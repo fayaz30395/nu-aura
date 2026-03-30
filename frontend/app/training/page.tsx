@@ -47,7 +47,7 @@ export default function TrainingPage() {
   // React Query hooks
   const { data: programsResponse, isLoading: programsLoading } = useAllPrograms();
   const { data: enrollmentsResponse, isLoading: enrollmentsLoading } = useEnrollmentsByEmployee(
-    user?.id || ''
+    user?.employeeId || ''
   );
   const createProgramMutation = useCreateTrainingProgram();
   const updateProgramMutation = useUpdateTrainingProgram();

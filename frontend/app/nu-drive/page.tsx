@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import { Skeleton } from '@mantine/core';
 import dynamic from 'next/dynamic';
@@ -51,6 +52,8 @@ const log = createLogger('NuDrivePage');
 function DriveContent() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission } = usePermissions();
+  const canDeleteFiles = hasPermission(Permissions.DOCUMENT_DELETE);
   const [isLoading, setIsLoading] = useState(true);
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -698,7 +701,7 @@ function DriveContent() {
           onShare={openShareModal}
           onToggleStar={toggleStar}
           onRename={openRenameModal}
-          onDelete={deleteFile}
+          onDelete={canDeleteFiles ? deleteFile : undefined}
         />
       )}
 

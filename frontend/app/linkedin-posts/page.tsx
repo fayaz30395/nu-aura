@@ -24,6 +24,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { isAdmin } from '@/lib/utils';
 import {
   useAllLinkedInPosts,
@@ -42,6 +43,8 @@ const logger = createLogger('LinkedInPosts');
 
 export default function LinkedInPostsPage() {
   const { user } = useAuth();
+  const { hasPermission } = usePermissions();
+  const canManagePosts = hasPermission(Permissions.ANNOUNCEMENT_MANAGE) || isAdmin(user?.roles);
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -106,7 +109,7 @@ export default function LinkedInPostsPage() {
                   Curate and manage LinkedIn posts for your company feed
                 </p>
               </div>
-              {isAdmin(user?.roles) && (
+              {canManagePosts && (
                 <button
                   onClick={() => {
                     setEditingPost(null);
@@ -271,7 +274,7 @@ export default function LinkedInPostsPage() {
                     </div>
 
                     {/* Actions */}
-                    {isAdmin(user?.roles) && (
+                    {canManagePosts && (
                       <div className="px-6 py-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
                         <button
                           onClick={() => handleEditPost(post)}

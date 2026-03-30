@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -12,7 +12,7 @@ import {
   useSubmitMultipleTimeEntries,
 } from '@/lib/hooks/queries/useTimeTracking';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Clock,
   Plus,
@@ -33,6 +33,15 @@ const log = createLogger('TimeTrackingListPage');
 
 export default function TimeTrackingPage() {
   const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.TIMESHEET_VIEW, Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const queryClient = useQueryClient();
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
 
@@ -61,6 +70,8 @@ export default function TimeTrackingPage() {
       draftCount: draftEntries.length,
     };
   }, [entries, summaryData]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const getStatusConfig = (status: TimeEntryStatus) => {
     const configs: Record<TimeEntryStatus, { bg: string; text: string; icon: typeof Clock }> = {

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 /**
  * Fluence entry point — redirects to the Wiki section (default landing).
@@ -9,10 +10,25 @@ import { useRouter } from 'next/navigation';
  */
 export default function FluencePage() {
   const router = useRouter();
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.KNOWLEDGE_VIEW,
+    Permissions.WIKI_VIEW,
+    Permissions.BLOG_VIEW,
+  );
 
   useEffect(() => {
-    router.replace('/fluence/wiki');
-  }, [router]);
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+      return;
+    }
+    if (isReady && hasAccess) {
+      router.replace('/fluence/wiki');
+    }
+  }, [router, isReady, hasAccess]);
+
+  if (!isReady || !hasAccess) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center">

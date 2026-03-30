@@ -1,7 +1,11 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 import { Stepper, Button, Badge, Table } from '@mantine/core';
 import {
   Upload,
@@ -43,7 +47,16 @@ interface ColumnMapping {
 
 export default function KekaImportPage() {
   const router = useRouter();
+  const { hasAnyRole, isReady } = usePermissions();
+  const { hasHydrated, isAuthenticated } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // DEF-59: RBAC gate — import is a destructive operation requiring admin access
+  useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) { router.replace('/auth/login'); return; }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   // State management
   const [step, setStep] = useState<ImportStep>('upload');

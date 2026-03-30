@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -46,6 +47,20 @@ export default function TemplateDetailPage() {
   const params = useParams();
   const templateId = params.id as string;
   const [showInstantiateModal, setShowInstantiateModal] = useState(false);
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.KNOWLEDGE_TEMPLATE_READ,
+    Permissions.KNOWLEDGE_VIEW,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   const { data: template, isLoading } = useFluenceTemplate(templateId, !!templateId);
   const { data: spacesData } = useWikiSpaces(0, 100);

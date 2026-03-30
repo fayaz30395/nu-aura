@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Users, AlertTriangle, RefreshCw, Search, Download, Info } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   ResourceManagementApiError,
 } from '@/lib/services/resource-management.service';
@@ -45,6 +47,16 @@ function AllocationBar({ value }: { value: number }) {
 type StatusFilter = AllocationStatus | 'ALL';
 
 export default function ResourcePoolPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [deptFilter, setDeptFilter] = useState('ALL');
@@ -104,6 +116,8 @@ export default function ResourcePoolPage() {
     a.download = 'resource-pool.csv';
     a.click();
   };
+
+  if (!permissionsReady || !hasAccess) return null;
 
   if (isApiUnavailable) {
     return (

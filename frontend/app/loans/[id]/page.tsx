@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { LoanStatus } from '@/lib/types/loan';
 import { useLoan } from '@/lib/hooks/queries/useLoans';
@@ -22,7 +24,15 @@ import {
 export default function LoanDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
   const loanId = params.id as string;
+
+  useEffect(() => {
+    if (!permissionsReady) return;
+    if (!hasPermission(Permissions.LOAN_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasPermission, router]);
 
   const { data: loan, isLoading, error } = useLoan(loanId);
 
@@ -71,6 +81,10 @@ export default function LoanDetailPage() {
     };
     return configs[status] || configs.PENDING;
   };
+
+  if (!permissionsReady || !hasPermission(Permissions.LOAN_VIEW)) {
+    return null;
+  }
 
   if (isLoading) {
     return (

@@ -44,6 +44,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
 import type { DashboardAnalyticsParams } from '@/lib/hooks/queries/useAnalytics';
 
@@ -85,6 +86,7 @@ const _CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export default function AnalyticsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('30d');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
@@ -106,6 +108,18 @@ export default function AnalyticsPage() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
+  // RBAC guard — analytics requires REPORT_VIEW permission (DEF-51)
+  React.useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // RBAC guard — block render for unauthorized users (DEF-51)
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
 
   if (!hasHydrated || isLoading) {
     return (

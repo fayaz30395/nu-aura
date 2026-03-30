@@ -4,13 +4,24 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Loader2 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function AllocationsPage() {
   const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.PROJECT_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {
-    router.replace('/allocations/summary');
-  }, [router]);
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+      return;
+    }
+    if (permissionsReady && hasAccess) {
+      router.replace('/allocations/summary');
+    }
+  }, [router, permissionsReady, hasAccess]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   return (
     <AppLayout>

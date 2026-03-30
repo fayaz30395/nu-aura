@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Users, Download, RefreshCw, AlertCircle, Search } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
@@ -75,6 +77,16 @@ const calculateDynamicStatus = (activeAllocation: number): AllocationStatus => {
 };
 
 export default function WorkloadDashboardPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>('thisMonth');
   const [selectedStatus, setSelectedStatus] = useState<AllocationStatus[]>([]);
@@ -253,6 +265,8 @@ export default function WorkloadDashboardPage() {
       }
     );
   };
+
+  if (!permissionsReady || !hasAccess) return null;
 
   return (
     <AppLayout>

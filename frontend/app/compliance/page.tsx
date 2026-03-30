@@ -1,9 +1,25 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Building2 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function CompliancePage() {
+  const { hasAnyPermission, isReady } = usePermissions();
+  const router = useRouter();
+
+  const hasAccess = hasAnyPermission(Permissions.COMPLIANCE_VIEW, Permissions.SYSTEM_ADMIN);
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
+
   return (
     <AppLayout activeMenuItem="admin">
       <div className="p-6">

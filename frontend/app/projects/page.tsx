@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Badge,
   Button,
@@ -419,6 +420,16 @@ export default function ProjectsPage() {
   const router = useRouter();
   const { user } = useAuth();
   const toast = useToast();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
+  if (!permissionsReady || !hasAccess) return null;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [activeTab, setActiveTab] = useState<'active' | 'all' | 'on_hold' | 'completed' | 'archived'>('active');

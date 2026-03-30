@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Plus,
   BookOpen,
@@ -27,6 +29,21 @@ import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/de
  */
 export default function FluenceDashboardPage() {
   const router = useRouter();
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.KNOWLEDGE_VIEW,
+    Permissions.WIKI_VIEW,
+    Permissions.BLOG_VIEW,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   // Fetch recent content
   const { data: wikiData, isLoading: wikiLoading } = useWikiPages(undefined, 0, 6);

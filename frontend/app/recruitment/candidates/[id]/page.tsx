@@ -100,7 +100,8 @@ export default function CandidateDetailPage() {
               <Calendar className="h-4 w-4" />
               Schedule Interview
             </Button>
-            <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+            {/* DEF-51: Fix permission from CANDIDATE_VIEW to RECRUITMENT_MANAGE for edit action */}
+            <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
               <Button
                 onClick={() => router.push(`/recruitment/candidates?edit=${candidate.id}`)}
                 className="flex items-center gap-2"

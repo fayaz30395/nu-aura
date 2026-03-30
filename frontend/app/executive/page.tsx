@@ -2,14 +2,23 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 /** /executive redirect — the actual page lives at /dashboards/executive */
 export default function ExecutiveRedirectPage() {
   const router = useRouter();
+  const { hasPermission, isReady } = usePermissions();
+
+  const hasAccess = hasPermission(Permissions.DASHBOARD_EXECUTIVE);
 
   useEffect(() => {
-    router.replace('/dashboards/executive');
-  }, [router]);
+    if (!isReady) return;
+    if (!hasAccess) {
+      router.replace('/me/dashboard');
+    } else {
+      router.replace('/dashboards/executive');
+    }
+  }, [isReady, hasAccess, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

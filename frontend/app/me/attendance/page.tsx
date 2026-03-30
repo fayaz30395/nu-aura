@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import {
   Calendar as CalendarIcon,
@@ -27,6 +30,13 @@ import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('AttendancePage');
 
+// DEF-42: Zod schema for regularization form
+const regularizationSchema = z.object({
+  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must be 1000 characters or less'),
+});
+
+type RegularizationFormData = z.infer<typeof regularizationSchema>;
+
 export default function MyAttendancePage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
@@ -34,8 +44,19 @@ export default function MyAttendancePage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showRegularizationModal, setShowRegularizationModal] = useState(false);
-  const [regularizationReason, setRegularizationReason] = useState('');
   const [regularizingRecord, setRegularizingRecord] = useState<AttendanceRecord | null>(null);
+
+  // DEF-42: React Hook Form + Zod for regularization modal
+  const {
+    register: registerRegularization,
+    handleSubmit: handleRegularizationSubmit,
+    reset: resetRegularization,
+    watch: watchRegularization,
+    formState: { errors: regularizationErrors },
+  } = useForm<RegularizationFormData>({
+    resolver: zodResolver(regularizationSchema),
+    defaultValues: { reason: '' },
+  });
 
   const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
   const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
@@ -111,20 +132,20 @@ export default function MyAttendancePage() {
     }
   };
 
-  const handleRequestRegularization = async () => {
-    if (!regularizingRecord || !regularizationReason.trim()) return;
+  const handleRequestRegularization = async (formData: RegularizationFormData) => {
+    if (!regularizingRecord) return;
 
     try {
       setError(null);
       await requestRegularization.mutateAsync({
         id: regularizingRecord.id,
         data: {
-          reason: regularizationReason,
+          reason: formData.reason,
         },
       });
 
       setShowRegularizationModal(false);
-      setRegularizationReason('');
+      resetRegularization();
       setRegularizingRecord(null);
     } catch (err: unknown) {
       log.error('Failed to request regularization:', err);
@@ -644,44 +665,50 @@ export default function MyAttendancePage() {
         </div>
       </div>
 
-      {/* Regularization Modal */}
+      {/* Regularization Modal — DEF-42: React Hook Form + Zod */}
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md card-aura">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Reason
-              </label>
-              <textarea
-                value={regularizationReason}
-                onChange={(e) => setRegularizationReason(e.target.value)}
-                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                rows={4}
-                placeholder="Please explain why you need regularization..."
-              />
-            </div>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => {
-                  setShowRegularizationModal(false);
-                  setRegularizationReason('');
-                  setRegularizingRecord(null);
-                }}
-                className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRequestRegularization}
-                disabled={!regularizationReason.trim()}
-                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Submit Request
-              </button>
-            </div>
+            <form onSubmit={handleRegularizationSubmit(handleRequestRegularization)}>
+              <div className="mb-4">
+                <label htmlFor="regularization-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Reason
+                </label>
+                <textarea
+                  id="regularization-reason"
+                  {...registerRegularization('reason')}
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  rows={4}
+                  placeholder="Please explain why you need regularization..."
+                />
+                {regularizationErrors.reason && (
+                  <p className="mt-1 text-sm text-danger-600">{regularizationErrors.reason.message}</p>
+                )}
+              </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowRegularizationModal(false);
+                    resetRegularization();
+                    setRegularizingRecord(null);
+                  }}
+                  className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!watchRegularization('reason')?.trim()}
+                  className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Submit Request
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

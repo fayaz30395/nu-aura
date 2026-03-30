@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { RefreshCw, AlertTriangle, Info } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   ResourceManagementApiError,
 } from '@/lib/services/resource-management.service';
@@ -134,6 +136,16 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CapacityTimelinePage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('ALL');
   const [viewMode, setViewMode] = useState<'week' | 'month'>('month');
@@ -163,6 +175,8 @@ export default function CapacityTimelinePage() {
     [...filtered].sort((a, b) => (b.totalAllocation ?? 0) - (a.totalAllocation ?? 0)),
     [filtered]
   );
+
+  if (!permissionsReady || !hasAccess) return null;
 
   if (isApiUnavailable) {
     return (

@@ -9,7 +9,7 @@ import {
   User, Building2, CreditCard, FileText, CheckCircle2,
   Upload, ChevronRight, AlertCircle
 } from 'lucide-react';
-import { apiClient } from '@/lib/api/client';
+import { publicApiClient } from '@/lib/api/public-client';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -88,7 +88,7 @@ export default function PreboardingPortalPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get<PreboardingData>(`/preboarding/portal/${token}`);
+      const response = await publicApiClient.get<PreboardingData>(`/preboarding/portal/${token}`);
       setData(response.data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Invalid or expired link');
@@ -119,7 +119,7 @@ export default function PreboardingPortalPage() {
   const savePersonalInfo = async (formData: PersonalInfoFormData) => {
     setSaving(true);
     try {
-      const response = await apiClient.put<PreboardingData>(`/preboarding/portal/${token}/personal-info`, formData);
+      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/personal-info`, formData);
       setData(response.data);
       setActiveStep(1);
     } catch (err) {
@@ -146,7 +146,7 @@ export default function PreboardingPortalPage() {
   const saveBankDetails = async (formData: BankDetailsFormData) => {
     setSaving(true);
     try {
-      const response = await apiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, formData);
+      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, formData);
       setData(response.data);
       setActiveStep(2);
     } catch (err) {
@@ -159,7 +159,7 @@ export default function PreboardingPortalPage() {
   const signOfferLetter = async () => {
     setSaving(true);
     try {
-      const response = await apiClient.post<PreboardingData>(`/preboarding/portal/${token}/sign-offer`);
+      const response = await publicApiClient.post<PreboardingData>(`/preboarding/portal/${token}/sign-offer`);
       setData(response.data);
     } catch (err) {
       log.error('Failed to sign offer letter:', err);

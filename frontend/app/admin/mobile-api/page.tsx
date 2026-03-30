@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Container,
   Paper,
@@ -26,6 +27,10 @@ import {
   IconClock,
 } from '@tabler/icons-react';
 import { AdminPageContent } from '@/components/layout';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 interface MobileEndpoint {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT';
@@ -36,6 +41,16 @@ interface MobileEndpoint {
 }
 
 export default function MobileApiPage() {
+  const router = useRouter();
+  const { hasAnyRole, isReady } = usePermissions();
+  const { hasHydrated, isAuthenticated } = useAuth();
+
+  // DEF-58: RBAC gate — API surface documentation should be restricted to admins
+  useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) { router.replace('/auth/login'); return; }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
   const dashboardEndpoints: MobileEndpoint[] = [
     {
       method: 'GET',

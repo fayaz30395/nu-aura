@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Download, XCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Badge,
   Button,
@@ -77,6 +79,16 @@ const buildEmployeeLabel = (employee: AllocationSummaryItem) => {
 };
 
 export default function AllocationSummaryPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.PROJECT_VIEW, Permissions.ALLOCATION_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -218,6 +230,8 @@ export default function AllocationSummaryPage() {
       mobilePriority: 'secondary' as const,
     },
   ], []);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   return (
     <AppLayout breadcrumbs={[{ label: 'Allocations', href: '/allocations/summary' }, { label: 'Summary' }]}>

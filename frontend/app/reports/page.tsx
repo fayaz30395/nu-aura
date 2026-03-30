@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ReportRequest, ReportType } from '@/lib/services/report.service';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useReportDownload } from '@/lib/hooks/queries/useReportDownload';
 
 interface ReportConfig {
@@ -309,6 +311,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 };
 
 export default function ReportsPage() {
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -320,6 +324,19 @@ export default function ReportsPage() {
   }, [successMessage]);
 
   const downloadMutation = useReportDownload();
+
+  // RBAC guard — reports hub requires REPORT_VIEW permission (DEF-49)
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // RBAC guard — block render for unauthorized users (DEF-49)
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
 
   const handleDownload = (type: ReportType, request: ReportRequest) => {
     if (!selectedReport) return;

@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Shield,
@@ -19,8 +20,21 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function SecurityPage() {
+  const { hasPermission, isReady } = usePermissions();
+  const router = useRouter();
+
+  const hasAccess = hasPermission(Permissions.SYSTEM_ADMIN);
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const certifications = [
     {
       icon: Shield,

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { notFound } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,6 +49,21 @@ export default function EditWikiPage() {
   const pageId = params.slug as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editorSearchQuery, setEditorSearchQuery] = useState('');
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.WIKI_MANAGE,
+    Permissions.KNOWLEDGE_WIKI_UPDATE,
+    Permissions.KNOWLEDGE_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { mutate: updateWikiPage } = useUpdateWikiPage();

@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Clock, CheckCircle, XCircle, PlusCircle, AlertCircle } from 'lucide-react';
@@ -44,8 +46,24 @@ const statusConfig: Record<string, { color: string; icon: typeof Clock; label: s
 };
 
 export default function CompOffPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.ATTENDANCE_VIEW_SELF,
+    Permissions.ATTENDANCE_VIEW_ALL,
+    Permissions.ATTENDANCE_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
   const [employeeId] = useState('current'); // resolved by backend from JWT
 

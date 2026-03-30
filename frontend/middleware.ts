@@ -20,10 +20,8 @@ const ACCESS_TOKEN_COOKIE = 'access_token';
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/auth/login',
-  '/auth/register',
   '/auth/forgot-password',
-  '/auth/reset-password',
-  '/auth/verify-email',
+  '/reset-password',
   '/',
   // Token-based public portals — accessed by candidates/employees without an account session
   '/preboarding/portal/',   // candidate preboarding portal (token in URL)
@@ -305,26 +303,41 @@ export function middleware(request: NextRequest) {
   const accessToken = accessTokenCookie?.value;
 
   if (!accessToken) {
-    // Check if this is an authenticated route that requires login
+    // DEF-27: Deny-by-default — any non-public route without a cookie redirects to login.
+    // This covers both known authenticated routes AND unknown/future routes.
+    const loginUrl = new URL('/auth/login', request.url);
+    loginUrl.searchParams.set('returnUrl', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // DEF-29: Decode JWT and check expiry — expired tokens must not pass middleware
+  const { role, roles, isExpired } = decodeJwt(accessToken);
+
+  if (isExpired) {
+    // Expired token on an authenticated route → redirect to login
+    // For non-authenticated routes, let through — AuthGuard / API client will handle refresh
     if (isAuthenticatedRoute(pathname)) {
-      // Not authenticated - redirect to login with return URL
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('returnUrl', pathname);
       return NextResponse.redirect(loginUrl);
     }
-    // For other routes, let them proceed (fine-grained checks happen client-side)
+    // Unknown routes with expired token also redirect (deny-by-default, DEF-27)
+    if (!isPublicRoute(pathname)) {
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('returnUrl', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }
 
   // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
-  const { role, roles } = decodeJwt(accessToken);
   if (role === 'SUPER_ADMIN' || roles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }
 
-  // Token exists - allow the request
+  // Token exists and is not expired - allow the request
   // Fine-grained permission checks happen client-side via AuthGuard
   const response = NextResponse.next();
   return addSecurityHeaders(response);

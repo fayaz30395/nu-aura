@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -8,9 +8,21 @@ import { useTemplates, useDeleteTemplate } from '@/lib/hooks/queries/useContract
 import { contractService } from '@/lib/services/contract.service';
 import { Button, Card, Input, Badge } from '@mantine/core';
 import { Plus, Search, Trash2 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ContractTemplatesPage() {
   const router = useRouter();
+  const { hasPermission, isReady } = usePermissions();
+
+  const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);

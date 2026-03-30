@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -67,7 +67,20 @@ type TabKey = 'my-overtime' | 'request' | 'team' | 'all';
 export default function OvertimePage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<TabKey>('my-overtime');
+
+  // BUG-L6-008: Page-level permission gate for overtime
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasAnyPermission]);
   const [myPage, setMyPage] = useState(0);
   const [teamPage, setTeamPage] = useState(0);
   const [allPage, setAllPage] = useState(0);
@@ -149,9 +162,12 @@ export default function OvertimePage() {
     [approveReject, user?.employeeId]
   );
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated || !permissionsReady) return null;
   if (!isAuthenticated) {
     router.push('/auth/login');
+    return null;
+  }
+  if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {
     return null;
   }
 

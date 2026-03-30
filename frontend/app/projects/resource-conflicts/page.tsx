@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertTriangle, CheckCircle, RefreshCw, Users, Percent } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -32,6 +34,16 @@ interface ConflictLog {
 }
 
 export default function ResourceConflictsPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.RESOURCE_VIEW, Permissions.PROJECT_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const queryClient = useQueryClient();
   const [scanResults, setScanResults] = useState<ConflictResult[] | null>(null);
 
@@ -54,6 +66,8 @@ export default function ResourceConflictsPage() {
       apiClient.post(`/resource-management/conflicts/${id}/resolve`, { resolvedBy: 'current' }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['resource-conflicts'] }),
   });
+
+  if (!permissionsReady || !hasAccess) return null;
 
   return (
     <AppLayout>

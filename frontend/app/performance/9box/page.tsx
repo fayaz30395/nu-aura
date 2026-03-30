@@ -1,7 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Download,
   Info,
@@ -13,6 +13,8 @@ import {
   Target,
 } from 'lucide-react';
 import { usePerformanceAllCycles, useAllReviews } from '@/lib/hooks/queries/usePerformance';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -181,16 +183,18 @@ export default function NineBoxPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('name');
 
-  // Initialize selected cycle
-  if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
-    const cycles = cyclesQuery.data.content;
-    const active = cycles.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
-    if (active) {
-      setSelectedCycleId(active.id);
-    } else if (cycles.length > 0) {
-      setSelectedCycleId(cycles[0].id);
+  // Initialize selected cycle (moved to useEffect to avoid setState during render)
+  useEffect(() => {
+    if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
+      const cycles = cyclesQuery.data.content;
+      const active = cycles.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
+      if (active) {
+        setSelectedCycleId(active.id);
+      } else if (cycles.length > 0) {
+        setSelectedCycleId(cycles[0].id);
+      }
     }
-  }
+  }, [selectedCycleId, cyclesQuery.data]);
 
   // Filter reviews by selected cycle
   const reviews = useMemo(() => {
@@ -314,6 +318,12 @@ export default function NineBoxPage() {
 
   return (
     <AppLayout>
+      <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
+          <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view the 9-Box talent grid.</p>
+        </div>
+      }>
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
@@ -631,6 +641,7 @@ export default function NineBoxPage() {
         ) : null}
         </div>
       </div>
+      </PermissionGate>
     </AppLayout>
   );
 }

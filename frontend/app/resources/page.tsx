@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import Link from 'next/link';
 import {
@@ -15,6 +16,7 @@ import {
   RefreshCw,
   Plus,
 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -23,6 +25,16 @@ import { useWorkloadDashboard, useMyPendingApprovals } from '@/lib/hooks/queries
 import { CreateAllocationModal } from '@/components/resources/CreateAllocationModal';
 
 export default function ResourcesPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError, refetch: refetchDashboard } = useWorkloadDashboard({});
@@ -32,6 +44,8 @@ export default function ResourcesPage() {
     (dashboardError as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
   const isLoading = dashboardLoading || pendingLoading;
   const error = dashboardError || pendingError;
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const summary = dashboardData?.summary ?? null;
   const pendingApprovals = pendingData?.content ?? [];

@@ -16,7 +16,7 @@ import { SkeletonStatCard } from '@/components/ui/Skeleton';
 
 const PAGE_SIZE = 10;
 
-const ROLE_OPTIONS: { label: string; value: string }[] = [
+const ALL_ROLE_OPTIONS: { label: string; value: string }[] = [
   { label: 'Super Admin', value: Roles.SUPER_ADMIN },
   { label: 'Tenant Admin', value: Roles.TENANT_ADMIN },
   { label: 'HR Admin', value: Roles.HR_ADMIN },
@@ -32,7 +32,13 @@ type RoleAssignmentForm = z.infer<typeof roleAssignmentSchema>;
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { isAdmin } = usePermissions();
+  const { isAdmin, hasRole } = usePermissions();
+
+  // DEF-49: Only SuperAdmin users can see/assign the SUPER_ADMIN role option
+  const ROLE_OPTIONS = useMemo(() => {
+    if (hasRole(Roles.SUPER_ADMIN)) return ALL_ROLE_OPTIONS;
+    return ALL_ROLE_OPTIONS.filter((opt) => opt.value !== Roles.SUPER_ADMIN);
+  }, [hasRole]);
   const [authChecked, setAuthChecked] = useState(false);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -47,7 +53,7 @@ export default function AdminDashboardPage() {
     resolver: zodResolver(roleAssignmentSchema),
     defaultValues: {
       email: '',
-      role: ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN,
+      role: ROLE_OPTIONS[0]?.value ?? Roles.EMPLOYEE,
     },
   });
   const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; email: string; role: string }>({

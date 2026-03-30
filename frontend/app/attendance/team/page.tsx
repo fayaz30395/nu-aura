@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -29,6 +29,8 @@ import { SkeletonStatCard, SkeletonTable, SkeletonCard } from '@/components/ui/S
 import { AttendanceRecord } from '@/lib/types/attendance';
 import { getLocalDateString } from '@/lib/utils/dateUtils';
 import { useAttendanceByDate } from '@/lib/hooks/queries/useAttendance';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
 
@@ -53,6 +55,21 @@ interface SortConfig {
 
 export default function TeamAttendancePage() {
   const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // BUG-L6-007: Page-level permission gate for team attendance
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) && !hasPermission(Permissions.ATTENDANCE_VIEW_ALL)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [searchTerm, setSearchTerm] = useState('');
@@ -183,6 +200,11 @@ export default function TeamAttendancePage() {
   const goToToday = () => {
     setSelectedDate(getLocalDateString());
   };
+
+  // Permission guard
+  if (!hasHydrated || !permissionsReady || (!hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) && !hasPermission(Permissions.ATTENDANCE_VIEW_ALL))) {
+    return null;
+  }
 
   return (
     <AppLayout activeMenuItem="attendance">

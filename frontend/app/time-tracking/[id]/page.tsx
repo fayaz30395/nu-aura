@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
 import { TimeEntryStatus } from '@/lib/types/time-tracking';
 import {
@@ -31,6 +32,15 @@ export default function TimeEntryDetailPage() {
   const router = useRouter();
   const params = useParams();
   const entryId = params.id as string;
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.TIMESHEET_VIEW, Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const { data: entry, isLoading, error } = useTimeEntry(entryId);
@@ -57,6 +67,8 @@ export default function TimeEntryDetailPage() {
       log.error('Error deleting entry:', error);
     }
   };
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const getStatusConfig = (status: TimeEntryStatus) => {
     const configs: Record<TimeEntryStatus, { bg: string; text: string; icon: typeof Clock }> = {

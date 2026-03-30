@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +10,7 @@ import { useCreateContract } from '@/lib/hooks/queries/useContracts';
 import { Button, Input, Select, Textarea, Card } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
 import { createLogger } from '@/lib/utils/logger';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('ContractPage');
 
@@ -26,7 +27,18 @@ type ContractFormData = z.infer<typeof contractFormSchema>;
 
 export default function CreateContractPage() {
   const router = useRouter();
+  const { hasPermission, isReady } = usePermissions();
   const createMutation = useCreateContract();
+
+  const hasAccess = hasPermission(Permissions.CONTRACT_CREATE);
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
     defaultValues: {

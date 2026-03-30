@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppLayout } from '@/components/layout';
@@ -11,7 +11,7 @@ import {
 } from '@/lib/types/employment-change-request';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Clock,
   CheckCircle,
@@ -28,6 +28,16 @@ export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // DEF-44: Redirect unauthorized users — prevents change request data exposure
+  useEffect(() => {
+    if (!permissionsReady) return;
+    if (!hasPermission(Permissions.EMPLOYMENT_CHANGE_VIEW_ALL)) {
+      router.replace('/employees');
+    }
+  }, [permissionsReady, hasPermission, router]);
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending'>('pending');
   const [rejectionReason, setRejectionReason] = useState('');
@@ -158,6 +168,11 @@ export default function EmploymentChangeRequestsPage() {
       </div>
     );
   };
+
+  // DEF-44: Don't render page content until permission is confirmed
+  if (!permissionsReady || !hasPermission(Permissions.EMPLOYMENT_CHANGE_VIEW_ALL)) {
+    return null;
+  }
 
   return (
     <AppLayout activeMenuItem="employees">

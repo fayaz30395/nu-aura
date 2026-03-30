@@ -2,14 +2,46 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveApp } from '@/lib/hooks/useActiveApp';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { ShieldAlert } from 'lucide-react';
 
 /** NU-Hire entry point — redirects to recruitment dashboard */
 export default function HireEntryPage() {
   const router = useRouter();
+  const { hasHydrated, isAuthenticated } = useAuth();
+  const { hasAppAccess } = useActiveApp();
 
   useEffect(() => {
-    router.replace('/recruitment');
-  }, [router]);
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+      return;
+    }
+    // DEF-40: Check app-level RBAC before redirecting
+    if (hasAppAccess('HIRE')) {
+      router.replace('/recruitment');
+    }
+  }, [hasHydrated, isAuthenticated, router, hasAppAccess]);
+
+  // Show access denied if authenticated but no access
+  if (hasHydrated && isAuthenticated && !hasAppAccess('HIRE')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="skeuo-card p-8 text-center max-w-md">
+          <ShieldAlert className="h-12 w-12 text-danger-500 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Access Denied</h2>
+          <p className="text-[var(--text-muted)] mb-4">You do not have permission to access NU-Hire.</p>
+          <button
+            onClick={() => router.replace('/me/dashboard')}
+            className="px-4 py-2 bg-sky-700 text-white rounded-lg hover:bg-sky-800 transition-colors"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">

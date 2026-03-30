@@ -25,6 +25,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { usePredictiveDashboard, useOrganizationTrends } from '@/lib/hooks/queries/usePredictiveAnalytics';
 import { formatCurrency } from '@/lib/utils';
 import type {
@@ -467,6 +468,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
 export default function PredictiveAnalyticsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [selectedYear] = useState(new Date().getFullYear());
 
@@ -479,6 +481,19 @@ export default function PredictiveAnalyticsPage() {
       router.push('/auth/login');
     }
   }, [hasHydrated, isAuthenticated, router]);
+
+  // RBAC guard — predictive analytics requires REPORT_VIEW permission (DEF-53)
+  React.useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // RBAC guard — block render for unauthorized users (DEF-53)
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
 
   // Loading state
   if (!hasHydrated || isLoading) {

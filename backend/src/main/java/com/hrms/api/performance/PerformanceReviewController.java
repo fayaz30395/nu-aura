@@ -116,14 +116,14 @@ public class PerformanceReviewController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_DELETE)
     public ResponseEntity<Void> deleteReview(@PathVariable UUID id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/competencies/{id}")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_DELETE)
     public ResponseEntity<Void> deleteCompetency(@PathVariable UUID id) {
         reviewService.deleteCompetency(id);
         return ResponseEntity.noContent().build();

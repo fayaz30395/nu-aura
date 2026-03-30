@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { useActivePFConfigs, useActiveESIConfigs, usePTSlabsByState, useMonthlyStatutoryContributions } from '@/lib/hooks/queries/useStatutory';
 
 const MONTHS = [
@@ -23,6 +25,22 @@ function fmt(n?: number | null): string {
 }
 
 export default function StatutoryPage() {
+    const router = useRouter();
+    const { isAuthenticated, hasHydrated } = useAuth();
+    const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+    // BUG-L6-001: Page-level permission gate for statutory compliance
+    useEffect(() => {
+        if (!hasHydrated || !permissionsReady) return;
+        if (!isAuthenticated) {
+            router.push('/auth/login');
+            return;
+        }
+        if (!hasPermission(Permissions.STATUTORY_VIEW)) {
+            router.replace('/me/dashboard');
+        }
+    }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+
     const [activeTab, setActiveTab] = useState<string | null>('pf');
 
     // Monthly report state
@@ -77,6 +95,11 @@ export default function StatutoryPage() {
         a.click();
         URL.revokeObjectURL(url);
     };
+
+    // Permission guard
+    if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
+        return null;
+    }
 
     return (
         <AppLayout>

@@ -6,6 +6,7 @@ import com.hrms.common.config.DistributedRateLimiter.RateLimitType;
 import com.hrms.common.config.RateLimitConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -46,6 +48,9 @@ class RateLimitFilterTest {
     private DistributedRateLimiter distributedRateLimiter;
 
     @Mock
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Mock
     private HttpServletRequest request;
 
     @Mock
@@ -58,7 +63,7 @@ class RateLimitFilterTest {
 
     @BeforeEach
     void setUp() {
-        rateLimitFilter = new RateLimitFilter(rateLimitConfig, distributedRateLimiter);
+        rateLimitFilter = new RateLimitFilter(rateLimitConfig, distributedRateLimiter, jwtTokenProvider);
         // Enable Redis by default
         ReflectionTestUtils.setField(rateLimitFilter, "useRedis", true);
     }
@@ -485,6 +490,62 @@ class RateLimitFilterTest {
             // Then
             String capturedKey = keyCaptor.getValue();
             assertTrue(capturedKey.contains("198.51.100.42"));
+        }
+
+        @Test
+        @DisplayName("DEF-31: Should resolve client key from access_token cookie when headers are absent")
+        void shouldResolveClientKeyFromAccessTokenCookie() throws ServletException, IOException {
+            // Given — no X-User-ID / X-Tenant-ID headers, but access_token cookie present
+            UUID userId = UUID.randomUUID();
+            UUID tenantId = UUID.randomUUID();
+            String fakeJwt = "eyJ0eXAiOiJKV1QifQ.eyJzdWIiOiJ0ZXN0In0.sig";
+
+            when(request.getRequestURI()).thenReturn("/api/v1/employees");
+            when(request.getHeader("X-User-ID")).thenReturn(null);
+            when(request.getHeader("X-Tenant-ID")).thenReturn(null);
+            when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("access_token", fakeJwt)});
+            when(jwtTokenProvider.getUserIdFromToken(fakeJwt)).thenReturn(userId);
+            when(jwtTokenProvider.getTenantIdFromToken(fakeJwt)).thenReturn(tenantId);
+
+            RateLimitResult result = new RateLimitResult(true, 99, 60);
+            ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+            when(distributedRateLimiter.tryAcquire(keyCaptor.capture(), eq(RateLimitType.API)))
+                    .thenReturn(result);
+
+            // When
+            rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+            // Then — should use tenantId:userId, not ip:...
+            String capturedKey = keyCaptor.getValue();
+            assertEquals(tenantId + ":" + userId, capturedKey);
+            verify(filterChain).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("DEF-31: Should fall back to IP when cookie JWT is invalid")
+        void shouldFallBackToIpWhenCookieJwtIsInvalid() throws ServletException, IOException {
+            // Given — cookie present but JWT parsing throws
+            String badJwt = "invalid-token";
+
+            when(request.getRequestURI()).thenReturn("/api/v1/employees");
+            when(request.getHeader("X-User-ID")).thenReturn(null);
+            when(request.getHeader("X-Tenant-ID")).thenReturn(null);
+            when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("access_token", badJwt)});
+            when(jwtTokenProvider.getUserIdFromToken(badJwt)).thenThrow(new RuntimeException("Invalid token"));
+            when(request.getRemoteAddr()).thenReturn("192.168.1.50");
+
+            RateLimitResult result = new RateLimitResult(true, 99, 60);
+            ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+            when(distributedRateLimiter.tryAcquire(keyCaptor.capture(), eq(RateLimitType.API)))
+                    .thenReturn(result);
+
+            // When
+            rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+            // Then — should fall back to IP-based key
+            String capturedKey = keyCaptor.getValue();
+            assertTrue(capturedKey.startsWith("ip:"));
+            verify(filterChain).doFilter(request, response);
         }
     }
 

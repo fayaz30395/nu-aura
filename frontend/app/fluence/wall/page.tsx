@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { IconTrendingUp, IconActivity, IconFlame } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
 import { PostComposer } from '@/components/wall';
 import { useCreatePost } from '@/lib/hooks/queries/useWall';
@@ -27,7 +30,22 @@ function TrendingSidebar() {
 }
 
 export default function WallPage() {
+  const router = useRouter();
   const createPost = useCreatePost();
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.KNOWLEDGE_VIEW,
+    Permissions.WALL_FLUENCE_VIEW,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   return (
     <AppLayout>

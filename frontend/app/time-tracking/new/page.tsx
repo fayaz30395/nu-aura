@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { EntryType } from '@/lib/types/time-tracking';
 import { useCreateTimeEntry, useSubmitTimeEntry } from '@/lib/hooks/queries/useTimeTracking';
 import { logger } from '@/lib/utils/logger';
@@ -53,6 +54,15 @@ const ENTRY_TYPES: { value: EntryType; label: string }[] = [
 
 export default function NewTimeEntryPage() {
   const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.TIMESHEET_CREATE, Permissions.TIME_TRACKING_CREATE, Permissions.TIME_TRACKING_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const createMutation = useCreateTimeEntry();
   const submitMutation = useSubmitTimeEntry();
   const submitModeRef = useRef<'draft' | 'submit'>('draft');
@@ -84,6 +94,8 @@ export default function NewTimeEntryPage() {
       setValue('billableHours', watchedHoursWorked);
     }
   }, [watchedHoursWorked, watchedIsBillable, setValue]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const onSubmit = async (data: TimeEntryFormData) => {
     try {

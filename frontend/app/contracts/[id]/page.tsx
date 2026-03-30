@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -8,10 +8,22 @@ import { useContract, useSignatures, useTerminateContract, useMarkAsActive } fro
 import { contractService } from '@/lib/services/contract.service';
 import { Button, Badge, Card, Tabs, Table } from '@mantine/core';
 import { ArrowLeft, Download } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ContractDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const { hasPermission, isReady } = usePermissions();
+
+  const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const contractId = params.id as string;
 
   const { data: contract, isLoading } = useContract(contractId);

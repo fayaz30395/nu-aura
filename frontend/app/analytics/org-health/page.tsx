@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
     Activity,
@@ -39,12 +40,28 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useOrganizationHealth } from '@/lib/hooks/queries/useAnalytics';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { chartColors } from '@/lib/utils/theme-colors';
 
 const COLORS = chartColors.palette();
 
 export default function OrganizationHealthPage() {
+    const router = useRouter();
+    const { hasPermission, isReady: permReady } = usePermissions();
     const { data, isLoading: loading, error, refetch } = useOrganizationHealth();
+
+    // RBAC guard — org health requires REPORT_VIEW permission (DEF-52)
+    useEffect(() => {
+      if (!permReady) return;
+      if (!hasPermission(Permissions.REPORT_VIEW)) {
+        router.replace('/dashboard');
+      }
+    }, [permReady, hasPermission, router]);
+
+    // RBAC guard — block render for unauthorized users (DEF-52)
+    if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+      return null;
+    }
 
     if (loading) return <LoadingSkeleton />;
 

@@ -14,6 +14,8 @@ import {
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import {
   Button,
   Input,
@@ -776,6 +778,15 @@ export default function ApplicantPipelinePage() {
         { label: 'Pipeline' },
       ]}
     >
+      {/* DEF-53: Gate pipeline page on RECRUITMENT_VIEW to prevent UI leak */}
+      <PermissionGate
+        anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_VIEW_ALL]}
+        fallback={
+          <div className="flex items-center justify-center h-[60vh]">
+            <p className="text-[var(--text-muted)]">You do not have permission to view the recruitment pipeline.</p>
+          </div>
+        }
+      >
       <div className="p-6 space-y-6 min-h-screen bg-[var(--bg-secondary)]">
         {/* ── Header ────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -1495,6 +1506,7 @@ export default function ApplicantPipelinePage() {
           </Button>
         </ModalFooter>
       </Modal>
+      </PermissionGate>
     </AppLayout>
   );
 }

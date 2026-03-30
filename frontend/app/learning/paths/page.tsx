@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import {
@@ -37,8 +38,23 @@ interface LearningPath {
 export default function LearningPathsPage() {
   const toast = useToast();
   const router = useRouter();
+  const { hasAnyPermission, isReady } = usePermissions();
 
   const [searchQuery, setSearchQuery] = useState('');
+
+  const hasAccess = hasAnyPermission(
+    Permissions.TRAINING_VIEW,
+    Permissions.LMS_COURSE_VIEW,
+    Permissions.TRAINING_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
 
   // Query for learning paths

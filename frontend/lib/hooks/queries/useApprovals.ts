@@ -152,6 +152,19 @@ export function useRejectExecution() {
   });
 }
 
+export function useReturnForModification() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
+      workflowService.returnForModification(executionId, comments),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
+      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
+    },
+  });
+}
+
 // ── Delegation Queries & Mutations ──────────────────────────────
 
 export const delegationKeys = {

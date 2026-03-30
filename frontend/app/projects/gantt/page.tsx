@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   ChevronLeft,
   ChevronRight,
@@ -39,6 +41,16 @@ const getWeekNumber = (date: Date): number => {
 };
 
 export default function GanttChartPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('week');
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [filters] = useState<GanttFilterOptions>({});
@@ -175,6 +187,8 @@ export default function GanttChartPage() {
 
     return { total, completed, delayed, atRisk, avgProgress };
   }, [ganttTasks]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   if (loading) {
     return (

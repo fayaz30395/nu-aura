@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import {
@@ -23,11 +24,27 @@ import {
 } from 'lucide-react';
 import { useTaxDeclarations } from '@/lib/hooks/queries/useTax';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import type { DeclarationStatus, TaxDeclarationResponse } from '@/lib/types/tax';
 
 export default function TaxOverviewPage() {
   const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // BUG-L6-003: Page-level permission gate for tax overview
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasPermission(Permissions.STATUTORY_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+
   const { data: rawDeclarations, isLoading, isError, error, refetch } = useTaxDeclarations(0, 100);
 
   // Safely extract declarations array — handles paginated objects, null, undefined
@@ -78,6 +95,11 @@ export default function TaxOverviewPage() {
   };
 
   const recentDeclarations = safeDeclarations.slice(0, 5);
+
+  // Permission guard
+  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
+    return null;
+  }
 
   return (
     <AppLayout

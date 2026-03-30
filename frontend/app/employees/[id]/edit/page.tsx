@@ -18,6 +18,7 @@ import { AppLayout } from '@/components/layout';
 import { AlertCircle, Clock } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { createLogger } from '@/lib/utils/logger';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 const log = createLogger('EmployeeEditPage');
 
@@ -74,6 +75,15 @@ export default function EditEmployeePage() {
   const router = useRouter();
   const params = useParams();
   const employeeId = params.id as string;
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // DEF-43: Redirect unauthorized users — prevents PII exposure in pre-populated form
+  useEffect(() => {
+    if (!permissionsReady) return;
+    if (!hasPermission(Permissions.EMPLOYEE_UPDATE)) {
+      router.replace('/employees');
+    }
+  }, [permissionsReady, hasPermission, router]);
 
   // React Query hooks for data fetching
   const { data: employee, isLoading: employeeLoading, error: employeeError } = useEmployee(employeeId);
@@ -266,6 +276,11 @@ export default function EditEmployeePage() {
       log.error('Error updating employee:', err);
     }
   };
+
+  // DEF-43: Don't render form content until permission is confirmed
+  if (!permissionsReady || !hasPermission(Permissions.EMPLOYEE_UPDATE)) {
+    return null;
+  }
 
   if (loading) {
     return (

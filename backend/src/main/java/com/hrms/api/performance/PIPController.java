@@ -49,7 +49,7 @@ public class PIPController {
     }
 
     @PostMapping("/{id}/check-in")
-    @RequiresPermission(Permission.REVIEW_SUBMIT)
+    @RequiresPermission(Permission.PIP_MANAGE)
     public ResponseEntity<PIPCheckInResponse> recordCheckIn(
             @PathVariable UUID id,
             @Valid @RequestBody PIPCheckInRequest request) {

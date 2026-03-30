@@ -64,6 +64,8 @@ public final class Permission {
     // Performance Management
     public static final String REVIEW_CREATE = "REVIEW:CREATE";
     public static final String REVIEW_VIEW = "REVIEW:VIEW";
+    public static final String REVIEW_UPDATE = "REVIEW:UPDATE";
+    public static final String REVIEW_DELETE = "REVIEW:DELETE";
     public static final String REVIEW_SUBMIT = "REVIEW:SUBMIT";
     public static final String REVIEW_APPROVE = "REVIEW:APPROVE";
     public static final String GOAL_CREATE = "GOAL:CREATE";
@@ -108,6 +110,11 @@ public final class Permission {
     public static final String FEEDBACK_360_CREATE = "FEEDBACK_360:CREATE";
     public static final String FEEDBACK_360_SUBMIT = "FEEDBACK_360:SUBMIT";
     public static final String FEEDBACK_360_MANAGE = "FEEDBACK_360:MANAGE";
+
+    // Feedback (general peer/upward feedback)
+    public static final String FEEDBACK_CREATE = "FEEDBACK:CREATE";
+    public static final String FEEDBACK_UPDATE = "FEEDBACK:UPDATE";
+    public static final String FEEDBACK_DELETE = "FEEDBACK:DELETE";
 
     // Helpdesk
     public static final String HELPDESK_TICKET_CREATE = "HELPDESK:TICKET_CREATE";
