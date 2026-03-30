@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
@@ -222,8 +223,8 @@ public class ExpenseClaimController {
 
     @GetMapping("/validate-policy")
     @RequiresPermission(Permission.EXPENSE_CREATE)
-    public ResponseEntity<java.util.List<String>> validatePolicy(
-            @RequestParam @NotNull java.util.UUID employeeId,
+    public ResponseEntity<List<String>> validatePolicy(
+            @RequestParam @NotNull UUID employeeId,
             @RequestParam @NotNull java.math.BigDecimal amount) {
         return ResponseEntity.ok(expenseClaimService.validatePolicy(employeeId, amount));
     }

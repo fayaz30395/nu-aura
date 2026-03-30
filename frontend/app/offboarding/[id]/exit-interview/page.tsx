@@ -29,7 +29,6 @@ import {
 import { notifications } from '@mantine/notifications';
 import {
   IconCheck,
-  IconAlertCircle,
   IconArrowLeft,
   IconMessageCircle,
   IconCalendar,
@@ -42,7 +41,6 @@ import {
   useExitProcess,
   useCreateExitInterview,
   useConductExitInterview,
-  useAllExitInterviews,
 } from '@/lib/hooks/queries/useExit';
 import {
   InterviewMode,

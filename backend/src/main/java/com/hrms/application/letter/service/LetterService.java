@@ -39,7 +39,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -851,7 +857,7 @@ public class LetterService {
                 results.add(enrichLetterResponse(GeneratedLetterResponse.fromEntity(saved), tenantId));
 
                 log.info("Bulk generated letter: {} for employee: {}", saved.getReferenceNumber(), employeeId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — service error boundary
                 log.error("Failed to generate letter for employee {}: {}", employeeId, e.getMessage());
                 // Continue with remaining employees
             }

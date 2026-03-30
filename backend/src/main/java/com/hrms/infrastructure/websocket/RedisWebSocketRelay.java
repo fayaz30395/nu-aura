@@ -95,7 +95,7 @@ public class RedisWebSocketRelay {
                 );
                 log.trace("Relayed topic message to {}", message.getDestination());
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Redis pub/sub error boundary
             log.error("Failed to relay WebSocket message from Redis: destination={}, sendType={}",
                     message.getDestination(), message.getSendType(), e);
         }
@@ -108,7 +108,7 @@ public class RedisWebSocketRelay {
             redisTemplate.convertAndSend(topic.getTopic(), message);
             log.debug("Published WebSocket message to Redis: destination={}, sendType={}",
                     message.getDestination(), message.getSendType());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Redis pub/sub error boundary
             // Fallback: deliver locally if Redis is down (single-pod graceful degradation)
             log.warn("Redis publish failed, falling back to local delivery: {}", e.getMessage());
             onMessage(message);

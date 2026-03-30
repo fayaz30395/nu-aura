@@ -63,7 +63,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
 
             log.info("Google Drive upload complete: objectName={}, fileId={}", objectName, uploadedFile.getId());
             return uploadedFile.getId();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive upload failed for object: {}", objectName, e);
             throw new BusinessException("Failed to upload file to Google Drive: " + e.getMessage());
         }
@@ -88,7 +88,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
             String downloadUrl = file.getWebContentLink();
             log.info("Google Drive download URL generated for fileId: {}", objectName);
             return downloadUrl;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive download URL generation failed for fileId: {}", objectName, e);
             throw new BusinessException("Failed to generate download URL from Google Drive");
         }
@@ -99,7 +99,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
         try {
             return driveService.files().get(objectName)
                     .executeMediaAsInputStream();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive download failed for fileId: {}", objectName, e);
             throw new BusinessException("Failed to retrieve file from Google Drive");
         }
@@ -110,7 +110,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
         try {
             driveService.files().delete(objectName).execute();
             log.info("Google Drive file deleted: fileId={}", objectName);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive delete failed for fileId: {}", objectName, e);
             throw new BusinessException("Failed to delete file from Google Drive");
         }
@@ -123,7 +123,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
                     .setFields("id")
                     .execute();
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             return false;
         }
     }
@@ -148,7 +148,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
 
             log.info("Google Drive file copied: sourceId={}, newId={}", sourceObjectName, copiedFile.getId());
             return copiedFile.getId();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive copy failed from {} to {}", sourceObjectName, destinationObjectName, e);
             throw new BusinessException("Failed to copy file in Google Drive");
         }
@@ -162,7 +162,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
                     .setFields("id, name")
                     .execute();
             log.info("Google Drive storage ready. Root folder: {} ({})", rootFolder.getName(), rootFolder.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive root folder not accessible: {}", rootFolderId, e);
             throw new BusinessException("Failed to initialize Google Drive storage: root folder not accessible");
         }
@@ -190,7 +190,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
             }
 
             return currentParent;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Failed to ensure folder hierarchy for: {}", objectName, e);
             throw new BusinessException("Failed to create folder structure in Google Drive");
         }
@@ -228,7 +228,7 @@ public class GoogleDriveStorageProvider implements StorageProvider {
 
             log.debug("Created Google Drive folder: {} under parent: {}", folderName, parentFolderId);
             return folder.getId();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Failed to find or create folder: {} under parent: {}", folderName, parentFolderId, e);
             throw new BusinessException("Failed to manage folder structure in Google Drive");
         }

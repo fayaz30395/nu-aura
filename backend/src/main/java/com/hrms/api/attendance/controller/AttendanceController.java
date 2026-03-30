@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * REST controller for attendance management.
@@ -547,12 +548,12 @@ public class AttendanceController {
     }
 
     private boolean isReportee(UUID employeeId) {
-        java.util.Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
         return reporteeIds != null && reporteeIds.contains(employeeId);
     }
 
     private boolean isEmployeeInUserLocations(UUID employeeId) {
-        java.util.Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
         if (locationIds == null || locationIds.isEmpty()) {
             return false;
         }
@@ -560,7 +561,7 @@ public class AttendanceController {
         try {
             Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
             return emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             return false;
         }
     }
@@ -574,18 +575,18 @@ public class AttendanceController {
         try {
             Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
             return departmentId.equals(emp.getDepartmentId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             return false;
         }
     }
 
     private boolean isInCustomTargets(UUID employeeId, String permission) {
-        java.util.Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
+        Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
         if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
             return true;
         }
 
-        java.util.Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
+        Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
             try {
@@ -593,12 +594,12 @@ public class AttendanceController {
                 if (emp.getDepartmentId() != null && customDepartmentIds.contains(emp.getDepartmentId())) {
                     return true;
                 }
-            } catch (Exception e) {
-                // Employee not found or access denied
+            } catch (Exception e) { // Intentional broad catch — controller error boundary
+                log.debug("Department scope check failed for employee {}: {}", employeeId, e.getMessage());
             }
         }
 
-        java.util.Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
+        Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
         if (customLocationIds != null && !customLocationIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
             try {
@@ -606,8 +607,8 @@ public class AttendanceController {
                 if (emp.getOfficeLocationId() != null && customLocationIds.contains(emp.getOfficeLocationId())) {
                     return true;
                 }
-            } catch (Exception e) {
-                // Employee not found or access denied
+            } catch (Exception e) { // Intentional broad catch — controller error boundary
+                log.debug("Location scope check failed for employee {}: {}", employeeId, e.getMessage());
             }
         }
 

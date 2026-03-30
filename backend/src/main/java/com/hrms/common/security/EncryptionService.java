@@ -137,7 +137,7 @@ public class EncryptionService {
             // Legacy path: value was encrypted with old ECB scheme
             log.warn("Decrypting legacy ECB-encrypted value; re-encrypt with encrypt() to upgrade to AES-GCM");
             return decryptLegacyEcb(encryptedValue);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — wraps crypto (GeneralSecurityException) + Base64 decode errors
             log.error("Decryption failed", e);
             throw new RuntimeException("Decryption failed", e);
         }

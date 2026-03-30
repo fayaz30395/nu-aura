@@ -66,7 +66,7 @@ interface CustomTooltipProps {
 }
 
 // Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+const _CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-[var(--border-main)]">

@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 /**
  * Entity representing a SAML 2.0 Identity Provider configuration per tenant.
@@ -67,7 +68,7 @@ public class SamlIdentityProvider extends TenantAware {
 
     /** Default role ID assigned to auto-provisioned users */
     @Column
-    private java.util.UUID defaultRoleId;
+    private UUID defaultRoleId;
 
     /**
      * JSON mapping of SAML assertion attributes to user fields.

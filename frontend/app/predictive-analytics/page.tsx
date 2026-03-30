@@ -30,10 +30,7 @@ import { formatCurrency } from '@/lib/utils';
 import type {
   PredictiveAnalyticsDashboard,
   AttritionPrediction,
-  WorkforceTrend,
   AnalyticsInsight,
-  SkillGap,
-  DepartmentRisk,
   KeyMetric,
 } from '@/lib/types/predictive-analytics';
 
@@ -100,13 +97,13 @@ const RISK_COLORS = {
   LOW: '#16a34a',
 } as const;
 
-const STATUS_COLORS = {
+const _STATUS_COLORS = {
   GOOD: '#16a34a',
   WARNING: '#f59e0b',
   CRITICAL: '#dc2626',
 } as const;
 
-const SEVERITY_COLORS = {
+const _SEVERITY_COLORS = {
   INFO: '#0284c7',
   WARNING: '#f59e0b',
   CRITICAL: '#dc2626',

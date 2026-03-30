@@ -4,7 +4,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -25,7 +24,6 @@ import {
   Edit,
   Trash2,
   Power,
-  Copy,
   ChevronLeft,
   ChevronRight,
   XCircle,

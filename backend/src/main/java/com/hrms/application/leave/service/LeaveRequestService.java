@@ -382,7 +382,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for leave request: {}", leaveRequest.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — leave processing error boundary
             log.warn("Could not start approval workflow for leave request {}: {}",
                     leaveRequest.getId(), e.getMessage());
         }

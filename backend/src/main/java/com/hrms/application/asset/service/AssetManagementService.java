@@ -294,7 +294,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for asset request: {} -> {}", assetId, employeeId);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Could not start approval workflow for asset request {}: {}", assetId, e.getMessage());
         }
 
@@ -316,7 +316,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
                     userId, action, "Asset", entityId, tenantId,
                     null, null, null, null, null, null, null, null,
                     description);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Failed to publish asset audit event (action={}, entityId={}): {}",
                     action, entityId, e.getMessage());
         }

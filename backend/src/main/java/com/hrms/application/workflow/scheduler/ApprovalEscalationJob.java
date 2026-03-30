@@ -73,7 +73,7 @@ public class ApprovalEscalationJob {
                 TenantContext.setCurrentTenant(tenant.getId());
                 int escalatedCount = processEscalationsForTenant(tenant.getId());
                 totalEscalated += escalatedCount;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 tenantsWithErrors++;
                 totalFailed++;
                 log.error("ApprovalEscalationJob: failed for tenant {}: {}",
@@ -108,7 +108,7 @@ public class ApprovalEscalationJob {
                 if (escalated) {
                     escalatedCount++;
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("Failed to escalate step {} (tenant={}): {}",
                         step.getId(), tenantId, e.getMessage(), e);
             }

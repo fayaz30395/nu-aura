@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AppLayout } from '@/components/layout';
@@ -22,7 +22,6 @@ import type {
   WorkflowEntityType,
   WorkflowType,
   ApproverType,
-  ApprovalStepRequest,
 } from '@/lib/types/workflow';
 import {
   ArrowLeft,
@@ -31,12 +30,10 @@ import {
   Edit,
   Eye,
   GitBranch,
-  Grip,
   Plus,
   Save,
   Trash2,
   XCircle,
-  CheckCircle,
   Clock,
   AlertTriangle,
 } from 'lucide-react';

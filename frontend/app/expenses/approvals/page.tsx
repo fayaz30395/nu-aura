@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
-import { CheckCircle, XCircle, Clock, DollarSign, Eye, Filter } from 'lucide-react';
+import { CheckCircle, XCircle, Eye } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 import { PermissionGate } from '@/components/auth/PermissionGate';

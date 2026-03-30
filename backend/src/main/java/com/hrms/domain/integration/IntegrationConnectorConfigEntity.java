@@ -2,6 +2,7 @@ package com.hrms.domain.integration;
 
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,9 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * JPA entity for storing integration connector configurations.
@@ -120,7 +123,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
             }
 
             return new ConnectorConfig(getTenantId(), connectorId, settings, subscriptions);
-        } catch (Exception e) {
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalArgumentException(
                 "Failed to parse connector configuration: " + e.getMessage(), e);
         }
@@ -139,7 +142,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
         try {
             this.configJson = objectMapper.writeValueAsString(config.settings());
             this.eventSubscriptions = String.join(",", config.eventSubscriptions());
-        } catch (Exception e) {
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalArgumentException(
                 "Failed to serialize connector configuration: " + e.getMessage(), e);
         }

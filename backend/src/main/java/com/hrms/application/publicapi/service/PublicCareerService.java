@@ -167,7 +167,7 @@ public class PublicCareerService {
                 if (candidate.getResumeUrl() == null) {
                     candidate.setResumeUrl(resumeObjectName);
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — public API error boundary
                 log.warn("Resume upload failed for candidate {} (application will still be saved): {}",
                         email, e.getMessage());
             }

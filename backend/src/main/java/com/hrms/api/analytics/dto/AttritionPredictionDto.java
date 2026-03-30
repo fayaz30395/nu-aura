@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 @Data
 @Builder
@@ -79,7 +80,7 @@ public class AttritionPredictionDto {
                 .createdAt(prediction.getCreatedAt());
 
         // Build risk factors list
-        List<RiskFactor> factors = new java.util.ArrayList<>();
+        List<RiskFactor> factors = new ArrayList<>();
         if (prediction.getTenureRisk() != null) {
             factors.add(RiskFactor.builder()
                     .name("Tenure")

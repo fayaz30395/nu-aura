@@ -24,7 +24,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -275,7 +280,7 @@ public class AuditLogService {
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             return attributes != null ? attributes.getRequest() : null;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             return null;
         }
     }

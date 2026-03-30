@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -130,7 +131,7 @@ public class PayrollRunService {
                 "PAYROLL_RUN",
                 payrollRun.getId(),
                 AuditAction.UPDATE,
-                java.util.Map.of(
+                Map.of(
                         "status", PayrollStatus.PROCESSED.name(),
                         "period", payrollRun.getPayPeriodYear() + "-" + payrollRun.getPayPeriodMonth()),
                 null,
@@ -151,7 +152,7 @@ public class PayrollRunService {
                 "PAYROLL_RUN",
                 payrollRun.getId(),
                 AuditAction.UPDATE,
-                java.util.Map.of(
+                Map.of(
                         "status", PayrollStatus.DRAFT.name(),
                         "reason", "Async processing failed; rolled back to DRAFT"),
                 null,
@@ -227,7 +228,7 @@ public class PayrollRunService {
                 "PAYROLL_RUN",
                 payrollRun.getId(),
                 AuditAction.DELETE,
-                java.util.Map.of("period", payrollRun.getPayPeriodYear() + "-" + payrollRun.getPayPeriodMonth(),
+                Map.of("period", payrollRun.getPayPeriodYear() + "-" + payrollRun.getPayPeriodMonth(),
                         "status", payrollRun.getStatus().name()),
                 null,
                 "Payroll run soft-deleted for period " + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth()

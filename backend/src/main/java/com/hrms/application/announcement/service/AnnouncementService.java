@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -92,7 +93,7 @@ public class AnnouncementService {
             announcement.setWallPostId(wallPost.getId());
             announcement = announcementRepository.save(announcement);
             log.info("Created wall post {} for announcement {}", wallPost.getId(), announcement.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
             log.error("Failed to create wall post for announcement {}: {}", announcement.getId(), e.getMessage());
             // Don't fail the announcement if wall post creation fails
         }
@@ -160,7 +161,7 @@ public class AnnouncementService {
                 .map(AnnouncementRead::getAnnouncementId)
                 .collect(Collectors.toSet());
 
-        java.util.Map<UUID, AnnouncementRead> readMap = employeeReads.stream()
+        Map<UUID, AnnouncementRead> readMap = employeeReads.stream()
                 .collect(Collectors.toMap(AnnouncementRead::getAnnouncementId, r -> r));
 
         // Apply targeting filter

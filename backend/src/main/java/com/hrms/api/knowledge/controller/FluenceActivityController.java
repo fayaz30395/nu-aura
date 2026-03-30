@@ -20,7 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -73,11 +78,11 @@ public class FluenceActivityController {
                                 (emp.getLastName() != null ? " " + emp.getLastName() : "");
                         nameMap.put(userId, name);
                     });
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — controller error boundary
                     log.debug("Could not resolve actor name for userId {}: {}", userId, e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.warn("Failed to batch-resolve actor names: {}", e.getMessage());
         }
         return nameMap;

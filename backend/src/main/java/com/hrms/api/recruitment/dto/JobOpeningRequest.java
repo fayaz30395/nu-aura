@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class JobOpeningRequest {
@@ -20,7 +21,7 @@ public class JobOpeningRequest {
     private String jobTitle;
 
     @NotNull(message = "Department ID is required")
-    private java.util.UUID departmentId;
+    private UUID departmentId;
 
     @Size(max = 200, message = "Location must not exceed 200 characters")
     private String location;
@@ -48,7 +49,7 @@ public class JobOpeningRequest {
     @Size(max = 2000, message = "Skills required must not exceed 2000 characters")
     private String skillsRequired;
 
-    private java.util.UUID hiringManagerId;
+    private UUID hiringManagerId;
     private JobOpening.JobStatus status;
     private LocalDate postedDate;
     private LocalDate closingDate;

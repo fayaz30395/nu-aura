@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
@@ -9,7 +10,6 @@ import { useOrgChartTree, useOrgChartDepartments } from '@/lib/hooks/useOrgChart
 import { OrgTree } from '@/components/org-chart/OrgTree';
 import { OrgListNode } from '@/components/org-chart/OrgNode';
 import { OrgChartFilters, ViewMode } from '@/components/org-chart/OrgChartFilters';
-import { OrgChartNode } from '@/lib/services/orgChart.service';
 import { Employee } from '@/lib/types/employee';
 import { SkeletonTable } from '@/components/ui/Loading';
 import {
@@ -100,9 +100,12 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
               >
                 {/* Avatar */}
                 {emp.profilePhotoUrl ? (
-                  <img
+                  <Image
                     src={emp.profilePhotoUrl}
                     alt={emp.fullName}
+                    width={32}
+                    height={32}
+                    unoptimized
                     className="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-600 flex-shrink-0"
                   />
                 ) : (

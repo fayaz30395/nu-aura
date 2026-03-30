@@ -14,7 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -81,7 +86,7 @@ public class FluenceChatService {
         CompletableFuture.runAsync(() -> {
             try {
                 executePipeline(emitter, request, tenantId, userId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
                 log.error("Chat pipeline error for tenant {}: {}", tenantId, e.getMessage(), e);
                 sendErrorEvent(emitter, "An unexpected error occurred. Please try again.");
             }
@@ -109,7 +114,7 @@ public class FluenceChatService {
             List<FluenceContentRetriever.ContentChunk> chunks;
             try {
                 chunks = contentRetriever.retrieveRelevantContent(request.getMessage());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
                 log.error("Content retrieval failed: {}", e.getMessage());
                 chunks = Collections.emptyList();
             }
@@ -149,14 +154,14 @@ public class FluenceChatService {
 
                             // 6. Send done event
                             sendDoneEvent(emitter, conversationId);
-                        } catch (Exception e) {
+                        } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
                             log.error("Error in post-stream processing: {}", e.getMessage());
                         } finally {
                             safeComplete(emitter);
                         }
                     }
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
             log.error("Pipeline execution failed for tenant {}: {}", tenantId, e.getMessage(), e);
             sendErrorEvent(emitter, "An unexpected error occurred. Please try again.");
             safeComplete(emitter);
@@ -169,7 +174,7 @@ public class FluenceChatService {
     private void safeComplete(SseEmitter emitter) {
         try {
             emitter.complete();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
             // Emitter may already be completed or timed out — this is expected on client disconnect
             log.debug("safeComplete: emitter completion suppressed (likely already closed): {}", e.getMessage());
         }
@@ -263,7 +268,7 @@ public class FluenceChatService {
             log.debug("Persisted conversation {}", conversationId);
             return conversationId;
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — AI/search integration error boundary
             log.error("Failed to persist conversation: {}", e.getMessage());
             return UUID.randomUUID();
         }

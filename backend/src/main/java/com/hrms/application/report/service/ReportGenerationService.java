@@ -428,7 +428,7 @@ public class ReportGenerationService {
                 default -> throw new BusinessException("Unknown report type: " + reportType);
             };
             return CompletableFuture.completedFuture(result);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — report generation error boundary
             return CompletableFuture.failedFuture(e);
         }
     }

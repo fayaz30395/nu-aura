@@ -73,7 +73,7 @@ public class ScheduledReportExecutionJob {
         for (ScheduledReport scheduledReport : dueReports) {
             try {
                 executeReport(scheduledReport);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-report error boundary
                 log.error("Unhandled error executing scheduled report '{}' (id={}): {}",
                         scheduledReport.getScheduleName(), scheduledReport.getId(), e.getMessage(), e);
             }
@@ -141,7 +141,7 @@ public class ScheduledReportExecutionJob {
             log.info("Successfully executed scheduled report: {} in {}ms",
                     scheduledReport.getScheduleName(), executionTimeMs);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-report error boundary
             log.error("Failed to execute scheduled report: {} - {}",
                     scheduledReport.getScheduleName(), e.getMessage(), e);
 
@@ -156,7 +156,7 @@ public class ScheduledReportExecutionJob {
             // The next run will be scheduled as usual
             try {
                 scheduledReportService.markAsExecuted(scheduledReport.getId());
-            } catch (Exception ex) {
+            } catch (Exception ex) { // Intentional broad catch — per-report error boundary
                 log.error("Failed to mark report as executed after error: {}", ex.getMessage());
             }
         } finally {
@@ -246,7 +246,7 @@ public class ScheduledReportExecutionJob {
                 mailSender.send(message);
                 log.info("Sent report email to: {}", recipientEmail);
 
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-report error boundary
                 log.error("Failed to send report email to {}: {}", recipientEmail, e.getMessage());
             }
         }

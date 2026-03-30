@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -215,7 +216,7 @@ public class OvertimeManagementService {
     public void useCompTime(UUID employeeId, BigDecimal hours, UUID leaveRequestId, java.time.LocalDate usageDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        java.util.List<CompTimeBalance> balances = compTimeBalanceRepository.findActiveBalances(tenantId, employeeId);
+        List<CompTimeBalance> balances = compTimeBalanceRepository.findActiveBalances(tenantId, employeeId);
         if (balances.isEmpty()) {
             throw new ResourceNotFoundException("No comp time balance available");
         }
@@ -253,7 +254,7 @@ public class OvertimeManagementService {
         log.info("Used {} comp time hours for employee: {}", hours, employeeId);
     }
 
-    public java.util.List<CompTimeTransaction> getCompTimeHistory(UUID employeeId,
+    public List<CompTimeTransaction> getCompTimeHistory(UUID employeeId,
             java.time.LocalDate startDate, java.time.LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return compTimeTransactionRepository.findByEmployeeAndDateRange(tenantId, employeeId, startDate, endDate);

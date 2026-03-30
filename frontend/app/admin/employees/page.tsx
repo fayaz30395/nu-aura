@@ -248,7 +248,7 @@ export default function AdminEmployeesPage() {
   // Mutations
   const createEmployeeMutation = useCreateEmployee();
 
-  const employees = employeesPage?.content ?? [];
+  const employees = useMemo(() => employeesPage?.content ?? [], [employeesPage?.content]);
   const totalPages = employeesPage?.totalPages ?? 0;
   const totalElements = employeesPage?.totalElements ?? 0;
 

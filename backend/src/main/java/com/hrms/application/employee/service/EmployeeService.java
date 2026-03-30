@@ -29,8 +29,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class EmployeeService {
@@ -533,7 +543,7 @@ public class EmployeeService {
 
     private List<EmployeeResponse> getSubordinatesRecursive(UUID managerId, UUID tenantId, int currentDepth) {
         if (currentDepth >= MAX_HIERARCHY_DEPTH) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
 
         List<Employee> directSubordinates = new ArrayList<>();
@@ -610,7 +620,7 @@ public class EmployeeService {
      * @return Optional containing the employee if found
      */
     @Transactional(readOnly = true)
-    public java.util.Optional<Employee> findByIdAndTenant(UUID employeeId, UUID tenantId) {
+    public Optional<Employee> findByIdAndTenant(UUID employeeId, UUID tenantId) {
         return employeeRepository.findByIdAndTenantId(employeeId, tenantId);
     }
 
@@ -621,7 +631,7 @@ public class EmployeeService {
      * @return Optional containing the employee if found
      */
     @Transactional(readOnly = true)
-    public java.util.Optional<Employee> getEmployeeByUserId(UUID userId) {
+    public Optional<Employee> getEmployeeByUserId(UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return employeeRepository.findByUserIdAndTenantId(userId, tenantId);
     }

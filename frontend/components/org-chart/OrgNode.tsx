@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -60,9 +61,12 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       {/* Header */}
       <div className="flex items-center gap-4 mb-3">
         {employee.profilePhotoUrl ? (
-          <img
+          <Image
             src={employee.profilePhotoUrl}
             alt={employee.fullName}
+            width={48}
+            height={48}
+            unoptimized
             className="h-12 w-12 rounded-full object-cover border-2 border-accent-200 dark:border-accent-700"
           />
         ) : (
@@ -160,9 +164,12 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         <div className="flex items-center gap-2.5">
           {/* Avatar */}
           {employee.profilePhotoUrl ? (
-            <img
+            <Image
               src={employee.profilePhotoUrl}
               alt={employee.fullName}
+              width={36}
+              height={36}
+              unoptimized
               className="h-9 w-9 rounded-full object-cover border border-white/60 dark:border-slate-600 flex-shrink-0"
             />
           ) : (
@@ -301,9 +308,12 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
 
         {/* Avatar */}
         {employee.profilePhotoUrl ? (
-          <img
+          <Image
             src={employee.profilePhotoUrl}
             alt={employee.fullName}
+            width={32}
+            height={32}
+            unoptimized
             className="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-600 flex-shrink-0"
           />
         ) : (

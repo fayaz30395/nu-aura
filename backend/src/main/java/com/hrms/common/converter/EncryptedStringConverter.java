@@ -89,7 +89,7 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             String encodedIv = Base64.getEncoder().encodeToString(iv);
             String encodedCiphertext = Base64.getEncoder().encodeToString(ciphertext);
             return encodedIv + ":" + encodedCiphertext;
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException e) {
             throw new IllegalStateException("Failed to encrypt column value", e);
         }
     }
@@ -118,7 +118,7 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
 
             byte[] plaintext = cipher.doFinal(ciphertext);
             return new String(plaintext, StandardCharsets.UTF_8);
-        } catch (Exception e) {
+        } catch (java.security.GeneralSecurityException e) {
             throw new IllegalStateException("Failed to decrypt column value", e);
         }
     }

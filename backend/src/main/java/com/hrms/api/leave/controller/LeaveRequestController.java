@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
 
 /**
  * REST controller for leave request management.
@@ -249,8 +250,8 @@ public class LeaveRequestController {
                         managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
                     }
                 }
-            } catch (Exception e) {
-                // Non-critical enrichment — don't fail the entire response
+            } catch (Exception e) { // Intentional broad catch — controller error boundary
+                log.debug("Non-critical enrichment failed for leave request {}: {}", request.getId(), e.getMessage());
             }
         }
 
@@ -259,8 +260,8 @@ public class LeaveRequestController {
             try {
                 Optional<Employee> approverOpt = employeeService.findByIdAndTenant(request.getApprovedBy(), tenantId);
                 approverOpt.ifPresent(approver -> response.setApproverName(approver.getFullName()));
-            } catch (Exception e) {
-                // Non-critical enrichment — don't fail the entire response
+            } catch (Exception e) { // Intentional broad catch — controller error boundary
+                log.debug("Non-critical approver name enrichment failed for leave request {}: {}", request.getId(), e.getMessage());
             }
         }
 
@@ -372,12 +373,12 @@ public class LeaveRequestController {
     }
 
     private boolean isReportee(UUID employeeId) {
-        java.util.Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
         return reporteeIds != null && reporteeIds.contains(employeeId);
     }
 
     private boolean isEmployeeInUserLocations(UUID employeeId) {
-        java.util.Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
         if (locationIds == null || locationIds.isEmpty()) {
             return false;
         }
@@ -400,16 +401,16 @@ public class LeaveRequestController {
 
     private boolean isInCustomTargets(UUID employeeId, String permission) {
         // Check if employee is directly in custom employee targets
-        java.util.Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
+        Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
         if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
             return true;
         }
 
         // Check if employee's department is in custom department targets
-        java.util.Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
+        Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
                     && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
                 return true;
@@ -417,10 +418,10 @@ public class LeaveRequestController {
         }
 
         // Check if employee's location is in custom location targets
-        java.util.Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
+        Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
         if (customLocationIds != null && !customLocationIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
+            Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
                     && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
                 return true;

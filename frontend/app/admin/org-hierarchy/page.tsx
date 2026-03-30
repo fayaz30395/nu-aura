@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Employee } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -53,7 +53,7 @@ export default function OrgHierarchyPage() {
 
   // React Query hook
   const { data: employeesData, isLoading, error } = useEmployees(0, 1000);
-  const employees = employeesData?.content || [];
+  const employees = useMemo(() => employeesData?.content || [], [employeesData?.content]);
   const loading = isLoading;
 
   // Build hierarchy when employees data changes

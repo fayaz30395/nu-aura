@@ -1,5 +1,7 @@
 package com.hrms.common.security;
 
+import java.util.Set;
+
 /**
  * Defines the available scopes for webhook API key authentication.
  *
@@ -85,7 +87,7 @@ public final class WebhookScopes {
      * @param requiredScope The scope required for the operation
      * @return true if access is granted
      */
-    public static boolean hasAnyScope(java.util.Set<String> grantedScopes, String requiredScope) {
+    public static boolean hasAnyScope(Set<String> grantedScopes, String requiredScope) {
         if (grantedScopes == null || grantedScopes.isEmpty()) {
             return false;
         }

@@ -17,7 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -291,7 +295,7 @@ public class ExitManagementService {
                 }
             });
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Error publishing OFFBOARDED lifecycle event for employee {}: {}",
                     employeeId, e.getMessage(), e);
             // Best-effort: do not propagate — the exit process status is already saved

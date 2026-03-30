@@ -327,7 +327,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for travel request: {}", travelRequest.getRequestNumber());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Could not start approval workflow for travel request {}: {}",
                     travelRequest.getRequestNumber(), e.getMessage());
         }

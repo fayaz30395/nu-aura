@@ -24,10 +24,6 @@ import {
   Users,
   Plus,
   CheckCircle,
-  Clock,
-  XCircle,
-  AlertCircle,
-  Gift,
   TrendingUp,
   UserPlus,
   FileText,
@@ -96,7 +92,7 @@ type TabKey = 'my-referrals' | 'submit' | 'policies' | 'manage';
 
 export default function ReferralsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>('my-referrals');
   const [managePage, setManagePage] = useState(0);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -105,7 +101,7 @@ export default function ReferralsPage() {
   const { data: myReferrals = [], isLoading: isMyLoading } = useMyReferrals();
   const { data: allReferralsData, isLoading: isAllLoading } = useAllReferrals(managePage, 20);
   const { data: policies = [], isLoading: isPoliciesLoading } = useActivePolicies();
-  const { data: dashboard, isLoading: isDashLoading } = useReferralDashboard();
+  const { data: dashboard, isLoading: _isDashLoading } = useReferralDashboard();
 
   // Mutations
   const submitReferral = useSubmitReferral();

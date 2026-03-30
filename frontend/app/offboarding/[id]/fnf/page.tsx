@@ -16,9 +16,7 @@ import {
   Divider,
   Loader,
   Center,
-  Alert,
   SimpleGrid,
-  Table,
   NumberInput,
   Textarea,
   Select,
@@ -27,7 +25,6 @@ import {
 import { notifications } from '@mantine/notifications';
 import {
   IconCheck,
-  IconAlertCircle,
   IconArrowLeft,
   IconSend,
   IconCash,
@@ -102,7 +99,7 @@ export default function FnFSettlementPage() {
   const exitProcessId = params.id as string;
 
   const { data: exitProcess } = useExitProcess(exitProcessId);
-  const { data: settlement, isLoading, error: loadError } = useSettlementByExitProcess(exitProcessId);
+  const { data: settlement, isLoading, error: _loadError } = useSettlementByExitProcess(exitProcessId);
 
   const createMutation = useCreateSettlement();
   const updateMutation = useUpdateSettlement();

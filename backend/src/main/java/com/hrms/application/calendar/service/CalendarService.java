@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -241,7 +245,7 @@ public class CalendarService {
             try {
                 performSync(event, event.getSyncProvider());
                 synced++;
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — service error boundary
                 log.error("Failed to sync event {}: {}", event.getId(), e.getMessage());
                 failed++;
             }
@@ -315,7 +319,7 @@ public class CalendarService {
     private void syncEventToProvider(CalendarEvent event) {
         try {
             performSync(event, event.getSyncProvider());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Background sync failed for event {}: {}", event.getId(), e.getMessage());
             event.setSyncStatus(SyncStatus.SYNC_ERROR);
             calendarEventRepository.save(event);

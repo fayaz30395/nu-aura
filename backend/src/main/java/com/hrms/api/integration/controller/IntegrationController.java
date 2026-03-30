@@ -60,7 +60,7 @@ public class IntegrationController {
                     .message(success ? "Test SMS sent successfully" : "Failed to send test SMS")
                     .timestamp(LocalDateTime.now())
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("SMS test failed", e);
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(false)
@@ -92,7 +92,7 @@ public class IntegrationController {
                     .phoneNumber(request.getPhoneNumber())
                     .timestamp(LocalDateTime.now())
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Failed to send SMS", e);
             return ResponseEntity.ok(SmsSendResponse.builder()
                     .success(false)
@@ -139,7 +139,7 @@ public class IntegrationController {
                     .message(success ? "Payment gateway connection successful" : "Payment gateway connection failed")
                     .timestamp(LocalDateTime.now())
                     .build());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Payment gateway test failed", e);
             return ResponseEntity.ok(IntegrationTestResponse.builder()
                     .success(false)

@@ -4,6 +4,8 @@ import com.hrms.domain.payment.PaymentConfig;
 import com.hrms.domain.payment.PaymentTransaction;
 import com.hrms.domain.payment.PaymentRefund;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -60,26 +62,29 @@ public interface PaymentGatewayAdapter {
     boolean testConnection(PaymentConfig config);
 
     // Response DTOs
+    @Data
     class PaymentGatewayResponse {
-        public String externalPaymentId;
-        public String status;
-        public String message;
-        public Map<String, Object> metadata;
-        public boolean success;
+        private String externalPaymentId;
+        private String status;
+        private String message;
+        private Map<String, Object> metadata;
+        private boolean success;
     }
 
+    @Data
     class PaymentStatusResponse {
-        public String status; // INITIATED, PROCESSING, COMPLETED, FAILED
-        public BigDecimal amount;
-        public String currency;
-        public long timestamp;
+        private String status; // INITIATED, PROCESSING, COMPLETED, FAILED
+        private BigDecimal amount;
+        private String currency;
+        private long timestamp;
     }
 
+    @Data
     class PaymentWebhookData {
-        public String eventType;
-        public String externalPaymentId;
-        public String status;
-        public BigDecimal amount;
-        public Map<String, Object> metadata;
+        private String eventType;
+        private String externalPaymentId;
+        private String status;
+        private BigDecimal amount;
+        private Map<String, Object> metadata;
     }
 }

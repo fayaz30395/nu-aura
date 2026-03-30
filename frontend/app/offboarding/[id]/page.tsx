@@ -22,7 +22,6 @@ import {
   ActionIcon,
   Tooltip,
   Modal,
-  Select,
   Textarea,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -31,7 +30,6 @@ import {
   IconAlertCircle,
   IconUser,
   IconCalendar,
-  IconBuilding,
   IconClock,
   IconFileText,
   IconShieldCheck,
@@ -61,7 +59,7 @@ import {
   RecoveryStatus,
   SettlementStatus,
 } from '@/lib/types/exit';
-import type { ExitClearance, AssetRecovery } from '@/lib/types/exit';
+import type { ExitClearance } from '@/lib/types/exit';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const getExitTypeLabel = (type: ExitType | string | null | undefined): string => {

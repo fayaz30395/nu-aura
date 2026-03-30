@@ -500,7 +500,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for onboarding process: {}", process.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Could not start approval workflow for onboarding process {}: {}",
                     process.getId(), e.getMessage());
         }

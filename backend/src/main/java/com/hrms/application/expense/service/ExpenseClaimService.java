@@ -29,7 +29,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -512,7 +520,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for expense claim: {}", claim.getClaimNumber());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Could not start approval workflow for expense claim {}: {}",
                     claim.getClaimNumber(), e.getMessage());
         }

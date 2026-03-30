@@ -15,7 +15,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Concrete implementation of {@link IntegrationConnector} for DocuSign e-signature workflows.
@@ -182,7 +186,7 @@ public class DocuSignConnector implements IntegrationConnector {
             // 4. Configuration is stored/updated by the caller
             log.info("DocuSign configuration completed for tenant: {}", config.tenantId());
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to configure DocuSign connector: {}", e.getMessage(), e);
             throw new RuntimeException("Configuration failed: " + e.getMessage(), e);
         }
@@ -200,7 +204,7 @@ public class DocuSignConnector implements IntegrationConnector {
                 default -> log.warn("Unsupported event type: {}", event.eventType());
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             // Log but don't fail the overall event processing
             log.error("Error handling DocuSign event {}: {}", event.eventType(), e.getMessage(), e);
         }
@@ -284,7 +288,7 @@ public class DocuSignConnector implements IntegrationConnector {
                     "Error parsing webhook: " + e.getMessage(),
                     Map.of()
             );
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Unexpected error handling webhook: {}", e.getMessage(), e);
             return WebhookCallbackResult.failure(
                     "Unexpected error: " + e.getMessage(),
@@ -361,7 +365,7 @@ public class DocuSignConnector implements IntegrationConnector {
                     subject != null ? subject : "Offer Letter"
             );
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error handling OFFER_CREATED: {}", e.getMessage(), e);
         }
     }
@@ -421,7 +425,7 @@ public class DocuSignConnector implements IntegrationConnector {
                     subject != null ? subject : "Document for Signature"
             );
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error handling DOCUMENT_CREATED: {}", e.getMessage(), e);
         }
     }
@@ -477,7 +481,7 @@ public class DocuSignConnector implements IntegrationConnector {
             log.warn("Envelope creation requires access to tenant-specific config; " +
                     "this should be passed via event metadata or obtained from TenantContext");
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error creating envelope: {}", e.getMessage(), e);
         }
     }
@@ -494,7 +498,7 @@ public class DocuSignConnector implements IntegrationConnector {
             // 3. Store the URL in envelope.signedDocumentUrl
             // 4. Update metadata with signed document location
             envelope.setCompletedAt(Instant.now());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error handling envelope completion: {}", e.getMessage(), e);
         }
     }
@@ -632,7 +636,7 @@ public class DocuSignConnector implements IntegrationConnector {
             return java.security.MessageDigest.isEqual(
                     computed.getBytes(StandardCharsets.UTF_8),
                     signature.getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Error verifying HMAC signature: {}", e.getMessage());
             return false;
         }

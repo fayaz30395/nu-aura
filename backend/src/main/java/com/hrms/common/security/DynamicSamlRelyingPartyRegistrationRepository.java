@@ -13,7 +13,9 @@ import org.springframework.security.saml2.provider.service.registration.Saml2Mes
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Base64;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -71,7 +73,7 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
         } catch (IllegalArgumentException e) {
             log.debug("Invalid registrationId (not a UUID): {}", registrationId);
             return null;
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — security filter error boundary
             log.error("Failed to build SAML registration for {}: {}", registrationId, e.getMessage(), e);
             return null;
         }
@@ -104,7 +106,7 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
                         .entityId(buildSpEntityId(registrationId, idp))
                         .assertionConsumerServiceLocation(appBaseUrl + "/login/saml2/sso/" + registrationId)
                         .build();
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — security filter error boundary
                 log.warn("Failed to build from metadata URL {}, falling back to manual config: {}",
                         idp.getMetadataUrl(), e.getMessage());
             }
@@ -128,7 +130,7 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
                             X509Certificate x509 = parseCertificate(decryptedCert);
                             party.verificationX509Credentials(c ->
                                     c.add(Saml2X509Credential.verification(x509)));
-                        } catch (Exception e) {
+                        } catch (Exception e) { // Intentional broad catch — security filter error boundary
                             log.error("Failed to parse IdP certificate for tenant {}: {}",
                                     registrationId, e.getMessage());
                             throw new RuntimeException("Invalid IdP certificate", e);

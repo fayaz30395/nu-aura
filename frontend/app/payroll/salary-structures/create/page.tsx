@@ -88,7 +88,7 @@ export default function CreateSalaryStructurePage() {
                   Define a salary structure for an employee with base salary and effective date.
                 </Text>
               </div>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
                 <Banknote className="h-5 w-5 text-white" />
               </div>
             </Group>

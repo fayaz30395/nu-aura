@@ -71,7 +71,7 @@ public class TenantAttendanceConfigService {
                     return parseConfig(attendanceMap);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
             log.warn("Failed to parse attendance config for tenant {}, using defaults: {}",
                     tenantId, e.getMessage());
         }

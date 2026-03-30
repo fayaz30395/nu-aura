@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -75,7 +80,7 @@ public class PermissionMigrationService {
             log.info("Migration completed successfully for tenant {}. Permissions: {}, Roles: {}, Users: {}",
                     tenantId, permissionsMigrated, rolesMigrated, usersProcessed);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             result.setSuccess(false);
             result.setErrorMessage(e.getMessage());
             log.error("Migration failed for tenant {}: {}", tenantId, e.getMessage(), e);

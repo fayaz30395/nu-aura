@@ -24,13 +24,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -134,7 +142,7 @@ public class KekaImportService {
             // For now, this is a placeholder implementation
             // The actual implementation would handle CSV parsing, validation, and bulk import
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Error during KEKA import", e);
             status = "FAILED";
             errors.add(KekaImportError.builder()
@@ -166,7 +174,7 @@ public class KekaImportService {
         try {
             history.setErrorSummary(objectMapper.writeValueAsString(errors));
             history.setMappingConfig(objectMapper.writeValueAsString(request.getMappings()));
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Failed to serialize import metadata", e);
         }
 

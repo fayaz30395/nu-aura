@@ -204,7 +204,7 @@ public class FluenceIndexingService {
             StringBuilder sb = new StringBuilder();
             extractTextNodes(root, sb);
             return sb.toString().replaceAll("\\s+", " ").trim();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — Elasticsearch integration error boundary
             // Fallback: crude regex extraction if JSON parsing fails
             log.trace("TipTap JSON parse failed, falling back to regex: {}", e.getMessage());
             return content

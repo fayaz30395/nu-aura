@@ -12,7 +12,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +89,7 @@ public class SecurityService {
     @Transactional(readOnly = true)
     public Set<String> getCachedPermissions(Collection<String> roles) {
         Set<String> permissions = new HashSet<>();
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         if (tenantId == null || roles == null || roles.isEmpty()) {
             // No tenant context — return empty set.
             // The condition above prevents caching this empty result,
@@ -111,7 +119,7 @@ public class SecurityService {
     @Transactional(readOnly = true)
     public Set<String> getFreshPermissions(Collection<String> roles) {
         Set<String> permissions = new HashSet<>();
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         if (tenantId == null || roles == null || roles.isEmpty()) {
             return permissions;
         }
@@ -132,7 +140,7 @@ public class SecurityService {
     }
 
     public String rolesCacheKey(Collection<String> roles) {
-        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         if (tenantId == null) {
             // Should never be reached when condition=isTenantContextPresent() is in effect,
             // but provide a safe non-null value as a defensive fallback.

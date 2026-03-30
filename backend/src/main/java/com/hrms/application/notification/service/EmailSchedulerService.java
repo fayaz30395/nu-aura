@@ -61,7 +61,7 @@ public class EmailSchedulerService {
                         if (email != null && !email.isEmpty()) {
                             emailService.sendBirthdayEmail(email, employee.getFullName());
                         }
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Intentional broad catch — per-email error boundary
                         log.error("Failed to send birthday email to {} (tenant {}): {}",
                                 employee.getFullName(), tenant.getCode(), e.getMessage());
                     }
@@ -112,7 +112,7 @@ public class EmailSchedulerService {
                         if (email != null && !email.isEmpty() && years > 0) {
                             emailService.sendAnniversaryEmail(email, employee.getFullName(), String.valueOf(years));
                         }
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Intentional broad catch — per-email error boundary
                         log.error("Failed to send anniversary email to {} (tenant {}): {}",
                                 employee.getFullName(), tenant.getCode(), e.getMessage());
                     }
@@ -143,7 +143,7 @@ public class EmailSchedulerService {
             TenantContext.setCurrentTenant(tenant.getId());
             try {
                 emailService.retryFailedEmailsForTenant(tenant.getId());
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-email error boundary
                 log.error("Error retrying failed emails for tenant {}: {}", tenant.getCode(), e.getMessage());
             } finally {
                 TenantContext.clear();
@@ -172,7 +172,7 @@ public class EmailSchedulerService {
             TenantContext.setCurrentTenant(tenant.getId());
             try {
                 emailService.sendScheduledEmails();
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-email error boundary
                 log.error("Error sending scheduled emails for tenant {}: {}", tenant.getCode(), e.getMessage());
             } finally {
                 TenantContext.clear();

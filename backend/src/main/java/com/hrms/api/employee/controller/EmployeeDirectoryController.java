@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import java.util.UUID;
 
 /**
  * Employee Directory API for searching and browsing employees.
@@ -135,7 +136,7 @@ public class EmployeeDirectoryController {
         // Parse comma-separated IDs and enums if provided
         if (departmentIds != null && !departmentIds.isEmpty()) {
             request.setDepartmentIds(java.util.Arrays.stream(departmentIds.split(","))
-                .map(java.util.UUID::fromString)
+                .map(UUID::fromString)
                 .collect(java.util.stream.Collectors.toList()));
         }
 
@@ -156,7 +157,7 @@ public class EmployeeDirectoryController {
         }
 
         if (managerId != null && !managerId.isEmpty()) {
-            request.setManagerId(java.util.UUID.fromString(managerId));
+            request.setManagerId(UUID.fromString(managerId));
         }
 
         log.info("Received employee directory GET search request: {}", request);

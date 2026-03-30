@@ -163,7 +163,7 @@ public class EmployeeLifecycleConsumer {
                 Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to route EMPLOYEE_HIRED integration event for employee {}: {}", employeeId, e.getMessage());
             // Don't fail the main consumer processing
         }
@@ -242,7 +242,7 @@ public class EmployeeLifecycleConsumer {
                 Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to route EMPLOYEE_ONBOARDED integration event for employee {}: {}", employeeId, e.getMessage());
             // Don't fail the main consumer processing
         }
@@ -310,7 +310,7 @@ public class EmployeeLifecycleConsumer {
                 Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to route EMPLOYEE_PROMOTED integration event for employee {}: {}", employeeId, e.getMessage());
             // Don't fail the main consumer processing
         }
@@ -387,7 +387,7 @@ public class EmployeeLifecycleConsumer {
                 Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to route EMPLOYEE_TRANSFERRED integration event for employee {}: {}", employeeId, e.getMessage());
             // Don't fail the main consumer processing
         }
@@ -494,7 +494,7 @@ public class EmployeeLifecycleConsumer {
                 Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to route EMPLOYEE_OFFBOARDED integration event for employee {}: {}", employeeId, e.getMessage());
             // Don't fail the main consumer processing
         }
@@ -531,7 +531,7 @@ public class EmployeeLifecycleConsumer {
                     implicitRoleEngine.recompute(employee.getUser().getId(), employeeId, tenantId);
                 }
             });
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to recompute implicit roles for employee {} in tenant {}: {}",
                 employeeId, tenantId, e.getMessage());
         }

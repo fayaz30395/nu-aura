@@ -661,7 +661,7 @@ public class AttendanceRecordService {
                     userId, action, entityType, entityId, tenantId,
                     null, null, null, null, null, null, null, null,
                     description);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
             log.warn("Failed to publish attendance audit event (action={}, entityId={}): {}",
                     action, entityId, e.getMessage());
         }

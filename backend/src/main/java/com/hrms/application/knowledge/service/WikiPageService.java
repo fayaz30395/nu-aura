@@ -229,7 +229,7 @@ public class WikiPageService {
         if (eventPublisher != null) {
             try {
                 eventPublisher.publishFluenceContent("wiki", pageId, action, tenantId);
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — content indexing error boundary
                 log.warn("Failed to publish fluence content event for wiki page {}: {}", pageId, e.getMessage());
             }
         }
@@ -239,7 +239,7 @@ public class WikiPageService {
         try {
             String excerpt = extractExcerpt(page.getContent());
             fluenceActivityService.recordActivity(tenantId, actorId, action, "WIKI", page.getId(), page.getTitle(), excerpt);
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — content indexing error boundary
             log.warn("Failed to record activity for wiki page: {}", e.getMessage());
         }
     }

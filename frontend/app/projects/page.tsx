@@ -42,7 +42,7 @@ import {
 } from '@/lib/hooks/queries/useProjects';
 import { createLogger } from '@/lib/utils/logger';
 
-const log = createLogger('ProjectsPage');
+const _log = createLogger('ProjectsPage');
 
 interface EmployeeSummary {
   id: string;

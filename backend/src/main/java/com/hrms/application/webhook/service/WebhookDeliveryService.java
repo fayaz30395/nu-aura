@@ -27,7 +27,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -314,7 +318,7 @@ public class WebhookDeliveryService {
      */
     private CircuitBreaker getOrCreateCircuitBreaker(UUID webhookId) {
         return circuitBreakers.computeIfAbsent(webhookId, id ->
-                new CircuitBreaker("webhook-" + id, 5, 2, java.time.Duration.ofSeconds(30)));
+                new CircuitBreaker("webhook-" + id, 5, 2, Duration.ofSeconds(30)));
     }
 
     // ========== Metrics ==========

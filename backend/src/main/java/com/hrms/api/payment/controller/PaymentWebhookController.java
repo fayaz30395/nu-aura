@@ -59,7 +59,7 @@ public class PaymentWebhookController {
             paymentService.processWebhook(provider, payload, actualSignature);
 
             return ResponseEntity.ok("Webhook processed successfully");
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Error processing webhook from provider: {}", provider, e);
             // LOW-2 FIX: Do not expose internal exception details to the caller.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

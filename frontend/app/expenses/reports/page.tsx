@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { AppLayout } from '@/components/layout';
-import { BarChart3, PieChart, TrendingUp, Download, Calendar, Filter } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Calendar } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { useExpenseReport } from '@/lib/hooks/queries';

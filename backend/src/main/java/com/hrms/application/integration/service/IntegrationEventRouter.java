@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service for routing integration events to configured connectors.
@@ -113,7 +114,7 @@ public class IntegrationEventRouter {
                     log.debug("Event processed successfully by connector: {} ({}ms)",
                         connectorId, durationMs);
 
-                } catch (Exception e) {
+                } catch (Exception e) { // Intentional broad catch — per-event integration error boundary
                     long durationMs = System.currentTimeMillis() - startTime;
 
                     log.error("Connector {} failed to process event {}: {}",
@@ -127,7 +128,7 @@ public class IntegrationEventRouter {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-event integration error boundary
             log.error("Unexpected error while routing event {}: {}",
                 event.eventType(), e.getMessage(), e);
         } finally {
@@ -156,7 +157,7 @@ public class IntegrationEventRouter {
 
         try {
             // Serialize the event with connector + error context into a compact JSON payload
-            String payload = objectMapper.writeValueAsString(java.util.Map.of(
+            String payload = objectMapper.writeValueAsString(Map.of(
                 "eventType", event.eventType(),
                 "entityType", event.entityType() != null ? event.entityType() : "",
                 "entityId", event.entityId() != null ? event.entityId().toString() : "",
@@ -187,7 +188,7 @@ public class IntegrationEventRouter {
             log.info("SEC: Failed integration event persisted to DLT store: eventType={}, connector={}",
                 event.eventType(), connectorId);
 
-        } catch (Exception persistenceException) {
+        } catch (Exception persistenceException) { // Intentional broad catch — per-event integration error boundary
             // Log but do not rethrow — DLT storage failure must not mask the original error
             log.error("SEC: Failed to persist integration event to DLT store: eventType={}, connector={}, persistenceError={}",
                 event.eventType(), connectorId, persistenceException.getMessage(), persistenceException);

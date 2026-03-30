@@ -6,7 +6,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Shield,
   Save,
   Trash2,
   TestTube,
@@ -85,7 +84,7 @@ export default function SsoSettingsPage() {
     reset,
     setValue,
     watch,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty: _isDirty },
   } = useForm<SamlConfigFormData>({
     resolver: zodResolver(samlConfigSchema),
     defaultValues: {

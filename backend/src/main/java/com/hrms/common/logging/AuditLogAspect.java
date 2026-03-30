@@ -217,7 +217,7 @@ public class AuditLogAspect {
                     try {
                         return UUID.fromString((String) arg);
                     } catch (IllegalArgumentException e) {
-                        // Not a valid UUID string
+                        log.debug("Audit param at index {} is not a valid UUID string: {}", audited.entityIdParam(), arg);
                     }
                 }
             }
@@ -233,7 +233,7 @@ public class AuditLogAspect {
                     return (UUID) id;
                 }
             } catch (ReflectiveOperationException e) {
-                // No getId() method or error
+                log.debug("Could not extract entity ID via getId() from {}: {}", result.getClass().getSimpleName(), e.getMessage());
             }
         }
 

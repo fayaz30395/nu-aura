@@ -112,7 +112,7 @@ public class ContractSignatureService {
     public Map<String, Integer> getSignatureSummary(UUID contractId) {
         int total = signatureRepository.countTotalSignatures(contractId);
         int signed = signatureRepository.countSignedSignatures(contractId);
-        return java.util.Map.of(
+        return Map.of(
                 "total", total,
                 "signed", signed,
                 "pending", total - signed

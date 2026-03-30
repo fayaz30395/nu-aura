@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -197,7 +198,7 @@ public class SalaryStructureService {
      * @return Optional containing monthly salary, or empty if no salary structure exists
      */
     @Transactional(readOnly = true)
-    public java.util.Optional<BigDecimal> getMonthlySalaryForEmployee(UUID employeeId) {
+    public Optional<BigDecimal> getMonthlySalaryForEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Get the most recent active salary structure

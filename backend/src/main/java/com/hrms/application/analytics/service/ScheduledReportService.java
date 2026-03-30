@@ -335,7 +335,7 @@ public class ScheduledReportService {
                         .orElse(null);
                 response.setDepartmentName(departmentName);
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — per-report error boundary
             log.error("Error parsing report parameters for report {}: {}", report.getId(), e.getMessage(), e);
             throw new IllegalStateException("Failed to parse report parameters for report " + report.getId(), e);
         }

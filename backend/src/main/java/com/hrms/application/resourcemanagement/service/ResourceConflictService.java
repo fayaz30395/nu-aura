@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -195,7 +198,7 @@ public class ResourceConflictService {
                     conflict.overlapStart(),
                     conflict.overlapEnd(),
                     conflict.totalAllocationPct());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Failed to persist conflict log: {}", e.getMessage());
         }
     }

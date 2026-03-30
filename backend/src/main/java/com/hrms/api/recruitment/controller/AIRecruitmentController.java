@@ -95,7 +95,7 @@ public class AIRecruitmentController {
             ResumeParseResponse response = aiRecruitmentService.parseResumeFromFile(fileBytes, fileName);
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — controller error boundary
             log.error("Error reading uploaded file: {}", e.getMessage());
             ResumeParseResponse response = ResumeParseResponse.builder()
                     .success(false)

@@ -461,7 +461,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for timesheet entry: {}", timeEntry.getId());
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — timesheet calculation error boundary
             log.warn("Could not start approval workflow for timesheet entry {}: {}",
                     timeEntry.getId(), e.getMessage());
         }

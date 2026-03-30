@@ -31,7 +31,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -492,7 +497,7 @@ public class SelfServiceService {
             log.info("Applied profile update for employee {}: {} = {}",
                     request.getEmployeeId(), fieldName, newValue);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Failed to apply profile update for field {}: {}", fieldName, e.getMessage());
             throw new BusinessException("Failed to apply profile update: " + e.getMessage());
         }

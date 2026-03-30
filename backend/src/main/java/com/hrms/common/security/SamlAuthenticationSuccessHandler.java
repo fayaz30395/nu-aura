@@ -19,7 +19,11 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -103,7 +107,7 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
             // Redirect to frontend dashboard
             response.sendRedirect(frontendUrl + "/dashboard?saml=success");
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — security filter error boundary
             log.error("SAML authentication processing failed for registration {}: {}",
                     registrationId, e.getMessage(), e);
             response.sendRedirect(frontendUrl + "/auth/login?error=saml_auth_failed&message=" +

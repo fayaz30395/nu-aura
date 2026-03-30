@@ -50,7 +50,7 @@ public class SmsNotificationService {
                 Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
                 initialized = true;
                 log.info("Twilio SMS service initialized successfully");
-            } catch (Exception e) {
+            } catch (Exception e) { // Intentional broad catch — per-SMS error boundary
                 // Intentional broad catch — Twilio.init() can throw checked and unchecked exceptions; fallback to mock
                 log.error("Failed to initialize Twilio: {}. Falling back to mock mode.", e.getMessage());
             }

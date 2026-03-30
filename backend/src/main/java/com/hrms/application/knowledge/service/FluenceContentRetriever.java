@@ -18,7 +18,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -132,7 +138,7 @@ public class FluenceContentRetriever {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — search/content retrieval error boundary
             log.error("Error retrieving content for RAG query: '{}'", query, e);
         }
 
@@ -195,7 +201,7 @@ public class FluenceContentRetriever {
             StringBuilder sb = new StringBuilder();
             extractTextNodes(root, sb);
             return sb.toString().replaceAll("\\s+", " ").trim();
-        } catch (Exception e) {
+        } catch (Exception e) { // Intentional broad catch — search/content retrieval error boundary
             // Fallback: crude regex extraction if JSON parsing fails
             log.trace("TipTap JSON parse failed, falling back to regex: {}", e.getMessage());
             return content

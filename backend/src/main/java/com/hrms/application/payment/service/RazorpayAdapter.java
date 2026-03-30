@@ -34,15 +34,15 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Razorpay API to create payment
             // Example: RazorpayClient.createTransfer(...)
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.externalPaymentId = "razorpay_" + transaction.getId();
-            response.status = "PROCESSING";
-            response.success = true;
+            response.setExternalPaymentId("razorpay_" + transaction.getId());
+            response.setStatus("PROCESSING");
+            response.setSuccess(true);
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Razorpay payment initiation failed", e);
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.success = false;
-            response.message = e.getMessage();
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
             return response;
         }
     }
@@ -62,10 +62,10 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Razorpay API to fetch payment status
             // Example: RazorpayClient.fetchPaymentDetails(externalPaymentId)
             PaymentStatusResponse response = new PaymentStatusResponse();
-            response.status = "COMPLETED";
-            response.timestamp = System.currentTimeMillis();
+            response.setStatus("COMPLETED");
+            response.setTimestamp(System.currentTimeMillis());
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Razorpay status check failed", e);
             return null;
         }
@@ -78,15 +78,15 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
             // Integration point: Call Razorpay API to initiate refund
             // Example: RazorpayClient.createRefund(...)
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.externalPaymentId = "razorpay_refund_" + refund.getId();
-            response.status = "PROCESSING";
-            response.success = true;
+            response.setExternalPaymentId("razorpay_refund_" + refund.getId());
+            response.setStatus("PROCESSING");
+            response.setSuccess(true);
             return response;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Razorpay refund processing failed", e);
             PaymentGatewayResponse response = new PaymentGatewayResponse();
-            response.success = false;
-            response.message = e.getMessage();
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
             return response;
         }
     }
@@ -107,9 +107,9 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
             // Integration point: Parse Razorpay webhook payload
             // Example: Parse JSON payload and extract event data
             PaymentWebhookData data = new PaymentWebhookData();
-            data.eventType = "payment.completed"; // Parse from payload
+            data.setEventType("payment.completed"); // Parse from payload
             return data;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Razorpay webhook parsing failed", e);
             return null;
         }
@@ -127,7 +127,7 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
             // Example: RazorpayClient.testConnection(config.getApiKey())
             log.info("Razorpay connection test successful");
             return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Razorpay connection test failed", e);
             return false;
         }
