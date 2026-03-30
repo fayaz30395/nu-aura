@@ -1,6 +1,7 @@
 package com.hrms.application.attendance.service;
 
 import com.hrms.api.attendance.dto.*;
+import com.hrms.application.shift.service.ShiftAttendanceService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
@@ -30,6 +31,7 @@ public class MobileAttendanceService {
     private final AttendanceTimeEntryRepository timeEntryRepository;
     private final OfficeLocationRepository officeLocationRepository;
     private final OfficeLocationService officeLocationService;
+    private final ShiftAttendanceService shiftAttendanceService;
 
     // ==================== MOBILE CHECK-IN/OUT ====================
 
@@ -168,8 +170,9 @@ public class MobileAttendanceService {
             record.setCheckOutLocation(geofenceResult.nearestLocation().getLocationName());
         }
 
-        // Calculate work duration
+        // Calculate work duration and overtime
         record.calculateWorkDuration();
+        shiftAttendanceService.calculateOvertimeForRecord(record);
 
         // Close open time entry
         closeOpenTimeEntry(record.getId(), now, "MOBILE_APP",

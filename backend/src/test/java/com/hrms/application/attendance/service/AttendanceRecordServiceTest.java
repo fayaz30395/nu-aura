@@ -1,5 +1,6 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.application.shift.service.ShiftAttendanceService;
 import com.hrms.common.config.AttendanceConfigProperties;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
@@ -45,6 +46,9 @@ class AttendanceRecordServiceTest {
 
     @Mock
     private EventPublisher eventPublisher;
+
+    @Mock
+    private ShiftAttendanceService shiftAttendanceService;
 
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;

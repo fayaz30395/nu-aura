@@ -195,7 +195,9 @@ public class AttendanceRecord extends TenantAware {
             long minutes = java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
             this.workDurationMinutes = (int) (minutes - (breakDurationMinutes != null ? breakDurationMinutes : 0));
 
-            // Update status based on work duration
+            // Update status based on work duration (overtime is NOT set here;
+            // it is the responsibility of ShiftAttendanceService which knows
+            // about the employee's assigned shift thresholds)
             updateStatusBasedOnWorkDuration();
         }
     }
@@ -228,11 +230,9 @@ public class AttendanceRecord extends TenantAware {
             // Full day - 8 hours or more
             this.status = AttendanceStatus.PRESENT;
             this.isHalfDay = false;
-            // Check for overtime (more than 9 hours = 540 minutes)
-            if (this.workDurationMinutes > 540) {
-                this.isOvertime = true;
-                this.overtimeMinutes = this.workDurationMinutes - FULL_DAY_MINUTES;
-            }
+            // NOTE: Overtime is NOT calculated here. It is set exclusively by
+            // ShiftAttendanceService.calculateOvertimeForRecord() which uses
+            // the employee's assigned shift thresholds (or sensible defaults).
         } else if (this.workDurationMinutes >= HALF_DAY_MINUTES) {
             // Half day - between 4 and 8 hours
             this.status = AttendanceStatus.HALF_DAY;

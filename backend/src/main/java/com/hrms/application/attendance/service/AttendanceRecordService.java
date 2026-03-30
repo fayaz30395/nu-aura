@@ -1,5 +1,6 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.application.shift.service.ShiftAttendanceService;
 import com.hrms.common.config.AttendanceConfigProperties;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
@@ -31,6 +32,7 @@ public class AttendanceRecordService {
     private final AttendanceTimeEntryRepository timeEntryRepository;
     private final AttendanceConfigProperties config;
     private final EventPublisher eventPublisher;
+    private final ShiftAttendanceService shiftAttendanceService;
 
     /**
      * Check in an employee at the specified time.
@@ -550,6 +552,9 @@ public class AttendanceRecordService {
         // Update status based on actual work duration (PRESENT, HALF_DAY, or
         // INCOMPLETE)
         record.updateStatusBasedOnWorkDuration();
+
+        // Calculate overtime using shift-aware logic (single source of truth)
+        shiftAttendanceService.calculateOvertimeForRecord(record);
 
         // Log if attendance is incomplete
         if (record.isIncompleteAttendance()) {

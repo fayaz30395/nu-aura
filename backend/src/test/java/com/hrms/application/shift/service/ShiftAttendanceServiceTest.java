@@ -1,6 +1,7 @@
 package com.hrms.application.shift.service;
 
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.shift.Shift;
 import com.hrms.domain.shift.ShiftAssignment;
 import com.hrms.infrastructure.shift.repository.ShiftAssignmentRepository;
@@ -168,5 +169,132 @@ class ShiftAttendanceServiceTest {
         Shift result = shiftAttendanceService.getAssignedShift(employeeId, LocalDate.now());
 
         assertThat(result).isNull();
+    }
+
+    // ==================== calculateOvertimeForRecord Tests ====================
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should use shift thresholds when shift assigned")
+    void calculateOvertimeForRecord_withShift() {
+        // Shift: 8h full day, 1h break => 420 min expected work
+        Shift shift = buildShift(LocalTime.of(9, 0), LocalTime.of(18, 0), false, 15);
+        mockAssignmentWithShift(shift);
+
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(500)  // 500 min worked, expected 420 => 80 min overtime
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isTrue();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(80);
+    }
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should return 0 when shift disallows overtime")
+    void calculateOvertimeForRecord_shiftDisallowsOvertime() {
+        Shift shift = buildShift(LocalTime.of(9, 0), LocalTime.of(18, 0), false, 15);
+        shift.setAllowsOvertime(false);
+        mockAssignmentWithShift(shift);
+
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(600)
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isFalse();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should use defaults when no shift assigned (overtime after 9h)")
+    void calculateOvertimeForRecord_noShift_overtime() {
+        when(shiftAssignmentRepository.findActiveAssignmentForEmployeeOnDate(
+                eq(tenantId), eq(employeeId), any()))
+                .thenReturn(Optional.empty());
+        when(shiftAssignmentRepository.findActiveEffectiveAssignmentsForDate(eq(tenantId), any()))
+                .thenReturn(java.util.Collections.emptyList());
+
+        // 10 hours = 600 minutes, threshold is 540 (9h), overtime = 600 - 480 = 120
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(600)
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isTrue();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(120);  // 600 - 480 = 120
+    }
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should return 0 when no shift and under 9h threshold")
+    void calculateOvertimeForRecord_noShift_noOvertime() {
+        when(shiftAssignmentRepository.findActiveAssignmentForEmployeeOnDate(
+                eq(tenantId), eq(employeeId), any()))
+                .thenReturn(Optional.empty());
+        when(shiftAssignmentRepository.findActiveEffectiveAssignmentsForDate(eq(tenantId), any()))
+                .thenReturn(java.util.Collections.emptyList());
+
+        // 8.5 hours = 510 minutes, under 540 threshold
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(510)
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isFalse();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should handle null/zero work duration")
+    void calculateOvertimeForRecord_nullWorkDuration() {
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(0)
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isFalse();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("calculateOvertimeForRecord - should use default thresholds: exactly 9h = no overtime")
+    void calculateOvertimeForRecord_noShift_exactly9h() {
+        when(shiftAssignmentRepository.findActiveAssignmentForEmployeeOnDate(
+                eq(tenantId), eq(employeeId), any()))
+                .thenReturn(Optional.empty());
+        when(shiftAssignmentRepository.findActiveEffectiveAssignmentsForDate(eq(tenantId), any()))
+                .thenReturn(java.util.Collections.emptyList());
+
+        // Exactly 540 minutes (9h) — threshold is > 540, so no overtime
+        AttendanceRecord record = AttendanceRecord.builder()
+                .employeeId(employeeId)
+                .attendanceDate(LocalDate.now())
+                .workDurationMinutes(540)
+                .build();
+        record.setTenantId(tenantId);
+
+        shiftAttendanceService.calculateOvertimeForRecord(record);
+
+        assertThat(record.getIsOvertime()).isFalse();
+        assertThat(record.getOvertimeMinutes()).isEqualTo(0);
     }
 }
