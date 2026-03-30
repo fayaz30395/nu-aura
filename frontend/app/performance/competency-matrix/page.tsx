@@ -42,22 +42,22 @@ import {
   Search,
   Filter,
 } from 'lucide-react';
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  Legend,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Cell,
-} from 'recharts';
+import dynamic from 'next/dynamic';
+
+// Recharts uses browser-only SVG/ResizeObserver APIs — lazy-load chart components.
+// Both chart files live in CompetencyCharts.tsx so the entire recharts bundle is
+// excluded from the initial page JS.
+const ChartSkeleton = () => (
+  <div className="w-full h-[280px] animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg" />
+);
+const GapAnalysisRadarChart = dynamic(
+  () => import('./CompetencyCharts').then(m => ({ default: m.GapAnalysisRadarChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
+const CompetencyHeatmapChart = dynamic(
+  () => import('./CompetencyCharts').then(m => ({ default: m.CompetencyHeatmapChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
 
 import { AppLayout } from '@/components/layout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
@@ -505,28 +505,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             </div>
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={300}>
-                <RadarChart data={radarData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 10 }} />
-                  <Radar
-                    name="Current Level"
-                    dataKey="current"
-                    stroke="#0369a1"
-                    fill="#0369a1"
-                    fillOpacity={0.3}
-                  />
-                  <Radar
-                    name="Required Level"
-                    dataKey="required"
-                    stroke="#dc2626"
-                    fill="#dc2626"
-                    fillOpacity={0.1}
-                  />
-                  <Legend />
-                </RadarChart>
-              </ResponsiveContainer>
+              <GapAnalysisRadarChart data={radarData} />
 
               {/* Gap Details */}
               <div className="mt-4 space-y-2">
@@ -684,7 +663,6 @@ function TeamViewTab({ managerId }: { managerId: string }) {
     }));
   }, [skills]);
 
-  const BAR_COLORS = ['#0369a1', '#059669', '#7c3aed', '#ea580c', '#0284c7'];
 
   if (skillsQuery.isLoading || gapQuery.isLoading) {
     return (
@@ -760,21 +738,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
               <Text c="dimmed">No team skills data available.</Text>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={heatmapData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 5]} tick={{ fontSize: 11 }} />
-                <YAxis type="category" dataKey="category" width={120} tick={{ fontSize: 11 }} />
-                <RechartsTooltip
-                  formatter={(value) => [`${value} avg`, 'Proficiency']}
-                />
-                <Bar dataKey="avgLevel" radius={[0, 4, 4, 0]}>
-                  {heatmapData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <CompetencyHeatmapChart data={heatmapData} />
           )}
         </Paper>
 

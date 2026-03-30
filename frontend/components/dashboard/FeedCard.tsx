@@ -387,8 +387,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         {/* Header: avatar + "Author created a post" + timestamp + action menu */}
         <div className="flex items-start gap-2 px-4 pt-4 pb-2">
           <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
+            <Image src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm leading-snug">
@@ -533,8 +532,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/30 dark:to-warning-950/30 border border-warning-200/50 dark:border-warning-800/30">
               <div className="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/50 flex items-center justify-center text-lg font-bold text-warning-700 dark:text-warning-300 overflow-hidden shrink-0">
                 {item.praiseRecipientAvatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.praiseRecipientAvatar} alt="" className="w-full h-full object-cover" />
+                  <Image src={item.praiseRecipientAvatar} alt={item.praiseRecipientName ?? ''} width={48} height={48} className="w-full h-full object-cover" />
                 ) : (
                   item.praiseRecipientName.charAt(0)
                 )}

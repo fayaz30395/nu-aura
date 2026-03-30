@@ -1,29 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from 'recharts';
 import {
   TrendingUp,
   TrendingDown,
@@ -47,7 +26,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePredictiveDashboard, useOrganizationTrends } from '@/lib/hooks/queries/usePredictiveAnalytics';
-import { chartColors } from '@/lib/utils/theme-colors';
 import { formatCurrency } from '@/lib/utils';
 import type {
   PredictiveAnalyticsDashboard,
@@ -58,6 +36,60 @@ import type {
   DepartmentRisk,
   KeyMetric,
 } from '@/lib/types/predictive-analytics';
+
+// ─── Lazy-loaded chart components ────────────────────────────────────────────
+// Recharts uses browser-only SVG/ResizeObserver APIs — ssr: false required.
+// All chart functions live in PredictiveCharts.tsx so the entire recharts
+// bundle is excluded from the initial page JS.
+
+const ChartSkeleton = () => (
+  <div className="h-[300px] w-full animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg" />
+);
+
+const AttritionTrendChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.AttritionTrendChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const DepartmentRiskHeatmap = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.DepartmentRiskHeatmap })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const TopRiskFactorsChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.TopRiskFactorsChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const HeadcountForecastChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.HeadcountForecastChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const CostProjectionChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.CostProjectionChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const EngagementTrendChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.EngagementTrendChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const PerformanceDistributionChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.PerformanceDistributionChart })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const FlightRiskRadar = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.FlightRiskRadar })),
+  { ssr: false, loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton /></div> }
+);
+const HiringNeedsByDeptChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.HiringNeedsByDeptChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
+const EngagementAttritionCorrelationChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.EngagementAttritionCorrelationChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
+const SkillGapsByCategoryChart = dynamic(
+  () => import('./PredictiveCharts').then(m => ({ default: m.SkillGapsByCategoryChart })),
+  { ssr: false, loading: ChartSkeleton }
+);
 
 // ==================== Constants ====================
 
@@ -79,36 +111,6 @@ const SEVERITY_COLORS = {
   WARNING: '#f59e0b',
   CRITICAL: '#dc2626',
 } as const;
-
-// ==================== Tooltip ====================
-
-interface TooltipPayloadEntry {
-  name: string;
-  value: number | string;
-  color: string;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: TooltipPayloadEntry[];
-  label?: string | number;
-}
-
-const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-[var(--border-main)]">
-        <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
-        {payload.map((entry: TooltipPayloadEntry, index: number) => (
-          <p key={index} className="text-sm" style={{ color: entry.color }}>
-            {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(1) : entry.value}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
 
 // ==================== Sub-components ====================
 
@@ -172,339 +174,21 @@ function AttritionRiskCards({ summary }: { summary: PredictiveAnalyticsDashboard
   );
 }
 
-function AttritionTrendChart({ trends }: { trends: WorkforceTrend[] }) {
-  const chartData = useMemo(
-    () =>
-      trends.map((t) => ({
-        label: t.periodLabel,
-        attritionRate: t.attritionRate ?? 0,
-        voluntaryRate: t.voluntaryAttritionRate ?? 0,
-        hiringRate: t.hiringRate ?? 0,
-      })),
-    [trends]
-  );
+// AttritionTrendChart moved to PredictiveCharts.tsx (dynamic import above)
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Attrition & Hiring Trends</CardTitle>
-        <CardDescription>Monthly attrition vs hiring rate over the past year</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickFormatter={(v) => `${v}%`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Area type="monotone" dataKey="attritionRate" name="Total Attrition %" stroke="#dc2626" fill="#dc262620" strokeWidth={2} />
-              <Area type="monotone" dataKey="voluntaryRate" name="Voluntary %" stroke="#f97316" fill="#f9731620" strokeWidth={2} />
-              <Area type="monotone" dataKey="hiringRate" name="Hiring Rate %" stroke="#16a34a" fill="#16a34a20" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// DepartmentRiskHeatmap moved to PredictiveCharts.tsx (dynamic import above)
 
-function DepartmentRiskHeatmap({ departmentRisks }: { departmentRisks: DepartmentRisk[] }) {
-  const chartData = useMemo(
-    () =>
-      departmentRisks
-        .sort((a, b) => b.avgRiskScore - a.avgRiskScore)
-        .map((d) => ({
-          name: d.departmentName.length > 15 ? d.departmentName.slice(0, 15) + '...' : d.departmentName,
-          fullName: d.departmentName,
-          riskScore: d.avgRiskScore ?? 0,
-          atRisk: d.atRiskCount ?? 0,
-          total: d.employeeCount ?? 0,
-          riskPct: d.riskPercentage ?? 0,
-        })),
-    [departmentRisks]
-  );
+// TopRiskFactorsChart moved to PredictiveCharts.tsx (dynamic import above)
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Department Risk Overview</CardTitle>
-        <CardDescription>Average risk score by department</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="riskScore" name="Avg Risk Score" radius={[0, 4, 4, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={
-                      entry.riskScore >= 70
-                        ? RISK_COLORS.CRITICAL
-                        : entry.riskScore >= 50
-                          ? RISK_COLORS.HIGH
-                          : entry.riskScore >= 30
-                            ? RISK_COLORS.MEDIUM
-                            : RISK_COLORS.LOW
-                    }
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// HeadcountForecastChart moved to PredictiveCharts.tsx (dynamic import above)
 
-function TopRiskFactorsChart({ employees }: { employees: AttritionPrediction[] }) {
-  const factorData = useMemo(() => {
-    const factorMap = new Map<string, { total: number; count: number }>();
-    employees.forEach((emp) => {
-      (emp.riskFactors || []).forEach((f) => {
-        const existing = factorMap.get(f.name) || { total: 0, count: 0 };
-        factorMap.set(f.name, { total: existing.total + f.score, count: existing.count + 1 });
-      });
-    });
-    return Array.from(factorMap.entries())
-      .map(([name, { total, count }]) => ({ name, avgScore: Math.round(total / count) }))
-      .sort((a, b) => b.avgScore - a.avgScore);
-  }, [employees]);
+// CostProjectionChart moved to PredictiveCharts.tsx (dynamic import above)
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Top Risk Factors</CardTitle>
-        <CardDescription>Average impact score across at-risk employees</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={factorData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="avgScore" name="Avg Impact Score" fill={chartColors.danger()} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// EngagementTrendChart moved to PredictiveCharts.tsx (dynamic import above)
 
-function HeadcountForecastChart({ trends, summary }: { trends: WorkforceTrend[]; summary: PredictiveAnalyticsDashboard['workforceSummary'] }) {
-  const chartData = useMemo(() => {
-    const historical = trends.map((t) => ({
-      label: t.periodLabel,
-      headcount: t.totalHeadcount ?? 0,
-      hires: t.newHires ?? 0,
-      terminations: t.terminations ?? 0,
-      type: 'actual' as 'actual' | 'forecast',
-    }));
-
-    // Project 6 months forward using average growth rate
-    const lastHeadcount = historical.length > 0 ? historical[historical.length - 1].headcount : summary.currentHeadcount;
-    const avgGrowth = trends.length > 1
-      ? trends.reduce((sum, t) => sum + (t.growthRate ?? 0), 0) / trends.length
-      : 0;
-
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const lastTrend = trends[trends.length - 1];
-    const startMonth = lastTrend ? lastTrend.periodMonth : new Date().getMonth() + 1;
-    const startYear = lastTrend ? lastTrend.periodYear : new Date().getFullYear();
-
-    const forecast: typeof historical = [];
-    let projected = lastHeadcount;
-    for (let i = 1; i <= 6; i++) {
-      const m = ((startMonth - 1 + i) % 12);
-      const y = startYear + Math.floor((startMonth - 1 + i) / 12);
-      projected = Math.round(projected * (1 + avgGrowth / 100));
-      forecast.push({
-        label: `${months[m]} ${y} (F)`,
-        headcount: projected,
-        hires: 0,
-        terminations: 0,
-        type: 'forecast',
-      });
-    }
-
-    return [...historical, ...forecast];
-  }, [trends, summary]);
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Headcount Forecast</CardTitle>
-        <CardDescription>Historical headcount with 6-month projection</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} angle={-30} textAnchor="end" height={60} />
-              <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="headcount"
-                name="Headcount"
-                stroke={chartColors.primary()}
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                strokeDasharray={undefined}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function CostProjectionChart({ trends }: { trends: WorkforceTrend[] }) {
-  const chartData = useMemo(
-    () =>
-      trends.map((t) => ({
-        label: t.periodLabel,
-        totalComp: t.totalCompensation ?? 0,
-        avgSalary: t.avgSalary ?? 0,
-        costPerHire: t.costPerHire ?? 0,
-        trainingCost: t.trainingCost ?? 0,
-      })),
-    [trends]
-  );
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Cost Projections</CardTitle>
-        <CardDescription>Compensation, hiring, and training cost trends</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey="costPerHire" name="Cost/Hire" fill={chartColors.primary()} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="trainingCost" name="Training Cost" fill={chartColors.success()} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function EngagementTrendChart({ trends }: { trends: WorkforceTrend[] }) {
-  const chartData = useMemo(
-    () =>
-      trends.map((t) => ({
-        label: t.periodLabel,
-        engagement: t.avgEngagementScore ?? 0,
-        performance: t.avgPerformanceRating ?? 0,
-      })),
-    [trends]
-  );
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Engagement & Performance Trends</CardTitle>
-        <CardDescription>Average engagement and performance scores over time</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <YAxis domain={[0, 5]} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Line type="monotone" dataKey="engagement" name="Engagement Score" stroke={chartColors.primary()} strokeWidth={2} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="performance" name="Performance Rating" stroke={chartColors.success()} strokeWidth={2} dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function PerformanceDistributionChart({ trends }: { trends: WorkforceTrend[] }) {
-  // Use the latest trend to show current performance distribution
-  const latest = trends[trends.length - 1];
-  const total = latest ? (latest.totalHeadcount ?? 0) : 0;
-  const high = latest ? (latest.highPerformersCount ?? 0) : 0;
-  const low = latest ? (latest.lowPerformersCount ?? 0) : 0;
-  const mid = Math.max(0, total - high - low);
-
-  const pieData = [
-    { name: 'High Performers', value: high, color: '#16a34a' },
-    { name: 'Average', value: mid, color: '#0284c7' },
-    { name: 'Below Expectations', value: low, color: '#dc2626' },
-  ].filter((d) => d.value > 0);
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Performance Distribution</CardTitle>
-        <CardDescription>Current workforce performance breakdown</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={3}
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// PerformanceDistributionChart moved to PredictiveCharts.tsx (dynamic import above)
 
 function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['skillGapSummary'] }) {
-  const categoryData = useMemo(
-    () =>
-      (summary.gapsByCategory || []).map((c) => ({
-        category: c.category,
-        gaps: c.gapCount,
-        severity: c.avgSeverity ?? 0,
-      })),
-    [summary]
-  );
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Skill Gap Summary Cards */}
@@ -564,7 +248,7 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
         </CardContent>
       </Card>
 
-      {/* Category Breakdown Chart */}
+      {/* Category Breakdown Chart — lazy-loaded from PredictiveCharts.tsx */}
       <Card>
         <CardHeader>
           <CardTitle>Gaps by Category</CardTitle>
@@ -572,15 +256,7 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
         </CardHeader>
         <CardContent>
           <div className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                <XAxis type="number" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                <YAxis dataKey="category" type="category" width={100} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="gaps" name="Gap Count" fill={chartColors.warning()} radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <SkillGapsByCategoryChart summary={summary} />
           </div>
         </CardContent>
       </Card>
@@ -741,46 +417,7 @@ function TopAtRiskEmployeesTable({ employees }: { employees: AttritionPrediction
   );
 }
 
-function FlightRiskRadar({ employees }: { employees: AttritionPrediction[] }) {
-  // Aggregate risk factors across top at-risk employees for radar visualization
-  const radarData = useMemo(() => {
-    const factorMap = new Map<string, number[]>();
-    employees.forEach((emp) => {
-      (emp.riskFactors || []).forEach((f) => {
-        const arr = factorMap.get(f.name) || [];
-        arr.push(f.score);
-        factorMap.set(f.name, arr);
-      });
-    });
-    return Array.from(factorMap.entries()).map(([name, scores]) => ({
-      factor: name,
-      score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
-    }));
-  }, [employees]);
-
-  if (radarData.length < 3) return null;
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Flight Risk Profile</CardTitle>
-        <CardDescription>Aggregate risk factor analysis for at-risk employees</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData}>
-              <PolarGrid stroke={chartColors.grid()} />
-              <PolarAngleAxis dataKey="factor" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-              <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
-              <Radar name="Risk Score" dataKey="score" stroke={chartColors.danger()} fill={chartColors.danger()} fillOpacity={0.2} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// FlightRiskRadar moved to PredictiveCharts.tsx (dynamic import above)
 
 // ==================== Workforce Summary Panel ====================
 
@@ -1022,23 +659,7 @@ export default function PredictiveAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={(attritionSummary.departmentRisks || []).map((d) => ({
-                        name: d.departmentName.length > 12 ? d.departmentName.slice(0, 12) + '...' : d.departmentName,
-                        atRisk: d.atRiskCount,
-                        total: d.employeeCount,
-                      }))}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-                      <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                      <Bar dataKey="total" name="Total Employees" fill={chartColors.primary()} radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="atRisk" name="At Risk" fill={chartColors.danger()} radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <HiringNeedsByDeptChart departmentRisks={attritionSummary.departmentRisks || []} />
                 </div>
               </CardContent>
             </Card>
@@ -1092,22 +713,7 @@ export default function PredictiveAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={trends.map((t) => ({
-                      label: t.periodLabel,
-                      engagement: t.avgEngagementScore ?? 0,
-                      attrition: t.attritionRate ?? 0,
-                    }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid()} />
-                      <XAxis dataKey="label" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                      <YAxis yAxisId="left" domain={[0, 5]} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} label={{ value: 'Engagement', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-muted)', fontSize: 11 } }} />
-                      <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickFormatter={(v) => `${v}%`} label={{ value: 'Attrition %', angle: 90, position: 'insideRight', style: { fill: 'var(--text-muted)', fontSize: 11 } }} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                      <Line yAxisId="left" type="monotone" dataKey="engagement" name="Engagement" stroke={chartColors.primary()} strokeWidth={2} />
-                      <Line yAxisId="right" type="monotone" dataKey="attrition" name="Attrition %" stroke={chartColors.danger()} strokeWidth={2} strokeDasharray="5 5" />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <EngagementAttritionCorrelationChart trends={trends} />
                 </div>
               </CardContent>
             </Card>

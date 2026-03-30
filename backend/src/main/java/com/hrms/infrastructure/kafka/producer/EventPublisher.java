@@ -242,6 +242,41 @@ public class EventPublisher {
     }
 
     /**
+     * Publish a payroll processing event to trigger async payroll computation.
+     *
+     * <p>The controller calls this immediately after transitioning the run to
+     * {@code PROCESSING} status and returns HTTP 202. The consumer picks up the
+     * event and executes the heavy per-employee work in batches.</p>
+     *
+     * @param runId         ID of the PayrollRun to process
+     * @param tenantId      Multi-tenant context
+     * @param triggeredBy   User ID who initiated processing
+     * @param payPeriodMonth Pay period month (1–12)
+     * @param payPeriodYear  Pay period year
+     */
+    public CompletableFuture<Void> publishPayrollProcessingEvent(
+            UUID runId,
+            UUID tenantId,
+            UUID triggeredBy,
+            Integer payPeriodMonth,
+            Integer payPeriodYear) {
+
+        PayrollProcessingEvent event = PayrollProcessingEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .eventType("PAYROLL_PROCESSING_REQUESTED")
+                .tenantId(tenantId)
+                .timestamp(LocalDateTime.now())
+                .source("payroll-service")
+                .runId(runId)
+                .triggeredBy(triggeredBy)
+                .payPeriodMonth(payPeriodMonth)
+                .payPeriodYear(payPeriodYear)
+                .build();
+
+        return sendEvent(KafkaTopics.PAYROLL_PROCESSING, event.getEventId(), event);
+    }
+
+    /**
      * Publish a fluence content event (CREATED, UPDATED, PUBLISHED, or DELETED).
      *
      * @param contentType Content type: "wiki", "blog", or "template"

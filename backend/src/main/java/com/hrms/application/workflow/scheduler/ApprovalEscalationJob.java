@@ -95,7 +95,7 @@ public class ApprovalEscalationJob {
      * @return Number of steps escalated
      */
     @Transactional
-    private int processEscalationsForTenant(UUID tenantId) {
+    int processEscalationsForTenant(UUID tenantId) {
         // Fetch all stale PENDING steps that are eligible for escalation
         List<StepExecution> staleSteps = stepExecutionRepository.findStaleStepsForEscalation(tenantId);
 
@@ -127,8 +127,7 @@ public class ApprovalEscalationJob {
      * @param tenantId The tenant ID
      * @return true if escalation succeeded, false otherwise
      */
-    @Transactional
-    private boolean escalateStepIfEligible(StepExecution step, UUID tenantId) {
+    boolean escalateStepIfEligible(StepExecution step, UUID tenantId) {
         // Get the escalation config for this workflow
         UUID workflowDefinitionId = step.getWorkflowExecution().getWorkflowDefinition().getId();
         Optional<ApprovalEscalationConfig> configOpt =

@@ -11,6 +11,10 @@ import com.hrms.domain.statutory.LWFConfiguration;
 import com.hrms.domain.statutory.LWFDeduction;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,15 +45,13 @@ public class LWFController {
 
     /**
      * GET /api/v1/payroll/lwf/configurations
-     * Lists all LWF state configurations for the current tenant.
+     * Lists LWF state configurations for the current tenant (paginated).
      */
     @GetMapping("/configurations")
     @RequiresPermission(Permission.STATUTORY_VIEW)
-    public ResponseEntity<List<LWFConfigurationDto>> getConfigurations() {
-        List<LWFConfiguration> configs = lwfService.getStateConfigurations();
-        return ResponseEntity.ok(configs.stream()
-                .map(this::toConfigDto)
-                .collect(Collectors.toList()));
+    public ResponseEntity<Page<LWFConfigurationDto>> getConfigurations(
+            @PageableDefault(size = 20, sort = "stateName", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(lwfService.getStateConfigurations(pageable).map(this::toConfigDto));
     }
 
     /**
@@ -79,17 +81,15 @@ public class LWFController {
 
     /**
      * GET /api/v1/payroll/lwf/deductions?month=&year=
-     * Lists LWF deductions for a given period.
+     * Lists LWF deductions for a given period (paginated).
      */
     @GetMapping("/deductions")
     @RequiresPermission(Permission.STATUTORY_VIEW)
-    public ResponseEntity<List<LWFDeductionDto>> getDeductions(
+    public ResponseEntity<Page<LWFDeductionDto>> getDeductions(
             @RequestParam Integer month,
-            @RequestParam Integer year) {
-        List<LWFDeduction> deductions = lwfService.getDeductionsByPeriod(month, year);
-        return ResponseEntity.ok(deductions.stream()
-                .map(this::toDeductionDto)
-                .collect(Collectors.toList()));
+            @RequestParam Integer year,
+            @PageableDefault(size = 20, sort = "stateCode", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(lwfService.getDeductionsByPeriod(month, year, pageable).map(this::toDeductionDto));
     }
 
     /**

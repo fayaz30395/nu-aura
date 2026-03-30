@@ -75,7 +75,7 @@ public class CacheConfig implements CachingConfigurer {
         cacheConfigurations.put(HOLIDAYS, defaultConfig.entryTtl(Duration.ofHours(24)));
         cacheConfigurations.put(PERMISSIONS, defaultConfig.entryTtl(Duration.ofHours(24)));
         cacheConfigurations.put(ROLES, defaultConfig.entryTtl(Duration.ofHours(24)));
-        cacheConfigurations.put(ROLE_PERMISSIONS, defaultConfig.entryTtl(Duration.ofMinutes(5)));
+        cacheConfigurations.put(ROLE_PERMISSIONS, defaultConfig.entryTtl(Duration.ofMinutes(15)));
 
         // Medium-lived caches (occasional changes) - 4 hours
         cacheConfigurations.put(DEPARTMENTS, defaultConfig.entryTtl(Duration.ofHours(4)));

@@ -23,10 +23,10 @@ export function getQueryClient(): QueryClient {
       }),
       defaultOptions: {
         queries: {
-          staleTime: 5 * 60 * 1000,
-          retry: 2,
+          staleTime: 5 * 60 * 1000,  // 5 minutes — overridden per-hook where needed
+          gcTime: 10 * 60 * 1000,    // 10 minutes garbage collection
+          retry: 1,
           refetchOnWindowFocus: false,
-          gcTime: 10 * 60 * 1000,
         },
         mutations: {
           retry: 1,

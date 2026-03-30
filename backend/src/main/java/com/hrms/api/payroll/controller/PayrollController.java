@@ -6,6 +6,7 @@ import com.hrms.application.payroll.service.PayrollRunService;
 import com.hrms.application.payroll.service.PayslipPdfService;
 import com.hrms.application.payroll.service.PayslipService;
 import com.hrms.application.payroll.service.SalaryStructureService;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -21,6 +22,7 @@ import com.hrms.domain.payroll.Payslip;
 import com.hrms.domain.payroll.SalaryStructure;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/payroll")
 @RequiredArgsConstructor
@@ -44,6 +47,7 @@ public class PayrollController {
     private final PayslipPdfService payslipPdfService;
     private final SalaryStructureService salaryStructureService;
     private final EmployeeService employeeService;
+    private final EventPublisher eventPublisher;
 
     // ===== Payroll Run Endpoints =====
 
@@ -100,11 +104,56 @@ public class PayrollController {
         return ResponseEntity.ok(payrollRuns);
     }
 
+    /**
+     * Submit a payroll run for async processing via Kafka.
+     *
+     * <p>The run is transitioned to {@code PROCESSING} immediately and the response
+     * returns {@code 202 Accepted}. A Kafka consumer picks up the event and executes
+     * the heavy per-employee computation in batches. The triggering user receives a
+     * WebSocket notification when processing completes or fails.</p>
+     *
+     * <p>Poll {@code GET /api/v1/payroll/runs/{id}/status} to check current state.</p>
+     */
     @PostMapping("/runs/{id}/process")
     @RequiresPermission(value = Permission.PAYROLL_PROCESS, revalidate = true)
     public ResponseEntity<PayrollRun> processPayrollRun(@PathVariable UUID id) {
-        UUID processedBy = SecurityContext.getCurrentUserId();
-        PayrollRun payrollRun = payrollRunService.processPayrollRun(id, processedBy);
+        UUID triggeredBy = SecurityContext.getCurrentUserId();
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // 1. Transition DRAFT → PROCESSING (pessimistic lock, state guard in domain)
+        PayrollRun payrollRun = payrollRunService.initiateProcessing(id, triggeredBy);
+
+        // 2. Publish async event; roll back to DRAFT if Kafka is unavailable
+        try {
+            eventPublisher.publishPayrollProcessingEvent(
+                    payrollRun.getId(),
+                    tenantId,
+                    triggeredBy,
+                    payrollRun.getPayPeriodMonth(),
+                    payrollRun.getPayPeriodYear()
+            ).get(); // block briefly to confirm broker accepted the message
+        } catch (Exception e) {
+            log.error("Failed to publish payroll processing event for run {}, rolling back to DRAFT: {}",
+                    id, e.getMessage(), e);
+            payrollRunService.failProcessing(id);
+            throw new RuntimeException(
+                    "Payroll processing could not be queued — Kafka unavailable. Please retry.", e);
+        }
+
+        // 3. Return 202 Accepted — processing will complete asynchronously
+        return ResponseEntity.accepted().body(payrollRun);
+    }
+
+    /**
+     * Poll the current processing status of a payroll run.
+     *
+     * <p>Returns the full {@link PayrollRun} entity so the caller can inspect
+     * {@code status}, {@code processedAt}, and {@code totalEmployees}.</p>
+     */
+    @GetMapping("/runs/{id}/status")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    public ResponseEntity<PayrollRun> getPayrollRunStatus(@PathVariable UUID id) {
+        PayrollRun payrollRun = payrollRunService.getPayrollRunById(id);
         return ResponseEntity.ok(payrollRun);
     }
 

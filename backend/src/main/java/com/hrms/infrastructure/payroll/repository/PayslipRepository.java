@@ -128,4 +128,48 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
         @Param("year") Integer year,
         @Param("month") Integer month
     );
+
+    // ==================== N+1 PREVENTION: NATIVE JOIN QUERIES ====================
+
+    /**
+     * Fetch all payslips for a payroll run with employee first/last name joined in a
+     * single SQL query — prevents N+1 when rendering payslip batch reports where each
+     * row needs the employee display name.
+     *
+     * <p>Payslip stores employeeId as a plain UUID scalar column (no @ManyToOne ORM
+     * association), so JPQL JOIN FETCH is not applicable. This native query joins the
+     * employees table once per payroll run rather than issuing one SELECT per payslip.</p>
+     *
+     * <p>Returns Object[] per row: {p.*, e.first_name, e.last_name, e.employee_code}</p>
+     * Use instead of findAllByTenantIdAndPayrollRunId when the caller needs employee
+     * identity columns alongside payslip financial data.</p>
+     */
+    @Query(value = "SELECT p.*, e.first_name, e.last_name, e.employee_code " +
+           "FROM payslips p " +
+           "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId " +
+           "WHERE p.tenant_id = :tenantId AND p.payroll_run_id = :runId " +
+           "ORDER BY e.last_name ASC, e.first_name ASC",
+           nativeQuery = true)
+    List<Object[]> findByRunWithEmployee(
+        @Param("tenantId") UUID tenantId,
+        @Param("runId") UUID runId
+    );
+
+    /**
+     * Fetch payslips for a pay period with employee data joined in one query — used by
+     * statutory filing generators (PF, ESI, etc.) that need employee codes alongside
+     * salary components without a per-row employee lookup.
+     */
+    @Query(value = "SELECT p.*, e.first_name, e.last_name, e.employee_code " +
+           "FROM payslips p " +
+           "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId " +
+           "WHERE p.tenant_id = :tenantId " +
+           "AND p.pay_period_month = :month AND p.pay_period_year = :year " +
+           "ORDER BY e.last_name ASC, e.first_name ASC",
+           nativeQuery = true)
+    List<Object[]> findByPeriodWithEmployee(
+        @Param("tenantId") UUID tenantId,
+        @Param("month") Integer month,
+        @Param("year") Integer year
+    );
 }
