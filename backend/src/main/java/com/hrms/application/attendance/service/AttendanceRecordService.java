@@ -95,10 +95,19 @@ public class AttendanceRecordService {
                 });
 
         if (record.getId() != null) {
+            // Reject if already checked in and not yet checked out (open session)
             boolean hasOpenRecord = record.hasOpenCheckIn();
             boolean hasOpenEntry = timeEntryRepository.findOpenEntryByAttendanceRecordId(record.getId()).isPresent();
             if (hasOpenRecord || hasOpenEntry) {
                 throw new IllegalStateException("Already checked in. Please check out before checking in again.");
+            }
+            // Reject if already completed for the day (both check-in and check-out recorded)
+            if (record.getCheckInTime() != null && record.getCheckOutTime() != null) {
+                throw new IllegalStateException(
+                        "Attendance already recorded for today (checked in at " +
+                        record.getCheckInTime().toLocalTime() + " and checked out at " +
+                        record.getCheckOutTime().toLocalTime() + "). " +
+                        "Use regularization to modify attendance records.");
             }
         }
 
