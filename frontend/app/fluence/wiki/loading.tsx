@@ -21,7 +21,7 @@ export default function Loading() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar skeleton */}
         <div className="lg:col-span-1">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-6 space-y-4">
             <Skeleton height={20} width="50%" />
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} height={40} />

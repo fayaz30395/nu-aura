@@ -536,7 +536,7 @@ export default function AnnouncementsPage() {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="skeuo-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -802,7 +802,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="skeuo-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

@@ -145,7 +145,7 @@ export default function NewTimeEntryPage() {
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6"
+          className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-6"
         >
           {/* Entry Date */}
           <div>

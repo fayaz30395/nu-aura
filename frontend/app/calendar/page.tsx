@@ -177,7 +177,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-4">
+        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
@@ -236,7 +236,7 @@ export default function CalendarPage() {
 
         {/* Today's Events */}
         {todayEvents.length > 0 && (
-          <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
+          <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
             <div className="flex items-center gap-4 mb-4">
               <CalendarDays className="h-6 w-6" />
               <h2 className="text-xl font-semibold">Today&apos;s Events</h2>
@@ -273,7 +273,7 @@ export default function CalendarPage() {
         )}
 
         {/* Events List */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {view === 'week' ? 'This Week' : 'This Month'}
@@ -385,7 +385,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
@@ -404,7 +404,7 @@ export default function CalendarPage() {
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">

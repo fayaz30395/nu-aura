@@ -318,7 +318,7 @@ export default function TravelRequestDetailsPage() {
           {/* Left Column - Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Travel Information */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
@@ -505,7 +505,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Travel Expenses */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)] flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
@@ -586,7 +586,7 @@ export default function TravelRequestDetailsPage() {
           {/* Right Column - Summary */}
           <div className="space-y-6">
             {/* Budget Summary */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                   <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400" />
@@ -652,7 +652,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Status Timeline */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400" />
@@ -700,7 +700,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Employee Info */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />

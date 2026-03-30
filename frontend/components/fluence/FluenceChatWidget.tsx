@@ -117,13 +117,13 @@ export const FluenceChatWidget: React.FC = () => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className={cn(
               'fixed z-50 flex flex-col',
-              'bg-[var(--bg-card)] border border-[var(--border-main)] rounded-2xl shadow-2xl',
+              'bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-2xl',
               'overflow-hidden',
               // Desktop: fixed size bottom-right
               'md:bottom-6 md:right-6 md:w-[400px] md:h-[560px]',
               // Mobile: near-fullscreen
               'bottom-0 right-0 left-0 top-16 md:top-auto md:left-auto',
-              'md:rounded-2xl rounded-t-2xl rounded-b-none'
+              'md:rounded-lg rounded-t-2xl rounded-b-none'
             )}
           >
             {/* Header */}
@@ -170,7 +170,7 @@ export const FluenceChatWidget: React.FC = () => {
               {messages.length === 0 ? (
                 /* Empty state with suggested questions */
                 <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                  <div className="w-12 h-12 rounded-2xl bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center mb-4">
                     <Sparkles className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                   </div>
                   <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">

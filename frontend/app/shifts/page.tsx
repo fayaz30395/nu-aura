@@ -102,8 +102,8 @@ export default function ShiftDashboardPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shift Management</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Management</h1>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
                 Team schedule overview and shift management
               </p>
             </div>
@@ -113,7 +113,7 @@ export default function ShiftDashboardPage() {
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'week'
                     ? 'bg-accent-700 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
                 }`}
               >
                 <Calendar className="w-4 h-4" />
@@ -123,7 +123,7 @@ export default function ShiftDashboardPage() {
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'list'
                     ? 'bg-accent-700 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -139,14 +139,14 @@ export default function ShiftDashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => router.push(link.href)}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
               >
                 <div className="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
                   <link.icon className="w-5 h-5 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white text-sm">{link.label}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{link.desc}</p>
+                  <p className="font-medium text-surface-900 dark:text-white text-sm">{link.label}</p>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">{link.desc}</p>
                 </div>
               </motion.button>
             ))}
@@ -155,14 +155,14 @@ export default function ShiftDashboardPage() {
           {/* Active Shifts Legend */}
           {activeShifts.length > 0 && (
             <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Shifts:</span>
+              <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Shifts:</span>
               {activeShifts.map((shift) => (
                 <div key={shift.id} className="flex items-center gap-1.5">
                   <div
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: shift.colorCode || '#6B7280' }}
                   />
-                  <span className="text-xs text-gray-600 dark:text-gray-300">
+                  <span className="text-xs text-surface-600 dark:text-surface-300">
                     {shift.shiftCode} ({formatTime(shift.startTime)}-{formatTime(shift.endTime)})
                   </span>
                 </div>
@@ -171,15 +171,15 @@ export default function ShiftDashboardPage() {
           )}
 
           {/* Week Navigation */}
-          <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="flex items-center justify-between bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             <button
               onClick={() => setCurrentWeekOffset((p) => p - 1)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
             </button>
             <div className="text-center">
-              <p className="font-semibold text-gray-900 dark:text-white">
+              <p className="font-semibold text-surface-900 dark:text-white">
                 {dates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} -{' '}
                 {dates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
@@ -192,9 +192,9 @@ export default function ShiftDashboardPage() {
             </div>
             <button
               onClick={() => setCurrentWeekOffset((p) => p + 1)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
             >
-              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />
             </button>
           </div>
 
@@ -203,16 +203,16 @@ export default function ShiftDashboardPage() {
             <NuAuraLoader />
           ) : scheduleByEmployee.length === 0 ? (
             <EmptyState
-              icon={<Users className="w-12 h-12 text-gray-400" />}
+              icon={<Users className="w-12 h-12 text-surface-400" />}
               title="No Schedule Data"
               description="No shift assignments found for this week. Generate a schedule or assign shifts to team members."
             />
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-x-auto">
               <table className="w-full min-w-[800px]">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400 w-48">
+                  <tr className="border-b border-surface-200 dark:border-surface-700">
+                    <th className="text-left p-4 text-sm font-medium text-surface-500 dark:text-surface-400 w-48">
                       Employee
                     </th>
                     {dates.map((d) => {
@@ -223,7 +223,7 @@ export default function ShiftDashboardPage() {
                           className={`text-center p-4 text-sm font-medium ${
                             isToday
                               ? 'text-accent-700 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20'
-                              : 'text-gray-500 dark:text-gray-400'
+                              : 'text-surface-500 dark:text-surface-400'
                           }`}
                         >
                           <div>{d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
@@ -237,11 +237,11 @@ export default function ShiftDashboardPage() {
                   {scheduleByEmployee.map(([empId, { name, code, entries }]) => (
                     <tr
                       key={empId}
-                      className="h-11 border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                      className="h-11 border-b border-surface-100 dark:border-surface-700/50 hover:bg-surface-50 dark:hover:bg-surface-700/30"
                     >
                       <td className="p-4">
-                        <p className="font-medium text-sm text-gray-900 dark:text-white">{name}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{code}</p>
+                        <p className="font-medium text-sm text-surface-900 dark:text-white">{name}</p>
+                        <p className="text-xs text-surface-500 dark:text-surface-400">{code}</p>
                       </td>
                       {dates.map((d) => {
                         const dateStr = d.toISOString().split('T')[0];
@@ -266,7 +266,7 @@ export default function ShiftDashboardPage() {
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-xs text-gray-300 dark:text-gray-600">OFF</span>
+                              <span className="text-xs text-surface-300 dark:text-surface-600">OFF</span>
                             )}
                           </td>
                         );

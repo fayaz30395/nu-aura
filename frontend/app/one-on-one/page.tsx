@@ -131,9 +131,9 @@ function getStatusBadge(status: MeetingStatus | undefined) {
     case 'RESCHEDULED':
       return { label: 'Rescheduled', classes: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' };
     case 'NO_SHOW':
-      return { label: 'No Show', classes: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
+      return { label: 'No Show', classes: 'bg-surface-100 text-surface-800 dark:bg-surface-900/30 dark:text-surface-400' };
     default:
-      return { label: 'Unknown', classes: 'bg-gray-100 text-gray-800' };
+      return { label: 'Unknown', classes: 'bg-surface-100 text-surface-800' };
   }
 }
 
@@ -156,8 +156,8 @@ function getPriorityColor(priority: MeetingAgendaPriority | MeetingActionPriorit
     case 'URGENT': return 'text-danger-600 dark:text-danger-400';
     case 'HIGH': return 'text-warning-600 dark:text-warning-400';
     case 'MEDIUM': return 'text-warning-600 dark:text-warning-400';
-    case 'LOW': return 'text-gray-500 dark:text-gray-400';
-    default: return 'text-gray-500';
+    case 'LOW': return 'text-surface-500 dark:text-surface-400';
+    default: return 'text-surface-500';
   }
 }
 
@@ -168,7 +168,7 @@ function getActionStatusColor(status: MeetingActionStatus): string {
     case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
     case 'CANCELLED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
     case 'CARRIED_OVER': return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
-    default: return 'bg-gray-100 text-gray-800';
+    default: return 'bg-surface-100 text-surface-800';
   }
 }
 
@@ -966,7 +966,7 @@ export default function OneOnOnePage() {
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star
                                 key={s}
-                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? 'text-warning-400 fill-warning-400' : 'text-gray-300'}`}
+                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? 'text-warning-400 fill-warning-400' : 'text-surface-300'}`}
                               />
                             ))}
                           </div>
@@ -994,7 +994,7 @@ export default function OneOnOnePage() {
                                         >
                                           <Star
                                             className={`h-7 w-7 transition-colors ${
-                                              s <= field.value ? 'text-warning-400 fill-warning-400' : 'text-gray-300 hover:text-warning-300'
+                                              s <= field.value ? 'text-warning-400 fill-warning-400' : 'text-surface-300 hover:text-warning-300'
                                             }`}
                                           />
                                         </button>
@@ -1322,7 +1322,7 @@ export default function OneOnOnePage() {
                   <input
                     type="checkbox"
                     {...scheduleForm.register('isRecurring')}
-                    className="h-4 w-4 rounded border-gray-300 text-accent-700 focus:ring-accent-700"
+                    className="h-4 w-4 rounded border-surface-300 text-accent-700 focus:ring-accent-700"
                   />
                   <span className="text-sm font-medium text-[var(--text-primary)]">Make this a recurring meeting</span>
                 </label>

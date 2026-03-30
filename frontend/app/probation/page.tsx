@@ -57,7 +57,7 @@ const getStatusConfig = (status: ProbationStatus) => {
     case 'ON_HOLD':
       return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
     default:
-      return { bg: 'bg-gray-100 dark:bg-gray-900/30', text: 'text-gray-700 dark:text-gray-400', label: status };
+      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: status };
   }
 };
 

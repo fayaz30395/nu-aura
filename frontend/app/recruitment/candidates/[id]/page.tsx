@@ -116,7 +116,7 @@ export default function CandidateDetailPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-6">
             <div className="flex items-center gap-6">
-              <div className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center">
+              <div className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
                 <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>

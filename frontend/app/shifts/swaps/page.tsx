@@ -37,7 +37,7 @@ const STATUS_CONFIG: Record<SwapStatus, { label: string; color: string; bgColor:
   APPROVED: { label: 'Approved', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30' },
   REJECTED: { label: 'Rejected', color: 'text-danger-700', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
   COMPLETED: { label: 'Completed', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30' },
-  CANCELLED: { label: 'Cancelled', color: 'text-gray-600', bgColor: 'bg-gray-100 dark:bg-gray-700' },
+  CANCELLED: { label: 'Cancelled', color: 'text-surface-600', bgColor: 'bg-surface-100 dark:bg-surface-700' },
 };
 
 function SwapCard({
@@ -59,12 +59,12 @@ function SwapCard({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+      className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <ArrowLeftRight className="w-4 h-4 text-accent-700 dark:text-accent-400" />
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
+          <span className="text-sm font-medium text-surface-900 dark:text-white">
             {swap.swapType}
           </span>
         </div>
@@ -73,7 +73,7 @@ function SwapCard({
         </span>
       </div>
 
-      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+      <div className="space-y-2 text-sm text-surface-600 dark:text-surface-300">
         <div className="flex justify-between">
           <span>Requester Date:</span>
           <span className="font-medium">{swap.requesterShiftDate}</span>
@@ -86,11 +86,11 @@ function SwapCard({
         )}
         {swap.reason && (
           <div>
-            <span className="text-gray-400">Reason: </span>
+            <span className="text-surface-400">Reason: </span>
             <span>{swap.reason}</span>
           </div>
         )}
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-surface-400">
           Requested {new Date(swap.requestedAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -101,7 +101,7 @@ function SwapCard({
       </div>
 
       {showActions && (swap.status === 'PENDING' || swap.status === 'PENDING_APPROVAL') && (
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-100 dark:border-surface-700">
           <button
             onClick={onAccept}
             disabled={actionPending}
@@ -161,28 +161,28 @@ export default function ShiftSwapsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/shifts')}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shift Swaps</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Swaps</h1>
+            <p className="text-sm text-surface-500 dark:text-surface-400">
               Manage shift swap requests
             </p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function ShiftSwapsPage() {
               <>
                 {mySwaps.length === 0 ? (
                   <EmptyState
-                    icon={<Send className="w-12 h-12 text-gray-400" />}
+                    icon={<Send className="w-12 h-12 text-surface-400" />}
                     title="No Swap Requests"
                     description="You haven't submitted any shift swap requests yet."
                   />
@@ -223,7 +223,7 @@ export default function ShiftSwapsPage() {
               <>
                 {incomingSwaps.length === 0 ? (
                   <EmptyState
-                    icon={<Inbox className="w-12 h-12 text-gray-400" />}
+                    icon={<Inbox className="w-12 h-12 text-surface-400" />}
                     title="No Incoming Requests"
                     description="No one has sent you a shift swap request."
                   />
@@ -259,7 +259,7 @@ export default function ShiftSwapsPage() {
               <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
                 {pendingApproval.length === 0 ? (
                   <EmptyState
-                    icon={<Shield className="w-12 h-12 text-gray-400" />}
+                    icon={<Shield className="w-12 h-12 text-surface-400" />}
                     title="No Pending Approvals"
                     description="All shift swap requests have been processed."
                   />

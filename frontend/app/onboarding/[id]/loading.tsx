@@ -25,7 +25,7 @@ export default function Loading() {
       </div>
 
       {/* Content skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <div key={index} className="space-y-1">

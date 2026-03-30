@@ -90,7 +90,7 @@ function StatusBadge({ status }: { status: string }) {
     PARTIAL_SUCCESS: { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', icon: AlertTriangle },
     FAILED: { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', icon: XCircle },
     IN_PROGRESS: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', icon: RefreshCw },
-    CANCELLED: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400', icon: XCircle },
+    CANCELLED: { bg: 'bg-surface-100 dark:bg-surface-800', text: 'text-surface-600 dark:text-surface-400', icon: XCircle },
   };
 
   const cfg = config[status] || config.FAILED;
@@ -182,8 +182,8 @@ function FileDropZone({
         <div className="flex items-center gap-4">
           <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{currentFile.name}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-sm font-medium text-surface-900 dark:text-surface-100">{currentFile.name}</p>
+            <p className="text-xs text-surface-500 dark:text-surface-400">
               {(currentFile.size / 1024).toFixed(1)} KB
             </p>
           </div>
@@ -213,7 +213,7 @@ function FileDropZone({
         flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed cursor-pointer transition-all
         ${isDragActive
           ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-          : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+          : 'border-surface-300 dark:border-surface-600 hover:border-accent-400 hover:bg-surface-50 dark:hover:bg-surface-800/50'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
@@ -226,11 +226,11 @@ function FileDropZone({
         className="hidden"
         aria-label="Upload file"
       />
-      <Upload className="h-10 w-10 text-gray-400 dark:text-gray-500 mb-3" />
-      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <Upload className="h-10 w-10 text-surface-400 dark:text-surface-500 mb-3" />
+      <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
         {isDragActive ? 'Drop file here' : 'Drag & drop a file here, or click to browse'}
       </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
         Supports .csv, .xlsx, .xls
       </p>
     </div>
@@ -341,11 +341,11 @@ function ImportSection() {
           const isActive = steps.indexOf(step) >= i;
           return (
             <div key={label} className="flex items-center gap-2">
-              {i > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
+              {i > 0 && <ChevronRight className="h-4 w-4 text-surface-400" />}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
-                  : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
+                  : 'bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-500'
               }`}>
                 {label}
               </span>
@@ -365,14 +365,14 @@ function ImportSection() {
               flex items-center gap-4 p-4 rounded-lg border text-left transition-all
               ${selectedType === value
                 ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-                : 'border-gray-200 dark:border-gray-700 hover:border-accent-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                : 'border-surface-200 dark:border-surface-700 hover:border-accent-300 hover:bg-surface-50 dark:hover:bg-surface-800/50'
               }
             `}
           >
-            <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-gray-400'}`} />
+            <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-surface-400'}`} />
             <div>
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
+              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-surface-900 dark:text-surface-100'}`}>{label}</p>
+              <p className="text-xs text-surface-500 dark:text-surface-400">{description}</p>
             </div>
           </button>
         ))}
@@ -380,10 +380,10 @@ function ImportSection() {
 
       {/* Template info & download */}
       {currentTemplate && !templatesLoading && (
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4">
+        <div className="rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50 p-4">
           <div className="flex items-start justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-surface-900 dark:text-surface-100 flex items-center gap-2">
                 <Info className="h-4 w-4 text-accent-600" />
                 Required Columns
               </h4>
@@ -394,12 +394,12 @@ function ImportSection() {
                   </span>
                 ))}
                 {currentTemplate.optionalColumns.slice(0, 5).map((col: string) => (
-                  <span key={col} className="px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-mono">
+                  <span key={col} className="px-2 py-0.5 rounded bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400 text-xs font-mono">
                     {col}
                   </span>
                 ))}
                 {currentTemplate.optionalColumns.length > 5 && (
-                  <span className="px-2 py-0.5 text-xs text-gray-500">
+                  <span className="px-2 py-0.5 text-xs text-surface-500">
                     +{currentTemplate.optionalColumns.length - 5} more
                   </span>
                 )}
@@ -411,7 +411,7 @@ function ImportSection() {
                   type="button"
                   onClick={() => downloadTemplateMutation.mutate('csv')}
                   disabled={downloadTemplateMutation.isPending}
-                  className="px-4 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-1.5 text-xs font-medium rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
                 >
                   <Download className="h-3.5 w-3.5 inline mr-1" />CSV
                 </button>
@@ -442,10 +442,10 @@ function ImportSection() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="rounded-lg border border-surface-200 dark:border-surface-700 overflow-hidden"
         >
-          <div className="bg-gray-50 dark:bg-gray-800 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div className="bg-surface-50 dark:bg-surface-800 px-4 py-4 border-b border-surface-200 dark:border-surface-700">
+            <h4 className="text-sm font-medium text-surface-900 dark:text-surface-100">
               Preview: {preview.totalRows} rows found ({preview.validRows} valid, {preview.invalidRows} invalid)
             </h4>
           </div>
@@ -453,23 +453,23 @@ function ImportSection() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-800/50">
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Row</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Code</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Name</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Email</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Department</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
+                  <tr className="bg-surface-50 dark:bg-surface-800/50">
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Row</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Code</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Name</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Email</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Department</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {preview.rows.slice(0, 10).map((row) => (
                     <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-danger-50 dark:bg-danger-900/10'}>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.rowNumber}</td>
-                      <td className="px-4 py-2 font-mono text-gray-900 dark:text-gray-100">{row.employeeCode}</td>
-                      <td className="px-4 py-2 text-gray-900 dark:text-gray-100">{row.fullName}</td>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.workEmail}</td>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.departmentName}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.rowNumber}</td>
+                      <td className="px-4 py-2 font-mono text-surface-900 dark:text-surface-100">{row.employeeCode}</td>
+                      <td className="px-4 py-2 text-surface-900 dark:text-surface-100">{row.fullName}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.workEmail}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.departmentName}</td>
                       <td className="px-4 py-2">
                         {row.isValid ? (
                           <CheckCircle2 className="h-4 w-4 text-success-500" />
@@ -506,7 +506,7 @@ function ImportSection() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-gray-200 dark:border-gray-700 p-6"
+          className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"
         >
           <div className="flex items-center gap-4 mb-4">
             {importResult.errorCount === 0 ? (
@@ -515,16 +515,16 @@ function ImportSection() {
               <AlertTriangle className="h-8 w-8 text-warning-500" />
             )}
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Complete</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">Import Complete</h4>
+              <p className="text-sm text-surface-500 dark:text-surface-400">
                 Processed in {importResult.durationMs}ms
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{importResult.totalRows}</p>
+            <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
+              <p className="text-xs text-surface-500 dark:text-surface-400">Total</p>
+              <p className="text-xl font-bold text-surface-900 dark:text-surface-100">{importResult.totalRows}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
               <p className="text-xs text-success-600 dark:text-success-400">Success</p>
@@ -582,7 +582,7 @@ function ImportSection() {
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           >
             Start Over
           </button>
@@ -618,7 +618,7 @@ function ExportSection() {
     <div className="space-y-6">
       {/* Export type selector */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
           Export Type
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -631,12 +631,12 @@ function ExportSection() {
                 p-4 rounded-lg border text-left transition-all
                 ${selectedType === value
                   ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-accent-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                  : 'border-surface-200 dark:border-surface-700 hover:border-accent-300 hover:bg-surface-50 dark:hover:bg-surface-800/50'
                 }
               `}
             >
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-gray-900 dark:text-gray-100'}`}>{label}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
+              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-surface-900 dark:text-surface-100'}`}>{label}</p>
+              <p className="text-xs text-surface-500 dark:text-surface-400">{description}</p>
             </button>
           ))}
         </div>
@@ -644,7 +644,7 @@ function ExportSection() {
 
       {/* Format selector */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
           Format
         </label>
         <div className="flex gap-4">
@@ -657,7 +657,7 @@ function ExportSection() {
                 px-4 py-2 rounded-lg border text-sm font-medium transition-all
                 ${selectedFormat === value
                   ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 ring-1 ring-accent-500'
-                  : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-accent-300'
+                  : 'border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 hover:border-accent-300'
                 }
               `}
             >
@@ -799,11 +799,11 @@ function KekaMigrationSection() {
           const isActive = steps.indexOf(wizardStep) >= i;
           return (
             <div key={key} className="flex items-center gap-2">
-              {i > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
+              {i > 0 && <ChevronRight className="h-4 w-4 text-surface-400" />}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
-                  : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
+                  : 'bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-500'
               }`}>
                 {label}
               </span>
@@ -848,12 +848,12 @@ function KekaMigrationSection() {
       {/* Column mapping step */}
       {wizardStep === 'map' && uploadResult && (
         <div className="space-y-4">
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="bg-gray-50 dark:bg-gray-800 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div className="rounded-lg border border-surface-200 dark:border-surface-700 overflow-hidden">
+            <div className="bg-surface-50 dark:bg-surface-800 px-4 py-4 border-b border-surface-200 dark:border-surface-700">
+              <h4 className="text-sm font-medium text-surface-900 dark:text-surface-100">
                 Column Mapping - {uploadResult.fileName}
               </h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
                 {uploadResult.detectedColumns.length} columns detected. Map each source column to a target field.
               </p>
             </div>
@@ -861,16 +861,16 @@ function KekaMigrationSection() {
               {mappings.map((mapping, index) => (
                 <div key={mapping.sourceColumn} className="flex items-center gap-4 px-4 py-4">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-mono text-gray-900 dark:text-gray-100 truncate">
+                    <p className="text-sm font-mono text-surface-900 dark:text-surface-100 truncate">
                       {mapping.sourceColumn}
                     </p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <ArrowRight className="h-4 w-4 text-surface-400 flex-shrink-0" />
                   <div className="flex-1">
                     <select
                       value={mapping.targetField}
                       onChange={(e) => updateMapping(index, 'targetField', e.target.value)}
-                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full text-sm rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       <option value="">-- Skip --</option>
                       {targetFields.map((tf) => (
@@ -899,7 +899,7 @@ function KekaMigrationSection() {
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
             >
               Start Over
             </button>
@@ -911,9 +911,9 @@ function KekaMigrationSection() {
       {wizardStep === 'preview' && previewData && (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total Rows</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{previewData.totalRows}</p>
+            <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
+              <p className="text-xs text-surface-500 dark:text-surface-400">Total Rows</p>
+              <p className="text-xl font-bold text-surface-900 dark:text-surface-100">{previewData.totalRows}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
               <p className="text-xs text-success-600 dark:text-success-400">Valid</p>
@@ -926,27 +926,27 @@ function KekaMigrationSection() {
           </div>
 
           {previewData.preview.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="overflow-x-auto rounded-lg border border-surface-200 dark:border-surface-700">
               <table className="min-w-full text-xs">
                 <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-800/50">
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Emp #</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Name</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Email</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Department</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Designation</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Joining</th>
+                  <tr className="bg-surface-50 dark:bg-surface-800/50">
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Emp #</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Name</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Email</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Department</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Designation</th>
+                    <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Joining</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {previewData.preview.slice(0, 5).map((row, i) => (
                     <tr key={i}>
-                      <td className="px-4 py-2 font-mono text-gray-900 dark:text-gray-100">{row.employeeNumber || '-'}</td>
-                      <td className="px-4 py-2 text-gray-900 dark:text-gray-100">{[row.firstName, row.lastName].filter(Boolean).join(' ') || '-'}</td>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.email || '-'}</td>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.department || '-'}</td>
-                      <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.designation || '-'}</td>
-                      <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{row.joiningDate || '-'}</td>
+                      <td className="px-4 py-2 font-mono text-surface-900 dark:text-surface-100">{row.employeeNumber || '-'}</td>
+                      <td className="px-4 py-2 text-surface-900 dark:text-surface-100">{[row.firstName, row.lastName].filter(Boolean).join(' ') || '-'}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.email || '-'}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.department || '-'}</td>
+                      <td className="px-4 py-2 text-surface-600 dark:text-surface-400">{row.designation || '-'}</td>
+                      <td className="px-4 py-2 text-surface-500 dark:text-surface-400">{row.joiningDate || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -981,7 +981,7 @@ function KekaMigrationSection() {
             <button
               type="button"
               onClick={() => setWizardStep('map')}
-              className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
             >
               Back to Mapping
             </button>
@@ -994,21 +994,21 @@ function KekaMigrationSection() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-gray-200 dark:border-gray-700 p-6"
+          className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"
         >
           <div className="flex items-center gap-4 mb-4">
             <CheckCircle2 className="h-8 w-8 text-success-500" />
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">KEKA Migration Complete</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">KEKA Migration Complete</h4>
+              <p className="text-sm text-surface-500 dark:text-surface-400">
                 <StatusBadge status={executeMutation.data.status} />
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <p className="text-xs text-gray-500 dark:text-gray-400">Processed</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{executeMutation.data.totalProcessed}</p>
+            <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
+              <p className="text-xs text-surface-500 dark:text-surface-400">Processed</p>
+              <p className="text-xl font-bold text-surface-900 dark:text-surface-100">{executeMutation.data.totalProcessed}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
               <p className="text-xs text-success-600 dark:text-success-400">Created</p>
@@ -1026,7 +1026,7 @@ function KekaMigrationSection() {
           <button
             type="button"
             onClick={handleReset}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           >
             Import Another File
           </button>
@@ -1049,7 +1049,7 @@ function HistorySection() {
   if (!historyPage || historyPage.content.length === 0) {
     return (
       <EmptyState
-        icon={<History className="h-12 w-12 text-gray-400" />}
+        icon={<History className="h-12 w-12 text-surface-400" />}
         title="No import history"
         description="Import operations will appear here once you start importing data."
       />
@@ -1058,31 +1058,31 @@ function HistorySection() {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="overflow-x-auto rounded-lg border border-surface-200 dark:border-surface-700">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 dark:bg-gray-800">
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">File</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Rows</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Created</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Errors</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Duration</th>
-              <th className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Date</th>
+            <tr className="bg-surface-50 dark:bg-surface-800">
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">File</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Status</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Rows</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Created</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Errors</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Duration</th>
+              <th className="px-4 py-2 text-left font-medium text-surface-500 dark:text-surface-400">Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {historyPage.content.map((entry: KekaImportHistoryEntry) => (
-              <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                <td className="px-4 py-4 font-medium text-gray-900 dark:text-gray-100">{entry.fileName}</td>
+              <tr key={entry.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                <td className="px-4 py-4 font-medium text-surface-900 dark:text-surface-100">{entry.fileName}</td>
                 <td className="px-4 py-4"><StatusBadge status={entry.status} /></td>
-                <td className="px-4 py-4 text-gray-600 dark:text-gray-400">{entry.totalRows ?? '-'}</td>
+                <td className="px-4 py-4 text-surface-600 dark:text-surface-400">{entry.totalRows ?? '-'}</td>
                 <td className="px-4 py-4 text-success-600 dark:text-success-400">{entry.created ?? '-'}</td>
                 <td className="px-4 py-4 text-danger-600 dark:text-danger-400">{entry.errors ?? '-'}</td>
-                <td className="px-4 py-4 text-gray-500 dark:text-gray-400">
+                <td className="px-4 py-4 text-surface-500 dark:text-surface-400">
                   {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
                 </td>
-                <td className="px-4 py-4 text-gray-500 dark:text-gray-400">
+                <td className="px-4 py-4 text-surface-500 dark:text-surface-400">
                   {entry.uploadedAt ? new Date(entry.uploadedAt).toLocaleDateString() : '-'}
                 </td>
               </tr>
@@ -1094,7 +1094,7 @@ function HistorySection() {
       {/* Pagination */}
       {historyPage.totalElements > 20 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-surface-500 dark:text-surface-400">
             Page {page + 1} ({historyPage.totalElements} total)
           </p>
           <div className="flex gap-2">
@@ -1102,7 +1102,7 @@ function HistorySection() {
               type="button"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="px-4 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="px-4 py-1.5 text-xs rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 transition-colors"
             >
               Previous
             </button>
@@ -1110,7 +1110,7 @@ function HistorySection() {
               type="button"
               onClick={() => setPage((p) => p + 1)}
               disabled={historyPage.content.length < 20}
-              className="px-4 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="px-4 py-1.5 text-xs rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 transition-colors"
             >
               Next
             </button>
@@ -1150,14 +1150,14 @@ export default function ImportExportPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           {/* Page header */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Import / Export Hub</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-100">Import / Export Hub</h1>
+            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
               Bulk import data, export reports, and manage KEKA migrations
             </p>
           </div>
 
           {/* Tab navigation */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-gray-800/50 w-fit">
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-100 dark:bg-surface-800/50 w-fit">
             {tabs.map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
@@ -1166,8 +1166,8 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                    ? 'bg-white dark:bg-gray-700 text-accent-700 dark:text-accent-400 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'bg-white dark:bg-surface-700 text-accent-700 dark:text-accent-400 shadow-sm'
+                    : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200'
                   }
                 `}
               >
@@ -1185,7 +1185,7 @@ export default function ImportExportPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6"
+              className="rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 p-6"
             >
               {activeTab === 'import' && <ImportSection />}
               {activeTab === 'export' && <ExportSection />}

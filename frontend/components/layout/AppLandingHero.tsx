@@ -108,7 +108,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
       >
         {/* Icon */}
         <motion.div
-          className={`${iconDimensions[iconSize]} rounded-2xl bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center shadow-lg mb-6 mx-auto`}
+          className={`${iconDimensions[iconSize]} rounded-lg bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center shadow-lg mb-6 mx-auto`}
           variants={itemVariants}
           whileHover={{ scale: 1.05 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}

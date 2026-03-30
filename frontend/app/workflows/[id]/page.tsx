@@ -426,7 +426,7 @@ export default function WorkflowDetailPage() {
               <InfoCard
                 label="Status"
                 value={workflow.isActive ? 'Active' : 'Inactive'}
-                valueClassName={workflow.isActive ? 'text-success-600 dark:text-success-400' : 'text-gray-500'}
+                valueClassName={workflow.isActive ? 'text-success-600 dark:text-success-400' : 'text-surface-500'}
               />
               <InfoCard label="Version" value={`v${workflow.version}`} />
             </div>
@@ -494,7 +494,7 @@ export default function WorkflowDetailPage() {
                             </span>
                           )}
                           {step.commentsRequired && (
-                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 dark:bg-gray-800/30 dark:text-gray-300">
+                            <span className="inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800/30 dark:text-surface-300">
                               Comments required
                             </span>
                           )}

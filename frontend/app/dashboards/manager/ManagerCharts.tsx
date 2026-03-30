@@ -37,8 +37,8 @@ export function ManagerAttendanceTrendChart({ data }: ManagerAttendanceTrendChar
       <AreaChart data={data}>
         <defs>
           <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.1} />
-            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.1} />
+            <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
@@ -47,7 +47,7 @@ export function ManagerAttendanceTrendChart({ data }: ManagerAttendanceTrendChar
         <Tooltip
           contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '20px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
         />
-        <Area type="monotone" dataKey="rate" stroke="#6366F1" strokeWidth={4} fillOpacity={1} fill="url(#colorRate)" />
+        <Area type="monotone" dataKey="rate" stroke="var(--accent-primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorRate)" />
       </AreaChart>
     </ResponsiveContainer>
   );

@@ -85,13 +85,13 @@ function PatternPreview({
   }, [entries, shiftMap]);
 
   if (entries.length === 0) {
-    return <p className="text-xs text-gray-400 italic">No pattern configured</p>;
+    return <p className="text-xs text-surface-400 italic">No pattern configured</p>;
   }
 
   return (
     <div className="grid grid-cols-7 gap-1">
       {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((d) => (
-        <div key={d} className="text-center text-xs font-medium text-gray-400 pb-1">
+        <div key={d} className="text-center text-xs font-medium text-surface-400 pb-1">
           {d}
         </div>
       ))}
@@ -212,13 +212,13 @@ export default function ShiftPatternsPage() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/shifts')}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shift Patterns</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Patterns</h1>
+                <p className="text-sm text-surface-500 dark:text-surface-400">
                   Define rotation cycles for shift scheduling
                 </p>
               </div>
@@ -239,7 +239,7 @@ export default function ShiftPatternsPage() {
             <NuAuraLoader />
           ) : patterns.length === 0 ? (
             <EmptyState
-              icon={<RotateCcw className="w-12 h-12 text-gray-400" />}
+              icon={<RotateCcw className="w-12 h-12 text-surface-400" />}
               title="No Patterns Defined"
               description="Create rotation patterns to auto-generate shift schedules."
             />
@@ -250,23 +250,23 @@ export default function ShiftPatternsPage() {
                   key={pattern.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+                  className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">{pattern.name}</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <h3 className="font-semibold text-surface-900 dark:text-white">{pattern.name}</h3>
+                      <p className="text-xs text-surface-500 dark:text-surface-400">
                         {pattern.rotationType} - {pattern.cycleDays} day cycle
                       </p>
                       {pattern.description && (
-                        <p className="text-xs text-gray-400 mt-1">{pattern.description}</p>
+                        <p className="text-xs text-surface-400 mt-1">{pattern.description}</p>
                       )}
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         pattern.isActive
                           ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                          : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400'
                       }`}
                     >
                       {pattern.isActive ? 'Active' : 'Inactive'}
@@ -275,14 +275,14 @@ export default function ShiftPatternsPage() {
 
                   {/* 4-week preview */}
                   <div className="mb-3">
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-2">
                       4-Week Preview
                     </p>
                     <PatternPreview patternJson={pattern.pattern} shifts={activeShifts} />
                   </div>
 
                   <PermissionGate permission={Permissions.SHIFT_MANAGE}>
-                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-2 pt-3 border-t border-surface-100 dark:border-surface-700">
                       <button
                         onClick={() => openEdit(pattern)}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
@@ -322,51 +322,51 @@ export default function ShiftPatternsPage() {
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.95, opacity: 0 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                  className="bg-white dark:bg-surface-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
-                  <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
+                    <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
                       {editingPattern ? 'Edit Pattern' : 'New Pattern'}
                     </h2>
                     <button
                       onClick={() => setShowForm(false)}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                      className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
                     >
-                      <X className="w-5 h-5 text-gray-500" />
+                      <X className="w-5 h-5 text-surface-500" />
                     </button>
                   </div>
 
                   <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Pattern Name *
                       </label>
                       <input
                         {...form.register('name')}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         placeholder="e.g., 4-on-2-off Rotation"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Description
                       </label>
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Rotation Type
                         </label>
                         <select
                           {...form.register('rotationType')}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {ROTATION_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -376,7 +376,7 @@ export default function ShiftPatternsPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Cycle Days
                         </label>
                         <input
@@ -386,20 +386,20 @@ export default function ShiftPatternsPage() {
                           })}
                           min={1}
                           max={60}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
 
                     {/* Pattern Builder */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Pattern Cycle (assign a shift to each day)
                       </label>
                       <div className="grid grid-cols-7 gap-2">
                         {patternSlots.map((slot, idx) => (
                           <div key={idx} className="space-y-1">
-                            <p className="text-xs text-center text-gray-400">Day {idx + 1}</p>
+                            <p className="text-xs text-center text-surface-400">Day {idx + 1}</p>
                             <select
                               value={slot}
                               onChange={(e) => {
@@ -407,7 +407,7 @@ export default function ShiftPatternsPage() {
                                 next[idx] = e.target.value;
                                 setPatternSlots(next);
                               }}
-                              className="w-full px-1 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              className="w-full px-1 py-1.5 border border-surface-300 dark:border-surface-600 rounded text-xs bg-white dark:bg-surface-900 focus:outline-none focus:ring-2 focus:ring-accent-700"
                             >
                               <option value="OFF">OFF</option>
                               {activeShifts.map((s) => (
@@ -423,7 +423,7 @@ export default function ShiftPatternsPage() {
 
                     {/* Preview */}
                     <div>
-                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-2">
                         4-Week Preview
                       </p>
                       <PatternPreview
@@ -433,11 +433,11 @@ export default function ShiftPatternsPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex justify-end gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
                       <button
                         type="button"
                         onClick={() => setShowForm(false)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                        className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-700 rounded-lg hover:bg-surface-200 dark:hover:bg-surface-600"
                       >
                         Cancel
                       </button>

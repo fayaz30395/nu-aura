@@ -109,7 +109,7 @@ export function ConfirmDialog({
     >
       <div
         ref={dialogRef}
-        className="bg-[var(--bg-card)] rounded-xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+        className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex gap-4">

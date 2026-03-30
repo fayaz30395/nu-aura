@@ -64,7 +64,7 @@ export default function NewTemplatePage() {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
+                        className="rounded-lg h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                         onClick={() => router.back()}
                     >
                         <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
@@ -91,7 +91,7 @@ export default function NewTemplatePage() {
                                     </label>
                                     <Input
                                         placeholder="e.g., Engineering Onboarding - Standard"
-                                        className="input-aura rounded-2xl bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-accent-500"
+                                        className="input-aura rounded-lg bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-accent-500"
                                         {...register('name')}
                                     />
                                     {errors.name && <p className="text-danger-500 text-sm">{errors.name.message}</p>}
@@ -105,7 +105,7 @@ export default function NewTemplatePage() {
                                     <textarea
                                         rows={4}
                                         placeholder="Briefly describe what this template is for and which departments should use it."
-                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
+                                        className="w-full rounded-lg bg-[var(--bg-input)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                                         {...register('description')}
                                     />
                                     {errors.description && <p className="text-danger-500 text-sm">{errors.description.message}</p>}
@@ -117,7 +117,7 @@ export default function NewTemplatePage() {
                                             type="submit"
                                             isLoading={isSubmitting}
                                             disabled={isSubmitting}
-                                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-2xl py-6 px-10"
+                                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-lg py-6 px-10"
                                             leftIcon={<Save className="h-4 w-4" />}
                                         >
                                             Create & Configure Tasks
@@ -130,7 +130,7 @@ export default function NewTemplatePage() {
                 </motion.div>
 
                 {/* Info Card */}
-                <Card className="border-0 bg-accent-500/5 dark:bg-accent-500/10 border-l-4 border-accent-500 rounded-2xl">
+                <Card className="border-0 bg-accent-500/5 dark:bg-accent-500/10 border-l-4 border-accent-500 rounded-lg">
                     <CardContent className="p-6 flex gap-4">
                         <CheckCircle2 className="h-6 w-6 text-accent-500 shrink-0 mt-1" />
                         <div>

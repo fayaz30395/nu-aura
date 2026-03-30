@@ -180,7 +180,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Time Card */}
-        <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6" />
             <h2 className="text-xl font-semibold">Event Time</h2>
@@ -209,7 +209,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-6">
           {/* Location */}
           {event.location && (
             <div className="flex items-start gap-4">
@@ -322,7 +322,7 @@ export default function EventDetailPage() {
 
         {/* Description */}
         {event.description && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
@@ -334,7 +334,7 @@ export default function EventDetailPage() {
 
         {/* Notes */}
         {event.notes && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
@@ -344,7 +344,7 @@ export default function EventDetailPage() {
 
         {/* Sync Status */}
         {event.syncProvider && event.syncProvider !== 'NONE' && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">

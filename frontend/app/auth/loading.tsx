@@ -12,7 +12,7 @@ export default function AuthLoading() {
         </div>
 
         {/* Card container skeleton */}
-        <div className="bg-[var(--bg-input)] rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sm:p-8 space-y-4">
+        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8 space-y-4">
           {/* Title skeleton */}
           <Skeleton height={28} width="70%" />
           <Skeleton height={16} width="90%" />

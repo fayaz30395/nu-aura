@@ -157,7 +157,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400" />
@@ -169,7 +169,7 @@ export default function TimeEntryDetailPage() {
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-3">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -184,7 +184,7 @@ export default function TimeEntryDetailPage() {
           </div>
 
           {entry.billingAmount && (
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
               <div className="flex items-center gap-4 mb-3">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                   <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -201,7 +201,7 @@ export default function TimeEntryDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Entry Details
           </h3>
@@ -244,7 +244,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Description */}
         {entry.description && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
@@ -254,7 +254,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Notes */}
         {entry.notes && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
@@ -264,7 +264,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Approval Info */}
         {entry.approvedDate && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>
@@ -295,7 +295,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Rejection Reason */}
         {entry.status === 'REJECTED' && entry.rejectionReason && (
-          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-2xl p-6">
+          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
             <div className="flex items-center gap-4 mb-3">
               <XCircle className="h-5 w-5 text-danger-500" />
               <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">

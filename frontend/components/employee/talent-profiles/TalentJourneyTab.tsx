@@ -64,7 +64,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: idx * 0.05 }}
-                            className={`px-4 py-2 rounded-2xl border flex items-center gap-2 shadow-sm ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
+                            className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-sm ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
                                 }`}
                         >
                             <span className="font-semibold text-sm">{skill.name}</span>
@@ -134,7 +134,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                 <motion.div
                                     key={idx}
                                     whileHover={{ scale: 1.02 }}
-                                    className="p-4 bg-gradient-to-r from-surface-50 to-white dark:from-surface-800 dark:to-surface-900 rounded-2xl border border-surface-100 dark:border-surface-700 flex gap-4"
+                                    className="p-4 bg-gradient-to-r from-surface-50 to-white dark:from-surface-800 dark:to-surface-900 rounded-lg border border-surface-100 dark:border-surface-700 flex gap-4"
                                 >
                                     <div className="h-12 w-12 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700">
                                         <Sparkles className="h-6 w-6" />
@@ -157,7 +157,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                         </div>
                         <div className="space-y-4">
                             {profile.recentFeedback.map((feedback, idx) => (
-                                <div key={idx} className="p-4 rounded-2xl bg-surface-50 dark:bg-surface-800/50 border border-transparent hover:border-accent-400 dark:hover:border-accent-900/30 transition-all">
+                                <div key={idx} className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 border border-transparent hover:border-accent-400 dark:hover:border-accent-900/30 transition-all">
                                     <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center gap-2">

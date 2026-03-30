@@ -124,7 +124,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             ref={ref}
             onClick={onAction}
             className={cn(
-              'group relative overflow-hidden rounded-xl border px-4 py-4 transition-all duration-300',
+              'group relative overflow-hidden rounded-lg border px-4 py-4 transition-all duration-300',
               config.bg,
               config.border,
               isClickable && 'cursor-pointer hover:shadow-md',
@@ -133,7 +133,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             {...props}
           >
             {/* Decorative accent line */}
-            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-xl', config.accent)} />
+            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)} />
 
             <div className="flex items-center gap-2">
               {icon && (
@@ -185,7 +185,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           ref={ref}
           onClick={onAction}
           className={cn(
-            'group relative overflow-hidden rounded-xl border p-4 transition-all duration-300',
+            'group relative overflow-hidden rounded-lg border p-4 transition-all duration-300',
             config.bg,
             config.border,
             isClickable && 'cursor-pointer hover:shadow-lg',
@@ -194,7 +194,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           {...props}
         >
         {/* Decorative accent line */}
-        <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-2xl', config.accent)} />
+        <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)} />
 
         {/* Card shine effect on hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">

@@ -31,8 +31,8 @@ export function ExecutiveHeadcountChart({ data }: ExecutiveHeadcountChartProps) 
       <AreaChart data={data}>
         <defs>
           <linearGradient id="colorHeadcount" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -48,7 +48,7 @@ export function ExecutiveHeadcountChart({ data }: ExecutiveHeadcountChartProps) 
         <Area
           type="monotone"
           dataKey="value"
-          stroke="#6366F1"
+          stroke="var(--accent-primary)"
           strokeWidth={2}
           fillOpacity={1}
           fill="url(#colorHeadcount)"

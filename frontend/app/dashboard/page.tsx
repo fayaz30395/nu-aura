@@ -530,14 +530,14 @@ export default function DashboardPage() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
+                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                   <p className="text-stat-medium" suppressHydrationWarning>
                     {currentTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) ?? '--:--'}
                   </p>
                   <p className="text-caption">Current time</p>
                 </div>
                 {analytics.viewType !== 'EMPLOYEE' && (
-                  <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
+                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                     <p className="text-caption">Team size</p>
                     <p className="text-stat-medium">{analytics.teamSize}</p>
                   </div>
@@ -704,7 +704,7 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
+                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -736,7 +736,7 @@ export default function DashboardPage() {
                     { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
                     { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
                   ].map((item) => (
-                    <div key={item.label} className="text-center p-4 sm:p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+                    <div key={item.label} className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
                       <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
                         <item.icon className="h-5 w-5" />
                       </div>
@@ -798,7 +798,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-4">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
                       <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
                     </div>
                     <p className="text-stat-large mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
@@ -977,7 +977,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
+                    <div className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
                       <Users className="h-8 w-8 text-[var(--accent-primary)]" />
                     </div>
                     <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
@@ -1010,7 +1010,7 @@ export default function DashboardPage() {
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Event Details
@@ -1156,7 +1156,7 @@ export default function DashboardPage() {
       {/* Email Preview Modal */}
       {selectedEmail && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
@@ -1216,7 +1216,7 @@ export default function DashboardPage() {
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl shadow-dropdown max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">

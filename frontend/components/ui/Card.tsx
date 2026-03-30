@@ -40,7 +40,7 @@ const Card = React.forwardRef<
           borderColor: 'var(--border-main)',
         }}
         className={cn(
-          'rounded-2xl transition-all duration-200',
+          'rounded-lg transition-all duration-200',
           variantStyles[variant],
           paddingStyles[padding],
           isHoverable && 'cursor-pointer hover:shadow-card-hover hover:border-[var(--border-strong)]',

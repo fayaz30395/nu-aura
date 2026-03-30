@@ -19,7 +19,7 @@ export default function Loading() {
         <Skeleton height={40} className="flex-1" />
         <Skeleton height={40} width={160} />
       </div>
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="border-b border-surface-200 dark:border-surface-800">
           <Skeleton height={44} />
         </div>

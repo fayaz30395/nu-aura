@@ -710,7 +710,7 @@ export default function TeamDirectory() {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="skeuo-card rounded-2xl max-w-lg w-full overflow-hidden"
+                className="skeuo-card rounded-lg max-w-lg w-full overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}

@@ -24,7 +24,7 @@ export default function Loading() {
         {Array.from({ length: 8 }).map((_, index) => (
           <div
             key={index}
-            className="rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-4"
+            className="rounded-lg border border-surface-200 dark:border-surface-800 p-4 space-y-4"
           >
             <div className="flex items-center gap-4">
               <Skeleton height={48} width={48} radius="xl" />

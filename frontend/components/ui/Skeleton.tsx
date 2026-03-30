@@ -72,7 +72,7 @@ function SkeletonCard({
     return (
         <div
             className={cn(
-                "rounded-xl border p-4 space-y-4",
+                "rounded-lg border p-4 space-y-4",
                 className
             )}
             style={{
@@ -119,7 +119,7 @@ function SkeletonTable({
 }: React.HTMLAttributes<HTMLDivElement> & { rows?: number; columns?: number }) {
     return (
         <div
-            className={cn("overflow-hidden rounded-xl border", className)}
+            className={cn("overflow-hidden rounded-lg border", className)}
             style={{
                 backgroundColor: 'var(--bg-card)',
                 borderColor: 'var(--border-main)',
@@ -153,7 +153,7 @@ function SkeletonStatCard({
 }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className={cn("rounded-xl border p-4", className)}
+            className={cn("rounded-lg border p-4", className)}
             style={{
                 backgroundColor: 'var(--bg-card)',
                 borderColor: 'var(--border-main)',
@@ -220,7 +220,7 @@ function SkeletonEmployeeCard({
 }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className={cn("rounded-xl border p-4", className)}
+            className={cn("rounded-lg border p-4", className)}
             style={{
                 backgroundColor: 'var(--bg-card)',
                 borderColor: 'var(--border-main)',
@@ -264,7 +264,7 @@ function SkeletonDashboard({
             {/* Charts/content row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div
-                    className="rounded-xl border p-4"
+                    className="rounded-lg border p-4"
                     style={{
                         backgroundColor: 'var(--bg-card)',
                         borderColor: 'var(--border-main)',
@@ -274,7 +274,7 @@ function SkeletonDashboard({
                     <Skeleton height={200} width="100%" />
                 </div>
                 <div
-                    className="rounded-xl border p-4"
+                    className="rounded-lg border p-4"
                     style={{
                         backgroundColor: 'var(--bg-card)',
                         borderColor: 'var(--border-main)',

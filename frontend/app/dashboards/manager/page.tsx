@@ -115,16 +115,16 @@ export default function ManagerDashboardPage() {
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-[80px] rounded-2xl" />
+          <Skeleton key={i} className="h-[80px] rounded-lg" />
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Skeleton className="h-[220px] rounded-2xl" />
-        <Skeleton className="h-[220px] rounded-2xl" />
+        <Skeleton className="h-[220px] rounded-lg" />
+        <Skeleton className="h-[220px] rounded-lg" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Skeleton className="h-[220px] rounded-2xl lg:col-span-2" />
-        <Skeleton className="h-[220px] rounded-2xl" />
+        <Skeleton className="h-[220px] rounded-lg lg:col-span-2" />
+        <Skeleton className="h-[220px] rounded-lg" />
       </div>
     </div>
   );

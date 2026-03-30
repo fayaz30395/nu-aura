@@ -49,7 +49,7 @@ export function EmptyState({
         {icon && (
           <div
             className={cn(
-              'flex items-center justify-center w-16 h-16 rounded-2xl mb-6',
+              'flex items-center justify-center w-16 h-16 rounded-lg mb-6',
               iconColor || 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
             )}
           >
@@ -80,7 +80,7 @@ export function EmptyState({
               'px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200',
               'bg-accent-700 hover:bg-accent-800 dark:bg-accent-700 dark:hover:bg-accent-800',
               'text-white disabled:opacity-50 disabled:cursor-not-allowed',
-              'focus-ring-aura'
+              'focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2'
             )}
           >
             {finalActionLoading ? (

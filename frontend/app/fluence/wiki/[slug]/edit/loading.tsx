@@ -20,7 +20,7 @@ export default function Loading() {
       </div>
 
       <Skeleton height={48} className="rounded-xl" />
-      <Skeleton height={500} className="rounded-2xl" />
+      <Skeleton height={500} className="rounded-lg" />
     </div>
   );
 }
