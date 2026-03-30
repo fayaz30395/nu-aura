@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, LogOut, LogIn } from 'lucide-react';
+import { Clock, LogOut, LogIn, CheckCircle2 } from 'lucide-react';
 
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
@@ -9,6 +9,9 @@ interface TimeClockWidgetProps {
   onCheckIn: () => void;
   onCheckOut: () => void;
   isLoading?: boolean;
+  isCompleted?: boolean;
+  checkOutTime?: string | null;
+  workDurationMinutes?: number | null;
 }
 
 function getInitialTime() {
@@ -34,6 +37,9 @@ export function TimeClockWidget({
   onCheckIn,
   onCheckOut,
   isLoading = false,
+  isCompleted = false,
+  checkOutTime,
+  workDurationMinutes,
 }: TimeClockWidgetProps) {
   const [currentTime, setCurrentTime] = useState<string>(getInitialTime());
   const [elapsedTime, setElapsedTime] = useState<string>('');
@@ -80,7 +86,7 @@ export function TimeClockWidget({
   const timePeriod = timeParts[1] || '';
 
   return (
-    <div className="skeuo-card rounded-2xl border border-[var(--border-main)] p-6">
+    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -119,32 +125,51 @@ export function TimeClockWidget({
         )}
       </div>
 
-      {/* Check In/Out Button */}
-      <button
-        onClick={isCheckedIn ? onCheckOut : onCheckIn}
-        disabled={isLoading}
-        className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 ${
-          isCheckedIn
-            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
-            : 'text-white border-0'
-        } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
-        style={!isCheckedIn ? {
-          background: 'linear-gradient(135deg, #3a5fd9 0%, #2a48b3 100%)',
-          boxShadow: '0 4px 14px rgba(58, 95, 217, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
-        } : undefined}
-      >
-        {isCheckedIn ? (
-          <>
-            <LogOut className="h-4 w-4" />
-            Clock Out
-          </>
-        ) : (
-          <>
-            <LogIn className="h-4 w-4" />
-            Clock In
-          </>
-        )}
-      </button>
+      {/* Check In/Out Button or Completed State */}
+      {isCompleted ? (
+        <div className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)]"
+          style={{ background: 'var(--status-success-bg)' }}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--status-success-text)' }} />
+            <span className="text-sm font-semibold" style={{ color: 'var(--status-success-text)' }}>
+              Attendance Completed
+            </span>
+          </div>
+          <span className="text-xs text-[var(--text-muted)]">
+            {workDurationMinutes != null
+              ? `${Math.floor(workDurationMinutes / 60)}h ${workDurationMinutes % 60}m worked today`
+              : checkOutTime
+                ? `Checked out at ${checkOutTime}`
+                : 'Have a great day!'}
+          </span>
+        </div>
+      ) : (
+        <button
+          onClick={isCheckedIn ? onCheckOut : onCheckIn}
+          disabled={isLoading}
+          className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 ${
+            isCheckedIn
+              ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
+              : 'text-white border-0'
+          } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
+          style={!isCheckedIn ? {
+            background: 'linear-gradient(135deg, #3a5fd9 0%, #2a48b3 100%)',
+            boxShadow: '0 4px 14px rgba(58, 95, 217, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+          } : undefined}
+        >
+          {isCheckedIn ? (
+            <>
+              <LogOut className="h-4 w-4" />
+              Clock Out
+            </>
+          ) : (
+            <>
+              <LogIn className="h-4 w-4" />
+              Clock In
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 }
