@@ -33,6 +33,8 @@ export default function MyDashboardPage() {
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState<Date | null>(null);
+  const [localCompleted, setLocalCompleted] = useState(false);
+  const [localCheckOutTime, setLocalCheckOutTime] = useState<string | null>(null);
 
   // React Query — single source of truth for dashboard data
   const { data: dashboard, isLoading: queryLoading } = useSelfServiceDashboard(
@@ -104,7 +106,9 @@ export default function MyDashboardPage() {
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(false);
-      setCheckInTime(null); // Clear the timer
+      setCheckInTime(null);
+      setLocalCompleted(true);
+      setLocalCheckOutTime(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
       refreshDashboard();
     } catch (error: unknown) {
       log.error('Check-out failed:', error);
@@ -200,8 +204,8 @@ export default function MyDashboardPage() {
                 onCheckIn={handleCheckIn}
                 onCheckOut={handleCheckOut}
                 isLoading={checkingIn}
-                isCompleted={!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime}
-                checkOutTime={dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : null}
+                isCompleted={localCompleted || (!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime)}
+                checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : null)}
                 workDurationMinutes={null}
               />
             </motion.div>
