@@ -19,7 +19,11 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -407,7 +411,7 @@ public class ExecutiveDashboardService {
         // 3. Single query: termination counts grouped by year/month
         Map<String, Long> terminationsByYearMonth = new HashMap<>();
         List<Object[]> termRows = employeeRepository.countTerminationsByTenantIdAndExitDateRange(
-                tenantId, Employee.EmployeeStatus.TERMINATED, rangeStart, rangeEnd);
+                tenantId, Employee.EmployeeStatus.TERMINATED.name(), rangeStart, rangeEnd);
         for (Object[] row : termRows) {
             String key = row[0] + "-" + row[1];
             terminationsByYearMonth.put(key, ((Number) row[2]).longValue());
