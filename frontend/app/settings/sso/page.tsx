@@ -26,6 +26,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { logger } from '@/lib/utils/logger';
 import {
   useSamlConfig,
@@ -63,6 +64,7 @@ type SamlConfigFormData = z.infer<typeof samlConfigSchema>;
 export default function SsoSettingsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -146,6 +148,14 @@ export default function SsoSettingsPage() {
       router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
+
+  // RBAC guard — only SYSTEM_ADMIN can access SSO config (DEF-55)
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.SYSTEM_ADMIN)) {
+      router.replace('/settings');
+    }
+  }, [permReady, hasPermission, router]);
 
   // Build request from form data
   const buildRequest = (data: SamlConfigFormData): SamlConfigRequest => {
@@ -286,6 +296,9 @@ export default function SsoSettingsPage() {
   // ==================== Render ====================
 
   if (!hasHydrated || !isAuthenticated) return null;
+
+  // RBAC guard — block render for non-admins (DEF-55)
+  if (!permReady || !hasPermission(Permissions.SYSTEM_ADMIN)) return null;
 
   return (
     <AppLayout activeMenuItem="settings">

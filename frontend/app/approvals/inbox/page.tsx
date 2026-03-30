@@ -17,6 +17,7 @@ import {
   useApprovalInboxCount,
   useApproveExecution,
   useRejectExecution,
+  useReturnForModification,
   useCreateDelegation,
   useMyDelegations,
 } from '@/lib/hooks/queries/useApprovals';
@@ -37,6 +38,7 @@ import {
   Clock,
   Inbox,
   RefreshCw,
+  RotateCcw,
   Search,
   XCircle,
   Zap,
@@ -184,10 +186,12 @@ export default function ApprovalInboxPage() {
   // Modals
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
   const [comments, setComments] = useState('');
 
   const approveMutation = useApproveExecution();
   const rejectMutation = useRejectExecution();
+  const returnMutation = useReturnForModification();
 
   const canViewInbox =
     isReady &&
@@ -251,6 +255,14 @@ export default function ApprovalInboxPage() {
     setShowRejectModal(false);
     setSelectedId(null);
   }, [selectedItem, comments, rejectMutation]);
+
+  const handleReturn = useCallback(async () => {
+    if (!selectedItem || !comments.trim()) return;
+    await returnMutation.mutateAsync({ executionId: selectedItem.id, comments });
+    setComments('');
+    setShowReturnModal(false);
+    setSelectedId(null);
+  }, [selectedItem, comments, returnMutation]);
 
   // Reset page when filters change
   const handleTabChange = useCallback((tabKey: string) => {
@@ -471,10 +483,22 @@ export default function ApprovalInboxPage() {
                             setComments('');
                             setShowRejectModal(true);
                           }}
-                          disabled={rejectMutation.isPending || approveMutation.isPending}
+                          disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
                         >
                           <XCircle className="mr-2 h-4 w-4" />
                           Reject
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex-1 border-warning-300 text-warning-700 hover:bg-warning-50 dark:border-warning-700 dark:text-warning-400"
+                          onClick={() => {
+                            setComments('');
+                            setShowReturnModal(true);
+                          }}
+                          disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
+                        >
+                          <RotateCcw className="mr-2 h-4 w-4" />
+                          Return
                         </Button>
                         <Button
                           variant="primary"
@@ -483,7 +507,7 @@ export default function ApprovalInboxPage() {
                             setComments('');
                             setShowApproveModal(true);
                           }}
-                          disabled={approveMutation.isPending || rejectMutation.isPending}
+                          disabled={approveMutation.isPending || rejectMutation.isPending || returnMutation.isPending}
                         >
                           <CheckCircle className="mr-2 h-4 w-4" />
                           Approve
@@ -617,6 +641,52 @@ export default function ApprovalInboxPage() {
             disabled={rejectMutation.isPending || !comments.trim()}
           >
             {rejectMutation.isPending ? 'Rejecting…' : 'Reject'}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* Return for Modification modal (DEF-44) */}
+      <Modal isOpen={showReturnModal} onClose={() => setShowReturnModal(false)} size="md">
+        <ModalHeader onClose={() => setShowReturnModal(false)}>
+          <div className="flex items-center gap-2 text-warning-600 dark:text-warning-400">
+            <RotateCcw className="h-5 w-5" />
+            Return for modification
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <p className="text-sm text-[var(--text-secondary)]">
+            Return this request to{' '}
+            <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong> for corrections.
+            The requester will be able to revise and resubmit.
+          </p>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-[var(--text-secondary)]">
+              Reason <span className="text-danger-500">*</span>
+            </label>
+            <textarea
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              placeholder="Explain what needs to be corrected..."
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              rows={3}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="ghost"
+            onClick={() => setShowReturnModal(false)}
+            disabled={returnMutation.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            className="bg-warning-600 hover:bg-warning-700"
+            onClick={handleReturn}
+            disabled={returnMutation.isPending || !comments.trim()}
+          >
+            {returnMutation.isPending ? 'Returning...' : 'Return for Modification'}
           </Button>
         </ModalFooter>
       </Modal>

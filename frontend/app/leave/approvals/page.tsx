@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
@@ -8,7 +8,7 @@ import { AppLayout } from '@/components/layout';
 import { useLeaveRequestsByStatus, useActiveLeaveTypes, useApproveLeaveRequest, useRejectLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
@@ -19,7 +19,20 @@ import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 export default function LeaveApprovalsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // BUG-L6-006: Page-level permission gate for leave approvals
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasPermission(Permissions.LEAVE_APPROVE)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
   const { data: pendingData } = useLeaveRequestsByStatus('PENDING', 0, 50);
   const { data: leaveTypes = [] } = useActiveLeaveTypes();
   const { data: employeeData } = useEmployees(0, 500);
@@ -97,6 +110,11 @@ export default function LeaveApprovalsPage() {
   const getLeaveTypeName = (leaveTypeId: string) => {
     return leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
   };
+
+  // Permission guard
+  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.LEAVE_APPROVE)) {
+    return null;
+  }
 
   return (
     <AppLayout activeMenuItem="leave">

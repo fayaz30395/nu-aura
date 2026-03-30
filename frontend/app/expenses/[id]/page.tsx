@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import {
   ArrowLeft, Receipt, CheckCircle, XCircle, Clock, DollarSign,
@@ -54,8 +55,16 @@ const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; 
 export default function ExpenseDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
   const { user } = useAuth();
   const claimId = params.id as string;
+
+  useEffect(() => {
+    if (!permissionsReady) return;
+    if (!hasPermission(Permissions.EXPENSE_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasPermission, router]);
 
   const { data: claim, isLoading } = useExpenseClaimDetail(claimId);
   const { data: items = [], isLoading: itemsLoading } = useExpenseClaimItems(claimId);
@@ -119,6 +128,10 @@ export default function ExpenseDetailPage() {
       { onSuccess: () => { setShowRejectDialog(false); setRejectReason(''); } }
     );
   };
+
+  if (!permissionsReady || !hasPermission(Permissions.EXPENSE_VIEW)) {
+    return null;
+  }
 
   if (isLoading) {
     return (

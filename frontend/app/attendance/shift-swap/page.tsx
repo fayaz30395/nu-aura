@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeftRight, PlusCircle } from 'lucide-react';
@@ -63,8 +65,25 @@ const shiftSwapSchema = z.object({
 type ShiftSwapFormData = z.infer<typeof shiftSwapSchema>;
 
 export default function ShiftSwapPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'my' | 'incoming' | 'approval'>('my');
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.ATTENDANCE_VIEW_SELF,
+    Permissions.ATTENDANCE_VIEW_ALL,
+    Permissions.SHIFT_VIEW,
+    Permissions.ATTENDANCE_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [showModal, setShowModal] = useState(false);
   const [employeeId] = useState('current'); // resolved from JWT by backend
 

@@ -310,6 +310,15 @@ export default function RecruitmentDashboard() {
 
   return (
     <AppLayout>
+      {/* DEF-49: Gate entire recruitment dashboard on RECRUITMENT_VIEW */}
+      <PermissionGate
+        anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_VIEW_ALL]}
+        fallback={
+          <div className="flex items-center justify-center h-[60vh]">
+            <p className="text-[var(--text-muted)]">You do not have permission to view recruitment data.</p>
+          </div>
+        }
+      >
       <motion.div
         className="space-y-6"
         initial="hidden"
@@ -587,6 +596,7 @@ export default function RecruitmentDashboard() {
         </motion.div>
 
       </motion.div>
+      </PermissionGate>
     </AppLayout>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -40,6 +41,21 @@ interface SearchResult {
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.KNOWLEDGE_VIEW,
+    Permissions.WIKI_VIEW,
+    Permissions.BLOG_VIEW,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get('q') || ''
   );

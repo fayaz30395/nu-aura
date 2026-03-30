@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
     Title,
     Text,
@@ -49,8 +50,21 @@ type TaxDeclarationFormData = z.infer<typeof taxDeclarationSchema>;
 
 export default function TaxDeclarationsPage() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, isAuthenticated, hasHydrated } = useAuth();
+    const { hasPermission, isReady: permissionsReady } = usePermissions();
     const [modalOpen, setModalOpen] = useState(false);
+
+    // BUG-L6-004: Page-level permission gate for tax declarations
+    useEffect(() => {
+        if (!hasHydrated || !permissionsReady) return;
+        if (!isAuthenticated) {
+            router.push('/auth/login');
+            return;
+        }
+        if (!hasPermission(Permissions.TDS_DECLARE) && !hasPermission(Permissions.STATUTORY_VIEW)) {
+            router.replace('/me/dashboard');
+        }
+    }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
     // Fetch declarations using React Query
     const { data, isLoading } = useTaxDeclarations(0, 20);
@@ -151,6 +165,11 @@ export default function TaxDeclarationsPage() {
             </Table.Td>
         </Table.Tr>
     ));
+
+    // Permission guard
+    if (!hasHydrated || !permissionsReady || (!hasPermission(Permissions.TDS_DECLARE) && !hasPermission(Permissions.STATUTORY_VIEW))) {
+        return null;
+    }
 
     return (
         <AppLayout>

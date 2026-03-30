@@ -12,6 +12,7 @@ import {
   Search,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
@@ -54,6 +55,8 @@ function categorizeFile(contentType: string): FileCategory {
 function FluenceDriveContent() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission } = usePermissions();
+  const canManageDrive = hasPermission(Permissions.DOCUMENT_UPLOAD) || hasPermission(Permissions.DOCUMENT_DELETE);
   const [activeCategory, setActiveCategory] = useState<FileCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -154,11 +157,13 @@ function FluenceDriveContent() {
           </div>
         </div>
 
-        {/* Upload Area */}
-        <FileUploader
-          onUpload={handleUpload}
-          isUploading={uploadMutation.isPending}
-        />
+        {/* Upload Area — gated behind document permissions (DEF-54) */}
+        {canManageDrive && (
+          <FileUploader
+            onUpload={handleUpload}
+            isUploading={uploadMutation.isPending}
+          />
+        )}
 
         {/* Search & Filter */}
         <div className="flex flex-col sm:flex-row gap-4">

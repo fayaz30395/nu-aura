@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Title,
   Text,
@@ -95,9 +97,24 @@ const fmt = (v?: number) =>
   v != null ? `₹${Number(v).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : '—';
 
 export default function FnFPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const exitProcessId = searchParams.get('exitProcessId') ?? '';
   const queryClient = useQueryClient();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+
+  // DEF-56: Gate on EXIT_VIEW or EXIT_MANAGE permission before rendering financial data
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasAnyPermission(Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasAnyPermission]);
 
   const [remarks, setRemarks] = useState('');
   const [paymentMode, setPaymentMode] = useState<string | null>(null);
@@ -129,6 +146,11 @@ export default function FnFPage() {
     },
     onError: () => notifications.show({ title: 'Error', message: 'Approval failed', color: 'red' }),
   });
+
+  // Block render until permissions are confirmed (prevent financial data flash)
+  if (!hasHydrated || !permissionsReady || !hasAnyPermission(Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE)) {
+    return <Center h={300}><Loader /></Center>;
+  }
 
   if (!exitProcessId) return (
     <Alert icon={<IconAlertCircle size={16} />} color="orange">

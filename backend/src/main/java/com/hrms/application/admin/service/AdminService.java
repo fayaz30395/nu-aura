@@ -6,6 +6,9 @@ import com.hrms.api.admin.dto.UpdateUserRoleRequest;
 import com.hrms.api.user.dto.RoleResponse;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
+import com.hrms.common.security.RoleHierarchy;
+import com.hrms.common.security.SecurityContext;
+import org.springframework.security.access.AccessDeniedException;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.User;
@@ -98,11 +101,28 @@ public class AdminService {
     }
 
     /**
+     * Privileged role codes that can only be assigned by a SuperAdmin.
+     */
+    private static final Set<String> PRIVILEGED_ROLE_CODES = Set.of(RoleHierarchy.SUPER_ADMIN);
+
+    /**
      * Update a user's roles (SuperAdmin only)
      * Can assign/update roles for any user across any tenant
      */
     @Transactional
     public AdminUserResponse updateUserRole(UUID userId, UpdateUserRoleRequest request) {
+        // DEF-49/50: Privilege escalation prevention — even though AdminController requires
+        // SYSTEM_ADMIN, defense-in-depth: verify the caller is SuperAdmin before assigning SUPER_ADMIN role
+        Set<String> privilegedRequested = request.getRoleCodes().stream()
+                .filter(PRIVILEGED_ROLE_CODES::contains)
+                .collect(Collectors.toSet());
+        if (!privilegedRequested.isEmpty() && !SecurityContext.isSuperAdmin()) {
+            log.warn("SECURITY: Privilege escalation attempt via admin API — user tried to assign {}",
+                    privilegedRequested);
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can assign privileged roles: " + privilegedRequested);
+        }
+
         // Find user without tenant restriction (SuperAdmin has access to all)
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));

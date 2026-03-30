@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelStatus } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -48,6 +49,7 @@ export default function TravelRequestDetailsPage() {
   const toast = useToast();
   const router = useRouter();
   const params = useParams();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const [error] = useState<string | null>(null);
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
@@ -64,6 +66,13 @@ export default function TravelRequestDetailsPage() {
       router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
+
+  useEffect(() => {
+    if (!permissionsReady) return;
+    if (!hasPermission(Permissions.TRAVEL_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasPermission, router]);
 
   // React Query hooks
   const { data: travelRequest, isLoading } = useTravelRequest(travelId, !!travelId);
@@ -199,6 +208,10 @@ export default function TravelRequestDetailsPage() {
     });
   };
 
+
+  if (!permissionsReady || !hasPermission(Permissions.TRAVEL_VIEW)) {
+    return null;
+  }
 
   if (isLoading) {
     return (

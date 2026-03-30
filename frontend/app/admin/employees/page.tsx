@@ -149,9 +149,16 @@ function PermissionPreview({ roleCodes }: { roleCodes: string[] }) {
 // Inline Role Editor Component
 // ──────────────────────────────────────────────
 function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: () => void }) {
+  const { hasRole } = usePermissions();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([Roles.EMPLOYEE]);
   const [saving, setSaving] = useState(false);
   const assignRolesMutation = useAssignRolesToUser(employee.userId || employee.id);
+
+  // DEF-54: Only SuperAdmin can see/assign the SUPER_ADMIN role in the inline editor
+  const availableRoles = useMemo(
+    () => hasRole(Roles.SUPER_ADMIN) ? ROLE_META : ROLE_META.filter((r) => r.value !== Roles.SUPER_ADMIN),
+    [hasRole],
+  );
 
   const toggleRole = (code: string) => {
     setSelectedRoles(prev =>
@@ -193,7 +200,7 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
         </button>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        {ROLE_META.map(role => (
+        {availableRoles.map(role => (
           <button
             key={role.value}
             type="button"

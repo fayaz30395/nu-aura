@@ -19,6 +19,8 @@ import {
     ListChecks
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -163,6 +165,15 @@ export default function TemplateEditorPage() {
                 { label: localTemplate?.name || 'Editor', href: `/onboarding/templates/${templateId}` }
             ]}
         >
+            {/* DEF-55: Gate onboarding template detail on ONBOARDING_VIEW */}
+            <PermissionGate
+                anyOf={[Permissions.ONBOARDING_VIEW, Permissions.ONBOARDING_MANAGE]}
+                fallback={
+                    <div className="flex items-center justify-center h-[60vh]">
+                        <p className="text-[var(--text-muted)]">You do not have permission to view onboarding templates.</p>
+                    </div>
+                }
+            >
             <div className="max-w-7xl mx-auto py-6 space-y-10">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -487,6 +498,7 @@ export default function TemplateEditorPage() {
                 type="danger"
                 loading={deleteTaskMutation.isPending}
             />
+            </PermissionGate>
         </AppLayout>
     );
 }

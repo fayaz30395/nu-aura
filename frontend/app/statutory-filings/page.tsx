@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Title, Text, Container, Card, Group, Badge, Button, Select, Table,
   Grid, ThemeIcon, Loader, Alert, Modal, Textarea, Stack, Tooltip,
@@ -16,6 +17,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useFilingTypes,
   useFilingHistory,
@@ -88,6 +91,22 @@ type GenerateFormValues = z.infer<typeof generateSchema>;
 // ─── Main Page Component ─────────────────────────────────────────────────────
 
 export default function StatutoryFilingsPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // BUG-L6-002: Page-level permission gate for statutory filings
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasPermission(Permissions.STATUTORY_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+
   const [activeTab, setActiveTab] = useState<string | null>('dashboard');
   const [filterType, setFilterType] = useState<string>('');
   const [page, setPage] = useState(0);
@@ -161,6 +180,11 @@ export default function StatutoryFilingsPage() {
     setSelectedRunId(runId);
     setSubmitModalOpen(true);
   }, []);
+
+  // ─── Permission guard ──────────────────────────────────────────────────────
+  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
+    return null;
+  }
 
   // ─── Render ────────────────────────────────────────────────────────────────
 

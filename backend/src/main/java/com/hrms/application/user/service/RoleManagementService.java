@@ -22,6 +22,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hrms.common.security.RoleHierarchy;
+import org.springframework.security.access.AccessDeniedException;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -42,6 +45,14 @@ public class RoleManagementService {
     private static final String ROLE_NOT_FOUND = "Role not found";
     private static final String CANNOT_MODIFY_SYSTEM_ROLE = "Cannot modify permissions for system role";
 
+    /**
+     * Privileged role codes that can only be assigned by a SuperAdmin.
+     * SUPER_ADMIN bypasses ALL permission checks — assigning it is a total system compromise.
+     */
+    private static final Set<String> PRIVILEGED_ROLE_CODES = Set.of(
+            RoleHierarchy.SUPER_ADMIN
+    );
+
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final CustomScopeTargetRepository customScopeTargetRepository;
@@ -50,6 +61,24 @@ public class RoleManagementService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final OfficeLocationRepository officeLocationRepository;
+
+    /**
+     * DEF-49/50/54: Privilege escalation prevention.
+     * Only a SuperAdmin may assign or revoke privileged roles (e.g. SUPER_ADMIN).
+     * Throws AccessDeniedException if a non-SuperAdmin attempts to assign a privileged role.
+     */
+    private void validateNoPrivilegeEscalation(Set<String> roleCodesToAssign) {
+        Set<String> privilegedRequested = roleCodesToAssign.stream()
+                .filter(PRIVILEGED_ROLE_CODES::contains)
+                .collect(Collectors.toSet());
+
+        if (!privilegedRequested.isEmpty() && !SecurityContext.isSuperAdmin()) {
+            log.warn("SECURITY: Privilege escalation attempt — user {} tried to assign privileged roles {} but is not SuperAdmin",
+                    SecurityContext.getCurrentUserId(), privilegedRequested);
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can assign or revoke privileged roles: " + privilegedRequested);
+        }
+    }
 
     @Transactional(readOnly = true)
     public List<RoleResponse> getAllRoles() {
@@ -466,8 +495,23 @@ public class RoleManagementService {
     public UserResponse assignRolesToUser(UUID userId, AssignRolesRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
+        // DEF-49/50/54: Prevent privilege escalation — only SuperAdmin can assign SUPER_ADMIN
+        validateNoPrivilegeEscalation(request.getRoleCodes());
+
         com.hrms.domain.user.User user = userRepository.findByIdAndTenantId(userId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Also check if the user currently has a privileged role being REMOVED — only SuperAdmin can revoke
+        Set<String> currentPrivilegedRoles = user.getRoles().stream()
+                .map(Role::getCode)
+                .filter(PRIVILEGED_ROLE_CODES::contains)
+                .collect(Collectors.toSet());
+        if (!currentPrivilegedRoles.isEmpty() && !SecurityContext.isSuperAdmin()) {
+            log.warn("SECURITY: Privilege escalation attempt — user {} tried to modify roles of a privileged user",
+                    SecurityContext.getCurrentUserId());
+            throw new AccessDeniedException(
+                    "Only SuperAdmin can modify roles of users with privileged roles: " + currentPrivilegedRoles);
+        }
 
         // Get roles by codes
         List<Role> roles = roleRepository.findByCodeInAndTenantId(request.getRoleCodes(), tenantId);
@@ -476,10 +520,6 @@ public class RoleManagementService {
         if (roles.size() != request.getRoleCodes().size()) {
             throw new ValidationException("One or more role codes are invalid");
         }
-
-        // Prevent assigning system roles via this API if restricted (optional, but good
-        // practice)
-        // For now allowing all roles valid for the tenant
 
         // Capture old roles for audit
         Set<String> oldRoles = user.getRoles().stream()

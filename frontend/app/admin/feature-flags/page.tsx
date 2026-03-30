@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Title,
   Text,
@@ -18,9 +19,12 @@ import {
 } from '@mantine/core';
 import { Search, ToggleLeft, Filter, Plus } from 'lucide-react';
 import { useFeatureFlags, useToggleFeatureFlag, useSetFeatureFlag } from '@/lib/hooks/queries/useFeatureFlags';
-import { usePermissions } from '@/lib/hooks/usePermissions';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { SkeletonCard } from '@/components/ui/Loading';
 import type { FeatureFlag } from '@/lib/types/feature-flag';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 const CATEGORIES = [
   { value: '', label: 'All Categories' },
@@ -36,8 +40,17 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function FeatureFlagsPage() {
-  const { isAdmin } = usePermissions();
+  const router = useRouter();
+  const { isAdmin, hasAnyRole, isReady } = usePermissions();
+  const { hasHydrated, isAuthenticated } = useAuth();
   const { data: flags, isLoading } = useFeatureFlags();
+
+  // DEF-51: RBAC gate — redirect non-admin users
+  useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) { router.replace('/auth/login'); return; }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
   const { mutate: toggleFlag, isPending: isToggling } = useToggleFeatureFlag();
   const { mutate: setFlag, isPending: isSetting } = useSetFeatureFlag();
 

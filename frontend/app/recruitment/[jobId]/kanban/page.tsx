@@ -40,6 +40,8 @@ import {
   type DropResult,
 } from '@hello-pangea/dnd';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { StageBadge } from '@/components/recruitment/StageBadge';
 import { OfferModal } from './OfferModal';
 import { recruitmentService } from '@/lib/services/recruitment.service';
@@ -485,6 +487,17 @@ export default function KanbanPage() {
 
   return (
     <AppLayout activeMenuItem="recruitment">
+      {/* DEF-52: Gate entire kanban page on RECRUITMENT_VIEW to prevent UI leak */}
+      <PermissionGate
+        anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.CANDIDATE_VIEW]}
+        fallback={
+          <Center style={{ height: '60vh' }}>
+            <Alert icon={<IconAlertCircle size={16} />} color="orange" title="Access Denied">
+              You do not have permission to view the recruitment pipeline.
+            </Alert>
+          </Center>
+        }
+      >
       <Stack gap="md" p="md">
         {/* Page header */}
         <Group justify="space-between" align="center">
@@ -592,6 +605,7 @@ export default function KanbanPage() {
           jobId={jobId}
         />
       )}
+      </PermissionGate>
     </AppLayout>
   );
 }

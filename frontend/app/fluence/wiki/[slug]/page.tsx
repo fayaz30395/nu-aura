@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { notFound } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -402,6 +403,21 @@ export default function WikiPageDetailPage() {
   const pageId = params.slug as string;
   const { user } = useAuth();
   const [commentText, setCommentText] = useState('');
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.WIKI_VIEW,
+    Permissions.KNOWLEDGE_WIKI_READ,
+    Permissions.KNOWLEDGE_VIEW,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [showViewers, setShowViewers] = useState(false);

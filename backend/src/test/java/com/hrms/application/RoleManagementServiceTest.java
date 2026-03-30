@@ -5,19 +5,25 @@ import com.hrms.application.user.service.RoleManagementService;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
+import com.hrms.common.security.RoleHierarchy;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.user.Permission;
 import com.hrms.domain.user.Role;
+import com.hrms.domain.user.User;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -37,6 +43,9 @@ class RoleManagementServiceTest {
 
     @Mock
     private PermissionRepository permissionRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private com.hrms.application.audit.service.AuditLogService auditLogService;
@@ -420,5 +429,186 @@ class RoleManagementServiceTest {
         verify(roleRepository).findByIdAndTenantIdWithPermissions(roleId, tenantId);
         verify(permissionRepository).findByCodeIn(new HashSet<>(Arrays.asList("USER_READ")));
         verify(roleRepository).save(any(Role.class));
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // DEF-49/50/54: Privilege Escalation Prevention Tests
+    // ──────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("Privilege Escalation Prevention (DEF-49/50/54)")
+    class PrivilegeEscalationTests {
+
+        private UUID userId;
+        private User regularUser;
+        private Role superAdminRole;
+        private Role employeeRole;
+
+        @BeforeEach
+        void setUpEscalationTests() {
+            userId = UUID.randomUUID();
+
+            // Create a regular employee role
+            employeeRole = new Role();
+            employeeRole.setId(UUID.randomUUID());
+            employeeRole.setCode("EMPLOYEE");
+            employeeRole.setName("Employee");
+            employeeRole.setIsSystemRole(true);
+            employeeRole.setTenantId(tenantId);
+            employeeRole.setPermissions(new HashSet<>());
+            employeeRole.setCreatedAt(LocalDateTime.now());
+            employeeRole.setUpdatedAt(LocalDateTime.now());
+
+            // Create the SUPER_ADMIN role
+            superAdminRole = new Role();
+            superAdminRole.setId(UUID.randomUUID());
+            superAdminRole.setCode(RoleHierarchy.SUPER_ADMIN);
+            superAdminRole.setName("Super Administrator");
+            superAdminRole.setIsSystemRole(true);
+            superAdminRole.setTenantId(tenantId);
+            superAdminRole.setPermissions(new HashSet<>());
+            superAdminRole.setCreatedAt(LocalDateTime.now());
+            superAdminRole.setUpdatedAt(LocalDateTime.now());
+
+            // Create a regular user with EMPLOYEE role
+            regularUser = new User();
+            regularUser.setId(userId);
+            regularUser.setEmail("regular@example.com");
+            regularUser.setFirstName("Regular");
+            regularUser.setLastName("User");
+            regularUser.setStatus(User.UserStatus.ACTIVE);
+            regularUser.setTenantId(tenantId);
+            regularUser.setRoles(new HashSet<>(Set.of(employeeRole)));
+            regularUser.setCreatedAt(LocalDateTime.now());
+            regularUser.setUpdatedAt(LocalDateTime.now());
+        }
+
+        @Test
+        @DisplayName("Non-SuperAdmin CANNOT assign SUPER_ADMIN role")
+        void assignRoles_NonSuperAdmin_AssigningSuperAdmin_ThrowsAccessDenied() {
+            // Given: current user is NOT a SuperAdmin
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of(RoleHierarchy.SUPER_ADMIN)));
+
+            // When & Then: should throw AccessDeniedException
+            assertThatThrownBy(() -> roleManagementService.assignRolesToUser(userId, request))
+                    .isInstanceOf(AccessDeniedException.class)
+                    .hasMessageContaining("Only SuperAdmin can assign or revoke privileged roles");
+
+            // Verify user was never looked up (guard fires first)
+            verify(userRepository, never()).findByIdAndTenantId(any(), any());
+        }
+
+        @Test
+        @DisplayName("SuperAdmin CAN assign SUPER_ADMIN role")
+        void assignRoles_SuperAdmin_AssigningSuperAdmin_Succeeds() {
+            // Given: current user IS a SuperAdmin
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(true);
+
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of(RoleHierarchy.SUPER_ADMIN)));
+
+            when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.of(regularUser));
+            when(roleRepository.findByCodeInAndTenantId(Set.of(RoleHierarchy.SUPER_ADMIN), tenantId))
+                    .thenReturn(List.of(superAdminRole));
+            when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            // When
+            UserResponse result = roleManagementService.assignRolesToUser(userId, request);
+
+            // Then: succeeds without exception
+            assertThat(result).isNotNull();
+            verify(userRepository).findByIdAndTenantId(userId, tenantId);
+            verify(userRepository).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Non-SuperAdmin CAN assign regular roles (EMPLOYEE, HR_MANAGER)")
+        void assignRoles_NonSuperAdmin_AssigningRegularRole_Succeeds() {
+            // Given: current user is NOT a SuperAdmin
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of("EMPLOYEE", "HR_MANAGER")));
+
+            when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.of(regularUser));
+            when(roleRepository.findByCodeInAndTenantId(Set.of("EMPLOYEE", "HR_MANAGER"), tenantId))
+                    .thenReturn(List.of(employeeRole));
+            // Size mismatch will be caught by validation, but escalation guard should not fire
+            // To test the guard specifically, match sizes
+            Role hrManagerRole = new Role();
+            hrManagerRole.setId(UUID.randomUUID());
+            hrManagerRole.setCode("HR_MANAGER");
+            hrManagerRole.setName("HR Manager");
+            hrManagerRole.setIsSystemRole(true);
+            hrManagerRole.setTenantId(tenantId);
+            hrManagerRole.setPermissions(new HashSet<>());
+            hrManagerRole.setCreatedAt(LocalDateTime.now());
+            hrManagerRole.setUpdatedAt(LocalDateTime.now());
+
+            when(roleRepository.findByCodeInAndTenantId(Set.of("EMPLOYEE", "HR_MANAGER"), tenantId))
+                    .thenReturn(List.of(employeeRole, hrManagerRole));
+            when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            // When
+            UserResponse result = roleManagementService.assignRolesToUser(userId, request);
+
+            // Then: succeeds — no escalation issue
+            assertThat(result).isNotNull();
+            verify(userRepository).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Non-SuperAdmin CANNOT modify roles of an existing SuperAdmin user")
+        void assignRoles_NonSuperAdmin_ModifyingSuperAdminUser_ThrowsAccessDenied() {
+            // Given: current user is NOT a SuperAdmin
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+
+            // The target user currently HAS the SUPER_ADMIN role
+            User superAdminUser = new User();
+            superAdminUser.setId(userId);
+            superAdminUser.setEmail("admin@example.com");
+            superAdminUser.setFirstName("Super");
+            superAdminUser.setLastName("Admin");
+            superAdminUser.setStatus(User.UserStatus.ACTIVE);
+            superAdminUser.setTenantId(tenantId);
+            superAdminUser.setRoles(new HashSet<>(Set.of(superAdminRole)));
+            superAdminUser.setCreatedAt(LocalDateTime.now());
+            superAdminUser.setUpdatedAt(LocalDateTime.now());
+
+            // Request tries to change them to just EMPLOYEE (removing SUPER_ADMIN)
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of("EMPLOYEE")));
+
+            when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.of(superAdminUser));
+
+            // When & Then: should throw because non-SuperAdmin cannot modify a SuperAdmin user's roles
+            assertThatThrownBy(() -> roleManagementService.assignRolesToUser(userId, request))
+                    .isInstanceOf(AccessDeniedException.class)
+                    .hasMessageContaining("Only SuperAdmin can modify roles of users with privileged roles");
+        }
+
+        @Test
+        @DisplayName("Non-SuperAdmin CANNOT assign SUPER_ADMIN mixed with regular roles")
+        void assignRoles_NonSuperAdmin_MixedRolesIncludingSuperAdmin_ThrowsAccessDenied() {
+            // Given: current user is NOT a SuperAdmin
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+
+            // Request includes both EMPLOYEE and SUPER_ADMIN
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of("EMPLOYEE", RoleHierarchy.SUPER_ADMIN)));
+
+            // When & Then
+            assertThatThrownBy(() -> roleManagementService.assignRolesToUser(userId, request))
+                    .isInstanceOf(AccessDeniedException.class)
+                    .hasMessageContaining("Only SuperAdmin can assign or revoke privileged roles");
+
+            verify(userRepository, never()).findByIdAndTenantId(any(), any());
+        }
     }
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import {
   CreditCard,
@@ -13,6 +14,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { usePayments, usePaymentStats } from '@/lib/hooks/queries/usePayments';
 import { paymentService } from '@/lib/services/payment.service';
 import {
@@ -40,7 +42,9 @@ interface Filters {
 }
 
 export default function PaymentsPage() {
+  const router = useRouter();
   const { hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
   const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
@@ -102,6 +106,14 @@ export default function PaymentsPage() {
     });
   }, [payments, activeTab, filters]);
 
+  // RBAC guard — payments requires PAYMENT_VIEW permission (DEF-57)
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.PAYMENT_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
   const clearFilters = () => {
     setFilters({
       status: 'ALL',
@@ -128,6 +140,11 @@ export default function PaymentsPage() {
         return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]" />;
     }
   };
+
+  // RBAC guard — block render for unauthorized users (DEF-57)
+  if (!permReady || !hasPermission(Permissions.PAYMENT_VIEW)) {
+    return null;
+  }
 
   if (!hasHydrated) {
     return (

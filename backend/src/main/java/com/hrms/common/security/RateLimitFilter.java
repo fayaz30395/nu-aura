@@ -1,11 +1,14 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.CookieConfig;
 import com.hrms.common.config.DistributedRateLimiter;
 import com.hrms.common.config.DistributedRateLimiter.RateLimitResult;
 import com.hrms.common.config.DistributedRateLimiter.RateLimitType;
 import com.hrms.common.config.RateLimitConfig;
+import com.hrms.common.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Rate limiting filter that applies different limits based on endpoint type.
@@ -41,6 +45,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimitConfig rateLimitConfig;
     private final DistributedRateLimiter distributedRateLimiter;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${app.rate-limit.use-redis:true}")
     private boolean useRedis;
@@ -129,7 +134,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private String resolveClientKey(HttpServletRequest request) {
-        // For authenticated requests, use user ID + tenant ID
+        // For authenticated requests, use user ID + tenant ID from headers
         String userId = request.getHeader("X-User-ID");
         String tenantId = request.getHeader("X-Tenant-ID");
 
@@ -137,9 +142,40 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return tenantId + ":" + userId;
         }
 
+        // DEF-31: Also check access_token cookie for cookie-authenticated users
+        // (the frontend uses HttpOnly cookies, not Authorization headers)
+        String cookieToken = getJwtFromCookie(request);
+        if (cookieToken != null) {
+            try {
+                UUID cookieUserId = jwtTokenProvider.getUserIdFromToken(cookieToken);
+                UUID cookieTenantId = jwtTokenProvider.getTenantIdFromToken(cookieToken);
+                if (cookieUserId != null && cookieTenantId != null) {
+                    return cookieTenantId + ":" + cookieUserId;
+                }
+            } catch (RuntimeException e) {
+                // Invalid/expired cookie token — fall through to IP-based limiting
+                log.debug("Could not extract user from access_token cookie for rate limiting", e);
+            }
+        }
+
         // For unauthenticated requests (like login), use IP address
         String clientIp = getClientIP(request);
         return "ip:" + clientIp;
+    }
+
+    /**
+     * Extract JWT from the access_token cookie (DEF-31).
+     */
+    private String getJwtFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**

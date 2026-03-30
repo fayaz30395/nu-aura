@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import { publicApiClient } from '@/lib/api/public-client';
 import {
   Title,
   Text,
@@ -46,12 +46,12 @@ const LEAVING_REASONS = [
 ];
 
 async function fetchInterview(token: string): Promise<ExitInterviewData> {
-  const res = await apiClient.get<ExitInterviewData>(`/exit/interview/public/${token}`);
+  const res = await publicApiClient.get<ExitInterviewData>(`/exit/interview/public/${token}`);
   return res.data;
 }
 
 async function submitInterview(token: string, data: object): Promise<void> {
-  await apiClient.post(`/exit/interview/public/${token}/submit`, data);
+  await publicApiClient.post(`/exit/interview/public/${token}/submit`, data);
 }
 
 export default function PublicExitInterviewPage() {

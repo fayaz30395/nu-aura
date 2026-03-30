@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelType, TransportMode } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useCreateTravelRequest, useSubmitTravelRequest } from '@/lib/hooks/queries/useTravel';
 import { isAxiosError } from '@/lib/utils/type-guards';
 import {
@@ -87,6 +88,7 @@ type TravelFormData = z.infer<typeof travelRequestSchema>;
 export default function NewTravelRequestPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyPermission, isReady } = usePermissions();
   const createMutation = useCreateTravelRequest();
   const submitMutation = useSubmitTravelRequest();
 
@@ -109,16 +111,28 @@ export default function NewTravelRequestPage() {
     },
   });
 
+  const hasAccess = hasAnyPermission(
+    Permissions.TRAVEL_CREATE,
+    Permissions.TRAVEL_VIEW,
+    Permissions.TRAVEL_MANAGE,
+  );
+
   useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) router.push('/auth/login');
-  }, [isAuthenticated, hasHydrated, router]);
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isAuthenticated, hasHydrated, isReady, hasAccess, router]);
 
   const watchedAccommodation = watch('accommodationRequired');
   const watchedIsInternational = watch('isInternational');
   const watchedDepartureDate = watch('departureDate');
 
-  if (!hasHydrated || !isAuthenticated) {
+  if (!hasHydrated || !isAuthenticated || !isReady || !hasAccess) {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">

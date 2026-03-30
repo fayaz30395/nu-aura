@@ -173,6 +173,11 @@ export const Permissions = {
   FEEDBACK_360_SUBMIT: 'FEEDBACK_360:SUBMIT',
   FEEDBACK_360_MANAGE: 'FEEDBACK_360:MANAGE',
 
+  // Feedback (general peer/upward feedback)
+  FEEDBACK_CREATE: 'FEEDBACK:CREATE',
+  FEEDBACK_UPDATE: 'FEEDBACK:UPDATE',
+  FEEDBACK_DELETE: 'FEEDBACK:DELETE',
+
   // Performance Improvement Plans
   PIP_VIEW: 'PIP:VIEW',
   PIP_CREATE: 'PIP:CREATE',

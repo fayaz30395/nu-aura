@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, useMemo, useRef, Suspense, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { notifications } from '@mantine/notifications';
@@ -141,8 +142,24 @@ export default function InterviewsPageWrapper() {
 }
 
 function InterviewsPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.RECRUITMENT_VIEW,
+    Permissions.RECRUITMENT_VIEW_ALL,
+    Permissions.RECRUITMENT_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
 
   // Query hooks
   const { data: candidatesData } = useCandidates(0, 100);

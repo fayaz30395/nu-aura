@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { apiClient } from '@/lib/api/client';
+import { publicApiClient } from '@/lib/api/public-client';
 import { usePublicJobs, type CareersFilters } from '@/lib/hooks/queries/useCareers';
 import {
   Search,
@@ -291,7 +291,7 @@ const ApplicationModal: React.FC<{
         formDataObj.append('resume', resumeFile);
       }
 
-      await apiClient.post('/careers/apply', formDataObj);
+      await publicApiClient.post('/careers/apply', formDataObj);
 
       setSubmitStatus('success');
       setSubmitMessage('Your application has been submitted successfully!');

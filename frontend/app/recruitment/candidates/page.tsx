@@ -554,7 +554,8 @@ function CandidatesPage() {
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">
-            <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+            {/* DEF-50: Fix permission from CANDIDATE_VIEW to RECRUITMENT_CREATE for write action */}
+            <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
               <Button
                 onClick={() => {
                   setEditingCandidate(null);

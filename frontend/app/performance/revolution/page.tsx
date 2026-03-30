@@ -21,6 +21,8 @@ const PerformanceSpiderChart = dynamic(
   { loading: () => <ChartLoadingFallback />, ssr: false }
 );
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -37,6 +39,12 @@ export default function PerformanceRevolutionPage() {
 
     return (
         <AppLayout activeMenuItem="performance">
+            <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
+                    <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view Performance Revolution.</p>
+                </div>
+            }>
             <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -205,6 +213,7 @@ export default function PerformanceRevolutionPage() {
                     </Card>
                 </div>
             </div>
+            </PermissionGate>
         </AppLayout>
     );
 }

@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import {
   ScheduledReport,
@@ -76,7 +78,9 @@ const scheduledReportFormSchema = z.object({
 type ScheduledReportFormData = z.infer<typeof scheduledReportFormSchema>;
 
 export default function ScheduledReportsPage() {
+  const router = useRouter();
   const toast = useToast();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedReport, setSelectedReport] = useState<ScheduledReport | null>(null);
@@ -121,6 +125,19 @@ export default function ScheduledReportsPage() {
   const updateMutation = useUpdateScheduledReport();
   const deleteMutation = useDeleteScheduledReport();
   const toggleMutation = useToggleScheduledReportStatus();
+
+  // RBAC guard — scheduled reports requires REPORT_VIEW permission (DEF-50)
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/reports');
+    }
+  }, [permReady, hasPermission, router]);
+
+  // RBAC guard — block render for unauthorized users (DEF-50)
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
 
   const handleFormSubmit = async (data: ScheduledReportFormData) => {
     // Filter out empty recipients

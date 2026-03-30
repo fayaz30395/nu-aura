@@ -41,6 +41,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useManagerDashboard, useManagerTeamProjects } from '@/lib/hooks/queries';
 import type { TeamMemberWithProjects, TeamMemberProjectAllocation } from '@/lib/types/dashboard';
 
@@ -94,21 +95,29 @@ const statusBadgeStyles: Record<string, string> = {
 export default function ManagerDashboardPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const hasManagerAccess = hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
   const { data: dashboardData, isLoading: loading, error } = useManagerDashboard(
-    hasHydrated && isAuthenticated
+    hasHydrated && isAuthenticated && hasManagerAccess
   );
   const {
     data: teamProjectsData,
     isLoading: teamProjectsLoading,
     error: teamProjectsError,
-  } = useManagerTeamProjects(hasHydrated && isAuthenticated);
+  } = useManagerTeamProjects(hasHydrated && isAuthenticated && hasManagerAccess);
 
   useEffect(() => {
-    if (!hasHydrated) return;
+    if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
+      return;
     }
-  }, [hasHydrated, isAuthenticated, router]);
+    // DEF-37: Gate on EMPLOYEE:VIEW_TEAM permission (manager-only)
+    if (!hasPermission(Permissions.EMPLOYEE_VIEW_TEAM)) {
+      router.replace('/me/dashboard');
+      return;
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
   // Loading skeleton
   const DashboardSkeleton = () => (
@@ -128,6 +137,11 @@ export default function ManagerDashboardPage() {
       </div>
     </div>
   );
+
+  // DEF-37: Don't render any dashboard content until permission is confirmed
+  if (!hasHydrated || !permissionsReady || !hasManagerAccess) {
+    return null;
+  }
 
   if (loading) {
     return (

@@ -262,9 +262,9 @@ public class WorkflowService {
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new BusinessException(WORKFLOW_DEF_NOT_FOUND));
 
-        // Check for active executions
-        long activeExecutions = workflowExecutionRepository.countByStatus(tenantId,
-                WorkflowExecution.ExecutionStatus.PENDING);
+        // Check for active executions scoped to THIS workflow definition (DEF-45 fix)
+        long activeExecutions = workflowExecutionRepository.countByWorkflowDefinitionIdAndStatusIn(
+                id, tenantId, List.of(WorkflowExecution.ExecutionStatus.PENDING, WorkflowExecution.ExecutionStatus.IN_PROGRESS));
         if (activeExecutions > 0) {
             // Create new version instead of updating
             definition.setActive(false);

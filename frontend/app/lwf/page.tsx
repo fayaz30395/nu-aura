@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Title, Text, Container, Tabs, Card, Table, Group, Badge, Button,
   Grid, ThemeIcon, Select, Loader, Alert, Modal, TextInput, NumberInput,
@@ -15,6 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useLWFConfigurations,
   useLWFDeductions,
@@ -90,6 +93,22 @@ type LWFConfigFormData = z.infer<typeof lwfConfigSchema>;
 // ─── Main Component ─────────────────────────────────────────────────────────
 
 export default function LWFPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
+
+  // BUG-L6-005: Page-level permission gate for LWF
+  useEffect(() => {
+    if (!hasHydrated || !permissionsReady) return;
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    if (!hasPermission(Permissions.STATUTORY_VIEW)) {
+      router.replace('/me/dashboard');
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+
   const [activeTab, setActiveTab] = useState<string | null>('configurations');
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const [editingConfig, setEditingConfig] = useState<LWFConfiguration | null>(null);
@@ -217,6 +236,11 @@ export default function LWFPage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  // Permission guard
+  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
+    return null;
+  }
 
   return (
     <AppLayout>

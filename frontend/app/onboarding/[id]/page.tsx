@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
+import { PermissionGate } from '@/components/auth/PermissionGate';
+import { Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -142,6 +144,15 @@ export default function OnboardingDetailPage() {
                 { label: process.employeeName || 'Process', href: `/onboarding/${processId}` }
             ]}
         >
+            {/* DEF-54: Gate onboarding detail page on ONBOARDING_VIEW */}
+            <PermissionGate
+                anyOf={[Permissions.ONBOARDING_VIEW, Permissions.ONBOARDING_MANAGE]}
+                fallback={
+                    <div className="flex items-center justify-center h-[60vh]">
+                        <p className="text-[var(--text-muted)]">You do not have permission to view onboarding details.</p>
+                    </div>
+                }
+            >
             <div className="max-w-7xl mx-auto space-y-8 pb-20">
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
@@ -380,6 +391,7 @@ export default function OnboardingDetailPage() {
                     </div>
                 </div>
             </div>
+            </PermissionGate>
         </AppLayout>
     );
 }

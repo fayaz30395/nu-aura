@@ -1,9 +1,26 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
 import { Briefcase } from 'lucide-react';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function AdminPayrollPage() {
+  const router = useRouter();
+  const { hasAnyRole, isReady } = usePermissions();
+  const { hasHydrated, isAuthenticated } = useAuth();
+
+  // DEF-56: RBAC gate — placeholder page must still require admin access
+  useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+    if (!isAuthenticated) { router.replace('/auth/login'); return; }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
+
   return (
     <DarkModeProvider>
       <div className="p-6">

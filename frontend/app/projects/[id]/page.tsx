@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft, Edit2, Loader2, XCircle } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
   Badge,
@@ -91,6 +92,16 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
   const [showActivateDialog, setShowActivateDialog] = useState(false);

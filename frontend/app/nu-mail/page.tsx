@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@mantine/core';
@@ -47,6 +48,9 @@ const GMAIL_SCOPES = [
 function MailContent() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(Permissions.EMAIL_VIEW, Permissions.EMAIL_SEND);
   const [isLoading, setIsLoading] = useState(true);
   const [emails, setEmails] = useState<EmailMessage[]>([]);
   const [labels, setLabels] = useState<EmailLabel[]>([]);
@@ -165,9 +169,13 @@ function MailContent() {
 
   // Check for stored token on mount
   useEffect(() => {
-    if (!hasHydrated) return;
+    if (!hasHydrated || !isReady) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
+      return;
+    }
+    if (!hasAccess) {
+      router.replace('/me/dashboard');
       return;
     }
 
@@ -185,7 +193,7 @@ function MailContent() {
     // loadLabels, loadEmails, loadSignature take a token param and are intentionally
     // omitted: including them without useCallback would cause an infinite re-render loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasHydrated, isAuthenticated, router, loadContacts]);
+  }, [hasHydrated, isAuthenticated, isReady, hasAccess, router, loadContacts]);
 
   // Handle click outside to close suggestions
   useEffect(() => {

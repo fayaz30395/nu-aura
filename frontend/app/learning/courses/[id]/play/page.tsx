@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
@@ -50,7 +52,23 @@ const CONTENT_TYPE_LABEL = {
 
 export default function CoursePlayerPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.TRAINING_VIEW,
+    Permissions.LMS_COURSE_VIEW,
+    Permissions.TRAINING_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
   const [contentStatus, setContentStatus] = useState<ContentState>({});
   const [showCompletion, setShowCompletion] = useState(false);

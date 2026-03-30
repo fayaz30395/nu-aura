@@ -24,7 +24,7 @@ public class FeedbackController {
     }
 
     @PostMapping
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.FEEDBACK_CREATE)
     public ResponseEntity<FeedbackResponse> giveFeedback(@Valid @RequestBody FeedbackRequest request) {
         FeedbackResponse response = feedbackService.giveFeedback(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -52,7 +52,7 @@ public class FeedbackController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.FEEDBACK_UPDATE)
     public ResponseEntity<FeedbackResponse> updateFeedback(
             @PathVariable UUID id,
             @Valid @RequestBody FeedbackRequest request
@@ -62,7 +62,7 @@ public class FeedbackController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.FEEDBACK_DELETE)
     public ResponseEntity<Void> deleteFeedback(@PathVariable UUID id) {
         feedbackService.deleteFeedback(id);
         return ResponseEntity.noContent().build();

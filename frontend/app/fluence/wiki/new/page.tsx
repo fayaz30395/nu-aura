@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -71,6 +72,21 @@ export default function CreateWikiPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [publishDrawerOpen, setPublishDrawerOpen] = useState(false);
+  const { hasAnyPermission, isReady } = usePermissions();
+
+  const hasAccess = hasAnyPermission(
+    Permissions.WIKI_CREATE,
+    Permissions.KNOWLEDGE_WIKI_CREATE,
+    Permissions.KNOWLEDGE_MANAGE,
+  );
+
+  useEffect(() => {
+    if (isReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [isReady, hasAccess, router]);
+
+  if (!isReady || !hasAccess) return null;
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const { mutate: createWikiPage } = useCreateWikiPage();
   const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);

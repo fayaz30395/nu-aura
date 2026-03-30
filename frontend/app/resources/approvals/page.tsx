@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import {
   Clock,
@@ -10,6 +11,7 @@ import {
   Briefcase,
   RefreshCw,
 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
@@ -32,6 +34,16 @@ import { format, parseISO } from 'date-fns';
 type TabKey = 'pending' | 'approved' | 'rejected';
 
 export default function ApprovalsPage() {
+  const router = useRouter();
+  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const hasAccess = hasAnyPermission(Permissions.ALLOCATION_APPROVE, Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+
+  useEffect(() => {
+    if (permissionsReady && !hasAccess) {
+      router.replace('/me/dashboard');
+    }
+  }, [permissionsReady, hasAccess, router]);
+
   const [activeTab, setActiveTab] = useState<TabKey>('pending');
   const [selectedRequest, setSelectedRequest] = useState<AllocationApprovalRequest | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -98,6 +110,8 @@ export default function ApprovalsPage() {
       }
     );
   };
+
+  if (!permissionsReady || !hasAccess) return null;
 
   const pendingRequests = requests.filter((r) => r.status === 'PENDING');
   const approvedRequests = requests.filter((r) => r.status === 'APPROVED');

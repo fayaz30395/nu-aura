@@ -16,9 +16,12 @@ import {
   Ticket,
   BookOpen,
 } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function HelpdeskPage() {
   const router = useRouter();
+  const { hasPermission } = usePermissions();
+  const isHelpdeskAdmin = hasPermission(Permissions.SYSTEM_ADMIN);
   const { data: dashboard, isLoading: dashboardLoading, error: dashboardError } = useSLADashboard();
   const { data: escalations = [], isLoading: escalationsLoading } = useMyPendingEscalations();
   const { data: slasResponse } = useSlaConfigs(0, 100);
@@ -75,27 +78,29 @@ export default function HelpdeskPage() {
           <p className="text-sm text-[var(--text-muted)] mt-1 skeuo-deboss">Manage SLA policies, escalations, and support metrics</p>
         </div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statCards.map((card) => (
-            <div
-              key={card.label}
-              className="skeuo-card p-4"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`p-2 rounded-lg ${card.bg}`}>
-                  <card.icon className={`w-5 h-5 ${card.color}`} />
-                </div>
-                <div>
-                  <p className="text-xs text-[var(--text-muted)]">{card.label}</p>
-                  <p className="text-lg font-semibold text-[var(--text-primary)]">
-                    {card.value}
-                  </p>
+        {/* Stat Cards — admin-only SLA metrics (DEF-56) */}
+        {isHelpdeskAdmin && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {statCards.map((card) => (
+              <div
+                key={card.label}
+                className="skeuo-card p-4"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-2 rounded-lg ${card.bg}`}>
+                    <card.icon className={`w-5 h-5 ${card.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-[var(--text-muted)]">{card.label}</p>
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
+                      {card.value}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Pending Escalations */}
         {escalations.length > 0 && (

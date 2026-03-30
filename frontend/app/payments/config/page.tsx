@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Settings, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 // Phase 2 stabilization: payments module gated behind feature flag
 const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
@@ -28,6 +29,7 @@ type ConfigFormData = z.infer<typeof configFormSchema>;
 export default function PaymentConfigPage() {
   const router = useRouter();
   const { hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
   const { data: configs = [] } = useAllPaymentConfigs();
@@ -65,6 +67,14 @@ export default function PaymentConfigPage() {
     }
   }, [router]);
 
+  // RBAC guard — only PAYMENT_CONFIG_MANAGE can access payment config (DEF-58)
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.PAYMENT_CONFIG)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
   useEffect(() => () => {
     if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
   }, []);
@@ -90,6 +100,11 @@ export default function PaymentConfigPage() {
   }, [selectedProvider, selectedConfig, reset]);
 
   if (!PAYMENTS_ENABLED) {
+    return null;
+  }
+
+  // RBAC guard — block render for non-admins (DEF-58)
+  if (!permReady || !hasPermission(Permissions.PAYMENT_CONFIG)) {
     return null;
   }
 

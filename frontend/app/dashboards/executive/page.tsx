@@ -41,6 +41,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
 import { StrategicAlert } from '@/lib/types/dashboard';
 import { formatCurrency } from '@/lib/utils';
@@ -60,20 +61,26 @@ const COLORS = [
 export default function ExecutiveDashboardPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   const { data, isLoading: loading, error, refetch } = useExecutiveDashboard(
-    isAuthenticated && hasHydrated
+    isAuthenticated && hasHydrated && hasPermission(Permissions.DASHBOARD_EXECUTIVE)
   );
 
   useEffect(() => {
-    if (!hasHydrated) return;
+    if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else {
-      setLastUpdated(new Date());
+      return;
     }
-  }, [hasHydrated, isAuthenticated, router]);
+    // DEF-35: Gate on DASHBOARD:EXECUTIVE permission before rendering
+    if (!hasPermission(Permissions.DASHBOARD_EXECUTIVE)) {
+      router.replace('/me/dashboard');
+      return;
+    }
+    setLastUpdated(new Date());
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
 
   const formatNumber = (value: number) => {
@@ -161,6 +168,11 @@ export default function ExecutiveDashboardPage() {
       </div>
     </div>
   );
+
+  // DEF-35/DEF-36: Don't render any dashboard content until permission is confirmed
+  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.DASHBOARD_EXECUTIVE)) {
+    return null;
+  }
 
   if (loading) {
     return (

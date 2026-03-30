@@ -60,8 +60,11 @@ export function useActiveApp(): ActiveAppState {
       const targetApp = PLATFORM_APPS[code];
       if (!targetApp.available) return false;
 
-      // Check if user has at least one permission matching the app's prefixes
-      if (!user || permissions.length === 0) return true; // Fallback: allow if no permissions loaded
+      // DEF-41: When user is authenticated but permissions haven't loaded yet,
+      // return false (locked) instead of true to prevent flash of unlocked apps.
+      // Only return true as fallback when user object is null (pre-auth state).
+      if (!user) return true; // Pre-auth: allow (auth guard will handle)
+      if (permissions.length === 0) return false; // Permissions loading: locked
 
       return targetApp.permissionPrefixes.some((prefix) => permissionModules.has(prefix));
     };
