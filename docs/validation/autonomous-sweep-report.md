@@ -158,3 +158,44 @@
 ---
 
 *Last updated: 2026-03-30 22:45 IST*
+
+---
+
+## Sweep Loop 2 — P0/P1 Screens (2026-03-31)
+
+### Additional Screens Validated
+
+| Module | Route | Role | Status | Notes |
+|--------|-------|------|--------|-------|
+| Contracts | /contracts | SA | VALIDATED | Empty state, search, filters, New Contract CTA |
+| Expenses | /expenses | SA | VALIDATED | Claims tabs (My/Pending/All/Analytics), stats, New Claim |
+| Onboarding | /onboarding | SA | VALIDATED | NU-Hire sub-app, stats, templates, initiate new hire |
+| Workflows | /workflows | SA | VALIDATED | 7 default workflows, builder UI, create workflow |
+| Assets | /assets | SA | VALIDATED | Stats, filters, empty state, Add Asset |
+| Leave Apply | /leave/apply | SA | VALIDATED | Form fields, no validation errors on empty submit (noted) |
+| Exec Dashboard | /dashboards/executive | SA | VALIDATED | Full KPIs, charts, alerts, financial summary |
+| Exec Dashboard | /dashboards/executive | EMP | VALIDATED | 403 BLOCKED (RBAC fix verified) |
+
+### Updated Coverage Summary
+
+- **Total routes discovered:** 241
+- **Screens validated (UI):** 28
+- **API endpoints tested (RBAC):** 11 × 6 roles = 66 checks
+- **Bugs fixed this session:** 13 (1 CRITICAL, 8 HIGH, 4 MEDIUM)
+- **Bugs noted (future):** 6 UI/UX items
+- **RBAC violations found & fixed:** 4
+
+### Loop 2 Result: CLEAN
+
+No new CRITICAL or HIGH defects found. All P0 screens render correctly with proper empty states and CTAs. RBAC fixes verified in browser.
+
+### Next Loop Targets (if continued)
+
+1. Employee detail view (/employees/[id]) — view + edit
+2. Shift management (/shifts/*, definitions, patterns, swaps)
+3. Reports module (/reports/*, builder, scheduled)
+4. Admin settings (/admin/*, roles, permissions, system)
+5. Calendar and time tracking (/calendar, /time-tracking)
+6. Travel and loans (/travel, /loans)
+
+*Updated: 2026-03-31 00:05 IST*
