@@ -1,11 +1,13 @@
 package com.hrms.application.shift.service;
 
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.shift.Shift;
 import com.hrms.domain.shift.ShiftAssignment;
 import com.hrms.infrastructure.shift.repository.ShiftAssignmentRepository;
 import com.hrms.infrastructure.shift.repository.ShiftRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,12 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShiftAttendanceService {
+
+    // Default thresholds when no shift is assigned
+    private static final int DEFAULT_STANDARD_MINUTES = 480;  // 8 hours
+    private static final int DEFAULT_OVERTIME_THRESHOLD_MINUTES = 540;  // 9 hours
 
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final ShiftRepository shiftRepository;
@@ -129,6 +136,64 @@ public class ShiftAttendanceService {
         }
 
         return 0;
+    }
+
+    /**
+     * Central overtime calculation for an AttendanceRecord.
+     * Uses the employee's assigned shift if available, otherwise falls back
+     * to default thresholds (overtime after 9h, measured from 8h standard).
+     *
+     * <p>This is the SINGLE source of truth for overtime. Neither
+     * {@code AttendanceRecord.calculateWorkDuration()} nor
+     * {@code AttendanceRecord.updateStatusBasedOnWorkDuration()} sets overtime.
+     *
+     * @param record the attendance record to update (mutated in place)
+     */
+    public void calculateOvertimeForRecord(AttendanceRecord record) {
+        if (record.getWorkDurationMinutes() == null || record.getWorkDurationMinutes() <= 0) {
+            record.setIsOvertime(false);
+            record.setOvertimeMinutes(0);
+            return;
+        }
+
+        int workedMinutes = record.getWorkDurationMinutes();
+        Shift shift = getAssignedShift(record.getEmployeeId(), record.getAttendanceDate());
+
+        if (shift != null) {
+            // Shift-based overtime
+            if (!Boolean.TRUE.equals(shift.getAllowsOvertime())) {
+                record.setIsOvertime(false);
+                record.setOvertimeMinutes(0);
+                return;
+            }
+
+            int fullDayMinutes = shift.getFullDayHours().intValue() * 60;
+            int breakMinutes = shift.getBreakDurationMinutes() != null ? shift.getBreakDurationMinutes() : 0;
+            int expectedWorkMinutes = fullDayMinutes - breakMinutes;
+
+            if (workedMinutes > expectedWorkMinutes) {
+                int overtime = workedMinutes - expectedWorkMinutes;
+                record.setIsOvertime(true);
+                record.setOvertimeMinutes(overtime);
+                log.debug("Shift-based overtime for employee {} on {}: {} minutes (shift expected: {} min)",
+                        record.getEmployeeId(), record.getAttendanceDate(), overtime, expectedWorkMinutes);
+            } else {
+                record.setIsOvertime(false);
+                record.setOvertimeMinutes(0);
+            }
+        } else {
+            // No shift assigned — use default thresholds
+            if (workedMinutes > DEFAULT_OVERTIME_THRESHOLD_MINUTES) {
+                int overtime = workedMinutes - DEFAULT_STANDARD_MINUTES;
+                record.setIsOvertime(true);
+                record.setOvertimeMinutes(overtime);
+                log.debug("Default overtime for employee {} on {}: {} minutes (no shift assigned)",
+                        record.getEmployeeId(), record.getAttendanceDate(), overtime);
+            } else {
+                record.setIsOvertime(false);
+                record.setOvertimeMinutes(0);
+            }
+        }
     }
 
     /**
