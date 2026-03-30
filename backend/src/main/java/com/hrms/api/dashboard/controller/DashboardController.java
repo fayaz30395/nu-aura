@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.hrms.common.security.Permission.DASHBOARD_VIEW;
+import static com.hrms.common.security.Permission.DASHBOARD_HR_OPS;
 
 @RestController
 @RequestMapping("/api/v1/dashboard")
@@ -21,7 +21,7 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/metrics")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(DASHBOARD_HR_OPS)
     public ResponseEntity<DashboardMetricsResponse> getDashboardMetrics() {
         log.info("Fetching dashboard metrics");
         DashboardMetricsResponse metrics = dashboardService.getDashboardMetrics();
