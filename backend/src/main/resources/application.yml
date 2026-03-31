@@ -17,8 +17,11 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      idle-timeout: 120000
+      max-lifetime: 240000
+      # Keepalive prevents Neon from closing idle connections (~5 min timeout)
+      keepalive-time: 120000
+      validation-timeout: 5000
       # Performance optimizations
       leak-detection-threshold: 60000
       pool-name: HrmsHikariPool
@@ -28,7 +31,8 @@ spring:
       # This ensures current_setting('app.current_tenant_id', true) always returns
       # a value (empty string) instead of raising an error when the variable is
       # completely unset. TenantRlsTransactionManager overrides this per-transaction.
-      connection-init-sql: SET app.current_tenant_id = ''
+      # statement_timeout prevents queries from hanging on broken connections (2 min max).
+      connection-init-sql: SET app.current_tenant_id = ''; SET statement_timeout = '120s'
 
   jpa:
     hibernate:
@@ -459,8 +463,10 @@ spring:
       maximum-pool-size: ${DB_POOL_MAX:20}
       minimum-idle: ${DB_POOL_MIN:5}
       connection-timeout: 30000
-      idle-timeout: 300000
-      max-lifetime: 600000
+      idle-timeout: 120000
+      max-lifetime: 240000
+      keepalive-time: 120000
+      validation-timeout: 5000
 
   jpa:
     show-sql: false

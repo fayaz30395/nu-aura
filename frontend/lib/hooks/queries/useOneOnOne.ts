@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { meetingService } from '@/lib/services/meeting.service';
+import { meetingService } from '@/lib/services/hrms/meeting.service';
 import { notifications } from '@mantine/notifications';
 import type {
   OneOnOneMeetingRequest,
@@ -11,7 +11,7 @@ import type {
   MeetingFeedbackRequest,
   MeetingRescheduleRequest,
   MeetingActionItemStatusRequest,
-} from '@/lib/types/meeting';
+} from '@/lib/types/hrms/meeting';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

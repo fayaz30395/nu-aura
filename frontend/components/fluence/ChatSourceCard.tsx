@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { BookOpen, Newspaper, FileStack, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ChatSource } from '@/lib/types/fluence-chat';
+import type { ChatSource } from '@/lib/types/platform/fluence-chat';
 
 const typeConfig: Record<string, { icon: React.ElementType; label: string; color: string }> = {
   wiki: { icon: BookOpen, label: 'Wiki', color: 'text-info-500 bg-info-50 dark:bg-info-950/30' },

@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { compensationService } from '@/lib/services/compensation.service';
+import { compensationService } from '@/lib/services/hrms/compensation.service';
 import type {
   CompensationCycleRequest,
   SalaryRevisionRequest,
   CycleStatus,
-} from '@/lib/types/compensation';
+} from '@/lib/types/hrms/compensation';
 
 // Query keys for cache management
 export const compensationKeys = {

@@ -9,11 +9,11 @@ import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Candidate, CandidateStatus, CandidateSource, CandidateStage, CreateCandidateRequest } from '@/lib/types/recruitment';
+import { Candidate, CandidateStatus, CandidateSource, CandidateStage, CreateCandidateRequest } from '@/lib/types/hire/recruitment';
 import { Users, Plus, Sparkles } from 'lucide-react';
 
-import { CreateOfferRequest } from '@/lib/types/recruitment';
-import { recruitmentService } from '@/lib/services/recruitment.service';
+import { CreateOfferRequest } from '@/lib/types/hire/recruitment';
+import { recruitmentService } from '@/lib/services/hire/recruitment.service';
 import {
   useCandidates,
   useJobOpenings,
@@ -41,7 +41,7 @@ import {
   CandidateScreeningSummaryResponse,
   FeedbackSynthesisResponse,
   ResumeParseResponse,
-} from '@/lib/types/ai-recruitment';
+} from '@/lib/types/hire/ai-recruitment';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

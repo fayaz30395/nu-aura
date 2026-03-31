@@ -5,7 +5,7 @@ import {
   publicOfferService,
   type AcceptOfferRequest,
   type DeclineOfferRequest,
-} from '@/lib/services/public-offer.service';
+} from '@/lib/services/hire/public-offer.service';
 
 // Query Key Factory
 export const publicOfferKeys = {

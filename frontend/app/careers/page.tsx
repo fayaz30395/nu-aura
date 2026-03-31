@@ -538,7 +538,7 @@ export default function CareersPage() {
               We&apos;re Hiring
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 skeuo-emboss">
+          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 skeuo-emboss" suppressHydrationWarning>
             Join Our Talented Team
           </h1>
           <p className="text-xl text-accent-100 mb-8 max-w-2xl mx-auto">

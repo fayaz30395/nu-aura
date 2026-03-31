@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { TrendData } from '@/lib/types/analytics';
+import { TrendData } from '@/lib/types/core/analytics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface AttendanceTrendChartProps {

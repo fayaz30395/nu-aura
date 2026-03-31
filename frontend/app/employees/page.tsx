@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEmployees, useManagers, useCreateEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { Employee, CreateEmployeeRequest } from '@/lib/types/employee';
+import { Employee, CreateEmployeeRequest } from '@/lib/types/hrms/employee';
 import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';

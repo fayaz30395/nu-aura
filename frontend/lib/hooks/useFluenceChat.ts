@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { streamFluenceChat } from '@/lib/services/fluence-chat.service';
-import type { ChatMessage, ChatSource, ChatRole } from '@/lib/types/fluence-chat';
+import { streamFluenceChat } from '@/lib/services/platform/fluence-chat.service';
+import type { ChatMessage, ChatSource, ChatRole } from '@/lib/types/platform/fluence-chat';
 
 /** Generate a simple unique ID */
 function uid(): string {

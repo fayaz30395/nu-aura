@@ -33,7 +33,7 @@ import type {
   AttritionPrediction,
   AnalyticsInsight,
   KeyMetric,
-} from '@/lib/types/predictive-analytics';
+} from '@/lib/types/core/predictive-analytics';
 
 // ─── Lazy-loaded chart components ────────────────────────────────────────────
 // Recharts uses browser-only SVG/ResizeObserver APIs — ssr: false required.

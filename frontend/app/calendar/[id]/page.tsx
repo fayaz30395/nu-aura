@@ -7,8 +7,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { calendarService } from '@/lib/services/calendar.service';
-import { EventStatus } from '@/lib/types/calendar';
+import { calendarService } from '@/lib/services/hrms/calendar.service';
+import { EventStatus } from '@/lib/types/hrms/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useCalendarEvent,

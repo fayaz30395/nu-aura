@@ -5,9 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useContract, useSignatures, useTerminateContract, useMarkAsActive } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/contract.service';
+import { contractService } from '@/lib/services/hrms/contract.service';
 import { Button, Badge, Card, Tabs, Table } from '@mantine/core';
-import { ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft, Download, Loader2 } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ContractDetailPage() {
@@ -35,7 +36,9 @@ export default function ContractDetailPage() {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="p-8 text-center text-[var(--text-muted)]">Loading contract...</div>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+        </div>
       </AppLayout>
     );
   }
@@ -56,7 +59,7 @@ export default function ContractDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] rounded">
+            <button onClick={() => router.back()} aria-label="Go back" className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
@@ -101,7 +104,14 @@ export default function ContractDetailPage() {
         <div className="flex gap-2">
           {contract.status === 'DRAFT' && (
             <Button
-              onClick={() => markActiveMutation.mutate(contractId)}
+              onClick={() => markActiveMutation.mutate(contractId, {
+                onSuccess: () => {
+                  notifications.show({ title: 'Success', message: 'Contract marked as active', color: 'green' });
+                },
+                onError: () => {
+                  notifications.show({ title: 'Error', message: 'Failed to mark contract as active', color: 'red' });
+                },
+              })}
               loading={markActiveMutation.isPending}
             >
               Mark as Active
@@ -110,7 +120,14 @@ export default function ContractDetailPage() {
           {contract.status === 'ACTIVE' && (
             <Button
               color="red"
-              onClick={() => terminateMutation.mutate(contractId)}
+              onClick={() => terminateMutation.mutate(contractId, {
+                onSuccess: () => {
+                  notifications.show({ title: 'Success', message: 'Contract terminated', color: 'green' });
+                },
+                onError: () => {
+                  notifications.show({ title: 'Error', message: 'Failed to terminate contract', color: 'red' });
+                },
+              })}
               loading={terminateMutation.isPending}
             >
               Terminate

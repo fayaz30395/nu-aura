@@ -2,11 +2,11 @@
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { workflowService } from '@/lib/services/workflow.service';
+import { workflowService } from '@/lib/services/core/workflow.service';
 import type {
   WorkflowDefinitionRequest,
   WorkflowEntityType,
-} from '@/lib/types/workflow';
+} from '@/lib/types/core/workflow';
 
 // ── Query Key Factory ────────────────────────────────────────────────────────
 

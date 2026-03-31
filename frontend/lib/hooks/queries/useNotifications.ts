@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationsApi } from '@/lib/api/notifications';
-import type { Notification, PagedNotificationResponse } from '@/lib/types/notifications';
+import type { Notification, PagedNotificationResponse } from '@/lib/types/core/notifications';
 
-import type { NotificationPreferences } from '@/lib/types/notifications';
+import type { NotificationPreferences } from '@/lib/types/core/notifications';
 
 // Query keys for cache management
 export const notificationKeys = {

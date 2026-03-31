@@ -7,7 +7,7 @@ import {
   EmployeeCapacity,
   AllocationValidationResult,
   formatAllocationPercentage,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { AlertTriangle, ArrowRight, Briefcase, Clock, CheckCircle } from 'lucide-react';
 
 interface AllocationApprovalModalProps {

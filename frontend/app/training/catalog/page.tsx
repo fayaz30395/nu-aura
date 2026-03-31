@@ -27,7 +27,7 @@ import {
 } from '@/components/ui';
 import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { lmsService, CourseSummaryDto } from '@/lib/services/lms.service';
+import { lmsService, CourseSummaryDto } from '@/lib/services/grow/lms.service';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { createLogger } from '@/lib/utils/logger';

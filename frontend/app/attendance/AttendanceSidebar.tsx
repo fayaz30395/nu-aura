@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { History, ClipboardCheck, Users, CalendarDays, Coffee, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
-import { AttendanceRecord, Holiday } from '@/lib/types/attendance';
+import { AttendanceRecord, Holiday } from '@/lib/types/hrms/attendance';
 import { STANDARD_WORK_HOURS, calculateHours, WeekStats } from './utils';
 
 // ─── Quick Action Links ───────────────────────────────────────────────────────

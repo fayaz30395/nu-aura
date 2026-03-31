@@ -43,7 +43,7 @@ import {
   BenefitClaim,
   CoverageLevel,
   ClaimRequest,
-} from '@/lib/types/benefits';
+} from '@/lib/types/hrms/benefits';
 import {
   useActiveBenefitPlans,
   useActiveEnrollments,

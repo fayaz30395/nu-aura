@@ -26,7 +26,7 @@ import { useTaxDeclarations } from '@/lib/hooks/queries/useTax';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';
-import type { DeclarationStatus, TaxDeclarationResponse } from '@/lib/types/tax';
+import type { DeclarationStatus, TaxDeclarationResponse } from '@/lib/types/hrms/tax';
 
 export default function TaxOverviewPage() {
   const router = useRouter();

@@ -10,10 +10,10 @@ import {
   RemoteWorkerResponse,
   UpcomingHolidayResponse,
   AttendanceTodayResponse,
-} from '@/lib/services/home.service';
-import { wallService, WallPostResponse, PageResponse } from '@/lib/services/wall.service';
-import { leaveService } from '@/lib/services/leave.service';
-import { LeaveBalance } from '@/lib/types/leave';
+} from '@/lib/services/core/home.service';
+import { wallService, WallPostResponse, PageResponse } from '@/lib/services/core/wall.service';
+import { leaveService } from '@/lib/services/hrms/leave.service';
+import { LeaveBalance } from '@/lib/types/hrms/leave';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

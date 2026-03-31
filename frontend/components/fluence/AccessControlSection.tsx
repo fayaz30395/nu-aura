@@ -6,8 +6,8 @@ import { Building2, Users, Shield, Info } from 'lucide-react';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { Card, CardContent } from '@/components/ui/Card';
-import type { Department } from '@/lib/types/employee';
-import type { Employee } from '@/lib/types/employee';
+import type { Department } from '@/lib/types/hrms/employee';
+import type { Employee } from '@/lib/types/hrms/employee';
 
 interface AccessControlSectionProps {
   /** Current visibility value */

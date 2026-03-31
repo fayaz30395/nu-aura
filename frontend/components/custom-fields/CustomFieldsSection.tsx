@@ -8,7 +8,7 @@ import {
   CustomFieldValue,
   CustomFieldValueRequest,
   EntityType,
-} from '@/lib/types/custom-fields';
+} from '@/lib/types/core/custom-fields';
 import CustomFieldRenderer from './CustomFieldRenderer';
 
 interface CustomFieldsSectionProps {

@@ -23,7 +23,7 @@ import {
 } from '@/components/ui';
 import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
-import type { CourseEnrollment } from '@/lib/services/lms.service';
+import type { CourseEnrollment } from '@/lib/services/grow/lms.service';
 import { useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
 import { createLogger } from '@/lib/utils/logger';
 

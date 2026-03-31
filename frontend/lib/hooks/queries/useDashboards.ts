@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '@/lib/services/dashboard.service';
+import { dashboardService } from '@/lib/services/core/dashboard.service';
 import {
   ExecutiveDashboardData,
   EmployeeDashboardData,
   ManagerDashboardResponse,
   ManagerTeamProjectsResponse,
-} from '@/lib/types/dashboard';
+} from '@/lib/types/core/dashboard';
 
 // Query key factory for dashboard queries
 export const dashboardKeys = {

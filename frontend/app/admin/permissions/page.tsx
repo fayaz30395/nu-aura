@@ -19,7 +19,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Permission, RoleWithDetails } from '@/lib/types/roles';
+import { Permission, RoleWithDetails } from '@/lib/types/core/roles';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { ConfirmDialog } from '@/components/ui';

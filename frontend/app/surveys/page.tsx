@@ -37,8 +37,8 @@ import {
   Textarea,
   ConfirmDialog,
 } from '@/components/ui';
-import type { Survey, SurveyRequest } from '@/lib/types/survey';
-import { SurveyType, SurveyStatus } from '@/lib/types/survey';
+import type { Survey, SurveyRequest } from '@/lib/types/grow/survey';
+import { SurveyType, SurveyStatus } from '@/lib/types/grow/survey';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
 import {
   useAllSurveys,

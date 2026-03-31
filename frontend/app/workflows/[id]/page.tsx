@@ -22,7 +22,7 @@ import type {
   WorkflowEntityType,
   WorkflowType,
   ApproverType,
-} from '@/lib/types/workflow';
+} from '@/lib/types/core/workflow';
 import {
   ArrowLeft,
   ChevronDown,

@@ -46,8 +46,8 @@ import {
   InterviewMode,
   InterviewStatus,
   LeavingReason,
-} from '@/lib/types/exit';
-import type { ExitInterview } from '@/lib/types/exit';
+} from '@/lib/types/hrms/exit';
+import type { ExitInterview } from '@/lib/types/hrms/exit';
 import { apiClient } from '@/lib/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { formatDate } from '@/lib/utils';

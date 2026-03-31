@@ -178,7 +178,8 @@ export default function EditWikiPage() {
             <div className="flex items-center gap-4 mb-2">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                aria-label="Go back"
+                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>

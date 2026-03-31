@@ -4,8 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   TravelStatus,
   TravelRequestFilters,
-} from '@/lib/types/travel';
-import { travelService } from '@/lib/services/travel.service';
+} from '@/lib/types/hrms/travel';
+import { travelService } from '@/lib/services/hrms/travel.service';
 
 // Query Key Factory
 export const travelKeys = {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { employeeService } from '@/lib/services/employee.service';
-import { CreateEmployeeRequest, UpdateEmployeeRequest, Employee } from '@/lib/types/employee';
+import { employeeService } from '@/lib/services/hrms/employee.service';
+import { CreateEmployeeRequest, UpdateEmployeeRequest, Employee } from '@/lib/types/hrms/employee';
 
 // Query keys for cache management
 export const employeeKeys = {

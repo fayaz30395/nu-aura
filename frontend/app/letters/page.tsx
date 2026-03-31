@@ -42,7 +42,7 @@ import {
   GenerateOfferLetterRequest,
   LetterCategory,
   LetterStatus,
-} from '@/lib/types/letter';
+} from '@/lib/types/hrms/letter';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';

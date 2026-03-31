@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isAdmin } from '@/lib/utils';
-import { Spotlight, CreateSpotlightRequest, UpdateSpotlightRequest } from '@/lib/types/spotlight';
+import { Spotlight, CreateSpotlightRequest, UpdateSpotlightRequest } from '@/lib/types/platform/spotlight';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';

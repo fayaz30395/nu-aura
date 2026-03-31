@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { assetService } from '@/lib/services/asset.service';
-import { CreateAssetRequest, AssetStatus, UpdateAssetRequest } from '@/lib/types/asset';
+import { assetService } from '@/lib/services/hrms/asset.service';
+import { CreateAssetRequest, AssetStatus, UpdateAssetRequest } from '@/lib/types/hrms/asset';
 
 // Query keys for cache management
 export const assetKeys = {

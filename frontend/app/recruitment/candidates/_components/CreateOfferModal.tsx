@@ -4,7 +4,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Loader2, X } from 'lucide-react';
-import { Candidate } from '@/lib/types/recruitment';
+import { Candidate } from '@/lib/types/hire/recruitment';
 import { CreateOfferFormData } from '@/lib/validations/recruitment';
 
 interface CreateOfferModalProps {

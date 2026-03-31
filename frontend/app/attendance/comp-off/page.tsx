@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Clock, CheckCircle, XCircle, PlusCircle, AlertCircle } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
+import { Modal } from '@mantine/core';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { TablePagination } from '@/components/ui';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 
@@ -25,6 +28,14 @@ interface CompOffRequest {
   reviewedAt?: string;
   reviewNote?: string;
   createdAt: string;
+}
+
+interface PageResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
 }
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
@@ -64,7 +75,10 @@ export default function CompOffPage() {
   }, [isReady, hasAccess, router]);
 
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
-  const [employeeId] = useState('current'); // resolved by backend from JWT
+  const [pendingPage, setPendingPage] = useState(0);
+  const [pendingPageSize, setPendingPageSize] = useState(20);
+  const { user } = useAuth();
+  const employeeId = user?.employeeId;
 
   const {
     register,
@@ -79,12 +93,13 @@ export default function CompOffPage() {
   const { data: myRequests, isLoading: loadingMy } = useQuery<CompOffRequest[]>({
     queryKey: ['comp-off', 'my', employeeId],
     queryFn: () => apiClient.get<CompOffRequest[]>(`/comp-off/my-pending/${employeeId}`).then(r => r.data),
+    enabled: !!employeeId,
   });
 
-  const { data: pendingRequests, isLoading: loadingPending } = useQuery<{ content: CompOffRequest[] }>({
-    queryKey: ['comp-off', 'pending'],
-    queryFn: () => apiClient.get<{ content: CompOffRequest[] }>('/comp-off/pending').then(r => r.data),
-    enabled: activeTab === 'pending',
+  const { data: pendingRequests, isLoading: loadingPending } = useQuery<PageResponse<CompOffRequest>>({
+    queryKey: ['comp-off', 'pending', pendingPage, pendingPageSize],
+    queryFn: () => apiClient.get<PageResponse<CompOffRequest>>('/comp-off/pending', { params: { page: pendingPage, size: pendingPageSize } }).then(r => r.data),
+    enabled: activeTab === 'pending' && !!employeeId,
   });
 
   const requestMutation = useMutation({
@@ -101,10 +116,21 @@ export default function CompOffPage() {
   const approveMutation = useMutation({
     mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
       apiClient.post(`/comp-off/${id}/${action}`, { reviewerId: employeeId, note: '' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comp-off'] }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['comp-off'] });
+      const actionLabel = variables.action === 'approve' ? 'approved' : 'rejected';
+      notifications.show({
+        title: 'Success',
+        message: `Comp-off request ${actionLabel} successfully`,
+        color: variables.action === 'approve' ? 'green' : 'orange',
+      });
+    },
+    onError: () => {
+      notifications.show({ title: 'Error', message: 'Failed to process comp-off request', color: 'red' });
+    },
   });
 
-  if (!isReady || !hasAccess) return null;
+  if (!isReady || !hasAccess || !employeeId) return null;
 
   const onSubmitForm = (data: CompOffFormData) => {
     requestMutation.mutate({ employeeId, attendanceDate: data.attendanceDate, reason: data.reason });
@@ -151,7 +177,10 @@ export default function CompOffPage() {
           {['my', 'pending'].map(tab => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab as 'my' | 'pending')}
+              onClick={() => {
+                setActiveTab(tab as 'my' | 'pending');
+                setPendingPage(0);
+              }}
               className={`pb-2 px-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
                   ? 'border-accent-600 text-accent-600'
@@ -235,51 +264,64 @@ export default function CompOffPage() {
                 </tbody>
               </table>
             )}
+
+            {activeTab === 'pending' && (pendingRequests?.totalElements ?? 0) > 0 && (
+              <div className="px-4 pb-4">
+                <TablePagination
+                  currentPage={pendingPage}
+                  totalPages={pendingRequests?.totalPages ?? 0}
+                  totalItems={pendingRequests?.totalElements ?? 0}
+                  pageSize={pendingPageSize}
+                  onPageChange={setPendingPage}
+                  onPageSizeChange={(size) => {
+                    setPendingPageSize(size);
+                    setPendingPage(0);
+                  }}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
       {/* Request Modal */}
-      {showRequestModal && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
-            <CardHeader>
-              <CardTitle>Request Comp-Off</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
-                  <input
-                    type="date"
-                    {...register('attendanceDate')}
-                    className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
-                  />
-                  {errors.attendanceDate && (
-                    <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
-                  )}
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
-                  <textarea
-                    {...register('reason')}
-                    rows={3}
-                    placeholder="Optional: why you worked overtime"
-                    className="input-aura"
-                  />
-                </div>
-                <div className="flex gap-4 justify-end pt-2">
-                  <Button type="button" variant="outline" onClick={handleModalClose} className="btn-secondary">Cancel</Button>
-                  <Button type="submit" disabled={requestMutation.isPending} className="btn-primary">
-                    {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <Modal
+        opened={showRequestModal}
+        onClose={handleModalClose}
+        title="Request Comp-Off"
+        size="md"
+        centered
+      >
+        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
+            <input
+              type="date"
+              {...register('attendanceDate')}
+              className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
+            />
+            {errors.attendanceDate && (
+              <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
+            )}
+            <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
+            <textarea
+              {...register('reason')}
+              rows={3}
+              placeholder="Optional: why you worked overtime"
+              className="input-aura"
+            />
+          </div>
+          <div className="flex gap-4 justify-end pt-2">
+            <Button type="button" variant="outline" onClick={handleModalClose} className="btn-secondary">Cancel</Button>
+            <Button type="submit" disabled={requestMutation.isPending} className="btn-primary">
+              {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </AppLayout>
   );
 }

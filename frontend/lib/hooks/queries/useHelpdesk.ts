@@ -6,7 +6,7 @@ import {
   TicketRequest,
   TicketCommentRequest,
   TicketStatus,
-} from '@/lib/services/helpdesk.service';
+} from '@/lib/services/hrms/helpdesk.service';
 
 export const helpdeskKeys = {
   all: ['helpdesk'] as const,

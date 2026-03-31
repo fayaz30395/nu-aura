@@ -124,6 +124,7 @@ export default function SearchPage() {
           <input
             type="text"
             placeholder="Search wiki pages, blog posts, templates..."
+            aria-label="Search NU-Fluence"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`${dsInput.base} w-full pl-12 pr-4 py-4 text-base`}
@@ -142,7 +143,7 @@ export default function SearchPage() {
               key={label}
               onClick={() => handleTypeChange(type)}
               whileTap={{ scale: 0.95 }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                 selectedType === type
                   ? 'bg-[var(--accent-700)] text-white shadow-md'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
@@ -234,7 +235,7 @@ export default function SearchPage() {
               </p>
             </motion.div>
 
-            {results.map((result, _index) => {
+            {results.map((result) => {
               const Icon = iconMap[result.type] || FileText;
               const colorClass = typeColorMap[result.type] || typeColorMap.wiki;
               const typeLabel = typeDisplayMap[result.type] || result.type;
@@ -247,6 +248,8 @@ export default function SearchPage() {
                 >
                   <Card
                     className={`${dsCard.interactive} cursor-pointer group`}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => {
                       if (result.url) {
                         router.push(result.url);
@@ -259,6 +262,24 @@ export default function SearchPage() {
                         const basePath = typeRoutes[result.type];
                         if (basePath) {
                           router.push(`${basePath}${result.id}`);
+                        }
+                      }
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (result.url) {
+                          router.push(result.url);
+                        } else {
+                          const typeRoutes: Record<string, string> = {
+                            wiki: '/fluence/wiki/',
+                            blog: '/fluence/blogs/',
+                            template: '/fluence/templates/',
+                          };
+                          const basePath = typeRoutes[result.type];
+                          if (basePath) {
+                            router.push(`${basePath}${result.id}`);
+                          }
                         }
                       }
                     }}

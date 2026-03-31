@@ -6,7 +6,7 @@ import { customFieldsApi } from '@/lib/api/custom-fields';
 import {
   CustomFieldDefinitionRequest,
   EntityType,
-} from '@/lib/types/custom-fields';
+} from '@/lib/types/core/custom-fields';
 
 // Query key factory
 const customFieldKeys = {

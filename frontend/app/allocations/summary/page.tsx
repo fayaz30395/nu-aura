@@ -15,7 +15,7 @@ import {
   TablePagination,
 } from '@/components/ui';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { AllocationSummaryItem } from '@/lib/types/hrms-allocation';
+import { AllocationSummaryItem } from '@/lib/types/hrms/hrms-allocation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useAllocationSummary,

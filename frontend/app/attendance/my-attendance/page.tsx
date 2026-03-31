@@ -20,7 +20,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Loading';
-import { AttendanceRecord } from '@/lib/types/attendance';
+import { AttendanceRecord } from '@/lib/types/hrms/attendance';
 import { getMonthStartString, getMonthEndString, getLocalDateString, getDateOffsetString } from '@/lib/utils/dateUtils';
 import { useAttendanceByDateRange, useMyTimeEntries, useHolidaysByYear } from '@/lib/hooks/queries/useAttendance';
 

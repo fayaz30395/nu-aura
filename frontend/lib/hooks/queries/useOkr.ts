@@ -1,10 +1,10 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { performanceRevolutionService } from '@/lib/services/performance.service';
-import { okrService } from '@/lib/services/okr.service';
-import { Objective, KeyResult } from '@/lib/types/performance';
-import type { ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
+import { performanceRevolutionService } from '@/lib/services/grow/performance.service';
+import { okrService } from '@/lib/services/grow/okr.service';
+import { Objective, KeyResult } from '@/lib/types/grow/performance';
+import type { ObjectiveRequest, KeyResultRequest } from '@/lib/services/grow/okr.service';
 import { notifications } from '@mantine/notifications';
 import { performanceKeys } from './performanceKeys';
 

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
-import { wallService, CreatePostRequest } from '@/lib/services/wall.service';
+import { wallService, CreatePostRequest } from '@/lib/services/core/wall.service';
 import { wallKeys } from '@/lib/hooks/queries/useWall';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { useAuth } from '@/lib/hooks/useAuth';

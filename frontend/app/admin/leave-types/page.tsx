@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LeaveType, LeaveTypeRequest, AccrualType, GenderSpecific } from '@/lib/types/leave';
+import { LeaveType, LeaveTypeRequest, AccrualType, GenderSpecific } from '@/lib/types/hrms/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { ConfirmDialog } from '@/components/ui';

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Loader2, User, X } from 'lucide-react';
-import { Employee } from '@/lib/types/employee';
-import { employeeService } from '@/lib/services/employee.service';
+import { Employee } from '@/lib/types/hrms/employee';
+import { employeeService } from '@/lib/services/hrms/employee.service';
 import { getInitials } from '@/lib/utils';
 import { logger } from '@/lib/utils/logger';
 

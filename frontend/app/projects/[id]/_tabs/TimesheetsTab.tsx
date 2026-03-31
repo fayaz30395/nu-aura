@@ -19,7 +19,7 @@ import {
   ResponsiveTable,
 } from '@/components/ui';
 import { usePsaProjectTimesheets, useCreatePsaTimesheet, useSubmitPsaTimesheet } from '@/lib/hooks/queries/usePsa';
-import { PSATimesheet } from '@/lib/types/psa';
+import { PSATimesheet } from '@/lib/types/hrms/psa';
 
 interface TimesheetsTabProps {
   projectId: string;

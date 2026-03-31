@@ -28,7 +28,7 @@ import {
   getAllocationStatusLabel,
   formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { format } from 'date-fns';
 
 export interface AllocationEditData {
@@ -108,7 +108,7 @@ export function EmployeeAllocationDetailModal({
   }).length;
 
   // Calculate dynamic status based on active allocation
-  const dynamicStatus: import('@/lib/types/resource-management').AllocationStatus =
+  const dynamicStatus: import('@/lib/types/hrms/resource-management').AllocationStatus =
     activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED ? 'OVER_ALLOCATED' :
     activeAllocation >= ALLOCATION_THRESHOLDS.OPTIMAL_MIN ? 'OPTIMAL' :
     activeAllocation > 0 ? 'UNDER_UTILIZED' : 'UNASSIGNED';

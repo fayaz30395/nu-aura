@@ -5,7 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeSchedule } from '@/lib/hooks/queries/useShifts';
 import { NuAuraLoader } from '@/components/ui/Loading';
-import { ScheduleEntry } from '@/lib/types/shift';
+import { ScheduleEntry } from '@/lib/types/hrms/shift';
 import {
   ChevronLeft,
   ChevronRight,

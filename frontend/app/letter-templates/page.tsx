@@ -48,7 +48,7 @@ import {
   LetterCategory,
   CreateLetterTemplateRequest,
   PlaceholderItem,
-} from '@/lib/types/letter';
+} from '@/lib/types/hrms/letter';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('LetterTemplatesPage');

@@ -9,7 +9,7 @@ import {
   Button,
   Input,
 } from '@/components/ui';
-import type { TrainingEnrollmentRequest } from '@/lib/types/training';
+import type { TrainingEnrollmentRequest } from '@/lib/types/grow/training';
 
 interface EnrollEmployeeModalProps {
   isOpen: boolean;

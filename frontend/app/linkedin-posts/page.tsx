@@ -32,7 +32,7 @@ import {
   useUpdateLinkedInPost,
   useDeleteLinkedInPost,
 } from '@/lib/hooks/queries/useLinkedIn';
-import { LinkedInPost, CreateLinkedInPostRequest, UpdateLinkedInPostRequest } from '@/lib/types/linkedin';
+import { LinkedInPost, CreateLinkedInPostRequest, UpdateLinkedInPostRequest } from '@/lib/types/platform/linkedin';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';

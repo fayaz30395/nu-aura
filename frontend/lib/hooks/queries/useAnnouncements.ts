@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { announcementService, CreateAnnouncementRequest, Announcement } from '@/lib/services/announcement.service';
+import { announcementService, CreateAnnouncementRequest, Announcement } from '@/lib/services/platform/announcement.service';
 
 // Query keys for cache management
 export const announcementKeys = {

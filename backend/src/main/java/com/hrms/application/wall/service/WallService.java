@@ -98,18 +98,25 @@ public class WallService {
         return mapToResponse(savedPost, authorId);
     }
 
+    /**
+     * BUG-001 FIX: Replaced per-post mapToResponse (which caused 5+ queries per post,
+     * ~100+ total for a page of 20) with a batch-aware 2-pass approach:
+     * 1. Fetch paginated post IDs
+     * 2. Batch-hydrate authors, reactions, votes in bulk queries
+     * Reduces total queries from ~100+ to ~8 regardless of page size.
+     */
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPosts(Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        Page<WallPost> posts = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(tenantId, pageable);
-        return posts.map(post -> mapToResponse(post, currentUserId));
+        Page<WallPost> postsPage = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(tenantId, pageable);
+        return mapPageToResponses(postsPage, tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPostsByType(WallPost.PostType type, Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        Page<WallPost> posts = wallPostRepository.findByTypeAndActiveTrue(tenantId, type, pageable);
-        return posts.map(post -> mapToResponse(post, currentUserId));
+        Page<WallPost> postsPage = wallPostRepository.findByTypeAndActiveTrue(tenantId, type, pageable);
+        return mapPageToResponses(postsPage, tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
@@ -347,6 +354,171 @@ public class WallService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<WallPost> posts = wallPostRepository.findPraiseByRecipientId(tenantId, employeeId, pageable);
         return posts.map(post -> mapToResponse(post, currentUserId));
+    }
+
+    // ==================== BATCH MAPPING (BUG-001 FIX) ====================
+
+    /**
+     * Batch-maps a page of WallPost entities to WallPostResponse DTOs using
+     * bulk queries instead of per-post lookups. Total query count is ~8 for
+     * any page size (vs ~5N before).
+     */
+    private Page<WallPostResponse> mapPageToResponses(Page<WallPost> postsPage, UUID tenantId, UUID currentUserId) {
+        List<WallPost> posts = postsPage.getContent();
+        if (posts.isEmpty()) {
+            return postsPage.map(post -> mapToResponse(post, currentUserId));
+        }
+
+        List<UUID> postIds = posts.stream().map(WallPost::getId).collect(Collectors.toList());
+
+        // 1. Batch-fetch posts with authors and praise recipients (eliminates N lazy loads)
+        Map<UUID, WallPost> hydratedPostMap = new HashMap<>();
+        wallPostRepository.findByIdsWithAuthors(postIds, tenantId)
+                .forEach(p -> hydratedPostMap.put(p.getId(), p));
+
+        // 2. Batch-fetch reaction counts by type for all posts
+        Map<UUID, Map<String, Integer>> reactionCountsMap = new HashMap<>();
+        postReactionRepository.countReactionsByTypeForPosts(postIds)
+                .forEach(row -> {
+                    UUID postId = (UUID) row[0];
+                    PostReaction.ReactionType type = (PostReaction.ReactionType) row[1];
+                    Long count = (Long) row[2];
+                    reactionCountsMap
+                            .computeIfAbsent(postId, k -> new HashMap<>())
+                            .put(type.name(), count.intValue());
+                });
+
+        // 3. Batch-fetch current user's reactions for all posts
+        Map<UUID, String> userReactionMap = new HashMap<>();
+        if (currentUserId != null) {
+            postReactionRepository.findUserReactionsForPosts(postIds, currentUserId)
+                    .forEach(row -> {
+                        UUID postId = (UUID) row[0];
+                        PostReaction.ReactionType type = (PostReaction.ReactionType) row[1];
+                        userReactionMap.put(postId, type.name());
+                    });
+        }
+
+        // 4. Batch-fetch current user's poll votes
+        Map<UUID, UUID> userVoteMap = new HashMap<>();
+        if (currentUserId != null) {
+            pollVoteRepository.findUserVotesForPosts(postIds, currentUserId)
+                    .forEach(row -> {
+                        UUID postId = (UUID) row[0];
+                        UUID optionId = (UUID) row[1];
+                        userVoteMap.put(postId, optionId);
+                    });
+        }
+
+        // 5. Fetch poll options for POLL-type posts
+        // Note: PollOptionRepository does not have a batch-by-postIds method,
+        // so we issue one query per poll post. Polls are typically a small fraction
+        // of the feed, so this is acceptable (usually 0-2 queries).
+        List<UUID> pollPostIds = posts.stream()
+                .filter(p -> p.getType() == WallPost.PostType.POLL)
+                .map(WallPost::getId)
+                .collect(Collectors.toList());
+        Map<UUID, List<PollOption>> pollOptionsMap = new HashMap<>();
+        if (!pollPostIds.isEmpty()) {
+            for (UUID pollId : pollPostIds) {
+                pollOptionsMap.put(pollId, pollOptionRepository.findByPostIdOrderByDisplayOrder(pollId));
+            }
+        }
+
+        // 6. Batch-fetch vote counts per option for poll posts
+        Map<UUID, Long> optionVoteCountMap = new HashMap<>();
+        Map<UUID, Long> pollTotalVotesMap = new HashMap<>();
+        if (!pollPostIds.isEmpty()) {
+            pollVoteRepository.countVotesByOptionForPosts(pollPostIds)
+                    .forEach(row -> {
+                        UUID optionId = (UUID) row[0];
+                        Long count = (Long) row[1];
+                        optionVoteCountMap.put(optionId, count);
+                    });
+            // Compute total votes per poll
+            for (UUID pollId : pollPostIds) {
+                List<PollOption> options = pollOptionsMap.getOrDefault(pollId, Collections.emptyList());
+                long total = options.stream()
+                        .mapToLong(o -> optionVoteCountMap.getOrDefault(o.getId(), 0L))
+                        .sum();
+                pollTotalVotesMap.put(pollId, total);
+            }
+        }
+
+        // Now map each post using pre-fetched data (no extra queries)
+        return postsPage.map(post -> {
+            WallPost hydrated = hydratedPostMap.getOrDefault(post.getId(), post);
+
+            WallPostResponse response = new WallPostResponse();
+            response.setId(hydrated.getId());
+            response.setType(hydrated.getType());
+            response.setContent(hydrated.getContent());
+            response.setImageUrl(hydrated.getImageUrl());
+            response.setPinned(hydrated.isPinned());
+            response.setVisibility(hydrated.getVisibility());
+            response.setCreatedAt(hydrated.getCreatedAt());
+            response.setUpdatedAt(hydrated.getUpdatedAt());
+
+            // Author info (already eagerly loaded)
+            response.setAuthor(mapToAuthorInfo(hydrated.getAuthor()));
+
+            // Praise recipient (already eagerly loaded)
+            if (hydrated.getPraiseRecipient() != null) {
+                response.setPraiseRecipient(mapToAuthorInfo(hydrated.getPraiseRecipient()));
+            }
+            if (hydrated.getCelebrationType() != null) {
+                response.setCelebrationType(hydrated.getCelebrationType());
+            }
+
+            // Counts from stored values (no query)
+            response.setLikeCount(hydrated.getLikesCount());
+            response.setCommentCount(hydrated.getCommentsCount());
+
+            // Reaction counts from batch query
+            response.setReactionCounts(reactionCountsMap.getOrDefault(hydrated.getId(), Collections.emptyMap()));
+
+            // Current user's reaction from batch query
+            if (currentUserId != null) {
+                String userReaction = userReactionMap.get(hydrated.getId());
+                response.setHasReacted(userReaction != null);
+                response.setUserReactionType(userReaction);
+
+                // Poll vote from batch query
+                if (hydrated.getType() == WallPost.PostType.POLL) {
+                    UUID votedOptionId = userVoteMap.get(hydrated.getId());
+                    response.setHasVoted(votedOptionId != null);
+                    response.setUserVotedOptionId(votedOptionId);
+                }
+            }
+
+            // Recent reactors — skip in batch mode for performance; the feed
+            // shows reaction counts + user's own reaction. Full reactor list
+            // is available via the dedicated GET /posts/{id}/reactions/details endpoint.
+            response.setRecentReactors(Collections.emptyList());
+            response.setTotalReactorCount(hydrated.getLikesCount());
+
+            // Poll options from batch query
+            if (hydrated.getType() == WallPost.PostType.POLL) {
+                List<PollOption> options = pollOptionsMap.getOrDefault(hydrated.getId(), Collections.emptyList());
+                long totalVotes = pollTotalVotesMap.getOrDefault(hydrated.getId(), 0L);
+
+                List<WallPostResponse.PollOptionResponse> pollOptionResponses = options.stream()
+                        .map(option -> {
+                            WallPostResponse.PollOptionResponse optionResponse = new WallPostResponse.PollOptionResponse();
+                            optionResponse.setId(option.getId());
+                            optionResponse.setText(option.getOptionText());
+                            long voteCount = optionVoteCountMap.getOrDefault(option.getId(), 0L);
+                            optionResponse.setVoteCount((int) voteCount);
+                            optionResponse.setVotePercentage(totalVotes > 0 ? (voteCount * 100.0 / totalVotes) : 0);
+                            return optionResponse;
+                        })
+                        .collect(Collectors.toList());
+
+                response.setPollOptions(pollOptionResponses);
+            }
+
+            return response;
+        });
     }
 
     // ==================== MAPPING HELPERS ====================

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { Mail, Phone, Building, MapPin, X } from 'lucide-react';
-import { Candidate } from '@/lib/types/recruitment';
+import { Candidate } from '@/lib/types/hire/recruitment';
 import { getStatusColor, getStageColor } from '../utils';
 
 interface ViewCandidateModalProps {

@@ -24,7 +24,7 @@ import {
   useUploadAttachment,
   useDeleteAttachment,
 } from '@/lib/hooks/queries/useFluence';
-import { FluenceAttachment } from '@/lib/types/fluence';
+import { FluenceAttachment } from '@/lib/types/platform/fluence';
 import { TextInput } from '@mantine/core';
 
 const _log = createLogger('FluenceDrivePage');

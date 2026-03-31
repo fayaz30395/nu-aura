@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { fluenceService } from '@/lib/services/fluence.service';
+import { fluenceService } from '@/lib/services/platform/fluence.service';
 import {
   WikiPage,
   EditLockResponse,
@@ -19,7 +19,7 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   FavoriteContentType,
-} from '@/lib/types/fluence';
+} from '@/lib/types/platform/fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

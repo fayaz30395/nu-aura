@@ -24,7 +24,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAttendanceByDateRange, useMyTimeEntries, useCheckIn, useCheckOut, useRequestRegularization } from '@/lib/hooks/queries/useAttendance';
-import { AttendanceRecord, AttendanceStatus } from '@/lib/types/attendance';
+import { AttendanceRecord, AttendanceStatus } from '@/lib/types/hrms/attendance';
 import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { createLogger } from '@/lib/utils/logger';
 

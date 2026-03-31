@@ -40,7 +40,7 @@ import {
   useImpersonationToken,
   useGrowthMetrics,
 } from '@/lib/hooks/queries/useSystemAdmin';
-import { TenantListItem, MonthlyGrowth } from '@/lib/types/admin-system';
+import { TenantListItem, MonthlyGrowth } from '@/lib/types/core/admin-system';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('SystemPage');

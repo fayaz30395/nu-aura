@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { workflowService } from '@/lib/services/workflow.service';
-import type { WorkflowExecutionResponse, WorkflowExecutionStatus, Page, ApprovalDelegateRequest, ApprovalDelegateResponse } from '@/lib/types/workflow';
+import { workflowService } from '@/lib/services/core/workflow.service';
+import type { WorkflowExecutionResponse, WorkflowExecutionStatus, Page, ApprovalDelegateRequest, ApprovalDelegateResponse } from '@/lib/types/core/workflow';
 
 export const approvalKeys = {
   all: ['approvals'] as const,

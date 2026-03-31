@@ -13,7 +13,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import type { WikiSpace } from '@/lib/types/fluence';
+import type { WikiSpace } from '@/lib/types/platform/fluence';
 
 // ─── Props ──────────────────────────────────────────────────────
 

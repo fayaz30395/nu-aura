@@ -25,7 +25,7 @@ import {
   useActiveExpenseCategories,
 } from '@/lib/hooks/queries';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ConfirmDialog } from '@/components/ui';
-import { ExpenseStatus, CreateExpenseItemRequest } from '@/lib/types/expense';
+import { ExpenseStatus, CreateExpenseItemRequest } from '@/lib/types/hrms/expense';
 
 const itemSchema = z.object({
   description: z.string().min(1, 'Description required'),

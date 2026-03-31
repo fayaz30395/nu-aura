@@ -20,7 +20,7 @@ import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { ResourceManagementApiError } from '@/lib/services/resource-management.service';
+import { ResourceManagementApiError } from '@/lib/services/hrms/resource-management.service';
 import { useWorkloadDashboard, useMyPendingApprovals } from '@/lib/hooks/queries/useResources';
 import { CreateAllocationModal } from '@/components/resources/CreateAllocationModal';
 

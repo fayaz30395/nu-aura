@@ -12,7 +12,7 @@ import {
 } from '@/components/ui';
 import { StatCard } from '@/components/ui/StatCard';
 import { usePsaProjectInvoices } from '@/lib/hooks/queries/usePsa';
-import { PSAInvoice } from '@/lib/types/psa';
+import { PSAInvoice } from '@/lib/types/hrms/psa';
 import { formatCurrency } from '@/lib/utils';
 
 interface InvoicesTabProps {

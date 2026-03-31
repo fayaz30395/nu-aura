@@ -10,8 +10,8 @@ import {
   Button,
   Badge,
 } from '@/components/ui';
-import { EnrollmentStatus } from '@/lib/types/training';
-import type { TrainingProgram, TrainingEnrollment } from '@/lib/types/training';
+import { EnrollmentStatus } from '@/lib/types/grow/training';
+import type { TrainingProgram, TrainingEnrollment } from '@/lib/types/grow/training';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
 
 interface ViewProgramModalProps {

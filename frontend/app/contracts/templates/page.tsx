@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useTemplates, useDeleteTemplate } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/contract.service';
+import { contractService } from '@/lib/services/hrms/contract.service';
 import { Button, Card, Input, Badge } from '@mantine/core';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2, Loader2 } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ContractTemplatesPage() {
@@ -26,7 +27,7 @@ export default function ContractTemplatesPage() {
   const [search, setSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
-  const { data: templatesData, isLoading } = useTemplates({ page, size: 20 });
+  const { data: templatesData, isLoading, isError } = useTemplates({ page, size: 20 });
   const deleteMutation = useDeleteTemplate();
 
   if (!isReady || !hasAccess) return null;
@@ -46,7 +47,14 @@ export default function ContractTemplatesPage() {
 
   const confirmDelete = () => {
     if (templateToDelete) {
-      deleteMutation.mutate(templateToDelete);
+      deleteMutation.mutate(templateToDelete, {
+        onSuccess: () => {
+          notifications.show({ title: 'Deleted', message: 'Template deleted successfully', color: 'green' });
+        },
+        onError: () => {
+          notifications.show({ title: 'Error', message: 'Failed to delete template. Please try again.', color: 'red' });
+        },
+      });
       setDeleteConfirmOpen(false);
       setTemplateToDelete(null);
     }
@@ -80,7 +88,13 @@ export default function ContractTemplatesPage() {
 
         {/* Templates Grid */}
         {isLoading ? (
-          <div className="text-center p-8 text-[var(--text-muted)]">Loading templates...</div>
+          <div className="flex items-center justify-center p-16">
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          </div>
+        ) : isError ? (
+          <div className="text-center p-8 text-danger-500">
+            Failed to load templates. Please try refreshing the page.
+          </div>
         ) : templates.length === 0 ? (
           <div className="text-center p-8 text-[var(--text-muted)]">
             <p>No templates found</p>
@@ -91,7 +105,15 @@ export default function ContractTemplatesPage() {
               <Card
                 key={template.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push(`/contracts/templates/${template.id}`)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    router.push(`/contracts/templates/${template.id}`);
+                  }
+                }}
               >
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-semibold text-lg">{template.name}</h3>

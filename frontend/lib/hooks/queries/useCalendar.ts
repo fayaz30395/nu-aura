@@ -7,7 +7,7 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { calendarService } from '@/lib/services/calendar.service';
+import { calendarService } from '@/lib/services/hrms/calendar.service';
 import {
   CalendarEvent,
   CreateCalendarEventRequest,
@@ -16,7 +16,7 @@ import {
   EventsSummary,
   SyncResult,
   Page,
-} from '@/lib/types/calendar';
+} from '@/lib/types/hrms/calendar';
 
 // Query key factory
 export const calendarKeys = {

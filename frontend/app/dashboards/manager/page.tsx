@@ -43,7 +43,7 @@ import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useManagerDashboard, useManagerTeamProjects } from '@/lib/hooks/queries';
-import type { TeamMemberWithProjects, TeamMemberProjectAllocation } from '@/lib/types/dashboard';
+import type { TeamMemberWithProjects, TeamMemberProjectAllocation } from '@/lib/types/core/dashboard';
 
 // Utility function to format dates
 const formatDate = (dateStr: string) => {

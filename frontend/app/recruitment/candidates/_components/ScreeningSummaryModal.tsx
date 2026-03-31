@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { Brain, CheckCircle, AlertTriangle, ShieldAlert, MessageSquare, Sparkles, X } from 'lucide-react';
-import { CandidateScreeningSummaryResponse } from '@/lib/types/ai-recruitment';
+import { CandidateScreeningSummaryResponse } from '@/lib/types/hire/ai-recruitment';
 
 interface ScreeningSummaryModalProps {
   open: boolean;

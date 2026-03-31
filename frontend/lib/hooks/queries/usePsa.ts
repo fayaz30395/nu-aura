@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { psaService } from '@/lib/services/psa.service';
+import { psaService } from '@/lib/services/hrms/psa.service';
 import {
   PSATimesheet,
   PSATimeEntry,
   PSAInvoice,
-} from '@/lib/types/psa';
+} from '@/lib/types/hrms/psa';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query key factory

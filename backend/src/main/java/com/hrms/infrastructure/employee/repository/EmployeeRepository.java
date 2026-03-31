@@ -110,6 +110,15 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
        Optional<Employee> findByUserIdAndTenantId(UUID userId, UUID tenantId);
 
+       /**
+        * BUG-007 FIX: Batch-fetch employees by their linked user IDs.
+        * Used by AdminService.getAllUsers() to resolve department names for the
+        * admin user listing without N+1 queries.
+        */
+       @EntityGraph(attributePaths = { "user" })
+       @Query("SELECT e FROM Employee e WHERE e.user.id IN :userIds")
+       List<Employee> findAllByUserIdIn(@Param("userIds") Collection<UUID> userIds);
+
        // Analytics methods
        long countByTenantId(UUID tenantId);
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Badge, Card, CardContent } from '@/components/ui';
-import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
+import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms/hrms-project';
 import { formatCurrency } from '@/lib/utils';
 
 interface OverviewTabProps {

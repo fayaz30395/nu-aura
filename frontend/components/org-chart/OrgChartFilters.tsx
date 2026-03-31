@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Search, GitBranch, List, Building2 } from 'lucide-react';
-import { Department } from '@/lib/types/employee';
+import { Department } from '@/lib/types/hrms/employee';
 import { cn } from '@/lib/utils';
 
 export type ViewMode = 'tree' | 'list' | 'department';

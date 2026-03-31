@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Calendar, Cake, Gift } from 'lucide-react';
-import { UpcomingEvents } from '@/lib/types/analytics';
+import { UpcomingEvents } from '@/lib/types/core/analytics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface UpcomingEventsCardProps {

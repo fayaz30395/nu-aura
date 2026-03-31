@@ -7,7 +7,7 @@ import {
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
-} from '../types/roles';
+} from '../types/core/roles';
 
 export const rolesApi = {
   getAllRoles: async (): Promise<Role[]> => {

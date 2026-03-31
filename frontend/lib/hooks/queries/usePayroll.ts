@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { payrollService } from '@/lib/services/payroll.service';
+import { payrollService } from '@/lib/services/hrms/payroll.service';
 import {
   PayrollRunRequest,
   PayslipRequest,
   SalaryStructureRequest,
   PayrollRunStatus,
-} from '@/lib/types/payroll';
+} from '@/lib/types/hrms/payroll';
 
 // Query keys for cache management
 export const payrollKeys = {

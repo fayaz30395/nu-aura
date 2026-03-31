@@ -28,7 +28,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
-import { EntityType } from '@/lib/types/custom-fields';
+import { EntityType } from '@/lib/types/core/custom-fields';
 import { AppLayout } from '@/components/layout';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
 import {
@@ -43,7 +43,7 @@ import { createLogger } from '@/lib/utils/logger';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Asset } from '@/lib/types/asset';
+import { Asset } from '@/lib/types/hrms/asset';
 
 const log = createLogger('EmployeePage');
 

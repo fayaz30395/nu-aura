@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Loader2, ChevronLeft, ChevronRight, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useIntegrationEvents } from '@/lib/hooks/queries/useConnectors';
-import { IntegrationEventLog } from '@/lib/types/connector';
+import { IntegrationEventLog } from '@/lib/types/core/connector';
 
 interface IntegrationActivityLogProps {
   connectorId?: string;

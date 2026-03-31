@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { CustomTarget, TargetType } from '@/lib/types/roles';
-import { employeeService } from '@/lib/services/employee.service';
-import { departmentService } from '@/lib/services/department.service';
-import { officeLocationService, OfficeLocation } from '@/lib/services/office-location.service';
-import { Employee, Department } from '@/lib/types/employee';
+import { CustomTarget, TargetType } from '@/lib/types/core/roles';
+import { employeeService } from '@/lib/services/hrms/employee.service';
+import { departmentService } from '@/lib/services/hrms/department.service';
+import { officeLocationService, OfficeLocation } from '@/lib/services/hrms/office-location.service';
+import { Employee, Department } from '@/lib/types/hrms/employee';
 import { logger } from '@/lib/utils/logger';
 
 interface CustomTargetPickerProps {

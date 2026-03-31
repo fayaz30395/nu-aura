@@ -18,7 +18,7 @@ import {
   EmployeeWorkload,
   DepartmentWorkload,
   AllocationStatus,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import {
   useWorkloadDashboard,
   useEmployeeAllocationHistory,

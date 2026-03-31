@@ -31,7 +31,7 @@ import {
   LWFFrequency,
   FREQUENCY_LABELS,
   STATUS_CONFIG,
-} from '@/lib/types/lwf';
+} from '@/lib/types/hrms/lwf';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 

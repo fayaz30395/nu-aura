@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { employeeService } from '@/lib/services/employee.service';
-import { payrollService, BULK_PROCESSING_AVAILABLE } from '@/lib/services/payroll.service';
-import { Employee } from '@/lib/types/employee';
+import { employeeService } from '@/lib/services/hrms/employee.service';
+import { payrollService, BULK_PROCESSING_AVAILABLE } from '@/lib/services/hrms/payroll.service';
+import { Employee } from '@/lib/types/hrms/employee';
 import { logger } from '@/lib/utils/logger';
 import { formatCurrency } from '@/lib/utils';
 import {

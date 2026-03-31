@@ -44,7 +44,7 @@ import {
 import {
   SettlementStatus,
   PaymentMode,
-} from '@/lib/types/exit';
+} from '@/lib/types/hrms/exit';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const fnfFormSchema = z.object({

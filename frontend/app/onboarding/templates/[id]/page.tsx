@@ -33,7 +33,7 @@ import {
     useUpdateOnboardingTemplateTask,
     useDeleteOnboardingTemplateTask,
 } from '@/lib/hooks/queries/useOnboarding';
-import { OnboardingChecklistTemplate, OnboardingTemplateTask, OnboardingTaskCategory, OnboardingTaskPriority } from '@/lib/types/onboarding';
+import { OnboardingChecklistTemplate, OnboardingTemplateTask, OnboardingTaskCategory, OnboardingTaskPriority } from '@/lib/types/hire/onboarding';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { createLogger } from '@/lib/utils/logger';
 

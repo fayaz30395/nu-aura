@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelStatus } from '@/lib/types/travel';
+import { TravelStatus } from '@/lib/types/hrms/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';

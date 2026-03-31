@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { escalationApi } from '@/lib/api/escalation';
-import { EscalationConfig as _EscalationConfig, EscalationConfigRequest } from '@/lib/types/escalation';
+import { EscalationConfig as _EscalationConfig, EscalationConfigRequest } from '@/lib/types/core/escalation';
 
 // Query key factory
 const escalationKeys = {

@@ -10,7 +10,7 @@ import {
   X,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { reportService, ReportRequest } from '@/lib/services/report.service';
+import { reportService, ReportRequest } from '@/lib/services/core/report.service';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

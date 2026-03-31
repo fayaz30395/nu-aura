@@ -18,7 +18,7 @@ import {
   useRequestRegularization,
   useRejectRegularization,
 } from '@/lib/hooks/queries/useAttendance';
-import { AttendanceRecord } from '@/lib/types/attendance';
+import { AttendanceRecord } from '@/lib/types/hrms/attendance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployee } from '@/lib/hooks/queries/useEmployees';
 import { usePermissions } from '@/lib/hooks/usePermissions';

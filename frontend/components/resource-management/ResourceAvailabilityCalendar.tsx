@@ -10,7 +10,7 @@ import {
   getAvailabilityStatusColor,
   getAvailabilityStatusLabel,
   AVAILABILITY_COLORS,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { format, parseISO, isWeekend, isSameDay } from 'date-fns';
 import { User } from 'lucide-react';
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { projectService } from '@/lib/services/project.service';
-import { CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/project';
-import { hrmsProjectService } from '@/lib/services/hrms-project.service';
-import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-allocation.service';
-import { ProjectCreateRequest, ProjectUpdateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
+import { projectService } from '@/lib/services/hrms/project.service';
+import { CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/hrms/project';
+import { hrmsProjectService } from '@/lib/services/hrms/hrms-project.service';
+import { hrmsProjectAllocationService } from '@/lib/services/hrms/hrms-project-allocation.service';
+import { ProjectCreateRequest, ProjectUpdateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms/hrms-project';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management

@@ -10,8 +10,8 @@ import { Skeleton } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
-import { employeeService } from '@/lib/services/employee.service';
-import { Employee } from '@/lib/types/employee';
+import { employeeService } from '@/lib/services/hrms/employee.service';
+import { Employee } from '@/lib/types/hrms/employee';
 import { createLogger } from '@/lib/utils/logger';
 
 import {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { goalService } from '@/lib/services/performance.service';
-import { Goal, GoalRequest } from '@/lib/types/performance';
+import { goalService } from '@/lib/services/grow/performance.service';
+import { Goal, GoalRequest } from '@/lib/types/grow/performance';
 import { notifications } from '@mantine/notifications';
 import { performanceKeys } from './performanceKeys';
 

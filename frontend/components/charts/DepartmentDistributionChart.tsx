@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { DepartmentDistribution } from '@/lib/types/analytics';
+import { DepartmentDistribution } from '@/lib/types/core/analytics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface DepartmentDistributionChartProps {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { recruitmentService } from '@/lib/services/recruitment.service';
-import { aiRecruitmentService } from '@/lib/services/ai-recruitment.service';
+import { recruitmentService } from '@/lib/services/hire/recruitment.service';
+import { aiRecruitmentService } from '@/lib/services/hire/ai-recruitment.service';
 import {
   CreateJobOpeningRequest,
   CreateCandidateRequest,
@@ -10,13 +10,13 @@ import {
   JobStatus,
   MoveStageRequest,
   CreateOfferRequest,
-} from '@/lib/types/recruitment';
+} from '@/lib/types/hire/recruitment';
 import {
   ResumeParseRequest,
   CandidateScreeningSummaryRequest,
   JobDescriptionRequest,
   FeedbackSynthesisRequest,
-} from '@/lib/types/ai-recruitment';
+} from '@/lib/types/hire/ai-recruitment';
 
 // ==================== Query Keys ====================
 

@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useEmployees, useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import type { Employee } from '@/lib/types/employee';
+import type { Employee } from '@/lib/types/hrms/employee';
 import {
   Search,
   Users,

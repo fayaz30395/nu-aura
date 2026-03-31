@@ -14,7 +14,7 @@ import {
   FIELD_TYPE_INFO,
   ENTITY_TYPE_INFO,
   VISIBILITY_INFO,
-} from '@/lib/types/custom-fields';
+} from '@/lib/types/core/custom-fields';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { ConfirmDialog } from '@/components/ui';

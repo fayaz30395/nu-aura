@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +40,7 @@ import java.util.Set;
 @RequestMapping("/api/v1/leave-requests")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 @Tag(name = "Leave Requests", description = "Leave request management endpoints for applying, approving, and tracking leave")
 public class LeaveRequestController {
 

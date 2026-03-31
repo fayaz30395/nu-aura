@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { lwfService } from '@/lib/services/lwf.service';
+import { lwfService } from '@/lib/services/hrms/lwf.service';
 import {
   LWFConfiguration,
   LWFConfigurationRequest,
   LWFDeduction,
   LWFCalculationRequest,
   LWFRemittanceReport,
-} from '@/lib/types/lwf';
+} from '@/lib/types/hrms/lwf';
 
 // ─── Query Key Factory ──────────────────────────────────────────────────────
 

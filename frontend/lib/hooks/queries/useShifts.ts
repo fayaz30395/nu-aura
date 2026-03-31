@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { shiftService } from '@/lib/services/shift.service';
+import { shiftService } from '@/lib/services/hrms/shift.service';
 import {
   ShiftDefinitionRequest,
   ShiftPatternRequest,
   ShiftAssignmentRequest,
   GenerateScheduleRequest,
   SubmitSwapRequest,
-} from '@/lib/types/shift';
+} from '@/lib/types/hrms/shift';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Keys ────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelStatus, TravelType, TransportMode } from '@/lib/types/travel';
+import { TravelStatus, TravelType, TransportMode } from '@/lib/types/hrms/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { formatCurrency } from '@/lib/utils';
 import { useTravelRequests } from '@/lib/hooks/queries/useTravel';

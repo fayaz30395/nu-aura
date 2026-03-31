@@ -24,7 +24,7 @@ import type {
   PredictiveAnalyticsDashboard,
   AttritionPrediction,
   WorkforceTrend,
-} from '@/lib/types/predictive-analytics';
+} from '@/lib/types/core/predictive-analytics';
 
 // ─── Shared tooltip ───────────────────────────────────────────────────────────
 

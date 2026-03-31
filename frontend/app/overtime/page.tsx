@@ -25,7 +25,7 @@ import {
   CheckCircle,
   Timer,
 } from 'lucide-react';
-import type { OvertimeRecordResponse } from '@/lib/types/overtime';
+import type { OvertimeRecordResponse } from '@/lib/types/hrms/overtime';
 
 // ── Zod schema for overtime request form ─────────────────────
 const overtimeFormSchema = z.object({

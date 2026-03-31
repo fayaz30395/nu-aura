@@ -22,7 +22,7 @@ import {
   useMyBlogPosts,
   useFluenceFavorites,
 } from '@/lib/hooks/queries/useFluence';
-import type { WikiPage, BlogPost, FluenceFavorite } from '@/lib/types/fluence';
+import type { WikiPage, BlogPost, FluenceFavorite } from '@/lib/types/platform/fluence';
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
 
 type TabType = 'wiki' | 'blog' | 'favorites';

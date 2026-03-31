@@ -35,8 +35,8 @@ import {
   formatHours,
   formatPercentage,
   formatCurrency,
-} from '@/lib/types/utilization';
-import { getDateRanges } from '@/lib/services/utilization.service';
+} from '@/lib/types/hrms/utilization';
+import { getDateRanges } from '@/lib/services/hrms/utilization.service';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useUtilizationDashboard } from '@/lib/hooks/queries/useReports';
 

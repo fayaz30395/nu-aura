@@ -13,8 +13,8 @@ import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 // Phase 2 stabilization: payments module gated behind feature flag
 const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
 import { useAllPaymentConfigs, useSavePaymentConfig, useTestConnection, useToggleConfigActive } from '@/lib/hooks/queries/usePayments';
-import { paymentService } from '@/lib/services/payment.service';
-import { PaymentProvider, SavePaymentConfigRequest } from '@/lib/types/payment';
+import { paymentService } from '@/lib/services/core/payment.service';
+import { PaymentProvider, SavePaymentConfigRequest } from '@/lib/types/core/payment';
 
 const configFormSchema = z.object({
   provider: z.enum(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const),

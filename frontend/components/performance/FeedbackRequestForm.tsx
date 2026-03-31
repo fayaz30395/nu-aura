@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { Users, Plus, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { FeedbackReviewer, NominatePeersRequest } from '@/lib/types/performance-360';
+import { FeedbackReviewer, NominatePeersRequest } from '@/lib/types/grow/performance-360';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { Employee } from '@/lib/types/employee';
+import { Employee } from '@/lib/types/hrms/employee';
 
 interface FeedbackRequestFormProps {
   cycleId: string;

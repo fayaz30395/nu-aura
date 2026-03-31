@@ -7,8 +7,8 @@ import { RefreshCw, AlertTriangle, Info } from 'lucide-react';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   ResourceManagementApiError,
-} from '@/lib/services/resource-management.service';
-import { EmployeeWorkload } from '@/lib/types/resource-management';
+} from '@/lib/services/hrms/resource-management.service';
+import { EmployeeWorkload } from '@/lib/types/hrms/resource-management';
 import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
 
 

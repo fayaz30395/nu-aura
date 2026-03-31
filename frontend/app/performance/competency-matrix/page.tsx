@@ -74,13 +74,13 @@ import type {
   CompetencyCategory,
   ProficiencyLevel,
   SkillGapDetail,
-} from '@/lib/types/competency';
+} from '@/lib/types/grow/competency';
 import {
   COMPETENCY_CATEGORY_LABELS,
   PROFICIENCY_LEVEL_LABELS,
   COMPETENCY_CATEGORY_COLORS,
   GAP_LEVEL_COLORS,
-} from '@/lib/types/competency';
+} from '@/lib/types/grow/competency';
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────
 

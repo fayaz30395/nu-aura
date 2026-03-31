@@ -13,9 +13,9 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { recruitmentService } from '@/lib/services/recruitment.service';
+import { recruitmentService } from '@/lib/services/hire/recruitment.service';
 import { isAxiosError } from '@/lib/utils/type-guards';
-import type { Candidate, CreateOfferRequest } from '@/lib/types/recruitment';
+import type { Candidate, CreateOfferRequest } from '@/lib/types/hire/recruitment';
 
 interface OfferModalProps {
   opened: boolean;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Shift, CreateShiftRequest } from '@/lib/types/shifts';
+import { Shift, CreateShiftRequest } from '@/lib/types/hrms/shifts';
 import { Clock, Plus, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';

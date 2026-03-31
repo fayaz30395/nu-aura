@@ -7,7 +7,7 @@ import {
   BulkCustomFieldValueRequest,
   EntityType,
   Page,
-} from '../types/custom-fields';
+} from '../types/core/custom-fields';
 
 const BASE_URL = '/custom-fields';
 

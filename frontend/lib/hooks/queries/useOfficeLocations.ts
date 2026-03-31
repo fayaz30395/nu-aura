@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   officeLocationService,
   OfficeLocationRequest,
-} from '@/lib/services/office-location.service';
+} from '@/lib/services/hrms/office-location.service';
 
 export const officeLocationKeys = {
   all: ['officeLocations'] as const,

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { onboardingService } from '@/lib/services/onboarding.service';
+import { onboardingService } from '@/lib/services/hire/onboarding.service';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('NewTemplatePage');

@@ -16,8 +16,8 @@ import {
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, Button, Input, Select, Badge } from '@/components/ui';
-import { ProgramStatus, TrainingCategory } from '@/lib/types/training';
-import type { TrainingProgram } from '@/lib/types/training';
+import { ProgramStatus, TrainingCategory } from '@/lib/types/grow/training';
+import type { TrainingProgram } from '@/lib/types/grow/training';
 
 const categoryOptions = [
   { value: TrainingCategory.TECHNICAL, label: 'Technical' },

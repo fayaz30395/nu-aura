@@ -4,7 +4,7 @@ import {
   ImplicitRoleRuleRequest,
   ImplicitUserRole,
   BulkRuleIdsRequest,
-} from '../types/implicitRoles';
+} from '../types/core/implicitRoles';
 
 interface PaginatedResponse<T> {
   content: T[];

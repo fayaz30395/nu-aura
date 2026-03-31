@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelType, TransportMode } from '@/lib/types/travel';
+import { TravelType, TransportMode } from '@/lib/types/hrms/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useCreateTravelRequest, useSubmitTravelRequest } from '@/lib/hooks/queries/useTravel';

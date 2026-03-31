@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { MessageSquare, X } from 'lucide-react';
-import { FeedbackSynthesisResponse } from '@/lib/types/ai-recruitment';
+import { FeedbackSynthesisResponse } from '@/lib/types/hire/ai-recruitment';
 
 interface FeedbackSynthesisModalProps {
   open: boolean;

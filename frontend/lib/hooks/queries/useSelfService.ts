@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { selfServiceService } from '@/lib/services/selfservice.service';
+import { selfServiceService } from '@/lib/services/hrms/selfservice.service';
 import {
   SelfServiceDashboard,
   DocumentRequestResponse,
@@ -10,8 +10,8 @@ import {
   ProfileUpdateRequestDto,
   DocumentType,
   ProfileUpdateCategory,
-} from '@/lib/types/selfservice';
-import { Page } from '@/lib/types/employee';
+} from '@/lib/types/hrms/selfservice';
+import { Page } from '@/lib/types/hrms/employee';
 
 // Query key factory for self-service queries
 export const selfServiceKeys = {

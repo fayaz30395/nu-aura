@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { calendarService } from '@/lib/services/calendar.service';
-import { EventStatus, CalendarEvent } from '@/lib/types/calendar';
+import { calendarService } from '@/lib/services/hrms/calendar.service';
+import { EventStatus, CalendarEvent } from '@/lib/types/hrms/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyCalendarEventsByDateRange } from '@/lib/hooks/queries/useCalendar';
 import {

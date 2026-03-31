@@ -19,7 +19,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { ReportRequest, ReportType } from '@/lib/services/report.service';
+import { ReportRequest, ReportType } from '@/lib/services/core/report.service';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useReportDownload } from '@/lib/hooks/queries/useReportDownload';
 

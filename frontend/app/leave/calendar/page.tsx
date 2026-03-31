@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeLeaveRequests, useLeaveRequestsByStatus, useActiveLeaveTypes } from '@/lib/hooks/queries/useLeaves';
-import { LeaveRequest } from '@/lib/types/leave';
+import { LeaveRequest } from '@/lib/types/hrms/leave';
 
 interface Holiday {
   id: string;

@@ -15,7 +15,7 @@ import {
   REPORT_TYPE_LABELS,
   FREQUENCY_LABELS,
   DAY_OF_WEEK_LABELS,
-} from '@/lib/types/analytics';
+} from '@/lib/types/core/analytics';
 import { useToast } from '@/components/notifications/ToastProvider';
 import {
   Plus,

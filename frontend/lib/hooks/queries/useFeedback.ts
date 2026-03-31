@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { feedbackService } from '@/lib/services/performance.service';
-import { FeedbackRequest } from '@/lib/types/performance';
+import { feedbackService } from '@/lib/services/grow/performance.service';
+import { FeedbackRequest } from '@/lib/types/grow/performance';
 import { notifications } from '@mantine/notifications';
 import { performanceKeys } from './performanceKeys';
 

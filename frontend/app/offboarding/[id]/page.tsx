@@ -58,8 +58,8 @@ import {
   ClearanceDepartment,
   RecoveryStatus,
   SettlementStatus,
-} from '@/lib/types/exit';
-import type { ExitClearance } from '@/lib/types/exit';
+} from '@/lib/types/hrms/exit';
+import type { ExitClearance } from '@/lib/types/hrms/exit';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const getExitTypeLabel = (type: ExitType | string | null | undefined): string => {

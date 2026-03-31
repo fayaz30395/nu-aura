@@ -20,7 +20,7 @@ import {
   SimpleGrid,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
-import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/performance';
+import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/grow/performance';
 
 // 9-box maps (performance axis = finalRating 1-5 → buckets Low/Med/High)
 // potential axis = managerRating 1-5 → buckets Low/Med/High

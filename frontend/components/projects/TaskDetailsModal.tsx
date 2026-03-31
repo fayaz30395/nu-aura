@@ -27,7 +27,7 @@ import {
   calculateTaskDuration,
   isTaskDelayed,
   isTaskAtRisk,
-} from '@/lib/types/project-calendar';
+} from '@/lib/types/hrms/project-calendar';
 import { format } from 'date-fns';
 
 interface TaskDetailsModalProps {

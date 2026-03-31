@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { AttendanceRecord, Holiday } from '@/lib/types/attendance';
+import { AttendanceRecord, Holiday } from '@/lib/types/hrms/attendance';
 import { getLocalDateString, getDateOffsetString, getMonthStartString } from '@/lib/utils/dateUtils';
 import { getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { motion } from 'framer-motion';

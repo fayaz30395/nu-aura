@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useReceivedFeedback, useGivenFeedback, useCreateFeedback, useUpdateFeedback, useDeleteFeedback } from '@/lib/hooks/queries/usePerformance';
-import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/performance';
+import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/grow/performance';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

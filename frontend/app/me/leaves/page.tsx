@@ -30,7 +30,7 @@ import {
   LeaveRequestRequest,
   LeaveRequestStatus,
   LeaveBalance,
-} from '@/lib/types/leave';
+} from '@/lib/types/hrms/leave';
 import { createLogger } from '@/lib/utils/logger';
 
 const leaveFormSchema = z.object({

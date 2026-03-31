@@ -44,10 +44,10 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { StageBadge } from '@/components/recruitment/StageBadge';
 import { OfferModal } from './OfferModal';
-import { recruitmentService } from '@/lib/services/recruitment.service';
+import { recruitmentService } from '@/lib/services/hire/recruitment.service';
 import { useRankedCandidates } from '@/lib/hooks/queries/useRecruitment';
-import type { Candidate, RecruitmentStage } from '@/lib/types/recruitment';
-import type { CandidateMatchResponse } from '@/lib/types/ai-recruitment';
+import type { Candidate, RecruitmentStage } from '@/lib/types/hire/recruitment';
+import type { CandidateMatchResponse } from '@/lib/types/hire/ai-recruitment';
 
 // ── 13-stage NU-Hire pipeline ──────────────────────────────────────────
 // Terminal / rejection stages are excluded from the main board columns.

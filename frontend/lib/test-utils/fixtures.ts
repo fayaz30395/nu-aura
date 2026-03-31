@@ -1,6 +1,6 @@
-import { Employee, EmployeeStatus, EmploymentType, Gender, EmployeeLevel, JobRole } from '@/lib/types/employee';
-import { LeaveRequest, LeaveType, LeaveBalance, LeaveRequestStatus } from '@/lib/types/leave';
-import { AttendanceRecord, AttendanceStatus, Shift, Holiday, HolidayType } from '@/lib/types/attendance';
+import { Employee, EmployeeStatus, EmploymentType, Gender, EmployeeLevel, JobRole } from '@/lib/types/hrms/employee';
+import { LeaveRequest, LeaveType, LeaveBalance, LeaveRequestStatus } from '@/lib/types/hrms/leave';
+import { AttendanceRecord, AttendanceStatus, Shift, Holiday, HolidayType } from '@/lib/types/hrms/attendance';
 
 // Employee Fixtures
 export const createMockEmployee = (overrides: Partial<Employee> = {}): Employee => ({

@@ -1,10 +1,10 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { wellnessService } from '@/lib/services/wellness.service';
+import { wellnessService } from '@/lib/services/grow/wellness.service';
 import {
   HealthLog,
-} from '@/lib/types/wellness';
+} from '@/lib/types/grow/wellness';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

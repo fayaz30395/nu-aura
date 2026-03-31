@@ -12,8 +12,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Employee } from '@/lib/types/employee';
-import { OrgChartNode } from '@/lib/services/orgChart.service';
+import { Employee } from '@/lib/types/hrms/employee';
+import { OrgChartNode } from '@/lib/services/hrms/orgChart.service';
 import { cn } from '@/lib/utils';
 
 // ── Level-based styling ─────────────────────────────────────────────────────

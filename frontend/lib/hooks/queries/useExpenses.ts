@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { expenseService } from '@/lib/services/expense.service';
+import { expenseService } from '@/lib/services/hrms/expense.service';
 import {
   CreateExpenseClaimRequest,
   CreateExpenseCategoryRequest,
@@ -9,7 +9,7 @@ import {
   CreateExpenseItemRequest,
   CreateExpenseAdvanceRequest,
   ExpenseStatus,
-} from '@/lib/types/expense';
+} from '@/lib/types/hrms/expense';
 import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management

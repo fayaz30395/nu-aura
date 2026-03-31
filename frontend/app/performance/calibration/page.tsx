@@ -14,7 +14,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { usePerformanceAllCycles, useAllReviews, useUpdateReview } from '@/lib/hooks/queries/usePerformance';
-import type { ReviewRequest } from '@/lib/types/performance';
+import type { ReviewRequest } from '@/lib/types/grow/performance';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';

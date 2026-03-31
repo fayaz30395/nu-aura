@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   helpdeskSLAService,
   TicketSLA,
-} from '@/lib/services/helpdesk-sla.service';
+} from '@/lib/services/hrms/helpdesk-sla.service';
 
 export const helpdeskSlaKeys = {
   all: ['helpdesk-sla'] as const,

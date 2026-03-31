@@ -36,7 +36,7 @@ import type {
   ProbationStatus,
   EvaluationType,
   ProbationRecommendation,
-} from '@/lib/types/probation';
+} from '@/lib/types/hrms/probation';
 
 // ── Status configuration ─────────────────────────────────────
 const getStatusConfig = (status: ProbationStatus) => {

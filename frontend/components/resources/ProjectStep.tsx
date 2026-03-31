@@ -11,8 +11,8 @@ import {
   DollarSign,
   Building2,
 } from 'lucide-react';
-import { Employee } from '@/lib/types/employee';
-import { Project, CreateProjectRequest } from '@/lib/types/project';
+import { Employee } from '@/lib/types/hrms/employee';
+import { Project, CreateProjectRequest } from '@/lib/types/hrms/project';
 
 // ─── Props ────────────────────────────────────────────────────────────
 export interface ProjectStepProps {

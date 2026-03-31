@@ -10,7 +10,7 @@ import {
   HelpCircle,
   MessageCircle,
 } from 'lucide-react';
-import type { ReactionType } from '@/lib/services/wall.service';
+import type { ReactionType } from '@/lib/services/core/wall.service';
 
 interface ReactionBarProps {
   reactionCounts: Record<string, number>;

@@ -10,10 +10,10 @@ import {
   MessageCircle, ThumbsUp, Heart, Star, Pin, Linkedin, Lightbulb, ExternalLink, Send, MessageSquare,
   MoreHorizontal, Trash2, Pencil, Check,
 } from 'lucide-react';
-import { wallService } from '@/lib/services/wall.service';
+import { wallService } from '@/lib/services/core/wall.service';
 import { PRAISE_CATEGORIES } from '@/components/dashboard/PostComposer';
-import type { CommentResponse } from '@/lib/services/wall.service';
-import type { FeedItem, FeedItemType } from '@/lib/types/feed';
+import type { CommentResponse } from '@/lib/services/core/wall.service';
+import type { FeedItem, FeedItemType } from '@/lib/types/core/feed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { cn } from '@/lib/utils';

@@ -4,7 +4,7 @@ import React from 'react';
 import { Settings, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ConnectorInfo, ConnectorStatus } from '@/lib/types/connector';
+import { ConnectorInfo, ConnectorStatus } from '@/lib/types/core/connector';
 
 interface ConnectorCardProps {
   connector: ConnectorInfo;

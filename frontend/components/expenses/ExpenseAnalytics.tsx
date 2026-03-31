@@ -10,7 +10,7 @@ import {
   Calendar,
   Users,
 } from 'lucide-react';
-import { ExpenseClaim, ExpenseCategory } from '@/lib/types/expense';
+import { ExpenseClaim, ExpenseCategory } from '@/lib/types/hrms/expense';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 
 interface ExpenseAnalyticsProps {

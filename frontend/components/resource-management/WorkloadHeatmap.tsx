@@ -7,7 +7,7 @@ import {
   WorkloadHeatmapCell,
   formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { format, parseISO } from 'date-fns';
 import { User, AlertTriangle } from 'lucide-react';
 

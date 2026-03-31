@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useContracts, useExpiringContracts, useActiveContracts, useExpiredContracts } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/contract.service';
+import { contractService } from '@/lib/services/hrms/contract.service';
 import { Button, Table, Badge, Input, Select } from '@mantine/core';
 import { Plus, Search, FileText, AlertCircle, RefreshCw } from 'lucide-react';
 import { PermissionGate } from '@/components/auth/PermissionGate';

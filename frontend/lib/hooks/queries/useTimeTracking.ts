@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { timeTrackingService } from '@/lib/services/time-tracking.service';
+import { timeTrackingService } from '@/lib/services/hrms/time-tracking.service';
 import {
   CreateTimeEntryRequest,
   TimeEntryStatus,
-} from '@/lib/types/time-tracking';
+} from '@/lib/types/hrms/time-tracking';
 import { notifications } from '@mantine/notifications';
 
 export const timeTrackingKeys = {

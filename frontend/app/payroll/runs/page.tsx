@@ -18,7 +18,7 @@ import {
   useProcessPayrollRun,
   useApprovePayrollRun,
 } from '@/lib/hooks/queries/usePayroll';
-import { PayrollRunRequest } from '@/lib/types/payroll';
+import { PayrollRunRequest } from '@/lib/types/hrms/payroll';
 import {
   PayrollRunsTab,
   PayrollRun,

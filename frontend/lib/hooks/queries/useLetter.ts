@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { letterService } from '@/lib/services/letter.service';
+import { letterService } from '@/lib/services/hrms/letter.service';
 import {
   CreateLetterTemplateRequest,
   GenerateLetterRequest,
   GenerateOfferLetterRequest,
   LetterCategory,
-} from '@/lib/types/letter';
+} from '@/lib/types/hrms/letter';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

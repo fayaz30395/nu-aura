@@ -9,7 +9,7 @@ import {
   CalendarEvent,
   CalendarViewType,
   CALENDAR_EVENT_COLORS,
-} from '@/lib/types/project-calendar';
+} from '@/lib/types/hrms/project-calendar';
 import {
   format,
   startOfMonth,

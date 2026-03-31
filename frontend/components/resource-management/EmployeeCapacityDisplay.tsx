@@ -10,7 +10,7 @@ import {
   getAllocationStatusLabel,
   formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { AlertTriangle, Clock, CheckCircle, User, Briefcase } from 'lucide-react';
 
 interface EmployeeCapacityDisplayProps {

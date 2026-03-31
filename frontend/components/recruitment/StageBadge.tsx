@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge } from '@mantine/core';
-import type { RecruitmentStage } from '@/lib/types/recruitment';
+import type { RecruitmentStage } from '@/lib/types/hire/recruitment';
 
 interface StageBadgeProps {
   stage: RecruitmentStage;

@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 16px Arial, sans-serif; fill: #475569; }
+      .section { font: 700 18px Arial, sans-serif; fill: #0f172a; }
+      .nodeTitle { font: 700 17px Arial, sans-serif; fill: #0f172a; }
+      .nodeText { font: 400 14px Arial, sans-serif; fill: #334155; }
+      .band { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; rx: 18; }
+      .channel { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; rx: 14; }
+      .runtime { fill: #fff7ed; stroke: #ea580c; stroke-width: 2; rx: 14; }
+      .data { fill: #ecfdf5; stroke: #16a34a; stroke-width: 2; rx: 14; }
+      .learn { fill: #fdf2f8; stroke: #db2777; stroke-width: 2; rx: 14; }
+      .line { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dashed { stroke: #94a3b8; stroke-width: 2.5; fill: none; stroke-dasharray: 8 6; marker-end: url(#arrowLight); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowLight" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="920" class="bg"/>
+
+  <text x="800" y="42" text-anchor="middle" class="title">Express GRS Runtime Architecture</text>
+  <text x="800" y="68" text-anchor="middle" class="subtitle">Clear proposal view of how search requests are personalized, ranked, and continuously improved</text>
+
+  <rect x="50" y="100" width="1500" height="120" class="band"/>
+  <text x="75" y="130" class="section">1. User Entry Points</text>
+  <rect x="110" y="150" width="220" height="48" class="channel"/>
+  <text x="220" y="178" text-anchor="middle" class="nodeTitle">Web Storefront</text>
+  <rect x="390" y="150" width="220" height="48" class="channel"/>
+  <text x="500" y="178" text-anchor="middle" class="nodeTitle">Mobile App</text>
+  <rect x="670" y="150" width="250" height="48" class="channel"/>
+  <text x="795" y="178" text-anchor="middle" class="nodeTitle">Search API / BFF</text>
+  <rect x="980" y="150" width="210" height="48" class="channel"/>
+  <text x="1085" y="178" text-anchor="middle" class="nodeTitle">Identity</text>
+  <rect x="1250" y="150" width="220" height="48" class="channel"/>
+  <text x="1360" y="178" text-anchor="middle" class="nodeTitle">A/B + Feature Flags</text>
+
+  <rect x="50" y="255" width="1500" height="210" class="band"/>
+  <text x="75" y="285" class="section">2. Online Decision Flow</text>
+  <rect x="85" y="320" width="250" height="92" class="runtime"/>
+  <text x="210" y="350" text-anchor="middle" class="nodeTitle">Query Understanding</text>
+  <text x="210" y="373" text-anchor="middle" class="nodeText">correct typos</text>
+  <text x="210" y="392" text-anchor="middle" class="nodeText">expand synonyms</text>
+  <text x="210" y="411" text-anchor="middle" class="nodeText">detect intent and entities</text>
+
+  <rect x="385" y="320" width="250" height="92" class="runtime"/>
+  <text x="510" y="350" text-anchor="middle" class="nodeTitle">Candidate Retrieval</text>
+  <text x="510" y="373" text-anchor="middle" class="nodeText">search keyword index</text>
+  <text x="510" y="392" text-anchor="middle" class="nodeText">search semantic index</text>
+  <text x="510" y="411" text-anchor="middle" class="nodeText">apply mandatory business filters</text>
+
+  <rect x="685" y="320" width="250" height="92" class="runtime"/>
+  <text x="810" y="350" text-anchor="middle" class="nodeTitle">Context Builder</text>
+  <text x="810" y="373" text-anchor="middle" class="nodeText">user affinity and segment</text>
+  <text x="810" y="392" text-anchor="middle" class="nodeText">inventory and size availability</text>
+  <text x="810" y="411" text-anchor="middle" class="nodeText">price and geo signals</text>
+
+  <rect x="985" y="320" width="250" height="92" class="runtime"/>
+  <text x="1110" y="350" text-anchor="middle" class="nodeTitle">Ranking Engine</text>
+  <text x="1110" y="373" text-anchor="middle" class="nodeText">combine business rules</text>
+  <text x="1110" y="392" text-anchor="middle" class="nodeText">apply ML relevance score</text>
+  <text x="1110" y="411" text-anchor="middle" class="nodeText">produce final rank order</text>
+
+  <rect x="1285" y="320" width="230" height="92" class="runtime"/>
+  <text x="1400" y="350" text-anchor="middle" class="nodeTitle">Response Assembly</text>
+  <text x="1400" y="373" text-anchor="middle" class="nodeText">results and facets</text>
+  <text x="1400" y="392" text-anchor="middle" class="nodeText">badges and explanations</text>
+  <text x="1400" y="411" text-anchor="middle" class="nodeText">cacheable response payload</text>
+
+  <rect x="50" y="500" width="1500" height="170" class="band"/>
+  <text x="75" y="530" class="section">3. Data Used During the Request</text>
+  <rect x="90" y="565" width="220" height="70" class="data"/>
+  <text x="200" y="593" text-anchor="middle" class="nodeTitle">Catalog Index</text>
+  <text x="200" y="615" text-anchor="middle" class="nodeText">products, metadata, text search</text>
+  <rect x="345" y="565" width="220" height="70" class="data"/>
+  <text x="455" y="593" text-anchor="middle" class="nodeTitle">Vector Index</text>
+  <text x="455" y="615" text-anchor="middle" class="nodeText">semantic nearest-neighbor recall</text>
+  <rect x="600" y="565" width="220" height="70" class="data"/>
+  <text x="710" y="593" text-anchor="middle" class="nodeTitle">Profile Store</text>
+  <text x="710" y="615" text-anchor="middle" class="nodeText">history, affinity, segment labels</text>
+  <rect x="855" y="565" width="220" height="70" class="data"/>
+  <text x="965" y="593" text-anchor="middle" class="nodeTitle">Inventory Service</text>
+  <text x="965" y="615" text-anchor="middle" class="nodeText">stock, sellability, size availability</text>
+  <rect x="1110" y="565" width="180" height="70" class="data"/>
+  <text x="1200" y="593" text-anchor="middle" class="nodeTitle">Geo Service</text>
+  <text x="1200" y="615" text-anchor="middle" class="nodeText">location and weather context</text>
+  <rect x="1325" y="565" width="180" height="70" class="data"/>
+  <text x="1415" y="593" text-anchor="middle" class="nodeTitle">Redis Cache</text>
+  <text x="1415" y="615" text-anchor="middle" class="nodeText">hot features and result cache</text>
+
+  <rect x="50" y="705" width="1500" height="170" class="band"/>
+  <text x="75" y="735" class="section">4. Learning Loop</text>
+  <rect x="120" y="770" width="250" height="68" class="learn"/>
+  <text x="245" y="798" text-anchor="middle" class="nodeTitle">User Interaction Events</text>
+  <text x="245" y="820" text-anchor="middle" class="nodeText">impression, click, add-to-cart, order</text>
+  <rect x="430" y="770" width="180" height="68" class="learn"/>
+  <text x="520" y="798" text-anchor="middle" class="nodeTitle">Event Stream</text>
+  <text x="520" y="820" text-anchor="middle" class="nodeText">Kafka / real-time pipeline</text>
+  <rect x="670" y="770" width="220" height="68" class="learn"/>
+  <text x="780" y="798" text-anchor="middle" class="nodeTitle">Warehouse</text>
+  <text x="780" y="820" text-anchor="middle" class="nodeText">analytics, joins, model datasets</text>
+  <rect x="950" y="770" width="180" height="68" class="learn"/>
+  <text x="1040" y="798" text-anchor="middle" class="nodeTitle">Feature Store</text>
+  <text x="1040" y="820" text-anchor="middle" class="nodeText">consistent train/serve features</text>
+  <rect x="1190" y="770" width="180" height="68" class="learn"/>
+  <text x="1280" y="798" text-anchor="middle" class="nodeTitle">Model Training</text>
+  <text x="1280" y="820" text-anchor="middle" class="nodeText">evaluation and refresh cycle</text>
+  <rect x="1430" y="770" width="90" height="68" class="learn"/>
+  <text x="1475" y="798" text-anchor="middle" class="nodeTitle">Serve</text>
+  <text x="1475" y="820" text-anchor="middle" class="nodeText">online</text>
+
+  <path d="M330 174 L390 174" class="line"/>
+  <path d="M610 174 L670 174" class="line"/>
+  <path d="M920 174 L980 174" class="line"/>
+  <path d="M1190 174 L1250 174" class="line"/>
+
+  <path d="M335 366 L385 366" class="line"/>
+  <path d="M635 366 L685 366" class="line"/>
+  <path d="M935 366 L985 366" class="line"/>
+  <path d="M1235 366 L1285 366" class="line"/>
+
+  <path d="M510 412 L200 565" class="dashed"/>
+  <path d="M510 412 L455 565" class="dashed"/>
+  <path d="M810 412 L710 565" class="dashed"/>
+  <path d="M810 412 L965 565" class="dashed"/>
+  <path d="M810 412 L1200 565" class="dashed"/>
+  <path d="M1110 412 L1415 565" class="dashed"/>
+
+  <path d="M1400 412 L245 770" class="dashed"/>
+  <path d="M370 804 L430 804" class="line"/>
+  <path d="M610 804 L670 804" class="line"/>
+  <path d="M890 804 L950 804" class="line"/>
+  <path d="M1130 804 L1190 804" class="line"/>
+  <path d="M1370 804 L1430 804" class="line"/>
+  <path d="M1475 770 L1110 412" class="dashed"/>
+</svg>

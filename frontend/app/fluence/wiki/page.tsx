@@ -34,7 +34,7 @@ import {
 import { usePermissions } from '@/lib/hooks/usePermissions';
 import { SpaceFormDrawer, type SpaceFormValues } from '@/components/fluence/SpaceFormDrawer';
 import { DeleteSpaceModal } from '@/components/fluence/DeleteSpaceModal';
-import type { WikiSpace } from '@/lib/types/fluence';
+import type { WikiSpace } from '@/lib/types/platform/fluence';
 import {
   layout,
   typography,

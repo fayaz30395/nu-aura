@@ -8,7 +8,7 @@ import {
   ExportDataType,
   ExportFormat,
   ExportRequest,
-} from '@/lib/services/importExport.service';
+} from '@/lib/services/core/importExport.service';
 
 // Re-export existing Keka hooks for convenience
 export {

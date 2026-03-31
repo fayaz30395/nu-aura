@@ -48,8 +48,8 @@ import {
   useLogHealth,
   useJoinChallenge,
 } from '@/lib/hooks/queries/useWellness';
-import type { HealthLog } from '@/lib/types/wellness';
-import { ProgramCategory, MetricType } from '@/lib/types/wellness';
+import type { HealthLog } from '@/lib/types/grow/wellness';
+import { ProgramCategory, MetricType } from '@/lib/types/grow/wellness';
 
 const healthLogSchema = z.object({
   metricType: z.string().min(1, 'Select a metric type'),

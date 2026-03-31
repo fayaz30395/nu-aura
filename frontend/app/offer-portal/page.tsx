@@ -12,7 +12,7 @@ import {
   useAcceptPublicOffer,
   useDeclinePublicOffer,
 } from '@/lib/hooks/queries/usePublicOffer';
-import { type PublicOfferResponse } from '@/lib/services/public-offer.service';
+import { type PublicOfferResponse } from '@/lib/services/hire/public-offer.service';
 import {
   FileText,
   CheckCircle,

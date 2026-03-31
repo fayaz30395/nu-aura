@@ -12,8 +12,8 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
-import { TrainingCategory, DeliveryMode, ProgramStatus } from '@/lib/types/training';
-import type { TrainingProgram } from '@/lib/types/training';
+import { TrainingCategory, DeliveryMode, ProgramStatus } from '@/lib/types/grow/training';
+import type { TrainingProgram } from '@/lib/types/grow/training';
 import { z } from 'zod';
 
 const categoryOptions = [

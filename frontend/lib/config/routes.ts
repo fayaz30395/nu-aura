@@ -485,12 +485,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     permission: Permissions.DASHBOARD_VIEW,
   },
 
-  // Home - accessible to all authenticated users
-  {
-    path: '/home',
-    requiresAuth: true,
-  },
-
   // Profile - accessible to all authenticated users
   {
     path: '/profile',

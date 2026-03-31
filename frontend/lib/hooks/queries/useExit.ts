@@ -14,8 +14,8 @@ import {
   ConductExitInterviewRequest,
   CreateAssetRecoveryRequest,
   RecordAssetReturnRequest,
-} from '@/lib/types/exit';
-import { exitService } from '@/lib/services/exit.service';
+} from '@/lib/types/hrms/exit';
+import { exitService } from '@/lib/services/hrms/exit.service';
 
 // Query Key Factory
 export const exitKeys = {

@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
-import { Payslip } from '@/lib/types/payroll';
+import { Payslip } from '@/lib/types/hrms/payroll';
 import { PayslipCard } from '@/components/payroll/PayslipCard';
 import { Button } from '@/components/ui/Button';
 import { Download, Search } from 'lucide-react';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { usePayslips } from '@/lib/hooks/queries/usePayroll';
-import { payrollService } from '@/lib/services/payroll.service';
+import { payrollService } from '@/lib/services/hrms/payroll.service';
 
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 

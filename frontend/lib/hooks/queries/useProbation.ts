@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { probationService } from '@/lib/services/probation.service';
+import { probationService } from '@/lib/services/hrms/probation.service';
 import {
   ProbationPeriodRequest,
   ProbationEvaluationRequest,
@@ -9,7 +9,7 @@ import {
   ProbationConfirmationRequest,
   ProbationTerminationRequest,
   ProbationStatus,
-} from '@/lib/types/probation';
+} from '@/lib/types/hrms/probation';
 
 // Query keys for cache management
 export const probationKeys = {

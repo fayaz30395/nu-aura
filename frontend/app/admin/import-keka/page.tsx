@@ -27,8 +27,8 @@ import {
   KekaImportPreview,
   KekaImportResult,
   KEKA_COLUMN_PRESETS,
-} from '@/lib/types/keka-import';
-import { kekaImportService } from '@/lib/services/keka-import.service';
+} from '@/lib/types/core/keka-import';
+import { kekaImportService } from '@/lib/services/core/keka-import.service';
 import {
   useKekaFileUpload,
   useKekaImportPreview,
@@ -206,7 +206,7 @@ export default function KekaImportPage() {
       setError(null);
       const mappingData: KekaImportMapping[] = validMappings.map((m) => ({
         sourceColumn: m.sourceColumn,
-        targetField: m.targetField as keyof import('@/lib/types/keka-import').KekaEmployee,
+        targetField: m.targetField as keyof import('@/lib/types/core/keka-import').KekaEmployee,
         transform: 'NONE',
       }));
 
@@ -238,7 +238,7 @@ export default function KekaImportPage() {
       setError(null);
       const mappingData: KekaImportMapping[] = validMappings.map((m) => ({
         sourceColumn: m.sourceColumn,
-        targetField: m.targetField as keyof import('@/lib/types/keka-import').KekaEmployee,
+        targetField: m.targetField as keyof import('@/lib/types/core/keka-import').KekaEmployee,
         transform: 'NONE',
       }));
 

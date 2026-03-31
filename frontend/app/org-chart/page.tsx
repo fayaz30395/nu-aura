@@ -10,7 +10,7 @@ import { useOrgChartTree, useOrgChartDepartments } from '@/lib/hooks/useOrgChart
 import { OrgTree } from '@/components/org-chart/OrgTree';
 import { OrgListNode } from '@/components/org-chart/OrgNode';
 import { OrgChartFilters, ViewMode } from '@/components/org-chart/OrgChartFilters';
-import { Employee } from '@/lib/types/employee';
+import { Employee } from '@/lib/types/hrms/employee';
 import { SkeletonTable } from '@/components/ui/Loading';
 import {
   Users,

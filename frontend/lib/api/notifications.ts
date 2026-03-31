@@ -4,7 +4,7 @@ import {
   CreateNotificationRequest,
   PagedNotificationResponse,
   NotificationPreferences,
-} from '../types/notifications';
+} from '../types/core/notifications';
 
 export const notificationsApi = {
   // Get paginated notifications

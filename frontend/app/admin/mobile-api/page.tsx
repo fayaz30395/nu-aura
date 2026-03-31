@@ -446,7 +446,7 @@ export default function MobileApiPage() {
               <Text fw={500} mb="xs">
                 Import Mobile API Service
               </Text>
-              <Code>{`import mobileApiService from '@/lib/services/mobile-api.service';`}</Code>
+              <Code>{`import mobileApiService from '@/lib/services/core/mobile-api.service';`}</Code>
             </div>
             <div>
               <Text fw={500} mb="xs">

@@ -43,7 +43,7 @@ import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
-import { StrategicAlert } from '@/lib/types/dashboard';
+import { StrategicAlert } from '@/lib/types/core/dashboard';
 import { formatCurrency } from '@/lib/utils';
 
 // Use CSS vars so chart colors adapt to dark mode automatically

@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { recognitionService } from '@/lib/services/recognition.service';
-import type { RecognitionRequest, ReactionType } from '@/lib/types/recognition';
+import { recognitionService } from '@/lib/services/grow/recognition.service';
+import type { RecognitionRequest, ReactionType } from '@/lib/types/grow/recognition';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────

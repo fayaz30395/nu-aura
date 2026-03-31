@@ -39,7 +39,7 @@ import {
   SearchResult,
   UnifiedSearchResponse,
   FluenceUnifiedSearchResponse,
-} from '@/lib/services/search.service';
+} from '@/lib/services/core/search.service';
 import { getAppForRoute } from '@/lib/config/apps';
 
 interface NavigationItem {

@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Heart, Send } from 'lucide-react';
-import { wallService } from '@/lib/services/wall.service';
-import type { CommentResponse } from '@/lib/services/wall.service';
+import { wallService } from '@/lib/services/core/wall.service';
+import type { CommentResponse } from '@/lib/services/core/wall.service';
 import { logger } from '@/lib/utils/logger';
 import { parseISO, isToday, formatDistanceToNow } from 'date-fns';
 

@@ -1,15 +1,15 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { reportService, ReportRequest } from '@/lib/services/report.service';
-import { scheduledReportService } from '@/lib/services/scheduled-report.service';
-import { utilizationService } from '@/lib/services/utilization.service';
+import { reportService, ReportRequest } from '@/lib/services/core/report.service';
+import { scheduledReportService } from '@/lib/services/core/scheduled-report.service';
+import { utilizationService } from '@/lib/services/hrms/utilization.service';
 import {
   ScheduledReportRequest,
-} from '@/lib/types/analytics';
+} from '@/lib/types/core/analytics';
 import {
   UtilizationFilterOptions,
-} from '@/lib/types/utilization';
+} from '@/lib/types/hrms/utilization';
 
 // Query key factory for reports
 export const reportKeys = {

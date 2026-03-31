@@ -1,8 +1,8 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminService } from '@/lib/services/admin.service';
-import { AdminStats, AdminUserSummary, Page, HealthResponse } from '@/lib/types/admin';
+import { adminService } from '@/lib/services/core/admin.service';
+import { AdminStats, AdminUserSummary, Page, HealthResponse } from '@/lib/types/core/admin';
 
 export const adminKeys = {
   all: ['admin'] as const,

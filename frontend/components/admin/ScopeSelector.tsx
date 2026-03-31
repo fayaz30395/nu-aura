@@ -6,7 +6,7 @@ import {
   CustomTarget,
   SCOPE_LABELS,
   SCOPE_DESCRIPTIONS,
-} from '@/lib/types/roles';
+} from '@/lib/types/core/roles';
 import { CustomTargetPicker } from './CustomTargetPicker';
 
 interface ScopeSelectorProps {

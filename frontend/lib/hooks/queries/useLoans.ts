@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { loanService } from '@/lib/services/loan.service';
+import { loanService } from '@/lib/services/hrms/loan.service';
 import {
   CreateLoanRequest,
   LoanFilters,
-} from '@/lib/types/loan';
+} from '@/lib/types/hrms/loan';
 
 // Query keys for cache management
 export const loanKeys = {

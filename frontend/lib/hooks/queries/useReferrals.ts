@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { referralService } from '@/lib/services/referral.service';
-import { ReferralRequest, ReferralPolicyRequest, ReferralStatus } from '@/lib/types/referral';
+import { referralService } from '@/lib/services/hire/referral.service';
+import { ReferralRequest, ReferralPolicyRequest, ReferralStatus } from '@/lib/types/hire/referral';
 
 // Query keys for cache management
 export const referralKeys = {

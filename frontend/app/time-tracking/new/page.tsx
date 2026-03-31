@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { EntryType } from '@/lib/types/time-tracking';
+import { EntryType } from '@/lib/types/hrms/time-tracking';
 import { useCreateTimeEntry, useSubmitTimeEntry } from '@/lib/hooks/queries/useTimeTracking';
 import { logger } from '@/lib/utils/logger';
 import {

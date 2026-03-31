@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Calendar } from 'lucide-react';
 import { logger } from '@/lib/utils/logger';
-import type { FeedItem } from '@/lib/types/feed';
+import type { FeedItem } from '@/lib/types/core/feed';
 
 // ─── Types ────────────────────────────────────────────────────────────
 export type DateBucket = 'today' | 'yesterday' | 'this_week' | 'last_week' | 'earlier';

@@ -14,8 +14,8 @@ import {
     Target,
     Sparkles
 } from 'lucide-react';
-import { TalentProfile } from '@/lib/types/employee';
-import { employeeService } from '@/lib/services/employee.service';
+import { TalentProfile } from '@/lib/types/hrms/employee';
+import { employeeService } from '@/lib/services/hrms/employee.service';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { logger } from '@/lib/utils/logger';

@@ -29,7 +29,7 @@ import {
   FileText,
   DollarSign,
 } from 'lucide-react';
-import type { ReferralResponse, ReferralStatus, ReferralRelationship } from '@/lib/types/referral';
+import type { ReferralResponse, ReferralStatus, ReferralRelationship } from '@/lib/types/hire/referral';
 
 // ── Zod schema for submit referral form ──────────────────────
 const referralFormSchema = z.object({

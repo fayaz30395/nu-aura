@@ -6,11 +6,11 @@ import {
   employeeSkillService,
   competencyService,
   skillGapService,
-} from '@/lib/services/competencyService';
+} from '@/lib/services/grow/competencyService';
 import type {
   EmployeeSkillRequest,
   CompetencyRequest,
-} from '@/lib/types/competency';
+} from '@/lib/types/grow/competency';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────
 

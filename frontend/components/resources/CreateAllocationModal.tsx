@@ -11,10 +11,10 @@ import {
   ArrowRight,
   ArrowLeft,
 } from 'lucide-react';
-import { employeeService } from '@/lib/services/employee.service';
-import { projectService } from '@/lib/services/project.service';
-import { Employee } from '@/lib/types/employee';
-import { Project, CreateProjectRequest, AssignEmployeeRequest, ProjectEmployee } from '@/lib/types/project';
+import { employeeService } from '@/lib/services/hrms/employee.service';
+import { projectService } from '@/lib/services/hrms/project.service';
+import { Employee } from '@/lib/types/hrms/employee';
+import { Project, CreateProjectRequest, AssignEmployeeRequest, ProjectEmployee } from '@/lib/types/hrms/project';
 import { ProjectStep } from './ProjectStep';
 import { EmployeeStep } from './EmployeeStep';
 import type { EmployeeAllocation, EmployeeCapacityMap } from './EmployeeStep';

@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Laptop } from 'lucide-react';
 import { useEmployeesOnLeaveToday, useRemoteWorkersToday } from '@/lib/hooks/queries/useHome';
-import { OnLeaveEmployeeResponse, RemoteWorkerResponse } from '@/lib/services/home.service';
+import { OnLeaveEmployeeResponse, RemoteWorkerResponse } from '@/lib/services/core/home.service';
 
 interface EmployeePresence {
   employeeId: string;

@@ -14,7 +14,7 @@ import {
   useApproveExpenseClaim,
   useRejectExpenseClaim,
 } from '@/lib/hooks/queries';
-import { ExpenseClaim } from '@/lib/types/expense';
+import { ExpenseClaim } from '@/lib/types/hrms/expense';
 
 export default function ExpenseApprovalsPage() {
   const router = useRouter();

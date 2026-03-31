@@ -5,7 +5,7 @@ import {
   CustomFieldDefinition,
   CustomFieldValue,
   FieldType,
-} from '@/lib/types/custom-fields';
+} from '@/lib/types/core/custom-fields';
 
 interface CustomFieldRendererProps {
   definition: CustomFieldDefinition;

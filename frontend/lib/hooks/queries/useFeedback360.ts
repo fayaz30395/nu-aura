@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { feedback360Service } from '@/lib/services/feedback360.service';
-import type { CycleRequest, FeedbackResponse } from '@/lib/services/feedback360.service';
+import { feedback360Service } from '@/lib/services/grow/feedback360.service';
+import type { CycleRequest, FeedbackResponse } from '@/lib/services/grow/feedback360.service';
 import { performanceKeys } from './performanceKeys';
 
 // ─── 360 Feedback Query Hooks ────────────────────────────────────────────

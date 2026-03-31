@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { departmentService } from '@/lib/services/department.service';
-import { Department, DepartmentRequest } from '@/lib/types/employee';
+import { departmentService } from '@/lib/services/hrms/department.service';
+import { Department, DepartmentRequest } from '@/lib/types/hrms/employee';
 
 // Query keys for cache management
 export const departmentKeys = {

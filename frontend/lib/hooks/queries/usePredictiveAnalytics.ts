@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { predictiveAnalyticsService } from '@/lib/services/predictive-analytics.service';
+import { predictiveAnalyticsService } from '@/lib/services/core/predictive-analytics.service';
 import type {
   PredictiveAnalyticsDashboard,
   AttritionPrediction,
@@ -9,7 +9,7 @@ import type {
   AnalyticsInsight,
   SkillGap,
   PaginatedResponse,
-} from '@/lib/types/predictive-analytics';
+} from '@/lib/types/core/predictive-analytics';
 
 // ==================== Query Keys ====================
 

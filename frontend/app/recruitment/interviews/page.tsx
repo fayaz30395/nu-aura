@@ -9,12 +9,12 @@ import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Interview, CreateInterviewRequest, InterviewStatus, InterviewType, InterviewResult } from '@/lib/types/recruitment';
-import { Employee } from '@/lib/types/employee';
+import { Interview, CreateInterviewRequest, InterviewStatus, InterviewType, InterviewResult } from '@/lib/types/hire/recruitment';
+import { Employee } from '@/lib/types/hrms/employee';
 import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validations/recruitment';
 import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings, useAllInterviews, useInterviewsByCandidate } from '@/lib/hooks/queries/useRecruitment';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/ai-recruitment';
+import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/hire/ai-recruitment';
 import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown } from 'lucide-react';
 import { getGoogleToken, hasValidGoogleToken } from '@/lib/utils/googleToken';
 
