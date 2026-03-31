@@ -48,9 +48,8 @@ public class Survey {
     private LocalDateTime updatedAt;
     @Column(name = "created_by")
     private UUID createdBy;
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum SurveyType {
         ENGAGEMENT, SATISFACTION, PULSE, EXIT, FEEDBACK, CUSTOM

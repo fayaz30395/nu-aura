@@ -22,7 +22,8 @@ import java.util.UUID;
     @Index(name = "idx_wall_post_tenant_type", columnList = "tenant_id,post_type"),
     @Index(name = "idx_wall_post_created_at", columnList = "created_at"),
     @Index(name = "idx_wall_post_pinned", columnList = "is_pinned,created_at"),
-    @Index(name = "idx_wall_post_celebrated", columnList = "celebrated_employee_id")
+    @Index(name = "idx_wall_post_celebrated", columnList = "celebrated_employee_id"),
+    @Index(name = "idx_wall_post_feed", columnList = "tenant_id,is_deleted,is_pinned,created_at")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class WallPost {
@@ -75,13 +76,13 @@ public class WallPost {
     @Column(name = "comments_count")
     private int commentsCount = 0;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostReaction> reactions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PollOption> pollOptions = new ArrayList<>();
 
     @CreatedDate

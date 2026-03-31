@@ -148,10 +148,9 @@ public class OvertimePolicy {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    @Builder.Default
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private Long version;
 
     /**
      * Get overtime multiplier based on type

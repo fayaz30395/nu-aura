@@ -77,9 +77,8 @@ public class TrainingEnrollment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum EnrollmentStatus {
         ENROLLED, IN_PROGRESS, COMPLETED, DROPPED, FAILED, CANCELLED

@@ -86,10 +86,9 @@ public class Shift {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    @Builder.Default
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private Long version;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "shift_type", length = 20)

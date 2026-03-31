@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/audit")
+@RequestMapping({"/api/v1/audit", "/api/v1/audit-logs"})
 @RequiredArgsConstructor
 @Slf4j
 public class AuditLogController {

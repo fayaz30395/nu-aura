@@ -28,9 +28,9 @@ import { logger } from '../utils/logger';
  * - DEBOUNCE_ACTIVITY_MS: 60 seconds (debounce activity tracking)
  */
 
-const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
-const TIMEOUT_WARNING_MS = 5 * 60 * 1000;     // 5 minutes before timeout (so warning at 25 min)
-const DEBOUNCE_ACTIVITY_MS = 60 * 1000;       // Debounce activity tracking to 60 seconds
+const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 60 minutes (aligns with JWT expiry; token refresh fires at 50 min so active users stay logged in)
+const TIMEOUT_WARNING_MS = 10 * 60 * 1000;    // 10 minutes before timeout (so warning at 50 min)
+const DEBOUNCE_ACTIVITY_MS = 30 * 1000;       // Debounce activity tracking to 30 seconds (was 60s — too coarse, causing missed activity)
 
 interface SessionTimeoutState {
   lastActivityTime: number;

@@ -90,6 +90,18 @@ public class AnnouncementController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{announcementId}/pin")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    public ResponseEntity<AnnouncementDto> pinAnnouncement(@PathVariable UUID announcementId) {
+        return ResponseEntity.ok(announcementService.pinAnnouncement(announcementId));
+    }
+
+    @PostMapping("/{announcementId}/unpin")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    public ResponseEntity<AnnouncementDto> unpinAnnouncement(@PathVariable UUID announcementId) {
+        return ResponseEntity.ok(announcementService.unpinAnnouncement(announcementId));
+    }
+
     @DeleteMapping("/{announcementId}")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable UUID announcementId) {

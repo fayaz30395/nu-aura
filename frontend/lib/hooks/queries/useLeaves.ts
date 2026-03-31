@@ -144,12 +144,14 @@ export function useCreateLeaveRequest() {
   return useMutation({
     mutationFn: (data: LeaveRequestRequest) => leaveService.createLeaveRequest(data),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
       if (result.employeeId) {
         queryClient.invalidateQueries({
           queryKey: leaveKeys.employeeBalances(result.employeeId),
         });
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
     },
   });
 }

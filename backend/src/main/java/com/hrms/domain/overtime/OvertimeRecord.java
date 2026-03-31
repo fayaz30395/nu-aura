@@ -112,10 +112,9 @@ public class OvertimeRecord {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    @Builder.Default
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private Long version;
 
     public enum OvertimeType {
         REGULAR,        // Regular overtime (1.5x)

@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Initializes default HRMS roles for tenants.
@@ -74,10 +76,22 @@ public class HrmsRoleInitializer {
         }
 
         private void createDefaultRoles(NuApplication app, UUID tenantId) {
+                // Pre-fetch existing roles in ONE query to avoid N individual existsByCode calls
+                List<AppRole> existingRoles = roleRepository.findByTenantIdAndApplicationIdOrderByLevelDesc(tenantId, app.getId());
+                Set<String> existingRoleCodes = existingRoles.stream()
+                        .map(AppRole::getCode)
+                        .collect(Collectors.toSet());
+
+                // Pre-fetch ALL HRMS permissions in ONE query for role assignment
+                List<AppPermission> allPerms = permissionRepository.findByApplicationCode(HrmsPermissionInitializer.APP_CODE);
+                Map<String, AppPermission> permMap = allPerms.stream()
+                        .collect(Collectors.toMap(AppPermission::getCode, p -> p));
+
                 // Super Admin - Full access
                 createRoleIfNotExists(app, tenantId, "SUPER_ADMIN", "Super Administrator",
                                 "Full system administration access", 100, true, false,
-                                Set.of(HrmsPermissionInitializer.SYSTEM_ADMIN));
+                                Set.of(HrmsPermissionInitializer.SYSTEM_ADMIN),
+                                existingRoleCodes, permMap);
 
                 // HR Manager - Full HR operations
                 createRoleIfNotExists(app, tenantId, "HR_MANAGER", "HR Manager",
@@ -112,7 +126,8 @@ public class HrmsRoleInitializer {
                                                 HrmsPermissionInitializer.PROJECT_DELETE,
                                                 HrmsPermissionInitializer.PROJECT_ASSIGN,
                                                 HrmsPermissionInitializer.ROLE_READ,
-                                                HrmsPermissionInitializer.USER_READ));
+                                                HrmsPermissionInitializer.USER_READ),
+                                existingRoleCodes, permMap);
 
                 // Department Manager - Department level access
                 createRoleIfNotExists(app, tenantId, "DEPARTMENT_MANAGER", "Department Manager",
@@ -131,7 +146,8 @@ public class HrmsRoleInitializer {
                                                 HrmsPermissionInitializer.PROJECT_CREATE,
                                                 HrmsPermissionInitializer.PROJECT_ASSIGN,
                                                 HrmsPermissionInitializer.REPORT_VIEW,
-                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ));
+                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ),
+                                existingRoleCodes, permMap);
 
                 // Team Lead - Team level access
                 createRoleIfNotExists(app, tenantId, "TEAM_LEAD", "Team Lead",
@@ -146,7 +162,8 @@ public class HrmsRoleInitializer {
                                                 HrmsPermissionInitializer.LEAVE_APPROVE,
                                                 "HRMS:LEAVE:VIEW_TEAM",
                                                 HrmsPermissionInitializer.PROJECT_VIEW,
-                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ));
+                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ),
+                                existingRoleCodes, permMap);
 
                 // Employee - Basic self-service access (default role)
                 createRoleIfNotExists(app, tenantId, "EMPLOYEE", "Employee",
@@ -159,7 +176,8 @@ public class HrmsRoleInitializer {
                                                 HrmsPermissionInitializer.LEAVE_READ,
                                                 HrmsPermissionInitializer.LEAVE_REQUEST,
                                                 HrmsPermissionInitializer.PAYROLL_VIEW_PAYSLIP,
-                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ));
+                                                HrmsPermissionInitializer.ANNOUNCEMENT_READ),
+                                existingRoleCodes, permMap);
 
                 // CEO - Executive access
                 createRoleIfNotExists(app, tenantId, "CEO", "Chief Executive Officer",
@@ -176,13 +194,15 @@ public class HrmsRoleInitializer {
                                                 HrmsPermissionInitializer.REPORT_VIEW,
                                                 HrmsPermissionInitializer.REPORT_CREATE,
                                                 HrmsPermissionInitializer.ANNOUNCEMENT_READ,
-                                                HrmsPermissionInitializer.ANNOUNCEMENT_CREATE));
+                                                HrmsPermissionInitializer.ANNOUNCEMENT_CREATE),
+                                existingRoleCodes, permMap);
         }
 
         private void createRoleIfNotExists(NuApplication app, UUID tenantId, String code, String name,
                         String description, int level, boolean isSystem, boolean isDefault,
-                        Set<String> permissionCodes) {
-                if (roleRepository.existsByCodeAndTenantIdAndApplicationId(code, tenantId, app.getId())) {
+                        Set<String> permissionCodes,
+                        Set<String> existingRoleCodes, Map<String, AppPermission> permMap) {
+                if (existingRoleCodes.contains(code)) {
                         log.debug("Role {} already exists for tenant {}", code, tenantId);
                         return;
                 }
@@ -198,10 +218,10 @@ public class HrmsRoleInitializer {
                                 .build();
                 role.setTenantId(tenantId);
 
-                // Add permissions
-                List<AppPermission> permissions = permissionRepository.findByCodeIn(permissionCodes);
-                for (AppPermission perm : permissions) {
-                        if (perm.getApplication().getId().equals(app.getId())) {
+                // Add permissions from pre-fetched map (no extra queries)
+                for (String permCode : permissionCodes) {
+                        AppPermission perm = permMap.get(permCode);
+                        if (perm != null && perm.getApplication().getId().equals(app.getId())) {
                                 role.getPermissions().add(perm);
                         }
                 }

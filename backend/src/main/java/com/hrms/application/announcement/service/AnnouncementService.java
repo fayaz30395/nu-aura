@@ -340,6 +340,34 @@ public class AnnouncementService {
     }
 
     @Transactional
+    public AnnouncementDto pinAnnouncement(UUID announcementId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Announcement announcement = announcementRepository.findByIdAndTenantId(announcementId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Announcement not found: " + announcementId));
+
+        announcement.setIsPinned(true);
+        announcement = announcementRepository.save(announcement);
+        log.info("Pinned announcement: {}", announcementId);
+
+        return AnnouncementDto.fromEntity(announcement);
+    }
+
+    @Transactional
+    public AnnouncementDto unpinAnnouncement(UUID announcementId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Announcement announcement = announcementRepository.findByIdAndTenantId(announcementId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Announcement not found: " + announcementId));
+
+        announcement.setIsPinned(false);
+        announcement = announcementRepository.save(announcement);
+        log.info("Unpinned announcement: {}", announcementId);
+
+        return AnnouncementDto.fromEntity(announcement);
+    }
+
+    @Transactional
     public void deleteAnnouncement(UUID announcementId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

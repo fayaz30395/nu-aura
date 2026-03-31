@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -327,7 +328,7 @@ public class WorkflowService {
 
     // ==================== Workflow Execution ====================
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public WorkflowExecutionResponse startWorkflow(WorkflowExecutionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -336,7 +337,9 @@ public class WorkflowService {
         WorkflowDefinition workflow = findApplicableWorkflow(tenantId, request);
 
         if (workflow == null) {
-            throw new BusinessException("No applicable workflow found for entity type: " + request.getEntityType());
+            log.warn("No applicable workflow found for entity type: {} (tenant: {}). "
+                    + "Submission will proceed without approval workflow.", request.getEntityType(), tenantId);
+            return null;
         }
 
         // Check for existing execution

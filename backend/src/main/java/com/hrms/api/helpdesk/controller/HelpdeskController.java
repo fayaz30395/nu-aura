@@ -49,6 +49,18 @@ public class HelpdeskController {
         return ResponseEntity.ok(helpdeskService.updateTicketStatus(id, status));
     }
 
+    @PatchMapping("/tickets/{id}/resolve")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<TicketResponse> resolveTicket(@PathVariable UUID id) {
+        return ResponseEntity.ok(helpdeskService.resolveTicket(id));
+    }
+
+    @PatchMapping("/tickets/{id}/close")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<TicketResponse> closeTicket(@PathVariable UUID id) {
+        return ResponseEntity.ok(helpdeskService.closeTicket(id));
+    }
+
     @PatchMapping("/tickets/{id}/assign")
     @RequiresPermission(SYSTEM_ADMIN)
     public ResponseEntity<TicketResponse> assignTicket(
