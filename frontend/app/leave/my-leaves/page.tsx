@@ -7,7 +7,7 @@ import { AlertCircle, RefreshCw, CalendarOff } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { useLeaveRequestsByStatus, useEmployeeLeaveRequests, useActiveLeaveTypes, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { LeaveRequestStatus, LeaveRequest } from '@/lib/types/leave';
+import { LeaveRequestStatus, LeaveRequest } from '@/lib/types/hrms/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';

@@ -5,9 +5,9 @@ import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { LoanStatus } from '@/lib/types/loan';
+import { LoanStatus } from '@/lib/types/hrms/loan';
 import { useLoan } from '@/lib/hooks/queries/useLoans';
-import { loanService } from '@/lib/services/loan.service';
+import { loanService } from '@/lib/services/hrms/loan.service';
 import {
   ArrowLeft,
   Loader2,

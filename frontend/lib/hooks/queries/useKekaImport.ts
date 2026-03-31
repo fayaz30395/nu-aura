@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   KekaImportMapping,
-} from '../../types/keka-import';
-import { kekaImportService } from '../../services/keka-import.service';
+} from '../../types/core/keka-import';
+import { kekaImportService } from '../../services/core/keka-import.service';
 
 // Query keys
 const kekaImportKeys = {

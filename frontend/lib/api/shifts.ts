@@ -6,7 +6,7 @@ import {
   ShiftAssignment,
   CreateShiftAssignmentRequest,
   PagedResponse,
-} from '../types/shifts';
+} from '../types/hrms/shifts';
 
 export const shiftsApi = {
   // Shift CRUD operations

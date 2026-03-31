@@ -28,7 +28,7 @@ import {
   Clock,
   Loader2,
 } from 'lucide-react';
-import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/recruitment';
+import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/hire/recruitment';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

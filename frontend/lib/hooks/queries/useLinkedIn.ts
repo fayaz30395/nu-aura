@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { linkedinService } from '@/lib/services/linkedin.service';
+import { linkedinService } from '@/lib/services/platform/linkedin.service';
 import {
   CreateLinkedInPostRequest,
   UpdateLinkedInPostRequest,
-} from '@/lib/types/linkedin';
+} from '@/lib/types/platform/linkedin';
 
 // Query keys for cache management
 export const linkedinKeys = {

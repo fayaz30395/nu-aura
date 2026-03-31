@@ -230,7 +230,7 @@ export default function FluenceDashboardPage() {
                     <motion.button
                       key={page.id}
                       onClick={() => router.push(`/fluence/wiki/${page.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
+                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{ x: 4 }}
                     >
                       <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
@@ -244,7 +244,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/wiki')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   whileHover={{ scale: 1.02 }}
                 >
                   View All Pages →
@@ -274,7 +274,7 @@ export default function FluenceDashboardPage() {
                     <motion.button
                       key={post.id}
                       onClick={() => router.push(`/fluence/blogs/${post.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
+                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{ x: 4 }}
                     >
                       <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
@@ -288,7 +288,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/blogs')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   whileHover={{ scale: 1.02 }}
                 >
                   Read All Posts →
@@ -318,7 +318,7 @@ export default function FluenceDashboardPage() {
                     <motion.button
                       key={template.id}
                       onClick={() => router.push(`/fluence/templates/${template.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group"
+                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{ x: 4 }}
                     >
                       <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
@@ -332,7 +332,7 @@ export default function FluenceDashboardPage() {
                 )}
                 <motion.button
                   onClick={() => router.push('/fluence/templates')}
-                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors"
+                  className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   whileHover={{ scale: 1.02 }}
                 >
                   All Templates →

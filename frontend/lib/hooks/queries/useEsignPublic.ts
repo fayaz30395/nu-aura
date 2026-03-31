@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { esignPublicService } from '@/lib/services/esign-public.service';
+import { esignPublicService } from '@/lib/services/hire/esign-public.service';
 
 // External signature info response type
 export interface ExternalSignatureInfoResponse {

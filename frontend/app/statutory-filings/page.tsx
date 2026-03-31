@@ -32,7 +32,7 @@ import type {
   FilingStatus,
   FilingRunResponse,
   FilingTypeInfo,
-} from '@/lib/types/statutory-filing';
+} from '@/lib/types/hrms/statutory-filing';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 

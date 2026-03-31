@@ -1,6 +1,5 @@
 package com.hrms.api.attendance.dto;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -27,7 +26,8 @@ public class CheckOutRequest {
     @Size(max = 45, message = "IP address must not exceed 45 characters")
     private String ip;
 
-    // Client's local date - used to ensure correct attendance date regardless of timezone
+    // Client's local date - used to ensure correct attendance date regardless of
+    // timezone
     private LocalDate attendanceDate;
 
     // GPS coordinates for geofencing

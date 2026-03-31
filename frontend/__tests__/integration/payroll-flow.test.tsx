@@ -10,13 +10,13 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 // Mock the payroll service
-vi.mock('@/lib/services/payroll.service', () => ({
+vi.mock('@/lib/services/hrms/payroll.service', () => ({
   payrollService: {
     createPayrollRun: vi.fn(),
   },
 }));
 
-import { payrollService } from '@/lib/services/payroll.service';
+import { payrollService } from '@/lib/services/hrms/payroll.service';
 
 const mockedPayrollService = vi.mocked(payrollService);
 

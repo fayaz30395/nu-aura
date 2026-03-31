@@ -20,7 +20,7 @@ import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { useMyCertificates } from '@/lib/hooks/queries/useLearning';
-import type { Certificate } from '@/lib/services/lms.service';
+import type { Certificate } from '@/lib/services/grow/lms.service';
 import { safeWindowOpen } from '@/lib/utils/url';
 
 export default function CertificateGalleryPage() {

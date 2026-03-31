@@ -64,7 +64,7 @@ import type {
   MeetingAgendaCategory,
   MeetingActionStatus,
   MeetingActionPriority,
-} from '@/lib/types/meeting';
+} from '@/lib/types/hrms/meeting';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 

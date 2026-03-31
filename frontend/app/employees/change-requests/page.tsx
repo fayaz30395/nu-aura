@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppLayout } from '@/components/layout';
-import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
+import { employmentChangeRequestService } from '@/lib/services/hrms/employment-change-request.service';
 import {
   ChangeRequestStatus,
   ChangeType,
-} from '@/lib/types/employment-change-request';
+} from '@/lib/types/hrms/employment-change-request';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';

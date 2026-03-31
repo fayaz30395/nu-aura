@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { overtimeService } from '@/lib/services/overtime.service';
-import { OvertimeRecordRequest, OvertimeApprovalRequest } from '@/lib/types/overtime';
+import { overtimeService } from '@/lib/services/hrms/overtime.service';
+import { OvertimeRecordRequest, OvertimeApprovalRequest } from '@/lib/types/hrms/overtime';
 
 // Query keys for cache management
 export const overtimeKeys = {

@@ -32,7 +32,7 @@ import {
   useUpdateKeyResultProgress,
   useDeleteKeyResult,
 } from '@/lib/hooks/queries/usePerformance';
-import type { Objective, KeyResult, ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
+import type { Objective, KeyResult, ObjectiveRequest, KeyResultRequest } from '@/lib/services/grow/okr.service';
 
 const OBJECTIVE_LEVELS = ['COMPANY', 'DEPARTMENT', 'TEAM', 'INDIVIDUAL'] as const;
 const OBJECTIVE_STATUSES = ['DRAFT', 'ACTIVE', 'ON_TRACK', 'AT_RISK', 'BEHIND', 'COMPLETED', 'CANCELLED'] as const;

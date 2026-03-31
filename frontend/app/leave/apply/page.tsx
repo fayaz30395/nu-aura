@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { useActiveLeaveTypes, useEmployeeBalancesForYear, useCreateLeaveRequest } from '@/lib/hooks/queries/useLeaves';
-import { HalfDayPeriod } from '@/lib/types/leave';
+import { HalfDayPeriod } from '@/lib/types/hrms/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 const leaveFormSchema = z.object({

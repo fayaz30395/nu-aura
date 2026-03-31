@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
-import { OrgChartNode } from '@/lib/services/orgChart.service';
+import { OrgChartNode } from '@/lib/services/hrms/orgChart.service';
 import { OrgNode } from './OrgNode';
 import { cn } from '@/lib/utils';
 

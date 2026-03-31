@@ -25,7 +25,7 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconDotsVertical, IconCheck, IconEye } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { TaxDeclarationResponse, DeclarationStatus, TaxRegimeType } from '@/lib/types/tax';
+import { TaxDeclarationResponse, DeclarationStatus, TaxRegimeType } from '@/lib/types/hrms/tax';
 import { useTaxDeclarations, useCreateTaxDeclaration } from '@/lib/hooks/queries/useTax';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { notifications } from '@mantine/notifications';

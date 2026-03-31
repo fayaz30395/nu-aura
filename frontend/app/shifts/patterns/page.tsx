@@ -11,7 +11,7 @@ import {
   useUpdatePattern,
   useDeletePattern,
 } from '@/lib/hooks/queries/useShifts';
-import { ShiftPattern, ShiftPatternRequest, ShiftDefinition } from '@/lib/types/shift';
+import { ShiftPattern, ShiftPatternRequest, ShiftDefinition } from '@/lib/types/hrms/shift';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useForm } from 'react-hook-form';

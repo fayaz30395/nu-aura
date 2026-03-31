@@ -8,7 +8,7 @@ import {
   ImplicitRoleRuleRequest,
   ImplicitUserRole as _ImplicitUserRole,
   BulkRuleIdsRequest,
-} from '@/lib/types/implicitRoles';
+} from '@/lib/types/core/implicitRoles';
 
 interface ListParams {
   page?: number;

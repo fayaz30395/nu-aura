@@ -25,7 +25,7 @@ import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutoco
 import { useOnboardingTemplates, useCreateOnboardingProcess } from '@/lib/hooks/queries/useOnboarding';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/onboarding';
+import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/hire/onboarding';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('NewOnboardingPage');

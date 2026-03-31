@@ -21,7 +21,7 @@ import { EmployeeCapacityDisplay } from '@/components/resource-management';
 import {
   AllocationApprovalRequest,
   formatAllocationPercentage,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import {
   useMyPendingApprovals,
   useEmployeeCapacity,

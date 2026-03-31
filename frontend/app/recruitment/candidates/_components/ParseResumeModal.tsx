@@ -5,7 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Sparkles, Loader2, X } from 'lucide-react';
 import { ResumeParseFormData } from '@/lib/validations/recruitment';
-import { ResumeParseResponse } from '@/lib/types/ai-recruitment';
+import { ResumeParseResponse } from '@/lib/types/hire/ai-recruitment';
 
 interface ParseResumeModalProps {
   open: boolean;

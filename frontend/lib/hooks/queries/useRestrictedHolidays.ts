@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { restrictedHolidayService } from '@/lib/services/restrictedHoliday.service';
+import { restrictedHolidayService } from '@/lib/services/hrms/restrictedHoliday.service';
 import {
   RestrictedHolidayRequest,
   PolicyRequest,
   SelectionStatus,
   SelectionActionRequest,
-} from '@/lib/types/restricted-holiday';
+} from '@/lib/types/hrms/restricted-holiday';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Keys ─────────────────────────────────────────────────

@@ -3,8 +3,8 @@
 import React from 'react';
 import { BookOpen, Play, Download, Award, Loader2 } from 'lucide-react';
 import { Card, CardContent, Button, Badge, EmptyState } from '@/components/ui';
-import { EnrollmentStatus } from '@/lib/types/training';
-import type { TrainingEnrollment } from '@/lib/types/training';
+import { EnrollmentStatus } from '@/lib/types/grow/training';
+import type { TrainingEnrollment } from '@/lib/types/grow/training';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
 import { safeWindowOpen } from '@/lib/utils/url';
 interface MyTrainingsTabProps {

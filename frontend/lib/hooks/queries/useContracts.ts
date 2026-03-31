@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { contractService } from '@/lib/services/contract.service';
+import { contractService } from '@/lib/services/hrms/contract.service';
 import type {
   CreateContractRequest,
   UpdateContractRequest,
@@ -9,7 +9,7 @@ import type {
   ContractType,
   SendForSigningRequest,
   CreateContractTemplateRequest,
-} from '@/lib/types/contract';
+} from '@/lib/types/hrms/contract';
 
 export const contractKeys = {
   all: ['contracts'] as const,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { UpcomingHolidayResponse } from '@/lib/services/home.service';
+import { UpcomingHolidayResponse } from '@/lib/services/core/home.service';
 import { useUpcomingHolidays } from '@/lib/hooks/queries/useHome';
 
 interface Holiday {

@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useTeamSchedule, useActiveShiftDefinitions } from '@/lib/hooks/queries/useShifts';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ScheduleEntry } from '@/lib/types/shift';
+import { ScheduleEntry } from '@/lib/types/hrms/shift';
 import {
   Calendar,
   List,

@@ -8,7 +8,7 @@ import {
   DocumentExpiryTracking,
   DocumentAccessLevel,
   DocumentWithStatus
-} from '@/lib/types/document-workflow';
+} from '@/lib/types/core/document-workflow';
 
 const DOCUMENTS_API = '/documents';
 const WORKFLOW_API = '/documents/workflow';

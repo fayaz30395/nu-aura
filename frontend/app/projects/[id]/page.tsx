@@ -28,7 +28,7 @@ import {
   ProjectType,
   ProjectPriority,
   ProjectUpdateRequest,
-} from '@/lib/types/hrms-project';
+} from '@/lib/types/hrms/hrms-project';
 import {
   useHrmsProject,
   useActivateHrmsProject,

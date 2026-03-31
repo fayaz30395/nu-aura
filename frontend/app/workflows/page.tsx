@@ -13,7 +13,7 @@ import {
   useWorkflowDefinitions,
   useDeactivateWorkflowDefinition,
 } from '@/lib/hooks/queries/useWorkflows';
-import type { WorkflowDefinitionResponse, WorkflowEntityType } from '@/lib/types/workflow';
+import type { WorkflowDefinitionResponse, WorkflowEntityType } from '@/lib/types/core/workflow';
 import { format } from 'date-fns';
 import {
   Plus,

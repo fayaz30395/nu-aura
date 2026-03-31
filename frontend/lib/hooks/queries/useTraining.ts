@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { trainingService } from '@/lib/services/training.service';
+import { trainingService } from '@/lib/services/grow/training.service';
 import type {
   TrainingProgramRequest,
   TrainingEnrollmentRequest,
   ProgramStatus,
   EnrollmentStatus,
-} from '@/lib/types/training';
+} from '@/lib/types/grow/training';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────

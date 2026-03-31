@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Send, CornerDownRight, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/Button';
-import { CommentResponse, AuthorInfo } from '@/lib/services/wall.service';
+import { CommentResponse, AuthorInfo } from '@/lib/services/core/wall.service';
 import { cn } from '@/lib/utils';
 
 // ==================== Props ====================

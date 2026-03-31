@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, Check, CheckCheck, Trash2, X, ExternalLink } from 'lucide-react';
 import { notificationsApi } from '@/lib/api/notifications';
-import { Notification, NotificationType } from '@/lib/types/notifications';
+import { Notification, NotificationType } from '@/lib/types/core/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { useWebSocket } from '@/lib/contexts/WebSocketContext';
 import { logger } from '@/lib/utils/logger';

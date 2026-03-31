@@ -3,8 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   OnboardingStatus
-} from '@/lib/types/onboarding';
-import { onboardingService } from '@/lib/services/onboarding.service';
+} from '@/lib/types/hire/onboarding';
+import { onboardingService } from '@/lib/services/hire/onboarding.service';
 
 // Query Key Factory
 export const onboardingKeys = {

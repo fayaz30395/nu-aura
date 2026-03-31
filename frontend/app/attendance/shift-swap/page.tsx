@@ -4,15 +4,21 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeftRight, PlusCircle } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
+import { Modal } from '@mantine/core';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { TablePagination } from '@/components/ui';
+import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
+import { shiftService } from '@/lib/services/hrms/shift.service';
+import { ShiftAssignment } from '@/lib/types/hrms/shift';
 
 interface ShiftSwapRequest {
   id: string;
@@ -57,7 +63,7 @@ const shiftSwapSchema = z.object({
   swapType: z.enum(['SWAP', 'GIVE_AWAY', 'PICK_UP']),
   requesterShiftDate: z.string().min(1, 'My shift date is required'),
   targetShiftDate: z.string().optional(),
-  requesterAssignmentId: z.string().min(1, 'My assignment ID is required'),
+  requesterAssignmentId: z.string().min(1, 'Please select your shift assignment'),
   targetEmployeeId: z.string().optional(),
   reason: z.string().optional(),
 });
@@ -68,6 +74,8 @@ export default function ShiftSwapPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'my' | 'incoming' | 'approval'>('my');
+  const [myPage, setMyPage] = useState(0);
+  const [myPageSize, setMyPageSize] = useState(20);
   const { hasAnyPermission, isReady } = usePermissions();
 
   const hasAccess = hasAnyPermission(
@@ -84,13 +92,16 @@ export default function ShiftSwapPage() {
   }, [isReady, hasAccess, router]);
 
   const [showModal, setShowModal] = useState(false);
-  const [employeeId] = useState('current'); // resolved from JWT by backend
+  const [selectedTargetEmployee, setSelectedTargetEmployee] = useState<{ id: string; name: string } | null>(null);
+  const { user } = useAuth();
+  const employeeId = user?.employeeId;
 
   const {
     register,
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ShiftSwapFormData>({
     resolver: zodResolver(shiftSwapSchema),
@@ -106,22 +117,34 @@ export default function ShiftSwapPage() {
 
   const watchedSwapType = watch('swapType');
 
-  const { data: myRequestsData, isLoading: loadingMy } = useQuery<{ content: ShiftSwapRequest[] }>({
-    queryKey: ['shift-swap', 'my', employeeId],
-    queryFn: () => apiClient.get<{ content: ShiftSwapRequest[] }>(`/shift-swaps/my-requests/${employeeId}`).then(r => r.data),
-    enabled: activeTab === 'my',
+  // Fetch the current user's active shift assignments for the dropdown
+  const { data: myAssignmentsData } = useQuery({
+    queryKey: ['shift-assignments', 'employee', employeeId],
+    queryFn: () => shiftService.getEmployeeAssignments(employeeId!, 0, 50),
+    enabled: !!employeeId && showModal,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const activeAssignments = (myAssignmentsData?.content ?? []).filter(
+    (a: ShiftAssignment) => a.status === 'ACTIVE'
+  );
+
+  const { data: myRequestsData, isLoading: loadingMy } = useQuery<{ content: ShiftSwapRequest[]; totalPages: number; totalElements: number }>({
+    queryKey: ['shift-swap', 'my', employeeId, myPage, myPageSize],
+    queryFn: () => apiClient.get<{ content: ShiftSwapRequest[]; totalPages: number; totalElements: number }>(`/shift-swaps/my-requests/${employeeId}`, { params: { page: myPage, size: myPageSize } }).then(r => r.data),
+    enabled: activeTab === 'my' && !!employeeId,
   });
 
   const { data: incomingRequests, isLoading: loadingIncoming } = useQuery<ShiftSwapRequest[]>({
     queryKey: ['shift-swap', 'incoming', employeeId],
     queryFn: () => apiClient.get<ShiftSwapRequest[]>(`/shift-swaps/incoming/${employeeId}`).then(r => r.data),
-    enabled: activeTab === 'incoming',
+    enabled: activeTab === 'incoming' && !!employeeId,
   });
 
   const { data: pendingApproval, isLoading: loadingApproval } = useQuery<ShiftSwapRequest[]>({
     queryKey: ['shift-swap', 'pending-approval'],
     queryFn: () => apiClient.get<ShiftSwapRequest[]>('/shift-swaps/pending-approval').then(r => r.data),
-    enabled: activeTab === 'approval',
+    enabled: activeTab === 'approval' && !!employeeId,
   });
 
   const submitMutation = useMutation({
@@ -130,6 +153,7 @@ export default function ShiftSwapPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shift-swap'] });
       setShowModal(false);
+      setSelectedTargetEmployee(null);
       reset();
     },
     onError: () => notifications.show({ title: 'Error', message: 'Failed to submit shift swap request', color: 'red' }),
@@ -138,7 +162,12 @@ export default function ShiftSwapPage() {
   const actionMutation = useMutation({
     mutationFn: ({ id, action, payload }: { id: string; action: string; payload: Record<string, string> }) =>
       apiClient.post(`/shift-swaps/${id}/${action}`, payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shift-swap'] }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['shift-swap'] });
+      const actionLabels: Record<string, string> = { approve: 'approved', reject: 'rejected', accept: 'accepted', decline: 'declined', cancel: 'cancelled' };
+      const label = actionLabels[variables.action] ?? variables.action;
+      notifications.show({ title: 'Success', message: `Shift swap request ${label} successfully`, color: 'green' });
+    },
     onError: (error: ApiError) => {
       const errorMessage = error?.response?.data?.message || 'Failed to process the request';
       notifications.show({
@@ -149,7 +178,7 @@ export default function ShiftSwapPage() {
     },
   });
 
-  if (!isReady || !hasAccess) return null;
+  if (!isReady || !hasAccess || !employeeId) return null;
 
   const onSubmitForm = (data: ShiftSwapFormData) => {
     submitMutation.mutate(data);
@@ -157,6 +186,7 @@ export default function ShiftSwapPage() {
 
   const handleModalClose = () => {
     setShowModal(false);
+    setSelectedTargetEmployee(null);
     reset();
   };
 
@@ -193,7 +223,10 @@ export default function ShiftSwapPage() {
           {tabs.map(tab => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'my' | 'incoming' | 'approval')}
+              onClick={() => {
+                setActiveTab(tab.key as 'my' | 'incoming' | 'approval');
+                setMyPage(0);
+              }}
               className={`pb-2 px-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.key
                   ? 'border-accent-600 text-accent-600'
@@ -285,19 +318,29 @@ export default function ShiftSwapPage() {
                 </tbody>
               </table>
             )}
+
+            {activeTab === 'my' && (myRequestsData?.totalElements ?? 0) > 0 && (
+              <div className="px-4 pb-4">
+                <TablePagination
+                  currentPage={myPage}
+                  totalPages={myRequestsData?.totalPages ?? 0}
+                  totalItems={myRequestsData?.totalElements ?? 0}
+                  pageSize={myPageSize}
+                  onPageChange={setMyPage}
+                  onPageSizeChange={(size) => {
+                    setMyPageSize(size);
+                    setMyPage(0);
+                  }}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
       {/* Create modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-          <Card className="w-full max-w-lg mx-4">
-            <CardHeader>
-              <CardTitle>New Shift Swap Request</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+      <Modal opened={showModal} onClose={handleModalClose} title="New Shift Swap Request" size="lg" centered>
+        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Type *</label>
                   <select
@@ -336,25 +379,36 @@ export default function ShiftSwapPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Assignment ID *</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Assignment *</label>
+                  <select
                     {...register('requesterAssignmentId')}
-                    placeholder="UUID of your shift assignment"
                     className={`input-aura ${errors.requesterAssignmentId ? 'border-danger-500' : ''}`}
-                  />
+                  >
+                    <option value="">Select your shift assignment</option>
+                    {activeAssignments.map((a: ShiftAssignment) => (
+                      <option key={a.id} value={a.id}>
+                        {a.shiftName} ({a.shiftCode}) — {a.assignmentDate} ({a.shiftStartTime}–{a.shiftEndTime})
+                      </option>
+                    ))}
+                  </select>
+                  {activeAssignments.length === 0 && (
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">No active shift assignments found</p>
+                  )}
                   {errors.requesterAssignmentId && (
                     <p className="mt-1 text-xs text-danger-500">{errors.requesterAssignmentId.message}</p>
                   )}
                 </div>
                 {watchedSwapType !== 'PICK_UP' && (
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Employee ID</label>
-                    <input
-                      type="text"
-                      {...register('targetEmployeeId')}
-                      placeholder="UUID of the other employee"
-                      className="input-aura"
+                    <EmployeeSearchAutocomplete
+                      label="Target Employee"
+                      placeholder="Search for an employee..."
+                      excludeIds={employeeId ? [employeeId] : []}
+                      value={selectedTargetEmployee}
+                      onChange={(emp) => {
+                        setSelectedTargetEmployee(emp);
+                        setValue('targetEmployeeId', emp?.id ?? '', { shouldValidate: true });
+                      }}
                     />
                   </div>
                 )}
@@ -373,11 +427,8 @@ export default function ShiftSwapPage() {
                     {submitMutation.isPending ? 'Submitting...' : 'Submit Request'}
                   </Button>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        </form>
+      </Modal>
     </AppLayout>
   );
 }

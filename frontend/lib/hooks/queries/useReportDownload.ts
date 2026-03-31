@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { reportService, ReportRequest, ReportType } from '@/lib/services/report.service';
+import { reportService, ReportRequest, ReportType } from '@/lib/services/core/report.service';
 
 const downloadFns: Record<ReportType, (req: ReportRequest) => Promise<void>> = {
   'employee-directory': (req) => reportService.downloadEmployeeReport(req),

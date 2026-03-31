@@ -10,13 +10,13 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
 import { Button, EmptyState, ConfirmDialog } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import type { TrainingProgram, TrainingEnrollmentRequest, TrainingProgramRequest } from '@/lib/types/training';
+import type { TrainingProgram, TrainingEnrollmentRequest, TrainingProgramRequest } from '@/lib/types/grow/training';
 import {
   TrainingCategory,
   DeliveryMode,
   ProgramStatus,
   EnrollmentStatus,
-} from '@/lib/types/training';
+} from '@/lib/types/grow/training';
 import {
   useAllPrograms,
   useEnrollmentsByEmployee,

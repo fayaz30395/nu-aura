@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { orgChartService, OrgChartNode, OrgChartStats } from '@/lib/services/orgChart.service';
-import { Employee, Department } from '@/lib/types/employee';
+import { orgChartService, OrgChartNode, OrgChartStats } from '@/lib/services/hrms/orgChart.service';
+import { Employee, Department } from '@/lib/types/hrms/employee';
 
 // ── Query Keys ──────────────────────────────────────────────────────────────
 

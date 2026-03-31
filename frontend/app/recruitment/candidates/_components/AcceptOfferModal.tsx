@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle } from 'lucide-react';
-import { Candidate } from '@/lib/types/recruitment';
+import { Candidate } from '@/lib/types/hire/recruitment';
 
 interface AcceptOfferModalProps {
   open: boolean;

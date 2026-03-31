@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { LeaveTypeDistribution } from '@/lib/types/analytics';
+import { LeaveTypeDistribution } from '@/lib/types/core/analytics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface LeaveDistributionChartProps {

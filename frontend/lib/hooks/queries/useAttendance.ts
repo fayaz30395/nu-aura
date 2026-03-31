@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { attendanceService } from '@/lib/services/attendance.service';
+import { attendanceService } from '@/lib/services/hrms/attendance.service';
 import {
   AttendanceRecord,
   CheckInRequest,
@@ -10,7 +10,7 @@ import {
   ShiftRequest,
   HolidayRequest,
   Page,
-} from '@/lib/types/attendance';
+} from '@/lib/types/hrms/attendance';
 
 // Query keys for cache management
 export const attendanceKeys = {

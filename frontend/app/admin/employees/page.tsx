@@ -23,7 +23,7 @@ import { useAllDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useRoles, useAssignRolesToUser } from '@/lib/hooks/queries/useRoles';
 // useUpdateUserRole removed — using usersApi.assignRoles for multi-role support
 import { Permissions, Roles, usePermissions } from '@/lib/hooks/usePermissions';
-import { Employee, CreateEmployeeRequest } from '@/lib/types/employee';
+import { Employee, CreateEmployeeRequest } from '@/lib/types/hrms/employee';
 import { usersApi } from '@/lib/api/users';
 
 // ──────────────────────────────────────────────

@@ -21,7 +21,7 @@ import type {
   CommentResponse,
   AuthorInfo,
   PollOptionResponse,
-} from '@/lib/services/wall.service';
+} from '@/lib/services/core/wall.service';
 import { ReactionBar } from './ReactionBar';
 import { CommentThread } from './CommentThread';
 

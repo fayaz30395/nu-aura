@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { ReportRequest } from '@/lib/services/report.service';
+import { ReportRequest } from '@/lib/services/core/report.service';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useDownloadPayrollReport } from '@/lib/hooks/queries/useReports';
 

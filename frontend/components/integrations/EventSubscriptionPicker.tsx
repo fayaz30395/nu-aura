@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MultiSelect } from '@mantine/core';
-import { ConnectorCapabilities } from '@/lib/types/connector';
+import { ConnectorCapabilities } from '@/lib/types/core/connector';
 
 const AVAILABLE_EVENTS = [
   'employee.created',

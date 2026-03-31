@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { createMockLeaveRequest, createMockLeaveBalance, mockLeaveTypes } from '@/lib/test-utils/fixtures';
 
 // Mock the leave service
-vi.mock('@/lib/services/leave.service', () => ({
+vi.mock('@/lib/services/hrms/leave.service', () => ({
   leaveService: {
     createLeaveRequest: vi.fn(),
     getLeaveRequestById: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock('@/lib/services/leave.service', () => ({
   },
 }));
 
-import { leaveService } from '@/lib/services/leave.service';
+import { leaveService } from '@/lib/services/hrms/leave.service';
 
 const mockedLeaveService = vi.mocked(leaveService);
 

@@ -24,7 +24,7 @@ import {
   SmsTestRequest,
   IntegrationTestResponse,
   SmsSendResponse,
-} from '@/lib/types/integration';
+} from '@/lib/types/core/integration';
 import { isProduction } from '@/lib/config/env';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
@@ -38,7 +38,7 @@ import {
   useTestPayment,
 } from '@/lib/hooks/queries/useIntegrations';
 import { useConnectors, useSaveConnectorConfig } from '@/lib/hooks/queries/useConnectors';
-import type { ConnectorConfigRequest } from '@/lib/types/connector';
+import type { ConnectorConfigRequest } from '@/lib/types/core/connector';
 import { ConnectorCard } from '@/components/integrations/ConnectorCard';
 import { ConnectorConfigPanel } from '@/components/integrations/ConnectorConfigPanel';
 import { IntegrationActivityLog } from '@/components/integrations/IntegrationActivityLog';

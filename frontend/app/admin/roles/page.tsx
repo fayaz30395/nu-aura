@@ -14,7 +14,7 @@ import {
   CustomTarget,
   PermissionScopeRequest,
   SCOPE_LABELS,
-} from '@/lib/types/roles';
+} from '@/lib/types/core/roles';
 import { ScopeSelector } from '@/components/admin/ScopeSelector';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';

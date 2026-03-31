@@ -24,7 +24,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
-import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/performance';
+import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/grow/performance';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

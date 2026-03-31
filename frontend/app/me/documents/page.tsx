@@ -41,7 +41,7 @@ import {
   DocumentType,
   DeliveryMode,
   DocumentRequestStatus,
-} from '@/lib/types/selfservice';
+} from '@/lib/types/hrms/selfservice';
 
 // UI metadata for known document types. Used to enrich API-returned type values with
 // human-readable labels and descriptions. If the backend introduces a new type that is

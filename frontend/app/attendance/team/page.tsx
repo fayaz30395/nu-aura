@@ -26,7 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { SkeletonStatCard, SkeletonTable, SkeletonCard } from '@/components/ui/Skeleton';
-import { AttendanceRecord } from '@/lib/types/attendance';
+import { AttendanceRecord } from '@/lib/types/hrms/attendance';
 import { getLocalDateString } from '@/lib/utils/dateUtils';
 import { useAttendanceByDate } from '@/lib/hooks/queries/useAttendance';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';

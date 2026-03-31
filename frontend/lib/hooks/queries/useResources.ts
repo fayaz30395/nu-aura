@@ -7,7 +7,7 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { resourceManagementService } from '@/lib/services/resource-management.service';
+import { resourceManagementService } from '@/lib/services/hrms/resource-management.service';
 import {
   EmployeeCapacity,
   AllocationApprovalRequest,
@@ -25,7 +25,7 @@ import {
   EmployeeWorkload,
   DepartmentWorkload,
   WorkloadHeatmapRow,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 interface PageResponse<T> {

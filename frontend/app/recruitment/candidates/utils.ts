@@ -1,4 +1,4 @@
-import { CandidateStatus, RecruitmentStage } from '@/lib/types/recruitment';
+import { CandidateStatus, RecruitmentStage } from '@/lib/types/hire/recruitment';
 
 /**
  * Status badge color mapping for candidates.

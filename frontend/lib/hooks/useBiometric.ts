@@ -6,8 +6,8 @@ import {
   biometricDeviceService,
   biometricPunchService,
   biometricApiKeyService,
-} from '@/lib/services/biometricService';
-import type { BiometricDeviceRequest } from '@/lib/services/biometricService';
+} from '@/lib/services/hrms/biometricService';
+import type { BiometricDeviceRequest } from '@/lib/services/hrms/biometricService';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────
 

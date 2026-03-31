@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { statutoryService } from '@/lib/services/statutory.service';
+import { statutoryService } from '@/lib/services/hrms/statutory.service';
 import {
   ProvidentFundConfig,
   ESIConfig,
   ProfessionalTaxSlab,
   MonthlyStatutoryContribution,
-} from '@/lib/types/statutory';
+} from '@/lib/types/hrms/statutory';
 
 // Query key factory for statutory compliance
 export const statutoryKeys = {

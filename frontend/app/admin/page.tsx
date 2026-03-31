@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { notifications } from '@mantine/notifications';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
 import { Roles, usePermissions } from '@/lib/hooks/usePermissions';
-import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/admin';
+import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/core/admin';
 import { AdminPageContent } from '@/components/layout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';

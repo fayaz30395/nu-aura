@@ -37,8 +37,8 @@ import {
   Textarea,
   Skeleton,
 } from '@/components/ui';
-import type { RecognitionRequest } from '@/lib/types/recognition';
-import { RecognitionType, RecognitionCategory } from '@/lib/types/recognition';
+import type { RecognitionRequest } from '@/lib/types/grow/recognition';
+import { RecognitionType, RecognitionCategory } from '@/lib/types/grow/recognition';
 import {
   usePublicFeed,
   useMyReceivedRecognitions,
@@ -49,7 +49,7 @@ import {
   useAddReaction,
   useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
-import { ReactionType } from '@/lib/types/recognition';
+import { ReactionType } from '@/lib/types/grow/recognition';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({

@@ -9,7 +9,7 @@ import { Building2, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, Users, Search,
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/employee';
+import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/hrms/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { SkeletonTable } from '@/components/ui/Loading';

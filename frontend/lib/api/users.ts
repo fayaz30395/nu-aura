@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { Role } from '../types/roles';
+import { Role } from '../types/core/roles';
 
 export interface User {
     id: string;

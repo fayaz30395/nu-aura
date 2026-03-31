@@ -77,21 +77,21 @@ const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
   return (
-    <div className="fixed inset-0" style={{ zIndex: 0 }}>
+    <div className="fixed inset-0" style={{ zIndex: 0 }} suppressHydrationWarning>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
       {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.08)' }} />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.06)' }} />
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(230, 42, 50, 0.04)' }} />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.08)' }} suppressHydrationWarning />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.06)' }} suppressHydrationWarning />
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'rgba(230, 42, 50, 0.04)' }} suppressHydrationWarning />
       </div>
       {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0" style={{ background: '#0a1218' }} />
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.14)' }} />
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.08)' }} />
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(230, 42, 50, 0.05)' }} />
+        <div className="absolute inset-0" style={{ background: '#0a1218' }} suppressHydrationWarning />
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'rgba(5, 7, 102, 0.14)' }} suppressHydrationWarning />
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'rgba(137, 57, 161, 0.08)' }} suppressHydrationWarning />
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'rgba(230, 42, 50, 0.05)' }} suppressHydrationWarning />
         {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04]"

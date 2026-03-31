@@ -10,7 +10,7 @@ import {
   useUpdateShiftDefinition,
   useDeleteShiftDefinition,
 } from '@/lib/hooks/queries/useShifts';
-import { ShiftDefinition, ShiftDefinitionRequest } from '@/lib/types/shift';
+import { ShiftDefinition, ShiftDefinitionRequest } from '@/lib/types/hrms/shift';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useForm, Controller } from 'react-hook-form';

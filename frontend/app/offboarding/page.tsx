@@ -43,7 +43,7 @@ import {
   useDeleteExitProcess,
   useUpdateExitStatus,
 } from '@/lib/hooks/queries/useExit';
-import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/exit';
+import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/hrms/exit';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { extractContent } from '@/lib/utils/type-guards';

@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { Drawer } from '@mantine/core';
 import { Button } from '@/components/ui/Button';
-import { ConnectorInfo, ConnectorConfigField, ConnectorConfigRequest } from '@/lib/types/connector';
+import { ConnectorInfo, ConnectorConfigField, ConnectorConfigRequest } from '@/lib/types/core/connector';
 
 interface ConnectorConfigPanelProps {
   connector: ConnectorInfo | null;

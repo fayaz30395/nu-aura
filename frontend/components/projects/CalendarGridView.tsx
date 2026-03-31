@@ -13,7 +13,7 @@ import {
   startOfDay,
   isToday,
 } from 'date-fns';
-import { CalendarEvent } from '@/lib/types/project-calendar';
+import { CalendarEvent } from '@/lib/types/hrms/project-calendar';
 
 interface CalendarGridViewProps {
   currentDate: Date;

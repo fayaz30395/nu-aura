@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { spotlightService } from '@/lib/services/spotlight.service';
-import type { Spotlight } from '@/lib/types/spotlight';
+import { spotlightService } from '@/lib/services/platform/spotlight.service';
+import type { Spotlight } from '@/lib/types/platform/spotlight';
 
 function getDemoSpotlights(): Spotlight[] {
   return [

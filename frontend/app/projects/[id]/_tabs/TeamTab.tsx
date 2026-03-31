@@ -19,7 +19,7 @@ import {
   Select,
   TablePagination,
 } from '@/components/ui';
-import { ProjectAllocation } from '@/lib/types/hrms-allocation';
+import { ProjectAllocation } from '@/lib/types/hrms/hrms-allocation';
 import { apiClient } from '@/lib/api/client';
 import {
   useProjectAllocations,

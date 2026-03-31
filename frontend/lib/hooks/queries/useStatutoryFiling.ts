@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { statutoryFilingService } from '@/lib/services/statutory-filing.service';
+import { statutoryFilingService } from '@/lib/services/hrms/statutory-filing.service';
 import {
   FilingTypeInfo,
   FilingRunResponse,
@@ -9,7 +9,7 @@ import {
   SubmitFilingRequest,
   ValidationResult,
   Page,
-} from '@/lib/types/statutory-filing';
+} from '@/lib/types/hrms/statutory-filing';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────────
 

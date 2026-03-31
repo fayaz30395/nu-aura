@@ -23,7 +23,7 @@ import {
   Feedback360Request,
   CycleRequest,
   FeedbackResponse,
-} from '@/lib/services/feedback360.service';
+} from '@/lib/services/grow/feedback360.service';
 import {
   useActiveFeedback360Cycles,
   useMyPending360Reviews,

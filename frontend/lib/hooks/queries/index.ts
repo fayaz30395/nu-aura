@@ -1,131 +1,99 @@
-// Employee hooks
-export * from './useEmployees';
+/**
+ * Query hooks barrel — all React Query hooks for NU-AURA.
+ * Organised by sub-app: HRMS → Hire → Grow → Platform → Core/Shared
+ */
 
-// Project hooks
-export * from './useProjects';
+// ── Shared utils ─────────────────────────────────────────────────────────────
+export * from './performanceKeys';
 
-// Leave hooks
-export * from './useLeaves';
-
-// Attendance hooks
-export * from './useAttendance';
-
-// Approval / workflow hooks
-export * from './useApprovals';
-
-// Compensation hooks
-export * from './useCompensation';
-
-// Tax hooks
-export * from './useTax';
-
-// Payroll hooks
-export * from './usePayroll';
-
-// Home hooks
-export * from './useHome';
-
-// Learning hooks
-export * from './useLearning';
-
-// Wellness hooks
-export * from './useWellness';
-
-// Letter hooks
-export * from './useLetter';
-
-// Loan hooks
-export * from './useLoans';
-
-// Timesheet hooks
-export * from './useTimesheets';
-
-// Notification hooks
-export * from './useNotifications';
-
-// Expense hooks
-export * from './useExpenses';
-
-// Benefit hooks
-export * from './useBenefits';
-
-// Asset hooks
-export * from './useAssets';
-
-// Performance hooks
-export * from './usePerformance';
-
-// Dashboard hooks
-export * from './useDashboards';
-
-// Self-service hooks
-export * from './useSelfService';
-
-// Announcement hooks
-export * from './useAnnouncements';
-
-// Department hooks
-export * from './useDepartments';
-
-// Onboarding hooks
-export * from './useOnboarding';
-
-// Travel hooks
-export * from './useTravel';
-
-// Survey hooks
-export * from './useSurveys';
-
-// Recognition hooks
-export * from './useRecognition';
-
-// Training hooks
-export * from './useTraining';
-
-// Recruitment hooks
-export * from './useRecruitment';
-
-// Wave 8 additions
-// Note: useFluence, usePayments, usePsa, useResources, useTimeTracking, useWall
-// are imported directly from their module files in page components to avoid
-// export name conflicts with earlier hooks (useContracts, useTimesheets, etc.)
+// ── NU-HRMS ──────────────────────────────────────────────────────────────────
 export * from './useAdmin';
 export * from './useAnalytics';
+export * from './useAssets';
+export * from './useAttendance';
+export * from './useBenefits';
 export * from './useCalendar';
+export * from './useCompensation';
 export * from './useContracts';
+export * from './useCustomFields';
+export * from './useDashboards';
+export * from './useDepartments';
 export * from './useDocumentWorkflow';
+export * from './useEmployees';
+export * from './useEscalation';
+export * from './useExpenses';
+export * from './useExit';
+export * from './useFeatureFlags';
+export * from './useGoals';
+export * from './useHelpdesk';
 export * from './useHelpdeskSla';
-export * from './useIntegrations';
+export * from './useHome';
+export * from './useImplicitRoles';
+export * from './useImportExport';
+export * from './useLeaves';
+export * from './useLetter';
+export * from './useLoans';
+export * from './useLWF';
+export * from './useOfficeLocations';
+export * from './useOneOnOne';
+export * from './useOvertime';
+export * from './usePayments';
+export * from './usePayroll';
+export * from './usePip';
+export * from './useProbation';
+export * from './useProjects';
+export * from './usePsa';
+export * from './useReportDownload';
+export * from './useReports';
+export * from './useResources';
+export * from './useRestrictedHolidays';
+export * from './useReviewCycles';
+export * from './useReviews';
+export * from './useRoles';
+export * from './useSelfService';
+export * from './useShifts';
+export * from './useStatutory';
+export * from './useStatutoryFiling';
+export * from './useSystemAdmin';
+export * from './useTax';
+export * from './useTimeTracking';
+export * from './useTimesheets';
+export * from './useTravel';
+
+// ── NU-Hire ──────────────────────────────────────────────────────────────────
+export * from './useApplicants';
+export * from './useApprovals';
+export * from './useCareers';
+export * from './useConnectors';
+export * from './useEsignPublic';
 export * from './useKekaImport';
 export * from './useMobileApi';
-export * from './useOfficeLocations';
-export * from './useReports';
-export * from './useSpotlight';
-export * from './useStatutory';
-export * from './useSystemAdmin';
-
-// Wave 9 additions
-export * from './useApplicants';
-export * from './useCareers';
-export * from './useCustomFields';
-export * from './useEsignPublic';
-export * from './useExit';
-export * from './useKnowledgeBase';
-export * from './useLinkedIn';
-export * from './useMfa';
+export * from './useOnboarding';
 export * from './usePreboarding';
 export * from './usePublicOffer';
-export * from './useRoles';
-export * from './useShifts';
+export * from './useRecruitment';
+export * from './useReferrals';
 
-// Predictive Analytics hooks
+// ── NU-Grow ───────────────────────────────────────────────────────────────────
+export * from './useFeedback360';
+export * from './useLearning';
+export * from './useMfa';
+export * from './useNotifications';
+export * from './useOkr';
+export * from './usePerformance';
 export * from './usePredictiveAnalytics';
-
-// LWF (Labour Welfare Fund) hooks
-export * from './useLWF';
-
-// Workflow definition hooks
+export * from './useRecognition';
+export * from './useSurveys';
+export * from './useTraining';
+export * from './useWellness';
 export * from './useWorkflows';
 
-// Helpdesk ticket hooks
-export * from './useHelpdesk';
+// ── NU-Fluence / Platform ────────────────────────────────────────────────────
+// Note: useFluence and useWall export useDeleteComment/useAddComment which
+// conflict with useHelpdesk. Import those hooks directly from their module files.
+export * from './useAnnouncements';
+export * from './useFeedback';
+export * from './useIntegrations';
+export * from './useKnowledgeBase';
+export * from './useLinkedIn';
+export * from './useSpotlight';

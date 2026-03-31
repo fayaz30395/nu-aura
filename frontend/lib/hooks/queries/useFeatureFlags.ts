@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { featureFlagService } from '@/lib/services/feature-flag.service';
-import type { FeatureFlagRequest } from '@/lib/types/feature-flag';
+import { featureFlagService } from '@/lib/services/core/feature-flag.service';
+import type { FeatureFlagRequest } from '@/lib/types/core/feature-flag';
 
 export const featureFlagKeys = {
   all: ['featureFlags'] as const,

@@ -8,9 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/logger';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { LoanType, RepaymentFrequency } from '@/lib/types/loan';
+import { LoanType, RepaymentFrequency } from '@/lib/types/hrms/loan';
 import { useCreateLoan } from '@/lib/hooks/queries/useLoans';
-import { loanService } from '@/lib/services/loan.service';
+import { loanService } from '@/lib/services/hrms/loan.service';
 import {
   ArrowLeft,
   Wallet,

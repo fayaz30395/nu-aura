@@ -4,7 +4,7 @@
  */
 
 import type { BadgeVariant } from '@/components/ui/types';
-import type { Gender, EmploymentType, EmployeeLevel, JobRole, EmployeeStatus } from '@/lib/types/employee';
+import type { Gender, EmploymentType, EmployeeLevel, JobRole, EmployeeStatus } from '@/lib/types/hrms/employee';
 
 // ============================================
 // BADGE VARIANT MAPPING

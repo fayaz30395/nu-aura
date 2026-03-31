@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-location.service';
+import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/hrms/office-location.service';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';

@@ -13,7 +13,7 @@ import {
   useApproveSwapRequest,
   useRejectSwapRequest,
 } from '@/lib/hooks/queries/useShifts';
-import { ShiftSwapRequest, SwapStatus } from '@/lib/types/shift';
+import { ShiftSwapRequest, SwapStatus } from '@/lib/types/hrms/shift';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { motion } from 'framer-motion';

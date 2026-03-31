@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { leaveService, LeaveEncashmentRequest } from '@/lib/services/leave.service';
-import { LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest } from '@/lib/types/leave';
+import { leaveService, LeaveEncashmentRequest } from '@/lib/services/hrms/leave.service';
+import { LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest } from '@/lib/types/hrms/leave';
 import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Star, TrendingUp, AlertTriangle, Users, GripVertical } from 'lucide-react';
-import { EmployeeCalibration } from '@/lib/types/performance-360';
+import { EmployeeCalibration } from '@/lib/types/grow/performance-360';
 
 interface CalibrationMatrixProps {
   employees: EmployeeCalibration[];

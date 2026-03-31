@@ -41,7 +41,7 @@ import {
   getPriorityColor,
   getCategoryLabel,
   CreateAnnouncementRequest,
-} from '@/lib/services/announcement.service';
+} from '@/lib/services/platform/announcement.service';
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';

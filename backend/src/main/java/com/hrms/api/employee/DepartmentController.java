@@ -7,8 +7,6 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +28,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/departments")
 @Tag(name = "Departments", description = "Department management endpoints for organizational structure")
-// SECURITY FIX (P1.2): Removed @CrossOrigin(origins = "*") - use global CORS config
+// SECURITY FIX (P1.2): Removed @CrossOrigin(origins = "*") - use global CORS
+// config
 public class DepartmentController {
 
     private final DepartmentService departmentService;
@@ -43,9 +42,9 @@ public class DepartmentController {
     @RequiresPermission(Permission.DEPARTMENT_MANAGE)
     @Operation(summary = "Create department", description = "Create a new department in the organization")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Department created successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "409", description = "Department with same name already exists")
+            @ApiResponse(responseCode = "201", description = "Department created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "409", description = "Department with same name already exists")
     })
     public ResponseEntity<DepartmentResponse> createDepartment(
             @Valid @RequestBody DepartmentRequest request) {
@@ -57,9 +56,9 @@ public class DepartmentController {
     @RequiresPermission(Permission.DEPARTMENT_MANAGE)
     @Operation(summary = "Update department", description = "Update an existing department")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Department updated successfully"),
-        @ApiResponse(responseCode = "404", description = "Department not found"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data")
+            @ApiResponse(responseCode = "200", description = "Department updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Department not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data")
     })
     public ResponseEntity<DepartmentResponse> updateDepartment(
             @Parameter(description = "Department UUID") @PathVariable UUID id,
@@ -70,15 +69,15 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     @Operation(summary = "Get department by ID", description = "Retrieve a single department by its UUID")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Department found"),
-        @ApiResponse(responseCode = "404", description = "Department not found")
+            @ApiResponse(responseCode = "200", description = "Department found"),
+            @ApiResponse(responseCode = "404", description = "Department not found")
     })
     public ResponseEntity<DepartmentResponse> getDepartment(
             @Parameter(description = "Department UUID") @PathVariable UUID id) {
@@ -88,10 +87,10 @@ public class DepartmentController {
 
     @GetMapping
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     @Operation(summary = "Get all departments", description = "Retrieve paginated list of all departments")
     @ApiResponse(responseCode = "200", description = "Departments retrieved successfully")
@@ -105,10 +104,10 @@ public class DepartmentController {
 
     @GetMapping("/active")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     @Operation(summary = "Get active departments", description = "Retrieve list of all active departments")
     @ApiResponse(responseCode = "200", description = "Active departments retrieved successfully")
@@ -119,9 +118,9 @@ public class DepartmentController {
 
     @GetMapping("/hierarchy")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Get department hierarchy", description = "Retrieve department tree structure with parent-child relationships")
     @ApiResponse(responseCode = "200", description = "Department hierarchy retrieved successfully")
@@ -132,10 +131,10 @@ public class DepartmentController {
 
     @GetMapping("/search")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     @Operation(summary = "Search departments", description = "Search departments by name or code")
     @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
@@ -152,8 +151,8 @@ public class DepartmentController {
     @RequiresPermission(Permission.DEPARTMENT_MANAGE)
     @Operation(summary = "Activate department", description = "Activate a deactivated department")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Department activated successfully"),
-        @ApiResponse(responseCode = "404", description = "Department not found")
+            @ApiResponse(responseCode = "200", description = "Department activated successfully"),
+            @ApiResponse(responseCode = "404", description = "Department not found")
     })
     public ResponseEntity<DepartmentResponse> activateDepartment(
             @Parameter(description = "Department UUID") @PathVariable UUID id) {
@@ -165,9 +164,9 @@ public class DepartmentController {
     @RequiresPermission(Permission.DEPARTMENT_MANAGE)
     @Operation(summary = "Deactivate department", description = "Deactivate an active department")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Department deactivated successfully"),
-        @ApiResponse(responseCode = "404", description = "Department not found"),
-        @ApiResponse(responseCode = "409", description = "Cannot deactivate department with active employees")
+            @ApiResponse(responseCode = "200", description = "Department deactivated successfully"),
+            @ApiResponse(responseCode = "404", description = "Department not found"),
+            @ApiResponse(responseCode = "409", description = "Cannot deactivate department with active employees")
     })
     public ResponseEntity<DepartmentResponse> deactivateDepartment(
             @Parameter(description = "Department UUID") @PathVariable UUID id) {
@@ -179,9 +178,9 @@ public class DepartmentController {
     @RequiresPermission(Permission.DEPARTMENT_MANAGE)
     @Operation(summary = "Delete department", description = "Permanently delete a department")
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Department deleted successfully"),
-        @ApiResponse(responseCode = "404", description = "Department not found"),
-        @ApiResponse(responseCode = "409", description = "Cannot delete department with employees")
+            @ApiResponse(responseCode = "204", description = "Department deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Department not found"),
+            @ApiResponse(responseCode = "409", description = "Cannot delete department with employees")
     })
     public ResponseEntity<Void> deleteDepartment(
             @Parameter(description = "Department UUID") @PathVariable UUID id) {

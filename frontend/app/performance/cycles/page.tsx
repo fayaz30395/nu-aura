@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/performance';
+import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/grow/performance';
 import { Play, Users, CheckCircle, Building2, MapPin } from 'lucide-react';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────

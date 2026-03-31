@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
-import { EventType, EventVisibility } from '@/lib/types/calendar';
+import { EventType, EventVisibility } from '@/lib/types/hrms/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateCalendarEvent } from '@/lib/hooks/queries/useCalendar';
 import {

@@ -5,8 +5,8 @@ import {
   startOfWeek, endOfWeek, subWeeks, isWithinInterval, startOfDay,
 } from 'date-fns';
 import { RefreshCw } from 'lucide-react';
-import { feedService } from '@/lib/services/feed.service';
-import type { FeedItem, FeedItemType } from '@/lib/types/feed';
+import { feedService } from '@/lib/services/core/feed.service';
+import type { FeedItem, FeedItemType } from '@/lib/types/core/feed';
 import { logger } from '@/lib/utils/logger';
 import { FeedCard, FEED_LABELS } from './FeedCard';
 import { FeedDateSection } from './FeedDateSection';

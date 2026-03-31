@@ -6,7 +6,7 @@ import {
   SamlConfigRequest,
   SamlConfigResponse,
   SamlTestConnectionResponse,
-} from '@/lib/services/saml.service';
+} from '@/lib/services/core/saml.service';
 
 export const samlKeys = {
   all: ['saml'] as const,

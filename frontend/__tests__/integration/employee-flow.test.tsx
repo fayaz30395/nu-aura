@@ -11,7 +11,7 @@ import { mockEmployees, createMockPage } from '@/lib/test-utils/fixtures';
 import React from 'react';
 
 // Mock the employee service
-vi.mock('@/lib/services/employee.service', () => ({
+vi.mock('@/lib/services/hrms/employee.service', () => ({
   employeeService: {
     createEmployee: vi.fn(),
     getEmployee: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock('@/lib/services/employee.service', () => ({
   },
 }));
 
-import { employeeService } from '@/lib/services/employee.service';
+import { employeeService } from '@/lib/services/hrms/employee.service';
 
 const mockedEmployeeService = vi.mocked(employeeService);
 

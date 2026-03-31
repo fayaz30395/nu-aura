@@ -21,7 +21,7 @@ import {
   useUpdateTicketStatus,
   useActiveCategories,
 } from '@/lib/hooks/queries/useHelpdesk';
-import type { TicketPriority, TicketStatus, TicketResponse } from '@/lib/services/helpdesk.service';
+import type { TicketPriority, TicketStatus, TicketResponse } from '@/lib/services/hrms/helpdesk.service';
 import {
   Plus,
   Search,

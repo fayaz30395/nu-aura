@@ -4,7 +4,7 @@
  *
  * Remove this file once the Fluence backend endpoints are fully deployed.
  */
-import type { WikiPage, WikiSpace, FluenceComment, DocumentTemplate, Page } from '@/lib/types/fluence';
+import type { WikiPage, WikiSpace, FluenceComment, DocumentTemplate, Page } from '@/lib/types/platform/fluence';
 
 // ─── Mock Users (for @mention / tagging) ────────────────────────
 

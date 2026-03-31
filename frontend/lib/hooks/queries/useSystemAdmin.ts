@@ -8,7 +8,7 @@ import {
   ImpersonationToken,
   PaginatedTenantList,
   GrowthMetrics,
-} from '@/lib/types/admin-system';
+} from '@/lib/types/core/admin-system';
 
 /**
  * React Query key factory for system admin queries

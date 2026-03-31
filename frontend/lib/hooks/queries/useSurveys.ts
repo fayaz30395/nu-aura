@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { surveyService } from '@/lib/services/survey.service';
-import type { SurveyStatus, SurveyRequest } from '@/lib/types/survey';
+import { surveyService } from '@/lib/services/grow/survey.service';
+import type { SurveyStatus, SurveyRequest } from '@/lib/types/grow/survey';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────

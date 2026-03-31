@@ -16,12 +16,12 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { usePayments, usePaymentStats } from '@/lib/hooks/queries/usePayments';
-import { paymentService } from '@/lib/services/payment.service';
+import { paymentService } from '@/lib/services/core/payment.service';
 import {
   PaymentStatus,
   PaymentType,
   PaymentProvider,
-} from '@/lib/types/payment';
+} from '@/lib/types/core/payment';
 import { EmptyState } from '@/components/ui';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 

@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { EscalationConfig, EscalationConfigRequest } from '../types/escalation';
+import { EscalationConfig, EscalationConfigRequest } from '../types/core/escalation';
 
 export const escalationApi = {
   getConfig: async (workflowId: string): Promise<EscalationConfig> => {

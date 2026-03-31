@@ -1,11 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { spotlightService } from '@/lib/services/spotlight.service';
+import { spotlightService } from '@/lib/services/platform/spotlight.service';
 import {
   CreateSpotlightRequest,
   UpdateSpotlightRequest,
-} from '@/lib/types/spotlight';
+} from '@/lib/types/platform/spotlight';
 
 export const spotlightKeys = {
   all: ['spotlight'] as const,

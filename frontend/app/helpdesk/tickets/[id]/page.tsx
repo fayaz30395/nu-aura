@@ -25,7 +25,7 @@ import {
   useDeleteTicket,
 } from '@/lib/hooks/queries/useHelpdesk';
 import { useTicketMetrics, useTicketEscalations } from '@/lib/hooks/queries/useHelpdeskSla';
-import type { TicketPriority, TicketStatus, TicketCommentResponse } from '@/lib/services/helpdesk.service';
+import type { TicketPriority, TicketStatus, TicketCommentResponse } from '@/lib/services/hrms/helpdesk.service';
 import {
   ArrowLeft,
   Clock,

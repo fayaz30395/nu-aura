@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Employee } from '@/lib/types/employee';
+import { Employee } from '@/lib/types/hrms/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { getInitials } from '@/lib/utils';

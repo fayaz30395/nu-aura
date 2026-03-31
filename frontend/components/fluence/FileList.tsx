@@ -11,8 +11,8 @@ import {
   FileCode,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { FluenceAttachment } from '@/lib/types/fluence';
-import { fluenceService } from '@/lib/services/fluence.service';
+import { FluenceAttachment } from '@/lib/types/platform/fluence';
+import { fluenceService } from '@/lib/services/platform/fluence.service';
 import { cn } from '@/lib/utils';
 import { safeWindowOpen } from '@/lib/utils/url';
 

@@ -11,7 +11,7 @@ import {
   useUpdateReview,
   useDeleteReview,
 } from '@/lib/hooks/queries/usePerformance';
-import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
+import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/grow/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { createLogger } from '@/lib/utils/logger';
 import { PermissionGate } from '@/components/auth/PermissionGate';

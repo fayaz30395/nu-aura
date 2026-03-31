@@ -2,8 +2,8 @@
 
 import React, { memo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Candidate } from '@/lib/types/recruitment';
-import { CandidateMatchResponse } from '@/lib/types/ai-recruitment';
+import { Candidate } from '@/lib/types/hire/recruitment';
+import { CandidateMatchResponse } from '@/lib/types/hire/ai-recruitment';
 import {
   Eye, Edit2, Trash2, Calendar, Send, CheckCircle, XCircle,
   Loader2, Brain, FileText, MessageSquare,

@@ -2,12 +2,12 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { employeeService } from '@/lib/services/employee.service';
+import { employeeService } from '@/lib/services/hrms/employee.service';
 import {
   EmployeeImportPreview,
   EmployeeImportResult,
   EmployeeImportRowPreview,
-} from '@/lib/types/employee';
+} from '@/lib/types/hrms/employee';
 import {
   Upload,
   FileSpreadsheet,

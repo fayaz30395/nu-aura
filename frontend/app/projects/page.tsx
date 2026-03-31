@@ -31,7 +31,7 @@ import {
   ProjectType,
   ProjectPriority,
   ProjectUpdateRequest,
-} from '@/lib/types/hrms-project';
+} from '@/lib/types/hrms/hrms-project';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 import { useToast } from '@/components/notifications/ToastProvider';

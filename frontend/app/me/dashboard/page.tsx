@@ -18,7 +18,7 @@ import { BirthdayWishingBoard } from '@/components/dashboard/BirthdayWishingBoar
 import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
 import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { attendanceService } from '@/lib/services/attendance.service';
+import { attendanceService } from '@/lib/services/hrms/attendance.service';
 import { useSelfServiceDashboard } from '@/lib/hooks/queries';
 import { useQueryClient } from '@tanstack/react-query';
 import { createLogger } from '@/lib/utils/logger';

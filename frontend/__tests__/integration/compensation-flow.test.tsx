@@ -10,14 +10,14 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 // Mock the compensation service
-vi.mock('@/lib/services/compensation.service', () => ({
+vi.mock('@/lib/services/hrms/compensation.service', () => ({
   compensationService: {
     approveRevision: vi.fn(),
     rejectRevision: vi.fn(),
   },
 }));
 
-import { compensationService } from '@/lib/services/compensation.service';
+import { compensationService } from '@/lib/services/hrms/compensation.service';
 
 const mockedCompensationService = vi.mocked(compensationService);
 

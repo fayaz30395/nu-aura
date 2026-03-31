@@ -81,15 +81,16 @@ class ApiClient {
           originalRequest._retry = true;
 
           try {
-            // If a refresh is already in-flight, wait for it instead of firing another
-            if (!refreshPromise) {
-              refreshPromise = this.client.post('/auth/refresh', null)
-                .then((res) => res.status === 200)
-                .catch(() => false)
-                .finally(() => { refreshPromise = null; });
-            }
+            // Atomic check-and-assign: the nullish coalescing operator ensures
+            // refreshPromise is assigned in the same expression that checks it,
+            // preventing a race where multiple 401 handlers in the same microtask
+            // batch could each see null before any assignment occurs (BUG-001).
+            const promise = refreshPromise ?? (refreshPromise = this.client.post('/auth/refresh', null)
+              .then((res) => res.status === 200)
+              .catch(() => false)
+              .finally(() => { refreshPromise = null; }));
 
-            const refreshed = await refreshPromise;
+            const refreshed = await promise;
 
             if (refreshed) {
               return this.client(originalRequest);

@@ -7,14 +7,14 @@ import {
   useInfiniteQuery,
   keepPreviousData,
 } from '@tanstack/react-query';
-import { wallService } from '@/lib/services/wall.service';
+import { wallService } from '@/lib/services/core/wall.service';
 import {
   PostType,
   ReactionType,
   WallPostResponse,
   CreatePostRequest,
   PageResponse,
-} from '@/lib/services/wall.service';
+} from '@/lib/services/core/wall.service';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 

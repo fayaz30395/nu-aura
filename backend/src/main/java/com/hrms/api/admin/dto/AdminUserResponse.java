@@ -25,6 +25,7 @@ public class AdminUserResponse {
     private String userStatus;
     private UUID tenantId;
     private String tenantName;
+    private String departmentName;
     private Set<RoleResponse> roles;
     private LocalDateTime lastLoginAt;
     private LocalDateTime createdAt;

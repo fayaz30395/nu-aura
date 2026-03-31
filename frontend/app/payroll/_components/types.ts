@@ -6,7 +6,7 @@ import {
   Payslip,
   SalaryStructure,
   PayrollRunStatus,
-} from '@/lib/types/payroll';
+} from '@/lib/types/hrms/payroll';
 
 export type { PayrollRun, Payslip, SalaryStructure, PayrollRunStatus };
 

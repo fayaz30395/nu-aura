@@ -35,7 +35,7 @@ import {
   useDeleteSamlConfig,
   useTestSamlConnection,
 } from '@/lib/hooks/useSamlConfig';
-import { samlService, SamlConfigRequest } from '@/lib/services/saml.service';
+import { samlService, SamlConfigRequest } from '@/lib/services/core/saml.service';
 
 // ==================== Zod Schema ====================
 

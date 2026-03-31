@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { paymentService } from '@/lib/services/payment.service';
+import { paymentService } from '@/lib/services/core/payment.service';
 import type {
   CreatePaymentTransactionRequest,
   UpdatePaymentTransactionRequest,
@@ -11,7 +11,7 @@ import type {
   PaymentProvider,
   PaymentStatus,
   PaymentType,
-} from '@/lib/types/payment';
+} from '@/lib/types/core/payment';
 
 export const paymentKeys = {
   all: ['payments'] as const,

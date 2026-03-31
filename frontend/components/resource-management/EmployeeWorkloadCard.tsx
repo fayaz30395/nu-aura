@@ -7,7 +7,7 @@ import {
   getAllocationStatusColor,
   ALLOCATION_THRESHOLDS,
   AllocationStatus,
-} from '@/lib/types/resource-management';
+} from '@/lib/types/hrms/resource-management';
 
 interface EmployeeWorkloadCardProps {
   workload: EmployeeWorkload;

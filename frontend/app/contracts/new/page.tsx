@@ -9,6 +9,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useCreateContract } from '@/lib/hooks/queries/useContracts';
 import { Button, Input, Select, Textarea, Card } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
+import { notifications } from '@mantine/notifications';
 import { createLogger } from '@/lib/utils/logger';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
@@ -65,6 +66,7 @@ export default function CreateContractPage() {
       router.push('/contracts');
     } catch (error) {
       log.error('Error creating contract:', error);
+      notifications.show({ title: 'Error', message: 'Failed to create contract. Please try again.', color: 'red' });
     }
   };
 
@@ -78,7 +80,7 @@ export default function CreateContractPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6 max-w-2xl">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] rounded">
+          <button onClick={() => router.back()} aria-label="Go back" className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-2xl font-bold skeuo-emboss">Create Contract</h1>

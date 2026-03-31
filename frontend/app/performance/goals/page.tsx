@@ -11,7 +11,7 @@ import {
   useUpdateGoal,
   useDeleteGoal,
 } from '@/lib/hooks/queries/usePerformance';
-import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
+import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/grow/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { createLogger } from '@/lib/utils/logger';
 import { PermissionGate } from '@/components/auth/PermissionGate';

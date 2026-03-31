@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { pipService } from '@/lib/services/performance.service';
-import type { CreatePIPRequest as CreatePIPRequestService, PIPCheckInRequest as PIPCheckInRequestService, ClosePIPRequest as ClosePIPRequestService } from '@/lib/services/performance.service';
+import { pipService } from '@/lib/services/grow/performance.service';
+import type { CreatePIPRequest as CreatePIPRequestService, PIPCheckInRequest as PIPCheckInRequestService, ClosePIPRequest as ClosePIPRequestService } from '@/lib/services/grow/performance.service';
 import { notifications } from '@mantine/notifications';
 import { performanceKeys } from './performanceKeys';
 

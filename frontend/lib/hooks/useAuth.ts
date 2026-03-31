@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { apiClient } from '../api/client';
 import { authApi } from '../api/auth';
-import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/auth';
+import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth';
 import { clearGoogleToken } from '../utils/googleToken';
 import { getQueryClient } from '../queryClient';
 

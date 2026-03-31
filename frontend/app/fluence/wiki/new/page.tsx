@@ -194,7 +194,8 @@ export default function CreateWikiPage() {
           <div className="fluence-page-topbar-left">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)]"
+              aria-label="Go back"
+              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -210,7 +211,7 @@ export default function CreateWikiPage() {
             {/* Visibility badge — click to open settings drawer */}
             <button
               onClick={() => setPublishDrawerOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-2.5 py-1 rounded-full transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-2.5 py-1 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <VisIcon className="w-3 h-3" />
               {selectedVisibility?.label ?? 'Organization'}
@@ -221,7 +222,7 @@ export default function CreateWikiPage() {
           <div className="fluence-page-topbar-right">
             <button
               type="button"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Eye className="w-4 h-4" />
               Preview
@@ -229,7 +230,7 @@ export default function CreateWikiPage() {
 
             <button
               type="button"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-4 py-2 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Save className="w-4 h-4" />
               Save Draft
@@ -238,7 +239,7 @@ export default function CreateWikiPage() {
             <button
               type="button"
               onClick={() => setPublishDrawerOpen(true)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 px-4 py-2 rounded-lg transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 px-4 py-2 rounded-lg transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Send className="w-4 h-4" />
               Publish
@@ -333,7 +334,7 @@ export default function CreateWikiPage() {
                   control={control}
                   name="visibility"
                   render={({ field }) => (
-                    <div className="space-y-1">
+                    <div className="space-y-1" role="radiogroup" aria-label="Visibility">
                       {VISIBILITY_OPTIONS.map((opt) => {
                         const Icon = opt.icon;
                         const isSelected = field.value === opt.value;
@@ -341,8 +342,10 @@ export default function CreateWikiPage() {
                           <button
                             key={opt.value}
                             type="button"
+                            role="radio"
+                            aria-checked={isSelected}
                             onClick={() => field.onChange(opt.value)}
-                            className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg text-left transition-all ${
+                            className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                               isSelected
                                 ? 'bg-accent-500/10 ring-1 ring-accent-500/30'
                                 : 'hover:bg-[var(--bg-secondary)]'
@@ -406,7 +409,7 @@ export default function CreateWikiPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 <Send className="w-4 h-4" />
                 {isSubmitting ? 'Publishing...' : 'Publish Page'}
@@ -414,7 +417,7 @@ export default function CreateWikiPage() {
               <button
                 type="button"
                 onClick={() => setPublishDrawerOpen(false)}
-                className="w-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-2 transition-colors"
+                className="w-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 Continue Editing
               </button>

@@ -5,7 +5,7 @@ import {
   ImpersonationToken,
   PaginatedTenantList,
   GrowthMetrics,
-} from '../types/admin-system';
+} from '../types/core/admin-system';
 
 /**
  * API endpoints for SuperAdmin system-wide management

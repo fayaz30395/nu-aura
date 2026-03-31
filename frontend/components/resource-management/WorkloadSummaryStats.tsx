@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { WorkloadSummary } from '@/lib/types/resource-management';
+import { WorkloadSummary } from '@/lib/types/hrms/resource-management';
 
 interface WorkloadSummaryStatsProps {
   summary: WorkloadSummary;

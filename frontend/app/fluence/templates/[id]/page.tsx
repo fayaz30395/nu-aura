@@ -19,10 +19,14 @@ import dynamic from 'next/dynamic';
 import { Skeleton, TextInput, Select, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { instantiateTemplateSchema } from '@/lib/validations/fluence';
+import { z } from 'zod';
 
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   useFluenceTemplate,
   useInstantiateTemplate,
@@ -30,23 +34,27 @@ import {
   useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
 
-import type { InstantiateTemplateRequest } from '@/lib/types/fluence';
+import type { InstantiateTemplateRequest } from '@/lib/types/platform/fluence';
+
+/** Form-level schema — excludes templateId which is injected at submit time */
+const instantiateFormSchema = instantiateTemplateSchema.pick({
+  documentTitle: true,
+  spaceId: true,
+});
+
+type InstantiateFormData = z.infer<typeof instantiateFormSchema>;
 
 const ContentViewer = dynamic(
   () => import('@/components/fluence/ContentViewer'),
   { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
 );
 
-interface InstantiateFormData {
-  documentTitle: string;
-  spaceId: string;
-}
-
 export default function TemplateDetailPage() {
   const router = useRouter();
   const params = useParams();
   const templateId = params.id as string;
   const [showInstantiateModal, setShowInstantiateModal] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { hasAnyPermission, isReady } = usePermissions();
 
   const hasAccess = hasAnyPermission(
@@ -74,6 +82,7 @@ export default function TemplateDetailPage() {
     formState: { errors },
     reset,
   } = useForm<InstantiateFormData>({
+    resolver: zodResolver(instantiateFormSchema),
     defaultValues: { documentTitle: '', spaceId: '' },
   });
 
@@ -109,9 +118,10 @@ export default function TemplateDetailPage() {
   );
 
   const handleDelete = useCallback(() => {
-    if (!template || !confirm('Are you sure you want to delete this template?')) return;
+    if (!template) return;
     deleteTemplate.mutate(template.id, {
       onSuccess: () => {
+        setDeleteConfirmOpen(false);
         notifications.show({ title: 'Template deleted', message: '', color: 'green' });
         router.push('/fluence/templates');
       },
@@ -142,7 +152,8 @@ export default function TemplateDetailPage() {
           <div className="flex-1">
             <button
               onClick={() => router.back()}
-              className="mb-3 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300"
+              aria-label="Go back"
+              className="mb-3 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Templates
@@ -180,8 +191,9 @@ export default function TemplateDetailPage() {
             <Button
               variant="secondary"
               className="gap-2"
-              onClick={handleDelete}
+              onClick={() => setDeleteConfirmOpen(true)}
               disabled={deleteTemplate.isPending}
+              aria-label="Delete template"
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -268,7 +280,7 @@ export default function TemplateDetailPage() {
             label="Page Title"
             placeholder="Enter a title for the new page"
             required
-            {...register('documentTitle', { required: 'Title is required', minLength: { value: 3, message: 'Min 3 characters' } })}
+            {...register('documentTitle')}
             error={errors.documentTitle?.message}
           />
           <Controller
@@ -307,6 +319,18 @@ export default function TemplateDetailPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Template"
+        message="Are you sure you want to delete this template? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleteTemplate.isPending}
+      />
     </AppLayout>
   );
 }

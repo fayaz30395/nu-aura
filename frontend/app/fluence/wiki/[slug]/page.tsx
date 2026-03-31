@@ -54,7 +54,7 @@ import { MentionInput, type MentionInputHandle } from '@/components/fluence/Ment
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
 import { TableOfContents } from '@/components/fluence/TableOfContents';
 import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
-import type { FluenceComment } from '@/lib/types/fluence';
+import type { FluenceComment } from '@/lib/types/platform/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -220,7 +220,8 @@ function CommentThread({
           <div className="flex items-center gap-4">
             <button
               onClick={handleLike}
-              className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
+              aria-label={liked ? 'Unlike comment' : 'Like comment'}
+              className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                 liked
                   ? 'text-[var(--accent-700)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -232,7 +233,7 @@ function CommentThread({
 
             <button
               onClick={() => onReply(comment.id)}
-              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150"
+              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Reply className="h-3.5 w-3.5" />
               Reply
@@ -241,7 +242,8 @@ function CommentThread({
             {comment.authorId === userId && (
               <button
                 onClick={() => onDelete(comment.id)}
-                className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover:opacity-100"
+                aria-label="Delete comment"
+                className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Delete
@@ -254,7 +256,7 @@ function CommentThread({
             <div className="mt-4">
               <button
                 onClick={() => setShowReplies(!showReplies)}
-                className="flex items-center gap-1.5 text-xs font-medium text-[var(--accent-700)] hover:text-[var(--accent-800)] transition-colors mb-2"
+                className="flex items-center gap-1.5 text-xs font-medium text-[var(--accent-700)] hover:text-[var(--accent-800)] transition-colors mb-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 <CornerDownRight className="h-3.5 w-3.5" />
                 {showReplies ? (
@@ -317,7 +319,8 @@ function CommentThread({
                   whileTap={{ scale: 0.95 }}
                   onClick={onSubmitReply}
                   disabled={!replyText.trim()}
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Send reply"
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                 >
                   <Send className="h-4 w-4" />
                 </motion.button>
@@ -372,7 +375,8 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
               setLiked(!liked);
               setLikeCount((p) => (liked ? p - 1 : p + 1));
             }}
-            className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
+            aria-label={liked ? 'Unlike reply' : 'Like reply'}
+            className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
               liked
                 ? 'text-[var(--accent-700)]'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -384,7 +388,8 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
           {reply.authorId === userId && (
             <button
               onClick={() => onDelete(reply.id)}
-              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover/reply:opacity-100"
+              aria-label="Delete reply"
+              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover/reply:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Trash2 className="h-3 w-3" />
             </button>
@@ -605,7 +610,8 @@ export default function WikiPageDetailPage() {
         >
           <button
             onClick={() => router.back()}
-            className="mb-6 inline-flex items-center gap-2 text-[var(--accent-700)] hover:text-[var(--accent-800)] transition-colors duration-200 group"
+            aria-label="Go back"
+            className="mb-6 inline-flex items-center gap-2 text-[var(--accent-700)] hover:text-[var(--accent-800)] transition-colors duration-200 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
           >
             <ArrowLeft
               className={`${iconSize.button} group-hover:-translate-x-1 transition-transform`}
@@ -655,7 +661,8 @@ export default function WikiPageDetailPage() {
                   <Tooltip label="Click to see who viewed this page" withArrow>
                     <button
                       onClick={() => setShowViewers(true)}
-                      className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer group"
+                      aria-label="Show viewers"
+                      className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                     >
                       <Eye
                         className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`}
@@ -678,7 +685,8 @@ export default function WikiPageDetailPage() {
                     whileTap={{ scale: 0.92 }}
                     onClick={handleToggleLike}
                     disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+                    aria-label={isLiked ? 'Unlike' : 'Like'}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                       isLiked
                         ? 'bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400'
                         : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-main)]'
@@ -697,7 +705,8 @@ export default function WikiPageDetailPage() {
                     whileTap={{ scale: 0.92 }}
                     onClick={handleToggleFavorite}
                     disabled={addFavorite.isPending || removeFavorite.isPending}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+                    aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                       isFavorited
                         ? 'bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800 text-warning-600 dark:text-warning-400'
                         : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
@@ -718,7 +727,8 @@ export default function WikiPageDetailPage() {
                         .getElementById('comments-section')
                         ?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                    aria-label="Jump to comments"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>{totalCommentCount}</span>
@@ -728,7 +738,8 @@ export default function WikiPageDetailPage() {
                   <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={handleCopyLink}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                    aria-label="Share link"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
                     {linkCopied ? (
                       <Check className="h-4 w-4 text-[var(--status-success-text)]" />
@@ -883,7 +894,7 @@ export default function WikiPageDetailPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setShowHistory(true)}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
                     <History className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Version History</span>
@@ -892,7 +903,7 @@ export default function WikiPageDetailPage() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
                     <Archive className={`${iconSize.cardInline} flex-shrink-0`} />
                     <span>Archive</span>
@@ -1002,7 +1013,8 @@ export default function WikiPageDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Send comment"
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                 >
                   <Send className="h-4 w-4" />
                 </motion.button>
@@ -1172,7 +1184,7 @@ export default function WikiPageDetailPage() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRestoreRevision(rev.id)}
                       disabled={restoreRevision.isPending}
-                      className="ml-4 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0"
+                      className="ml-4 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                     >
                       <RefreshCw className="h-3 w-3" />
                       Restore

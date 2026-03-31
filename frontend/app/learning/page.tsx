@@ -13,7 +13,7 @@ import {
   useMyCertificates,
   useEnrollCourse,
 } from '@/lib/hooks/queries/useLearning';
-import type { Course, CourseEnrollment, Certificate } from '@/lib/services/lms.service';
+import type { Course, CourseEnrollment, Certificate } from '@/lib/services/grow/lms.service';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

@@ -19,15 +19,15 @@ import {
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useQuery } from '@tanstack/react-query';
-import { projectService } from '@/lib/services/project.service';
-import { projectCalendarService } from '@/lib/services/project-calendar.service';
+import { projectService } from '@/lib/services/hrms/project.service';
+import { projectCalendarService } from '@/lib/services/hrms/project-calendar.service';
 import {
   GanttTask,
   GanttFilterOptions,
   isTaskDelayed,
   isTaskAtRisk,
   calculateTaskDuration,
-} from '@/lib/types/project-calendar';
+} from '@/lib/types/hrms/project-calendar';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
 

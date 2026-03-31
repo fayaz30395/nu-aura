@@ -25,14 +25,14 @@ import type {
   ExportFormat,
   ImportResult,
   EmployeeImportPreview,
-} from '@/lib/services/importExport.service';
+} from '@/lib/services/core/importExport.service';
 import type {
   KekaFileUploadResponse,
   KekaImportPreview,
   KekaImportMapping,
   KekaImportHistoryEntry,
   KekaEmployee,
-} from '@/lib/types/keka-import';
+} from '@/lib/types/core/keka-import';
 import {
   Upload,
   Download,

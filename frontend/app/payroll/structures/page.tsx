@@ -16,7 +16,7 @@ import {
   useUpdateSalaryStructure,
   useDeleteSalaryStructure,
 } from '@/lib/hooks/queries/usePayroll';
-import { SalaryStructureRequest } from '@/lib/types/payroll';
+import { SalaryStructureRequest } from '@/lib/types/hrms/payroll';
 import {
   SalaryStructuresTab,
   SalaryStructure,

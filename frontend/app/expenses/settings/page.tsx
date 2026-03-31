@@ -20,7 +20,7 @@ import {
   useUpdateExpensePolicy,
   useToggleExpensePolicy,
 } from '@/lib/hooks/queries';
-import { ExpenseCategoryEntity, ExpensePolicyEntity, CreateExpenseCategoryRequest, CreateExpensePolicyRequest } from '@/lib/types/expense';
+import { ExpenseCategoryEntity, ExpensePolicyEntity, CreateExpenseCategoryRequest, CreateExpensePolicyRequest } from '@/lib/types/hrms/expense';
 
 // ─── Category Schema ─────────────────────────────────────────────────────────
 const categorySchema = z.object({

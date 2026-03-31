@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Bell, Mail, MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/hooks/queries/useNotifications';
-import type { NotificationPreferences as NotificationPreferencesType } from '@/lib/types/notifications';
+import type { NotificationPreferences as NotificationPreferencesType } from '@/lib/types/core/notifications';
 
 interface NotificationPreference {
   key: string;

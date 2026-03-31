@@ -10,8 +10,8 @@ import {
   Percent,
   Trash2,
 } from 'lucide-react';
-import { Employee } from '@/lib/types/employee';
-import { Project, ProjectEmployee } from '@/lib/types/project';
+import { Employee } from '@/lib/types/hrms/employee';
+import { Project, ProjectEmployee } from '@/lib/types/hrms/project';
 
 // ─── Types (re-exported so CreateAllocationModal can import them) ──────
 export interface EmployeeAllocation {

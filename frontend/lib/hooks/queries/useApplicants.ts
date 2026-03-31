@@ -2,11 +2,11 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { applicantService } from '@/lib/services/applicant.service';
+import { applicantService } from '@/lib/services/hire/applicant.service';
 import type {
   ApplicantRequest,
   ApplicantStatusUpdate,
-} from '@/lib/types/applicant';
+} from '@/lib/types/hire/applicant';
 
 // ==================== Query Keys ====================
 

@@ -26,9 +26,9 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
-import { applicantService } from '@/lib/services/applicant.service';
-import { letterService } from '@/lib/services/letter.service';
-import { LetterCategory } from '@/lib/types/letter';
+import { applicantService } from '@/lib/services/hire/applicant.service';
+import { letterService } from '@/lib/services/hrms/letter.service';
+import { LetterCategory } from '@/lib/types/hrms/letter';
 import { useQueryClient } from '@tanstack/react-query';
 import { useJobOpenings } from '@/lib/hooks/queries/useRecruitment';
 import { usePipelineByJob, applicantKeys } from '@/lib/hooks/queries/useApplicants';
@@ -36,13 +36,13 @@ import { useActiveLetterTemplates } from '@/lib/hooks/queries/useLetter';
 import {
   ApplicationSource,
   ApplicationStatus,
-} from '@/lib/types/applicant';
+} from '@/lib/types/hire/applicant';
 import type {
   Applicant,
   ApplicantRequest,
   ApplicantStatusUpdate,
   PipelineData,
-} from '@/lib/types/applicant';
+} from '@/lib/types/hire/applicant';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('PipelinePage');

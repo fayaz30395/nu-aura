@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { benefitsService } from '@/lib/services/benefits.service';
+import { benefitsService } from '@/lib/services/hrms/benefits.service';
 import {
   EnrollmentRequest,
   ClaimRequest,
   BenefitPlanRequest,
-} from '@/lib/types/benefits';
+} from '@/lib/types/hrms/benefits';
 
 // Query keys for cache management
 export const benefitKeys = {

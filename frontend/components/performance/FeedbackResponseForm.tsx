@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Star, Save, Send, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { FeedbackResponseDetailed } from '@/lib/types/performance-360';
+import { FeedbackResponseDetailed } from '@/lib/types/grow/performance-360';
 
 interface FeedbackResponseFormProps {
   requestId: string;

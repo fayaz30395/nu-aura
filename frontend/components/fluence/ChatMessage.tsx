@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Bot, User, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatSourceCard } from './ChatSourceCard';
-import type { ChatMessage as ChatMessageType } from '@/lib/types/fluence-chat';
+import type { ChatMessage as ChatMessageType } from '@/lib/types/platform/fluence-chat';
 
 interface ChatMessageProps {
   message: ChatMessageType;

@@ -11,7 +11,7 @@ import {
   AssignPermissionsWithScopeRequest,
   UpdatePermissionScopeRequest,
   Permission as _Permission,
-} from '@/lib/types/roles';
+} from '@/lib/types/core/roles';
 
 // Query key factory
 const roleKeys = {

@@ -26,7 +26,7 @@ import type {
   CreatePIPRequest,
   PIPStatus,
   PIPCheckInRequest,
-} from '@/lib/types/performance';
+} from '@/lib/types/grow/performance';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

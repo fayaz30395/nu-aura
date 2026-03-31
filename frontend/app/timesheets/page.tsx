@@ -30,7 +30,7 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeTimesheets, useTimesheetEntries, useCreateTimesheet, useSubmitTimesheet, useAddTimeEntry } from '@/lib/hooks/queries/useTimesheets';
 import { useProjects } from '@/lib/hooks/queries/useProjects';
-import { Timesheet, ActivityType, CreateTimeEntryRequest } from '@/lib/types/timesheet';
+import { Timesheet, ActivityType, CreateTimeEntryRequest } from '@/lib/types/hrms/timesheet';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 

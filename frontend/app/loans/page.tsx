@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { loanService } from '@/lib/services/loan.service';
-import { LoanStatus } from '@/lib/types/loan';
+import { loanService } from '@/lib/services/hrms/loan.service';
+import { LoanStatus } from '@/lib/types/hrms/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';

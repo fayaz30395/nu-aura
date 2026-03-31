@@ -17,7 +17,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePayslipsByEmployee, usePayslips, useDownloadPayslipPdf } from '@/lib/hooks/queries/usePayroll';
-import { Payslip } from '@/lib/types/payroll';
+import { Payslip } from '@/lib/types/hrms/payroll';
 import { createLogger } from '@/lib/utils/logger';
 import { formatCurrency } from '@/lib/utils';
 

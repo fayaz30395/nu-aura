@@ -49,7 +49,7 @@ import type {
   HolidayCategory,
   SelectionStatus,
   PolicyRequest,
-} from '@/lib/types/restricted-holiday';
+} from '@/lib/types/hrms/restricted-holiday';
 
 // ─── Zod Schemas ────────────────────────────────────────────────
 

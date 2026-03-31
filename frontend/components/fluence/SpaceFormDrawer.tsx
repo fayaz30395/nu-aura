@@ -16,7 +16,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import type { WikiSpace, WikiVisibility } from '@/lib/types/fluence';
+import type { WikiSpace, WikiVisibility } from '@/lib/types/platform/fluence';
 
 // ─── Validation Schema ──────────────────────────────────────────
 

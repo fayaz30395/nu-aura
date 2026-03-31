@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { timeTrackingService } from '@/lib/services/time-tracking.service';
-import { TimeEntryStatus } from '@/lib/types/time-tracking';
+import { timeTrackingService } from '@/lib/services/hrms/time-tracking.service';
+import { TimeEntryStatus } from '@/lib/types/hrms/time-tracking';
 import {
   useTimeEntry,
   useSubmitTimeEntry,
@@ -22,6 +22,7 @@ import {
   FileText,
   DollarSign,
   Send,
+  Pencil,
 } from 'lucide-react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { createLogger } from '@/lib/utils/logger';
@@ -335,6 +336,13 @@ export default function TimeEntryDetailPage() {
                 className="px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors disabled:opacity-50"
               >
                 Delete
+              </button>
+              <button
+                onClick={() => router.push(`/time-tracking/${entry.id}/edit`)}
+                className="flex items-center justify-center gap-2 px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit
               </button>
               <button
                 onClick={handleSubmit}

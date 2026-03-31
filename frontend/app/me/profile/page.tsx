@@ -30,7 +30,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyEmployee, useUpdateMyProfile } from '@/lib/hooks/queries';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
-import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
+import { employmentChangeRequestService } from '@/lib/services/hrms/employment-change-request.service';
 
 const log = createLogger('ProfilePage');
 

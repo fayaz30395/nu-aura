@@ -4,7 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import mobileApiService from '../../services/mobile-api.service';
+import mobileApiService from '../../services/core/mobile-api.service';
 import {
   MobileDashboardResponse,
   LeaveBalanceResponse,
@@ -17,7 +17,7 @@ import {
   MobileDeviceRegistrationRequest,
   MobileMarkReadRequest,
   SyncResponse,
-} from '../../types/mobile-api';
+} from '../../types/core/mobile-api';
 
 // Query keys for mobile API
 export const mobileApiKeys = {

@@ -19,9 +19,9 @@ import {
 } from '@/lib/hooks/queries/useRecruitment';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { JobOpening, JobStatus, Priority, CreateJobOpeningRequest } from '@/lib/types/recruitment';
-import { Department } from '@/lib/types/employee';
-import { JobDescriptionResponse } from '@/lib/types/ai-recruitment';
+import { JobOpening, JobStatus, Priority, CreateJobOpeningRequest } from '@/lib/types/hire/recruitment';
+import { Department } from '@/lib/types/hrms/employee';
+import { JobDescriptionResponse } from '@/lib/types/hire/ai-recruitment';
 import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Eye, Edit2, Trash2, X, Sparkles } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PermissionGate } from '@/components/auth/PermissionGate';

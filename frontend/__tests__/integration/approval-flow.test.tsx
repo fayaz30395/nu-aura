@@ -24,7 +24,7 @@ interface ApprovalItem {
 }
 
 // Mock the workflow service
-vi.mock('@/lib/services/workflow.service', () => ({
+vi.mock('@/lib/services/core/workflow.service', () => ({
   workflowService: {
     processApprovalAction: vi.fn(),
     getApprovalInbox: vi.fn(),
@@ -32,7 +32,7 @@ vi.mock('@/lib/services/workflow.service', () => ({
   },
 }));
 
-import { workflowService } from '@/lib/services/workflow.service';
+import { workflowService } from '@/lib/services/core/workflow.service';
 
 const mockedWorkflowService = vi.mocked(workflowService);
 

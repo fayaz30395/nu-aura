@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { LeaveRequest, LeaveRequestStatus } from '@/lib/types/leave';
+import { LeaveRequest, LeaveRequestStatus } from '@/lib/types/hrms/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
 import {
   useActiveLeaveTypes,

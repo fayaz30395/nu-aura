@@ -31,7 +31,7 @@ import type {
   BiometricDevice,
   BiometricDeviceRequest,
   BiometricPunchLog,
-} from '@/lib/services/biometricService';
+} from '@/lib/services/hrms/biometricService';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 

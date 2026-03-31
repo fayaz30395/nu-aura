@@ -27,7 +27,7 @@ export default function AllocationsPage() {
     <AppLayout>
       <div className="flex items-center justify-center h-64">
         <div className="skeuo-card p-8 flex items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-[var(--accent-700)]" />
           <span className="text-muted-foreground">Loading Allocations...</span>
         </div>
       </div>

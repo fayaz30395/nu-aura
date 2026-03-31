@@ -4,8 +4,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { timeTrackingService } from '@/lib/services/time-tracking.service';
-import { TimeEntryStatus } from '@/lib/types/time-tracking';
+import { timeTrackingService } from '@/lib/services/hrms/time-tracking.service';
+import { TimeEntryStatus } from '@/lib/types/hrms/time-tracking';
 import {
   useMyTimeTrackingEntries,
   useTimeSummary,
@@ -13,6 +13,9 @@ import {
 } from '@/lib/hooks/queries/useTimeTracking';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {
+  TablePagination,
+} from '@/components/ui';
 import {
   Clock,
   Plus,
@@ -44,14 +47,18 @@ export default function TimeTrackingPage() {
 
   const queryClient = useQueryClient();
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
 
   const { weekStart, weekEnd } = useMemo(() => timeTrackingService.getWeekDates(), []);
-  const { data: entriesData, isLoading, error } = useMyTimeTrackingEntries(0, 20);
+  const { data: entriesData, isLoading, error } = useMyTimeTrackingEntries(currentPage, pageSize);
   const { data: summaryData } = useTimeSummary(weekStart, weekEnd);
   const submitMultipleMutation = useSubmitMultipleTimeEntries();
 
   // Stable reference: prevents summary useMemo from re-running on every render.
   const entries = useMemo(() => entriesData?.content ?? [], [entriesData]);
+  const totalPages = entriesData?.totalPages ?? 0;
+  const totalElements = entriesData?.totalElements ?? 0;
 
   const summary = useMemo(() => {
     const draftEntries = entries.filter((e) => e.status === 'DRAFT');
@@ -398,6 +405,22 @@ export default function TimeTrackingPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {totalElements > 0 && (
+            <div className="px-6 pb-4">
+              <TablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalElements}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={(size) => {
+                  setPageSize(size);
+                  setCurrentPage(0);
+                }}
+              />
             </div>
           )}
         </div>

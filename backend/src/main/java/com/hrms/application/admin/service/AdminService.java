@@ -12,6 +12,9 @@ import org.springframework.security.access.AccessDeniedException;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.User;
+import com.hrms.domain.employee.Department;
+import com.hrms.domain.employee.Employee;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
@@ -45,6 +48,7 @@ public class AdminService {
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final RoleRepository roleRepository;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
     private final WorkflowExecutionRepository workflowExecutionRepository;
@@ -97,7 +101,39 @@ public class AdminService {
         tenantRepository.findAllById(tenantIds)
                 .forEach(tenant -> tenantMap.put(tenant.getId(), tenant.getName()));
 
-        return usersPage.map(user -> mapToAdminUserResponse(user, tenantMap.get(user.getTenantId())));
+        // BUG-007 FIX: Batch-lookup employee department names for all users on this page.
+        // User -> Employee (by userId) -> departmentId -> Department name.
+        // Two batch queries instead of N+1.
+        Set<UUID> userIds = usersPage.getContent().stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+        Map<UUID, UUID> userDeptMap = new HashMap<>(); // userId -> departmentId
+        employeeRepository.findAllByUserIdIn(userIds)
+                .forEach(emp -> {
+                    if (emp.getDepartmentId() != null && emp.getUser() != null) {
+                        userDeptMap.put(emp.getUser().getId(), emp.getDepartmentId());
+                    }
+                });
+
+        Set<UUID> deptIds = new HashSet<>(userDeptMap.values());
+        Map<UUID, String> deptNameMap = new HashMap<>();
+        if (!deptIds.isEmpty()) {
+            departmentRepository.findAllById(deptIds)
+                    .forEach(dept -> deptNameMap.put(dept.getId(), dept.getName()));
+        }
+
+        // Build final userId -> departmentName map
+        Map<UUID, String> userDeptNameMap = new HashMap<>();
+        userDeptMap.forEach((userId, deptId) -> {
+            String name = deptNameMap.get(deptId);
+            if (name != null) {
+                userDeptNameMap.put(userId, name);
+            }
+        });
+
+        return usersPage.map(user -> mapToAdminUserResponse(user,
+                tenantMap.get(user.getTenantId()),
+                userDeptNameMap.get(user.getId())));
     }
 
     /**
@@ -168,13 +204,24 @@ public class AdminService {
                 .orElse(null);
         String tenantName = tenant != null ? tenant.getName() : "Unknown";
 
-        return mapToAdminUserResponse(updatedUser, tenantName);
+        // Resolve department name for the updated user
+        String departmentName = null;
+        Employee linkedEmployee = employeeRepository
+                .findByUserIdAndTenantId(updatedUser.getId(), updatedUser.getTenantId())
+                .orElse(null);
+        if (linkedEmployee != null && linkedEmployee.getDepartmentId() != null) {
+            departmentName = departmentRepository.findById(linkedEmployee.getDepartmentId())
+                    .map(Department::getName)
+                    .orElse(null);
+        }
+
+        return mapToAdminUserResponse(updatedUser, tenantName, departmentName);
     }
 
     /**
-     * Map User entity to AdminUserResponse with tenant information
+     * Map User entity to AdminUserResponse with tenant and department information
      */
-    private AdminUserResponse mapToAdminUserResponse(User user, String tenantName) {
+    private AdminUserResponse mapToAdminUserResponse(User user, String tenantName, String departmentName) {
         Set<RoleResponse> roleResponses = user.getRoles().stream()
                 .map(this::mapRoleToResponse)
                 .collect(Collectors.toSet());
@@ -187,6 +234,7 @@ public class AdminService {
                 .userStatus(user.getStatus().name())
                 .tenantId(user.getTenantId())
                 .tenantName(tenantName)
+                .departmentName(departmentName)
                 .roles(roleResponses)
                 .lastLoginAt(user.getLastLoginAt())
                 .createdAt(user.getCreatedAt())

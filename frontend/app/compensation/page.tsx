@@ -48,7 +48,7 @@ import type {
   CycleStatus,
   RevisionType,
   RevisionStatus,
-} from '@/lib/types/compensation';
+} from '@/lib/types/hrms/compensation';
 
 const cycleTypeLabels: Record<CycleType, string> = {
   ANNUAL: 'Annual',

@@ -9,7 +9,7 @@ import { Send, BarChart3, Award, X, Plus, Image as ImageIcon, Smile, Paperclip, 
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { CreatePostRequest, PostType } from '@/lib/services/wall.service';
+import { CreatePostRequest, PostType } from '@/lib/services/core/wall.service';
 import { cn } from '@/lib/utils';
 
 // ==================== Zod Schemas ====================

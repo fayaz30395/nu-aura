@@ -19,7 +19,7 @@ import {
   IconArticle,
   IconTemplate,
 } from '@tabler/icons-react';
-import type { FluenceActivity } from '@/lib/types/fluence';
+import type { FluenceActivity } from '@/lib/types/platform/fluence';
 
 interface ActivityCardProps {
   activity: FluenceActivity;

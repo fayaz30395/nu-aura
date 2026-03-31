@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { connectorService } from '@/lib/services/connector.service';
-import { ConnectorConfigRequest, TemplateMappingRequest } from '@/lib/types/connector';
+import { connectorService } from '@/lib/services/core/connector.service';
+import { ConnectorConfigRequest, TemplateMappingRequest } from '@/lib/types/core/connector';
 
 // Query keys for cache management
 export const connectorKeys = {

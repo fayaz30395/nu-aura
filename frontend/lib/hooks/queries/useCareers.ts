@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { publicApiClient } from '@/lib/api/public-client';
 
 interface Job {
   id: string;
@@ -15,6 +16,10 @@ interface Job {
   responsibilities: string[];
   salaryRange?: string;
   experience: 'Entry-level' | 'Mid-level' | 'Senior' | 'Lead';
+}
+
+interface JobsResponse {
+  jobs: Job[];
 }
 
 export interface CareersFilters {
@@ -33,24 +38,21 @@ export const careersKeys = {
 
 /**
  * Fetch public job listings with optional filters
- * This is a public endpoint that doesn't require authentication
+ * This is a public endpoint that doesn't require authentication.
+ * Uses publicApiClient which points to the Spring Boot backend (localhost:8080/api/v1).
  */
 export function usePublicJobs(filters: CareersFilters) {
-  const params = new URLSearchParams();
-  if (filters.department) params.append('department', filters.department);
-  if (filters.location) params.append('location', filters.location);
-  if (filters.type) params.append('type', filters.type);
-  if (filters.q) params.append('q', filters.q);
-
   return useQuery({
     queryKey: careersKeys.jobsList(filters),
     queryFn: async () => {
-      const response = await fetch(`/api/public/careers/jobs?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch jobs');
-      }
-      const data = await response.json();
-      return (data.jobs ?? []) as Job[];
+      const params: Record<string, string> = {};
+      if (filters.department) params.department = filters.department;
+      if (filters.location) params.location = filters.location;
+      if (filters.type) params.type = filters.type;
+      if (filters.q) params.q = filters.q;
+
+      const response = await publicApiClient.get<JobsResponse>('/public/careers/jobs', { params });
+      return response.data.jobs ?? [];
     },
     staleTime: 30_000, // public page, cache for 30s
   });

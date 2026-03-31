@@ -9,7 +9,7 @@ import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle,
 import { useAuth } from '@/lib/hooks/useAuth';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
+import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/hrms/expense';
 import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
 import { safeWindowOpen } from '@/lib/utils/url';
