@@ -44,9 +44,8 @@ public class OnboardingProcess {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum ProcessType {
         ONBOARDING, OFFBOARDING

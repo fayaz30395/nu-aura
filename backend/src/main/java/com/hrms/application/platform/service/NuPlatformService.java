@@ -97,10 +97,19 @@ public class NuPlatformService {
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
             .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
+        // Batch: fetch all existing permission codes in ONE query instead of N individual existsByCode calls
+        Set<String> allCodes = permissions.stream()
+            .map(def -> AppPermission.buildCode(appCode.toUpperCase(), def.module(), def.action()))
+            .collect(Collectors.toSet());
+        Set<String> existingCodes = permissionRepository.findByCodeIn(allCodes).stream()
+            .map(AppPermission::getCode)
+            .collect(Collectors.toSet());
+
+        List<AppPermission> newPermissions = new java.util.ArrayList<>();
         for (PermissionDefinition def : permissions) {
             String fullCode = AppPermission.buildCode(appCode.toUpperCase(), def.module(), def.action());
 
-            if (!permissionRepository.existsByCode(fullCode)) {
+            if (!existingCodes.contains(fullCode)) {
                 AppPermission permission = AppPermission.builder()
                     .application(app)
                     .code(fullCode)
@@ -113,12 +122,17 @@ public class NuPlatformService {
                     .displayOrder(def.order())
                     .build();
 
-                permissionRepository.save(permission);
+                newPermissions.add(permission);
                 log.debug("Registered permission: {}", fullCode);
             }
         }
 
-        log.info("Registered {} permissions for application: {}", permissions.size(), appCode);
+        if (!newPermissions.isEmpty()) {
+            permissionRepository.saveAll(newPermissions);
+        }
+
+        log.info("Registered {} permissions for application: {} ({} new)",
+            permissions.size(), appCode, newPermissions.size());
     }
 
     /**

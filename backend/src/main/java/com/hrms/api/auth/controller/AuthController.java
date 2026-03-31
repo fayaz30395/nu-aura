@@ -2,6 +2,7 @@ package com.hrms.api.auth.controller;
 
 import com.hrms.api.auth.dto.*;
 import java.util.Map;
+import java.util.UUID;
 import com.hrms.application.auth.service.AuthService;
 import com.hrms.application.auth.service.MfaService;
 import com.hrms.common.config.CookieConfig;
@@ -37,6 +38,14 @@ public class AuthController {
         this.mfaService = mfaService;
         this.cookieConfig = cookieConfig;
         this.tokenProvider = tokenProvider;
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Get current authenticated user", description = "Returns the profile of the currently authenticated user including roles and permissions")
+    public ResponseEntity<AuthResponse> getCurrentUser() {
+        UUID userId = SecurityContext.getCurrentUserId();
+        AuthResponse profile = authService.getUserProfile(userId);
+        return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/login")

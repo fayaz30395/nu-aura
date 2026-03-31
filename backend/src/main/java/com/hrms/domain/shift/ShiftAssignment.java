@@ -83,10 +83,9 @@ public class ShiftAssignment {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    @Builder.Default
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private Long version;
 
     public enum AssignmentType {
         PERMANENT,   // Permanent shift assignment

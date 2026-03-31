@@ -122,6 +122,16 @@ public class HelpdeskService {
     }
 
     @Transactional
+    public TicketResponse resolveTicket(UUID ticketId) {
+        return updateTicketStatus(ticketId, Ticket.TicketStatus.RESOLVED);
+    }
+
+    @Transactional
+    public TicketResponse closeTicket(UUID ticketId) {
+        return updateTicketStatus(ticketId, Ticket.TicketStatus.CLOSED);
+    }
+
+    @Transactional
     public TicketResponse assignTicket(UUID ticketId, UUID assigneeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Assigning ticket {} to {} for tenant {}", ticketId, assigneeId, tenantId);

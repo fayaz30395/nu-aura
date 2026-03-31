@@ -87,10 +87,9 @@ public class ShiftSwapRequest {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Builder.Default
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private Long version;
 
     public enum SwapType {
         SWAP,           // Swap shifts with another employee

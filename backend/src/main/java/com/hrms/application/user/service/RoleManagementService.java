@@ -478,6 +478,12 @@ public class RoleManagementService {
     }
 
     @Transactional(readOnly = true)
+    public UserResponse getUserById(UUID userId) {
+        com.hrms.domain.user.User user = userRepository.findByIdWithRolesAndPermissions(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+        return mapUserToResponse(user);
+    }
+
     public List<UserResponse> getAllUsers() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         List<com.hrms.domain.user.User> users = userRepository.findByTenantId(tenantId); // Assuming this method exists

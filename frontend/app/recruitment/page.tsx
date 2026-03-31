@@ -365,7 +365,6 @@ export default function RecruitmentDashboard() {
             title="Active Job Openings"
             value={stats.activeJobs}
             variant="primary"
-            size="compact"
             onAction={() => router.push('/recruitment/jobs')}
             actionLabel="View Jobs"
           />
@@ -374,7 +373,6 @@ export default function RecruitmentDashboard() {
             title="Total Candidates"
             value={stats.totalCandidates}
             variant="success"
-            size="compact"
             onAction={() => router.push('/recruitment/candidates')}
             actionLabel="View All"
           />
@@ -383,7 +381,6 @@ export default function RecruitmentDashboard() {
             title="Interviews This Week"
             value={stats.interviewsThisWeek}
             variant="blue"
-            size="compact"
             onAction={() => router.push('/recruitment/interviews')}
             actionLabel="Schedule"
           />
@@ -392,7 +389,6 @@ export default function RecruitmentDashboard() {
             title="Pending Offers"
             value={stats.pendingOffers}
             variant="orange"
-            size="compact"
             onAction={() => router.push('/recruitment/candidates')}
             actionLabel="Review"
           />

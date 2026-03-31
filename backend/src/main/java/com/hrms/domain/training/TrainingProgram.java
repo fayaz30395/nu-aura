@@ -108,9 +108,8 @@ public class TrainingProgram {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum TrainingCategory {
         TECHNICAL, SOFT_SKILLS, LEADERSHIP, COMPLIANCE, SAFETY, PRODUCT, SALES, CUSTOMER_SERVICE, OTHER

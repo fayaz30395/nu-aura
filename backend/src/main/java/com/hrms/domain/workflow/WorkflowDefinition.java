@@ -108,6 +108,7 @@ public class WorkflowDefinition extends TenantAware {
         SHIFT_CHANGE,
         WORK_FROM_HOME,
         RECRUITMENT_OFFER,
+        PERFORMANCE_REVIEW,
         CUSTOM
     }
 

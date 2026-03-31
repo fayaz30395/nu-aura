@@ -19,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static com.hrms.common.security.Permission.SYSTEM_ADMIN;
@@ -37,6 +38,19 @@ public class AdminController {
 
     private final AdminService adminService;
     private final EmployeeLinkerService employeeLinkerService;
+
+    /**
+     * Get platform settings
+     * SuperAdmin only - returns platform configuration
+     */
+    @GetMapping("/settings")
+    @Operation(summary = "Get platform settings", description = "Returns global platform configuration settings (SuperAdmin only)")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<Map<String, Object>> getSettings() {
+        log.info("SuperAdmin requesting platform settings");
+        Map<String, Object> settings = adminService.getPlatformSettings();
+        return ResponseEntity.ok(settings);
+    }
 
     /**
      * Get global platform statistics

@@ -482,6 +482,8 @@ export function useSettleExpenseAdvance() {
       expenseService.settleAdvance(advanceId, claimId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
+      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
     },
   });
 }

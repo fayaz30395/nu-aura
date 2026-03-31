@@ -54,9 +54,8 @@ public class Asset {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum AssetCategory {
         LAPTOP, DESKTOP, MONITOR, PHONE, TABLET, FURNITURE, VEHICLE, SOFTWARE_LICENSE, OTHER

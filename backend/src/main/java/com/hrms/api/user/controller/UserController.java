@@ -4,6 +4,8 @@ import com.hrms.api.user.dto.AssignRolesRequest;
 import com.hrms.api.user.dto.UserResponse;
 import com.hrms.application.user.service.RoleManagementService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,14 @@ import static com.hrms.common.security.Permission.USER_VIEW;
 public class UserController {
 
     private final RoleManagementService roleManagementService;
+
+    @GetMapping("/me")
+    @Operation(summary = "Get current user profile", description = "Returns the profile of the currently authenticated user with roles")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        UUID userId = SecurityContext.getCurrentUserId();
+        UserResponse user = roleManagementService.getUserById(userId);
+        return ResponseEntity.ok(user);
+    }
 
     @GetMapping
     @RequiresPermission(USER_VIEW)

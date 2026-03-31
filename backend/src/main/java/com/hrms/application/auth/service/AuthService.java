@@ -113,6 +113,26 @@ public class AuthService {
     @Value("${app.auth.allowed-domain:nulogic.io}")
     private String allowedDomain;
 
+    @Transactional(readOnly = true)
+    public AuthResponse getUserProfile(UUID userId) {
+        User user = userRepository.findByIdWithRolesAndPermissions(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+        UUID tenantId = user.getTenantId();
+        AuthContext ctx = buildAuthContext(user, tenantId);
+
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .employeeId(ctx.employeeId())
+                .tenantId(tenantId)
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .roles(new ArrayList<>(ctx.appRoles()))
+                .permissions(new ArrayList<>(ctx.appPermissions().keySet()))
+                .build();
+    }
+
     @Transactional
     public AuthResponse login(LoginRequest request) {
         // First, find the user by email to auto-detect their tenant

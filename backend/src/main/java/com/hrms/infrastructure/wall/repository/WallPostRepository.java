@@ -85,7 +85,8 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Use this when you need to display author info (name, avatar) with posts.
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author " +
+           "LEFT JOIN FETCH p.author a " +
+           "LEFT JOIN FETCH a.user " +
            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
     Optional<WallPost> findByIdWithAuthor(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
@@ -94,8 +95,10 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Eliminates N+1 when accessing both author and praiseRecipient.
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author " +
-           "LEFT JOIN FETCH p.praiseRecipient " +
+           "LEFT JOIN FETCH p.author a " +
+           "LEFT JOIN FETCH a.user " +
+           "LEFT JOIN FETCH p.praiseRecipient pr " +
+           "LEFT JOIN FETCH pr.user " +
            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
     Optional<WallPost> findByIdWithAuthorAndRecipient(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
@@ -109,8 +112,10 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * 3. Call this method to fetch posts with authors in one query
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author " +
-           "LEFT JOIN FETCH p.praiseRecipient " +
+           "LEFT JOIN FETCH p.author a " +
+           "LEFT JOIN FETCH a.user " +
+           "LEFT JOIN FETCH p.praiseRecipient pr " +
+           "LEFT JOIN FETCH pr.user " +
            "WHERE p.id IN :postIds AND p.tenantId = :tenantId")
     List<WallPost> findByIdsWithAuthors(@Param("postIds") List<UUID> postIds, @Param("tenantId") UUID tenantId);
 

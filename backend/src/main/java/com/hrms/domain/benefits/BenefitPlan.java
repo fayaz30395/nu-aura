@@ -49,9 +49,8 @@ public class BenefitPlan {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Builder.Default
     @Version
-    private Long version = 0L;
+    private Long version;
 
     public enum BenefitType {
         HEALTH_INSURANCE, DENTAL, VISION, LIFE_INSURANCE, RETIREMENT_401K, PTO, WELLNESS, GYM, EDUCATION, OTHER

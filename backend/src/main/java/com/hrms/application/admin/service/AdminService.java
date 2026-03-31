@@ -54,6 +54,30 @@ public class AdminService {
     private final WorkflowExecutionRepository workflowExecutionRepository;
 
     /**
+     * Get platform settings
+     * Returns current platform configuration
+     */
+    @Transactional(readOnly = true)
+    public java.util.Map<String, Object> getPlatformSettings() {
+        long totalTenants = tenantRepository.count();
+        long totalUsers = userRepository.count();
+        long totalEmployees = employeeRepository.count();
+        long totalDepartments = departmentRepository.count();
+
+        java.util.Map<String, Object> settings = new java.util.LinkedHashMap<>();
+        settings.put("platform", "NU-AURA HRMS");
+        settings.put("version", "2.0");
+        settings.put("totalTenants", totalTenants);
+        settings.put("totalUsers", totalUsers);
+        settings.put("totalEmployees", totalEmployees);
+        settings.put("totalDepartments", totalDepartments);
+        settings.put("multiTenancy", true);
+        settings.put("rbacEnabled", true);
+        settings.put("mfaSupported", true);
+        return settings;
+    }
+
+    /**
      * Get global platform statistics
      * SuperAdmin only - aggregates data across all tenants
      */
