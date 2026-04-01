@@ -66,46 +66,4 @@ public class IdempotencyService {
         }
     }
 
-    /**
-     * Check if an event has already been processed.
-     *
-     * @param eventId the unique event identifier
-     * @return true if event was already processed, false otherwise
-     * @deprecated Use {@link #tryProcess(String)} instead for atomic check-and-set.
-     *             This method is retained only for backward compatibility during migration.
-     */
-    @Deprecated(forRemoval = true)
-    public boolean isProcessed(String eventId) {
-        try {
-            String key = PREFIX + eventId;
-            Boolean exists = redisTemplate.hasKey(key);
-            return exists != null && exists;
-        } catch (RuntimeException e) {
-            log.warn("Redis unavailable for idempotency check on event {}: {}. " +
-                    "Processing will continue with potential for duplicates.",
-                    eventId, e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Mark an event as processed.
-     * Sets a Redis key with 24-hour expiration.
-     *
-     * @param eventId the unique event identifier
-     * @deprecated Use {@link #tryProcess(String)} instead for atomic check-and-set.
-     *             This method is retained only for backward compatibility during migration.
-     */
-    @Deprecated(forRemoval = true)
-    public void markProcessed(String eventId) {
-        try {
-            String key = PREFIX + eventId;
-            redisTemplate.opsForValue().set(key, "processed", TTL_HOURS, TimeUnit.HOURS);
-            log.debug("Marked event {} as processed in Redis (TTL: {} hours)", eventId, TTL_HOURS);
-        } catch (RuntimeException e) {
-            log.warn("Failed to mark event {} as processed in Redis: {}. " +
-                    "Duplicate processing is possible if consumer restarts.",
-                    eventId, e.getMessage());
-        }
-    }
 }
