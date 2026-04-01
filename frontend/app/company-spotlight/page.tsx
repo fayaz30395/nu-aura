@@ -611,7 +611,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                     </p>
                   )}
                   {ctaLabel && (
-                    <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate">
+                    <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {ctaLabel}
                     </button>
                   )}
@@ -625,14 +625,14 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit(onSubmit)}
             disabled={createMutation.isPending || updateMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             {createMutation.isPending || updateMutation.isPending ? (
               <>

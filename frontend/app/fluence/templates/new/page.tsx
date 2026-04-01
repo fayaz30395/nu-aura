@@ -193,7 +193,8 @@ export default function CreateTemplatePage() {
           <div className="fluence-page-topbar-left">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)]"
+              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              aria-label="Go back"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -211,7 +212,7 @@ export default function CreateTemplatePage() {
             <button
               type="button"
               onClick={() => setSettingsDrawerOpen(true)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Tag className="w-4 h-4" />
               Settings
@@ -222,7 +223,7 @@ export default function CreateTemplatePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Send className="w-4 h-4" />
                 {isSubmitting ? 'Saving...' : 'Save Template'}
