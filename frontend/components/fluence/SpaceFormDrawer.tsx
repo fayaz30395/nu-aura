@@ -229,7 +229,7 @@ export function SpaceFormDrawer({
                     whileHover={{ scale: 1.15 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => field.onChange(emoji)}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all duration-150 border ${
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all duration-150 border cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === emoji
                         ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/10 ring-2 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'
@@ -261,7 +261,7 @@ export function SpaceFormDrawer({
                     whileHover={{ scale: 1.15 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => field.onChange(c.value)}
-                    className={`w-10 h-10 rounded-lg transition-all duration-150 border-2 ${
+                    className={`w-10 h-10 rounded-lg transition-all duration-150 border-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === c.value
                         ? 'border-[var(--text-primary)] ring-2 ring-offset-2 ring-offset-[var(--bg-card)]'
                         : 'border-transparent'
@@ -273,6 +273,7 @@ export function SpaceFormDrawer({
                         : {}),
                     }}
                     title={c.label}
+                    aria-label={`Select ${c.label} color`}
                   />
                 ))}
               </div>
@@ -297,7 +298,7 @@ export function SpaceFormDrawer({
                     type="button"
                     whileTap={{ scale: 0.98 }}
                     onClick={() => field.onChange(opt.value)}
-                    className={`w-full text-left px-4 py-4 rounded-lg border transition-all duration-150 ${
+                    className={`w-full text-left px-4 py-4 rounded-lg border transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === opt.value
                         ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/5 ring-1 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'

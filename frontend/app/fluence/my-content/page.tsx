@@ -130,7 +130,7 @@ export default function MyContentPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 relative px-4 py-4 text-sm font-medium whitespace-nowrap
-                transition-colors duration-200 flex items-center gap-2
+                transition-colors duration-200 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                 ${activeTab === tab.id
                   ? 'text-[var(--accent-700)] dark:text-[var(--accent-400)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
@@ -459,7 +459,7 @@ function ContentCard({
   return (
     <motion.button
       onClick={onClick}
-      className={`${card.interactive} ${card.padding} w-full text-left`}
+      className={`${card.interactive} ${card.padding} w-full text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
       {...dsMotion.cardHover}
     >
       <div className="flex items-start gap-4">
@@ -527,7 +527,7 @@ function FavoriteCard({
   return (
     <motion.button
       onClick={onClick}
-      className={`${card.interactive} ${card.padding} w-full text-left flex items-center gap-4`}
+      className={`${card.interactive} ${card.padding} w-full text-left flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
       {...dsMotion.cardHover}
     >
       <StarIcon className="h-5 w-5 text-warning-500 fill-warning-500 flex-shrink-0" />

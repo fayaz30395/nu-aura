@@ -1,6 +1,0 @@
-# Demo profile: includes seed data migration location
-# Activate with: SPRING_PROFILES_ACTIVE=demo
-# Loads V8__demo_seed_data.sql with Acme Corp sample data (users, employees, projects, leave types)
-spring:
-  flyway:
-    locations: classpath:db/migration,classpath:db/seed

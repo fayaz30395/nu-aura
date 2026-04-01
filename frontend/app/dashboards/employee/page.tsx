@@ -520,7 +520,7 @@ export default function EmployeeDashboardPage() {
                           <div
                             className="w-3 h-3 rounded-full"
                             style={{
-                              backgroundColor: balance.colorCode || '#3b82f6',
+                              backgroundColor: balance.colorCode || 'var(--accent-primary)',
                             }}
                           />
                           <span className="text-sm font-medium text-[var(--text-secondary)]">
@@ -536,7 +536,7 @@ export default function EmployeeDashboardPage() {
                           className="h-full rounded-full transition-all"
                           style={{
                             width: `${balance.percentage}%`,
-                            backgroundColor: balance.colorCode || '#3b82f6',
+                            backgroundColor: balance.colorCode || 'var(--accent-primary)',
                           }}
                         />
                       </div>

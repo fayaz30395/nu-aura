@@ -106,21 +106,23 @@ export default function ShiftDashboardPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode('week')}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`p-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   viewMode === 'week'
                     ? 'bg-accent-700 text-white'
                     : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
                 }`}
+                aria-label="Week view"
               >
                 <Calendar className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`p-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   viewMode === 'list'
                     ? 'bg-accent-700 text-white'
                     : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
                 }`}
+                aria-label="List view"
               >
                 <List className="w-4 h-4" />
               </button>
@@ -135,7 +137,7 @@ export default function ShiftDashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => router.push(link.href)}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <div className="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
                   <link.icon className="w-5 h-5 text-accent-700 dark:text-accent-400" />
@@ -170,7 +172,8 @@ export default function ShiftDashboardPage() {
           <div className="flex items-center justify-between bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             <button
               onClick={() => setCurrentWeekOffset((p) => p - 1)}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              aria-label="Previous week"
             >
               <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
             </button>
@@ -181,14 +184,15 @@ export default function ShiftDashboardPage() {
               </p>
               <button
                 onClick={() => setCurrentWeekOffset(0)}
-                className="text-xs text-accent-700 dark:text-accent-400 hover:underline"
+                className="text-xs text-accent-700 dark:text-accent-400 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 Today
               </button>
             </div>
             <button
               onClick={() => setCurrentWeekOffset((p) => p + 1)}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              aria-label="Next week"
             >
               <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />
             </button>

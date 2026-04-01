@@ -74,7 +74,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center justify-between w-full mb-4 group"
+        className="flex items-center justify-between w-full mb-4 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
         <h3 className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-700)] transition-colors">
           Contents
@@ -98,13 +98,14 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
             <motion.button
               key={heading.id}
               onClick={() => handleHeadingClick(heading.id)}
-              className={`block w-full text-left px-4 py-1.5 rounded-md text-xs transition-all line-clamp-2 ${
+              className={`block w-full text-left px-4 py-1.5 rounded-md text-xs transition-all line-clamp-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 activeHeadingId === heading.id
                   ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] font-medium'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
               }`}
               style={{ marginLeft: `${(heading.level - minLevel) * 12}px` }}
               whileHover={{ x: 2 }}
+              aria-label={`Jump to ${heading.text}`}
             >
               {heading.text}
             </motion.button>

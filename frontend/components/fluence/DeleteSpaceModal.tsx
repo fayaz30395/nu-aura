@@ -211,7 +211,7 @@ export function DeleteSpaceModal({
                     type="button"
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedTargetId(s.id)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-150 text-left ${
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-150 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       selectedTargetId === s.id
                         ? 'border-[var(--accent-700)] bg-[var(--accent-700)]/5 ring-1 ring-[var(--accent-700)]/30'
                         : 'border-[var(--border-main)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)]'

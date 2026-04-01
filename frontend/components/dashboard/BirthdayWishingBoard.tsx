@@ -25,7 +25,7 @@ function Balloon({ color, className }: { color: string; className?: string }) {
 }
 
 function FloatingBalloons() {
-  const balloonColors = ['#0ea5e9', '#06b6d4', '#0369a1', '#0284c7', '#38bdf8', '#7dd3fc'];
+  const balloonColors = ['var(--accent-300)', 'var(--accent-400)', 'var(--accent-500)', 'var(--accent-600)', 'var(--accent-200)', 'var(--accent-100)'];
 
   return (
     <div className="absolute inset-x-0 top-0 h-24 overflow-hidden pointer-events-none">
@@ -58,7 +58,7 @@ function FloatingBalloons() {
 /* ─── Confetti Particles ─────────────────────────────────────────────────── */
 
 function ConfettiParticle({ delay, left }: { delay: number; left: string }) {
-  const colors = ['#8B5CF6', '#F59E0B', '#EC4899', '#10B981', '#3B82F6', '#F97316'];
+  const colors = ['var(--chart-secondary)', 'var(--chart-warning)', 'var(--chart-accent)', 'var(--chart-success)', 'var(--chart-primary)', 'var(--chart-warning)'];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
   return (
@@ -84,7 +84,7 @@ function ConfettiParticle({ delay, left }: { delay: number; left: string }) {
 /* ─── Banner Bunting ─────────────────────────────────────────────────────── */
 
 function BuntingFlags() {
-  const flagColors = ['#0ea5e9', '#06b6d4', '#0369a1', '#38bdf8', '#7dd3fc', '#0ea5e9', '#06b6d4', '#0369a1', '#38bdf8', '#7dd3fc', '#0ea5e9', '#06b6d4'];
+  const flagColors = ['var(--accent-300)', 'var(--accent-400)', 'var(--accent-500)', 'var(--accent-200)', 'var(--accent-100)', 'var(--accent-300)', 'var(--accent-400)', 'var(--accent-500)', 'var(--accent-200)', 'var(--accent-100)', 'var(--accent-300)', 'var(--accent-400)'];
 
   return (
     <div className="absolute inset-x-0 top-0 h-6 overflow-hidden pointer-events-none">
@@ -93,7 +93,7 @@ function BuntingFlags() {
         <path
           d="M0 4 Q 50 12, 100 4 Q 150 12, 200 4 Q 250 12, 300 4 Q 350 12, 400 4"
           fill="none"
-          stroke="#38bdf8"
+          stroke="var(--accent-200)"
           strokeWidth="0.8"
           opacity="0.5"
         />
@@ -163,13 +163,13 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
   const isTodayMyBirthday = useMemo(() => {
     if (forceShow) return true;
     if (!user?.employeeId) return false;
+    if (!Array.isArray(birthdays)) return false;
     return birthdays.some(b => b.employeeId === user.employeeId && b.isToday);
   }, [user?.employeeId, birthdays, forceShow]);
 
   // Simulate wishers — in production, fetch from a birthday wishes API
   const wishers = useMemo(() => {
-    // Placeholder wishers from birthday data (team members who have birthdays = colleagues)
-    // In production, replace with actual wishes endpoint
+    if (!Array.isArray(birthdays)) return [];
     return birthdays
       .filter(b => b.employeeId !== user?.employeeId)
       .slice(0, 5)
@@ -185,7 +185,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative overflow-hidden rounded-lg border border-sky-200 dark:border-sky-800/40 bg-gradient-to-br from-sky-50 via-white to-cyan-50 dark:from-sky-950/40 dark:via-[var(--bg-card)] dark:to-cyan-950/30"
+      className="relative overflow-hidden rounded-lg border border-accent-200 dark:border-accent-800/40 bg-gradient-to-br from-accent-50 via-white to-cyan-50 dark:from-accent-950/40 dark:via-[var(--bg-card)] dark:to-cyan-950/30"
     >
       {/* Decorative elements */}
       <BuntingFlags />
@@ -200,7 +200,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
       <div className="relative z-10 px-6 pt-20 pb-6 text-center">
         {/* Avatar with party hat effect */}
         <div className="relative inline-block mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900/40 text-xl font-bold text-sky-700 dark:text-sky-400 border-2 border-sky-300 dark:border-sky-700 shadow-lg mx-auto">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-lg mx-auto">
             {displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
           </div>
           <motion.div
@@ -213,10 +213,10 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
         </div>
 
         {/* Birthday message */}
-        <h3 className="text-lg font-bold text-sky-900 dark:text-sky-200">
+        <h3 className="text-lg font-bold text-accent-900 dark:text-accent-200">
           Happy birthday, {displayName}!
         </h3>
-        <p className="text-sm text-sky-700/70 dark:text-sky-400/70 mt-1 max-w-xs mx-auto">
+        <p className="text-sm text-accent-700/70 dark:text-accent-400/70 mt-1 max-w-xs mx-auto">
           May this year bring you joy, success, and wonderful memories with the team!
         </p>
 
@@ -224,7 +224,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-sky-300 dark:border-sky-700 bg-white dark:bg-sky-900/30 px-4 py-2 text-sm font-medium text-sky-700 dark:text-sky-300 shadow-sm hover:bg-sky-50 dark:hover:bg-sky-900/50 transition-colors"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-white dark:bg-accent-900/30 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-sm hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           onClick={() => {
             // Navigate to wishes view — for now, scroll to celebrations section
             const celebrationSection = document.querySelector('[data-section="celebrations"]');
@@ -232,6 +232,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
               celebrationSection.scrollIntoView({ behavior: 'smooth' });
             }
           }}
+          aria-label="See your birthday wishes"
         >
           <Gift className="h-4 w-4" />
           See your wishes
