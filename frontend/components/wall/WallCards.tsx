@@ -134,7 +134,7 @@ function CardHeader({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg"
+              className="absolute right-0 top-full z-50 mt-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]"
             >
               {onPin && (
                 <button

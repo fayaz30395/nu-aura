@@ -115,7 +115,7 @@ export const ComposeModal = React.memo(function ComposeModal({
             {showSuggestions && activeField === 'to' && filteredContacts.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto"
               >
                 {filteredContacts.map((contact) => (
                   <button
@@ -164,7 +164,7 @@ export const ComposeModal = React.memo(function ComposeModal({
             {showSuggestions && activeField === 'cc' && filteredContacts.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto"
               >
                 {filteredContacts.map((contact) => (
                   <button

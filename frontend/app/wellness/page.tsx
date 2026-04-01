@@ -336,7 +336,7 @@ export default function WellnessPage() {
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {programs.map((program) => (
-                    <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <Card key={program.id} className="overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
                           <div className={`rounded-lg p-4 ${getCategoryColor(program.category)}`}>
@@ -392,7 +392,7 @@ export default function WellnessPage() {
               ) : (
                 <div className="space-y-4">
                   {challenges.map((challenge) => (
-                    <Card key={challenge.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <Card key={challenge.id} className="overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div>

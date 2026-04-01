@@ -268,7 +268,7 @@ export default function CourseCatalogPage() {
               return (
                 <Card
                   key={course.id}
-                  className="border border-[var(--border-main)] hover:shadow-md transition-shadow flex flex-col"
+                  className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow flex flex-col"
                 >
                   {/* Thumbnail placeholder */}
                   <div className="h-36 bg-gradient-to-br from-accent-50 to-accent-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">

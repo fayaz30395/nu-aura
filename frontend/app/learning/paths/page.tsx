@@ -139,7 +139,7 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Search */}
             <div className="relative">
@@ -181,7 +181,7 @@ export default function LearningPathsPage() {
         ) : filteredPaths.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPaths.map((path) => (
-              <div key={path.id} className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={path.id} className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 {/* Thumbnail */}
                 {path.thumbnailUrl ? (
                   <div className="relative w-full h-40">
@@ -298,7 +298,7 @@ export default function LearningPathsPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
+          <div className="bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}

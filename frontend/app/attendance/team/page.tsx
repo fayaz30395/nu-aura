@@ -651,7 +651,7 @@ export default function TeamAttendancePage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.03, duration: 0.25 }}
                   >
-                    <Card className={`card-aura h-full hover:shadow-lg transition-all border-t-4 ${
+                    <Card className={`card-aura h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 ${
                       record.status === 'PRESENT' ? 'border-t-success-500' :
                       record.status === 'ABSENT' ? 'border-t-danger-500' :
                       record.status === 'LATE' ? 'border-t-warning-500' :
@@ -750,7 +750,7 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => router.push('/attendance')}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-accent-500"
+              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-500"
             >
               <CardContent className="p-6">
                 <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
@@ -769,7 +769,7 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => router.push('/attendance/regularization')}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-warning-500"
+              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-warning-500"
             >
               <CardContent className="p-6">
                 <div className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center mb-4">
@@ -788,7 +788,7 @@ export default function TeamAttendancePage() {
             <Card
               isClickable
               onClick={() => window.print()}
-              className="card-interactive h-full hover:shadow-lg transition-all border-t-4 border-t-accent-700"
+              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-700"
             >
               <CardContent className="p-6">
                 <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">

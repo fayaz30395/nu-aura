@@ -93,7 +93,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
       </div>
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-lg">
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)]">
           {filtered.length === 0 ? (
             <div className="px-4 py-2 text-sm text-[var(--text-muted)]">No results found</div>
           ) : (
@@ -780,7 +780,7 @@ const formatDateTime = (dateString?: string): string => {
         {/* Add/Edit Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -1008,7 +1008,7 @@ const formatDateTime = (dateString?: string): string => {
         {/* Feedback Modal */}
         {showFeedbackModal && selectedInterview && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
@@ -1085,7 +1085,7 @@ const formatDateTime = (dateString?: string): string => {
         {/* Delete Modal */}
         {showDeleteModal && interviewToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-danger-600" />
@@ -1110,7 +1110,7 @@ const formatDateTime = (dateString?: string): string => {
         {/* AI Interview Questions Modal */}
         {showQuestionsModal && generatedQuestions && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">

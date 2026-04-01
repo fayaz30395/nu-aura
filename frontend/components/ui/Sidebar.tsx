@@ -114,7 +114,7 @@ const ChildrenFlyover: React.FC<{
         ref={panelRef}
         className={cn(
           'fixed z-50 w-64 bg-[var(--bg-elevated)]',
-          'rounded-lg shadow-xl',
+          'rounded-lg shadow-[var(--shadow-dropdown)]',
           'transform transition-all duration-100 ease-out',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
@@ -297,7 +297,7 @@ const SidebarMenuItem: React.FC<{
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium',
     'transition-all duration-150 ease-out',
     isActive || isFlyoverOpen
-      ? 'font-semibold shadow-sm border-l-[3px]'
+      ? 'font-semibold shadow-[var(--shadow-card)] border-l-[3px]'
       : 'hover:bg-[var(--sidebar-hover-bg)]',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
@@ -358,7 +358,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-accent-500 rounded-full text-xs text-white">
@@ -755,7 +755,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             ) : (
               <div className="w-8 h-8 rounded-lg flex items-center justify-center group relative transition-all duration-200 hover:scale-105" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))' }}>
                 <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
                   Pro Features Active
                 </div>
               </div>

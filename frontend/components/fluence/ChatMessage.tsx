@@ -98,7 +98,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
           {/* Streaming cursor */}
           {message.isStreaming && message.content && (
-            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-sm" />
+            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-md" />
           )}
         </div>
 

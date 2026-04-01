@@ -191,7 +191,7 @@ export default function AttritionReportPage() {
                 const colors = RISK_COLOR[pred.riskLevel] ?? RISK_COLOR.MEDIUM;
                 const expanded = expandedId === pred.id;
                 return (
-                  <div key={pred.id} className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-md' : ''}`}>
+                  <div key={pred.id} className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-[var(--shadow-elevated)]' : ''}`}>
                     <button
                       onClick={() => setExpandedId(expanded ? null : pred.id)}
                       className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-[var(--bg-surface)]"

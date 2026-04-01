@@ -99,7 +99,7 @@ export function ContentGrid({
             }}
           >
             <Card
-              className="group h-full cursor-pointer transition-all hover:shadow-lg"
+              className="group h-full cursor-pointer transition-all hover:shadow-[var(--shadow-dropdown)]"
               onClick={() => router.push(getRoute(item))}
             >
               <CardHeader className="pb-3">

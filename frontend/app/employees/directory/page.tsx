@@ -473,7 +473,7 @@ export default function TeamDirectory() {
                       {/* Card Header with gradient */}
                       <div className={`h-20 ${getRandomColor(employee.fullName)} relative`}>
                         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                          <div className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-lg">
+                          <div className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
                             <div
                               className={`w-full h-full rounded-full ${getRandomColor(
                                 employee.fullName
@@ -735,7 +735,7 @@ export default function TeamDirectory() {
                     <X className="w-5 h-5 text-white" />
                   </button>
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-lg">
+                    <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
                       <div
                         className={`w-full h-full rounded-full ${getRandomColor(
                           selectedEmployee.fullName

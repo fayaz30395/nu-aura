@@ -121,7 +121,7 @@ export default function SystemDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-lg shadow-accent-500/25">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Server className="h-6 w-6 text-white" />
           </div>
           <div>

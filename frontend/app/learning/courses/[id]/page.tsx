@@ -365,7 +365,7 @@ export default function CourseDetailPage() {
 
         {/* Right: CTA card */}
         <div className="space-y-4">
-          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 shadow-sm sticky top-6">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] sticky top-6">
             {course.thumbnailUrl && (
               <div className="relative w-full h-36 mb-4">
                 <Image

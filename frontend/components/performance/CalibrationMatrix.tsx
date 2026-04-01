@@ -78,7 +78,7 @@ function EmployeeCard({
       draggable={!readOnly}
       onDragStart={onDragStart}
       onClick={onClick}
-      className={`p-2 bg-white rounded border border-[var(--border-main)] shadow-sm cursor-pointer hover:shadow-md transition-all text-xs ${
+      className={`p-2 bg-white rounded border border-[var(--border-main)] shadow-[var(--shadow-card)] cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-all text-xs ${
         isDragging ? 'opacity-50' : ''
       } ${!readOnly ? 'hover:border-accent-400' : ''}`}
     >

@@ -494,7 +494,7 @@ export default function MyAttendancePage() {
                       onClick={() => handleDateSelect(day)}
                       className={`aspect-square p-1 rounded-md border transition-all ${
                         isSelected
-                          ? 'border-accent-500 bg-accent-50 shadow-sm'
+                          ? 'border-accent-500 bg-accent-50 shadow-[var(--shadow-card)]'
                           : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
                       } ${isToday ? 'ring-2 ring-accent-300' : ''}`}
                     >

@@ -41,7 +41,7 @@ export function FileContextMenu({
     <div
       ref={menuRef}
       style={{ left: position.x, top: position.y }}
-      className="fixed z-50 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg py-1 min-w-[180px]"
+      className="fixed z-50 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] py-1 min-w-[180px]"
     >
       {file.mimeType !== 'application/vnd.google-apps.folder' && (
         <button

@@ -70,7 +70,7 @@ interface CustomTooltipProps {
 const _CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-[var(--border-main)]">
+      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-[var(--shadow-dropdown)] border border-[var(--border-main)]">
         <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -263,7 +263,7 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -283,7 +283,7 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -304,7 +304,7 @@ export default function AnalyticsPage() {
           </Card>
 
           {analytics.payroll && (
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div>

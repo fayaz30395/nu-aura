@@ -324,13 +324,13 @@ export default function CapacityTimelinePage() {
             <div className="flex items-center gap-4 mb-4 pb-3 border-b border-[var(--border-main)] text-xs text-[var(--text-muted)]">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-success-500" /> ≤80% optimal
+                <span className="inline-block w-3 h-3 rounded-md bg-success-500" /> ≤80% optimal
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-warning-400" /> 81–99% high
+                <span className="inline-block w-3 h-3 rounded-md bg-warning-400" /> 81–99% high
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-sm bg-danger-500" /> ≥100% over-allocated
+                <span className="inline-block w-3 h-3 rounded-md bg-danger-500" /> ≥100% over-allocated
               </span>
               <span className="ml-auto text-[var(--text-muted)] italic">
                 Hover a row to see project names

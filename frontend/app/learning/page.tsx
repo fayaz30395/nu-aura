@@ -138,7 +138,7 @@ export default function LearningPage() {
         {loading || coursesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-md overflow-hidden">
+              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
                 <Skeleton className="h-40 w-full" />
                 <div className="p-4 space-y-4">
                   <Skeleton className="h-5 w-3/4" />
@@ -156,7 +156,7 @@ export default function LearningPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {courses.length > 0 ? (
                   courses.map((course) => (
-                    <div key={course.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div key={course.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       {course.thumbnailUrl ? (
                         <div className="relative w-full h-40">
                           <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
@@ -210,7 +210,7 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-3 bg-[var(--bg-secondary)] rounded-lg shadow-md p-8 text-center">
+                  <div className="col-span-3 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
                     <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
                     <p className="text-[var(--text-muted)] text-lg font-medium">No courses available at the moment.</p>
                   </div>
@@ -223,7 +223,7 @@ export default function LearningPage() {
               <div className="space-y-4">
                 {myEnrollments.length > 0 ? (
                   myEnrollments.map((enrollment) => (
-                    <div key={enrollment.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div key={enrollment.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course #{enrollment.courseId.slice(0, 8)}</h3>
@@ -270,7 +270,7 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-8 text-center">
+                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
                     <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
                     <p className="text-[var(--text-muted)] text-lg font-medium mb-2">You haven&apos;t enrolled in any courses yet.</p>
                     <p className="text-[var(--text-secondary)]">Browse the catalog to get started!</p>
@@ -284,7 +284,7 @@ export default function LearningPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {certificates.length > 0 ? (
                   certificates.map((cert) => (
-                    <div key={cert.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 border-l-4 border-warning-500 hover:shadow-lg transition-shadow">
+                    <div key={cert.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-warning-500 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
@@ -328,7 +328,7 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-2 bg-[var(--bg-secondary)] rounded-lg shadow-md p-8 text-center">
+                  <div className="col-span-2 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
                     <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
                     <p className="text-[var(--text-muted)] text-lg font-medium mb-2">No certificates earned yet.</p>
                     <p className="text-[var(--text-secondary)]">Complete courses to earn certificates!</p>

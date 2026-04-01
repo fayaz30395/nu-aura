@@ -226,7 +226,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 4, scale: 0.98 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
-              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-xl overflow-hidden"
+              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
             >
               {/* Search header */}
               <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border-subtle)]">
@@ -286,7 +286,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
-              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-xl p-4 text-center"
+              className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4 text-center"
             >
               <AtSign className="h-5 w-5 text-[var(--text-muted)] mx-auto mb-1" />
               <p className="text-sm text-[var(--text-muted)]">No matching team members</p>

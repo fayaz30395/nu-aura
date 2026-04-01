@@ -436,7 +436,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                         getNotificationBg(notification.type)
                       )}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-card)]">
                         {getNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">

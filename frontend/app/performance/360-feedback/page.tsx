@@ -287,7 +287,7 @@ export default function Feedback360Page() {
                 resetCycleForm();
                 setShowCycleModal(true);
               }}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
             >
               <Plus className="h-5 w-5 mr-2" />
               New Cycle
@@ -350,7 +350,7 @@ export default function Feedback360Page() {
       {activeTab === 'cycles' && (
         <div className="space-y-4">
           {cycles.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+            <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <Users className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No feedback cycles</h3>
               <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -362,7 +362,7 @@ export default function Feedback360Page() {
               {cycles.map((cycle) => (
                 <div
                   key={cycle.id}
-                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-6"
+                  className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] p-6"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
@@ -459,7 +459,7 @@ export default function Feedback360Page() {
       {activeTab === 'pending' && (
         <div className="space-y-4">
           {pendingReviews.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+            <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <CheckCircle className="mx-auto h-12 w-12 text-success-400" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">All caught up!</h3>
               <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -467,7 +467,7 @@ export default function Feedback360Page() {
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-[var(--border-main)]">
+            <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-[var(--border-main)]">
                   <thead className="bg-[var(--bg-surface)]">
@@ -489,7 +489,7 @@ export default function Feedback360Page() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-[var(--border-main)]">
+                  <tbody className="bg-[var(--bg-card)] divide-y divide-[var(--border-main)]">
                     {pendingReviews.map((request) => (
                       <tr key={request.id} className="hover:bg-[var(--bg-surface)]">
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -536,7 +536,7 @@ export default function Feedback360Page() {
       {activeTab === 'summaries' && (
         <div className="space-y-4">
           {summaries.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+            <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <BarChart3 className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No results yet</h3>
               <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -548,7 +548,7 @@ export default function Feedback360Page() {
               {summaries.map((summary) => (
                 <div
                   key={summary.id}
-                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-6"
+                  className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] p-6"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -685,7 +685,7 @@ export default function Feedback360Page() {
 
                   <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)] mt-4">
                     <button
-                      className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View Details
@@ -712,7 +712,7 @@ export default function Feedback360Page() {
       {/* Create Cycle Modal */}
       {showCycleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Create 360 Feedback Cycle
@@ -923,7 +923,7 @@ export default function Feedback360Page() {
                   setShowCycleModal(false);
                   resetCycleForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
@@ -944,7 +944,7 @@ export default function Feedback360Page() {
       {/* Submit Response Modal */}
       {showResponseModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
               <p className="text-sm text-[var(--text-muted)] mt-1">
@@ -1061,7 +1061,7 @@ export default function Feedback360Page() {
                   setSelectedRequest(null);
                   resetResponseForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
@@ -1069,7 +1069,7 @@ export default function Feedback360Page() {
                 <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
                   <button
                     onClick={() => handleSubmitResponse(true)}
-                    className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                    className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
                   >
                     Save Draft
                   </button>

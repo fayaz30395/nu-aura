@@ -179,7 +179,7 @@ export default function SignupPage() {
             <CardDescription>Start your free trial — no credit card required</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Error */}
               {error && (
                 <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
@@ -206,7 +206,7 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.companyName
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
@@ -231,7 +231,7 @@ export default function SignupPage() {
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`input-aura block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`input-aura block w-full pl-9 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
                           ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
@@ -261,7 +261,7 @@ export default function SignupPage() {
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
                           ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
@@ -279,7 +279,7 @@ export default function SignupPage() {
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`input-aura block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminLastName
                           ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
@@ -305,7 +305,7 @@ export default function SignupPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminEmail
                           ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'
@@ -332,7 +332,7 @@ export default function SignupPage() {
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                      className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.password
                           ? 'border-danger-500 dark:border-danger-500'
                           : 'border-[var(--border-main)]'

@@ -225,7 +225,7 @@ export default function ManagerDashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className={`px-4 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-sm transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
+            <div className={`px-4 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-[var(--shadow-card)] transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
               ? 'bg-success-500/10 border-success-500/20 text-success-700 dark:text-success-400'
               : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
               }`}>
@@ -238,7 +238,7 @@ export default function ManagerDashboardPage() {
         {/* Global Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
+            <Card className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
@@ -259,7 +259,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
+            <Card className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <UserCheck className="h-10 w-10 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
@@ -280,7 +280,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
+            <Card className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Calendar className="h-10 w-10 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
@@ -301,7 +301,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
+            <Card className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Zap className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
@@ -438,7 +438,7 @@ export default function ManagerDashboardPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
-                          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-md">
+                          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
                             {leave.employeeName?.charAt(0)}
                           </div>
                           <div>
@@ -586,7 +586,7 @@ export default function ManagerDashboardPage() {
                       {/* Member header */}
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-4">
-                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-md">
+                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
                             {member.employeeName?.charAt(0)}
                           </div>
                           <div>
@@ -680,7 +680,7 @@ export default function ManagerDashboardPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="h-7 w-7 rounded-lg bg-danger-500 text-white flex items-center justify-center shadow-md">
+                      <div className="h-7 w-7 rounded-lg bg-danger-500 text-white flex items-center justify-center shadow-[var(--shadow-elevated)]">
                         <AlertTriangle className="h-4 w-4" />
                       </div>
                       <h2 className="text-sm font-black text-[var(--text-primary)] tracking-tight">System Alerts</h2>
@@ -688,7 +688,7 @@ export default function ManagerDashboardPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {teamAlerts.slice(0, 3).map((alert) => (
-                      <div key={alert.id} className="p-4 rounded-xl bg-white/40 dark:bg-black/20 border border-danger-500/10">
+                      <div key={alert.id} className="p-4 rounded-xl bg-[var(--glass-bg)] border border-danger-500/10">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge className="bg-danger-500 text-white font-black px-1.5 py-0 text-2xs">CRITICAL</Badge>
                           <span className="text-2xs font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
@@ -711,7 +711,7 @@ export default function ManagerDashboardPage() {
         {/* Team Performance Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Goals Overview */}
-          <Card className="border-0 shadow-md">
+          <Card className="border-0 shadow-[var(--shadow-elevated)]">
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <Target className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
@@ -768,7 +768,7 @@ export default function ManagerDashboardPage() {
           </Card>
 
           {/* One-on-Ones & Feedback */}
-          <Card className="border-0 shadow-md">
+          <Card className="border-0 shadow-[var(--shadow-elevated)]">
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <Users className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />

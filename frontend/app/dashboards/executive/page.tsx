@@ -246,7 +246,7 @@ export default function ExecutiveDashboardPage() {
         {data.keyMetrics && data.keyMetrics.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {data.keyMetrics.slice(0, 4).map((kpi, index) => (
-              <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+              <Card key={index} className="border-0 shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -276,7 +276,7 @@ export default function ExecutiveDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Payroll/Headcount Trend */}
           {data.trendCharts?.headcountTrend && data.trendCharts.headcountTrend.length > 0 && (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-accent-500" />
@@ -291,7 +291,7 @@ export default function ExecutiveDashboardPage() {
 
           {/* Department Distribution */}
           {data.workforceSummary?.byDepartment && data.workforceSummary.byDepartment.length > 0 && (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChart className="h-5 w-5 text-accent-500" />
@@ -322,7 +322,7 @@ export default function ExecutiveDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Alerts */}
           <div className="lg:col-span-2 space-y-4">
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-warning-500" />
@@ -377,7 +377,7 @@ export default function ExecutiveDashboardPage() {
           <div className="space-y-4">
             {/* Workforce Overview */}
             {data.workforceSummary && (
-              <Card className="border-0 shadow-md">
+              <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Users className="h-5 w-5 text-accent-500" />
@@ -413,7 +413,7 @@ export default function ExecutiveDashboardPage() {
 
             {/* Productivity Metrics */}
             {data.productivityMetrics && (
-              <Card className="border-0 shadow-md">
+              <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Activity className="h-5 w-5 text-accent-500" />
@@ -445,7 +445,7 @@ export default function ExecutiveDashboardPage() {
 
             {/* Risk Indicators */}
             {data.riskIndicators && (
-              <Card className="border-0 shadow-md">
+              <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Shield className="h-5 w-5 text-danger-500" />
@@ -480,7 +480,7 @@ export default function ExecutiveDashboardPage() {
         {/* Financial Summary */}
         {data.financialSummary && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
@@ -504,7 +504,7 @@ export default function ExecutiveDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">YTD Payroll</p>
@@ -519,7 +519,7 @@ export default function ExecutiveDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Cost/Employee</p>
@@ -534,7 +534,7 @@ export default function ExecutiveDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Revenue/Employee</p>

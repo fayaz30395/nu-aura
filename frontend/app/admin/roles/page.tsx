@@ -515,7 +515,7 @@ export default function RolesPage() {
                   {showPermissionDropdown && permissions.length > 0 && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setShowPermissionDropdown(false)} />
-                      <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-64 overflow-y-auto">
                         {permissions
                           .filter(permission =>
                             permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
@@ -569,7 +569,7 @@ export default function RolesPage() {
                     </>
                   )}
                   {showPermissionDropdown && permissions.length === 0 && (
-                    <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-lg p-4">
+                    <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] p-4">
                       <p className="text-sm text-[var(--text-muted)] text-center">
                         No permissions available. Please check if you are logged in.
                       </p>

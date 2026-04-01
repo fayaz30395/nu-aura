@@ -269,7 +269,7 @@ export default function ScheduledReportsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-[var(--text-secondary)]">
               Status:
@@ -298,7 +298,7 @@ export default function ScheduledReportsPage() {
             <div className="text-[var(--text-secondary)]">Loading scheduled reports...</div>
           </div>
         ) : filteredReports.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <Clock className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
             <div className="text-[var(--text-secondary)] mb-4">
               {filterActive === 'ALL' ? 'No scheduled reports found' : `No ${filterActive.toLowerCase()} scheduled reports`}
@@ -325,7 +325,7 @@ export default function ScheduledReportsPage() {
               return (
                 <div
                   key={report.id}
-                  className={`bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow ${
+                  className={`bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow ${
                     !report.isActive ? 'opacity-60' : ''
                   }`}
                 >

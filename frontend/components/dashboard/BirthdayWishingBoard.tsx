@@ -127,7 +127,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
         return (
           <div
             key={i}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-accent-100 dark:bg-accent-900/40 text-2xs font-bold text-accent-700 dark:text-accent-400 shadow-sm"
+            className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-accent-100 dark:bg-accent-900/40 text-2xs font-semibold text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]"
             title={w.name}
           >
             {w.avatarUrl ? (
@@ -139,7 +139,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
         );
       })}
       {wishers.length > 5 && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-2xs font-bold text-[var(--text-muted)]">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-2xs font-semibold text-[var(--text-muted)]">
           +{wishers.length - 5}
         </div>
       )}
@@ -200,7 +200,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
       <div className="relative z-10 px-6 pt-20 pb-6 text-center">
         {/* Avatar with party hat effect */}
         <div className="relative inline-block mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-lg mx-auto">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-[var(--shadow-dropdown)] mx-auto">
             {displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
           </div>
           <motion.div
@@ -224,7 +224,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-white dark:bg-accent-900/30 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-sm hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-white dark:bg-accent-900/30 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-[var(--shadow-card)] hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           onClick={() => {
             // Navigate to wishes view — for now, scroll to celebrations section
             const celebrationSection = document.querySelector('[data-section="celebrations"]');

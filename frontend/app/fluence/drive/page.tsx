@@ -144,7 +144,7 @@ function FluenceDriveContent() {
       <div className="space-y-6">
         {/* Hero Section */}
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
             <HardDrive className="h-8 w-8 text-white" />
           </div>
           <div>

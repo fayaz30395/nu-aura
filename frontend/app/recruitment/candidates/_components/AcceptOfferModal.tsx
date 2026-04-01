@@ -26,7 +26,7 @@ export function AcceptOfferModal({
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
+      <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
         <div className="flex items-center mb-4">
           <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
             <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />

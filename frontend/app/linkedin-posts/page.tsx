@@ -115,7 +115,7 @@ export default function LinkedInPostsPage() {
                     setEditingPost(null);
                     setShowCreateModal(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-[var(--shadow-card)]"
                 >
                   <Plus className="w-5 h-5" />
                   Add Post
@@ -129,7 +129,7 @@ export default function LinkedInPostsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-[var(--bg-card)] rounded-xl shadow-sm p-4 mb-6"
+            className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-4 mb-6"
           >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
@@ -171,7 +171,7 @@ export default function LinkedInPostsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
+                    className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all border border-[var(--border-main)] overflow-hidden group"
                   >
                     {/* Card Header */}
                     <div className="p-6 border-b border-[var(--border-main)]">

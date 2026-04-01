@@ -186,7 +186,7 @@ export default function FeedbackResponseForm({
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="bg-white rounded-lg shadow-[var(--shadow-dropdown)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[var(--border-main)] sticky top-0 bg-white z-10">
         <div className="flex items-start justify-between">

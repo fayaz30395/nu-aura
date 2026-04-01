@@ -210,7 +210,7 @@ export default function OfficeLocationsPage() {
         </div>
 
         {showForm && (
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit Location' : 'Add New Location'}
             </h2>
@@ -336,7 +336,7 @@ export default function OfficeLocationsPage() {
         {loading ? (
           <div className="text-center py-8">Loading...</div>
         ) : (
-          <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
               <thead className="bg-[var(--bg-secondary)]/50">
                 <tr>

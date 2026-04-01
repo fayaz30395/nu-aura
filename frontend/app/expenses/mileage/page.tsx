@@ -214,8 +214,8 @@ export default function MileagePage() {
         {/* Summary Cards */}
         {summary && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
-              <div className="flex items-center gap-3">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+              <div className="flex items-center gap-2">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <Car className="h-5 w-5 text-accent-700" />
                 </div>
@@ -227,8 +227,8 @@ export default function MileagePage() {
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
-              <div className="flex items-center gap-3">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+              <div className="flex items-center gap-2">
                 <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-success-600" />
                 </div>
@@ -240,8 +240,8 @@ export default function MileagePage() {
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
-              <div className="flex items-center gap-3">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+              <div className="flex items-center gap-2">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                   <MapPin className="h-5 w-5 text-accent-600" />
                 </div>
@@ -254,8 +254,8 @@ export default function MileagePage() {
               </div>
             </div>
             {summary.policyMaxMonthlyKm != null && summary.remainingMonthlyKm != null && (
-              <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
-                <div className="flex items-center gap-3">
+              <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+                <div className="flex items-center gap-2">
                   <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                     <Filter className="h-5 w-5 text-warning-600" />
                   </div>
@@ -314,7 +314,7 @@ export default function MileagePage() {
                   <button
                     key={status}
                     onClick={() => setStatusFilter(status)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                    className={`px-2 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       statusFilter === status
                         ? 'bg-accent-700 text-white'
                         : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200'
@@ -336,30 +336,30 @@ export default function MileagePage() {
                 icon={<Car className="h-12 w-12 text-surface-400" />}
               />
             ) : (
-              <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+              <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-surface-50 dark:bg-surface-700/50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Date
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Route
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Distance
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Vehicle
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Reimbursement
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Status
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-surface-500 uppercase">
+                        <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
                           Actions
                         </th>
                       </tr>
@@ -393,27 +393,27 @@ export default function MileagePage() {
                   icon={<CheckCircle className="h-12 w-12 text-surface-400" />}
                 />
               ) : (
-                <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+                <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead className="bg-surface-50 dark:bg-surface-700/50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                             Employee
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                             Date
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                             Route
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                             Distance
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                             Amount
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-surface-500 uppercase">
+                          <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
                             Actions
                           </th>
                         </tr>
@@ -421,27 +421,27 @@ export default function MileagePage() {
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                         {pendingQuery.data.content.map((logEntry) => (
                           <tr key={logEntry.id}>
-                            <td className="px-4 py-3 font-medium text-surface-900 dark:text-white">
+                            <td className="px-4 py-2 font-medium text-surface-900 dark:text-white">
                               {logEntry.employeeName || 'N/A'}
                             </td>
-                            <td className="px-4 py-3 text-surface-600 dark:text-surface-300">
+                            <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
                               {logEntry.travelDate}
                             </td>
-                            <td className="px-4 py-3 text-surface-600 dark:text-surface-300">
+                            <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
                               {logEntry.fromLocation} &rarr; {logEntry.toLocation}
                             </td>
-                            <td className="px-4 py-3 text-surface-900 dark:text-white font-medium">
+                            <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
                               {logEntry.distanceKm} km
                             </td>
-                            <td className="px-4 py-3 text-surface-900 dark:text-white font-medium">
+                            <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
                               {formatCurrency(logEntry.reimbursementAmount)}
                             </td>
-                            <td className="px-4 py-3 text-right">
+                            <td className="px-4 py-2 text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => handleApproveLog(logEntry.id)}
                                   disabled={approveMutation.isPending}
-                                  className="px-3 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  className="px-2 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   Approve
                                 </button>
@@ -450,7 +450,7 @@ export default function MileagePage() {
                                     setSelectedLogId(logEntry.id);
                                     setShowRejectModal(true);
                                   }}
-                                  className="px-3 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  className="px-2 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   Reject
                                 </button>
@@ -480,9 +480,9 @@ export default function MileagePage() {
                 {policies.map((policy) => (
                   <div
                     key={policy.id}
-                    className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-5"
+                    className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
                   >
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold text-surface-900 dark:text-white">{policy.name}</h3>
                       <span
                         className={`px-2 py-0.5 text-xs rounded-full ${
@@ -544,7 +544,7 @@ export default function MileagePage() {
                   <input
                     type="date"
                     {...register('travelDate')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                   />
                   {errors.travelDate && (
                     <p className="text-danger-500 text-xs mt-1">{errors.travelDate.message}</p>
@@ -560,7 +560,7 @@ export default function MileagePage() {
                       type="text"
                       {...register('fromLocation')}
                       placeholder="Starting point"
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.fromLocation && (
                       <p className="text-danger-500 text-xs mt-1">{errors.fromLocation.message}</p>
@@ -574,7 +574,7 @@ export default function MileagePage() {
                       type="text"
                       {...register('toLocation')}
                       placeholder="Destination"
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.toLocation && (
                       <p className="text-danger-500 text-xs mt-1">{errors.toLocation.message}</p>
@@ -593,7 +593,7 @@ export default function MileagePage() {
                       min="0.01"
                       {...register('distanceKm')}
                       placeholder="0.00"
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.distanceKm && (
                       <p className="text-danger-500 text-xs mt-1">{errors.distanceKm.message}</p>
@@ -605,7 +605,7 @@ export default function MileagePage() {
                     </label>
                     <select
                       {...register('vehicleType')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     >
                       <option value="CAR">Car</option>
                       <option value="MOTORCYCLE">Motorcycle</option>
@@ -616,7 +616,7 @@ export default function MileagePage() {
                 </div>
 
                 {estimatedReimbursement > 0 && (
-                  <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-3 border border-accent-200 dark:border-accent-800">
+                  <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-2 border border-accent-200 dark:border-accent-800">
                     <p className="text-sm text-accent-700 dark:text-accent-300">
                       Estimated reimbursement:{' '}
                       <span className="font-bold">{formatCurrency(estimatedReimbursement)}</span>
@@ -632,7 +632,7 @@ export default function MileagePage() {
                     type="text"
                     {...register('purpose')}
                     placeholder="e.g., Client meeting, site visit"
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                   />
                 </div>
 
@@ -644,7 +644,7 @@ export default function MileagePage() {
                     {...register('notes')}
                     rows={2}
                     placeholder="Additional notes..."
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -681,7 +681,7 @@ export default function MileagePage() {
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
                 placeholder="Enter reason for rejection..."
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
               />
             </div>
           </ModalBody>
@@ -717,8 +717,8 @@ interface MileageLogRowProps {
 function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
   return (
     <tr>
-      <td className="px-4 py-3 text-surface-900 dark:text-white">{log.travelDate}</td>
-      <td className="px-4 py-3 text-surface-600 dark:text-surface-300">
+      <td className="px-4 py-2 text-surface-900 dark:text-white">{log.travelDate}</td>
+      <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
         <div className="flex items-center gap-1">
           <span>{log.fromLocation}</span>
           <span className="text-surface-400">&rarr;</span>
@@ -726,15 +726,15 @@ function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
         </div>
         {log.purpose && <p className="text-xs text-surface-400 mt-0.5">{log.purpose}</p>}
       </td>
-      <td className="px-4 py-3 font-medium text-surface-900 dark:text-white">{log.distanceKm} km</td>
-      <td className="px-4 py-3 text-surface-600 dark:text-surface-300">
+      <td className="px-4 py-2 font-medium text-surface-900 dark:text-white">{log.distanceKm} km</td>
+      <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
         {VEHICLE_LABELS[log.vehicleType]}
       </td>
-      <td className="px-4 py-3 font-medium text-surface-900 dark:text-white">
+      <td className="px-4 py-2 font-medium text-surface-900 dark:text-white">
         {formatCurrency(log.reimbursementAmount)}
         <p className="text-xs text-surface-400">@ {formatCurrency(log.ratePerKm)}/km</p>
       </td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-2">
         <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${STATUS_COLORS[log.status]}`}>
           {log.status}
         </span>
@@ -742,12 +742,12 @@ function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
           <p className="text-xs text-danger-500 mt-1">{log.rejectionReason}</p>
         )}
       </td>
-      <td className="px-4 py-3 text-right">
+      <td className="px-4 py-2 text-right">
         {log.status === 'DRAFT' && (
           <button
             onClick={() => onSubmit(log.id)}
             disabled={isSubmitting}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="flex items-center gap-1 px-2 py-1.5 text-xs bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <Send className="h-3 w-3" />
             Submit

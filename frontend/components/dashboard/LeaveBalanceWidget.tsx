@@ -125,7 +125,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
       <div className="space-y-2 pt-3 border-t border-[var(--border-subtle)]">
         <a
           href="/leaves/request"
-          className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+          className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"
           style={{
             background: 'var(--nu-gradient-dark)',
             boxShadow: '0 2px 8px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)',

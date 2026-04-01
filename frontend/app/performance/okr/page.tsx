@@ -300,7 +300,7 @@ export default function OKRPage() {
               setEditingObjective(null);
               setShowObjectiveModal(true);
             }}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
           >
             <Plus className="h-5 w-5 mr-2" />
             New Objective
@@ -376,7 +376,7 @@ export default function OKRPage() {
           filteredObjectives.map((objective: Objective) => (
             <div
               key={objective.id}
-              className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm overflow-hidden"
+              className="bg-white rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] overflow-hidden"
             >
               {/* Objective Header */}
               <div className="p-4">
@@ -558,7 +558,7 @@ export default function OKRPage() {
       {/* Objective Modal */}
       {showObjectiveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 {editingObjective ? 'Edit Objective' : 'Create Objective'}
@@ -680,7 +680,7 @@ export default function OKRPage() {
       {/* Key Result Modal */}
       {showKeyResultModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Add Key Result</h2>
             </div>

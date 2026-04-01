@@ -450,7 +450,7 @@ export default function RecognitionPage() {
                                 {recognition.likesCount}
                               </button>
                               {showReactionPicker === recognition.id && (
-                                <div className="absolute bottom-full left-0 mb-2 p-1.5 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-lg shadow-lg flex gap-1 z-10">
+                                <div className="absolute bottom-full left-0 mb-2 p-1.5 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] flex gap-1 z-10">
                                   {reactionEmojis.map((reaction) => (
                                     <button
                                       key={reaction.type}

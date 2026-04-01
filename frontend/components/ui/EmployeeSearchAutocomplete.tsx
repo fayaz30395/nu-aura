@@ -207,7 +207,7 @@ export function EmployeeSearchAutocomplete({
             ref={dropdownRef}
             id="employee-search-results"
             role="listbox"
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-auto"
+            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
           >
             {results.map((employee, index) => {
               const name = getEmployeeName(employee);
@@ -244,7 +244,7 @@ export function EmployeeSearchAutocomplete({
         {isOpen && query && results.length === 0 && !loading && (
           <div
             ref={dropdownRef}
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg p-4"
+            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] p-4"
           >
             <div className="flex flex-col items-center text-center">
               <User className="h-8 w-8 text-surface-400 mb-2" />

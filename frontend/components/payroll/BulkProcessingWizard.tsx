@@ -581,7 +581,7 @@ export const BulkProcessingWizard: React.FC = () => {
                           <td className="px-4 py-4 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
                             {formatCurrency(emp.grossAmount)}
                           </td>
-                          <td className="px-4 py-4 text-sm text-right font-bold text-accent-700 dark:text-accent-400">
+                          <td className="px-4 py-4 text-sm text-right font-semibold text-accent-700 dark:text-accent-400">
                             {formatCurrency(emp.netAmount)}
                           </td>
                         </tr>

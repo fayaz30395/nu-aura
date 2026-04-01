@@ -142,7 +142,7 @@ export default function PayrollPage() {
                 key={href}
                 onClick={() => router.push(href)}
                 aria-label={label}
-                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg ${hoverBorder} transition-all duration-200 text-left skeuo-card cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
+                className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-dropdown)] ${hoverBorder} transition-all duration-200 text-left skeuo-card cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className={`p-2.5 rounded-lg bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>

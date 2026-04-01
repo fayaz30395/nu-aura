@@ -78,7 +78,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
     <div
       className={cn(
         'absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-2rem)]',
-        'rounded-lg border shadow-lg z-50',
+        'rounded-lg border shadow-[var(--shadow-dropdown)] z-50',
         'bg-[var(--bg-surface)] border-[var(--border-main)]',
         'animate-in fade-in-0 zoom-in-95',
         className

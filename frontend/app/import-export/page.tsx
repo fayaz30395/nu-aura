@@ -1156,7 +1156,7 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                    ? 'bg-white dark:bg-surface-700 text-accent-700 dark:text-accent-400 shadow-sm'
+                    ? 'bg-white dark:bg-surface-700 text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
                     : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200'
                   }
                 `}

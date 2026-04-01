@@ -114,7 +114,7 @@ export function ReactionBar({
               transition={{ duration: 0.15 }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              className="absolute bottom-full left-0 mb-2 bg-[var(--bg-card)] rounded-lg shadow-lg p-2 flex gap-1 z-50 border border-[var(--border-main)]"
+              className="absolute bottom-full left-0 mb-2 bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] p-2 flex gap-1 z-50 border border-[var(--border-main)]"
             >
               {reactionTypes.map((type) => (
                 <motion.button

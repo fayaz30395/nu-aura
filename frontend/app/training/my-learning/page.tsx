@@ -230,7 +230,7 @@ export default function MyLearningPage() {
               const isUpdating = updatingId === enrollment.id;
 
               return (
-                <Card key={enrollment.id} className="border border-[var(--border-main)] hover:shadow-md transition-shadow">
+                <Card key={enrollment.id} className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: info */}

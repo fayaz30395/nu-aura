@@ -239,7 +239,7 @@ export default function CreateWikiPage() {
             <button
               type="button"
               onClick={() => setPublishDrawerOpen(true)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 px-4 py-2 rounded-lg transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Send className="w-4 h-4" />
               Publish

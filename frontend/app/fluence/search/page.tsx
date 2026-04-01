@@ -145,7 +145,7 @@ export default function SearchPage() {
               whileTap={{ scale: 0.95 }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                 selectedType === type
-                  ? 'bg-[var(--accent-700)] text-white shadow-md'
+                  ? 'bg-[var(--accent-700)] text-white shadow-[var(--shadow-elevated)]'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >

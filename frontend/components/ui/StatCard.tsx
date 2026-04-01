@@ -127,7 +127,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               'group relative overflow-hidden rounded-lg border px-4 py-4 transition-all duration-300',
               config.bg,
               config.border,
-              isClickable && 'cursor-pointer hover:shadow-md',
+              isClickable && 'cursor-pointer hover:shadow-[var(--shadow-elevated)]',
               className
             )}
             {...props}
@@ -188,7 +188,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             'group relative overflow-hidden rounded-lg border p-4 transition-all duration-300',
             config.bg,
             config.border,
-            isClickable && 'cursor-pointer hover:shadow-lg',
+            isClickable && 'cursor-pointer hover:shadow-[var(--shadow-dropdown)]',
             className
           )}
           {...props}

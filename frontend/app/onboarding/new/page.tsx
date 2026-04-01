@@ -148,7 +148,7 @@ export default function NewOnboardingPage() {
                         {steps.map((step, idx) => (
                             <div key={step.id} className="flex items-center">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
-                                        ? 'bg-accent-700 border-accent-700 text-white shadow-lg'
+                                        ? 'bg-accent-700 border-accent-700 text-white shadow-[var(--shadow-dropdown)]'
                                         : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]'
                                     }`}>
                                     <step.icon className="h-5 w-5" />
@@ -195,7 +195,7 @@ export default function NewOnboardingPage() {
 
                                     {selectedEmployee && (
                                         <div className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
-                                            <div className="h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
+                                            <div className="h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-[var(--shadow-dropdown)]">
                                                 {selectedEmployee.name.charAt(0)}
                                             </div>
                                             <div>
@@ -231,7 +231,7 @@ export default function NewOnboardingPage() {
                                                 key={temp.id}
                                                 onClick={() => setSelectedTemplate(temp)}
                                                 className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${selectedTemplate?.id === temp.id
-                                                        ? 'bg-accent-500/10 border-accent-500 shadow-lg'
+                                                        ? 'bg-accent-500/10 border-accent-500 shadow-[var(--shadow-dropdown)]'
                                                         : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                                                     }`}
                                             >
@@ -351,7 +351,7 @@ export default function NewOnboardingPage() {
                                     variant="primary"
                                     onClick={handleNext}
                                     size="lg"
-                                    className="px-10 rounded-lg font-black tracking-widest uppercase text-xs shadow-xl shadow-accent-500/20"
+                                    className="px-10 rounded-lg font-black tracking-widest uppercase text-xs shadow-[var(--shadow-dropdown)] shadow-accent-500/20"
                                     rightIcon={<ChevronRight className="h-4 w-4" />}
                                 >
                                     Continue
@@ -362,7 +362,7 @@ export default function NewOnboardingPage() {
                                     onClick={handleFormSubmit(handleSubmit)}
                                     isLoading={createProcessMutation.isPending}
                                     size="lg"
-                                    className="btn-primary px-10 rounded-lg font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20"
+                                    className="btn-primary px-10 rounded-lg font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20"
                                     leftIcon={<Zap className="h-4 w-4" />}
                                 >
                                     Launch Process

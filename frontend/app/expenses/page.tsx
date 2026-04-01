@@ -831,7 +831,7 @@ export default function ExpenseClaims() {
               {filteredClaims.map((claim) => (
                 <div
                   key={claim.id}
-                  className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
+                  className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
                     selectedClaims.has(claim.id)
                       ? 'border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
                       : 'border-[var(--border-main)]'

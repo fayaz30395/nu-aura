@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
-          <div className="max-w-md w-full bg-[var(--bg-input)] rounded-lg shadow-lg p-8">
+          <div className="max-w-md w-full bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-dropdown)] p-8">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-danger-100 dark:bg-danger-900/30 mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-danger-600 dark:text-danger-400"

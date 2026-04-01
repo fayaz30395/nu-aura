@@ -64,7 +64,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: idx * 0.05 }}
-                            className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-sm ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
+                            className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-[var(--shadow-card)] ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
                                 }`}
                         >
                             <span className="font-semibold text-sm">{skill.name}</span>
@@ -102,10 +102,10 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                     }`}>
                                     {getMilestoneIcon(milestone.type)}
                                 </div>
-                                <Card className="border-none shadow-sm dark:bg-surface-800/50">
+                                <Card className="border-none shadow-[var(--shadow-card)] dark:bg-surface-800/50">
                                     <CardContent className="p-4">
                                         <div className="flex justify-between items-start mb-1">
-                                            <h4 className="font-bold text-surface-900 dark:text-surface-50">{milestone.title}</h4>
+                                            <h4 className="font-semibold text-surface-900 dark:text-surface-50">{milestone.title}</h4>
                                             <span className="text-xs font-medium text-surface-500 bg-surface-100 dark:bg-surface-700 px-2 py-0.5 rounded uppercase">
                                                 {milestone.date}
                                             </span>
@@ -140,7 +140,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                         <Sparkles className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-sm">{achievement.title}</h4>
+                                        <h4 className="font-semibold text-sm">{achievement.title}</h4>
                                         <p className="text-xs text-surface-500 mt-1 line-clamp-2">{achievement.description}</p>
                                         <span className="text-xs text-accent-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
                                     </div>
@@ -161,7 +161,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                     <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-accent-300 dark:bg-accent-900/40 text-xs flex items-center justify-center font-bold text-accent-900">
+                                            <div className="w-6 h-6 rounded-full bg-accent-300 dark:bg-accent-900/40 text-xs flex items-center justify-center font-semibold text-accent-900">
                                                 {feedback.fromName.charAt(0)}
                                             </div>
                                             <span className="text-xs font-semibold">{feedback.fromName}</span>

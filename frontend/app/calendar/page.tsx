@@ -168,7 +168,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               New Event
@@ -214,7 +214,7 @@ export default function CalendarPage() {
                 onClick={() => setView('week')}
                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'week'
-                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-secondary)]'
                 }`}
               >
@@ -224,7 +224,7 @@ export default function CalendarPage() {
                 onClick={() => setView('month')}
                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'month'
-                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-secondary)]'
                 }`}
               >
@@ -385,7 +385,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
@@ -404,7 +404,7 @@ export default function CalendarPage() {
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">

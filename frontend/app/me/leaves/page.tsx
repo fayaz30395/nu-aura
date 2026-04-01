@@ -521,7 +521,7 @@ export default function MyLeavesPage() {
                 {filteredLeaveRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="card-aura p-6 rounded-lg hover:shadow-md transition-shadow"
+                    className="card-aura p-6 rounded-lg hover:shadow-[var(--shadow-elevated)] transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
@@ -839,7 +839,7 @@ export default function MyLeavesPage() {
         {/* Leave Encashment Modal */}
         {showEncashModal && encashBalance && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-xl">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">

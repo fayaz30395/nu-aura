@@ -110,7 +110,7 @@ export default function PerformanceRevolutionPage() {
                                                 </div>
                                             </div>
                                             {/* Tooltip on hover */}
-                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white text-[var(--text-primary)] p-2 rounded text-xs whitespace-nowrap z-50 shadow-xl">
+                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white text-[var(--text-primary)] p-2 rounded text-xs whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
                                                 <p className="font-bold">{node.title}</p>
                                                 <p className="text-[var(--text-muted)]">{node.ownerName}</p>
                                             </div>
@@ -190,7 +190,7 @@ export default function PerformanceRevolutionPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-sm border border-accent-100 dark:border-accent-900/50">
+                                <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
                                     <h4 className="text-xs font-bold text-accent-600 uppercase tracking-wider mb-2">Growth Opportunity</h4>
                                     <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
                                     <p className="text-xs text-[var(--text-muted)]">Based on your &quot;System Design&quot; skill Gap</p>
@@ -199,7 +199,7 @@ export default function PerformanceRevolutionPage() {
                                         <ChevronRight className="h-4 w-4 text-accent-400" />
                                     </div>
                                 </div>
-                                <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-sm border border-accent-100 dark:border-accent-900/50">
+                                <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
                                     <h4 className="text-xs font-bold text-success-600 uppercase tracking-wider mb-2">Peak Performance</h4>
                                     <p className="text-sm font-semibold mb-1">Consistency King</p>
                                     <p className="text-xs text-[var(--text-muted)]">9 weeks of meeting all Weekly Commitments</p>

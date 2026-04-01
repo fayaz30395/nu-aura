@@ -116,7 +116,7 @@ export default function FluenceDashboardPage() {
             <div className="flex flex-wrap gap-4">
               <Button
                 onClick={() => router.push('/fluence/wiki/new')}
-                className="gap-2 bg-[var(--bg-card)] text-[var(--accent-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="gap-2 bg-[var(--bg-card)] text-[var(--accent-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-all"
               >
                 <Plus className={iconSize.button} />
                 New Wiki Page

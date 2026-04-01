@@ -112,7 +112,7 @@ export default function BiometricDevicesPage() {
                 onClick={() => { setActiveTab(key); setPage(0); }}
                 className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === key
-                    ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
+                    ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
@@ -306,7 +306,7 @@ function DeviceCard({
     : 'Never';
 
   return (
-    <Card className="group hover:shadow-md transition-shadow">
+    <Card className="group hover:shadow-[var(--shadow-elevated)] transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
@@ -422,7 +422,7 @@ function RegisterDeviceModal({ onClose }: { onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg rounded-xl bg-[var(--bg-surface)] p-6 shadow-xl"
+        className="w-full max-w-lg rounded-xl bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-dropdown)]"
       >
         <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
           Register Biometric Device
@@ -578,7 +578,7 @@ function DeviceLogsDrawer({
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="w-full max-w-xl bg-[var(--bg-surface)] shadow-xl overflow-y-auto"
+        className="w-full max-w-xl bg-[var(--bg-surface)] shadow-[var(--shadow-dropdown)] overflow-y-auto"
       >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-4">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
@@ -918,7 +918,7 @@ function GenerateApiKeyModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md rounded-xl bg-[var(--bg-surface)] p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-dropdown)]"
       >
         <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
           Generate API Key

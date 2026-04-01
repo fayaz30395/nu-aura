@@ -170,7 +170,7 @@ export default function FeedbackPage() {
           </PermissionGate>
         </div>
 
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] mb-6">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('received')}
@@ -211,7 +211,7 @@ export default function FeedbackPage() {
             <div className="text-[var(--text-secondary)]">Loading feedback...</div>
           </div>
         ) : filteredFeedback.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">
               No {activeTab === 'received' ? 'received' : 'given'} feedback found
             </div>
@@ -232,7 +232,7 @@ export default function FeedbackPage() {
         ) : (
           <div className="space-y-4">
             {filteredFeedback.map((feedback) => (
-              <div key={feedback.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div key={feedback.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-3 flex-wrap">

@@ -215,7 +215,7 @@ export default function GanttChartPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-lg">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-[var(--shadow-dropdown)]">
             <Calendar className="h-6 w-6 text-white" />
           </div>
           <div>

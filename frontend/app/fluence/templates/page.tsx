@@ -91,7 +91,7 @@ export default function TemplatesPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
             <Button
               onClick={handleCreateTemplate}
-              className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150 flex-shrink-0"
+              className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150 flex-shrink-0"
             >
               <Plus className={iconSize.button} />
               Create Template
@@ -146,7 +146,7 @@ export default function TemplatesPage() {
                   <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
                     <Button
                       onClick={handleCreateTemplate}
-                      className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-sm hover:shadow-md transition-shadow duration-150"
+                      className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150"
                     >
                       <Plus className={iconSize.button} />
                       Create Template

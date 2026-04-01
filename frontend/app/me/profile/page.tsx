@@ -319,11 +319,11 @@ export default function MyProfilePage() {
                     alt={displayName}
                     width={128}
                     height={128}
-                    className="rounded-full object-cover border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] shadow-lg bg-[var(--bg-input)]"
+                    className="rounded-full object-cover border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] shadow-[var(--shadow-dropdown)] bg-[var(--bg-input)]"
                     onError={() => setPhotoLoadError(true)}
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-accent-700 shadow-lg">
+                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-accent-700 shadow-[var(--shadow-dropdown)]">
                     {getInitials(displayName)}
                   </div>
                 )}
@@ -696,7 +696,7 @@ export default function MyProfilePage() {
         {/* Bank Change Request Modal */}
         {showBankChangeModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-xl">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">

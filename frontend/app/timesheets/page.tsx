@@ -537,7 +537,7 @@ export default function TimesheetsPage() {
           <div className="space-y-4">
             {timesheets.length > 0 ? (
               timesheets.map((timesheet) => (
-                <Card key={timesheet.id} className="hover:shadow-md transition-shadow">
+                <Card key={timesheet.id} className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">

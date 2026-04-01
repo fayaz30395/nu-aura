@@ -160,7 +160,7 @@ export default function CompanySpotlightPage() {
                   setEditingSpotlight(null);
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Plus className="w-5 h-5" />
                 Add Slide
@@ -201,7 +201,7 @@ export default function CompanySpotlightPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
+                      className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all border border-[var(--border-main)] overflow-hidden group"
                     >
                       <div className="flex gap-6 p-6">
                         {/* Preview */}
@@ -599,7 +599,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                 Live Preview
               </label>
               <div
-                className={`w-full aspect-video rounded-lg bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-lg overflow-hidden`}
+                className={`w-full aspect-video rounded-lg bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-[var(--shadow-dropdown)] overflow-hidden`}
               >
                 <div className="text-white max-w-full">
                   <h3 className="font-bold text-lg mb-2 line-clamp-2">

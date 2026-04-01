@@ -104,7 +104,7 @@ export default function ContractTemplatesPage() {
             {templates.map((template) => (
               <Card
                 key={template.id}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
+                className="cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-shadow"
                 role="button"
                 tabIndex={0}
                 onClick={() => router.push(`/contracts/templates/${template.id}`)}

@@ -155,7 +155,7 @@ export default function ContactPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] mb-3">{method.description}</p>
+                  <p className="text-sm text-[var(--text-muted)] mb-2">{method.description}</p>
                   <p className="text-sm font-medium text-accent-700 dark:text-accent-400">
                     {method.value}
                   </p>
@@ -197,8 +197,8 @@ export default function ContactPage() {
                 </motion.div>
               )}
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Name *
@@ -233,7 +233,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Company *
@@ -292,7 +292,7 @@ export default function ContactPage() {
                   <textarea
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
-                    className={`input-aura w-full px-4 py-3 rounded-lg bg-[var(--bg-input)] border ${
+                    className={`input-aura w-full px-4 py-2 rounded-lg bg-[var(--bg-input)] border ${
                       errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
                     } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                     {...register('message')}
@@ -384,7 +384,7 @@ export default function ContactPage() {
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-3">{office.address}</p>
+                <p className="text-sm text-[var(--text-secondary)] mb-2">{office.address}</p>
                 <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                   <Clock className="h-4 w-4" />
                   {office.timezone}

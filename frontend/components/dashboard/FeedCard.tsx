@@ -139,7 +139,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
       {showMenu && (
         <>
           <div className="fixed inset-0 z-10 cursor-pointer" onClick={() => setShowMenu(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg py-1">
+          <div className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] py-1">
             {onEdit && (
               <button
                 onClick={() => { onEdit(); setShowMenu(false); }}
@@ -624,7 +624,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   {showReactorsPopover && (
                     <>
                       <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)} />
-                      <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-lg overflow-hidden">
+                      <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] overflow-hidden">
                         <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
                           <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
                           <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close reactions popup">✕</button>

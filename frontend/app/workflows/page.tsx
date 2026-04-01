@@ -209,7 +209,7 @@ export default function WorkflowListPage() {
               placeholder="Search workflows..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             />
           </div>
         </div>
@@ -319,7 +319,7 @@ export default function WorkflowListPage() {
                             </button>
                             {menuOpenId === wf.id && (
                               <div
-                                className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-1 shadow-lg"
+                                className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-1 shadow-[var(--shadow-dropdown)]"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <button

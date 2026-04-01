@@ -395,7 +395,7 @@ export default function ReportsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="hover:shadow-lg transition-shadow duration-200 h-full flex flex-col">
+              <Card className="hover:shadow-[var(--shadow-dropdown)] transition-shadow duration-200 h-full flex flex-col">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className={`p-4 rounded-lg ${report.bgColor}`}>

@@ -194,7 +194,7 @@ export default function JobBoardsPage() {
               const sc = statusIcon[posting.status] ?? statusIcon.PENDING;
               const StatusIcon = sc.icon;
               return (
-                <Card key={posting.id} className="hover:shadow-md transition-shadow">
+                <Card key={posting.id} className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
                   <CardContent className="pt-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-4">

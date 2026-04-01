@@ -196,7 +196,7 @@ function FrameworkAdminTab() {
         {categoryStats.map((stat) => (
           <Paper
             key={stat.category}
-            className="p-4 border border-[var(--border-main)] skeuo-card cursor-pointer hover:shadow-md transition-shadow"
+            className="p-4 border border-[var(--border-main)] skeuo-card cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-shadow"
             onClick={() => setFilterCategory(filterCategory === stat.category ? null : stat.category)}
           >
             <div className="flex items-center justify-between">

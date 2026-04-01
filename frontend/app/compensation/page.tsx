@@ -447,7 +447,7 @@ export default function CompensationPage() {
             {/* Cycles Grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {cycles.map((cycle) => (
-                <Card key={cycle.id} className="hover:shadow-lg transition-shadow">
+                <Card key={cycle.id} className="hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -647,7 +647,7 @@ export default function CompensationPage() {
             ) : (
               <div className="space-y-4">
                 {pendingRevisions.map((revision) => (
-                  <Card key={revision.id} className="hover:shadow-lg transition-shadow">
+                  <Card key={revision.id} className="hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                     <CardContent className="p-4">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">

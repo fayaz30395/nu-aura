@@ -166,7 +166,7 @@ export default function TaxOverviewPage() {
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg" mb="xl">
           <Card
             withBorder radius="md" p="lg"
-            className="skeuo-card cursor-pointer hover:shadow-lg transition-shadow"
+            className="skeuo-card cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-shadow"
             onClick={() => router.push('/tax/declarations')}
           >
             <Group justify="space-between">

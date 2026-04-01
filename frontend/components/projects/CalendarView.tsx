@@ -463,7 +463,7 @@ export function CalendarView({
               onClick={() => setViewType(type)}
               className={`px-4 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
-                  ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
               }`}
             >

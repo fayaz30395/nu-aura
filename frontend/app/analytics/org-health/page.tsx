@@ -133,7 +133,7 @@ export default function OrganizationHealthPage() {
                     </motion.div>
 
                     <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-accent-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-[var(--shadow-card)] shadow-accent-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Staff Retention</CardTitle>
@@ -159,7 +159,7 @@ export default function OrganizationHealthPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-accent-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-[var(--shadow-card)] shadow-accent-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Engagement Intensity</CardTitle>
