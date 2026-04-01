@@ -39,6 +39,9 @@ public class PulseSurveyResponse {
     private LocalDateTime publishedAt;
     private LocalDateTime closedAt;
     private LocalDateTime createdAt;
+    private Boolean isTemplate;
+    private String templateName;
+    private String templateCategory;
     private List<QuestionResponse> questions;
 
     @Data
@@ -82,6 +85,9 @@ public class PulseSurveyResponse {
                 .publishedAt(survey.getPublishedAt())
                 .closedAt(survey.getClosedAt())
                 .createdAt(survey.getCreatedAt())
+                .isTemplate(survey.getIsTemplate())
+                .templateName(survey.getTemplateName())
+                .templateCategory(survey.getTemplateCategory())
                 .build();
     }
 }
