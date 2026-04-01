@@ -165,7 +165,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                     <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">
                       {notification.message}
                     </p>
-                    <p className="text-[10px] text-[var(--text-muted)] mt-1">
+                    <p className="text-2xs text-[var(--text-muted)] mt-1">
                       {formatDistanceToNow(new Date(notification.createdAt), {
                         addSuffix: true,
                       })}

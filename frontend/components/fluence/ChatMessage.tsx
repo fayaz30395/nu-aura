@@ -105,7 +105,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         {/* Source citations */}
         {message.sources && message.sources.length > 0 && (
           <div className="space-y-1">
-            <p className="text-[11px] font-medium text-[var(--text-muted)] uppercase tracking-wider px-1">
+            <p className="text-3xs font-medium text-[var(--text-muted)] uppercase tracking-wider px-1">
               Sources
             </p>
             {message.sources.map((source) => (

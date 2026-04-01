@@ -747,7 +747,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <p className="text-xs font-semibold truncate" style={{ color: 'var(--sidebar-text-active)' }}>
                     Pro Features
                   </p>
-                  <p className="text-[10px]" style={{ color: 'var(--sidebar-text-muted)' }}>
+                  <p className="text-2xs" style={{ color: 'var(--sidebar-text-muted)' }}>
                     All modules active
                   </p>
                 </div>

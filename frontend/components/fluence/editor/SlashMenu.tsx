@@ -293,7 +293,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           <div className="max-h-[320px] overflow-y-auto py-1">
             {Object.entries(grouped).map(([category, items]) => (
               <div key={category}>
-                <div className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
+                <div className="px-4 pt-2 pb-1 text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
                   {category}
                 </div>
                 {items.map((item) => {
