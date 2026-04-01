@@ -136,7 +136,7 @@ export const FluenceChatWidget: React.FC = () => {
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                     NU-Fluence AI
                   </h3>
-                  <p className="text-[11px] text-[var(--text-muted)]">
+                  <p className="text-3xs text-[var(--text-muted)]">
                     Ask about your knowledge base
                   </p>
                 </div>
@@ -277,7 +277,7 @@ export const FluenceChatWidget: React.FC = () => {
                   </button>
                 )}
               </div>
-              <p className="text-[10px] text-[var(--text-muted)] mt-1.5 text-center">
+              <p className="text-2xs text-[var(--text-muted)] mt-1.5 text-center">
                 AI answers are based on your NU-Fluence content
               </p>
             </div>

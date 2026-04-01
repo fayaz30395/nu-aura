@@ -159,7 +159,7 @@ const Header: React.FC<HeaderProps> = ({
               <Bell className="h-5 w-5" />
               {totalUnreadCount > 0 && (
                 <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center">
-                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-semibold text-white">
+                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-2xs font-semibold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>

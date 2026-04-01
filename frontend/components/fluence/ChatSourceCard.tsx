@@ -37,7 +37,7 @@ export const ChatSourceCard: React.FC<ChatSourceCardProps> = ({ source }) => {
           {source.title}
         </p>
         {source.excerpt && (
-          <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 mt-0.5">
+          <p className="text-3xs text-[var(--text-muted)] line-clamp-1 mt-0.5">
             {source.excerpt}
           </p>
         )}
