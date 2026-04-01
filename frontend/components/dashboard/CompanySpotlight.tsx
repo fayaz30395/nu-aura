@@ -13,7 +13,7 @@ function getDemoSpotlights(): Spotlight[] {
       id: 'demo-1',
       title: 'Welcome to Nulogic',
       description: 'Building the future of HR technology together',
-      bgGradient: 'from-slate-700 to-slate-800',
+      bgGradient: 'from-surface-700 to-surface-800',
       displayOrder: 1,
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -23,7 +23,7 @@ function getDemoSpotlights(): Spotlight[] {
       id: 'demo-2',
       title: 'Q1 2026 Goals',
       description: 'Focus on product excellence and customer delight',
-      bgGradient: 'from-slate-600 to-gray-700',
+      bgGradient: 'from-surface-600 to-surface-700',
       displayOrder: 2,
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -33,7 +33,7 @@ function getDemoSpotlights(): Spotlight[] {
       id: 'demo-3',
       title: 'Join Our Community',
       description: 'Connect with us on LinkedIn for the latest updates',
-      bgGradient: 'from-gray-700 to-slate-800',
+      bgGradient: 'from-surface-700 to-surface-800',
       displayOrder: 3,
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -76,7 +76,7 @@ export function CompanySpotlight() {
   // Use muted gradient or fallback
   const gradientClass = current.bgGradient
     ? `bg-gradient-to-r ${current.bgGradient}`
-    : 'bg-gradient-to-r from-slate-700 to-slate-800';
+    : 'bg-gradient-to-r from-surface-700 to-surface-800';
 
   return (
     <div
