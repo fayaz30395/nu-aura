@@ -300,7 +300,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckOutRequest}
                         isLoading={checkOutPending}
-                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-rose-500 to-accent-600 text-white hover:from-rose-600 hover:to-accent-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-danger-500 to-accent-600 text-white hover:from-danger-600 hover:to-accent-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogOut className="h-5 w-5 mr-2" />
                         Check Out
@@ -323,7 +323,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 progress={workProgress}
                 size={110}
                 strokeWidth={10}
-                color={isOvertime ? 'var(--color-warning, #f59e0b)' : workProgress >= 100 ? 'var(--color-success, #22c55e)' : 'var(--color-accent, #6366f1)'}
+                color={isOvertime ? 'var(--chart-warning)' : workProgress >= 100 ? 'var(--chart-success)' : 'var(--chart-info)'}
               >
                 <div className="text-center">
                   <div className="text-stat-medium text-[var(--text-primary)] tabular-nums leading-none skeuo-emboss">

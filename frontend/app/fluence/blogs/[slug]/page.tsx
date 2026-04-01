@@ -215,8 +215,9 @@ export default function BlogPostDetailPage() {
         {/* Back Button */}
         <motion.button
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-[var(--accent-700)] dark:text-[var(--accent-400)] hover:text-[var(--accent-800)] dark:hover:text-[var(--accent-300)] transition-colors group"
+          className="inline-flex items-center gap-2 text-[var(--accent-700)] dark:text-[var(--accent-400)] hover:text-[var(--accent-800)] dark:hover:text-[var(--accent-300)] transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           whileHover={{ x: -4 }}
+          aria-label="Back"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back
@@ -292,7 +293,8 @@ export default function BlogPostDetailPage() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   onClick={() => setShowViewers(true)}
-                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-700)] transition-colors cursor-pointer"
+                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                  aria-label={`${post.viewCount || 0} views`}
                 >
                   <Eye className="w-4 h-4 flex-shrink-0" />
                   <span>{post.viewCount || 0} views</span>
@@ -315,8 +317,9 @@ export default function BlogPostDetailPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
-                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors"
+                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     title="Edit post"
+                    aria-label="Edit post"
                   >
                     <Edit className="w-5 h-5" />
                   </motion.button>
@@ -326,8 +329,9 @@ export default function BlogPostDetailPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCopyLink}
-                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors"
+                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 title="Copy link"
+                aria-label="Copy link"
               >
                 <Share className="w-5 h-5" />
               </motion.button>
@@ -399,12 +403,13 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleToggleLike}
                   disabled={likeMutation.isPending || unlikeMutation.isPending}
-                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isLiked
                       ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-600 dark:text-danger-300'
                       : 'bg-[var(--bg-secondary)] hover:bg-danger-100 dark:hover:bg-danger-900/30 text-[var(--text-secondary)] hover:text-danger-600 dark:hover:text-danger-300'
                   }`}
                   title={isLiked ? 'Unlike' : 'Like'}
+                  aria-label={isLiked ? 'Unlike' : 'Like'}
                 >
                   <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                   <span className="text-xs font-medium">{post.likeCount || 0}</span>
@@ -415,12 +420,13 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleToggleFavorite}
                   disabled={addFavorite.isPending || removeFavorite.isPending}
-                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isFavorited
                       ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-600 dark:text-warning-300'
                       : 'bg-[var(--bg-secondary)] hover:bg-warning-100 dark:hover:bg-warning-900/30 text-[var(--text-secondary)] hover:text-warning-600 dark:hover:text-warning-300'
                   }`}
                   title={isFavorited ? 'Remove favorite' : 'Add to favorites'}
+                  aria-label={isFavorited ? 'Remove favorite' : 'Add to favorites'}
                 >
                   <Star className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
                 </motion.button>
@@ -432,8 +438,9 @@ export default function BlogPostDetailPage() {
                     const el = document.getElementById('comment-input');
                     el?.focus();
                   }}
-                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   title="Comment"
+                  aria-label="Comment"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span className="text-xs font-medium">{comments.length}</span>
@@ -443,8 +450,9 @@ export default function BlogPostDetailPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleCopyLink}
-                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--text-secondary)] hover:text-[var(--accent-700)] dark:hover:text-[var(--accent-300)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   title="Share"
+                  aria-label="Share"
                 >
                   <Share className="w-4 h-4" />
                 </motion.button>
@@ -584,7 +592,8 @@ export default function BlogPostDetailPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="px-4 py-2.5 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  aria-label="Send comment"
                 >
                   <Send className="w-4 h-4" />
                 </motion.button>
@@ -629,8 +638,9 @@ export default function BlogPostDetailPage() {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setDeleteCommentId(comment.id)}
-                            className="text-[var(--text-muted)] hover:text-danger-500 transition-colors opacity-0 group-hover:opacity-100"
+                            className="text-[var(--text-muted)] hover:text-danger-500 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                             title="Delete comment"
+                            aria-label="Delete comment"
                           >
                             <Trash2 className="w-4 h-4" />
                           </motion.button>

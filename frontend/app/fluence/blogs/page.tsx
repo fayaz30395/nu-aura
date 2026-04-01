@@ -159,7 +159,7 @@ export default function BlogsPage() {
             >
               <motion.button
                 onClick={() => setSelectedCategoryId(undefined)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   selectedCategoryId === undefined
                     ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
@@ -181,7 +181,7 @@ export default function BlogsPage() {
                 <motion.button
                   key={category.id}
                   onClick={() => setSelectedCategoryId(category.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategoryId === category.id
                       ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
@@ -275,7 +275,7 @@ export default function BlogsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                       {/* Image Section */}
                       {featuredPost.coverImageUrl ? (
-                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-rose-400 overflow-hidden relative group">
+                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-danger-400 overflow-hidden relative group">
                           <Image
                             src={featuredPost.coverImageUrl!}
                             alt={featuredPost.title}
@@ -286,7 +286,7 @@ export default function BlogsPage() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         </div>
                       ) : (
-                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-rose-400 flex items-center justify-center relative">
+                        <div className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-danger-400 flex items-center justify-center relative">
                           <Pen className="w-16 h-16 text-white/30" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         </div>
@@ -409,7 +409,7 @@ export default function BlogsPage() {
                 </p>
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="text-warning-600 dark:text-warning-400 hover:underline text-sm font-medium"
+                  className="text-warning-600 dark:text-warning-400 hover:underline text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   Clear search
                 </button>
@@ -440,7 +440,7 @@ export default function BlogsPage() {
                       >
                         {/* Cover Image */}
                         {post.coverImageUrl ? (
-                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-rose-300 overflow-hidden relative group">
+                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-danger-300 overflow-hidden relative group">
                             <Image
                               src={post.coverImageUrl!}
                               alt={post.title}
@@ -451,7 +451,7 @@ export default function BlogsPage() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                           </div>
                         ) : (
-                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-rose-300 flex items-center justify-center relative">
+                          <div className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-danger-300 flex items-center justify-center relative">
                             <Pen className="w-12 h-12 text-white/25" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                           </div>

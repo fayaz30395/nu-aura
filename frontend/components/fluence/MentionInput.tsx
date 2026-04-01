@@ -185,7 +185,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
         'from-accent-500 to-accent-600',
         'from-success-500 to-success-600',
         'from-warning-500 to-warning-600',
-        'from-rose-500 to-rose-600',
+        'from-danger-500 to-danger-600',
         'from-accent-700 to-accent-800',
         'from-accent-500 to-accent-600',
         'from-warning-500 to-warning-600',
@@ -247,11 +247,12 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                       insertMention(user);
                     }}
                     onMouseEnter={() => setSelectedIdx(idx)}
-                    className={`w-full flex items-center gap-4 px-4 py-2 text-left transition-colors duration-100 ${
+                    className={`w-full flex items-center gap-4 px-4 py-2 text-left transition-colors duration-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       idx === selectedIdx
                         ? 'bg-[var(--accent-700)]/10'
                         : 'hover:bg-[var(--bg-secondary)]'
                     }`}
+                    aria-label={`Select ${user.fullName}`}
                   >
                     <div
                       className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${getUserColor(user.id)} flex items-center justify-center text-white text-xs font-semibold`}

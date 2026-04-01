@@ -279,7 +279,8 @@ export default function WikiPage() {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={handleOpenCreateSpace}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        aria-label="Create new space"
                       >
                         <Plus className="h-4 w-4" />
                       </motion.button>
@@ -316,7 +317,7 @@ export default function WikiPage() {
                     {/* All Spaces button */}
                     <motion.button
                       onClick={() => setSelectedSpaceId(undefined)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         selectedSpaceId === undefined
                           ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium'
                           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
@@ -340,7 +341,7 @@ export default function WikiPage() {
                       >
                         <button
                           onClick={() => setSelectedSpaceId(space.id)}
-                          className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${
+                          className={`w-full text-left px-4 py-2.5 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                             selectedSpaceId === space.id
                               ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
                               : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
@@ -372,7 +373,8 @@ export default function WikiPage() {
                                 whileHover={{ scale: 1.15 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => handleOpenEditSpace(space, e)}
-                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-700)] hover:border-[var(--accent-700)] transition-colors"
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-700)] hover:border-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                aria-label="Edit space"
                               >
                                 <Pencil className="h-3 w-3" />
                               </motion.button>
@@ -382,7 +384,8 @@ export default function WikiPage() {
                                 whileHover={{ scale: 1.15 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => handleOpenDeleteSpace(space, e)}
-                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-danger-600 hover:border-danger-400 transition-colors"
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-danger-600 hover:border-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                aria-label="Delete space"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </motion.button>

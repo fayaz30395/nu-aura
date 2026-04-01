@@ -41,7 +41,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#f9fafb',
+      backgroundColor: 'var(--bg-main)',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       padding: '1rem',
     },
@@ -67,11 +67,11 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     title: {
       fontSize: '1.5rem',
       fontWeight: '700',
-      color: '#111827',
+      color: '#050766',
       margin: '0 0 0.5rem',
     },
     description: {
-      color: '#6b7280',
+      color: '#3E616A',
       margin: '0 0 1.5rem',
       lineHeight: '1.6',
     },
@@ -106,7 +106,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     button: {
       width: '100%',
       padding: '0.75rem 1rem',
-      backgroundColor: '#3b82f6',
+      backgroundColor: 'var(--accent-primary)',
       color: 'white',
       border: 'none',
       borderRadius: '0.5rem',
@@ -118,8 +118,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     secondaryButton: {
       width: '100%',
       padding: '0.75rem 1rem',
-      backgroundColor: '#e5e7eb',
-      color: '#374151',
+      backgroundColor: '#d4d4f7',
+      color: '#050766',
       border: 'none',
       borderRadius: '0.5rem',
       fontSize: '0.875rem',
@@ -179,7 +179,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             {!isDevelopment && error.digest && (
               <div
                 style={{
-                  backgroundColor: '#f3f4f6',
+                  backgroundColor: '#F4F5F6',
                   padding: '0.75rem',
                   borderRadius: '0.375rem',
                   marginBottom: '1.5rem',
@@ -189,7 +189,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 <p
                   style={{
                     fontSize: '0.75rem',
-                    color: '#6b7280',
+                    color: '#3E616A',
                     margin: '0 0 0.25rem',
                   }}
                 >
@@ -199,7 +199,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                   style={{
                     fontSize: '0.875rem',
                     fontFamily: 'monospace',
-                    color: '#374151',
+                    color: '#050766',
                     margin: 0,
                   }}
                 >
@@ -213,10 +213,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 onClick={reset}
                 style={styles.button}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#2563eb';
+                  e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
                 }}
               >
                 Try Again
@@ -227,10 +227,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 }}
                 style={styles.secondaryButton}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#d1d5db';
+                  e.currentTarget.style.backgroundColor = '#d4d4f7';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#e5e7eb';
+                  e.currentTarget.style.backgroundColor = '#d4d4f7';
                 }}
               >
                 Go Home
