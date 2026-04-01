@@ -1,0 +1,312 @@
+# Google Cloud Build Configuration for HRMS Platform
+# This file defines the CI/CD pipeline for building and deploying to GKE
+
+substitutions:
+  _GKE_CLUSTER: 'hrms-cluster'
+  _GKE_ZONE: 'us-central1-a'
+  _NAMESPACE: 'hrms'
+  _BACKEND_IMAGE_NAME: 'hrms-backend'
+  _FRONTEND_IMAGE_NAME: 'hrms-frontend'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  substitutionOption: 'ALLOW_LOOSE'
+
+steps:
+  # ============================================================================
+  # Step 1: Build Backend Docker Image
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-backend'
+    args:
+      - 'build'
+      - '-f'
+      - 'deployment/docker/Dockerfile.backend'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$BRANCH_NAME-$SHORT_SHA'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:latest'
+      - '--build-arg'
+      - 'BUILDKIT_INLINE_CACHE=1'
+      - '.'
+    timeout: '1800s'
+
+  # ============================================================================
+  # Step 2: Build Frontend Docker Image
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-f'
+      - 'deployment/docker/Dockerfile.frontend'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$BRANCH_NAME-$SHORT_SHA'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:latest'
+      - '--build-arg'
+      - 'BUILDKIT_INLINE_CACHE=1'
+      - '.'
+    timeout: '1800s'
+
+  # ============================================================================
+  # Step 3: Push Backend Image to GCR
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}'
+    waitFor: ['build-backend']
+
+  # ============================================================================
+  # Step 4: Push Frontend Image to GCR
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}'
+    waitFor: ['build-frontend']
+
+  # ============================================================================
+  # Step 5: Get GKE Credentials
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'get-credentials'
+    args:
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - '${_GKE_CLUSTER}'
+      - '--zone=${_GKE_ZONE}'
+    waitFor: ['-']
+
+  # ============================================================================
+  # Step 6: Create Namespace (if not exists)
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'create-namespace'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/namespace.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['get-credentials']
+
+  # ============================================================================
+  # Step 7: Apply ConfigMaps
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-configmaps'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/configmap.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['create-namespace']
+
+  # ============================================================================
+  # Step 8: Apply Secrets (from GCP Secret Manager)
+  # NOTE: Secrets should be managed via GCP Secret Manager, not in git
+  # This step assumes secrets are already created in the cluster
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'verify-secrets'
+    args:
+      - 'get'
+      - 'secret'
+      - 'hrms-secrets'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['create-namespace']
+
+  # ============================================================================
+  # Step 9: Update Backend Deployment with new image
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'deploy-backend'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/hrms-backend'
+      - 'backend=gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['push-backend', 'apply-configmaps', 'verify-secrets']
+
+  # ============================================================================
+  # Step 10: Update Frontend Deployment with new image
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'deploy-frontend'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/hrms-frontend'
+      - 'frontend=gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['push-frontend', 'apply-configmaps', 'verify-secrets']
+
+  # ============================================================================
+  # Step 11: Apply Backend Service
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-backend-service'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/backend-service.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['deploy-backend']
+
+  # ============================================================================
+  # Step 12: Apply Frontend Service
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-frontend-service'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/frontend-service.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['deploy-frontend']
+
+  # ============================================================================
+  # Step 13: Apply Ingress Configuration
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-ingress'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/ingress.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['apply-backend-service', 'apply-frontend-service']
+
+  # ============================================================================
+  # Step 14: Apply HPA Configuration
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-hpa'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/hpa.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['deploy-backend', 'deploy-frontend']
+
+  # ============================================================================
+  # Step 15: Apply Network Policies
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'apply-network-policy'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment/kubernetes/network-policy.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['create-namespace']
+
+  # ============================================================================
+  # Step 16: Wait for Backend Rollout
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'wait-backend-rollout'
+    args:
+      - 'rollout'
+      - 'status'
+      - 'deployment/hrms-backend'
+      - '-n'
+      - '${_NAMESPACE}'
+      - '--timeout=10m'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['deploy-backend', 'apply-backend-service']
+
+  # ============================================================================
+  # Step 17: Wait for Frontend Rollout
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'wait-frontend-rollout'
+    args:
+      - 'rollout'
+      - 'status'
+      - 'deployment/hrms-frontend'
+      - '-n'
+      - '${_NAMESPACE}'
+      - '--timeout=10m'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['deploy-frontend', 'apply-frontend-service']
+
+  # ============================================================================
+  # Step 18: Verify Deployment
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'verify-deployment'
+    args:
+      - 'get'
+      - 'all'
+      - '-n'
+      - '${_NAMESPACE}'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+    waitFor: ['wait-backend-rollout', 'wait-frontend-rollout']
+
+# Images to be pushed to Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:latest'
+  - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}:$BRANCH_NAME-$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:latest'
+  - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}:$BRANCH_NAME-$SHORT_SHA'
+
+# Timeout for entire build (60 minutes)
+timeout: '3600s'
+
+# Artifacts to store
+artifacts:
+  objects:
+    location: 'gs://${PROJECT_ID}_cloudbuild/artifacts/$BUILD_ID'
+    paths:
+      - 'deployment/kubernetes/*.yaml'

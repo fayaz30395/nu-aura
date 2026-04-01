@@ -1,0 +1,176 @@
+# NU-AURA HRMS — Development Docker Compose
+# For production, use docker-compose.prod.yml (see .env.production.example for required vars)
+# For demo mode (seed data), add override: docker-compose -f docker-compose.yml -f docker-compose.demo.yml up
+
+services:
+  # postgres service removed — using Neon DB (cloud-hosted PostgreSQL)
+
+  redis:
+    image: redis:7-alpine
+    container_name: hrms-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6380:6379"  # mapped to 6380 to avoid conflict with local Redis on 6379
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-devRedis123!}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hrms_network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: hrms-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_INIT_LIMIT: 5
+    ports:
+      - "127.0.0.1:2181:2181"
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    networks:
+      - hrms_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: hrms-kafka
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    ports:
+      - "127.0.0.1:9092:9092"
+      - "127.0.0.1:9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_COMPRESSION_TYPE: snappy
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/kafka-broker-api-versions --bootstrap-server=localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - hrms_network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: hrms-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      # SECURITY NOTE: xpack.security is disabled for local dev convenience.
+      # In production (docker-compose.prod.yml), xpack.security.enabled=true with ELASTIC_PASSWORD.
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - hrms_network
+
+  # minio removed — using Google Drive for file storage
+
+  # backend and frontend run locally in dev (./start-backend.sh + npm run dev)
+  # Use 'docker-compose --profile app up -d' to run them in containers instead
+  backend:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: hrms-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:?Set NEON_JDBC_URL in .env}
+      SPRING_DATASOURCE_USERNAME: ${NEON_DB_USERNAME:?Set NEON_DB_USERNAME in .env}
+      SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:?Set NEON_DB_PASSWORD in .env}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-devRedis123!}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+      APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set in .env}
+      FRONTEND_URL: http://localhost:3000
+    networks:
+      - hrms_network
+
+  frontend:
+    profiles: ["app"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hrms-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    networks:
+      - hrms_network
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: hrms-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - hrms_network
+
+volumes:
+  redis_data:
+  prometheus_data:
+  zookeeper_data:
+  zookeeper_logs:
+  kafka_data:
+  elasticsearch_data:
+
+networks:
+  hrms_network:
+    driver: bridge

@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrms-frontend
+  namespace: hrms
+  labels:
+    app: hrms
+    component: frontend
+    version: v1
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hrms
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: hrms
+        component: frontend
+        version: v1
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      # Init container to wait for backend
+      initContainers:
+      - name: wait-for-backend
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z hrms-backend 8080; do echo waiting for backend; sleep 2; done;']
+
+      containers:
+      - name: frontend
+        # IMAGE_TAG is replaced by CI/CD pipeline (e.g., git SHA or semver).
+        # Do NOT deploy with :latest in production.
+        image: gcr.io/PROJECT_ID/hrms-frontend:IMAGE_TAG
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+
+        env:
+        # ── Node Environment ───────────────────────────────────────────────────────
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: NODE_ENV
+
+        # ── API Configuration (REQUIRED) ───────────────────────────────────────────
+        # env.ts validates NEXT_PUBLIC_API_URL at startup; app will crash if missing
+        - name: NEXT_PUBLIC_API_URL
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: NEXT_PUBLIC_API_URL
+
+        # ── Google OAuth (optional) ────────────────────────────────────────────────
+        - name: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+        # ── Demo mode (disabled in production) ────────────────────────────────────
+        - name: NEXT_PUBLIC_DEMO_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: NEXT_PUBLIC_DEMO_MODE
+
+        # ── Analytics ─────────────────────────────────────────────────────────────
+        - name: NEXT_PUBLIC_ENABLE_ANALYTICS
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: NEXT_PUBLIC_ENABLE_ANALYTICS
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /.next/cache
+
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - frontend
+              topologyKey: kubernetes.io/hostname
+
+      terminationGracePeriodSeconds: 30

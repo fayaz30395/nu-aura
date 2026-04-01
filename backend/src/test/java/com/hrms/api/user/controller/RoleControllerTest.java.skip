@@ -1,0 +1,568 @@
+package com.hrms.api.user.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.user.dto.*;
+import com.hrms.application.user.service.RoleManagementService;
+import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.TenantFilter;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(RoleController.class)
+@ContextConfiguration(classes = {RoleController.class, RoleControllerTest.TestConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
+@DisplayName("RoleController Unit Tests")
+class RoleControllerTest {
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
+            return new JpaMetamodelMappingContext();
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private RoleManagementService roleManagementService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private TenantFilter tenantFilter;
+
+    private UUID roleId;
+    private RoleResponse roleResponse;
+    private CreateRoleRequest createRoleRequest;
+    private UpdateRoleRequest updateRoleRequest;
+
+    @BeforeEach
+    void setUp() {
+        roleId = UUID.randomUUID();
+
+        roleResponse = new RoleResponse();
+        roleResponse.setId(roleId);
+        roleResponse.setCode("MANAGER");
+        roleResponse.setName("Manager");
+        roleResponse.setDescription("Manager role with team management capabilities");
+        // Create permission responses
+        Set<PermissionResponse> permissions = new HashSet<>();
+        PermissionResponse p1 = new PermissionResponse();
+        p1.setCode("employee.view");
+        permissions.add(p1);
+        PermissionResponse p2 = new PermissionResponse();
+        p2.setCode("employee.create");
+        permissions.add(p2);
+        PermissionResponse p3 = new PermissionResponse();
+        p3.setCode("leave.approve");
+        permissions.add(p3);
+        roleResponse.setPermissions(permissions);
+
+        createRoleRequest = new CreateRoleRequest();
+        createRoleRequest.setCode("MANAGER");
+        createRoleRequest.setName("Manager");
+        createRoleRequest.setDescription("Manager role with team management capabilities");
+        createRoleRequest.setPermissionCodes(new HashSet<>() {{
+            add("employee.view");
+            add("employee.create");
+            add("leave.approve");
+        }});
+
+        updateRoleRequest = new UpdateRoleRequest();
+        updateRoleRequest.setCode("MANAGER");
+        updateRoleRequest.setName("Senior Manager");
+        updateRoleRequest.setDescription("Updated manager role");
+    }
+
+    @Nested
+    @DisplayName("Get All Roles Tests")
+    class GetAllRolesTests {
+
+        @Test
+        @DisplayName("Should get all roles successfully")
+        void shouldGetAllRolesSuccessfully() throws Exception {
+            List<RoleResponse> roles = new ArrayList<>();
+            roles.add(roleResponse);
+
+            RoleResponse adminRole = new RoleResponse();
+            adminRole.setId(UUID.randomUUID());
+            adminRole.setCode("ADMIN");
+            adminRole.setName("Administrator");
+            roles.add(adminRole);
+
+            when(roleManagementService.getAllRoles())
+                    .thenReturn(roles);
+
+            mockMvc.perform(get("/api/v1/roles"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$.length()").value(2))
+                    .andExpect(jsonPath("$[0].code").value("MANAGER"))
+                    .andExpect(jsonPath("$[1].code").value("ADMIN"));
+
+            verify(roleManagementService).getAllRoles();
+        }
+
+        @Test
+        @DisplayName("Should return empty list when no roles exist")
+        void shouldReturnEmptyListWhenNoRoles() throws Exception {
+            when(roleManagementService.getAllRoles())
+                    .thenReturn(new ArrayList<>());
+
+            mockMvc.perform(get("/api/v1/roles"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$.length()").value(0));
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Role by ID Tests")
+    class GetRoleByIdTests {
+
+        @Test
+        @DisplayName("Should get role by ID successfully")
+        void shouldGetRoleById() throws Exception {
+            when(roleManagementService.getRoleById(eq(roleId)))
+                    .thenReturn(roleResponse);
+
+            mockMvc.perform(get("/api/v1/roles/{id}", roleId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(roleId.toString()))
+                    .andExpect(jsonPath("$.code").value("MANAGER"))
+                    .andExpect(jsonPath("$.name").value("Manager"))
+                    .andExpect(jsonPath("$.permissions").isArray());
+
+            verify(roleManagementService).getRoleById(eq(roleId));
+        }
+
+        @Test
+        @DisplayName("Should return 404 for non-existent role")
+        void shouldReturn404ForNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            when(roleManagementService.getRoleById(eq(nonExistentId)))
+                    .thenThrow(new IllegalArgumentException("Role not found"));
+
+            mockMvc.perform(get("/api/v1/roles/{id}", nonExistentId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Create Role Tests")
+    class CreateRoleTests {
+
+        @Test
+        @DisplayName("Should create role successfully")
+        void shouldCreateRoleSuccessfully() throws Exception {
+            when(roleManagementService.createRole(any(CreateRoleRequest.class)))
+                    .thenReturn(roleResponse);
+
+            mockMvc.perform(post("/api/v1/roles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createRoleRequest)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(roleId.toString()))
+                    .andExpect(jsonPath("$.code").value("MANAGER"))
+                    .andExpect(jsonPath("$.name").value("Manager"));
+
+            verify(roleManagementService).createRole(any(CreateRoleRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 400 for missing required fields")
+        void shouldReturn400ForMissingFields() throws Exception {
+            CreateRoleRequest invalidRequest = new CreateRoleRequest();
+            // Missing code and name
+
+            mockMvc.perform(post("/api/v1/roles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+
+            verify(roleManagementService, never()).createRole(any());
+        }
+
+        @Test
+        @DisplayName("Should return 400 for duplicate role code")
+        void shouldReturn400ForDuplicateCode() throws Exception {
+            when(roleManagementService.createRole(any(CreateRoleRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Role code already exists"));
+
+            mockMvc.perform(post("/api/v1/roles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createRoleRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should validate role code length")
+        void shouldValidateRoleCodeLength() throws Exception {
+            CreateRoleRequest invalidRequest = new CreateRoleRequest();
+            invalidRequest.setCode("A".repeat(51)); // Exceeds max length
+            invalidRequest.setName("Test Role");
+
+            mockMvc.perform(post("/api/v1/roles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should validate role name length")
+        void shouldValidateRoleNameLength() throws Exception {
+            CreateRoleRequest invalidRequest = new CreateRoleRequest();
+            invalidRequest.setCode("TEST");
+            invalidRequest.setName("A".repeat(101)); // Exceeds max length
+
+            mockMvc.perform(post("/api/v1/roles")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Update Role Tests")
+    class UpdateRoleTests {
+
+        @Test
+        @DisplayName("Should update role successfully")
+        void shouldUpdateRoleSuccessfully() throws Exception {
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+            updatedResponse.setName("Senior Manager");
+            updatedResponse.setDescription("Updated manager role");
+
+            when(roleManagementService.updateRole(eq(roleId), any(UpdateRoleRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(put("/api/v1/roles/{id}", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(updateRoleRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(roleId.toString()))
+                    .andExpect(jsonPath("$.name").value("Senior Manager"));
+
+            verify(roleManagementService).updateRole(eq(roleId), any(UpdateRoleRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when updating non-existent role")
+        void shouldReturn404WhenUpdatingNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            when(roleManagementService.updateRole(eq(nonExistentId), any(UpdateRoleRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Role not found"));
+
+            mockMvc.perform(put("/api/v1/roles/{id}", nonExistentId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(updateRoleRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Delete Role Tests")
+    class DeleteRoleTests {
+
+        @Test
+        @DisplayName("Should delete role successfully")
+        void shouldDeleteRoleSuccessfully() throws Exception {
+            doNothing().when(roleManagementService).deleteRole(eq(roleId));
+
+            mockMvc.perform(delete("/api/v1/roles/{id}", roleId))
+                    .andExpect(status().isNoContent());
+
+            verify(roleManagementService).deleteRole(eq(roleId));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when deleting non-existent role")
+        void shouldReturn404WhenDeletingNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            doThrow(new IllegalArgumentException("Role not found"))
+                    .when(roleManagementService).deleteRole(eq(nonExistentId));
+
+            mockMvc.perform(delete("/api/v1/roles/{id}", nonExistentId))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should not delete role with active assignments")
+        void shouldNotDeleteRoleWithActiveAssignments() throws Exception {
+            doThrow(new IllegalArgumentException("Cannot delete role with active user assignments"))
+                    .when(roleManagementService).deleteRole(eq(roleId));
+
+            mockMvc.perform(delete("/api/v1/roles/{id}", roleId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Assign Permissions Tests")
+    class AssignPermissionsTests {
+
+        @Test
+        @DisplayName("Should assign permissions to role successfully")
+        void shouldAssignPermissionsSuccessfully() throws Exception {
+            AssignPermissionsRequest request = new AssignPermissionsRequest();
+            request.setPermissionCodes(new HashSet<>() {{
+                add("employee.view");
+                add("employee.create");
+                add("employee.delete");
+                add("leave.approve");
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+            updatedResponse.setPermissions(request.getPermissionCodes());
+
+            when(roleManagementService.assignPermissions(eq(roleId), any(AssignPermissionsRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(put("/api/v1/roles/{id}/permissions", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.permissions").isArray())
+                    .andExpect(jsonPath("$.permissions.length()").value(4));
+
+            verify(roleManagementService).assignPermissions(eq(roleId), any(AssignPermissionsRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should add permissions to existing permissions")
+        void shouldAddPermissionsSuccessfully() throws Exception {
+            AssignPermissionsRequest request = new AssignPermissionsRequest();
+            request.setPermissionCodes(new HashSet<>() {{
+                add("payroll.process");
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+            updatedResponse.setPermissions(new HashSet<>() {{
+                add("employee.view");
+                add("employee.create");
+                add("leave.approve");
+                add("payroll.process");
+            }});
+
+            when(roleManagementService.addPermissions(eq(roleId), any(AssignPermissionsRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(post("/api/v1/roles/{id}/permissions", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.permissions.length()").value(4));
+
+            verify(roleManagementService).addPermissions(eq(roleId), any(AssignPermissionsRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should remove permissions from role")
+        void shouldRemovePermissionsSuccessfully() throws Exception {
+            AssignPermissionsRequest request = new AssignPermissionsRequest();
+            request.setPermissionCodes(new HashSet<>() {{
+                add("employee.delete");
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+            updatedResponse.setPermissions(new HashSet<>() {{
+                add("employee.view");
+                add("employee.create");
+                add("leave.approve");
+            }});
+
+            when(roleManagementService.removePermissions(eq(roleId), any(AssignPermissionsRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(delete("/api/v1/roles/{id}/permissions", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.permissions.length()").value(3));
+
+            verify(roleManagementService).removePermissions(eq(roleId), any(AssignPermissionsRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when assigning permissions to non-existent role")
+        void shouldReturn404WhenAssigningToNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            AssignPermissionsRequest request = new AssignPermissionsRequest();
+            request.setPermissionCodes(new HashSet<>());
+
+            when(roleManagementService.assignPermissions(eq(nonExistentId), any(AssignPermissionsRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Role not found"));
+
+            mockMvc.perform(put("/api/v1/roles/{id}/permissions", nonExistentId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Assign Permissions with Scope Tests")
+    class AssignPermissionsWithScopeTests {
+
+        @Test
+        @DisplayName("Should assign permissions with RBAC scopes")
+        void shouldAssignPermissionsWithScope() throws Exception {
+            AssignPermissionsWithScopeRequest request = new AssignPermissionsWithScopeRequest();
+            request.setPermissionScopes(new HashMap<>() {{
+                put("employee.view", "DEPARTMENT");
+                put("leave.approve", "TEAM");
+                put("attendance.mark", "SELF");
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+
+            when(roleManagementService.assignPermissionsWithScope(eq(roleId), any(AssignPermissionsWithScopeRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(put("/api/v1/roles/{id}/permissions-with-scope", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(roleId.toString()));
+
+            verify(roleManagementService).assignPermissionsWithScope(eq(roleId), any(AssignPermissionsWithScopeRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should support ALL scope for permissions")
+        void shouldSupportAllScope() throws Exception {
+            AssignPermissionsWithScopeRequest request = new AssignPermissionsWithScopeRequest();
+            request.setPermissionScopes(new HashMap<>() {{
+                put("employee.view", "ALL");
+                put("payroll.view", "ALL");
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+
+            when(roleManagementService.assignPermissionsWithScope(eq(roleId), any(AssignPermissionsWithScopeRequest.class)))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(put("/api/v1/roles/{id}/permissions-with-scope", roleId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("Update Permission Scope Tests")
+    class UpdatePermissionScopeTests {
+
+        @Test
+        @DisplayName("Should update permission scope for a single permission")
+        void shouldUpdatePermissionScope() throws Exception {
+            UpdatePermissionScopeRequest request = new UpdatePermissionScopeRequest();
+            request.setScope("DEPARTMENT");
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+            updatedResponse.setCode("MANAGER");
+
+            when(roleManagementService.updatePermissionScope(
+                    eq(roleId),
+                    eq("employee.view"),
+                    eq("DEPARTMENT"),
+                    isNull()))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(patch("/api/v1/roles/{roleId}/permissions/{permissionCode}/scope", roleId, "employee.view")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk());
+
+            verify(roleManagementService).updatePermissionScope(
+                    eq(roleId),
+                    eq("employee.view"),
+                    eq("DEPARTMENT"),
+                    isNull());
+        }
+
+        @Test
+        @DisplayName("Should update permission scope with custom targets")
+        void shouldUpdatePermissionScopeWithCustomTargets() throws Exception {
+            UpdatePermissionScopeRequest request = new UpdatePermissionScopeRequest();
+            request.setScope("CUSTOM");
+            request.setCustomTargets(new HashMap<>() {{
+                put("employees", Set.of(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+            }});
+
+            RoleResponse updatedResponse = new RoleResponse();
+            updatedResponse.setId(roleId);
+
+            when(roleManagementService.updatePermissionScope(
+                    eq(roleId),
+                    eq("employee.view"),
+                    eq("CUSTOM"),
+                    any()))
+                    .thenReturn(updatedResponse);
+
+            mockMvc.perform(patch("/api/v1/roles/{roleId}/permissions/{permissionCode}/scope", roleId, "employee.view")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should return 404 when updating scope for non-existent role")
+        void shouldReturn404WhenUpdatingScopeForNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            UpdatePermissionScopeRequest request = new UpdatePermissionScopeRequest();
+            request.setScope("TEAM");
+
+            when(roleManagementService.updatePermissionScope(
+                    eq(nonExistentId),
+                    anyString(),
+                    anyString(),
+                    any()))
+                    .thenThrow(new IllegalArgumentException("Role not found"));
+
+            mockMvc.perform(patch("/api/v1/roles/{roleId}/permissions/{permissionCode}/scope", nonExistentId, "employee.view")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+}

@@ -1,0 +1,106 @@
+# Alert Rules for HRMS Application
+groups:
+  - name: hrms_application_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: rate(api_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for endpoint {{ $labels.endpoint }}"
+
+      # High response time alert
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API latency detected"
+          description: "95th percentile latency is {{ $value }}s for {{ $labels.uri }}"
+
+      # Database connection pool alert
+      - alert: DatabaseConnectionPoolLow
+        expr: hikaricp_connections_active / hikaricp_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Connection pool usage is {{ $value | humanizePercentage }}"
+
+      # Application down alert
+      - alert: ApplicationDown
+        expr: up{job="hrms-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "HRMS Backend is down"
+          description: "HRMS Backend instance {{ $labels.instance }} is down"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: jvm
+        annotations:
+          summary: "High JVM heap memory usage"
+          description: "JVM heap usage is {{ $value | humanizePercentage }}"
+
+      # Failed login attempts
+      - alert: HighFailedLoginRate
+        expr: rate(auth_login_total{status="failure"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "High failed login rate detected"
+          description: "Failed login rate is {{ $value }} per second"
+
+      # Rate limit breaches
+      - alert: HighRateLimitExceeded
+        expr: rate(rate_limit_exceeded_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: info
+          component: security
+        annotations:
+          summary: "High rate limit breaches"
+          description: "Rate limit is being exceeded {{ $value }} times per second"
+
+  - name: hrms_business_alerts
+    interval: 60s
+    rules:
+      # Low active users (potential issue)
+      - alert: LowActiveUsers
+        expr: active_users < 5
+        for: 10m
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Low number of active users"
+          description: "Only {{ $value }} active users in the system"
+
+      # No payroll processing in expected timeframe
+      - alert: PayrollProcessingDelayed
+        expr: rate(payroll_processed_total[24h]) == 0
+        for: 2h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "No payroll processing detected"
+          description: "No payroll has been processed in the last 24 hours"

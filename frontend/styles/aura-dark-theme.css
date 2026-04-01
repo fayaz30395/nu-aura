@@ -1,0 +1,181 @@
+/**
+ * NU-AURA Dark Theme — Supplementary Utility Classes
+ *
+ * Brand: NULogic — Infinite Innovation
+ * Palette: Lapis Blue (#050766) + Dark Teal (#133E49) + Red-Orange/Purple gradient
+ * Typography: Montserrat (headings) + Open Sans (body) + Roboto Mono (code)
+ *
+ * NOTE: Core dark mode CSS variables live in globals.css under `.dark {}`.
+ *       This file provides utility classes and animations for dark mode UI.
+ *       Import this file ONLY if you need dark-specific utility classes.
+ */
+
+/* ══════════════════════════════════════════════════════
+   SCROLLBARS — Dark theme scrollbar styling
+   ══════════════════════════════════════════════════════ */
+
+.dark * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-main) transparent;
+}
+
+.dark *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: var(--border-main);
+  border-radius: 4px;
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ══════════════════════════════════════════════════════
+   SELECTION — Custom text selection color (dark)
+   ══════════════════════════════════════════════════════ */
+
+.dark ::selection {
+  background: var(--ring-primary);
+  color: var(--text-primary);
+}
+
+.dark ::-moz-selection {
+  background: var(--ring-primary);
+  color: var(--text-primary);
+}
+
+/* ══════════════════════════════════════════════════════
+   UTILITY CLASSES — Dark mode specific patterns
+   ══════════════════════════════════════════════════════ */
+
+/* Status Dot (for indicators) */
+.dark .status-dot-success {
+  background: var(--status-success-text);
+  color: var(--status-success-text);
+}
+
+.dark .status-dot-danger {
+  background: var(--status-danger-text);
+  color: var(--status-danger-text);
+}
+
+.dark .status-dot-warning {
+  background: var(--status-warning-text);
+  color: var(--status-warning-text);
+}
+
+.dark .status-dot-primary {
+  background: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* Glow Effects — NULogic brand glow for dark mode */
+.dark .glow-primary {
+  box-shadow: 0 0 20px var(--ring-primary);
+}
+
+.dark .glow-success {
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+}
+
+.dark .glow-danger {
+  box-shadow: 0 0 20px var(--ring-danger);
+}
+
+.dark .glow-warning {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.15);
+}
+
+.dark .glow-accent {
+  box-shadow: 0 0 20px var(--ring-primary);
+}
+
+/* Gradient Text — NULogic dark mode accent */
+.dark .gradient-text-primary {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--chart-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Card Backgrounds */
+.dark .card-aura {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 200ms ease;
+}
+
+.dark .card-aura:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Glass Background */
+.dark .glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Dividers */
+.dark .divider {
+  height: 1px;
+  background: var(--border-main);
+  margin: 1.5rem 0;
+}
+
+.dark .divider-vertical {
+  width: 1px;
+  height: 100%;
+  background: var(--border-main);
+  margin: 0 1rem;
+}
+
+/* ══════════════════════════════════════════════════════
+   FOCUS STYLES — Accessibility (dark mode)
+   ══════════════════════════════════════════════════════ */
+
+.dark *:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ══════════════════════════════════════════════════════
+   PRINT STYLES
+   ══════════════════════════════════════════════════════ */
+
+@media print {
+  .dark body {
+    background: white;
+    color: black;
+  }
+
+  .dark .no-print {
+    display: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   REDUCED MOTION — Accessibility
+   ══════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

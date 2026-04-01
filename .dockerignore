@@ -1,0 +1,29 @@
+# Ignore frontend (has its own build context)
+frontend/node_modules
+frontend/.next
+frontend/.turbo
+
+# IDE and editor files
+.idea
+.vscode
+*.iml
+
+# Git
+.git
+.gitignore
+
+# Docs and non-build files
+docs
+*.md
+LICENSE
+
+# Backend build artifacts (rebuilt in Docker)
+backend/target
+
+# Docker compose files (not needed inside image)
+docker-compose*.yml
+prometheus.yml
+
+# OS files
+.DS_Store
+Thumbs.db

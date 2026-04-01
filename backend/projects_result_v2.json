@@ -1,0 +1,1 @@
+{"timestamp":"2026-02-11T01:51:57.371399","status":500,"error":"Internal Server Error","message":"An unexpected error occurred","errors":null,"path":"/api/v1/projects","requestId":"3138a784-cf6c-434b-b6e0-a21a62ab3590","tenantId":"660e8400-e29b-41d4-a716-446655440001","errorCode":"INTERNAL_ERROR"}

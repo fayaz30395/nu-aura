@@ -1,0 +1,496 @@
+package com.hrms.application.home.service;
+
+import com.hrms.api.home.dto.*;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.attendance.AttendanceRecord;
+import com.hrms.domain.attendance.Holiday;
+import com.hrms.domain.employee.Department;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.domain.leave.LeaveType;
+import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
+import com.hrms.infrastructure.attendance.repository.HolidayRepository;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+@Transactional(readOnly = true)
+public class HomeService {
+
+    private final EmployeeRepository employeeRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final HolidayRepository holidayRepository;
+    private final DepartmentRepository departmentRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+
+    /**
+     * Get upcoming birthdays for the next N days (default 7 days)
+     */
+    @Transactional(readOnly = true)
+    public List<BirthdayResponse> getUpcomingBirthdays(int days) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(days);
+
+        List<Employee> employees = employeeRepository.findUpcomingBirthdays(tenantId, today, endDate);
+
+        // Get all department IDs and fetch them in one query
+        Set<UUID> departmentIds = employees.stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return employees.stream()
+                .filter(e -> e.getDateOfBirth() != null)
+                .map(e -> {
+                    LocalDate dob = e.getDateOfBirth();
+                    LocalDate birthdayThisYear = dob.withYear(today.getYear());
+
+                    // If birthday already passed this year, consider next year
+                    if (birthdayThisYear.isBefore(today)) {
+                        birthdayThisYear = dob.withYear(today.getYear() + 1);
+                    }
+
+                    long daysUntil = ChronoUnit.DAYS.between(today, birthdayThisYear);
+                    boolean isToday = daysUntil == 0;
+
+                    String departmentName = null;
+                    if (e.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(e.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return BirthdayResponse.builder()
+                            .employeeId(e.getId())
+                            .employeeName(e.getFullName())
+                            .avatarUrl(null) // Employee entity doesn't have profile pic
+                            .department(departmentName)
+                            .dateOfBirth(dob)
+                            .birthdayDate(birthdayThisYear)
+                            .isToday(isToday)
+                            .daysUntil((int) daysUntil)
+                            .build();
+                })
+                .sorted(Comparator.comparingInt(BirthdayResponse::getDaysUntil))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get upcoming work anniversaries for the next N days (default 7 days)
+     */
+    @Transactional(readOnly = true)
+    public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(days);
+
+        List<Employee> employees = employeeRepository.findUpcomingAnniversaries(tenantId, today, endDate);
+
+        // Get all department IDs and fetch them in one query
+        Set<UUID> departmentIds = employees.stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return employees.stream()
+                .filter(e -> e.getJoiningDate() != null)
+                .map(e -> {
+                    LocalDate joiningDate = e.getJoiningDate();
+                    LocalDate anniversaryThisYear = joiningDate.withYear(today.getYear());
+
+                    // If anniversary already passed this year, consider next year
+                    if (anniversaryThisYear.isBefore(today)) {
+                        anniversaryThisYear = joiningDate.withYear(today.getYear() + 1);
+                    }
+
+                    long daysUntil = ChronoUnit.DAYS.between(today, anniversaryThisYear);
+                    boolean isToday = daysUntil == 0;
+                    int yearsCompleted = Period.between(joiningDate, anniversaryThisYear).getYears();
+
+                    String departmentName = null;
+                    if (e.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(e.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return WorkAnniversaryResponse.builder()
+                            .employeeId(e.getId())
+                            .employeeName(e.getFullName())
+                            .avatarUrl(null) // Employee entity doesn't have profile pic
+                            .department(departmentName)
+                            .designation(e.getDesignation()) // designation is a String field
+                            .joiningDate(joiningDate)
+                            .anniversaryDate(anniversaryThisYear)
+                            .yearsCompleted(yearsCompleted)
+                            .isToday(isToday)
+                            .daysUntil((int) daysUntil)
+                            .build();
+                })
+                .sorted(Comparator.comparingInt(WorkAnniversaryResponse::getDaysUntil))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get new joinees in the last N days (default 30 days)
+     */
+    @Transactional(readOnly = true)
+    public List<NewJoineeResponse> getNewJoinees(int days) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(days);
+
+        // Use date-filtered query instead of loading all employees (fixes NEW-011 O(n) memory issue)
+        List<Employee> employees = employeeRepository.findByTenantIdAndJoiningDateBetweenAndStatus(
+                tenantId, startDate, today, Employee.EmployeeStatus.ACTIVE);
+
+        // Get all department IDs and fetch them in one query
+        Set<UUID> departmentIds = employees.stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return employees.stream()
+                .filter(e -> e.getJoiningDate() != null)
+                .map(e -> {
+                    long daysSinceJoining = ChronoUnit.DAYS.between(e.getJoiningDate(), today);
+
+                    String departmentName = null;
+                    if (e.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(e.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return NewJoineeResponse.builder()
+                            .employeeId(e.getId())
+                            .employeeName(e.getFullName())
+                            .avatarUrl(null)
+                            .department(departmentName)
+                            .designation(e.getDesignation())
+                            .joiningDate(e.getJoiningDate())
+                            .daysSinceJoining((int) daysSinceJoining)
+                            .build();
+                })
+                .sorted(Comparator.comparingInt(NewJoineeResponse::getDaysSinceJoining))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get employees on leave today
+     */
+    @Transactional(readOnly = true)
+    public List<OnLeaveEmployeeResponse> getEmployeesOnLeaveToday() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+
+        // Get leave requests where today falls between start and end date
+        List<LeaveRequest> leaves = leaveRequestRepository.findByTenantIdAndStartDateBetween(tenantId, today.minusMonths(1), today);
+
+        // Filter to only approved leaves that cover today
+        List<LeaveRequest> approvedLeavesToday = leaves.stream()
+                .filter(lr -> lr.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED)
+                .filter(lr -> !lr.getStartDate().isAfter(today) && !lr.getEndDate().isBefore(today))
+                .collect(Collectors.toList());
+
+        if (approvedLeavesToday.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Get employee IDs
+        Set<UUID> employeeIds = approvedLeavesToday.stream()
+                .map(LeaveRequest::getEmployeeId)
+                .collect(Collectors.toSet());
+
+        // Get leave type IDs
+        Set<UUID> leaveTypeIds = approvedLeavesToday.stream()
+                .map(LeaveRequest::getLeaveTypeId)
+                .collect(Collectors.toSet());
+
+        // Fetch employees and leave types in batch
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+
+        Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllById(leaveTypeIds).stream()
+                .collect(Collectors.toMap(LeaveType::getId, Function.identity()));
+
+        // Get department IDs from employees
+        Set<UUID> departmentIds = employeeMap.values().stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return approvedLeavesToday.stream()
+                .map(leave -> {
+                    Employee employee = employeeMap.get(leave.getEmployeeId());
+                    LeaveType leaveType = leaveTypeMap.get(leave.getLeaveTypeId());
+
+                    if (employee == null) {
+                        return null;
+                    }
+
+                    String departmentName = null;
+                    if (employee.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(employee.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return OnLeaveEmployeeResponse.builder()
+                            .employeeId(employee.getId())
+                            .employeeName(employee.getFullName())
+                            .avatarUrl(null)
+                            .department(departmentName)
+                            .leaveType(leaveType != null ? leaveType.getLeaveName() : "Leave")
+                            .startDate(leave.getStartDate())
+                            .endDate(leave.getEndDate())
+                            .reason(leave.getReason())
+                            .build();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get employees working remotely today (checked in with REMOTE/WFH source)
+     */
+    @Transactional(readOnly = true)
+    public List<RemoteWorkerResponse> getRemoteWorkersToday() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+
+        List<AttendanceRecord> todayRecords = attendanceRecordRepository.findByTenantIdAndAttendanceDate(tenantId, today);
+
+        // Filter for remote/WFH check-ins
+        List<AttendanceRecord> remoteRecords = todayRecords.stream()
+                .filter(r -> r.getCheckInSource() != null &&
+                        (r.getCheckInSource().equalsIgnoreCase("REMOTE") ||
+                         r.getCheckInSource().equalsIgnoreCase("WFH") ||
+                         r.getCheckInSource().equalsIgnoreCase("HOME")))
+                .collect(Collectors.toList());
+
+        if (remoteRecords.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Batch fetch employees
+        Set<UUID> employeeIds = remoteRecords.stream()
+                .map(AttendanceRecord::getEmployeeId)
+                .collect(Collectors.toSet());
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
+                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+
+        // Get department info
+        Set<UUID> departmentIds = employeeMap.values().stream()
+                .filter(e -> e.getDepartmentId() != null)
+                .map(Employee::getDepartmentId)
+                .collect(Collectors.toSet());
+        Map<UUID, Department> departmentMap = getDepartmentMap(tenantId, departmentIds);
+
+        return remoteRecords.stream()
+                .map(record -> {
+                    Employee employee = employeeMap.get(record.getEmployeeId());
+                    if (employee == null) return null;
+
+                    String departmentName = null;
+                    if (employee.getDepartmentId() != null) {
+                        Department dept = departmentMap.get(employee.getDepartmentId());
+                        departmentName = dept != null ? dept.getName() : null;
+                    }
+
+                    return RemoteWorkerResponse.builder()
+                            .employeeId(employee.getId())
+                            .employeeName(employee.getFullName())
+                            .avatarUrl(null)
+                            .department(departmentName)
+                            .designation(employee.getDesignation())
+                            .checkInTime(record.getCheckInTime())
+                            .checkInLocation(record.getCheckInLocation())
+                            .build();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get today's attendance status for an employee
+     */
+    @Transactional(readOnly = true)
+    public AttendanceTodayResponse getAttendanceToday(UUID employeeId) {
+        // Handle null employeeId (SuperAdmin or users without employee record)
+        if (employeeId == null) {
+            log.warn("getAttendanceToday called with null employeeId");
+            return AttendanceTodayResponse.builder()
+                    .date(LocalDate.now())
+                    .status("NOT_APPLICABLE")
+                    .isCheckedIn(false)
+                    .canCheckIn(false)
+                    .canCheckOut(false)
+                    .build();
+        }
+
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+
+        // Check if today is a holiday
+        Optional<Holiday> holidayOpt = holidayRepository.findByTenantIdAndDate(tenantId, today);
+        if (holidayOpt.isPresent()) {
+            return AttendanceTodayResponse.builder()
+                    .employeeId(employeeId)
+                    .date(today)
+                    .status("HOLIDAY")
+                    .isCheckedIn(false)
+                    .canCheckIn(false)
+                    .canCheckOut(false)
+                    .build();
+        }
+
+        // Check if today is a weekend
+        DayOfWeek dayOfWeek = today.getDayOfWeek();
+        boolean isWeekend = dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
+
+        // Check if employee is on leave today
+        Long leaveCount = leaveRequestRepository.countByTenantIdAndDateAndStatusAndEmployeeId(
+                tenantId, today, LeaveRequest.LeaveRequestStatus.APPROVED, employeeId);
+        boolean isOnLeave = leaveCount != null && leaveCount > 0;
+
+        // Check attendance record first - this takes priority over weekend/leave status
+        // because user may have already clocked in
+        Optional<AttendanceRecord> attendanceOpt = attendanceRecordRepository.findByTenantIdAndEmployeeIdAndDate(
+                tenantId, employeeId, today);
+
+        if (attendanceOpt.isPresent()) {
+            AttendanceRecord record = attendanceOpt.get();
+            boolean hasCheckedIn = record.getCheckInTime() != null;
+            boolean hasCheckedOut = record.getCheckOutTime() != null;
+            boolean isCurrentlyCheckedIn = hasCheckedIn && !hasCheckedOut;
+
+            // Convert workDurationMinutes to decimal hours
+            Double totalWorkHours = null;
+            if (record.getWorkDurationMinutes() != null && record.getWorkDurationMinutes() > 0) {
+                totalWorkHours = record.getWorkDurationMinutes() / 60.0;
+            }
+
+            // After clock-out, allow clock-in again for another session
+            // canCheckIn: true if not currently checked in (either never checked in, or already checked out)
+            // canCheckOut: true only if currently checked in (checked in but not yet checked out)
+            return AttendanceTodayResponse.builder()
+                    .attendanceId(record.getId())
+                    .employeeId(employeeId)
+                    .date(today)
+                    .status(record.getStatus().name())
+                    .checkInTime(record.getCheckInTime())
+                    .checkOutTime(record.getCheckOutTime())
+                    .totalWorkHours(totalWorkHours)
+                    .isCheckedIn(isCurrentlyCheckedIn)
+                    .canCheckIn(!isCurrentlyCheckedIn) // Can clock in if not currently clocked in
+                    .canCheckOut(isCurrentlyCheckedIn) // Can clock out only if currently clocked in
+                    .source(record.getCheckInSource())
+                    .location(record.getCheckInLocation())
+                    .build();
+        }
+
+        // No attendance record exists - check weekend/leave status
+        if (isOnLeave) {
+            return AttendanceTodayResponse.builder()
+                    .employeeId(employeeId)
+                    .date(today)
+                    .status("ON_LEAVE")
+                    .isCheckedIn(false)
+                    .canCheckIn(false)
+                    .canCheckOut(false)
+                    .build();
+        }
+
+        if (isWeekend) {
+            return AttendanceTodayResponse.builder()
+                    .employeeId(employeeId)
+                    .date(today)
+                    .status("WEEKLY_OFF")
+                    .isCheckedIn(false)
+                    .canCheckIn(true) // Allow clock-in on weekends if needed
+                    .canCheckOut(false)
+                    .build();
+        }
+
+        // Normal working day with no attendance record - employee can check in
+        return AttendanceTodayResponse.builder()
+                .employeeId(employeeId)
+                .date(today)
+                .status("NOT_MARKED")
+                .isCheckedIn(false)
+                .canCheckIn(true)
+                .canCheckOut(false)
+                .build();
+    }
+
+    /**
+     * Get upcoming holidays for the next N days (default 30 days)
+     */
+    @Transactional(readOnly = true)
+    public List<UpcomingHolidayResponse> getUpcomingHolidays(int days) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(days);
+
+        List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, today, endDate);
+
+        return holidays.stream()
+                .map(h -> {
+                    long daysUntil = ChronoUnit.DAYS.between(today, h.getHolidayDate());
+                    String dayOfWeekStr = h.getHolidayDate().getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+                    return UpcomingHolidayResponse.builder()
+                            .id(h.getId())
+                            .name(h.getHolidayName())
+                            .date(h.getHolidayDate())
+                            .type(h.getHolidayType() != null ? h.getHolidayType().name() : "COMPANY_EVENT")
+                            .description(h.getDescription())
+                            .isOptional(Boolean.TRUE.equals(h.getIsOptional()))
+                            .daysUntil((int) daysUntil)
+                            .dayOfWeek(dayOfWeekStr)
+                            .build();
+                })
+                .sorted(Comparator.comparingInt(UpcomingHolidayResponse::getDaysUntil))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Helper method to get departments as a map
+     */
+    private Map<UUID, Department> getDepartmentMap(UUID tenantId, Set<UUID> departmentIds) {
+        if (departmentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return departmentRepository.findAllById(departmentIds).stream()
+                .collect(Collectors.toMap(Department::getId, Function.identity()));
+    }
+}

@@ -1,0 +1,129 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=RUNSCRIPT FROM 'classpath:schema-h2.sql'
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    hikari:
+      # Override the PostgreSQL-specific connection-init-sql from application.yml.
+      # H2 does not support SET app.current_tenant_id; use a no-op SELECT instead.
+      connection-init-sql: SELECT 1
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+        globally_quoted_identifiers: true
+
+  sql:
+    init:
+      mode: never
+
+  liquibase:
+    enabled: false
+
+  flyway:
+    enabled: false
+
+  # Disable Redis for tests - use in-memory cache instead
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  cache:
+    type: simple
+    cache-names:
+      - dashboardMetrics
+      - dashboardAnalytics
+      - employeeMetrics
+      - attendanceMetrics
+      - leaveMetrics
+      - payrollMetrics
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    admin:
+      fail-fast: false
+    consumer:
+      auto-offset-reset: earliest
+    properties:
+      request.timeout.ms: 5000
+      retry.backoff.ms: 500
+
+  mail:
+    host: localhost
+    port: 25
+
+# Disable health checks for external services in tests
+management:
+  health:
+    redis:
+      enabled: false
+    mail:
+      enabled: false
+    db:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: false
+
+app:
+  # Disable RLS transaction manager in tests — H2 doesn't support SET LOCAL
+  rls:
+    transaction-manager:
+      enabled: false
+    datasource-wrapper:
+      enabled: false
+  security:
+    encryption:
+      key: test-encryption-key-32-bytes-xx!
+  jwt:
+    secret: b8f3d0c9a1e2f4b7c6d8e9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8
+    expiration: 3600000
+    refresh-expiration: 86400000
+
+  tenant:
+    resolution-strategy: header
+    header-name: X-Tenant-ID
+
+  frontend:
+    url: http://localhost:3000
+
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: hrms-test-files
+
+# Disable AI features in tests
+ai:
+  openai:
+    api-key: test-key
+    base-url: http://localhost:8081
+
+# Minimize logging in tests
+logging:
+  level:
+    root: WARN
+    com.hrms: INFO
+    org.springframework.test: WARN
+    org.hibernate: WARN
+    org.springframework.boot.autoconfigure: ERROR
+
+# Disable Swagger in tests
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
