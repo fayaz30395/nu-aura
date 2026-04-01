@@ -529,7 +529,7 @@ export type PermissionCode = (typeof Permissions)[keyof typeof Permissions];
 export const Roles = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   TENANT_ADMIN: 'TENANT_ADMIN',
-  // M-3: HR_ADMIN does not exist in backend — maps to HR_MANAGER. Kept here for UI display only.
+  // Real backend role (rank 85) — senior HR leadership above HR_MANAGER
   HR_ADMIN: 'HR_ADMIN',
   HR_MANAGER: 'HR_MANAGER',
   HR_EXECUTIVE: 'HR_EXECUTIVE',
