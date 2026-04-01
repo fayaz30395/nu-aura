@@ -1,166 +1,126 @@
 # NU-AURA Platform
 
-Enterprise-grade, multi-tenant SaaS bundle app platform for HR operations, recruitment, performance management, and knowledge collaboration.
-
-**Status:** ~90% Complete | Stabilization Phase 7 Complete | Go-Live Gate Pending
+Enterprise-grade, multi-tenant SaaS platform for HR operations, recruitment, performance management, and knowledge collaboration.
 
 ## Platform Architecture
 
-NU-AURA is a **bundle app platform** containing 4 sub-applications, accessed via a unified login and app switcher:
+NU-AURA is a **bundle app platform** — 4 sub-applications behind a single login and app switcher:
 
 | Sub-App | Domain | Status |
 |---------|--------|--------|
-| **NU-HRMS** | Core HR (employees, attendance, leave, payroll, benefits, assets) | ~95% |
-| **NU-Hire** | Recruitment & onboarding (ATS, pipeline, job boards) | ~92% |
-| **NU-Grow** | Performance, learning & engagement (reviews, OKRs, 360, LMS) | ~90% |
-| **NU-Fluence** | Knowledge management & collaboration (wiki, blogs) | Phase 2 (~85%) |
+| **NU-HRMS** | Core HR (employees, attendance, leave, payroll, benefits, assets) | Active |
+| **NU-Hire** | Recruitment & onboarding (ATS, pipeline, job boards) | Active |
+| **NU-Grow** | Performance, learning & engagement (reviews, OKRs, 360, LMS) | Active |
+| **NU-Fluence** | Knowledge management & collaboration (wiki, blogs) | Phase 2 (backend built, frontend pending) |
 
 ## Technology Stack
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Backend | Spring Boot | 3.4.1 |
-| Language | Java | 17 |
-| Frontend | Next.js (App Router) | 14.2.35 |
-| UI Library | Mantine | 8.3.14 |
-| Styling | Tailwind CSS | 3.4 |
-| Database | PostgreSQL (Neon cloud dev) | 14+ |
+| Language | Java | 21 |
+| Frontend | Next.js (App Router) | 14 |
+| UI Library | Mantine | 7.x |
+| Styling | Tailwind CSS | 3.x |
+| Database | PostgreSQL (Neon cloud dev, PostgreSQL 16 prod) | 16 |
 | Cache | Redis | 7 |
-| Event Streaming | Kafka (Confluent) | 7.6 |
-| File Storage | MinIO | 8.6 |
-| Testing | Playwright (E2E) + JUnit 5 | 1.57 |
+| Event Streaming | Kafka (Confluent) | 7.6.0 |
+| Search | Elasticsearch | 8.11.0 |
+| File Storage | MinIO (S3-compatible) | Latest |
 | Monitoring | Prometheus + Grafana + AlertManager | Latest |
 
 ## Repository Structure
 
 ```
 nu-aura/
-├── backend/                    # Spring Boot monolith (Java 17, Maven)
+├── backend/                    # Spring Boot monolith (Java 21, Maven)
 │   ├── src/main/java/com/hrms/
-│   │   ├── api/                # 71 controller packages (REST endpoints)
-│   │   ├── application/        # 188 service classes (business logic)
-│   │   ├── domain/             # 304 JPA entities
-│   │   ├── infrastructure/     # 254 repositories + Kafka + WebSocket
+│   │   ├── api/                # 143 controllers (REST endpoints)
+│   │   ├── application/        # 209 services (business logic)
+│   │   ├── domain/             # 265 entities + enums
+│   │   ├── infrastructure/     # 260 repositories + Kafka + WebSocket
 │   │   └── common/             # Config, security, validation, exceptions
 │   └── src/main/resources/
-│       ├── application.yml     # Spring Boot config
-│       └── db/migration/       # 49 Flyway migrations (V0–V52)
+│       └── db/migration/       # 88 Flyway migrations (V0–V91)
 ├── frontend/                   # Next.js 14 App Router
-│   ├── app/                    # 196 pages
-│   ├── components/             # 129 TSX components
-│   ├── lib/                    # Services, hooks, types, validations
-│   ├── e2e/                    # 36 Playwright E2E specs
-│   └── middleware.ts           # Edge route protection + OWASP headers
-├── modules/                    # Shared backend modules
-│   ├── common/                 # TenantAwareAsyncTask, base classes
-│   └── pm/                     # Project management sub-system
-├── monitoring/                 # Observability stack
-│   ├── prometheus/             # Scrape config + 28 alert rules (2 groups)
-│   ├── grafana/                # 4 dashboards + provisioning
-│   └── alertmanager/           # Routing, receivers, inhibition
-├── deployment/
-│   └── kubernetes/             # 10 active K8s manifests (GCP GKE)
-├── docs/                       # Architecture, ADRs, runbooks, execution logs
-├── scripts/                    # DB export/import, migration tools
-├── docker-compose.yml          # Dev: Redis, Kafka, MinIO, Prometheus
-├── docker-compose.prod.yml     # Production config
-└── docker-compose.override.yml # Dev hot-reload
+│   ├── app/                    # 200+ pages
+│   ├── components/             # 123 TSX components
+│   ├── lib/                    # 190 hooks, 92 services, types, validations
+│   └── middleware.ts           # Route protection + OWASP headers
+├── monitoring/                 # Prometheus (28 alerts, 19 SLOs) + Grafana (4 dashboards) + AlertManager
+├── deployment/kubernetes/      # 10 K8s manifests (GCP GKE)
+├── docs/                       # Architecture, ADRs, runbooks
+├── scripts/                    # DB tools, migration utilities
+├── docker-compose.yml          # Dev: Redis, Zookeeper, Kafka, Elasticsearch, MinIO, Prometheus
+└── docker-compose.prod.yml     # Production config
 ```
 
 ## Quick Start
 
 ### Prerequisites
 
-- Java 17
+- Java 21+
 - Node.js 18+
 - Docker & Docker Compose
-- Neon PostgreSQL credentials (or any PostgreSQL 14+ instance)
+- Neon PostgreSQL credentials (or any PostgreSQL 16+ instance)
 
 ### 1. Start Infrastructure
 
 ```bash
-# Start Redis, Kafka, MinIO, Prometheus
 docker-compose up -d
 ```
 
-> **Note:** PostgreSQL is hosted on Neon cloud (not in docker-compose). Set `NEON_JDBC_URL`, `NEON_DB_USERNAME`, `NEON_DB_PASSWORD` in a `.env` file at the repo root.
+> PostgreSQL is hosted on Neon cloud (not in docker-compose). Configure DB credentials in `.env` at repo root.
 
 ### 2. Start Backend
 
 ```bash
-cd backend
-./start-backend.sh
-# Runs on http://localhost:8080
+cd backend && ./start-backend.sh
+# http://localhost:8080
 ```
 
 ### 3. Start Frontend
 
 ```bash
-cd frontend
-npm install   # first time only
-npm run dev
-# Runs on http://localhost:3000
+cd frontend && npm install && npm run dev
+# http://localhost:3000
 ```
 
-### Environment Variables
-
-**Backend** (set in `.env` or `application.yml`):
-- `NEON_JDBC_URL` — PostgreSQL JDBC connection string
-- `NEON_DB_USERNAME` / `NEON_DB_PASSWORD` — DB credentials
-- `JWT_SECRET` — JWT signing key (64+ chars)
-- `APP_SECURITY_ENCRYPTION_KEY` — Encryption key for sensitive data
-- `PAYMENTS_ENABLED` — Payment gateway kill-switch (default: `false`)
-
-**Frontend** (set in `frontend/.env.local`):
-- `NEXT_PUBLIC_API_URL` — Backend URL (default: `http://localhost:8080/api/v1`)
-- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — Google OAuth client ID
-- `NEXT_PUBLIC_DEMO_MODE` — Enable demo mode
-- `NEXT_PUBLIC_PAYMENTS_ENABLED` — Payment UI visibility (default: `false`)
+See [SETUP.md](SETUP.md) for detailed setup instructions and environment variables.
 
 ## Key Architecture Decisions
 
 - **Multi-tenancy:** Shared DB, shared schema. `tenant_id` UUID on every table. PostgreSQL RLS enforces isolation.
-- **Authentication:** JWT in HttpOnly cookies. Access token 1h, refresh token 24h. Google SSO via OIDC/PKCE.
-- **Authorization:** RBAC with ~300 `module.action` permission strings. 9 roles. SuperAdmin bypasses all checks.
-- **Events:** Kafka 4 topics (`approval-events`, `audit-events`, `employee-lifecycle-events`, `notification-events`) + dead letter queues.
+- **Authentication:** JWT (JJWT 0.12.6) with 24h access token, 30-day refresh. Google OAuth 2.0 SSO. MFA via TOTP.
+- **Authorization:** RBAC with 500+ `MODULE:ACTION` permissions. 9 roles (ESS, MGR, HRA, REC, PAY, FIN, ITA, SYS, UNA). SuperAdmin bypasses all checks.
+- **Events:** Kafka 5 topics (`approvals`, `notifications`, `audit`, `employee-lifecycle`, `fluence-content`) + 5 DLT topics.
 - **Payroll:** SpEL formula engine with DAG-ordered component evaluation, always transactional.
-- **Migrations:** Flyway only (V0–V52). Legacy Liquibase in `db/changelog/` is deprecated.
+- **Workflow:** Generic approval engine — `workflow_def` > `workflow_step` > `approval_instance` > `approval_task`.
+- **Migrations:** Flyway only (V0–V91, 88 files). Next migration: V92. Legacy Liquibase deprecated.
 
-## Monitoring & Observability
+## Services (Development)
 
-| Tool | URL | Purpose |
-|------|-----|---------|
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Frontend | `http://localhost:3000` | Next.js dev server |
+| Backend | `http://localhost:8080` | Spring Boot API |
 | Swagger UI | `http://localhost:8080/swagger-ui.html` | API documentation |
-| Prometheus | `http://localhost:9090` | Metrics scraping (5 targets) |
-| Grafana | Import dashboards from `monitoring/grafana/` | 4 dashboards: Overview, API, Business, Webhooks |
-| AlertManager | Configure via `monitoring/alertmanager/` | Severity-routed alerting |
-| MinIO Console | `http://localhost:9001` | File storage management |
-
-Alert rules: 9 application alerts + 19 SLO alerts in `monitoring/prometheus/rules/`.
-
-Operational runbooks: `docs/runbooks/` (incident response, payroll correction, data correction, Kafka DLQ).
+| Prometheus | `http://localhost:9090` | Metrics |
+| MinIO Console | `http://localhost:9001` | File storage |
 
 ## Documentation
 
-Detailed documentation is in [docs/](docs/):
-
-- Architecture: `docs/architecture-diagrams/`, `docs/adr/`
-- Operations: `docs/runbooks/`
-- Stabilization: `docs/execution/phase-{0..7}.md`
-- Technical baseline: `docs/technical-baseline.md`
-
-## Deployment
-
-| Platform | Config |
-|----------|--------|
-| Kubernetes (GCP GKE) | `deployment/kubernetes/` (10 manifests) |
-| Docker Compose | `docker-compose.yml` / `docker-compose.prod.yml` |
-| Google Cloud Build | `deployment/cloudbuild.yaml` |
+| Document | Description |
+|----------|-------------|
+| [REQUIREMENTS.md](REQUIREMENTS.md) | Functional and non-functional requirements |
+| [SETUP.md](SETUP.md) | Detailed setup guide |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Development workflow and code standards |
+| [SEED_DATA_README.md](SEED_DATA_README.md) | Seed data documentation |
+| [docs/adr/](docs/adr/) | Architecture Decision Records |
+| [docs/build-kit/](docs/build-kit/) | Architecture specifications (24 documents) |
+| [docs/runbooks/](docs/runbooks/) | Operational runbooks |
+| [docs/architecture/](docs/architecture/) | Technical architecture analysis |
 
 ## License
 
 Proprietary — NuLogic Technologies
-
----
-
-*Last Updated: March 2026*

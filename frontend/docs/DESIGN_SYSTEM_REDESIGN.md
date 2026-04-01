@@ -1,210 +1,69 @@
-# NU-AURA Design System Redesign
+# NU-AURA Design System
 
-**Aesthetic**: Civic Canvas (Warm, crafted enterprise)
-**Philosophy**: Human clarity + tactical depth + calm momentum
-**Status**: ✅ Foundation refreshed
+## Current State
 
----
+**Color palette:** Slate/Sky (migrated from Purple in March 2026)
+**Typography:** IBM Plex Sans / Serif / Mono
+**Component library:** Mantine UI + custom components in `frontend/components/ui/`
+**Spacing grid:** 8px
 
-## Overview
+## Color Tokens
 
-This redesign shifts NU-AURA away from cold minimalism into a **warm, confident enterprise UI**. It keeps clarity and density, but adds **material depth**, **editorial typography**, and **atmospheric backgrounds** so the platform feels modern and human without losing rigor.
+| Element | Token | Value |
+|---------|-------|-------|
+| Primary CTA | `sky-700` | #0369A1 |
+| Primary hover | `sky-800` | #075985 |
+| Background (dark) | `slate-900` | #0F172A |
+| Sidebar | `--bg-sidebar` | #1e1b4b |
+| Accents | `sky-*` palette | Various |
+| Focus ring | `sky-700` | #0369A1 |
 
-### Core Principles
+### Quick Replace Patterns
 
-1. **Warm surfaces, high legibility** — paper-like neutrals with strong contrast
-2. **Purposeful hierarchy** — serif-led headings, mono metrics
-3. **Signal-first accent** — teal is used to guide attention, not decorate
-4. **Material depth** — soft shadows, crisp borders, no glassmorphism
-5. **Meaningful motion** — page enter + staggered reveals only
-6. **Atmosphere** — gradients and grid texture for subtle depth
-
-### Differentiation Anchor
-
-> "Enterprise clarity that feels human, not sterile."
-
----
-
-## What Changed
-
-### 1. Typography
-
-**Before**: Inter / Space Grotesk / Fraunces (mixed, inconsistent)
-**After**: IBM Plex family (humanist + editorial + mono)
-
-- **Body**: IBM Plex Sans
-- **Headings**: IBM Plex Serif
-- **Metrics**: IBM Plex Mono
-- **Tighter hierarchy**: serif for titles, mono for numbers
-
-**Usage**:
 ```tsx
-<h1 className="text-page-title">Dashboard</h1>
-<p className="text-body">Content here</p>
-<span className="text-stat-large">₹ 1,24,300</span>
+// Buttons
+bg-primary-600 hover:bg-primary-700 → bg-sky-700 hover:bg-sky-800
+
+// Badges
+bg-primary-100 text-primary-700 → bg-sky-100 text-sky-700
+
+// Focus rings
+focus:ring-primary-500 → focus:ring-sky-700
+
+// Gradients
+from-primary-500 to-primary-600 → from-sky-700 to-sky-800
+
+// Text colors
+text-primary-600 dark:text-primary-400 → text-sky-700 dark:text-sky-400
 ```
 
----
+## Typography
 
-### 2. Color System
+| Variant | Font | Weight | Size |
+|---------|------|--------|------|
+| Page title | IBM Plex Sans | 700 | 24px |
+| Section title | IBM Plex Sans | 600 | 18px |
+| Card title | IBM Plex Sans | 600 | 16px |
+| Body | IBM Plex Sans | 400 | 14px |
+| Code/mono | IBM Plex Mono | 400 | 13px |
 
-**Before**: Purple-centric, high-contrast gray scale
-**After**: Warm sand neutrals + signal teal accent
+Font variables: `--font-sans`, `--font-serif`, `--font-mono` (loaded in `frontend/app/layout.tsx`)
 
-#### Light Mode
-- Background: `#f7f3ec`
-- Surface: `#ffffff`
-- Text: `#1c1b19`
-- Borders: `#e3dcd1`
-- Accent: `#0d9488`
+## Component Conventions
 
-#### Dark Mode
-- Background: `#0f1416`
-- Surface: `#131a1d`
-- Text: `#f2ede4`
-- Borders: `#273037`
-- Accent: `#2dd4bf`
+- **Buttons:** `<Button>` component with 11 variants — no raw `<button>`
+- **Cards:** `card-aura` with interactive variant
+- **Tables:** `table-aura` with built-in pagination, sort, search
+- **Badges:** `badge-status` with Sky palette
+- **Inputs:** `input-aura` with label + error integration
+- **Loading:** `NuAuraLoader`, `SkeletonTable`, `SkeletonStatCard`, `SkeletonCard`
+- **Empty states:** `<EmptyState>` with icon + title + description + action
+- **Dark mode:** Toggle `.dark` on `<html>`, all elements adapt via CSS vars
 
-**Removed**:
-- Purple brand bias
-- Flat, sterile neutrals
+## Spacing
 
----
+8px grid. Banned Tailwind classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`, `m-3`, `m-5`
 
-### 3. Background Atmosphere
+## Design Token File
 
-We now use a **soft gradient + subtle grid** to create atmosphere without visual noise.
-
-```css
---bg-pattern:
-  radial-gradient(...teal glow...),
-  radial-gradient(...blue glow...),
-  linear-gradient(...paper tone...),
-  linear-gradient(...grid...),
-  linear-gradient(...grid...);
-```
-
----
-
-### 4. Shadows
-
-**Before**: Minimal ring shadows
-**After**: Soft material depth
-
-```css
---shadow-card: 0 1px 0 rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
---shadow-elevated: 0 1px 0 rgba(16,24,40,.08), 0 16px 36px rgba(16,24,40,.14);
-```
-
----
-
-### 5. Components
-
-#### Cards
-```css
-.card-aura {
-  border-radius: 16px;
-  border: 1px solid var(--border-main);
-  box-shadow: var(--shadow-card);
-}
-```
-
-#### Buttons
-```css
-.btn-primary {
-  background-image: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover));
-  border-radius: 12px;
-}
-```
-
-#### Forms
-```css
-.input-aura {
-  height: 44px;
-  border-radius: 12px;
-}
-```
-
----
-
-### 6. Motion
-
-**Before**: Generic micro-motion
-**After**: Page + stagger only
-
-```css
-.page-reveal { animation: riseIn 280ms ease-out; }
-.stagger-children > * { animation: riseIn 320ms ease-out; }
-```
-
----
-
-### 7. Layout Shell
-
-- **Header**: semi-opaque surface, subtle hover glow
-- **Sidebar**: deep ink background, teal signal for active states
-- **AppSwitcher**: accent-led, calm grid
-
----
-
-## Design Tokens Reference
-
-### Core CSS Variables
-
-```css
-/* Surfaces */
---bg-main
---bg-surface
---bg-elevated
---bg-card
---bg-card-hover
-
-/* Text */
---text-primary
---text-secondary
---text-muted
-
-/* Borders */
---border-main
---border-subtle
---border-strong
---border-focus
-
-/* Accent */
---accent-primary
---accent-primary-hover
---accent-primary-subtle
-
-/* Shadows */
---shadow-card
---shadow-card-hover
---shadow-elevated
---shadow-dropdown
-```
-
----
-
-## Migration Guide
-
-1. **Replace purple accents**
-   - `primary-*` → `accent-*`
-2. **Update card radius**
-   - `rounded-xl` → `rounded-2xl`
-3. **Use staggered reveal for sections**
-   - Wrap blocks with `stagger-children`
-4. **Prefer mono for metrics**
-   - Use `text-stat-large` / `text-stat-medium`
-
----
-
-## Next Steps
-
-1. ✅ Design tokens + globals refresh
-2. 🔄 Layout shell polish (Header + Sidebar fine-tune)
-3. ⏳ Dashboard redesign pass
-4. ⏳ Component library audit
-5. ⏳ Full codebase migration
-
----
-
-**Updated**: 2026-03-21
+`frontend/styles/design-tokens.css` — spacing scale, typography scale, z-index scale (10, 20, 30, 50), touch targets (44px minimum)
