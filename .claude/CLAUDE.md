@@ -298,7 +298,8 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
-- **Flyway Status:** V0–V91 active (88 files, gaps at V1, V27–V29, V63–V66, V68–V79). Next migration = **V92**. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for recent migration details.
+- **Flyway Status:** V0–V93 active. Next migration = **V94** (reserved for canonical permission re-seed). V95 reserved for asset maintenance. V96 reserved for survey templates. Legacy Liquibase in `db/changelog/` — DO NOT USE. See MEMORY.md for migration tracking.
+- **HR_ADMIN Role:** Real backend role at rank 85 (between TENANT_ADMIN=90 and HR_MANAGER=80). Added in platform readiness plan. Senior HR leadership with role management, settings, audit, and workflow config permissions.
 - **Kafka Topics:** `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content` — 5 topics + 5 DLT topics + DLT handler. Failed events stored in `FailedKafkaEvent` table.
 - **Scheduled Jobs:** 25 `@Scheduled` jobs across attendance, contracts, email, notifications, recruitment, workflows, reports, webhooks, rate limiting, leave accrual, and tenant operations.
 - **Security:** Rate limiting (Bucket4j + Redis): 5/min auth, 100/min API, 5/5min exports. OWASP headers at both edge (Next.js middleware) and backend (Spring Security). CSRF double-submit cookie. Password policy: 12+ chars, uppercase/lowercase/digit/special required, history of 5, 90-day max age.

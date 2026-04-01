@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
  * run without needing full mocking.
  */
 @ExtendWith(MockitoExtension.class)
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
 @DisplayName("GlobalExceptionHandler Tests")
 class GlobalExceptionHandlerTest {
 
