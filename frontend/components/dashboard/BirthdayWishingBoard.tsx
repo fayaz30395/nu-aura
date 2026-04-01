@@ -185,7 +185,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative overflow-hidden rounded-lg border border-accent-200 dark:border-accent-800/40 bg-gradient-to-br from-accent-50 via-white to-cyan-50 dark:from-accent-950/40 dark:via-[var(--bg-card)] dark:to-cyan-950/30"
+      className="relative overflow-hidden rounded-lg border border-accent-200 dark:border-accent-800/40 bg-gradient-to-br from-accent-50 via-white to-info-50 dark:from-accent-950/40 dark:via-[var(--bg-card)] dark:to-info-950/30"
     >
       {/* Decorative elements */}
       <BuntingFlags />

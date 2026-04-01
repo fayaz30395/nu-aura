@@ -193,7 +193,7 @@ export default function StatutoryFilingsPage() {
       <Container size="xl" py="md">
         <Group justify="space-between" mb="lg">
           <div>
-            <Title order={2} className="text-slate-900 dark:text-white">
+            <Title order={2} className="text-surface-900 dark:text-white">
               Statutory Filing Reports
             </Title>
             <Text c="dimmed" size="sm">

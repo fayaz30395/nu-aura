@@ -119,7 +119,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
         <button
           onClick={zoomOut}
           disabled={zoom <= MIN_ZOOM}
-          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Zoom out"
         >
           <ZoomOut className="h-4 w-4 text-[var(--text-secondary)]" />
@@ -130,7 +130,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
         <button
           onClick={zoomIn}
           disabled={zoom >= MAX_ZOOM}
-          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Zoom in"
         >
           <ZoomIn className="h-4 w-4 text-[var(--text-secondary)]" />
@@ -138,7 +138,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
         <div className="w-px h-5 bg-[var(--border-main)]" />
         <button
           onClick={resetView}
-          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           aria-label="Reset view"
         >
           <Maximize2 className="h-4 w-4 text-[var(--text-secondary)]" />
@@ -150,7 +150,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
         ref={containerRef}
         className={cn(
           'overflow-hidden rounded-lg min-h-[500px] border border-[var(--border-subtle)]',
-          'bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900/50 dark:to-slate-900',
+          'bg-gradient-to-br from-surface-50/50 to-white dark:from-surface-900/50 dark:to-surface-900',
           isPanning ? 'cursor-grabbing' : 'cursor-grab',
         )}
         onMouseDown={handleMouseDown}

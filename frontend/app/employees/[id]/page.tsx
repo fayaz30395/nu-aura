@@ -354,14 +354,14 @@ export default function EmployeeDetailPage() {
     <AppLayout activeMenuItem="employees">
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* ── HERO BANNER ──────────────────────────────────────────── */}
-        <div className="relative bg-gradient-to-r from-slate-900 via-accent-950 to-slate-900 border-b border-[var(--border-main)]">
+        <div className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {/* Back + Actions row */}
             <div className="flex items-center justify-between mb-6">
               <button
                 onClick={() => router.push('/employees')}
                 aria-label="Back to employees list"
-                className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
+                className="flex items-center gap-1 text-surface-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="text-sm">Employees</span>
@@ -411,8 +411,8 @@ export default function EmployeeDetailPage() {
                     {formatEnumValue(employee.status)}
                   </span>
                 </div>
-                <p className="text-slate-300 text-sm mt-1">{employee.designation || '-'}</p>
-                <p className="text-slate-400 text-xs mt-0.5">{employee.employeeCode}</p>
+                <p className="text-surface-300 text-sm mt-1">{employee.designation || '-'}</p>
+                <p className="text-surface-400 text-xs mt-0.5">{employee.employeeCode}</p>
               </div>
             </div>
           </div>
