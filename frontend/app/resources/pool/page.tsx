@@ -347,7 +347,7 @@ export default function ResourcePoolPage() {
                   { label: 'Unassigned', color: 'bg-[var(--bg-secondary)]' },
                 ].map(l => (
                   <span key={l.label} className="flex items-center gap-1">
-                    <span className={`inline-block w-2.5 h-2.5 rounded-sm ${l.color}`} />
+                    <span className={`inline-block w-2.5 h-2.5 rounded-md ${l.color}`} />
                     {l.label}
                   </span>
                 ))}

@@ -63,7 +63,7 @@ export function ResourceAvailabilityCalendar({
           {/* Header with dates */}
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 min-w-[200px] bg-white px-4 py-2 text-left text-sm font-medium text-surface-700 dark:bg-surface-900 dark:text-surface-300">
+              <th className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
                 Employee
               </th>
               {dates.map((date) => {
@@ -160,7 +160,7 @@ function EmployeeRow({
       {/* Employee info */}
       <td
         className={cn(
-          'sticky left-0 z-10 bg-white px-4 py-2 dark:bg-surface-900',
+          'sticky left-0 z-10 bg-[var(--bg-card)] px-4 py-2',
           'border-b border-surface-100 dark:border-surface-800',
           onEmployeeClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800'
         )}

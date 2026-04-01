@@ -721,7 +721,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
     <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-[var(--border-main)] dark:bg-[var(--bg-surface)] dark:border-[var(--border-main)] ${colors.icon}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-card)] border border-[var(--border-main)] ${colors.icon}`}>
           {item.personAvatarUrl ? (
             <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32} className="rounded-full object-cover" />
           ) : icon}

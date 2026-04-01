@@ -224,7 +224,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-white dark:bg-accent-900/30 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-[var(--shadow-card)] hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-[var(--shadow-card)] hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           onClick={() => {
             // Navigate to wishes view — for now, scroll to celebrations section
             const celebrationSection = document.querySelector('[data-section="celebrations"]');

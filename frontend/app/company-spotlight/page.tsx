@@ -611,7 +611,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                     </p>
                   )}
                   {ctaLabel && (
-                    <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <button className="mt-4 px-4 py-2 bg-[var(--bg-card)] text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {ctaLabel}
                     </button>
                   )}

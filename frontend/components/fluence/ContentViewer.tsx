@@ -75,7 +75,7 @@ export default function ContentViewer({
 
   if (!editor) {
     return (
-      <div className={`rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+      <div className={`rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-surface-700 ${className}`}>
         <div className="text-[var(--text-muted)]">Loading content...</div>
       </div>
     );
@@ -83,7 +83,7 @@ export default function ContentViewer({
 
   if (!content) {
     return (
-      <div className={`rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+      <div className={`rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-surface-700 ${className}`}>
         <div className="text-[var(--text-muted)]">No content to display</div>
       </div>
     );

@@ -206,7 +206,7 @@ function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: Pre
           </div>
         ) : previewHtml ? (
           <div
-            className="prose prose-sm max-w-none dark:prose-invert p-6 border border-[var(--border-main)] rounded-lg bg-white dark:bg-surface-900"
+            className="prose prose-sm max-w-none dark:prose-invert p-6 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewHtml) }}
           />
         ) : (

@@ -192,7 +192,7 @@ export function AllocationApprovalModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
-              className="w-full rounded-lg border border-surface-200 bg-white p-4 text-sm placeholder:text-surface-400 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-surface-700 dark:bg-surface-800 dark:placeholder:text-surface-500"
+              className="w-full rounded-lg border border-surface-200 bg-[var(--bg-input)] p-4 text-sm placeholder:text-surface-400 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-surface-700 dark:placeholder:text-surface-500"
               rows={3}
             />
           </div>

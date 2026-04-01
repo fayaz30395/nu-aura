@@ -304,7 +304,7 @@ export default function EmployeeCompensationPage() {
         {/* Back navigation */}
         <button
           onClick={() => router.push(`/employees/${employeeId}`)}
-          className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-sm"
+          className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-md"
           aria-label="Back to employee profile"
         >
           <ChevronLeft size={16} />

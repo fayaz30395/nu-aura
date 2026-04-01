@@ -548,7 +548,7 @@ function AllocationCard({
       } ${
         allocation.isPendingApproval
           ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
-          : 'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-800'
+          : 'border-surface-200 bg-[var(--bg-card)] dark:border-surface-700'
       }`}
       onClick={onClick}
     >
@@ -628,7 +628,7 @@ function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
   };
 
   return (
-    <div className="rounded-lg border border-surface-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-800">
+    <div className="rounded-lg border border-surface-200 bg-[var(--bg-card)] p-4 dark:border-surface-700">
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">

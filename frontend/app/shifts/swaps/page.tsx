@@ -58,7 +58,7 @@ function SwapCard({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4"
+      className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -180,7 +180,7 @@ export default function ShiftSwapsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-[var(--shadow-card)]'
+                  ? 'bg-[var(--bg-card)] text-surface-900 dark:text-white shadow-[var(--shadow-card)]'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
               }`}
             >

@@ -78,7 +78,7 @@ function EmployeeCard({
       draggable={!readOnly}
       onDragStart={onDragStart}
       onClick={onClick}
-      className={`p-2 bg-white rounded border border-[var(--border-main)] shadow-[var(--shadow-card)] cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-all text-xs ${
+      className={`p-2 bg-[var(--bg-card)] rounded border border-[var(--border-main)] shadow-[var(--shadow-card)] cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-all text-xs ${
         isDragging ? 'opacity-50' : ''
       } ${!readOnly ? 'hover:border-accent-400' : ''}`}
     >
@@ -231,7 +231,7 @@ export default function CalibrationMatrix({
   return (
     <div className="space-y-4">
       {/* Legend */}
-      <div className="bg-white p-4 rounded-lg border border-[var(--border-main)]">
+      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
@@ -256,7 +256,7 @@ export default function CalibrationMatrix({
       </div>
 
       {/* Matrix Grid */}
-      <div className="bg-white p-4 rounded-lg border border-[var(--border-main)] overflow-x-auto">
+      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)] overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Y-axis label */}
           <div className="flex items-center mb-4">
@@ -402,7 +402,7 @@ export default function CalibrationMatrix({
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg-white p-4 rounded-lg border border-[var(--border-main)]">
+      <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Distribution Summary</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>

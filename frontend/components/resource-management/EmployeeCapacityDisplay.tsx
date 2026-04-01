@@ -274,7 +274,7 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
         'flex items-center justify-between rounded-lg border p-4',
         allocation.isPendingApproval
           ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
-          : 'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-800'
+          : 'border-surface-200 bg-[var(--bg-card)] dark:border-surface-700'
       )}
     >
       <div className="flex items-center gap-2">
