@@ -63,7 +63,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {
@@ -106,7 +106,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {
@@ -149,7 +149,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {
@@ -194,7 +194,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {
@@ -232,7 +232,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {
@@ -276,7 +276,7 @@ public class PdfExportService {
 
             document.add(table);
             return out.toByteArray();
-        } catch (DocumentException | java.io.IOException e) {
+        } catch (DocumentException e) {
             log.error("Error generating PDF: {}", e.getMessage(), e);
             throw new DocumentException("Failed to generate PDF");
         } finally {

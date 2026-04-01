@@ -258,7 +258,7 @@ public class PaymentService {
             webhook.setExternalEventId(data.getExternalPaymentId());
 
             // Update transaction status based on webhook
-            Optional<PaymentTransaction> txnOpt = paymentTransactionRepository.findByExternalRef(data.externalPaymentId);
+            Optional<PaymentTransaction> txnOpt = paymentTransactionRepository.findByExternalRef(data.getExternalPaymentId());
             if (txnOpt.isPresent()) {
                 PaymentTransaction transaction = txnOpt.get();
                 updateTransactionFromWebhook(transaction, data);

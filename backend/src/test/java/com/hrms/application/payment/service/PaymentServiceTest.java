@@ -98,8 +98,8 @@ class PaymentServiceTest {
                     .thenReturn(Optional.of(config));
 
             PaymentGatewayAdapter.PaymentGatewayResponse successResponse = new PaymentGatewayAdapter.PaymentGatewayResponse();
-            successResponse.success = true;
-            successResponse.externalPaymentId = "ext-pay-123";
+            successResponse.setSuccess(true);
+            successResponse.setExternalPaymentId("ext-pay-123");
 
             when(razorpayAdapter.initiatePayment(any())).thenReturn(successResponse);
             when(paymentTransactionRepository.save(any(PaymentTransaction.class)))
@@ -131,8 +131,8 @@ class PaymentServiceTest {
                     .thenReturn(Optional.of(config));
 
             PaymentGatewayAdapter.PaymentGatewayResponse failResponse = new PaymentGatewayAdapter.PaymentGatewayResponse();
-            failResponse.success = false;
-            failResponse.message = "Insufficient funds";
+            failResponse.setSuccess(false);
+            failResponse.setMessage("Insufficient funds");
 
             when(razorpayAdapter.initiatePayment(any())).thenReturn(failResponse);
             when(paymentTransactionRepository.save(any(PaymentTransaction.class)))
@@ -188,7 +188,7 @@ class PaymentServiceTest {
                     .thenReturn(Optional.of(config));
 
             PaymentGatewayAdapter.PaymentStatusResponse statusResponse = new PaymentGatewayAdapter.PaymentStatusResponse();
-            statusResponse.status = "COMPLETED";
+            statusResponse.setStatus("COMPLETED");
 
             when(razorpayAdapter.checkStatus("ext-123")).thenReturn(statusResponse);
             when(paymentTransactionRepository.save(any(PaymentTransaction.class)))
@@ -259,8 +259,8 @@ class PaymentServiceTest {
                     .thenReturn(Optional.of(config));
 
             PaymentGatewayAdapter.PaymentGatewayResponse refundResponse = new PaymentGatewayAdapter.PaymentGatewayResponse();
-            refundResponse.success = true;
-            refundResponse.externalPaymentId = "refund-ext-456";
+            refundResponse.setSuccess(true);
+            refundResponse.setExternalPaymentId("refund-ext-456");
 
             when(razorpayAdapter.processRefund(any(PaymentRefund.class))).thenReturn(refundResponse);
             when(paymentRefundRepository.save(any(PaymentRefund.class)))
@@ -318,7 +318,7 @@ class PaymentServiceTest {
                     .thenReturn(Optional.of(config));
 
             PaymentGatewayAdapter.PaymentGatewayResponse failedRefund = new PaymentGatewayAdapter.PaymentGatewayResponse();
-            failedRefund.success = false;
+            failedRefund.setSuccess(false);
 
             when(razorpayAdapter.processRefund(any(PaymentRefund.class))).thenReturn(failedRefund);
             when(paymentRefundRepository.save(any(PaymentRefund.class)))
@@ -354,9 +354,9 @@ class PaymentServiceTest {
             when(razorpayAdapter.verifyWebhookSignature(payload, signature)).thenReturn(true);
 
             PaymentGatewayAdapter.PaymentWebhookData webhookData = new PaymentGatewayAdapter.PaymentWebhookData();
-            webhookData.eventType = "payment.captured";
-            webhookData.externalPaymentId = "ext-pay-123";
-            webhookData.status = "completed";
+            webhookData.setEventType("payment.captured");
+            webhookData.setExternalPaymentId("ext-pay-123");
+            webhookData.setStatus("completed");
 
             when(razorpayAdapter.parseWebhookPayload(payload)).thenReturn(webhookData);
 

@@ -6,6 +6,7 @@ import com.hrms.application.analytics.dto.*;
 import com.hrms.application.analytics.service.AnalyticsService;
 import com.hrms.application.analytics.service.DashboardAnalyticsService;
 import com.hrms.application.platform.service.HrmsPermissionInitializer;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
@@ -30,6 +31,7 @@ public class AnalyticsController {
      * pendingApprovals, payrollProcessedThisMonth, openPositions.
      */
     @GetMapping("/summary")
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     public ResponseEntity<com.hrms.application.analytics.dto.AnalyticsSummary> getAnalyticsSummary() {
         com.hrms.application.analytics.dto.AnalyticsSummary summary = analyticsService.getAnalyticsSummary();
         return ResponseEntity.ok(summary);

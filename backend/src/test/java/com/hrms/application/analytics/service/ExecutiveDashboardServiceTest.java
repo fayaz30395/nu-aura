@@ -86,7 +86,7 @@ class ExecutiveDashboardServiceTest {
                 eq(TENANT_ID), any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(List.of());
         when(employeeRepository.countTerminationsByTenantIdAndExitDateRange(
-                eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED),
+                eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED.name()),
                 any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(List.of());
 
@@ -119,7 +119,7 @@ class ExecutiveDashboardServiceTest {
 
             // Then: exactly 1 termination batch query
             verify(employeeRepository, times(1)).countTerminationsByTenantIdAndExitDateRange(
-                    eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED),
+                    eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED.name()),
                     any(LocalDate.class), any(LocalDate.class));
 
             // Verify NO per-month payroll queries were made (would be 12 otherwise)

@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ import java.util.Set;
  * REST controller for attendance management.
  * Handles check-in/out, time tracking, regularization, and bulk imports.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/attendance")
 @RequiredArgsConstructor
