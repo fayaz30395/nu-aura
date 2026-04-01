@@ -237,7 +237,8 @@
       "Bash(docker-compose down:*)",
       "Bash(ps -p 82900 -o pid,command)",
       "Bash(git diff:*)",
-      "Bash(/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" /Applications/iTerm.app/Contents/Info.plist)"
+      "Bash(/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" /Applications/iTerm.app/Contents/Info.plist)",
+      "Bash(claude --version)"
     ],
     "additionalDirectories": [
       "/tmp"
