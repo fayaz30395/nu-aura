@@ -156,7 +156,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
                 setCode('');
                 setError(null);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors group"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <HelpCircle className="h-4 w-4" />
               <span>Use a backup code instead</span>
@@ -172,7 +172,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
                 setCode('');
                 setError(null);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Back to authenticator code
             </button>

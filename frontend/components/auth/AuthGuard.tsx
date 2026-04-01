@@ -255,7 +255,7 @@ export function AuthGuard({
           </p>
           <button
             onClick={() => router.push('/me/dashboard')}
-            className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
+            className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Go to Home
           </button>

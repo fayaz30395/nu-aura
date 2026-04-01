@@ -155,8 +155,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                 <button
                   type="button"
                   onClick={copySecret}
-                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   title="Copy secret"
+                  aria-label="Copy secret"
                 >
                   {copiedSecret ? (
                     <Check className="h-5 w-5 text-success-600" />
@@ -250,8 +251,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   key={index}
                   type="button"
                   onClick={() => copyBackupCode(code, index)}
-                  className="p-4 text-left bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors group"
+                  className="p-4 text-left bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   title="Click to copy"
+                  aria-label={`Copy backup code ${index + 1}`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <code className="font-mono text-sm text-[var(--text-primary)] flex-1">
