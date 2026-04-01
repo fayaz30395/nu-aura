@@ -116,11 +116,12 @@ export function EmailList({
                   e.stopPropagation();
                   onToggleStar(email.id, email.isStarred);
                 }}
-                className={`flex-shrink-0 ${
+                className={`flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   email.isStarred
                     ? 'text-warning-500'
                     : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-warning-500'
                 }`}
+                aria-label={email.isStarred ? 'Remove star' : 'Add star'}
               >
                 <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`} />
               </button>

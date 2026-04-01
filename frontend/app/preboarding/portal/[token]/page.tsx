@@ -235,7 +235,7 @@ export default function PreboardingPortalPage() {
               className={`flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}
               onClick={() => setActiveStep(idx)}
             >
-              <button className={`flex flex-col items-center cursor-pointer ${idx === activeStep ? 'opacity-100' : 'opacity-60'}`}>
+              <button className={`flex flex-col items-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${idx === activeStep ? 'opacity-100' : 'opacity-60'}`} aria-label={`Go to step ${idx + 1}: ${step.label}`}>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors ${
                   step.complete
                     ? 'bg-success-500 text-white'

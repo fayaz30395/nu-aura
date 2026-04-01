@@ -102,21 +102,21 @@ export default function EmploymentChangeRequestsPage() {
     switch (status) {
       case 'PENDING':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
             <Clock className="h-3 w-3" />
             Pending
           </span>
         );
       case 'APPROVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
             <CheckCircle className="h-3 w-3" />
             Approved
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
             <XCircle className="h-3 w-3" />
             Rejected
           </span>
@@ -164,7 +164,7 @@ export default function EmploymentChangeRequestsPage() {
         <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
         <span className="text-sm text-[var(--text-muted)]">{currentValue || 'N/A'}</span>
         <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
-        <span className="text-sm font-medium text-accent-700 dark:text-accent-400">{newValue || 'N/A'}</span>
+        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{newValue || 'N/A'}</span>
       </div>
     );
   };
@@ -180,7 +180,7 @@ export default function EmploymentChangeRequestsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             ← Back
           </button>
@@ -220,7 +220,7 @@ export default function EmploymentChangeRequestsPage() {
             <div className="text-sm text-[var(--text-secondary)] mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
-            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500">
+            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               {requests.length}
             </div>
           </div>
@@ -251,7 +251,7 @@ export default function EmploymentChangeRequestsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
+                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                           {request.employeeName?.charAt(0) || 'E'}
                         </span>
                       </div>
@@ -365,10 +365,10 @@ export default function EmploymentChangeRequestsPage() {
                           </div>
                           {request.rejectionReason && (
                             <div>
-                              <span className="text-sm font-medium text-danger-600 dark:text-danger-400">
+                              <span className="text-sm font-medium text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                 Rejection Reason:
                               </span>
-                              <p className="text-sm text-danger-700 dark:text-danger-300 mt-1">
+                              <p className="text-sm text-danger-700 dark:text-danger-300 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                 {request.rejectionReason}
                               </p>
                             </div>

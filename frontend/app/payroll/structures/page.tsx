@@ -154,7 +154,7 @@ export default function SalaryStructuresPage() {
               {error}
               <button
                 onClick={() => setError(null)}
-                className="ml-4 text-sm underline hover:no-underline"
+                className="ml-4 text-sm underline hover:no-underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Dismiss
               </button>

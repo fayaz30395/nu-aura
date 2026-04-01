@@ -196,7 +196,7 @@ export default function ExpenseSettingsPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors capitalize ${
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors capitalize cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab
                     ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-50 shadow-sm'
                     : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
@@ -217,7 +217,7 @@ export default function ExpenseSettingsPage() {
                 </h2>
                 <button
                   onClick={openCategoryCreate}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add Category
@@ -248,22 +248,25 @@ export default function ExpenseSettingsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleCategoryMutation.mutate({ categoryId: cat.id, active: !cat.isActive })}
-                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
+                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           title={cat.isActive ? 'Deactivate' : 'Activate'}
+                          aria-label={cat.isActive ? 'Deactivate category' : 'Activate category'}
                         >
                           {cat.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
                         </button>
                         <button
                           onClick={() => openCategoryEdit(cat)}
-                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
+                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           title="Edit"
+                          aria-label="Edit category"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setDeleteCategoryId(cat.id)}
-                          className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
+                          className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           title="Delete"
+                          aria-label="Delete category"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -285,7 +288,7 @@ export default function ExpenseSettingsPage() {
                 </h2>
                 <button
                   onClick={openPolicyCreate}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add Policy
@@ -318,13 +321,15 @@ export default function ExpenseSettingsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => togglePolicyMutation.mutate({ policyId: pol.id, active: !pol.isActive })}
-                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
+                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          aria-label={pol.isActive ? 'Deactivate policy' : 'Activate policy'}
                         >
                           {pol.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
                         </button>
                         <button
                           onClick={() => openPolicyEdit(pol)}
-                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
+                          className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          aria-label="Edit policy"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -378,8 +383,8 @@ export default function ExpenseSettingsPage() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
+                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel</button>
+                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingCategory ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>
@@ -449,8 +454,8 @@ export default function ExpenseSettingsPage() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <button type="button" onClick={() => setShowPolicyModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
+                <button type="button" onClick={() => setShowPolicyModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel</button>
+                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingPolicy ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>

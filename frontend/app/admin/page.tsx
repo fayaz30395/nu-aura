@@ -199,7 +199,7 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={handleSearchApply}
-              className="btn-secondary px-4 py-2 text-sm font-medium rounded-xl"
+              className="btn-secondary px-4 py-2 text-sm font-medium rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Search
             </button>

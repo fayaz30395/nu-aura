@@ -166,8 +166,9 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         <button
           onClick={() => loadFeed(true)}
           disabled={isRefreshing}
-          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
+          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           title="Refresh"
+          aria-label="Refresh feed"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
         </button>
@@ -179,7 +180,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
           <button
             key={option.value}
             onClick={() => setActiveFilter(option.value)}
-            className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${
+            className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               activeFilter === option.value
                 ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
                 : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-[var(--bg-card-hover)]'

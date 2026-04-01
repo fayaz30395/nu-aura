@@ -140,7 +140,7 @@ export function HolidayCarousel({
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedHolidays.length) % displayedHolidays.length)}
-            className="flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            className="flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
             aria-label="Previous holiday"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -174,7 +174,7 @@ export function HolidayCarousel({
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedHolidays.length)}
-            className="flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            className="flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
             aria-label="Next holiday"
           >
             <ChevronRight className="h-5 w-5" />
@@ -189,7 +189,7 @@ export function HolidayCarousel({
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-1.5 rounded-full transition-all ${
+              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
                 idx === currentIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/40'
               }`}
               aria-label={`Holiday ${idx + 1}`}

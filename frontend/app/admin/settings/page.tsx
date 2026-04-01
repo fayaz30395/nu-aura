@@ -160,9 +160,9 @@ export default function AdminSettingsPage() {
                   <div className={`p-4 rounded-xl ${card.bgColor}`}>
                     <Icon className={`h-6 w-6 ${card.color}`} />
                   </div>
-                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
-                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
+                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {card.title}
                 </h3>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -190,7 +190,7 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <Calendar className="h-5 w-5 text-success-600 dark:text-success-400" />
+                <Calendar className="h-5 w-5 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
@@ -203,7 +203,7 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Users className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <Users className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Employees</p>
@@ -216,7 +216,7 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Departments</p>

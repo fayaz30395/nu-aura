@@ -169,7 +169,7 @@ const StarRating: React.FC<StarRatingProps> = ({ value, readOnly = false, size =
         type="button"
         disabled={readOnly}
         onClick={() => !readOnly && onChange?.(i + 1)}
-        className={`p-0 rounded transition-colors ${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}`}
+        className={`p-0 rounded transition-colors ${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
         aria-label={`${i + 1} star`}
       >
         <Star
@@ -211,7 +211,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}
-        className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+        className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
         aria-label="More options"
       >
         <MoreHorizontal size={14} />
@@ -220,7 +220,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
         <div className="absolute right-0 top-6 z-30 w-44 bg-white border border-[var(--border-main)] rounded-lg shadow-lg py-1 text-sm">
           <button
             type="button"
-            className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+            className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             onClick={() => { setOpen(false); onViewDetails(); }}
           >
             View Details
@@ -228,7 +228,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {!isTerminal && nextStage && (
             <button
               type="button"
-              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               onClick={() => { setOpen(false); onMoveToNextStage(); }}
             >
               Move to {STAGE_LABELS[nextStage]}
@@ -237,7 +237,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {(applicant.status === ApplicationStatus.HR_ROUND || applicant.status === ApplicationStatus.OFFER_PENDING) && (
             <button
               type="button"
-              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               onClick={() => { setOpen(false); onCreateOffer?.(); }}
             >
               Create Offer Letter
@@ -246,7 +246,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {applicant.status !== ApplicationStatus.REJECTED && (
             <button
               type="button"
-              className="w-full text-left px-4 py-2 hover:bg-danger-50 text-danger-600 transition-colors"
+              className="w-full text-left px-4 py-2 hover:bg-danger-50 text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               onClick={() => { setOpen(false); onReject(); }}
             >
               Reject
@@ -847,7 +847,7 @@ export default function ApplicantPipelinePage() {
           <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
             <AlertCircle size={16} className="flex-shrink-0" />
             <span className="flex-1">{dragError}</span>
-            <button onClick={() => setDragError(null)} className="p-1 hover:bg-danger-100 rounded">
+            <button onClick={() => setDragError(null)} aria-label="Close error message" className="p-1 hover:bg-danger-100 rounded cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <X size={14} />
             </button>
           </div>
@@ -917,7 +917,8 @@ export default function ApplicantPipelinePage() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                    aria-label="Clear search"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <X size={14} />
                   </button>
@@ -926,7 +927,7 @@ export default function ApplicantPipelinePage() {
 
               <button
                 onClick={() => setShowFilters(v => !v)}
-                className={`flex items-center gap-1.5 px-4 py-2 text-sm border rounded-lg transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-sm border rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   hasActiveFilters
                     ? 'border-accent-300 bg-accent-50 text-accent-700'
                     : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
@@ -945,7 +946,7 @@ export default function ApplicantPipelinePage() {
               {hasActiveFilters && (
                 <button
                   onClick={() => { setSearchQuery(''); setSourceFilter(''); setMinRating(0); }}
-                  className="text-xs text-accent-700 hover:text-accent-800 font-medium"
+                  className="text-xs text-accent-700 hover:text-accent-800 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Clear all
                 </button>
@@ -974,7 +975,7 @@ export default function ApplicantPipelinePage() {
                   <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-white">
                     <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15} />
                     {minRating > 0 && (
-                      <button onClick={() => setMinRating(0)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+                      <button onClick={() => setMinRating(0)} aria-label="Clear rating filter" className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         <X size={12} />
                       </button>
                     )}
@@ -1129,7 +1130,7 @@ export default function ApplicantPipelinePage() {
                                               type="button"
                                               disabled={isMoving}
                                               onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
-                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-accent-50 text-[var(--text-muted)] hover:text-accent-700 border border-[var(--border-main)] hover:border-accent-200 transition-all"
+                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-accent-50 text-[var(--text-muted)] hover:text-accent-700 border border-[var(--border-main)] hover:border-accent-200 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                             >
                                               {isMoving ? (
                                                 <Loader2 size={10} className="animate-spin" />

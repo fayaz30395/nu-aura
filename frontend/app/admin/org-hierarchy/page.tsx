@@ -260,7 +260,7 @@ export default function OrgHierarchyPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold skeuo-emboss flex items-center space-x-4">
-            <svg className="h-8 w-8 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
             </svg>
             <span>Organization Chart</span>
@@ -331,12 +331,12 @@ export default function OrgHierarchyPage() {
           ) : error ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="mx-auto h-16 w-16 text-danger-500 mb-4">
+                <div className="mx-auto h-16 w-16 text-danger-500 mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-danger-600 dark:text-danger-400 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
+                <p className="text-danger-600 dark:text-danger-400 font-medium mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (

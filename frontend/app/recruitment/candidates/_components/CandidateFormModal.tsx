@@ -50,7 +50,7 @@ export function CandidateFormModal({
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
             </h2>
-            <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
+            <button onClick={onClose} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <X className="h-6 w-6" />
             </button>
           </div>

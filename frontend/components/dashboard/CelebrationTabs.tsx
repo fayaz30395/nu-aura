@@ -71,7 +71,7 @@ export function CelebrationTabs() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2.5 text-xs font-medium transition-colors ${
+              className={`px-4 py-2.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${
                 activeTab === tab.key
                   ? 'border-b-2 border-accent-500 text-[var(--text-primary)]'
                   : 'border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
@@ -86,7 +86,8 @@ export function CelebrationTabs() {
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mr-3 rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
+          className="mr-3 rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          aria-label="Toggle celebration expansion"
         >
           <ChevronDown size={16} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </button>
@@ -102,7 +103,7 @@ export function CelebrationTabs() {
               <p className="text-xs text-[var(--text-muted)]">Failed to load celebrations</p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-xs text-accent-500 hover:text-accent-400 font-medium transition-colors"
+                className="text-xs text-accent-500 hover:text-accent-400 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 Try again
               </button>

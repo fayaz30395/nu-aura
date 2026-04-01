@@ -579,7 +579,8 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
         {isOwn && (
           <button
             onClick={() => onDelete(comment.id)}
-            className="text-xs text-[var(--text-muted)] hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors"
+            className="text-xs text-[var(--text-muted)] hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            aria-label="Delete comment"
           >
             <Trash2 className="h-3 w-3" />
             Delete

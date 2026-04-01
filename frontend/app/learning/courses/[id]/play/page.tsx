@@ -418,7 +418,7 @@ export default function CoursePlayerPage() {
             <button
               onClick={goPrev}
               disabled={activeContentIdx <= 0}
-              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed"
+              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               title="Previous"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -527,7 +527,7 @@ export default function CoursePlayerPage() {
                 <button
                   onClick={goPrev}
                   disabled={activeContentIdx <= 0}
-                  className="flex items-center gap-1 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous
                 </button>
@@ -565,7 +565,7 @@ export default function CoursePlayerPage() {
             </p>
             <div className="flex flex-col gap-2">
               {enrollment?.certificateId && (
-                <button className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700">
+                <button className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   Download Certificate
                 </button>
               )}

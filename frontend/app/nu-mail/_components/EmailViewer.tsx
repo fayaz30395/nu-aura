@@ -183,9 +183,9 @@ export function EmailViewer({
                 <button
                   key={attachment.id}
                   onClick={() => onDownloadAttachment(email.id, attachment.id, attachment.filename)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <FileText className="h-4 w-4 text-[var(--text-muted)]" />
+                  <FileText className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <span className="text-sm text-[var(--text-secondary)]">
                     {attachment.filename}
                   </span>

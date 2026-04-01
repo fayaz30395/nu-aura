@@ -113,13 +113,15 @@ export function CompanySpotlight() {
         <>
           <button
             onClick={() => { setCurrentIndex((prev) => (prev - 1 + spotlights.length) % spotlights.length); setIsAutoPlaying(false); }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            aria-label="Previous spotlight"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={() => { setCurrentIndex((prev) => (prev + 1) % spotlights.length); setIsAutoPlaying(false); }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            aria-label="Next spotlight"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -133,9 +135,10 @@ export function CompanySpotlight() {
             <button
               key={index}
               onClick={() => { setCurrentIndex(index); setIsAutoPlaying(false); }}
-              className={`h-1.5 rounded-full transition-all ${
+              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
                 index === currentIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5 hover:bg-white/60'
               }`}
+              aria-label={`Spotlight ${index + 1}`}
             />
           ))}
         </div>

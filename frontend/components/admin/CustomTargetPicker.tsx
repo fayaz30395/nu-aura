@@ -262,11 +262,11 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             type="button"
             onClick={() => handleTypeChange(type)}
             disabled={disabled}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               targetType === type
                 ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-white'
-            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             {getTargetTypeIcon(type)}
             <span>{getTargetTypeLabel(type)}s</span>
@@ -313,7 +313,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                   key={`${result.type}-${result.id}`}
                   type="button"
                   onClick={() => addTarget(result)}
-                  className="w-full px-4 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] transition-colors"
+                  className="w-full px-4 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   <div className="flex items-center gap-2">
                     <span className={`p-1 rounded ${getTargetTypeBadgeColor(result.type)}`}>
@@ -364,8 +364,9 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                   <button
                     type="button"
                     onClick={() => removeTarget(index)}
-                    className="ml-1 hover:opacity-70 transition-opacity"
+                    className="ml-1 hover:opacity-70 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                     title="Remove"
+                    aria-label="Remove target"
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

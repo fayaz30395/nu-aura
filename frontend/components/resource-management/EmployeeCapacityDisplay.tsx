@@ -177,7 +177,7 @@ export function EmployeeCapacityDisplay({
       {onViewDetails && (
         <button
           onClick={onViewDetails}
-          className="text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+          className="text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
         >
           View full availability →
         </button>

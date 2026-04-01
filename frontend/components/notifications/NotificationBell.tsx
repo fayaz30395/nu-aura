@@ -202,7 +202,7 @@ export const NotificationBell: React.FC = () => {
             <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button onClick={handleMarkAllAsRead} className="text-sm text-accent-600 hover:text-accent-800">
+                <button onClick={handleMarkAllAsRead} className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
                   <CheckCheck className="h-4 w-4" />
                 </button>
               )}

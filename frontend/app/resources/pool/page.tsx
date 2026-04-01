@@ -130,7 +130,7 @@ export default function ResourcePoolPage() {
           <p className="text-[var(--text-muted)] text-sm max-w-md">
             {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
-          <button onClick={() => refetch()} className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors">
+          <button onClick={() => refetch()} aria-label="Retry loading resource pool data" className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
             <RefreshCw size={14} /> Retry
           </button>
         </div>

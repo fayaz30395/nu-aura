@@ -48,7 +48,7 @@ export const NewFolderModal = React.memo(function NewFolderModal({
           <h3 className="font-semibold text-[var(--text-primary)]">Create New Folder</h3>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>
@@ -127,7 +127,7 @@ export const ShareModal = React.memo(function ShareModal({
           <h3 className="font-semibold text-[var(--text-primary)]">Share &quot;{file.name}&quot;</h3>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>
@@ -236,7 +236,7 @@ export const RenameModal = React.memo(function RenameModal({
           <h3 className="font-semibold text-[var(--text-primary)]">Rename</h3>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>
@@ -347,7 +347,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
           )}
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2"
+            className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>

@@ -249,7 +249,7 @@ export default function ForgotPasswordPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-3"
+                className="btn-primary w-full py-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

@@ -133,7 +133,8 @@ export default function NewTimeEntryPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
+            aria-label="Go back to previous page"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>

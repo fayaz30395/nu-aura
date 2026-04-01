@@ -307,7 +307,7 @@ export default function PermissionsPage() {
                                 {role.name}
                               </h3>
                               {role.isSystemRole && (
-                                <span className="px-2 py-0.5 text-xs bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600 rounded-full">
+                                <span className="px-2 py-0.5 text-xs bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                   System
                                 </span>
                               )}
@@ -325,7 +325,7 @@ export default function PermissionsPage() {
                                   e.stopPropagation();
                                   openEditRoleModal(role);
                                 }}
-                                className="p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Pencil className="w-4 h-4" />
                               </button>
@@ -334,7 +334,7 @@ export default function PermissionsPage() {
                                   e.stopPropagation();
                                   handleDeleteRole(role.id, role.name);
                                 }}
-                                className="p-2 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -415,7 +415,7 @@ export default function PermissionsPage() {
                           <tr key={user.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-400 font-medium">
+                                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                   {user.firstName[0]}
                                 </div>
                                 <span className="font-medium text-[var(--text-primary)]">
@@ -430,7 +430,7 @@ export default function PermissionsPage() {
                               <div className="flex flex-wrap gap-2">
                                 {user.roles.length > 0 ? (
                                   user.roles.map(role => (
-                                    <span key={role.code} className="inline-flex items-center px-2 py-1 rounded bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 text-xs">
+                                    <span key={role.code} className="inline-flex items-center px-2 py-1 rounded bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                       {role.name}
                                     </span>
                                   ))
@@ -442,7 +442,7 @@ export default function PermissionsPage() {
                             <td className="px-6 py-4 text-right">
                               <button
                                 onClick={() => openEditUserModal(user)}
-                                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors"
+                                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Pencil className="w-4 h-4" />
                                 Edit Roles
@@ -629,7 +629,7 @@ function EditRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.name && (
-                  <p className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
+                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
                 )}
               </div>
               <div>
@@ -772,7 +772,7 @@ function CreateRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.roleCode && (
-                  <p className="mt-1 text-xs text-danger-500">{form.formState.errors.roleCode.message}</p>
+                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.roleCode.message}</p>
                 )}
               </div>
               <div>
@@ -784,7 +784,7 @@ function CreateRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.name && (
-                  <p className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
+                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
                 )}
               </div>
             </div>

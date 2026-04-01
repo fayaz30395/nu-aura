@@ -283,7 +283,7 @@ export default function WellnessPage() {
                       });
                       setIsLogModalOpen(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <Icon className="h-5 w-5 text-accent-500" />
                     <span className="text-sm font-medium text-[var(--text-secondary)]">{metric.label}</span>

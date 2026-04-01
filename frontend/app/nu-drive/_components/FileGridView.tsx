@@ -23,9 +23,9 @@ export function FileGridView({ files, onFileClick, onContextMenu }: FileGridView
         >
           <button
             onClick={(e) => onContextMenu(e, file)}
-            className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-opacity"
+            className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
+            <MoreVertical className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
           </button>
           <div className="flex flex-col items-center text-center">
             <div className="mb-3 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-accent-50 dark:group-hover:bg-accent-950/30 transition-colors">

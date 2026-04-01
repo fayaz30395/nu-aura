@@ -108,25 +108,27 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       padding: '0.75rem 1rem',
       backgroundColor: 'var(--accent-primary)',
       color: 'white',
-      border: 'none',
+      border: '2px solid transparent',
       borderRadius: '0.5rem',
       fontSize: '0.875rem',
       fontWeight: '500',
       cursor: 'pointer',
-      transition: 'background-color 0.2s',
-    },
+      transition: 'background-color 0.2s, border-color 0.2s',
+      outline: 'none',
+    } as React.CSSProperties,
     secondaryButton: {
       width: '100%',
       padding: '0.75rem 1rem',
       backgroundColor: '#d4d4f7',
       color: '#050766',
-      border: 'none',
+      border: '2px solid transparent',
       borderRadius: '0.5rem',
       fontSize: '0.875rem',
       fontWeight: '500',
       cursor: 'pointer',
-      transition: 'background-color 0.2s',
-    },
+      transition: 'background-color 0.2s, border-color 0.2s',
+      outline: 'none',
+    } as React.CSSProperties,
   };
 
   return (
@@ -218,6 +220,15 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 onMouseOut={(e) => {
                   e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--ring-primary)';
+                  e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'transparent';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                aria-label="Try again"
               >
                 Try Again
               </button>
@@ -232,6 +243,15 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 onMouseOut={(e) => {
                   e.currentTarget.style.backgroundColor = '#d4d4f7';
                 }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--ring-primary)';
+                  e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'transparent';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                aria-label="Go to dashboard"
               >
                 Go Home
               </button>

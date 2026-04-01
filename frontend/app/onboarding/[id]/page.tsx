@@ -255,7 +255,8 @@ export default function OnboardingDetailPage() {
                                                             <div className="flex items-center gap-4 flex-1">
                                                                 <button
                                                                     onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
-                                                                    className={`flex-shrink-0 transition-all ${task.status === 'COMPLETED' ? 'text-success-500' : 'text-[var(--text-muted)] group-hover:text-accent-400'
+                                                                    aria-label={`Mark task ${task.taskName} as ${task.status === 'COMPLETED' ? 'incomplete' : 'complete'}`}
+                                                                    className={`flex-shrink-0 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${task.status === 'COMPLETED' ? 'text-success-500' : 'text-[var(--text-muted)] group-hover:text-accent-400'
                                                                         }`}
                                                                 >
                                                                     {task.status === 'COMPLETED' ? (

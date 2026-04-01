@@ -434,13 +434,13 @@ export function CalendarView({
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
           </button>
           <button
             onClick={handleNext}
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400" />
           </button>
@@ -449,7 +449,7 @@ export function CalendarView({
           </h2>
           <button
             onClick={handleToday}
-            className="px-4 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="px-4 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             Today
           </button>

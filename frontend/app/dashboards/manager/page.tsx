@@ -158,12 +158,12 @@ export default function ManagerDashboardPage() {
       <AppLayout activeMenuItem="dashboard">
         <div className="p-6">
           <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl p-6 flex items-center gap-4">
-            <AlertCircle className="h-8 w-8 text-danger-600 dark:text-danger-400" />
+            <AlertCircle className="h-8 w-8 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             <div>
-              <h3 className="text-xl font-semibold text-danger-900 dark:text-danger-200">
+              <h3 className="text-xl font-semibold text-danger-900 dark:text-danger-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 Error Loading Dashboard
               </h3>
-              <p className="text-danger-700 dark:text-danger-400">{error instanceof Error ? error.message : String(error)}</p>
+              <p className="text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : String(error)}</p>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@ export default function ManagerDashboardPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="h-1.5 w-1.5 rounded-full bg-accent-500 animate-pulse" />
-              <span className="text-2xs font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400">Live Insights</span>
+              <span className="text-2xs font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Live Insights</span>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
               Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400 skeuo-emboss">Pulse</span>
@@ -240,7 +240,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Users className="h-10 w-10 text-accent-500" />
+                <Users className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -250,7 +250,7 @@ export default function ManagerDashboardPage() {
                     <div className="h-6 w-0.5 rounded-full bg-accent-500" />
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Reports</span>
-                      <span className="text-xs font-bold text-accent-700">{teamOverview.directReports} Direct</span>
+                      <span className="text-xs font-bold text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                <UserCheck className="h-10 w-10 text-success-500" />
+                <UserCheck className="h-10 w-10 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -271,7 +271,7 @@ export default function ManagerDashboardPage() {
                     <div className="h-6 w-0.5 rounded-full bg-success-500" />
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">On-Site</span>
-                      <span className="text-xs font-bold text-success-600 dark:text-success-400">{teamAttendance.workFromHomeToday} WFH</span>
+                      <span className="text-xs font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamAttendance.workFromHomeToday} WFH</span>
                     </div>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Calendar className="h-10 w-10 text-warning-500" />
+                <Calendar className="h-10 w-10 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -292,7 +292,7 @@ export default function ManagerDashboardPage() {
                     <div className="h-6 w-0.5 rounded-full bg-warning-500" />
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Confirmed</span>
-                      <span className="text-xs font-bold text-warning-600 dark:text-warning-400">{teamLeave.pendingApprovals} Pending</span>
+                      <span className="text-xs font-bold text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamLeave.pendingApprovals} Pending</span>
                     </div>
                   </div>
                 </div>
@@ -303,7 +303,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Zap className="h-10 w-10 text-accent-500" />
+                <Zap className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -313,7 +313,7 @@ export default function ManagerDashboardPage() {
                     <div className="h-6 w-0.5 rounded-full bg-accent-500" />
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Total</span>
-                      <span className="text-xs font-bold text-accent-600 dark:text-accent-400">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
+                      <span className="text-xs font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
                     </div>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default function ManagerDashboardPage() {
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <Activity className="h-4 w-4 text-accent-500" />
+                    <Activity className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     <span className="text-sm">Attendance Flow</span>
                   </div>
                   <Badge variant="outline" className="text-2xs font-bold uppercase tracking-tighter self-center">Real-time</Badge>
@@ -341,14 +341,14 @@ export default function ManagerDashboardPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-2.5 bg-accent-500/5 rounded-xl border border-accent-500/10">
                       <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly Rate</p>
-                      <span className="text-xl font-black text-accent-600 dark:text-accent-400 font-mono tracking-tighter">
+                      <span className="text-xl font-black text-accent-600 dark:text-accent-400 font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
                     <div className="p-2.5 bg-success-500/5 rounded-xl border border-success-500/10">
                       <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Stability</p>
                       <div className="flex items-center gap-2">
-                        <span className="text-xl font-black text-success-600 dark:text-success-400 font-mono tracking-tighter">
+                        <span className="text-xl font-black text-success-600 dark:text-success-400 font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                           {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
                         </span>
                         {teamAttendance.monthlyAttendanceChange !== 0 && (
@@ -373,7 +373,7 @@ export default function ManagerDashboardPage() {
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[280px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-4">
-                  <Star className="h-4 w-4 text-warning-500" />
+                  <Star className="h-4 w-4 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <span className="text-sm">Performance DNA</span>
                 </CardTitle>
               </CardHeader>
@@ -397,7 +397,7 @@ export default function ManagerDashboardPage() {
                           className="absolute h-full bg-gradient-to-r from-warning-400 to-warning-500 rounded-full"
                         />
                       </div>
-                      <div className="flex justify-between mt-1 font-bold text-xs text-warning-600">
+                      <div className="flex justify-between mt-1 font-bold text-xs text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         <span>{teamPerformance.goalCompletionRate?.toFixed(0)}% Completed</span>
                         <span>On Track</span>
                       </div>
@@ -421,10 +421,10 @@ export default function ManagerDashboardPage() {
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-accent-500" />
+                    <FileText className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     <span className="text-sm">Approval Pipeline</span>
                   </div>
-                  <Badge className="bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20 text-2xs">
+                  <Badge className="bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20 text-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     {teamLeave.pendingLeaveRequests.length} Active
                   </Badge>
                 </CardTitle>
@@ -443,7 +443,7 @@ export default function ManagerDashboardPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs text-[var(--text-primary)] group-hover:text-accent-500 transition-colors">{leave.employeeName}</span>
+                              <span className="font-bold text-xs text-[var(--text-primary)] group-hover:text-accent-500 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{leave.employeeName}</span>
                               {leave.urgency === 'HIGH' && (
                                 <span className="animate-pulse flex h-1.5 w-1.5 rounded-full bg-danger-500" />
                               )}
@@ -463,7 +463,7 @@ export default function ManagerDashboardPage() {
                   {teamLeave.pendingLeaveRequests.length === 0 && (
                     <div className="p-6 text-center">
                       <div className="h-10 w-10 rounded-full bg-success-500/10 flex items-center justify-center mx-auto mb-2">
-                        <CheckCircle className="h-5 w-5 text-success-500" />
+                        <CheckCircle className="h-5 w-5 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                       </div>
                       <p className="text-sm font-black text-[var(--text-primary)]">Clear Pipeline</p>
                       <p className="text-[var(--text-muted)] mt-0.5 text-xs font-bold">All approvals are up to date.</p>
@@ -479,7 +479,7 @@ export default function ManagerDashboardPage() {
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] h-full">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-2">
-                  <ClipboardList className="h-4 w-4 text-accent-500" />
+                  <ClipboardList className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <span className="text-sm">Immediate Acts</span>
                 </CardTitle>
               </CardHeader>
@@ -503,7 +503,7 @@ export default function ManagerDashboardPage() {
                   ))}
 
                   {(actionItems.overdueApprovals > 0 || actionItems.overdueReviews > 0) && (
-                    <div className="mt-2 p-2 rounded-xl bg-danger-500/10 border border-danger-500/20 text-danger-600 dark:text-danger-400 flex items-center gap-2">
+                    <div className="mt-2 p-2 rounded-xl bg-danger-500/10 border border-danger-500/20 text-danger-600 dark:text-danger-400 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       <AlertCircle className="h-4 w-4 animate-bounce" />
                       <div>
                         <p className="font-black text-xs leading-tight">{actionItems.overdueApprovals + actionItems.overdueReviews} Overdue</p>
@@ -523,16 +523,16 @@ export default function ManagerDashboardPage() {
             <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FolderKanban className="h-4 w-4 text-accent-500" />
+                  <FolderKanban className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <span className="text-sm">Team Projects & Allocations</span>
                 </div>
                 {teamProjectsData?.summary && (
                   <div className="flex items-center gap-2 text-2xs font-bold text-[var(--text-muted)]">
                     <span>{teamProjectsData.summary.totalReports} Reports</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
-                    <span className="text-success-600 dark:text-success-400">{teamProjectsData.summary.allocatedCount} Allocated</span>
+                    <span className="text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamProjectsData.summary.allocatedCount} Allocated</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
-                    <span className="text-warning-600 dark:text-warning-400">{teamProjectsData.summary.unallocatedCount} Unallocated</span>
+                    <span className="text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamProjectsData.summary.unallocatedCount} Unallocated</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
                     <span>Avg: {teamProjectsData.summary.avgAllocation}%</span>
                   </div>
@@ -553,7 +553,7 @@ export default function ManagerDashboardPage() {
               {!teamProjectsLoading && teamProjectsError && (
                 <div className="p-8 text-center">
                   <div className="h-14 w-14 rounded-full bg-accent-500/10 flex items-center justify-center mx-auto mb-3">
-                    <Briefcase className="h-7 w-7 text-accent-500" />
+                    <Briefcase className="h-7 w-7 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">Coming Soon</p>
                   <p className="text-[var(--text-muted)] mt-1 text-sm font-bold">
@@ -592,7 +592,7 @@ export default function ManagerDashboardPage() {
                           <div>
                             <button
                               onClick={() => router.push(`/employees/${member.employeeId}`)}
-                              className="font-extrabold text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors text-left"
+                              className="font-extrabold text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               {member.employeeName}
                             </button>
@@ -604,7 +604,7 @@ export default function ManagerDashboardPage() {
 
                         <div className="flex items-center gap-4">
                           {member.isOverAllocated && (
-                            <div className="flex items-center gap-1 text-xs font-black text-danger-600 dark:text-danger-400 bg-danger-500/10 px-2.5 py-1 rounded-full">
+                            <div className="flex items-center gap-1 text-xs font-black text-danger-600 dark:text-danger-400 bg-danger-500/10 px-2.5 py-1 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               <AlertTriangle className="h-3.5 w-3.5" />
                               Over-allocated
                             </div>
@@ -635,7 +635,7 @@ export default function ManagerDashboardPage() {
                                 <span className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-surface-400'}`} />
                                 <button
                                   onClick={() => router.push(`/projects/${project.projectId}`)}
-                                  className="font-bold text-sm text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex items-center gap-1.5"
+                                  className="font-bold text-sm text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   {project.projectName}
                                   <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -696,7 +696,7 @@ export default function ManagerDashboardPage() {
                         <h4 className="font-extrabold text-xs text-[var(--text-primary)] mb-0.5">{alert.title}</h4>
                         <p className="text-2xs font-bold text-[var(--text-muted)] leading-relaxed line-clamp-2">{alert.description}</p>
                         <div className="mt-2 pt-2 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex items-center justify-between">
-                          <span className="text-2xs font-black uppercase text-accent-500">Action: {alert.actionRequired}</span>
+                          <span className="text-2xs font-black uppercase text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Action: {alert.actionRequired}</span>
                           <Button variant="ghost" size="sm" className="font-black text-2xs h-6 px-2">RESOLVE</Button>
                         </div>
                       </div>
@@ -714,7 +714,7 @@ export default function ManagerDashboardPage() {
           <Card className="border-0 shadow-md">
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
-                <Target className="h-4 w-4 text-accent-500" />
+                <Target className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Team Goals
               </CardTitle>
             </CardHeader>
@@ -722,7 +722,7 @@ export default function ManagerDashboardPage() {
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
-                    <p className="text-lg font-bold text-success-600 dark:text-success-400">
+                    <p className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {teamPerformance.goalsOnTrack}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
@@ -730,7 +730,7 @@ export default function ManagerDashboardPage() {
                     </p>
                   </div>
                   <div className="p-2 bg-warning-50 dark:bg-warning-900/20 rounded-lg text-center">
-                    <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
+                    <p className="text-lg font-bold text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {teamPerformance.goalsAtRisk}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
@@ -738,7 +738,7 @@ export default function ManagerDashboardPage() {
                     </p>
                   </div>
                   <div className="p-2 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-center">
-                    <p className="text-lg font-bold text-accent-600 dark:text-accent-400">
+                    <p className="text-lg font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {teamPerformance.goalsCompleted}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
@@ -771,7 +771,7 @@ export default function ManagerDashboardPage() {
           <Card className="border-0 shadow-md">
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
-                <Users className="h-4 w-4 text-accent-500" />
+                <Users className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Engagement & Feedback
               </CardTitle>
             </CardHeader>
@@ -792,7 +792,7 @@ export default function ManagerDashboardPage() {
                       {teamPerformance.oneOnOnesScheduled}
                     </span>
                     {teamPerformance.oneOnOnesOverdue > 0 && (
-                      <span className="text-danger-600 dark:text-danger-400 flex items-center gap-1">
+                      <span className="text-danger-600 dark:text-danger-400 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         <AlertCircle className="h-3 w-3" />
                         {teamPerformance.oneOnOnesOverdue} overdue
                       </span>
@@ -811,8 +811,8 @@ export default function ManagerDashboardPage() {
                   </div>
                   {teamPerformance.pendingFeedbackRequests > 0 && (
                     <div className="flex items-center gap-1 text-2xs mt-0.5">
-                      <Clock className="h-3 w-3 text-warning-600" />
-                      <span className="text-warning-600 dark:text-warning-400">
+                      <Clock className="h-3 w-3 text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                      <span className="text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {teamPerformance.pendingFeedbackRequests} pending
                       </span>
                     </div>

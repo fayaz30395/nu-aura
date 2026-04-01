@@ -302,7 +302,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
                     <button
                       key={item.title}
                       ref={(el) => { itemRefs.current[idx] = el; }}
-                      className={`fluence-slash-item ${
+                      className={`fluence-slash-item cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         idx === selectedIndex ? 'fluence-slash-item-active' : ''
                       }`}
                       onClick={() => selectItem(idx)}

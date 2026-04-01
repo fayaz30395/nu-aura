@@ -203,7 +203,7 @@ export default function MileagePage() {
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-4 w-4" />
               Log Mileage
@@ -287,7 +287,7 @@ export default function MileagePage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+                className={`pb-3 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab.key
                     ? 'border-accent-700 text-accent-700'
                     : 'border-transparent text-surface-500 hover:text-surface-700'
@@ -314,7 +314,7 @@ export default function MileagePage() {
                   <button
                     key={status}
                     onClick={() => setStatusFilter(status)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       statusFilter === status
                         ? 'bg-accent-700 text-white'
                         : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200'
@@ -441,7 +441,7 @@ export default function MileagePage() {
                                 <button
                                   onClick={() => handleApproveLog(logEntry.id)}
                                   disabled={approveMutation.isPending}
-                                  className="px-3 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                                  className="px-3 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   Approve
                                 </button>
@@ -450,7 +450,7 @@ export default function MileagePage() {
                                     setSelectedLogId(logEntry.id);
                                     setShowRejectModal(true);
                                   }}
-                                  className="px-3 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors"
+                                  className="px-3 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   Reject
                                 </button>
@@ -653,14 +653,14 @@ export default function MileagePage() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 text-sm text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || createMutation.isPending}
-                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {createMutation.isPending ? 'Creating...' : 'Create Log'}
               </button>
@@ -688,14 +688,14 @@ export default function MileagePage() {
           <ModalFooter>
             <button
               onClick={() => setShowRejectModal(false)}
-              className="px-4 py-2 text-sm text-surface-600 hover:bg-surface-100 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm text-surface-600 hover:bg-surface-100 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Cancel
             </button>
             <button
               onClick={handleRejectLog}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>
@@ -747,7 +747,7 @@ function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
           <button
             onClick={() => onSubmit(log.id)}
             disabled={isSubmitting}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 ml-auto"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <Send className="h-3 w-3" />
             Submit

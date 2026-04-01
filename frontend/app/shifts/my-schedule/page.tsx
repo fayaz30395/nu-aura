@@ -104,7 +104,7 @@ export default function MySchedulePage() {
           </div>
           <button
             onClick={() => router.push('/shifts/swaps')}
-            className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <ArrowLeftRight className="w-4 h-4" />
             Swap Request
@@ -118,7 +118,8 @@ export default function MySchedulePage() {
             <div className="flex items-center justify-between mb-4">
               <button
                 onClick={() => setMonthOffset((p) => p - 1)}
-                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Previous month"
               >
                 <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
               </button>
@@ -126,14 +127,15 @@ export default function MySchedulePage() {
                 <h2 className="font-semibold text-surface-900 dark:text-white">{monthName}</h2>
                 <button
                   onClick={() => setMonthOffset(0)}
-                  className="text-xs text-accent-700 dark:text-accent-400 hover:underline"
+                  className="text-xs text-accent-700 dark:text-accent-400 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   Today
                 </button>
               </div>
               <button
                 onClick={() => setMonthOffset((p) => p + 1)}
-                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Next month"
               >
                 <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />
               </button>

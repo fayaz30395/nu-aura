@@ -410,7 +410,7 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleDownloadCertificate}
                     disabled={downloadingCert}
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-success-600 text-success-600 dark:text-success-400 rounded-md text-sm font-medium hover:bg-success-50 dark:hover:bg-success-900/20 mb-2 disabled:opacity-60"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-success-600 text-success-600 dark:text-success-400 rounded-md text-sm font-medium hover:bg-success-50 dark:hover:bg-success-900/20 mb-2 disabled:opacity-60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {downloadingCert ? (
                       <>
@@ -439,7 +439,7 @@ export default function CourseDetailPage() {
                 <button
                   onClick={handleEnroll}
                   disabled={enrollMutation.isPending}
-                  className="btn-primary w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="btn-primary w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {enrollMutation.isPending ? (
                     <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>

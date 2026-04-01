@@ -131,7 +131,8 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
     <div className="relative">
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="p-0.5 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+        className="p-0.5 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        aria-label="Open menu"
       >
         <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
@@ -142,7 +143,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             {onEdit && (
               <button
                 onClick={() => { onEdit(); setShowMenu(false); }}
-                className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Pencil className="h-3 w-3" />
                 Edit post
@@ -151,7 +152,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
             <button
               onClick={onDelete}
               disabled={isDeleting}
-              className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50"
+              className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Trash2 className="h-3 w-3" />
               {isDeleting ? 'Deleting...' : 'Delete post'}
@@ -442,14 +443,14 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <button
                   onClick={handleCancelEdit}
                   disabled={isSavingEdit}
-                  className="px-4 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+                  className="px-4 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
                   disabled={!editContent.trim() || isSavingEdit}
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {isSavingEdit ? 'Saving...' : 'Save'}
                 </button>
@@ -566,7 +567,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           <div className="flex items-center gap-4">
             <button
               onClick={handleLike}
-              className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 liked ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
@@ -575,7 +576,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             </button>
             <button
               onClick={handleToggleComments}
-              className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 showComments ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
@@ -589,7 +590,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <div className="relative">
                   <button
                     onClick={handleShowAllReactors}
-                    className="inline-flex items-center gap-1.5 hover:text-[var(--text-secondary)] transition-colors"
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    aria-label="Show all reactions"
                   >
                     {localReactors.length > 0 && (
                       <div className="flex -space-x-1.5">
@@ -625,7 +627,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                       <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-lg overflow-hidden">
                         <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
                           <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
-                          <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs">✕</button>
+                          <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close reactions popup">✕</button>
                         </div>
                         <div className="max-h-48 overflow-y-auto">
                           {isLoadingAllReactors ? (
@@ -663,7 +665,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <span className="mx-0.5">·</span>
               )}
               {localCommentCount > 0 && (
-                <button onClick={handleToggleComments} className="hover:text-[var(--text-secondary)] hover:underline transition-colors">
+                <button onClick={handleToggleComments} className="hover:text-[var(--text-secondary)] hover:underline transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {localCommentCount} {localCommentCount === 1 ? 'Comment' : 'Comments'}
                 </button>
               )}
@@ -689,7 +691,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <button
                 onClick={handleSubmitComment}
                 disabled={!commentText.trim() || isSubmittingComment}
-                className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Submit comment"
               >
                 <Send className="h-3 w-3" />
               </button>
@@ -854,7 +857,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             <div className="flex items-center gap-2 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
               <button
                 onClick={handleLike}
-                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
+                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
@@ -863,7 +866,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               </button>
               <button
                 onClick={handleToggleComments}
-                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
+                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   showComments ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >

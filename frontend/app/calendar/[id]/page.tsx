@@ -109,7 +109,7 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Event not found'}
             </p>
@@ -237,7 +237,7 @@ export default function EventDetailPage() {
                   href={event.meetingLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1"
+                  className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Join Meeting
                   <ExternalLink className="h-4 w-4" />
@@ -387,7 +387,7 @@ export default function EventDetailPage() {
                 <button
                   onClick={handleSyncToGoogle}
                   disabled={syncToGoogleMutation.isPending}
-                  className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {syncToGoogleMutation.isPending ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -401,7 +401,7 @@ export default function EventDetailPage() {
               <PermissionGate permission={Permissions.CALENDAR_DELETE}>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center gap-2 px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Trash2 className="h-5 w-5" />
                   Delete

@@ -65,9 +65,9 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
             </div>
             <button
               onClick={(e) => onContextMenu(e, file)}
-              className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+              className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
+              <MoreVertical className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
           </div>
         ))}

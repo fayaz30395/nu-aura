@@ -195,7 +195,8 @@ export default function PricingPage() {
             <div className="inline-flex items-center gap-4 p-1 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)]">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
+                aria-label="Switch to monthly billing"
+                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   billingCycle === 'monthly'
                     ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm'
                     : 'text-[var(--text-muted)]'
@@ -205,7 +206,8 @@ export default function PricingPage() {
               </button>
               <button
                 onClick={() => setBillingCycle('annual')}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                aria-label="Switch to annual billing"
+                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   billingCycle === 'annual'
                     ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm'
                     : 'text-[var(--text-muted)]'

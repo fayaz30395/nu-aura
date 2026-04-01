@@ -179,7 +179,7 @@ export default function ExpenseDetailPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/expenses')}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Back to expenses"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -245,14 +245,14 @@ export default function ExpenseDetailPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowReceiptScanner(true)}
-                  className="flex items-center gap-1.5 px-4 py-1.5 border border-accent-700 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 border border-accent-700 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Receipt className="w-4 h-4" />
                   Scan Receipt
                 </button>
                 <button
                   onClick={() => setShowAddItem(true)}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add Item
@@ -293,7 +293,7 @@ export default function ExpenseDetailPage() {
                   {isDraft && isOwner && (
                     <button
                       onClick={() => setDeleteItemId(item.id)}
-                      className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
+                      className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       aria-label="Delete item"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -362,7 +362,7 @@ export default function ExpenseDetailPage() {
             <button
               onClick={onSubmit}
               disabled={submitMutation.isPending}
-              className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {submitMutation.isPending ? 'Submitting...' : 'Submit for Approval'}
             </button>
@@ -372,13 +372,13 @@ export default function ExpenseDetailPage() {
               <button
                 onClick={onApprove}
                 disabled={approveMutation.isPending}
-                className="px-4 py-2 bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
               </button>
               <button
                 onClick={() => setShowRejectDialog(true)}
-                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Reject
               </button>
@@ -435,10 +435,10 @@ export default function ExpenseDetailPage() {
               </div>
             </ModalBody>
             <ModalFooter>
-              <button type="button" onClick={() => setShowAddItem(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">
+              <button type="button" onClick={() => setShowAddItem(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 Cancel
               </button>
-              <button type="submit" disabled={addItemMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50">
+              <button type="submit" disabled={addItemMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {addItemMutation.isPending ? 'Adding...' : 'Add Item'}
               </button>
             </ModalFooter>
@@ -461,13 +461,13 @@ export default function ExpenseDetailPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <button type="button" onClick={() => setShowRejectDialog(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">
+            <button type="button" onClick={() => setShowRejectDialog(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               Cancel
             </button>
             <button
               onClick={onReject}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>

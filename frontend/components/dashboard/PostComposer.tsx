@@ -239,20 +239,20 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           />
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add image">
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Add image">
                 <ImageIcon size={14} />
               </button>
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add emoji">
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Add emoji">
                 <Smile size={14} />
               </button>
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Attach file">
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Attach file">
                 <Paperclip size={14} />
               </button>
             </div>
             <button
               onClick={handlePost}
               disabled={!postContent.trim() || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {isSubmitting ? 'Posting...' : 'Post'}
@@ -304,7 +304,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <button
                 type="button"
                 onClick={addPollOption}
-                className="flex items-center gap-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 transition-colors pl-7"
+                className="flex items-center gap-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 transition-colors pl-7 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 <Plus size={12} />
                 Add option
@@ -317,7 +317,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleCreatePoll}
               disabled={!canSubmitPoll || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
               {isSubmitting ? 'Creating...' : 'Create Poll'}
@@ -447,7 +447,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleSendPraise}
               disabled={!canSubmitPraise || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
               {isSubmitting ? 'Sending...' : 'Send Praise'}

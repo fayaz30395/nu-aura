@@ -143,11 +143,12 @@ export default function AvailabilityCalendarPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" disabled={isLoading}>
+            <Button variant="ghost" disabled={isLoading} aria-label="Refresh data">
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             <Button
               variant="outline"
+              aria-label="Toggle filters"
               onClick={() => setShowFilters(!showFilters)}
               className={showFilters ? 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]' : ''}
             >

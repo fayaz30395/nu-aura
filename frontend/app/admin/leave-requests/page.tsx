@@ -163,7 +163,7 @@ export default function AdminLeaveRequestsPage() {
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-6 py-4 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 selectedStatus === status
                   ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
@@ -246,7 +246,7 @@ export default function AdminLeaveRequestsPage() {
                               setSelectedRequest(request);
                               setShowApproveModal(true);
                             }}
-                            className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300"
+                            className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             Approve
                           </button>
@@ -255,7 +255,7 @@ export default function AdminLeaveRequestsPage() {
                               setSelectedRequest(request);
                               setShowRejectModal(true);
                             }}
-                            className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300"
+                            className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             Reject
                           </button>
@@ -300,14 +300,14 @@ export default function AdminLeaveRequestsPage() {
                   setSelectedRequest(null);
                   setApprovalComments('');
                 }}
-                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 disabled={approveMutation.isPending}
               >
                 Cancel
               </button>
               <button
                 onClick={handleApprove}
-                className="btn-primary px-4 py-2 bg-success-600 text-white rounded-md hover:bg-success-700 disabled:opacity-50"
+                className="btn-primary px-4 py-2 bg-success-600 text-white rounded-md hover:bg-success-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 disabled={approveMutation.isPending}
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
@@ -345,14 +345,14 @@ export default function AdminLeaveRequestsPage() {
                   setSelectedRequest(null);
                   setRejectionReason('');
                 }}
-                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 disabled={rejectMutation.isPending}
               >
                 Cancel
               </button>
               <button
                 onClick={handleReject}
-                className="btn-secondary px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
+                className="btn-secondary px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 disabled={rejectMutation.isPending || !rejectionReason.trim()}
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

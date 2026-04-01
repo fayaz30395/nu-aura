@@ -239,7 +239,7 @@ export default function HolidayCalendarManagementPage() {
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
-              className="btn-primary !h-auto"
+              className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               + Add Holiday
             </button>
@@ -252,7 +252,8 @@ export default function HolidayCalendarManagementPage() {
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
-              className="absolute top-0 bottom-0 right-0 px-4 py-4"
+              className="absolute top-0 bottom-0 right-0 px-4 py-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              aria-label="Close error message"
             >
               <span className="text-danger-500 dark:text-danger-400 text-xl">&times;</span>
             </button>
@@ -353,13 +354,13 @@ export default function HolidayCalendarManagementPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="text-accent-700 hover:text-accent-900 px-4 py-1"
+                            className="text-accent-700 hover:text-accent-900 px-4 py-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
-                            className="text-danger-600 hover:text-danger-900 px-4 py-1"
+                            className="text-danger-600 hover:text-danger-900 px-4 py-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             Delete
                           </button>
@@ -403,7 +404,8 @@ export default function HolidayCalendarManagementPage() {
                       setEditingHoliday(null);
                       resetForm();
                     }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    aria-label="Close dialog"
                   >
                     <span className="text-2xl">&times;</span>
                   </button>
@@ -541,14 +543,14 @@ export default function HolidayCalendarManagementPage() {
                         setEditingHoliday(null);
                         resetForm();
                       }}
-                      className="btn-secondary"
+                      className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                      className="btn-primary !h-auto disabled:opacity-50"
+                      className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingHoliday ? 'Update' : 'Create')} Holiday
                     </button>

@@ -292,14 +292,14 @@ export default function ImplicitRolesPage() {
           </select>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="btn-primary !h-auto whitespace-nowrap"
+            className="btn-primary !h-auto whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Create Rule
           </button>
           <button
             onClick={handleRecomputeAll}
             disabled={recomputeMutation.isPending}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 disabled:opacity-50 whitespace-nowrap"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 disabled:opacity-50 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Recompute All
           </button>
@@ -314,20 +314,20 @@ export default function ImplicitRolesPage() {
               <button
                 onClick={handleBulkActivate}
                 disabled={bulkActivateMutation.isPending}
-                className="px-4 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50"
+                className="px-4 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Activate
               </button>
               <button
                 onClick={handleBulkDeactivate}
                 disabled={bulkDeactivateMutation.isPending}
-                className="px-4 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50"
+                className="px-4 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Deactivate
               </button>
               <button
                 onClick={() => setSelectedRules([])}
-                className="px-4 py-1 text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] rounded hover:bg-[var(--bg-surface)]"
+                className="px-4 py-1 text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] rounded hover:bg-[var(--bg-surface)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Clear
               </button>
@@ -418,7 +418,7 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                     <button
                       onClick={() => openAffectedUsersModal(rule)}
-                      className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline"
+                      className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {rule.affectedUserCount} users
                     </button>
@@ -437,13 +437,13 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <button
                       onClick={() => openEditModal(rule)}
-                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300"
+                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteRule(rule)}
-                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300"
+                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Delete
                     </button>
@@ -570,14 +570,14 @@ export default function ImplicitRolesPage() {
                     setShowCreateModal(false);
                     createForm.reset();
                   }}
-                  className="btn-secondary"
+                  className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="btn-primary !h-auto disabled:opacity-50"
+                  className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Create Rule
                 </button>
@@ -689,14 +689,14 @@ export default function ImplicitRolesPage() {
                     setSelectedRule(null);
                     editForm.reset();
                   }}
-                  className="btn-secondary"
+                  className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="btn-primary !h-auto disabled:opacity-50"
+                  className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Update Rule
                 </button>
@@ -731,7 +731,8 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
           </h2>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            aria-label="Close dialog"
           >
             ✕
           </button>
@@ -802,7 +803,7 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
         <div className="flex justify-end mt-6">
           <button
             onClick={onClose}
-            className="btn-secondary"
+            className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Close
           </button>

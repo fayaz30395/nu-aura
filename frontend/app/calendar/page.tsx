@@ -121,7 +121,7 @@ export default function CalendarPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             <p className="text-[var(--text-secondary)]">Loading calendar...</p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function CalendarPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Failed to load calendar events'}
             </p>
@@ -193,7 +193,7 @@ export default function CalendarPage() {
             </button>
             <button
               onClick={goToToday}
-              className="px-4 py-1.5 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
+              className="px-4 py-1.5 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Today
             </button>
@@ -290,7 +290,7 @@ export default function CalendarPage() {
               <PermissionGate permission={Permissions.CALENDAR_CREATE}>
                 <button
                   onClick={() => router.push('/calendar/new')}
-                  className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
+                  className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Create your first event
                 </button>
@@ -351,7 +351,7 @@ export default function CalendarPage() {
                               </span>
                             )}
                             {event.meetingLink && (
-                              <span className="text-xs text-accent-500 flex items-center gap-1">
+                              <span className="text-xs text-accent-500 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                 <Video className="h-3 w-3" />
                                 Online
                               </span>
@@ -391,7 +391,7 @@ export default function CalendarPage() {
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Schedule Event
@@ -410,7 +410,7 @@ export default function CalendarPage() {
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
                 <Video className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Meetings

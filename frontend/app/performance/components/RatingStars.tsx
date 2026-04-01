@@ -52,7 +52,8 @@ export default function RatingStars({
               onClick={() => handleClick(starValue)}
               onMouseEnter={() => interactive && setHoverRating(starValue)}
               onMouseLeave={() => interactive && setHoverRating(0)}
-              className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+              aria-label={`Rate ${starValue} out of ${maxRating}`}
+              className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
             >
               {isFilled ? (
                 <svg

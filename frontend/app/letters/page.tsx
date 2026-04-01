@@ -546,7 +546,7 @@ export default function LettersPage() {
         <div className="flex gap-2 border-b border-[var(--border-main)]">
           <button
             onClick={() => setActiveTab('letters')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               activeTab === 'letters'
                 ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
@@ -556,7 +556,7 @@ export default function LettersPage() {
           </button>
           <button
             onClick={() => setActiveTab('templates')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               activeTab === 'templates'
                 ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
@@ -683,13 +683,13 @@ export default function LettersPage() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-right">
                               <div className="relative group inline-block">
-                                <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]">
+                                <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="More options">
                                   <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                                 </button>
                                 <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                                   <button
                                     onClick={() => handleViewDetails(letter)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   >
                                     <Eye className="h-4 w-4" />
                                     View Details
@@ -697,7 +697,7 @@ export default function LettersPage() {
                                   {letter.status === LetterStatus.DRAFT && (
                                     <button
                                       onClick={() => handleSubmitForApproval(letter)}
-                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                     >
                                       <Send className="h-4 w-4" />
                                       Submit for Approval
@@ -707,7 +707,7 @@ export default function LettersPage() {
                                     <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div />}>
                                       <button
                                         onClick={() => handleApproveLetter(letter)}
-                                        className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2"
+                                        className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       >
                                         <CheckCircle className="h-4 w-4" />
                                         Approve
@@ -719,7 +719,7 @@ export default function LettersPage() {
                                       <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
                                         <button
                                           onClick={() => handleIssueLetter(letter)}
-                                          className="w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2"
+                                          className="w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                         >
                                           <FileCheck className="h-4 w-4" />
                                           Issue Letter
@@ -729,7 +729,7 @@ export default function LettersPage() {
                                         <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
                                           <button
                                             onClick={() => handleIssueWithESign(letter)}
-                                            className="w-full px-4 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2"
+                                            className="w-full px-4 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                           >
                                             <PenTool className="h-4 w-4" />
                                             Issue with E-Sign
@@ -756,7 +756,7 @@ export default function LettersPage() {
                                   ) : letter.status === LetterStatus.ISSUED ? (
                                     <button
                                       disabled
-                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-muted)] cursor-not-allowed opacity-50 flex items-center gap-2"
+                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-muted)] cursor-not-allowed opacity-50 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       title="PDF not yet available"
                                     >
                                       <Download className="h-4 w-4" />
@@ -766,7 +766,7 @@ export default function LettersPage() {
                                   {letter.status === LetterStatus.ISSUED && (
                                     <button
                                       onClick={() => handleRevokeLetter(letter)}
-                                      className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
+                                      className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                     >
                                       <XCircle className="h-4 w-4" />
                                       Revoke
