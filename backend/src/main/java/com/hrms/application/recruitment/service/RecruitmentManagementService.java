@@ -528,6 +528,26 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         return mapToCandidateResponse(savedCandidate);
     }
 
+    // ==================== Offer Listing ====================
+
+    @Transactional(readOnly = true)
+    public Page<CandidateResponse> getAllOffers(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Candidate> offerSpec = (root, query, cb) ->
+            cb.in(root.get("status")).value(
+                Candidate.CandidateStatus.OFFER_EXTENDED,
+                Candidate.CandidateStatus.OFFER_ACCEPTED,
+                Candidate.CandidateStatus.OFFER_DECLINED
+            );
+        Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
+
+        Page<Candidate> page = candidateRepository.findAll(
+                Specification.where(tenantSpec).and(offerSpec).and(scopeSpec), pageable);
+        return mapCandidatePageBatch(page);
+    }
+
     // ==================== Interview Operations (delegated) ====================
 
     public InterviewResponse scheduleInterview(InterviewRequest request) {

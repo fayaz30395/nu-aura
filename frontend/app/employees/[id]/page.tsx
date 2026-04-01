@@ -44,6 +44,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 import { Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Asset } from '@/lib/types/hrms/asset';
+import { Skeleton } from '@mantine/core';
 
 const log = createLogger('EmployeePage');
 
@@ -275,10 +276,35 @@ export default function EmployeeDetailPage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700" />
-            <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
+        <div className="min-h-screen bg-[var(--bg-secondary)] p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Header skeleton */}
+            <div className="mb-8 flex items-center space-x-4">
+              <Skeleton circle height={80} width={80} />
+              <div className="flex-1">
+                <Skeleton height={28} width="30%" mb="md" />
+                <Skeleton height={16} width="20%" />
+              </div>
+            </div>
+
+            {/* Tabs skeleton */}
+            <div className="flex space-x-4 mb-6 border-b border-[var(--border-main)]">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} height={40} width={100} />
+              ))}
+            </div>
+
+            {/* Content skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton height={24} width="40%" />
+                  <Skeleton height={16} mb="sm" />
+                  <Skeleton height={16} width="80%" mb="sm" />
+                  <Skeleton height={16} width="75%" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </AppLayout>
@@ -674,19 +700,21 @@ export default function EmployeeDetailPage() {
               </SectionCard>
 
               {/* Banking & Tax */}
-              <SectionCard title="Banking & Tax">
-                <div className="grid grid-cols-1 gap-4">
-                  <InfoField label="Bank Name" value={employee.bankName} />
-                  <InfoField label="Account Number" value={employee.bankAccountNumber} />
-                  <InfoField label="IFSC / Routing" value={employee.bankIfscCode} />
-                  <InfoField label="Tax ID / SSN" value={employee.taxId} />
-                </div>
-                <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
-                  <p className="text-xs text-accent-700 dark:text-accent-400">
-                    Banking and tax information is encrypted and stored securely.
-                  </p>
-                </div>
-              </SectionCard>
+              <PermissionGate permission={Permissions.EMPLOYEE_BANK_READ} fallback={null}>
+                <SectionCard title="Banking & Tax">
+                  <div className="grid grid-cols-1 gap-4">
+                    <InfoField label="Bank Name" value={employee.bankName} />
+                    <InfoField label="Account Number" value={employee.bankAccountNumber} />
+                    <InfoField label="IFSC / Routing" value={employee.bankIfscCode} />
+                    <InfoField label="Tax ID / SSN" value={employee.taxId} />
+                  </div>
+                  <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
+                    <p className="text-xs text-accent-700 dark:text-accent-400">
+                      Banking and tax information is encrypted and stored securely.
+                    </p>
+                  </div>
+                </SectionCard>
+              </PermissionGate>
             </div>
           )}
 

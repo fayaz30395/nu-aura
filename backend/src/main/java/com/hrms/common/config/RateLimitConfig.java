@@ -23,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RateLimitConfig {
 
-    @Value("${app.rate-limit.auth.capacity:10}")
+    @Value("${app.rate-limit.auth.capacity:5}")
     private int authCapacity;
 
-    @Value("${app.rate-limit.auth.refill-tokens:10}")
+    @Value("${app.rate-limit.auth.refill-tokens:5}")
     private int authRefillTokens;
 
     @Value("${app.rate-limit.auth.refill-minutes:1}")
@@ -70,7 +70,7 @@ public class RateLimitConfig {
 
     /**
      * Get or create a rate limit bucket for authentication endpoints.
-     * Stricter limits: 10 requests per minute per IP
+     * Stricter limits: 5 requests per minute per IP
      */
     public Bucket getAuthBucket(String key) {
         return authBuckets.computeIfAbsent(key, k -> createAuthBucket());

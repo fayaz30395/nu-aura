@@ -172,7 +172,7 @@ const StatCard = ({
 );
 
 export default function PerformancePage() {
-  const goalsQuery = useAllGoals(0, 1000);
+  const goalsQuery = useAllGoals(0, 20);
   const cyclesQuery = usePerformanceActiveCycles();
   const okrQuery = useOkrDashboardSummary();
   const pending360Query = useMyPending360Reviews();
@@ -304,30 +304,76 @@ export default function PerformancePage() {
 
       {/* Module Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {performanceModules.map((module) => (
-          <PermissionGate key={module.id} permission={Permissions.REVIEW_VIEW} fallback={null}>
-          <Link
-            href={module.href}
-            aria-label={`Go to ${module.title} management`}
-            className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
-          >
-            <div className="p-4">
-              <div className="flex items-start gap-4">
-                <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
-                  <module.icon className={`h-5 w-5 ${module.textColor}`} />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
-                    {module.title}
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{module.description}</p>
+        {performanceModules.map((module) => {
+          // Determine permission gate per module
+          let permission: string | null = null;
+          switch (module.id) {
+            case 'goals':
+            case 'okr':
+              // Goals and OKRs are self-service — no permission gate required
+              permission = null;
+              break;
+            case 'reviews':
+              permission = Permissions.REVIEW_VIEW;
+              break;
+            case '360-feedback':
+              permission = Permissions.FEEDBACK_360_VIEW;
+              break;
+            case 'feedback':
+              permission = Permissions.FEEDBACK_CREATE;
+              break;
+            case 'cycles':
+              permission = Permissions.REVIEW_VIEW;
+              break;
+            case 'pip':
+              permission = Permissions.PIP_VIEW;
+              break;
+            case 'calibration':
+              permission = Permissions.CALIBRATION_VIEW;
+              break;
+            case '9box':
+              permission = Permissions.REVIEW_VIEW;
+              break;
+            case 'competency-matrix':
+              permission = Permissions.REVIEW_VIEW;
+              break;
+            default:
+              permission = null;
+          }
+
+          const CardLink = (
+            <Link
+              href={module.href}
+              aria-label={`Go to ${module.title} management`}
+              className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
+            >
+              <div className="p-4">
+                <div className="flex items-start gap-4">
+                  <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
+                    <module.icon className={`h-5 w-5 ${module.textColor}`} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
+                      {module.title}
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{module.description}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`} />
-          </Link>
-          </PermissionGate>
-        ))}
+              <div className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`} />
+            </Link>
+          );
+
+          if (permission) {
+            return (
+              <PermissionGate key={module.id} permission={permission} fallback={null}>
+                {CardLink}
+              </PermissionGate>
+            );
+          }
+
+          return <div key={module.id}>{CardLink}</div>;
+        })}
       </div>
 
       {/* Getting Started Section */}

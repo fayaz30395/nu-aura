@@ -8,9 +8,11 @@ import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.travel.TravelRequest;
 import com.hrms.domain.travel.TravelRequest.TravelStatus;
 import com.hrms.domain.workflow.WorkflowDefinition;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.travel.repository.TravelRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +32,14 @@ import java.util.stream.Collectors;
 public class TravelService implements ApprovalCallbackHandler {
 
     private final TravelRequestRepository travelRequestRepository;
+    private final EmployeeRepository employeeRepository;
     private final WorkflowService workflowService;
 
     public TravelService(TravelRequestRepository travelRequestRepository,
+                         EmployeeRepository employeeRepository,
                          @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
         this.travelRequestRepository = travelRequestRepository;
+        this.employeeRepository = employeeRepository;
         this.workflowService = workflowService;
     }
 
@@ -229,7 +234,7 @@ public class TravelService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return travelRequestRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
-                .map(TravelRequestDto::fromEntity);
+                .map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
     }
 
     @Transactional(readOnly = true)
@@ -239,7 +244,7 @@ public class TravelService implements ApprovalCallbackHandler {
                 tenantId,
                 List.of(TravelStatus.SUBMITTED, TravelStatus.PENDING_APPROVAL),
                 pageable
-        ).map(TravelRequestDto::fromEntity);
+        ).map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
     }
 
     @Transactional(readOnly = true)
@@ -247,10 +252,10 @@ public class TravelService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         if (status != null) {
             return travelRequestRepository.findByTenantIdAndStatus(tenantId, status, pageable)
-                    .map(TravelRequestDto::fromEntity);
+                    .map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
         }
         return travelRequestRepository.findByTenantId(tenantId, pageable)
-                .map(TravelRequestDto::fromEntity);
+                .map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
     }
 
     @Transactional(readOnly = true)
@@ -260,7 +265,8 @@ public class TravelService implements ApprovalCallbackHandler {
         LocalDate nextMonth = today.plusMonths(1);
         return travelRequestRepository.findByTenantIdAndDepartureDateBetweenAndStatus(
                 tenantId, today, nextMonth, TravelStatus.APPROVED
-        ).stream().map(TravelRequestDto::fromEntity).collect(Collectors.toList());
+        ).stream().map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)))
+         .collect(Collectors.toList());
     }
 
     // ======================== ApprovalCallbackHandler ========================
@@ -314,6 +320,17 @@ public class TravelService implements ApprovalCallbackHandler {
         travelRequest.setApprovedDate(LocalDate.now());
         travelRequest.setRejectionReason(reason);
         travelRequestRepository.save(travelRequest);
+    }
+
+    private String getEmployeeFullName(UUID employeeId, UUID tenantId) {
+        try {
+            return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+                    .orElse(null);
+        } catch (Exception e) {
+            log.debug("Could not fetch employee name for ID {}: {}", employeeId, e.getMessage());
+            return null;
+        }
     }
 
     private void startTravelApprovalWorkflow(TravelRequest travelRequest, UUID tenantId) {

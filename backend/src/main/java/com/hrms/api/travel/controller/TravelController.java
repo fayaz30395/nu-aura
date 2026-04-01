@@ -27,6 +27,16 @@ public class TravelController {
 
     private final TravelService travelService;
 
+    @GetMapping
+    @RequiresPermission(Permission.TRAVEL_VIEW_ALL)
+    @Operation(summary = "Get all travel requests", description = "Get all travel requests (redirects to /requests)")
+    public ResponseEntity<Page<TravelRequestDto>> getAll(
+            @RequestParam(required = false) TravelStatus status,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(travelService.getAllRequests(status, pageable));
+    }
+
     @PostMapping("/requests")
     @RequiresPermission(Permission.TRAVEL_CREATE)
     @Operation(summary = "Create travel request", description = "Create a new travel request")

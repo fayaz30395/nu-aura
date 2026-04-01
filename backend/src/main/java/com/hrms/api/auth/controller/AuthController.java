@@ -44,6 +44,9 @@ public class AuthController {
     @Operation(summary = "Get current authenticated user", description = "Returns the profile of the currently authenticated user including roles and permissions")
     public ResponseEntity<AuthResponse> getCurrentUser() {
         UUID userId = SecurityContext.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         AuthResponse profile = authService.getUserProfile(userId);
         return ResponseEntity.ok(profile);
     }
@@ -58,7 +61,10 @@ public class AuthController {
         // Set secure httpOnly cookies
         setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
-        // Return response (tokens also in body for backward compatibility during migration)
+        // Clear tokens from response body - keep only in httpOnly cookie for security
+        authResponse.setAccessToken(null);
+        authResponse.setRefreshToken(null);
+
         return ResponseEntity.ok(authResponse);
     }
 
@@ -71,6 +77,10 @@ public class AuthController {
 
         // Set secure httpOnly cookies
         setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
+
+        // Clear tokens from response body - keep only in httpOnly cookie for security
+        authResponse.setAccessToken(null);
+        authResponse.setRefreshToken(null);
 
         return ResponseEntity.ok(authResponse);
     }
@@ -103,6 +113,10 @@ public class AuthController {
             // Set secure httpOnly cookies
             setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
+            // Clear tokens from response body - keep only in httpOnly cookie for security
+            authResponse.setAccessToken(null);
+            authResponse.setRefreshToken(null);
+
             return ResponseEntity.ok(authResponse);
         } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.error("MFA login failed for user: {}", request.getUserId(), e);
@@ -127,13 +141,18 @@ public class AuthController {
             return ResponseEntity.badRequest().build();
         }
 
-        // Revoke the old refresh token before issuing a new one
-        tokenProvider.revokeToken(refreshToken);
-
+        // Call authService.refresh() FIRST to get new tokens, THEN revoke the old token
         AuthResponse authResponse = authService.refresh(refreshToken);
+
+        // Revoke the old refresh token after successful refresh
+        tokenProvider.revokeToken(refreshToken);
 
         // Set new cookies
         setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
+
+        // Clear tokens from response body - keep only in httpOnly cookie for security
+        authResponse.setAccessToken(null);
+        authResponse.setRefreshToken(null);
 
         return ResponseEntity.ok(authResponse);
     }

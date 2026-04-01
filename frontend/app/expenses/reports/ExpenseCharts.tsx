@@ -17,9 +17,18 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// Using CSS custom properties for theme-aware colors that adapt to dark mode
 const COLORS = [
-  '#0369a1', '#0891b2', '#059669', '#d97706', '#dc2626',
-  '#7c3aed', '#db2777', '#ea580c', '#65a30d', '#4f46e5',
+  'var(--mantine-color-sky-6)',
+  'var(--mantine-color-cyan-6)',
+  'var(--mantine-color-green-6)',
+  'var(--mantine-color-amber-6)',
+  'var(--mantine-color-red-6)',
+  'var(--mantine-color-blue-6)',
+  'var(--mantine-color-pink-6)',
+  'var(--mantine-color-orange-6)',
+  'var(--mantine-color-lime-6)',
+  'var(--mantine-color-indigo-6)',
 ];
 
 interface ChartDataPoint {
@@ -47,8 +56,8 @@ export function ExpenseTrendChart({ data }: ExpenseTrendChartProps) {
             borderRadius: '8px',
           }}
         />
-        <Line type="monotone" dataKey="amount" stroke="#0369a1" strokeWidth={2} dot={{ r: 4 }} name="Amount" />
-        <Line type="monotone" dataKey="count" stroke="#059669" strokeWidth={2} dot={{ r: 4 }} name="Claims" />
+        <Line type="monotone" dataKey="amount" stroke="var(--mantine-color-sky-6)" strokeWidth={2} dot={{ r: 4 }} name="Amount" />
+        <Line type="monotone" dataKey="count" stroke="var(--mantine-color-green-6)" strokeWidth={2} dot={{ r: 4 }} name="Claims" />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -104,8 +113,8 @@ export function ExpenseStatusChart({ data }: ExpenseStatusChartProps) {
             borderRadius: '8px',
           }}
         />
-        <Bar dataKey="amount" fill="#0369a1" radius={[4, 4, 0, 0]} name="Amount" />
-        <Bar dataKey="count" fill="#059669" radius={[4, 4, 0, 0]} name="Claims" />
+        <Bar dataKey="amount" fill="var(--mantine-color-sky-6)" radius={[4, 4, 0, 0]} name="Amount" />
+        <Bar dataKey="count" fill="var(--mantine-color-green-6)" radius={[4, 4, 0, 0]} name="Claims" />
       </BarChart>
     </ResponsiveContainer>
   );

@@ -68,6 +68,10 @@ public class TravelRequestDto {
     private LocalDateTime updatedAt;
 
     public static TravelRequestDto fromEntity(TravelRequest entity) {
+        return fromEntity(entity, null);
+    }
+
+    public static TravelRequestDto fromEntity(TravelRequest entity, String employeeName) {
         if (entity == null) return null;
 
         Integer totalDays = null;
@@ -79,6 +83,7 @@ public class TravelRequestDto {
                 .id(entity.getId())
                 .tenantId(entity.getTenantId())
                 .employeeId(entity.getEmployeeId())
+                .employeeName(employeeName)
                 .requestNumber(entity.getRequestNumber())
                 .travelType(entity.getTravelType())
                 .purpose(entity.getPurpose())
