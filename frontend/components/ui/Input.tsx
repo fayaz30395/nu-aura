@@ -126,9 +126,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <button
                 type="button"
                 onClick={handleRightIconClick}
-                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
                 tabIndex={-1}
                 disabled={disabled}
+                aria-label="Toggle right icon"
               >
                 {rightIcon}
               </button>
@@ -139,7 +140,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 type="button"
                 onClick={handleRightIconClick}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)]"
+                className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 p-1 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 disabled={disabled}
               >
                 {showPassword ? (
