@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import Link from 'next/link';
 import {
@@ -18,14 +19,25 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { useMyCertificates } from '@/lib/hooks/queries/useLearning';
 import type { Certificate } from '@/lib/services/grow/lms.service';
 import { safeWindowOpen } from '@/lib/utils/url';
 
 export default function CertificateGalleryPage() {
+  const router = useRouter();
   const toast = useToast();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // A3: Permission gate — redirect if user lacks LMS:CERTIFICATE_VIEW
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.LMS_CERTIFICATE_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
   const [dateFilter, setDateFilter] = useState('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

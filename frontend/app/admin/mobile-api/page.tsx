@@ -30,7 +30,8 @@ import { AdminPageContent } from '@/components/layout';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { useAuth } from '@/lib/hooks/useAuth';
 
-const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+// A3: Mobile API docs are sensitive infrastructure — restrict to platform admins only
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN];
 
 interface MobileEndpoint {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT';

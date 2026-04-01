@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CalendarOff } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { useLeaveRequestsByStatus, useEmployeeLeaveRequests, useActiveLeaveTypes, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { LeaveRequestStatus, LeaveRequest } from '@/lib/types/hrms/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -18,6 +19,15 @@ export default function MyLeavesPage() {
   const toast = useToast();
   const router = useRouter();
   const { user } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.LEAVE_VIEW_SELF)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState<string | null>(null);

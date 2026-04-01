@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -24,12 +24,22 @@ import {
 } from '@/lib/hooks/queries/useFluence';
 import type { WikiPage, BlogPost, FluenceFavorite } from '@/lib/types/platform/fluence';
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 type TabType = 'wiki' | 'blog' | 'favorites';
 
 export default function MyContentPage() {
   const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<TabType>('wiki');
+
+  // A3: Permission gate — redirect if user lacks KNOWLEDGE:WIKI_READ
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.KNOWLEDGE_WIKI_READ)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
 
   const { data: myWikiData, isLoading: wikiLoading } = useMyWikiPages(0, 50);
   const { data: myBlogData, isLoading: myBlogLoading } = useMyBlogPosts(0, 50);
