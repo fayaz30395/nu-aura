@@ -83,10 +83,10 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].employeeName", is("John Doe")))
-                .andExpect(jsonPath("$[0].department", is("Engineering")))
-                .andExpect(jsonPath("$[0].daysUntil", is(2)));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].employeeName", is("John Doe")))
+                .andExpect(jsonPath("$.content[0].department", is("Engineering")))
+                .andExpect(jsonPath("$.content[0].daysUntil", is(2)));
     }
 
     @Test
@@ -102,7 +102,7 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.content", hasSize(0)));
     }
 
     @Test
@@ -129,10 +129,10 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].employeeName", is("Jane Smith")))
-                .andExpect(jsonPath("$[0].yearsCompleted", is(5)))
-                .andExpect(jsonPath("$[0].today", is(true)));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].employeeName", is("Jane Smith")))
+                .andExpect(jsonPath("$.content[0].yearsCompleted", is(5)))
+                .andExpect(jsonPath("$.content[0].today", is(true)));
     }
 
     @Test
@@ -156,9 +156,9 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].employeeName", is("New Employee")))
-                .andExpect(jsonPath("$[0].daysSinceJoining", is(5)));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].employeeName", is("New Employee")))
+                .andExpect(jsonPath("$.content[0].daysSinceJoining", is(5)));
     }
 
     @Test
@@ -183,9 +183,9 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].employeeName", is("Leave Employee")))
-                .andExpect(jsonPath("$[0].leaveType", is("Sick Leave")));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].employeeName", is("Leave Employee")))
+                .andExpect(jsonPath("$.content[0].leaveType", is("Sick Leave")));
     }
 
     // Note: The /api/v1/home/attendance/me endpoint uses SecurityContext.getCurrentEmployeeId()
@@ -240,10 +240,10 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("Republic Day")))
-                .andExpect(jsonPath("$[0].type", is("NATIONAL")))
-                .andExpect(jsonPath("$[0].daysUntil", is(10)));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].name", is("Republic Day")))
+                .andExpect(jsonPath("$.content[0].type", is("NATIONAL")))
+                .andExpect(jsonPath("$.content[0].daysUntil", is(10)));
     }
 
     @Test
@@ -259,6 +259,6 @@ class HomeControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.content", hasSize(0)));
     }
 }
