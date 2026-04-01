@@ -127,7 +127,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
         return (
           <div
             key={i}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-accent-100 dark:bg-accent-900/40 text-[10px] font-bold text-accent-700 dark:text-accent-400 shadow-sm"
+            className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-accent-100 dark:bg-accent-900/40 text-2xs font-bold text-accent-700 dark:text-accent-400 shadow-sm"
             title={w.name}
           >
             {w.avatarUrl ? (
@@ -139,7 +139,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
         );
       })}
       {wishers.length > 5 && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-[10px] font-bold text-[var(--text-muted)]">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-2xs font-bold text-[var(--text-muted)]">
           +{wishers.length - 5}
         </div>
       )}

@@ -436,7 +436,7 @@ export default function SlackIntegrationPage() {
                   {feature.status === 'active' ? (
                     <Check className="h-3 w-3" />
                   ) : (
-                    <span className="text-[10px] font-bold">S</span>
+                    <span className="text-2xs font-bold">S</span>
                   )}
                 </div>
                 <div>

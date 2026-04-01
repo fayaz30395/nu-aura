@@ -74,7 +74,7 @@ export function FeedDateSection({
         <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
           {group.label}
         </span>
-        <span className="text-[10px] font-medium text-[var(--text-muted)] bg-[var(--bg-surface)] px-1.5 py-0.5 rounded-full">
+        <span className="text-2xs font-medium text-[var(--text-muted)] bg-[var(--bg-surface)] px-1.5 py-0.5 rounded-full">
           {group.items.length}
         </span>
         <div className="flex-1 border-b border-[var(--border-subtle)] ml-1" />

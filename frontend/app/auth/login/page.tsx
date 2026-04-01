@@ -173,7 +173,7 @@ function DemoLoginPanel({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30"
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4" />
@@ -196,7 +196,7 @@ function DemoLoginPanel({
               type="button"
               disabled={isLoading}
               onClick={() => handleClick(account.email)}
-              className="w-full flex items-center gap-4 px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5"
+              className="w-full flex items-center gap-4 px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <div
                 className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm`}
@@ -208,7 +208,7 @@ function DemoLoginPanel({
                   <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {account.name}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
+                  <span className="text-2xs px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
                     {account.role.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -222,7 +222,7 @@ function DemoLoginPanel({
               )}
             </button>
           ))}
-          <p className="text-[10px] text-[var(--text-muted)] text-center pt-1">
+          <p className="text-2xs text-[var(--text-muted)] text-center pt-1">
             Password for all accounts: <code className="px-1 py-0.5 bg-[var(--bg-elevated)] rounded text-[var(--text-secondary)]">Welcome@123</code>
           </p>
         </div>

@@ -155,11 +155,11 @@ function StepPipelinePreview({
             <p className="mt-2 max-w-[120px] text-center text-xs font-medium text-[var(--text-primary)] truncate">
               {step.stepName || `Step ${idx + 1}`}
             </p>
-            <p className="text-[10px] text-[var(--text-muted)] truncate max-w-[120px]">
+            <p className="text-2xs text-[var(--text-muted)] truncate max-w-[120px]">
               {getApproverTypeLabel(step.approverType)}
             </p>
             {step.slaHours && step.slaHours > 0 ? (
-              <p className="flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+              <p className="flex items-center gap-0.5 text-2xs text-[var(--text-muted)]">
                 <Clock className="h-3 w-3" /> {step.slaHours}h
               </p>
             ) : null}
@@ -708,7 +708,8 @@ export default function WorkflowDetailPage() {
                             type="button"
                             disabled={idx === 0}
                             onClick={() => move(idx, idx - 1)}
-                            className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30"
+                            aria-label="Move step up"
+                            className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             <ChevronUp className="h-3.5 w-3.5" />
                           </button>
@@ -716,7 +717,8 @@ export default function WorkflowDetailPage() {
                             type="button"
                             disabled={idx === fields.length - 1}
                             onClick={() => move(idx, idx + 1)}
-                            className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30"
+                            aria-label="Move step down"
+                            className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             <ChevronDown className="h-3.5 w-3.5" />
                           </button>
@@ -731,7 +733,8 @@ export default function WorkflowDetailPage() {
                       <button
                         type="button"
                         onClick={() => remove(idx)}
-                        className="rounded p-1 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+                        aria-label="Delete step"
+                        className="rounded p-1 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

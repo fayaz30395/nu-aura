@@ -302,7 +302,7 @@ function ResponsiveTable<T>({
                     />
                   )}
                   {renderRowActions && (
-                    <div onClick={(e) => e.stopPropagation()}>{renderRowActions(row)}</div>
+                    <div className="cursor-pointer" onClick={(e) => e.stopPropagation()}>{renderRowActions(row)}</div>
                   )}
                 </div>
               </div>
@@ -369,7 +369,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(0)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="First page"
           >
             <span className="text-sm">First</span>
@@ -377,7 +377,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Previous page"
           >
             <span className="text-sm">Prev</span>
@@ -390,7 +390,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Next page"
           >
             <span className="text-sm">Next</span>
@@ -398,7 +398,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(totalPages - 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Last page"
           >
             <span className="text-sm">Last</span>

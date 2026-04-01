@@ -137,7 +137,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
       </button>
       {showMenu && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+          <div className="fixed inset-0 z-10 cursor-pointer" onClick={() => setShowMenu(false)} />
           <div className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg py-1">
             {onEdit && (
               <button
@@ -407,7 +407,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {item.isPinned && (
-              <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+              <span className="inline-flex items-center gap-0.5 text-2xs text-[var(--text-muted)]">
                 <Pin className="h-2.5 w-2.5" /> Pinned
               </span>
             )}
@@ -621,7 +621,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   {/* Reactors popover */}
                   {showReactorsPopover && (
                     <>
-                      <div className="fixed inset-0 z-40" onClick={() => setShowReactorsPopover(false)} />
+                      <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)} />
                       <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-lg overflow-hidden">
                         <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
                           <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>

@@ -463,7 +463,7 @@ export default function EmployeeDetailPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
                   Business Unit
                 </p>
                 <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -471,7 +471,7 @@ export default function EmployeeDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
                   Department
                 </p>
                 <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -479,13 +479,13 @@ export default function EmployeeDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
                   Cost Center
                 </p>
                 <p className="text-sm font-medium text-[var(--text-primary)]">Not Set</p>
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
+                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
                   Reporting Manager
                 </p>
                 {employee.managerId ? (

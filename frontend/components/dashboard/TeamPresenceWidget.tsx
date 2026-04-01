@@ -37,7 +37,7 @@ function mapRemoteToPresence(emp: RemoteWorkerResponse): EmployeePresence {
 
 function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' }) {
   const initials = getInitials(name);
-  const sizeClasses = size === 'sm' ? 'h-7 w-7 text-[10px]' : 'h-9 w-9 text-xs';
+  const sizeClasses = size === 'sm' ? 'h-7 w-7 text-2xs' : 'h-9 w-9 text-xs';
   return (
     <div
       className={`flex items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30 font-semibold text-accent-700 dark:text-accent-400 ${sizeClasses}`}
@@ -85,7 +85,7 @@ export function OnLeaveTodayCard() {
           {onLeaveEmployees.slice(0, 6).map((e) => (
             <div key={e.employeeId} className="flex flex-col items-center gap-1 min-w-[48px]">
               <Avatar name={e.employeeName} />
-              <span className="text-[10px] text-[var(--text-muted)] max-w-[56px] truncate text-center">
+              <span className="text-2xs text-[var(--text-muted)] max-w-[56px] truncate text-center">
                 {e.employeeName.split(' ')[0]}
               </span>
             </div>
@@ -95,7 +95,7 @@ export function OnLeaveTodayCard() {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-muted)]">
                 +{onLeaveEmployees.length - 6}
               </div>
-              <span className="text-[10px] text-[var(--text-muted)]">more</span>
+              <span className="text-2xs text-[var(--text-muted)]">more</span>
             </div>
           )}
         </div>
@@ -122,7 +122,7 @@ export function WorkingRemotelyCard() {
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <p className="text-xs font-medium text-[var(--text-secondary)]">Everyone is at office!</p>
-            <p className="text-[10px] text-[var(--text-muted)] mt-0.5">No one is working remotely today.</p>
+            <p className="text-2xs text-[var(--text-muted)] mt-0.5">No one is working remotely today.</p>
           </div>
           {/* Decorative remote work illustration */}
           <div className="flex items-center gap-1.5 opacity-40">
@@ -137,7 +137,7 @@ export function WorkingRemotelyCard() {
                 <Avatar name={e.employeeName} />
                 <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-success-500" />
               </div>
-              <span className="text-[10px] text-[var(--text-muted)] max-w-[56px] truncate text-center">
+              <span className="text-2xs text-[var(--text-muted)] max-w-[56px] truncate text-center">
                 {e.employeeName.split(' ')[0]}
               </span>
             </div>
@@ -147,7 +147,7 @@ export function WorkingRemotelyCard() {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-muted)]">
                 +{remoteWorkers.length - 6}
               </div>
-              <span className="text-[10px] text-[var(--text-muted)]">more</span>
+              <span className="text-2xs text-[var(--text-muted)]">more</span>
             </div>
           )}
         </div>

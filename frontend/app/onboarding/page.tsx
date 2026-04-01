@@ -122,7 +122,7 @@ export default function OnboardingPage() {
                                         </div>
                                         <TrendingUp className="h-3.5 w-3.5 text-success-500" />
                                     </div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
+                                    <p className="text-2xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
                                     <p className="text-2xl font-black text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                                 </CardContent>
                             </Card>

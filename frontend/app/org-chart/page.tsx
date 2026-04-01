@@ -122,7 +122,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
                       {emp.fullName}
                     </p>
                     {manager?.id === emp.id && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                      <span className="text-2xs font-semibold px-1.5 py-0.5 rounded bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                         Head
                       </span>
                     )}
@@ -133,7 +133,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
                 </div>
 
                 {emp.level && (
-                  <span className="text-[10px] font-medium text-[var(--text-tertiary)] flex-shrink-0">
+                  <span className="text-2xs font-medium text-[var(--text-tertiary)] flex-shrink-0">
                     {emp.level.replace('_', ' ')}
                   </span>
                 )}

@@ -593,7 +593,7 @@ export default function RolesPage() {
                 <button
                   type="submit"
                   disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
-                  className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                  className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                 >
                   {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
                 </button>
@@ -709,7 +709,7 @@ export default function RolesPage() {
                 <button
                   type="submit"
                   disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
-                  className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                  className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
                 >
                   {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
                 </button>
