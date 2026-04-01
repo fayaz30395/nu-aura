@@ -261,7 +261,7 @@ export default function TimeTrackingPage() {
               <button
                 onClick={handleSubmitSelected}
                 disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {submitMultipleMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

@@ -465,7 +465,7 @@ export default function RecognitionPage() {
                               )}
                             </div>
                             <button
-                              className="flex items-center gap-1 hover:text-accent-500 dark:hover:text-accent-400 transition-colors"
+                              className="flex items-center gap-1 hover:text-accent-500 dark:hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               aria-label={`Comment on recognition (${recognition.commentsCount} comments)`}
                               onClick={() => toggleComments(recognition.id)}
                             >
@@ -494,7 +494,7 @@ export default function RecognitionPage() {
                                   className="flex-1 px-4 py-1.5 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                                 />
                                 <button
-                                  className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50"
+                                  className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   disabled={!commentText[recognition.id]?.trim()}
                                 >
                                   <Send className="h-3.5 w-3.5" />

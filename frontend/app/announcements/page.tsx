@@ -810,9 +810,8 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
-          <button
-            onClick={handleClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+          <button onClick={handleClose}
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
@@ -978,17 +977,15 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
           {/* Footer */}
           <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
-            <button
-              type="button"
+            <button type="button"
               onClick={handleClose}
-              className="flex-1 btn-secondary"
+              className="flex-1 btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Cancel
             </button>
-            <button
-              type="submit"
+            <button type="submit"
               disabled={createMutation.isPending || updateMutation.isPending}
-              className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {createMutation.isPending || updateMutation.isPending ? (
                 <>

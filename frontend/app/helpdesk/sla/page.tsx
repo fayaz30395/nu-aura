@@ -403,7 +403,7 @@ export default function HelpdeskSLAPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="btn-primary !h-auto disabled:opacity-50"
+                    className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {editingId ? 'Update' : 'Create'}
                   </button>

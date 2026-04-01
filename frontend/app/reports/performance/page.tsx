@@ -166,7 +166,7 @@ export default function PerformanceReportsPage() {
                 <button
                   onClick={handleDownload}
                   disabled={loading}
-                  className="w-full btn-primary !h-auto disabled:opacity-50"
+                  className="w-full btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {loading ? (
                     <>

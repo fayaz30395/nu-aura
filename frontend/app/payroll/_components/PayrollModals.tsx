@@ -107,14 +107,14 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -255,14 +255,14 @@ export const PayslipModal = React.memo(function PayslipModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -446,14 +446,14 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="btn-secondary flex-1 px-4 py-2 rounded-lg"
+                className="btn-secondary flex-1 px-4 py-2 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50"
+                className="btn-primary flex-1 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -493,14 +493,14 @@ export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
         <div className="flex gap-4">
           <button
             onClick={onCancel}
-            className="btn-secondary flex-1 px-4 py-2 rounded-lg"
+            className="btn-secondary flex-1 px-4 py-2 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 skeuo-button"
+            className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             {loading ? 'Deleting...' : 'Delete'}
           </button>

@@ -549,7 +549,7 @@ export default function OneOnOnePage() {
                           <button
                             onClick={handleStartMeeting}
                             disabled={startMutation.isPending}
-                            className="flex items-center gap-1 px-4 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors"
+                            className="flex items-center gap-1 px-4 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
                             <Play className="h-3.5 w-3.5" /> Start
                           </button>
@@ -662,7 +662,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={addAgendaMutation.isPending}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 {addAgendaMutation.isPending ? 'Adding...' : 'Add'}
                               </button>
@@ -822,7 +822,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={createActionMutation.isPending}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 {createActionMutation.isPending ? 'Adding...' : 'Add Action'}
                               </button>
@@ -940,7 +940,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleSaveNotes}
                         disabled={updateNotesMutation.isPending}
-                        className="flex items-center gap-1 px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         <Send className="h-3.5 w-3.5" />
                         {updateNotesMutation.isPending ? 'Saving...' : 'Save Notes'}
@@ -1014,7 +1014,7 @@ export default function OneOnOnePage() {
                                 <button
                                   type="submit"
                                   disabled={submitFeedbackMutation.isPending}
-                                  className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg"
+                                  className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 >
                                   {submitFeedbackMutation.isPending ? 'Submitting...' : 'Submit Feedback'}
                                 </button>
@@ -1074,7 +1074,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCancelMeeting}
                         disabled={!cancelReason || cancelMutation.isPending}
-                        className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Meeting'}
                       </button>
@@ -1118,7 +1118,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleRescheduleMeeting}
                         disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         {rescheduleMutation.isPending ? 'Rescheduling...' : 'Reschedule'}
                       </button>
@@ -1149,7 +1149,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCompleteMeeting}
                         disabled={completeMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg"
+                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         {completeMutation.isPending ? 'Completing...' : 'Complete'}
                       </button>
@@ -1355,7 +1355,7 @@ export default function OneOnOnePage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-6 py-2.5 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {createMutation.isPending ? 'Scheduling...' : 'Schedule Meeting'}
                 </button>

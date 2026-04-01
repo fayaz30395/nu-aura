@@ -397,26 +397,22 @@
   .card-elevated {
     @apply rounded-lg border;
     background-color: var(--bg-elevated);
-    background-image: var(--gradient-skeuo-surface);
-    border-color: var(--border-main);
+    border-color: var(--border-subtle);
     box-shadow: var(--shadow-elevated);
   }
 
   .card-interactive {
     @apply rounded-lg border cursor-pointer;
     background-color: var(--bg-card);
-    background-image: var(--gradient-skeuo-card);
-    border-color: var(--border-main);
-    box-shadow: var(--shadow-skeuo-card);
-    transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 180ms ease-out,
+    border-color: var(--border-subtle);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 180ms ease-out,
                 border-color 180ms ease-out;
   }
 
   .card-interactive:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-skeuo-card-hover);
-    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-main);
   }
 
   /* ── Glass Surfaces (Frosted Skeuomorphic) ──────────────────── */

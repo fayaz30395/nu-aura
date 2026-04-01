@@ -281,7 +281,7 @@ export default function ReportBuilderPage() {
                 {filters.length < 5 && (
                   <button
                     onClick={addFilter}
-                    className="text-xs text-accent-600 hover:text-accent-800 font-medium"
+                    className="text-xs text-accent-600 hover:text-accent-800 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     + Add Filter
                   </button>
@@ -372,7 +372,7 @@ export default function ReportBuilderPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="w-full bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
+                  className="w-full bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {saving ? 'Saving…' : 'Save Template'}
                 </button>
@@ -389,7 +389,7 @@ export default function ReportBuilderPage() {
                   <button
                     onClick={handlePreview}
                     disabled={loading || selectedCols.length === 0}
-                    className="w-full bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50"
+                    className="w-full bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {loading ? 'Loading…' : 'Preview Results'}
                   </button>
@@ -398,7 +398,7 @@ export default function ReportBuilderPage() {
                   <button
                     onClick={handleExport}
                     disabled={loading || selectedCols.length === 0}
-                    className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50"
+                    className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Export CSV
                   </button>

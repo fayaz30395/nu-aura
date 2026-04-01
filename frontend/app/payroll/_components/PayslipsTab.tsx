@@ -66,7 +66,7 @@ export function PayslipsTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreatePayslip}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Create Payslip
           </button>

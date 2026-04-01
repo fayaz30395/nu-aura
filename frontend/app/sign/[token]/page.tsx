@@ -491,7 +491,7 @@ export default function SignPage() {
               <button
                 onClick={handleEmailVerify}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="w-full py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-50"
+                className="w-full py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Continue to Sign
               </button>
@@ -550,7 +550,7 @@ export default function SignPage() {
                   <p className="text-xs text-[var(--text-muted)]">Draw your signature in the box below</p>
                   <button
                     onClick={clearCanvas}
-                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Clear
                   </button>
@@ -635,7 +635,7 @@ export default function SignPage() {
               <button
                 onClick={handleSign}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {signDocumentMutation.isPending ? (
                   <>
@@ -701,7 +701,7 @@ export default function SignPage() {
               <button
                 onClick={handleDecline}
                 disabled={declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 bg-danger-600 hover:bg-danger-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 py-2.5 px-4 bg-danger-600 hover:bg-danger-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {declineDocumentMutation.isPending ? (
                   <>

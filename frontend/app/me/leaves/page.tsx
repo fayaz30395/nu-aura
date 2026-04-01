@@ -481,7 +481,7 @@ export default function MyLeavesPage() {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-4 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                    className="px-4 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Clear
                   </button>
@@ -511,7 +511,7 @@ export default function MyLeavesPage() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-4 px-4 py-2 text-sm text-accent-700 hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors"
+                  className="mt-4 px-4 py-2 text-sm text-accent-700 hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Clear Filters
                 </button>
@@ -639,7 +639,7 @@ export default function MyLeavesPage() {
                   </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -735,14 +735,14 @@ export default function MyLeavesPage() {
                       type="button"
                       onClick={handleCloseModal}
                       disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50"
+                      className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
                         <>
@@ -772,7 +772,7 @@ export default function MyLeavesPage() {
                 </h2>
                 <button
                   onClick={handleCloseCancelModal}
-                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -809,14 +809,14 @@ export default function MyLeavesPage() {
                     type="button"
                     onClick={handleCloseCancelModal}
                     disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50"
+                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Keep Request
                   </button>
                   <button
                     type="submit"
                     disabled={cancelLeaveRequest.isPending || cancelSubmitting}
-                    className="flex items-center gap-2 px-6 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {cancelLeaveRequest.isPending || cancelSubmitting ? (
                       <>

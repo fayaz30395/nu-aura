@@ -168,7 +168,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5 text-[var(--text-muted)]" />
           </button>
@@ -283,14 +283,14 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
+            className="flex-1 px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Cancel
           </button>
           <button
             onClick={handleDownload}
             disabled={isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             {isPending ? (
               <>

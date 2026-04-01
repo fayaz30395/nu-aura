@@ -552,7 +552,7 @@ export default function PerformanceReviewsPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50"
+                      className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
                     </button>
@@ -583,7 +583,7 @@ export default function PerformanceReviewsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50"
+                  className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

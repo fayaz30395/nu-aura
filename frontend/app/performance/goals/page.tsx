@@ -522,7 +522,7 @@ export default function GoalsPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 btn-primary !h-auto disabled:opacity-50"
+                      className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isSubmitting ? 'Saving...' : selectedGoal ? 'Update' : 'Create'}
                     </button>
@@ -553,7 +553,7 @@ export default function GoalsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>
