@@ -58,7 +58,13 @@ class HrAdminRoleTest {
                 Permission.AUDIT_VIEW,
                 Permission.CUSTOM_FIELD_MANAGE,
                 Permission.WORKFLOW_MANAGE,
-                Permission.DEPARTMENT_MANAGE
+                Permission.DEPARTMENT_MANAGE,
+                Permission.STATUTORY_MANAGE,
+                Permission.LEAVE_TYPE_MANAGE,
+                Permission.LEAVE_BALANCE_MANAGE,
+                Permission.ANALYTICS_EXPORT,
+                Permission.REPORT_SCHEDULE,
+                Permission.INTEGRATION_MANAGE
         );
     }
 
