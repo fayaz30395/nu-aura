@@ -1,368 +1,83 @@
-# Contributing to Nu-Aura HRMS
+# Contributing to NU-AURA
 
-Thank you for your interest in contributing to Nu-Aura! This document provides guidelines and best practices for contributing to the project.
+## Workflow
 
-## Table of Contents
+1. All work happens on **`main`** branch — no feature branches
+2. Write code, run lint + typecheck + tests
+3. Commit with conventional commit format
+4. Push to `main`
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Workflow](#development-workflow)
-- [Code Standards](#code-standards)
-- [Testing Requirements](#testing-requirements)
-- [Pull Request Process](#pull-request-process)
-- [Commit Guidelines](#commit-guidelines)
+## Commit Format
 
----
+```
+type(scope): description
 
-## Code of Conduct
+[optional body]
+```
 
-- Be respectful and inclusive
-- Provide constructive feedback
-- Focus on the code, not the person
-- Ask questions if something is unclear
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
----
-
-## Getting Started
-
-1. **Fork the repository** (if external contributor)
-2. **Clone your fork**: `git clone <your-fork-url>`
-3. **Set up the development environment**: See [SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
-4. **Create a feature branch**: `git checkout -b feature/AURA-123-your-feature`
-
----
-
-## Development Workflow
-
-### Branch Strategy
-
-| Branch Type | Pattern | Base Branch | Merge Target |
-|-------------|---------|-------------|--------------|
-| Feature | `feature/AURA-XXX-description` | `develop` | `develop` |
-| Bugfix | `bugfix/AURA-XXX-description` | `develop` | `develop` |
-| Hotfix | `hotfix/AURA-XXX-description` | `main` | `main` + `develop` |
-| Release | `release/vX.Y.Z` | `develop` | `main` + `develop` |
-
-### Workflow Steps
-
-1. **Create branch** from latest `develop`
-2. **Make changes** following code standards
-3. **Write tests** for new functionality
-4. **Run local tests** before pushing
-5. **Push branch** and create Pull Request
-6. **Address review feedback**
-7. **Squash and merge** after approval
-
----
+Examples:
+```
+feat(payroll): add salary revision with effective date support
+fix(leave): prevent negative leave balance on approval
+refactor(auth): extract JWT validation into reusable filter
+```
 
 ## Code Standards
 
-### Backend (Java/Spring Boot)
+### TypeScript / Frontend
 
-#### Style Guide
-- Follow [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
-- Use 4 spaces for indentation (not tabs)
-- Maximum line length: 120 characters
+- **No `any`** — define proper interfaces for all types
+- **All forms** must use React Hook Form + Zod validation
+- **All data fetching** must use React Query — no raw `useEffect` + `fetch`
+- **HTTP client:** Use the existing Axios client in `frontend/lib/` — never create new instances
+- **Colors:** CSS variables only — no hardcoded hex values
+- **Spacing:** 8px grid — banned classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`, `m-3`, `m-5`
+- **Buttons:** `<Button>` component only — no raw `<button>` with inline styles
+- **Loading states:** `NuAuraLoader`, `SkeletonTable`, `SkeletonStatCard`, `SkeletonCard` — no plain spinner text
+- **Empty states:** `<EmptyState>` component — no blank page fallbacks
+- **Icons:** Lucide React + Tabler Icons — don't mix icon libraries
 
-#### Naming Conventions
-```java
-// Classes: PascalCase
-public class EmployeeService { }
+### Java / Backend
 
-// Methods/Variables: camelCase
-public Employee findById(UUID id) { }
+- Java 21 with Spring Boot 3.4.1
+- Follow existing package structure: `api/`, `application/`, `domain/`, `infrastructure/`, `common/`
+- All endpoints must have `@RequiresPermission` or explicit public access
+- All tenant-scoped entities must include `tenant_id`
+- DTO mapping via MapStruct — no manual mapping
+- All forms/inputs validated with Jakarta Validation annotations
 
-// Constants: SCREAMING_SNAKE_CASE
-public static final int MAX_RETRIES = 3;
-
-// Packages: lowercase
-package com.hrms.application.employee;
-```
-
-#### Lombok Usage
-```java
-@Data                    // For DTOs
-@Builder                 // For complex objects
-@RequiredArgsConstructor // For dependency injection
-@Slf4j                   // For logging
-```
-
-#### Service Layer Pattern
-```java
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class EmployeeService {
-    private final EmployeeRepository employeeRepository;
-
-    @Transactional(readOnly = true)
-    public Employee findById(UUID id) {
-        return employeeRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Employee", id));
-    }
-}
-```
-
-### Frontend (TypeScript/React)
-
-#### Style Guide
-- ESLint + Prettier configuration provided
-- Use TypeScript strict mode
-- Prefer functional components with hooks
-
-#### Naming Conventions
-```typescript
-// Components: PascalCase
-export function EmployeeCard({ employee }: EmployeeCardProps) { }
-
-// Hooks: camelCase with use prefix
-export function useEmployees() { }
-
-// Types/Interfaces: PascalCase
-interface EmployeeCardProps { }
-
-// Files: kebab-case for components, camelCase for utilities
-// employee-card.tsx, useEmployees.ts
-```
-
-#### Component Structure
-```typescript
-'use client';
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import type { Employee } from '@/lib/types/employee';
-
-interface EmployeeCardProps {
-  employee: Employee;
-  onEdit?: (id: string) => void;
-}
-
-export function EmployeeCard({ employee, onEdit }: EmployeeCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  return (
-    <div className="p-4 border rounded-lg">
-      <h3>{employee.firstName} {employee.lastName}</h3>
-      {onEdit && (
-        <Button onClick={() => onEdit(employee.id)}>Edit</Button>
-      )}
-    </div>
-  );
-}
-```
-
-#### React Query Patterns
-```typescript
-// Query keys should be hierarchical
-export const employeeKeys = {
-  all: ['employees'] as const,
-  lists: () => [...employeeKeys.all, 'list'] as const,
-  list: (filters: EmployeeFilters) => [...employeeKeys.lists(), filters] as const,
-  details: () => [...employeeKeys.all, 'detail'] as const,
-  detail: (id: string) => [...employeeKeys.details(), id] as const,
-};
-```
-
----
-
-## Testing Requirements
-
-### Backend Tests
-
-#### Unit Tests
-- Test business logic in isolation
-- Mock external dependencies
-- Aim for 80% service layer coverage
-
-```java
-@ExtendWith(MockitoExtension.class)
-class EmployeeServiceTest {
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @InjectMocks
-    private EmployeeService employeeService;
-
-    @Test
-    void findById_WhenExists_ReturnsEmployee() {
-        // Given
-        UUID id = UUID.randomUUID();
-        Employee expected = createEmployee(id);
-        when(employeeRepository.findById(id)).thenReturn(Optional.of(expected));
-
-        // When
-        Employee result = employeeService.findById(id);
-
-        // Then
-        assertThat(result).isEqualTo(expected);
-    }
-}
-```
-
-#### Integration Tests
-- Test API endpoints with MockMvc
-- Use `@SpringBootTest` for full context
-- Test database operations with test containers
-
-### Frontend Tests
-
-#### Component Tests
-```typescript
-import { render, screen } from '@/lib/test-utils';
-import { EmployeeCard } from './EmployeeCard';
-import { createMockEmployee } from '@/lib/test-utils/fixtures';
-
-describe('EmployeeCard', () => {
-  it('renders employee name', () => {
-    const employee = createMockEmployee({ firstName: 'John', lastName: 'Doe' });
-    render(<EmployeeCard employee={employee} />);
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-  });
-});
-```
-
-#### Hook Tests
-```typescript
-import { renderHook, waitFor } from '@testing-library/react';
-import { useEmployees } from './useEmployees';
-import { createWrapper } from '@/lib/test-utils';
-
-describe('useEmployees', () => {
-  it('fetches employees successfully', async () => {
-    const { result } = renderHook(() => useEmployees(), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-  });
-});
-```
-
-### Running Tests
+### Testing
 
 ```bash
 # Backend
-cd backend
-mvn test                           # All tests
-mvn test -Dtest=EmployeeServiceTest # Specific test
+cd backend && ./mvnw test
 
-# Frontend
-cd frontend
-npm test                           # All tests
-npm test -- --watch               # Watch mode
-npm run test:coverage             # With coverage
+# Frontend lint + typecheck
+cd frontend && npm run lint && npx tsc --noEmit
 ```
 
----
+- Backend: JUnit 5 + Mockito. Use `@WebMvcTest` for controller tests, not `@SpringBootTest`
+- Frontend: Component tests for all new components
+- Target: 80% minimum coverage (excludes DTOs, entities, config)
+- All new endpoints must have at least one test
 
-## Pull Request Process
+### Sensitive Files (Require Review)
 
-### Before Submitting
+These files affect security and must be reviewed carefully before changes:
 
-1. **Update your branch**: `git pull origin develop`
-2. **Run all tests**: Ensure they pass locally
-3. **Run linters**: Fix any style violations
-4. **Update documentation**: If needed
+- `backend/src/main/java/com/hrms/common/config/SecurityConfig.java`
+- `frontend/middleware.ts`
+- Any Flyway migration file (`db/migration/V*.sql`)
 
-### PR Checklist
+## Pre-Push Checklist
 
-- [ ] Code follows project style guidelines
-- [ ] Tests added for new functionality
-- [ ] All tests pass locally
-- [ ] Documentation updated if needed
-- [ ] No console.log or debug statements
-- [ ] No hardcoded secrets or credentials
-
-### PR Title Format
-
-```
-[AURA-123] feat: Add webhook delivery system
-
-[AURA-456] fix: Resolve leave balance calculation error
-
-[AURA-789] refactor: Simplify employee search logic
-```
-
-### PR Description Template
-
-```markdown
-## Summary
-Brief description of changes
-
-## Changes
-- Added webhook delivery service
-- Implemented circuit breaker pattern
-- Added retry mechanism with exponential backoff
-
-## Testing
-- [ ] Unit tests added
-- [ ] Integration tests added
-- [ ] Manual testing completed
-
-## Screenshots (if UI changes)
-<!-- Add screenshots here -->
-
-## Related Issues
-Closes #123
-```
-
----
-
-## Commit Guidelines
-
-### Commit Message Format
-
-```
-type(scope): subject
-
-body (optional)
-
-footer (optional)
-```
-
-### Types
-
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, no code change |
-| `refactor` | Code restructuring |
-| `test` | Adding tests |
-| `chore` | Maintenance tasks |
-| `perf` | Performance improvement |
-
-### Examples
-
-```bash
-feat(webhook): add HMAC signature verification
-
-fix(leave): correct balance calculation for half-day leaves
-
-docs(api): add webhook API documentation
-
-refactor(employee): extract validation logic to separate service
-
-test(attendance): add integration tests for check-in endpoint
-```
-
-### Guidelines
-
-- Use present tense: "Add feature" not "Added feature"
-- Keep subject line under 72 characters
-- Reference issue numbers in footer: `Closes #123`
-- Separate subject from body with blank line
-
----
-
-## Questions?
-
-If you have questions about contributing:
-1. Check existing documentation
-2. Search closed issues/PRs
-3. Ask in the team channel
-4. Create an issue with the `question` label
+- [ ] `npx tsc --noEmit` — zero TypeScript errors
+- [ ] `npm run lint` — zero lint errors
+- [ ] `./mvnw test` — all tests pass
+- [ ] No `any` types introduced
+- [ ] No new Axios instances
+- [ ] No hardcoded colors or spacing violations
+- [ ] No secrets or credentials in code
+- [ ] Flyway migration version doesn't conflict (current: V0–V91, next: V92)
