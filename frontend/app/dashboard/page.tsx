@@ -750,7 +750,7 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px]"
+                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -915,7 +915,8 @@ export default function DashboardPage() {
                       <button
                         onClick={loadGoogleNotifications}
                         disabled={notificationsLoading}
-                        className="p-1.5 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        aria-label="Refresh notifications"
                       >
                         <RefreshCw className={`h-4 w-4 text-[var(--text-muted)] ${notificationsLoading ? 'animate-spin' : ''}`} />
                       </button>
@@ -1063,7 +1064,8 @@ export default function DashboardPage() {
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close event details"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
@@ -1212,7 +1214,8 @@ export default function DashboardPage() {
                   setSelectedEmail(null);
                   setEmailContent('');
                 }}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close email details"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
@@ -1277,7 +1280,8 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close file preview"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>

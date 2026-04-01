@@ -21,34 +21,34 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
   scale[`${name}10`],
 ];
 
-// ─── NULogic Brand Design System ──────────────────────────────────────────
+// ─── NU-AURA Blue Monochrome Design System ──────────────────────────────
 
-// Primary/Accent - NULogic Lapis Blue
+// Primary/Accent — NU-AURA Blue (hue ~228)
 const accent: MantineColorsTuple = [
-  '#eeeeff',   // 0 — accent-50
-  '#d4d4f7',   // 1 — accent-100
-  '#a8a8ef',   // 2 — accent-200
-  '#7c7ce6',   // 3 — accent-300
-  '#5050de',   // 4 — accent-400
-  '#2525b0',   // 5 — accent-500
-  '#0f0f8a',   // 6 — accent-600
-  '#050766',   // 7 — accent-700 (NULogic Lapis Blue)
-  '#040555',   // 8 — accent-800
-  '#030344',   // 9 — accent-900
+  '#f0f3fc',   // 0 — accent-50
+  '#dce3f8',   // 1 — accent-100
+  '#bcc9f2',   // 2 — accent-200
+  '#92a8e8',   // 3 — accent-300
+  '#6884dc',   // 4 — accent-400
+  '#4463cf',   // 5 — accent-500
+  '#3350b8',   // 6 — accent-600
+  '#2952A3',   // 7 — accent-700 (NU-AURA Blue)
+  '#244288',   // 8 — accent-800
+  '#1d356d',   // 9 — accent-900
 ];
 
-// Neutrals - NULogic Teal Gray
+// Neutrals — Blue-tinted grays (monochrome)
 const secondary: MantineColorsTuple = [
-  '#F4F5F6',   // 0 — neutral-50 (NULogic Near-White)
-  '#ecedef',   // 1 — neutral-100
-  '#d8dadd',   // 2 — neutral-200
-  '#c0c3c8',   // 3 — neutral-300
-  '#9a9fa8',   // 4 — neutral-400
-  '#797E85',   // 5 — neutral-500
-  '#5e636c',   // 6 — neutral-600
-  '#3E616A',   // 7 — neutral-700 (NULogic Muted Teal)
-  '#1e2a30',   // 8 — neutral-800
-  '#133E49',   // 9 — neutral-900 (NULogic Dark Teal)
+  '#f7f8fb',   // 0 — neutral-50
+  '#f0f2f7',   // 1 — neutral-100
+  '#dfe2ed',   // 2 — neutral-200
+  '#b8bccf',   // 3 — neutral-300
+  '#8186a0',   // 4 — neutral-400
+  '#5a5f78',   // 5 — neutral-500
+  '#4e5270',   // 6 — neutral-600
+  '#363a52',   // 7 — neutral-700
+  '#1e2240',   // 8 — neutral-800
+  '#0e1225',   // 9 — neutral-900
 ];
 
 // Semantic colors (professional, muted)
