@@ -377,6 +377,85 @@ public class PulseSurveyService {
         return response;
     }
 
+    // ==================== Template & Clone ====================
+
+    @Transactional
+    public PulseSurvey cloneSurvey(UUID surveyId, String newTitle) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        PulseSurvey source = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+
+        PulseSurvey clone = PulseSurvey.builder()
+                .title(newTitle != null ? newTitle : source.getTitle() + " (Copy)")
+                .description(source.getDescription())
+                .surveyType(source.getSurveyType())
+                .startDate(source.getStartDate())
+                .endDate(source.getEndDate())
+                .isAnonymous(source.getIsAnonymous())
+                .isMandatory(source.getIsMandatory())
+                .frequency(source.getFrequency())
+                .reminderEnabled(source.getReminderEnabled())
+                .reminderDaysBefore(source.getReminderDaysBefore())
+                .targetDepartments(source.getTargetDepartments())
+                .targetLocations(source.getTargetLocations())
+                .status(PulseSurvey.SurveyStatus.DRAFT)
+                .totalQuestions(0)
+                .totalResponses(0)
+                .totalInvited(0)
+                .build();
+
+        clone.setId(UUID.randomUUID());
+        clone.setTenantId(tenantId);
+        clone = surveyRepository.save(clone);
+
+        // Deep clone all active questions
+        List<PulseSurveyQuestion> sourceQuestions = questionRepository.findAllBySurveyIdAndIsActiveTrue(surveyId);
+        for (PulseSurveyQuestion sq : sourceQuestions) {
+            PulseSurveyQuestion clonedQuestion = PulseSurveyQuestion.builder()
+                    .surveyId(clone.getId())
+                    .questionText(sq.getQuestionText())
+                    .questionType(sq.getQuestionType())
+                    .questionOrder(sq.getQuestionOrder())
+                    .isRequired(sq.getIsRequired())
+                    .options(sq.getOptions())
+                    .minValue(sq.getMinValue())
+                    .maxValue(sq.getMaxValue())
+                    .minLabel(sq.getMinLabel())
+                    .maxLabel(sq.getMaxLabel())
+                    .category(sq.getCategory())
+                    .helpText(sq.getHelpText())
+                    .isActive(true)
+                    .build();
+            clonedQuestion.setId(UUID.randomUUID());
+            clonedQuestion.setTenantId(tenantId);
+            questionRepository.save(clonedQuestion);
+        }
+
+        clone.setTotalQuestions(sourceQuestions.size());
+        clone = surveyRepository.save(clone);
+
+        log.info("Cloned survey {} -> {} with {} questions", surveyId, clone.getId(), sourceQuestions.size());
+        return clone;
+    }
+
+    @Transactional
+    public PulseSurvey saveAsTemplate(UUID surveyId, String templateName, String category) {
+        PulseSurvey clone = cloneSurvey(surveyId, templateName);
+        clone.setIsTemplate(true);
+        clone.setTemplateName(templateName);
+        clone.setTemplateCategory(category);
+        clone = surveyRepository.save(clone);
+
+        log.info("Saved survey {} as template: {} (category: {})", surveyId, templateName, category);
+        return clone;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PulseSurvey> getTemplates() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return surveyRepository.findAllTemplates(tenantId);
+    }
+
     // ==================== Analytics ====================
 
     @Transactional(readOnly = true)
@@ -432,6 +511,9 @@ public class PulseSurveyService {
                 question.getQuestionType() == QuestionType.LIKERT ||
                 question.getQuestionType() == QuestionType.NPS) {
                 qa.put("averageScore", answerRepository.getAverageNumericValueByQuestion(surveyId, question.getId()));
+                qa.put("minScore", answerRepository.getMinNumericValueByQuestion(surveyId, question.getId()));
+                qa.put("maxScore", answerRepository.getMaxNumericValueByQuestion(surveyId, question.getId()));
+                qa.put("responseCount", answerRepository.countNumericResponsesByQuestion(surveyId, question.getId()));
                 qa.put("distribution", answerRepository.getNumericDistribution(surveyId, question.getId()));
 
                 if (question.getQuestionType() == QuestionType.NPS) {

@@ -88,6 +88,16 @@ public class PulseSurvey extends TenantAware {
     @Column(name = "average_score", precision = 5)
     private Double averageScore;
 
+    @Column(name = "is_template")
+    @Builder.Default
+    private Boolean isTemplate = false;
+
+    @Column(name = "template_name", length = 200)
+    private String templateName;
+
+    @Column(name = "template_category", length = 50)
+    private String templateCategory;
+
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
 

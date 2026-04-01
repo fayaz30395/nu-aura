@@ -50,4 +50,12 @@ public interface PulseSurveyRepository extends JpaRepository<PulseSurvey, UUID> 
     Long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") SurveyStatus status);
 
     boolean existsByTitleAndTenantId(String title, UUID tenantId);
+
+    @Query("SELECT s FROM PulseSurvey s WHERE s.tenantId = :tenantId " +
+            "AND s.isTemplate = true AND s.isDeleted = false ORDER BY s.templateCategory, s.templateName")
+    List<PulseSurvey> findAllTemplates(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT s FROM PulseSurvey s WHERE s.tenantId = :tenantId " +
+            "AND s.isTemplate = true AND s.templateCategory = :category AND s.isDeleted = false")
+    List<PulseSurvey> findTemplatesByCategory(@Param("tenantId") UUID tenantId, @Param("category") String category);
 }

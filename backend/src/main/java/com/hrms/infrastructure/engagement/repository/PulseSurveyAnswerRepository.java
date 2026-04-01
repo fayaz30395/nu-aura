@@ -50,6 +50,18 @@ public interface PulseSurveyAnswerRepository extends JpaRepository<PulseSurveyAn
             "AND a.numericValue IS NOT NULL")
     Double calculateNPSScore(@Param("surveyId") UUID surveyId, @Param("questionId") UUID questionId);
 
+    @Query("SELECT MIN(a.numericValue) FROM PulseSurveyAnswer a " +
+            "WHERE a.surveyId = :surveyId AND a.questionId = :questionId AND a.numericValue IS NOT NULL")
+    Integer getMinNumericValueByQuestion(@Param("surveyId") UUID surveyId, @Param("questionId") UUID questionId);
+
+    @Query("SELECT MAX(a.numericValue) FROM PulseSurveyAnswer a " +
+            "WHERE a.surveyId = :surveyId AND a.questionId = :questionId AND a.numericValue IS NOT NULL")
+    Integer getMaxNumericValueByQuestion(@Param("surveyId") UUID surveyId, @Param("questionId") UUID questionId);
+
+    @Query("SELECT COUNT(a) FROM PulseSurveyAnswer a " +
+            "WHERE a.surveyId = :surveyId AND a.questionId = :questionId AND a.numericValue IS NOT NULL")
+    Long countNumericResponsesByQuestion(@Param("surveyId") UUID surveyId, @Param("questionId") UUID questionId);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM PulseSurveyAnswer a WHERE a.responseId = :responseId")

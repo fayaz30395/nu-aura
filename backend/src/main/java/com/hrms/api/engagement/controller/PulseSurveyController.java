@@ -143,6 +143,48 @@ public class PulseSurveyController {
         return ResponseEntity.noContent().build();
     }
 
+    // ==================== Template & Clone ====================
+
+    @PostMapping("/{surveyId}/clone")
+    @RequiresPermission(Permission.SURVEY_MANAGE)
+    public ResponseEntity<PulseSurveyResponse> cloneSurvey(
+            @PathVariable UUID surveyId,
+            @RequestParam(required = false) String newTitle) {
+        PulseSurvey cloned = surveyService.cloneSurvey(surveyId, newTitle);
+        return ResponseEntity.created(URI.create("/api/v1/surveys/" + cloned.getId()))
+                .body(PulseSurveyResponse.fromEntity(cloned));
+    }
+
+    @PostMapping("/{surveyId}/save-as-template")
+    @RequiresPermission(Permission.SURVEY_MANAGE)
+    public ResponseEntity<PulseSurveyResponse> saveAsTemplate(
+            @PathVariable UUID surveyId,
+            @RequestParam String templateName,
+            @RequestParam(required = false) String category) {
+        PulseSurvey template = surveyService.saveAsTemplate(surveyId, templateName, category);
+        PulseSurveyResponse response = PulseSurveyResponse.fromEntity(template);
+        response.setIsTemplate(true);
+        response.setTemplateName(template.getTemplateName());
+        response.setTemplateCategory(template.getTemplateCategory());
+        return ResponseEntity.created(URI.create("/api/v1/surveys/" + template.getId()))
+                .body(response);
+    }
+
+    @GetMapping("/templates")
+    @RequiresPermission(Permission.SURVEY_VIEW)
+    public ResponseEntity<List<PulseSurveyResponse>> getTemplates() {
+        List<PulseSurvey> templates = surveyService.getTemplates();
+        return ResponseEntity.ok(templates.stream()
+                .map(t -> {
+                    PulseSurveyResponse resp = PulseSurveyResponse.fromEntity(t);
+                    resp.setIsTemplate(true);
+                    resp.setTemplateName(t.getTemplateName());
+                    resp.setTemplateCategory(t.getTemplateCategory());
+                    return resp;
+                })
+                .collect(Collectors.toList()));
+    }
+
     // ==================== Survey Response (Employee) ====================
 
     @PostMapping("/{surveyId}/start")
