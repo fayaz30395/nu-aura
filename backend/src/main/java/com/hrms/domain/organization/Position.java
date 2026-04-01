@@ -2,11 +2,13 @@ package com.hrms.domain.organization;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "positions")
 @Getter

@@ -2,6 +2,7 @@ package com.hrms.domain.wellness;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "wellness_programs")
 @Getter

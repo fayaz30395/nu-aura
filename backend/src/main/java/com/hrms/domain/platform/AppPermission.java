@@ -2,6 +2,7 @@ package com.hrms.domain.platform;
 
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +12,7 @@ import lombok.experimental.SuperBuilder;
  *
  * This replaces the old Permission entity with app-awareness.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "app_permissions", indexes = {
     @Index(name = "idx_app_perm_code", columnList = "code", unique = true),

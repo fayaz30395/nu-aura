@@ -4,6 +4,7 @@ import com.hrms.common.entity.BaseEntity;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "user_basic_notification_preferences",
         uniqueConstraints = @UniqueConstraint(

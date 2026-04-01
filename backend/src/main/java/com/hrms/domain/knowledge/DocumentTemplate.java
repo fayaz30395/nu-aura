@@ -2,9 +2,11 @@ package com.hrms.domain.knowledge;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@Where(clause = "is_deleted = false")
 @Entity(name = "KnowledgeDocumentTemplate")
 @Table(name = "knowledge_templates", indexes = {
         @Index(name = "idx_knowledge_templates_tenant", columnList = "tenantId"),

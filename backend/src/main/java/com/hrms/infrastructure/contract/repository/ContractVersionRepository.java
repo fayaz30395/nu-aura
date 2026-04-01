@@ -1,6 +1,8 @@
 package com.hrms.infrastructure.contract.repository;
 
 import com.hrms.domain.contract.ContractVersion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,8 @@ import java.util.UUID;
 public interface ContractVersionRepository extends JpaRepository<ContractVersion, UUID> {
 
     List<ContractVersion> findByContractIdOrderByVersionNumberDesc(UUID contractId);
+
+    Page<ContractVersion> findByContractIdOrderByVersionNumberDesc(UUID contractId, Pageable pageable);
 
     Optional<ContractVersion> findByContractIdAndVersionNumber(UUID contractId, Integer versionNumber);
 

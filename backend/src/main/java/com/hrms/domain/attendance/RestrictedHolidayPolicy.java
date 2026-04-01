@@ -2,6 +2,7 @@ package com.hrms.domain.attendance;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -9,6 +10,7 @@ import lombok.experimental.SuperBuilder;
  * Tenant-level policy governing restricted holiday selections.
  * One policy per tenant per year.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "restricted_holiday_policies", indexes = {
     @Index(name = "idx_rhp_tenant_id", columnList = "tenantId"),

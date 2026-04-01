@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Where;
 import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "wiki_page_comments", indexes = {
         @Index(name = "idx_wiki_page_comments_tenant", columnList = "tenantId"),

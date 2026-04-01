@@ -2,6 +2,7 @@ package com.hrms.domain.workflow;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.UUID;
  * Workflow Rule - Defines conditions for workflow selection and step behavior.
  * Supports complex rule expressions for dynamic workflow routing.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "workflow_rules")
 @Getter

@@ -2,6 +2,7 @@ package com.hrms.domain.workflow;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
  * Step Execution - Tracks the execution of a single approval step.
  * Records who approved/rejected and when.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "step_executions")
 @Getter

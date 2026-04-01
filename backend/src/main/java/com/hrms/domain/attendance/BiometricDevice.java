@@ -2,6 +2,7 @@ package com.hrms.domain.attendance;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
  * Represents a biometric device (fingerprint, face, iris, card reader)
  * registered for a tenant's attendance tracking.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "biometric_devices", indexes = {
     @Index(name = "idx_biometric_device_tenant", columnList = "tenantId"),

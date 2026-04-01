@@ -2,6 +2,7 @@ package com.hrms.domain.expense;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Replaces the old ExpenseCategory enum for tenant-specific customisation.
  * Supports hierarchical categories via parentCategoryId.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_categories", indexes = {
     @Index(name = "idx_expense_cat_tenant", columnList = "tenantId"),

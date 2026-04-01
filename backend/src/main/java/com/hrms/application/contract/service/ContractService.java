@@ -313,6 +313,19 @@ public class ContractService {
     }
 
     /**
+     * Get expiring contracts (paginated)
+     */
+    @Transactional(readOnly = true)
+    public Page<ContractListDto> getExpiringContracts(int days, Pageable pageable) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        LocalDate today = LocalDate.now();
+        LocalDate expiryDate = today.plusDays(days);
+
+        return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate, pageable)
+                .map(this::toListDto);
+    }
+
+    /**
      * Get expired contracts
      */
     @Transactional(readOnly = true)
@@ -325,6 +338,16 @@ public class ContractService {
     }
 
     /**
+     * Get expired contracts (paginated)
+     */
+    @Transactional(readOnly = true)
+    public Page<ContractListDto> getExpiredContracts(Pageable pageable) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return contractRepository.findExpiredContracts(tenantId, pageable)
+                .map(this::toListDto);
+    }
+
+    /**
      * Get active contracts
      */
     @Transactional(readOnly = true)
@@ -334,6 +357,16 @@ public class ContractService {
                 .stream()
                 .map(this::toListDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get active contracts (paginated)
+     */
+    @Transactional(readOnly = true)
+    public Page<ContractListDto> getActiveContracts(Pageable pageable) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return contractRepository.findActiveContracts(tenantId, pageable)
+                .map(this::toListDto);
     }
 
     // ===================== Version Management =====================
@@ -352,6 +385,20 @@ public class ContractService {
                         "content", v.getContent()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get version history (paginated)
+     */
+    @Transactional(readOnly = true)
+    public Page<Map<String, Object>> getVersionHistory(UUID contractId, Pageable pageable) {
+        return versionRepository.findByContractIdOrderByVersionNumberDesc(contractId, pageable)
+                .map(v -> Map.of(
+                        "versionNumber", (Object) v.getVersionNumber(),
+                        "changeNotes", (Object) v.getChangeNotes(),
+                        "createdAt", (Object) v.getCreatedAt(),
+                        "content", (Object) v.getContent()
+                ));
     }
 
     // ===================== Helper Methods =====================

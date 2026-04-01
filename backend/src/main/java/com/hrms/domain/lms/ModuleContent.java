@@ -2,11 +2,13 @@ package com.hrms.domain.lms;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "lms_module_contents", indexes = {
     @Index(name = "idx_lms_content_tenant", columnList = "tenantId"),

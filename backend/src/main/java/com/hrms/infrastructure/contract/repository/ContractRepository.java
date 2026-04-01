@@ -53,14 +53,32 @@ public interface ContractRepository extends JpaRepository<Contract, UUID> {
             @Param("endDate") LocalDate endDate
     );
 
+    @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = :status " +
+            "AND c.endDate IS NOT NULL AND c.endDate BETWEEN :startDate AND :endDate")
+    Page<Contract> findExpiringContracts(
+            @Param("tenantId") UUID tenantId,
+            @Param("status") ContractStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable
+    );
+
     @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
             "AND c.endDate IS NOT NULL AND c.endDate <= CURRENT_DATE")
     List<Contract> findExpiredContracts(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
+            "AND c.endDate IS NOT NULL AND c.endDate <= CURRENT_DATE")
+    Page<Contract> findExpiredContracts(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     // Active contracts
     @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
             "AND c.startDate <= CURRENT_DATE AND (c.endDate IS NULL OR c.endDate >= CURRENT_DATE)")
     List<Contract> findActiveContracts(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE' " +
+            "AND c.startDate <= CURRENT_DATE AND (c.endDate IS NULL OR c.endDate >= CURRENT_DATE)")
+    Page<Contract> findActiveContracts(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     // Search
     @Query("SELECT c FROM Contract c WHERE c.tenantId = :tenantId AND " +

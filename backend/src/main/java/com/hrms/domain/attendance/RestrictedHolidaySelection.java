@@ -2,6 +2,7 @@ package com.hrms.domain.attendance;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 /**
  * Records an employee's selection (opt-in) for a specific restricted holiday.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "restricted_holiday_selections", indexes = {
     @Index(name = "idx_rhs_tenant_id", columnList = "tenantId"),

@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,39 +32,46 @@ public class HomeController {
     @GetMapping("/birthdays")
     @Operation(summary = "Get upcoming birthdays", description = "Returns employees with birthdays in the next N days")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<BirthdayResponse>> getUpcomingBirthdays(
+    public ResponseEntity<Page<BirthdayResponse>> getUpcomingBirthdays(
             @Parameter(description = "Number of days to look ahead (default 7)")
-            @RequestParam(defaultValue = "7") int days) {
+            @RequestParam(defaultValue = "7") int days,
+            Pageable pageable) {
         log.debug("Getting upcoming birthdays for next {} days", days);
-        return ResponseEntity.ok(homeService.getUpcomingBirthdays(days));
+        List<BirthdayResponse> all = homeService.getUpcomingBirthdays(days);
+        return ResponseEntity.ok(toPage(all, pageable));
     }
 
     @GetMapping("/anniversaries")
     @Operation(summary = "Get upcoming work anniversaries", description = "Returns employees with work anniversaries in the next N days")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<WorkAnniversaryResponse>> getUpcomingAnniversaries(
+    public ResponseEntity<Page<WorkAnniversaryResponse>> getUpcomingAnniversaries(
             @Parameter(description = "Number of days to look ahead (default 7)")
-            @RequestParam(defaultValue = "7") int days) {
+            @RequestParam(defaultValue = "7") int days,
+            Pageable pageable) {
         log.debug("Getting upcoming work anniversaries for next {} days", days);
-        return ResponseEntity.ok(homeService.getUpcomingWorkAnniversaries(days));
+        List<WorkAnniversaryResponse> all = homeService.getUpcomingWorkAnniversaries(days);
+        return ResponseEntity.ok(toPage(all, pageable));
     }
 
     @GetMapping("/new-joinees")
     @Operation(summary = "Get new joinees", description = "Returns employees who joined in the last N days")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<NewJoineeResponse>> getNewJoinees(
+    public ResponseEntity<Page<NewJoineeResponse>> getNewJoinees(
             @Parameter(description = "Number of days to look back (default 30)")
-            @RequestParam(defaultValue = "30") int days) {
+            @RequestParam(defaultValue = "30") int days,
+            Pageable pageable) {
         log.debug("Getting new joinees for last {} days", days);
-        return ResponseEntity.ok(homeService.getNewJoinees(days));
+        List<NewJoineeResponse> all = homeService.getNewJoinees(days);
+        return ResponseEntity.ok(toPage(all, pageable));
     }
 
     @GetMapping("/on-leave")
     @Operation(summary = "Get employees on leave today", description = "Returns employees who are on approved leave today")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<OnLeaveEmployeeResponse>> getEmployeesOnLeaveToday() {
+    public ResponseEntity<Page<OnLeaveEmployeeResponse>> getEmployeesOnLeaveToday(Pageable pageable) {
         log.debug("Getting employees on leave today");
-        return ResponseEntity.ok(homeService.getEmployeesOnLeaveToday());
+        List<OnLeaveEmployeeResponse> all = homeService.getEmployeesOnLeaveToday();
+        return ResponseEntity.ok(toPage(all, pageable));
     }
 
     @GetMapping("/attendance/me")
@@ -89,18 +99,31 @@ public class HomeController {
     @GetMapping("/remote-workers")
     @Operation(summary = "Get remote workers today", description = "Returns employees who checked in remotely today")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<RemoteWorkerResponse>> getRemoteWorkersToday() {
+    public ResponseEntity<Page<RemoteWorkerResponse>> getRemoteWorkersToday(Pageable pageable) {
         log.debug("Getting remote workers today");
-        return ResponseEntity.ok(homeService.getRemoteWorkersToday());
+        List<RemoteWorkerResponse> all = homeService.getRemoteWorkersToday();
+        return ResponseEntity.ok(toPage(all, pageable));
     }
 
     @GetMapping("/holidays")
     @Operation(summary = "Get upcoming holidays", description = "Returns holidays in the next N days")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<UpcomingHolidayResponse>> getUpcomingHolidays(
+    public ResponseEntity<Page<UpcomingHolidayResponse>> getUpcomingHolidays(
             @Parameter(description = "Number of days to look ahead (default 30)")
-            @RequestParam(defaultValue = "30") int days) {
+            @RequestParam(defaultValue = "30") int days,
+            Pageable pageable) {
         log.debug("Getting upcoming holidays for next {} days", days);
-        return ResponseEntity.ok(homeService.getUpcomingHolidays(days));
+        List<UpcomingHolidayResponse> all = homeService.getUpcomingHolidays(days);
+        return ResponseEntity.ok(toPage(all, pageable));
+    }
+
+    /**
+     * Helper to convert a List into a Page using the requested Pageable slice.
+     */
+    private <T> Page<T> toPage(List<T> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), list.size());
+        List<T> subList = start >= list.size() ? List.of() : list.subList(start, end);
+        return new PageImpl<>(subList, pageable, list.size());
     }
 }

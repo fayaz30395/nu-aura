@@ -1,6 +1,8 @@
 package com.hrms.infrastructure.compliance.repository;
 
 import com.hrms.domain.compliance.PolicyAcknowledgment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +19,11 @@ public interface PolicyAcknowledgmentRepository extends JpaRepository<PolicyAckn
 
     List<PolicyAcknowledgment> findByPolicyIdAndTenantId(UUID policyId, UUID tenantId);
 
+    Page<PolicyAcknowledgment> findByPolicyIdAndTenantId(UUID policyId, UUID tenantId, Pageable pageable);
+
     List<PolicyAcknowledgment> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId);
+
+    Page<PolicyAcknowledgment> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId, Pageable pageable);
 
     boolean existsByPolicyIdAndEmployeeIdAndPolicyVersion(UUID policyId, UUID employeeId, Integer policyVersion);
 

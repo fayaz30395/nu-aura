@@ -2,6 +2,7 @@ package com.hrms.domain.payment;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_refunds", indexes = {
     @Index(name = "idx_payment_refund_tenant", columnList = "tenantId"),

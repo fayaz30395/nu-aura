@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_template_mappings", indexes = {

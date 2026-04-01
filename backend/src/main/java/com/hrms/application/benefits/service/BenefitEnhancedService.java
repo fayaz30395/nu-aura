@@ -1,6 +1,8 @@
 package com.hrms.application.benefits.service;
 
 import com.hrms.api.benefits.dto.*;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.benefits.*;
@@ -40,6 +42,7 @@ public class BenefitEnhancedService {
     private final BenefitClaimRepository claimRepository;
     private final FlexBenefitAllocationRepository flexAllocationRepository;
     private final EventPublisher eventPublisher;
+    private final AuditLogService auditLogService;
 
     // ==================== BENEFIT PLANS ====================
 
@@ -260,6 +263,8 @@ public class BenefitEnhancedService {
 
         log.info("Created enrollment: {} for employee: {}", enrollment.getId(), request.getEmployeeId());
 
+        try { auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.CREATE, null, null, "Benefit enrollment created for employee " + request.getEmployeeId()); } catch (Exception e) { log.warn("Audit log failed for benefit enrollment create: {}", e.getMessage()); }
+
         // Publish audit event for enrollment creation (best-effort)
         publishBenefitAuditEvent(currentUser, "CREATE", "BenefitEnrollment", enrollment.getId(),
                 tenantId, "Enrollment created for employee " + request.getEmployeeId() + " in plan " + request.getBenefitPlanId());
@@ -308,6 +313,9 @@ public class BenefitEnhancedService {
         enrollment.setApprovalComments(comments);
 
         enrollment = enrollmentRepository.save(enrollment);
+
+        try { auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.APPROVE, null, null, "Benefit enrollment approved: " + comments); } catch (Exception e) { log.warn("Audit log failed for benefit enrollment approve: {}", e.getMessage()); }
+
         return EnrollmentResponse.from(enrollment);
     }
 

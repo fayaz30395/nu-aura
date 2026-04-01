@@ -2,9 +2,11 @@ package com.hrms.domain.user;
 
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "permissions", indexes = {
     @Index(name = "idx_permission_code", columnList = "code", unique = true),

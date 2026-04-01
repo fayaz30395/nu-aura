@@ -149,9 +149,21 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<CompliancePolicy> getActivePolicies(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return policyRepository.findActivePolicies(tenantId, LocalDate.now(), pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<CompliancePolicy> getPoliciesByCategory(CompliancePolicy.PolicyCategory category) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return policyRepository.findByCategory(tenantId, category);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CompliancePolicy> getPoliciesByCategory(CompliancePolicy.PolicyCategory category, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return policyRepository.findByCategory(tenantId, category, pageable);
     }
 
     // ==================== Policy Acknowledgment ====================
@@ -190,9 +202,21 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PolicyAcknowledgment> getEmployeeAcknowledgments(UUID employeeId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return acknowledgmentRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<PolicyAcknowledgment> getPolicyAcknowledgments(UUID policyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return acknowledgmentRepository.findByPolicyIdAndTenantId(policyId, tenantId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PolicyAcknowledgment> getPolicyAcknowledgments(UUID policyId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return acknowledgmentRepository.findByPolicyIdAndTenantId(policyId, tenantId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -298,6 +322,12 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ComplianceChecklist> getActiveChecklists(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return checklistRepository.findActiveChecklists(tenantId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<ComplianceChecklist> getMyChecklists() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -305,9 +335,22 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ComplianceChecklist> getMyChecklists(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+        return checklistRepository.findByAssignee(tenantId, userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<ComplianceChecklist> getOverdueChecklists() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return checklistRepository.findOverdueChecklists(tenantId, LocalDate.now());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ComplianceChecklist> getOverdueChecklists(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return checklistRepository.findOverdueChecklists(tenantId, LocalDate.now(), pageable);
     }
 
     // ==================== Audit Logging ====================
@@ -352,6 +395,12 @@ public class ComplianceService {
     public List<AuditLog> getEntityAuditHistory(String entityType, UUID entityId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return auditLogRepository.findByEntity(tenantId, entityType, entityId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AuditLog> getEntityAuditHistory(String entityType, UUID entityId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return auditLogRepository.findByEntity(tenantId, entityType, entityId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -439,6 +488,12 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ComplianceAlert> getActiveAlerts(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return alertRepository.findActiveAlerts(tenantId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<ComplianceAlert> getMyAlerts() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -446,9 +501,22 @@ public class ComplianceService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ComplianceAlert> getMyAlerts(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+        return alertRepository.findByAssignee(tenantId, userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<ComplianceAlert> getCriticalAlerts() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return alertRepository.findCriticalAlerts(tenantId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ComplianceAlert> getCriticalAlerts(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return alertRepository.findCriticalAlerts(tenantId, pageable);
     }
 
     // ==================== Compliance Dashboard ====================

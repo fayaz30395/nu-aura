@@ -143,12 +143,13 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
     @Operation(summary = "Get my attendance", description = "Retrieve authenticated user's attendance records for a date range")
     @ApiResponse(responseCode = "200", description = "Attendance records retrieved successfully")
-    public ResponseEntity<List<AttendanceResponse>> getMyAttendance(
+    public ResponseEntity<Page<AttendanceResponse>> getMyAttendance(
             @Parameter(description = "Start date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "End date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @Parameter(description = "End date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Pageable pageable) {
         UUID employeeId = requireCurrentEmployeeId();
-        List<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate);
-        return ResponseEntity.ok(records.stream().map(this::toResponse).toList());
+        Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable);
+        return ResponseEntity.ok(records.map(this::toResponse));
     }
 
     @GetMapping("/my-time-entries")
@@ -268,14 +269,15 @@ public class AttendanceController {
             Permission.ATTENDANCE_VIEW_ALL,
             Permission.ATTENDANCE_VIEW_TEAM
     })
-    public ResponseEntity<List<AttendanceResponse>> getEmployeeAttendanceByRange(
+    public ResponseEntity<Page<AttendanceResponse>> getEmployeeAttendanceByRange(
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Pageable pageable) {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
-        List<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate);
-        return ResponseEntity.ok(records.stream().map(this::toResponse).toList());
+        Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable);
+        return ResponseEntity.ok(records.map(this::toResponse));
     }
 
     @GetMapping("/pending-regularizations")

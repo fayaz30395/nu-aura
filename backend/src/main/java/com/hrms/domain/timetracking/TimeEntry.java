@@ -2,6 +2,7 @@ package com.hrms.domain.timetracking;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity(name = "TimeEntry")
 @Table(name = "time_entries")
 @Getter

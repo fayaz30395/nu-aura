@@ -2,6 +2,7 @@ package com.hrms.domain.expense;
 
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
  * Each claim can have multiple items (e.g., hotel + meals + taxi).
  * Receipt is stored via MinIO and referenced by storagePath.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_items", indexes = {
     @Index(name = "idx_expense_item_claim", columnList = "expense_claim_id"),

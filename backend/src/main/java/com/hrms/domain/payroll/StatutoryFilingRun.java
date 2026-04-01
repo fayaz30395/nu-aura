@@ -2,6 +2,7 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Records the filing type, period, generation status, file location in MinIO,
  * validation results, and submission tracking.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_runs", indexes = {
     @Index(name = "idx_sfr_tenant", columnList = "tenantId"),

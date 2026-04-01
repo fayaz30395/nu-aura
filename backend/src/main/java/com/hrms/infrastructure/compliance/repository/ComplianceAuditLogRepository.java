@@ -20,6 +20,9 @@ public interface ComplianceAuditLogRepository extends JpaRepository<AuditLog, UU
     @Query("SELECT a FROM ComplianceAuditLog a WHERE a.tenantId = :tenantId AND a.entityType = :entityType AND a.entityId = :entityId ORDER BY a.timestamp DESC")
     List<AuditLog> findByEntity(@Param("tenantId") UUID tenantId, @Param("entityType") String entityType, @Param("entityId") UUID entityId);
 
+    @Query("SELECT a FROM ComplianceAuditLog a WHERE a.tenantId = :tenantId AND a.entityType = :entityType AND a.entityId = :entityId ORDER BY a.timestamp DESC")
+    Page<AuditLog> findByEntity(@Param("tenantId") UUID tenantId, @Param("entityType") String entityType, @Param("entityId") UUID entityId, Pageable pageable);
+
     @Query("SELECT a FROM ComplianceAuditLog a WHERE a.tenantId = :tenantId AND a.performedBy = :userId ORDER BY a.timestamp DESC")
     Page<AuditLog> findByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, Pageable pageable);
 

@@ -21,6 +21,8 @@ import com.hrms.infrastructure.shift.repository.ShiftRepository;
 
 import com.hrms.domain.overtime.CompTimeBalance;
 import com.hrms.domain.overtime.CompTimeTransaction;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.event.overtime.OvertimeApprovedEvent;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,7 @@ public class OvertimeManagementService {
     private final EmployeeRepository employeeRepository;
     private final ShiftRepository shiftRepository;
     private final DomainEventPublisher domainEventPublisher;
+    private final AuditLogService auditLogService;
 
     @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {
@@ -96,6 +99,9 @@ public class OvertimeManagementService {
                 .build();
 
         record = overtimeRecordRepository.save(record);
+
+        try { auditLogService.logAction("OVERTIME_RECORD", record.getId(), AuditAction.CREATE, null, null, "Overtime record created for employee " + request.getEmployeeId()); } catch (Exception e) { log.warn("Audit log failed for overtime create: {}", e.getMessage()); }
+
         return mapToResponse(record);
     }
 
@@ -133,6 +139,9 @@ public class OvertimeManagementService {
         }
 
         record = overtimeRecordRepository.save(record);
+
+        try { auditLogService.logAction("OVERTIME_RECORD", record.getId(), "APPROVE".equalsIgnoreCase(request.getAction()) ? AuditAction.APPROVE : AuditAction.REJECT, null, null, "Overtime record " + request.getAction().toLowerCase() + " by " + approverId); } catch (Exception e) { log.warn("Audit log failed for overtime approve/reject: {}", e.getMessage()); }
+
         return mapToResponse(record);
     }
 

@@ -471,6 +471,13 @@ public class AttendanceRecordService {
     }
 
     @Transactional(readOnly = true)
+    public Page<AttendanceRecord> getAttendanceByDateRange(UUID employeeId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return attendanceRecordRepository.findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+                tenantId, employeeId, startDate, endDate, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<AttendanceRecord> getPendingRegularizations(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceRecordRepository.findPendingRegularizations(tenantId, pageable);

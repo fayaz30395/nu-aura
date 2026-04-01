@@ -8,6 +8,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.performance.PerformanceReview;
 import com.hrms.domain.performance.ReviewCompetency;
 
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -36,17 +38,20 @@ public class PerformanceReviewService {
     private final EmployeeRepository employeeRepository;
     private final ReviewCycleRepository reviewCycleRepository;
     private final DomainEventPublisher domainEventPublisher;
+    private final AuditLogService auditLogService;
 
     public PerformanceReviewService(PerformanceReviewRepository reviewRepository,
                                     ReviewCompetencyRepository competencyRepository,
                                     EmployeeRepository employeeRepository,
                                     ReviewCycleRepository reviewCycleRepository,
-                                    DomainEventPublisher domainEventPublisher) {
+                                    DomainEventPublisher domainEventPublisher,
+                                    AuditLogService auditLogService) {
         this.reviewRepository = reviewRepository;
         this.competencyRepository = competencyRepository;
         this.employeeRepository = employeeRepository;
         this.reviewCycleRepository = reviewCycleRepository;
         this.domainEventPublisher = domainEventPublisher;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional
@@ -72,6 +77,8 @@ public class PerformanceReviewService {
 
         review.setTenantId(tenantId);
         review = reviewRepository.save(review);
+
+        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.CREATE, null, null, "Performance review created for employee " + request.getEmployeeId()); } catch (Exception e) { log.warn("Audit log failed for review create: {}", e.getMessage()); }
 
         return mapToResponse(review);
     }
@@ -181,6 +188,8 @@ public class PerformanceReviewService {
 
         review = reviewRepository.save(review);
 
+        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review submitted"); } catch (Exception e) { log.warn("Audit log failed for review submit: {}", e.getMessage()); }
+
         return mapToResponse(review);
     }
 
@@ -215,6 +224,8 @@ public class PerformanceReviewService {
                 reviewerName,
                 review.getCompletedAt()
         ));
+
+        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review completed with rating " + review.getOverallRating()); } catch (Exception e) { log.warn("Audit log failed for review complete: {}", e.getMessage()); }
 
         log.info("Performance review {} completed for employee {} with rating {}",
                 reviewId, review.getEmployeeId(), review.getOverallRating());

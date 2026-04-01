@@ -2,6 +2,7 @@ package com.hrms.domain.contract;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 /**
  * ContractReminder entity for managing contract reminders (expiry, renewal, review)
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "contract_reminders", indexes = {
         @Index(name = "idx_contract_reminders_contract_id", columnList = "contract_id"),

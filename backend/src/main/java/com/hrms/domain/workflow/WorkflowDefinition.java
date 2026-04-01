@@ -2,6 +2,7 @@ package com.hrms.domain.workflow;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.lang.Nullable;
@@ -14,6 +15,7 @@ import java.util.UUID;
  * Workflow Definition - Defines a reusable workflow template for approvals.
  * Supports various entity types (Leave, Expense, Travel, Loan, etc.)
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "workflow_definitions")
 @Getter

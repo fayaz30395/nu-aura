@@ -2,6 +2,7 @@ package com.hrms.domain.customfield;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * Defines the schema for a custom field.
  * Custom fields allow organizations to extend entity data with their own attributes.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "custom_field_definitions", indexes = {
     @Index(name = "idx_cfd_tenant", columnList = "tenantId"),

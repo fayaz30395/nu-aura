@@ -3,6 +3,8 @@ package com.hrms.application.expense.service;
 import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.api.expense.dto.ExpenseClaimResponse;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.security.DataScopeService;
@@ -51,6 +53,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final WorkflowService workflowService;
     private final ExpensePolicyService expensePolicyService;
     private final DomainEventPublisher domainEventPublisher;
+    private final AuditLogService auditLogService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
@@ -59,13 +62,15 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             DataScopeService dataScopeService,
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
             @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService,
-            DomainEventPublisher domainEventPublisher) {
+            DomainEventPublisher domainEventPublisher,
+            AuditLogService auditLogService) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
         this.workflowService = workflowService;
         this.expensePolicyService = expensePolicyService;
         this.domainEventPublisher = domainEventPublisher;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional
@@ -94,6 +99,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Created expense claim: {} for employee: {}", saved.getClaimNumber(), employeeId);
+
+        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.CREATE, null, null, "Expense claim created: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim create: {}", e.getMessage()); }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -157,6 +164,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverId);
 
+        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.APPROVE, null, null, "Expense claim approved: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim approve: {}", e.getMessage()); }
+
         // FIX-002: Publish event for payroll to add expense reimbursement earning
         domainEventPublisher.publish(ExpenseApprovedEvent.of(
                 this, tenantId, saved.getId(),
@@ -182,6 +191,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Rejected expense claim: {} by {}", saved.getClaimNumber(), rejecterId);
 
+        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.REJECT, null, null, "Expense claim rejected: " + saved.getClaimNumber() + ", reason: " + reason); } catch (Exception e) { log.warn("Audit log failed for expense claim reject: {}", e.getMessage()); }
+
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
 
@@ -195,6 +206,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         claim.markAsPaid(paymentDate, paymentReference);
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as paid: {}", saved.getClaimNumber());
+
+        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim marked as paid: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim paid: {}", e.getMessage()); }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -453,6 +466,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         claim.markAsReimbursed(reimbursementRef);
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as reimbursed: {} ref: {}", saved.getClaimNumber(), reimbursementRef);
+
+        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim reimbursed: " + saved.getClaimNumber() + ", ref: " + reimbursementRef); } catch (Exception e) { log.warn("Audit log failed for expense claim reimbursed: {}", e.getMessage()); }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
