@@ -11,5 +11,8 @@
     "claude-code-setup@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true
+  },
+  "experimental": {
+    "agentTeams": true
   }
 }
