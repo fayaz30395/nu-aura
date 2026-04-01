@@ -162,7 +162,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                 'min-h-[44px]'
               )}
             >
-              <FileSpreadsheet className="h-4 w-4 text-green-600" />
+              <FileSpreadsheet className="h-4 w-4 text-success-600" />
               Export as Excel
             </button>
 
@@ -179,7 +179,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
-                <FileDown className="h-4 w-4 text-red-600" />
+                <FileDown className="h-4 w-4 text-danger-600" />
                 Export as PDF
               </button>
             )}

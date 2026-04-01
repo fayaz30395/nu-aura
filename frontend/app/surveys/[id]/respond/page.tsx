@@ -224,7 +224,7 @@ function RatingQuestion({
           <svg
             className={`h-8 w-8 ${
               (answer.ratingValue ?? 0) >= val
-                ? 'text-yellow-400 fill-yellow-400'
+                ? 'text-warning-400 fill-warning-400'
                 : 'text-[var(--text-muted)] fill-none'
             }`}
             viewBox="0 0 24 24"

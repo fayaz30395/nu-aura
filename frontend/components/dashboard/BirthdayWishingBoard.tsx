@@ -208,7 +208,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <PartyPopper className="h-6 w-6 text-yellow-500" />
+            <PartyPopper className="h-6 w-6 text-warning-500" />
           </motion.div>
         </div>
 

@@ -61,8 +61,8 @@ const VEHICLE_LABELS: Record<VehicleType, string> = {
 const STATUS_COLORS: Record<MileageStatus, string> = {
   DRAFT: 'bg-surface-100 text-surface-700',
   SUBMITTED: 'bg-accent-100 text-accent-700',
-  APPROVED: 'bg-green-100 text-green-700',
-  REJECTED: 'bg-red-100 text-red-700',
+  APPROVED: 'bg-success-100 text-success-700',
+  REJECTED: 'bg-danger-100 text-danger-700',
   PAID: 'bg-success-100 text-success-700',
 };
 
@@ -229,8 +229,8 @@ export default function MileagePage() {
             </div>
             <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-success-600" />
                 </div>
                 <div>
                   <p className="text-xs text-surface-500 dark:text-surface-400">Reimbursement</p>
@@ -441,7 +441,7 @@ export default function MileagePage() {
                                 <button
                                   onClick={() => handleApproveLog(logEntry.id)}
                                   disabled={approveMutation.isPending}
-                                  className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                                  className="px-3 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50"
                                 >
                                   Approve
                                 </button>
@@ -450,7 +450,7 @@ export default function MileagePage() {
                                     setSelectedLogId(logEntry.id);
                                     setShowRejectModal(true);
                                   }}
-                                  className="px-3 py-1.5 text-xs bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                                  className="px-3 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors"
                                 >
                                   Reject
                                 </button>
@@ -487,7 +487,7 @@ export default function MileagePage() {
                       <span
                         className={`px-2 py-0.5 text-xs rounded-full ${
                           policy.isActive
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-success-100 text-success-700'
                             : 'bg-surface-100 text-surface-500'
                         }`}
                       >
@@ -547,7 +547,7 @@ export default function MileagePage() {
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                   />
                   {errors.travelDate && (
-                    <p className="text-red-500 text-xs mt-1">{errors.travelDate.message}</p>
+                    <p className="text-danger-500 text-xs mt-1">{errors.travelDate.message}</p>
                   )}
                 </div>
 
@@ -563,7 +563,7 @@ export default function MileagePage() {
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.fromLocation && (
-                      <p className="text-red-500 text-xs mt-1">{errors.fromLocation.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{errors.fromLocation.message}</p>
                     )}
                   </div>
                   <div>
@@ -577,7 +577,7 @@ export default function MileagePage() {
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.toLocation && (
-                      <p className="text-red-500 text-xs mt-1">{errors.toLocation.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{errors.toLocation.message}</p>
                     )}
                   </div>
                 </div>
@@ -596,7 +596,7 @@ export default function MileagePage() {
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
                     />
                     {errors.distanceKm && (
-                      <p className="text-red-500 text-xs mt-1">{errors.distanceKm.message}</p>
+                      <p className="text-danger-500 text-xs mt-1">{errors.distanceKm.message}</p>
                     )}
                   </div>
                   <div>
@@ -695,7 +695,7 @@ export default function MileagePage() {
             <button
               onClick={handleRejectLog}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
             >
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>
@@ -739,7 +739,7 @@ function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
           {log.status}
         </span>
         {log.rejectionReason && (
-          <p className="text-xs text-red-500 mt-1">{log.rejectionReason}</p>
+          <p className="text-xs text-danger-500 mt-1">{log.rejectionReason}</p>
         )}
       </td>
       <td className="px-4 py-3 text-right">

@@ -53,9 +53,9 @@ function statusLabel(status: CourseEnrollment['status']): string {
 function ProgressBar({ value }: { value: number }) {
   const clamped = Math.min(100, Math.max(0, value));
   const color =
-    clamped === 100 ? '#22c55e' :
-    clamped >= 50   ? '#f59e0b' :
-                      '#3b82f6';
+    clamped === 100 ? 'var(--chart-success)' :
+    clamped >= 50   ? 'var(--chart-warning)' :
+                      'var(--chart-primary)';
   return (
     <div className="w-full bg-[var(--border-main)] rounded-full h-2.5 overflow-hidden">
       <div
