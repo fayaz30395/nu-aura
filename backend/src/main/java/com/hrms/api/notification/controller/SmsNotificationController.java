@@ -116,6 +116,7 @@ public class SmsNotificationController {
     }
 
     @GetMapping("/status")
+    @RequiresPermission(Permission.NOTIFICATION_MANAGE)
     @Operation(summary = "Get SMS Service Status", description = "Check Twilio SMS service configuration and status")
     public ResponseEntity<Map<String, Object>> getStatus() {
         SmsNotificationService.ServiceStatus status = smsNotificationService.getStatus();
@@ -133,6 +134,7 @@ public class SmsNotificationController {
     }
 
     @PostMapping("/validate-number")
+    @RequiresPermission(Permission.NOTIFICATION_MANAGE)
     @Operation(summary = "Validate Phone Number", description = "Validate phone number format")
     public ResponseEntity<Map<String, Object>> validatePhoneNumber(
             @RequestParam String phoneNumber,
