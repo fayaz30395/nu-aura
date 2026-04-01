@@ -12,6 +12,7 @@ import {
   ExpenseAdvanceEntity,
   CreateExpenseAdvanceRequest,
   ExpenseReportData,
+  OcrResult,
 } from '../../types/hrms/expense';
 
 class ExpenseService {
@@ -256,6 +257,18 @@ class ExpenseService {
 
   async cancelAdvance(advanceId: string): Promise<void> {
     await apiClient.post(`/expenses/advances/${advanceId}/cancel`);
+  }
+
+  // ─── OCR Receipt Scanning ────────────────────────────────────────────────────
+
+  async scanReceipt(file: File): Promise<OcrResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<OcrResult>('/expenses/receipts/scan', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000, // OCR can take longer
+    });
+    return response.data;
   }
 
   // ─── Reports ────────────────────────────────────────────────────────────────

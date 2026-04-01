@@ -23,6 +23,7 @@ export * from './useEmployees';
 export * from './useEscalation';
 export * from './useExpenses';
 export * from './useExit';
+export * from './useMileage';
 export * from './useFeatureFlags';
 export * from './useGoals';
 export * from './useHelpdesk';

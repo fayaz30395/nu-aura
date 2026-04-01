@@ -206,6 +206,21 @@ export function usePolicyValidation(employeeId: string | undefined, amount: numb
   });
 }
 
+// ========== OCR RECEIPT SCANNING ==========
+
+export function useScanReceipt() {
+  return useMutation({
+    mutationFn: (file: File) => expenseService.scanReceipt(file),
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'OCR Scan Failed',
+        message: error.message || 'Failed to scan receipt. Please try again or enter details manually.',
+        color: 'red',
+      });
+    },
+  });
+}
+
 // ========== CLAIM MUTATIONS ==========
 
 export function useCreateExpenseClaim() {
