@@ -268,7 +268,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                       </p>
                     </div>
                     {idx === selectedIdx && (
-                      <kbd className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                      <kbd className="flex-shrink-0 text-2xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
                         Enter
                       </kbd>
                     )}
