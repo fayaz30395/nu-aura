@@ -22,6 +22,12 @@ export * from './usePreloadData';
 export * from './useSamlConfig';
 export * from './useSessionTimeout';
 export * from './useTokenRefresh';
+export * from './useUnsavedChanges';
+export * from './useAriaAnnounce';
+// useUnifiedNotifications is re-exported from './useNotifications' — the query-level
+// useNotifications comes from './queries/useNotifications' to avoid name collision.
+export { useUnifiedNotifications } from './useNotifications';
+export type { UnifiedNotification, UseNotificationsReturn } from './useNotifications';
 
 // ── All React Query module hooks (re-exported from queries/) ─────────────────
 // Note: usePermissions from queries/useRoles is intentionally excluded here
