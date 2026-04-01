@@ -1,0 +1,791 @@
+
+> hrms-frontend@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ✓ Compiled /middleware in 303ms (72 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 13.9s (5620 modules)
+(node:65414) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ GET / 200 in 14657ms
+ ✓ Compiled in 875ms (2516 modules)
+ ✓ Compiled in 352ms (2502 modules)
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 6.6s (5615 modules)
+ GET /auth/login 200 in 5329ms
+ GET /auth/login 200 in 124ms
+ GET /auth/login 200 in 111ms
+ GET / 200 in 168ms
+ GET /auth/login 200 in 101ms
+ ○ Compiling /me/dashboard ...
+ ✓ Compiled /me/dashboard in 1537ms (5990 modules)
+ GET /me/dashboard 200 in 412ms
+ ○ Compiling /employees ...
+ ✓ Compiled /employees in 2.7s (6002 modules)
+ GET /employees 200 in 3028ms
+ ○ Compiling /leave/calendar ...
+ ✓ Compiled /leave/calendar in 1241ms (6032 modules)
+ GET /leave/calendar 200 in 1643ms
+ GET /me/dashboard 200 in 235ms
+ GET /employees 200 in 201ms
+ ○ Compiling /attendance ...
+ ✓ Compiled /attendance in 6.4s (7002 modules)
+ GET /attendance 200 in 6958ms
+ ○ Compiling /performance ...
+ ✓ Compiled /performance in 1528ms (7025 modules)
+ GET /performance 200 in 1818ms
+ ○ Compiling /admin/roles ...
+ ✓ Compiled /admin/roles in 4.2s (7051 modules)
+ GET /admin/roles 200 in 4657ms
+ ○ Compiling /recruitment/jobs ...
+ ✓ Compiled /recruitment/jobs in 1399ms (7072 modules)
+ GET /recruitment/jobs 200 in 1672ms
+ ✓ Compiled in 11.6s (7068 modules)
+ ✓ Compiled in 1962ms (3264 modules)
+ ✓ Compiled in 10.8s (7070 modules)
+ ✓ Compiled in 23.5s (7070 modules)
+ ✓ Compiled in 4.2s (7070 modules)
+ ✓ Compiled in 5.1s (7070 modules)
+ ✓ Compiled in 2.5s (7070 modules)
+ ✓ Compiled in 931ms (3265 modules)
+ ✓ Compiled in 1461ms (7070 modules)
+ ✓ Compiled in 6.7s (7070 modules)
+ GET /me/dashboard 200 in 472ms
+ ✓ Compiled in 4.9s (7070 modules)
+ ✓ Compiled in 7.6s (7070 modules)
+ ✓ Compiled in 3.9s (7070 modules)
+ ✓ Compiled in 7.5s (7070 modules)
+ ✓ Compiled in 16s (7070 modules)
+ ✓ Compiled in 3.3s (7070 modules)
+ ✓ Compiled in 3.9s (7070 modules)
+ ✓ Compiled in 6.1s (7070 modules)
+ ✓ Compiled in 6.1s (7070 modules)
+ ✓ Compiled in 2.1s (3265 modules)
+ ✓ Compiled in 3.1s (3265 modules)
+ ✓ Compiled in 10.1s (7070 modules)
+ GET /me/dashboard 200 in 443ms
+ GET /me/dashboard 200 in 159ms
+ GET /me/dashboard 200 in 186ms
+ GET /me/dashboard 200 in 490ms
+ GET /me/dashboard 200 in 1461ms
+ GET /me/dashboard 200 in 219ms
+ GET /me/dashboard 200 in 166ms
+ ✓ Compiled in 10.7s (7070 modules)
+ ✓ Compiled in 1243ms (3265 modules)
+ ✓ Compiled in 1825ms (3265 modules)
+ ✓ Compiled in 1617ms (3265 modules)
+ ✓ Compiled in 1217ms (3265 modules)
+ ✓ Compiled in 986ms (3265 modules)
+ ✓ Compiled in 1119ms (3265 modules)
+ ✓ Compiled in 882ms (3265 modules)
+ ✓ Compiled in 1175ms (3265 modules)
+ ✓ Compiled in 1952ms (3265 modules)
+ ✓ Compiled in 3s (3265 modules)
+ ✓ Compiled in 1338ms (3265 modules)
+ ✓ Compiled in 14.9s (7070 modules)
+ GET /me/dashboard 200 in 13248ms
+ ✓ Compiled in 6.2s (7070 modules)
+ ✓ Compiled in 1661ms (3265 modules)
+ ✓ Compiled in 1528ms (3265 modules)
+ ✓ Compiled in 10.9s (7070 modules)
+ ✓ Compiled in 1602ms (3265 modules)
+ ✓ Compiled in 6.4s (7070 modules)
+ ✓ Compiled in 15.5s (7070 modules)
+ ✓ Compiled in 2.1s (3265 modules)
+ ✓ Compiled in 1323ms (3265 modules)
+ GET /me/dashboard 200 in 665ms
+ GET /recruitment/jobs 200 in 227ms
+ GET /me/dashboard 200 in 149ms
+ ○ Compiling /employees ...
+ ✓ Compiled /employees in 4.5s (3817 modules)
+ GET /employees 200 in 5017ms
+ GET /attendance 200 in 501ms
+ ○ Compiling /onboarding ...
+ ✓ Compiled /onboarding in 6.9s (7094 modules)
+ GET /onboarding 200 in 7190ms
+ ○ Compiling /dashboards/manager ...
+ ✓ Compiled /dashboards/manager in 5s (7140 modules)
+ GET /dashboards/manager 200 in 5513ms
+ GET /attendance 200 in 214ms
+ GET /me/dashboard 200 in 312ms
+ ✓ Compiled in 18.1s (7135 modules)
+ ✓ Compiled in 9.7s (7135 modules)
+ ✓ Compiled in 4s (3316 modules)
+ ✓ Compiled in 1135ms (3316 modules)
+ ✓ Compiled in 1675ms (3316 modules)
+ ✓ Compiled in 3.1s (3316 modules)
+ ✓ Compiled in 1009ms (3316 modules)
+ ✓ Compiled in 7.6s (7135 modules)
+ GET /me/dashboard 200 in 617ms
+ GET /attendance 200 in 399ms
+ GET /attendance 200 in 182ms
+ GET /onboarding 200 in 236ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.1s (3827 modules)
+ GET / 200 in 3377ms
+ GET /me/dashboard 200 in 315ms
+ GET /me/dashboard 200 in 122ms
+ ✓ Compiled in 5.4s (7135 modules)
+ ✓ Compiled in 3.5s (7135 modules)
+ ✓ Compiled in 3.6s (7135 modules)
+ ✓ Compiled in 4.2s (7135 modules)
+ GET /onboarding 200 in 371ms
+ ✓ Compiled in 6.2s (7135 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /onboarding 200 in 717ms
+ GET /me/dashboard 200 in 719ms
+ GET /me/dashboard 200 in 211ms
+ ✓ Compiled in 3.8s (7135 modules)
+ ✓ Compiled in 5.3s (7135 modules)
+ GET /onboarding 200 in 808ms
+ GET /me/dashboard 200 in 218ms
+ GET /onboarding 200 in 116ms
+ ✓ Compiled in 9.7s (7135 modules)
+ ✓ Compiled in 2.5s (7135 modules)
+ ✓ Compiled in 1235ms (3316 modules)
+ ✓ Compiled in 6.9s (7135 modules)
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 1399ms (3837 modules)
+ GET /auth/login?returnUrl=%2Fme%2Fdashboard 200 in 1763ms
+ GET /auth/login?returnUrl=%2Fonboarding 200 in 1817ms
+ ✓ Compiled in 1592ms (7141 modules)
+ ✓ Compiled in 1184ms (3316 modules)
+ ✓ Compiled in 867ms (3316 modules)
+ ✓ Compiled in 1035ms (3316 modules)
+ ✓ Compiled in 933ms (3316 modules)
+ ✓ Compiled in 940ms (3316 modules)
+ ✓ Compiled in 994ms (3316 modules)
+ ✓ Compiled in 1081ms (3316 modules)
+ ✓ Compiled in 1120ms (3316 modules)
+ GET /auth/login?returnUrl=%2Fme%2Fdashboard 200 in 373ms
+ ✓ Compiled in 1293ms (3316 modules)
+ ✓ Compiled in 1179ms (3316 modules)
+ ✓ Compiled in 1316ms (3316 modules)
+ ✓ Compiled in 743ms (3316 modules)
+ ✓ Compiled in 1127ms (3316 modules)
+ ✓ Compiled in 9.4s (7141 modules)
+ ✓ Compiled in 1740ms (3316 modules)
+ ✓ Compiled in 1303ms (3316 modules)
+ ✓ Compiled in 1029ms (3316 modules)
+ ✓ Compiled in 1385ms (3316 modules)
+ ✓ Compiled in 932ms (3316 modules)
+ ✓ Compiled in 1160ms (3316 modules)
+ ✓ Compiled in 1203ms (3316 modules)
+ ✓ Compiled in 1861ms (3316 modules)
+ ✓ Compiled in 844ms (3316 modules)
+ ✓ Compiled in 1312ms (3316 modules)
+ ✓ Compiled in 1075ms (3316 modules)
+ ✓ Compiled in 1193ms (3316 modules)
+ ✓ Compiled in 1170ms (3316 modules)
+ ✓ Compiled in 1258ms (3316 modules)
+ ✓ Compiled in 1316ms (3316 modules)
+ ✓ Compiled in 2.6s (3316 modules)
+ ✓ Compiled in 963ms (3316 modules)
+ ✓ Compiled in 1265ms (3316 modules)
+ ✓ Compiled in 1359ms (3316 modules)
+ ✓ Compiled in 979ms (3316 modules)
+ GET /auth/login?returnUrl=%2Fonboarding 200 in 428ms
+ ✓ Compiled in 5.5s (7141 modules)
+ GET /me/dashboard 200 in 283ms
+ ✓ Compiled in 3.5s (7141 modules)
+ ✓ Compiled in 2.6s (7141 modules)
+ ✓ Compiled in 712ms (3316 modules)
+ ✓ Compiled in 915ms (3316 modules)
+ ✓ Compiled in 908ms (3316 modules)
+ GET /me/dashboard 200 in 243ms
+ ✓ Compiled in 967ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 6.2s (7141 modules)
+ GET /me/dashboard 200 in 914ms
+ ✓ Compiled in 3.1s (7141 modules)
+ ✓ Compiled in 10.4s (7141 modules)
+ ✓ Compiled in 1515ms (3316 modules)
+ ✓ Compiled in 779ms (3316 modules)
+ ✓ Compiled in 1169ms (3316 modules)
+ ✓ Compiled in 1341ms (3316 modules)
+ ✓ Compiled in 800ms (3316 modules)
+ ✓ Compiled in 1148ms (3316 modules)
+ ✓ Compiled in 1679ms (3316 modules)
+ ✓ Compiled in 1098ms (3316 modules)
+ ✓ Compiled in 1152ms (3316 modules)
+ ✓ Compiled in 919ms (3316 modules)
+ ✓ Compiled in 876ms (3316 modules)
+ ✓ Compiled in 1180ms (3316 modules)
+ ✓ Compiled in 1003ms (3316 modules)
+ ✓ Compiled in 858ms (3316 modules)
+ ✓ Compiled in 1956ms (3316 modules)
+ ✓ Compiled in 1411ms (3316 modules)
+ ✓ Compiled in 919ms (3316 modules)
+ ✓ Compiled in 1218ms (3316 modules)
+ ✓ Compiled in 1284ms (3316 modules)
+ ✓ Compiled in 1679ms (3316 modules)
+ GET /me/dashboard 200 in 698ms
+ ✓ Compiled in 4.1s (3316 modules)
+ GET /me/dashboard 200 in 157ms
+ GET /me/dashboard 200 in 144ms
+ ✓ Compiled in 10.4s (7141 modules)
+ GET /me/dashboard 200 in 405ms
+ ✓ Compiled in 2.3s (3316 modules)
+ ✓ Compiled in 5.3s (7141 modules)
+ ✓ Compiled in 4.7s (7141 modules)
+ ✓ Compiled in 2.3s (7141 modules)
+ ✓ Compiled in 1950ms (7141 modules)
+ ✓ Compiled in 2.5s (7141 modules)
+ ✓ Compiled in 2.3s (7141 modules)
+ ✓ Compiled in 7s (7141 modules)
+ ✓ Compiled in 1816ms (7141 modules)
+ ✓ Compiled in 20.6s (7141 modules)
+ ✓ Compiled in 984ms (3316 modules)
+ ✓ Compiled in 1617ms (3316 modules)
+ ✓ Compiled in 668ms (3316 modules)
+ ✓ Compiled in 581ms (3316 modules)
+ ✓ Compiled in 1586ms (3316 modules)
+ ✓ Compiled in 783ms (3316 modules)
+ ✓ Compiled in 673ms (3316 modules)
+ ✓ Compiled in 1223ms (3316 modules)
+ ✓ Compiled in 686ms (3316 modules)
+ ✓ Compiled in 675ms (3316 modules)
+ ✓ Compiled in 1317ms (3316 modules)
+ ✓ Compiled in 835ms (3316 modules)
+ ✓ Compiled in 959ms (3316 modules)
+ ✓ Compiled in 1043ms (3316 modules)
+ ✓ Compiled in 748ms (3316 modules)
+ ✓ Compiled in 761ms (3316 modules)
+ ✓ Compiled in 1462ms (3316 modules)
+ ✓ Compiled in 876ms (3316 modules)
+ ✓ Compiled in 697ms (3316 modules)
+ ✓ Compiled in 1590ms (3316 modules)
+ ✓ Compiled in 814ms (3316 modules)
+ ✓ Compiled in 655ms (3316 modules)
+ ✓ Compiled in 1269ms (3316 modules)
+ ✓ Compiled in 3.8s (3316 modules)
+ ✓ Compiled in 643ms (3316 modules)
+ ✓ Compiled in 1429ms (3316 modules)
+ ✓ Compiled in 829ms (3316 modules)
+ ✓ Compiled in 816ms (3316 modules)
+ ✓ Compiled in 1859ms (3316 modules)
+ ✓ Compiled in 946ms (3316 modules)
+ ✓ Compiled in 652ms (3316 modules)
+ ✓ Compiled in 1484ms (3316 modules)
+ ✓ Compiled in 800ms (3316 modules)
+ ✓ Compiled in 642ms (3316 modules)
+ ✓ Compiled in 613ms (3316 modules)
+ ✓ Compiled in 1175ms (3316 modules)
+ ✓ Compiled in 727ms (3316 modules)
+ ✓ Compiled in 1524ms (3316 modules)
+ ✓ Compiled in 905ms (3316 modules)
+ ✓ Compiled in 2.7s (3316 modules)
+ ✓ Compiled in 922ms (3316 modules)
+ ✓ Compiled in 1670ms (3316 modules)
+ ✓ Compiled in 1297ms (3316 modules)
+ ✓ Compiled in 731ms (3316 modules)
+ ✓ Compiled in 1701ms (3316 modules)
+ ✓ Compiled in 960ms (3316 modules)
+ ✓ Compiled in 973ms (3316 modules)
+ ✓ Compiled in 1845ms (3316 modules)
+ ✓ Compiled in 910ms (3316 modules)
+ ✓ Compiled in 775ms (3316 modules)
+ ✓ Compiled in 1728ms (3316 modules)
+ ✓ Compiled in 842ms (3316 modules)
+ ✓ Compiled in 686ms (3316 modules)
+ ✓ Compiled in 2.2s (3316 modules)
+ ✓ Compiled in 1483ms (3316 modules)
+ ✓ Compiled in 923ms (3316 modules)
+ ✓ Compiled in 1802ms (3316 modules)
+ ✓ Compiled in 929ms (3316 modules)
+ ✓ Compiled in 876ms (3316 modules)
+ ✓ Compiled in 2.8s (3316 modules)
+ ✓ Compiled in 916ms (3316 modules)
+ ✓ Compiled in 862ms (3316 modules)
+ ✓ Compiled in 2.3s (3316 modules)
+ ✓ Compiled in 835ms (3316 modules)
+ ✓ Compiled in 745ms (3316 modules)
+ ✓ Compiled in 1668ms (3316 modules)
+ ✓ Compiled in 820ms (3316 modules)
+ ✓ Compiled in 707ms (3316 modules)
+ ✓ Compiled in 1590ms (3316 modules)
+ ✓ Compiled in 1003ms (3316 modules)
+ ✓ Compiled in 1088ms (3316 modules)
+ ✓ Compiled in 1655ms (3316 modules)
+ ✓ Compiled in 1366ms (3316 modules)
+ ✓ Compiled in 908ms (3316 modules)
+ ✓ Compiled in 1936ms (3316 modules)
+ ✓ Compiled in 1490ms (3316 modules)
+ ✓ Compiled in 743ms (3316 modules)
+ ✓ Compiled in 1404ms (3316 modules)
+ ✓ Compiled in 870ms (3316 modules)
+ ✓ Compiled in 694ms (3316 modules)
+ ✓ Compiled in 5.2s (7141 modules)
+ ✓ Compiled in 1366ms (3316 modules)
+ ✓ Compiled in 890ms (3316 modules)
+ ✓ Compiled in 1495ms (3316 modules)
+ ✓ Compiled in 729ms (3316 modules)
+ ✓ Compiled in 3.3s (3316 modules)
+ ✓ Compiled in 1734ms (3316 modules)
+ ✓ Compiled in 810ms (3316 modules)
+ ✓ Compiled in 717ms (3316 modules)
+ ✓ Compiled in 1115ms (3316 modules)
+ ✓ Compiled in 671ms (3316 modules)
+ ✓ Compiled in 845ms (3316 modules)
+ ✓ Compiled in 1562ms (3316 modules)
+ ✓ Compiled in 992ms (3316 modules)
+ ✓ Compiled in 621ms (3316 modules)
+ ✓ Compiled in 1753ms (3316 modules)
+ ✓ Compiled in 739ms (3316 modules)
+ ✓ Compiled in 688ms (3316 modules)
+ ✓ Compiled in 719ms (3316 modules)
+ ✓ Compiled in 753ms (3316 modules)
+ ✓ Compiled in 587ms (3316 modules)
+ ✓ Compiled in 650ms (3316 modules)
+ ✓ Compiled in 1286ms (3316 modules)
+ ✓ Compiled in 768ms (3316 modules)
+ ✓ Compiled in 1712ms (3316 modules)
+ ✓ Compiled in 1220ms (3316 modules)
+ ✓ Compiled in 800ms (3316 modules)
+ ✓ Compiled in 1426ms (3316 modules)
+ ✓ Compiled in 703ms (3316 modules)
+ ✓ Compiled in 679ms (3316 modules)
+ ✓ Compiled in 1186ms (3316 modules)
+ ✓ Compiled in 698ms (3316 modules)
+ ✓ Compiled in 726ms (3316 modules)
+ ✓ Compiled in 1373ms (3316 modules)
+ ✓ Compiled in 711ms (3316 modules)
+ ✓ Compiled in 648ms (3316 modules)
+ ✓ Compiled in 665ms (3316 modules)
+ ✓ Compiled in 1145ms (3316 modules)
+ ✓ Compiled in 593ms (3316 modules)
+ ✓ Compiled in 641ms (3316 modules)
+ ✓ Compiled in 1350ms (3316 modules)
+ ✓ Compiled in 692ms (3316 modules)
+ ✓ Compiled in 1253ms (3316 modules)
+ ✓ Compiled in 834ms (3316 modules)
+ ✓ Compiled in 716ms (3316 modules)
+ ✓ Compiled in 1392ms (3316 modules)
+ ✓ Compiled in 728ms (3316 modules)
+ ✓ Compiled in 599ms (3316 modules)
+ ✓ Compiled in 666ms (3316 modules)
+ ✓ Compiled in 1094ms (3316 modules)
+ ✓ Compiled in 1027ms (3316 modules)
+ ✓ Compiled in 1359ms (3316 modules)
+ ✓ Compiled in 648ms (3316 modules)
+ ✓ Compiled in 958ms (3316 modules)
+ ✓ Compiled in 1086ms (3316 modules)
+ ✓ Compiled in 1787ms (3316 modules)
+ ✓ Compiled in 4s (3316 modules)
+ ✓ Compiled in 1006ms (3316 modules)
+ ✓ Compiled in 1529ms (3316 modules)
+ ✓ Compiled in 756ms (3316 modules)
+ ✓ Compiled in 749ms (3316 modules)
+ ✓ Compiled in 1504ms (3316 modules)
+ ✓ Compiled in 1334ms (3316 modules)
+ ✓ Compiled in 834ms (3316 modules)
+ ✓ Compiled in 1810ms (3316 modules)
+ ✓ Compiled in 694ms (3316 modules)
+ ✓ Compiled in 664ms (3316 modules)
+ ✓ Compiled in 643ms (3316 modules)
+ ✓ Compiled in 1094ms (3316 modules)
+ ✓ Compiled in 5.6s (7141 modules)
+ ✓ Compiled in 1789ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /me/dashboard 200 in 1045ms
+ ✓ Compiled in 1077ms (3316 modules)
+ ✓ Compiled in 1734ms (3316 modules)
+ ✓ Compiled in 869ms (3316 modules)
+ ✓ Compiled in 1098ms (3316 modules)
+ ✓ Compiled in 1740ms (3316 modules)
+ ✓ Compiled in 1204ms (3316 modules)
+ ✓ Compiled in 670ms (3316 modules)
+ ✓ Compiled in 1782ms (3316 modules)
+ ✓ Compiled in 878ms (3316 modules)
+ ✓ Compiled in 901ms (3316 modules)
+ ✓ Compiled in 1643ms (3316 modules)
+ ✓ Compiled in 836ms (3316 modules)
+ ✓ Compiled in 955ms (3316 modules)
+ ✓ Compiled in 1553ms (3316 modules)
+ ✓ Compiled in 781ms (3316 modules)
+ ✓ Compiled in 768ms (3316 modules)
+ ✓ Compiled in 1814ms (3316 modules)
+ ✓ Compiled in 1130ms (3316 modules)
+ ✓ Compiled in 753ms (3316 modules)
+ ✓ Compiled in 1872ms (3316 modules)
+ ✓ Compiled in 1456ms (3316 modules)
+ ✓ Compiled in 749ms (3316 modules)
+ ✓ Compiled in 1245ms (3316 modules)
+ ✓ Compiled in 1831ms (3316 modules)
+ ✓ Compiled in 844ms (3316 modules)
+ ✓ Compiled in 681ms (3316 modules)
+ ✓ Compiled in 1992ms (3316 modules)
+ ✓ Compiled in 1151ms (3316 modules)
+ ✓ Compiled in 771ms (3316 modules)
+ ✓ Compiled in 1817ms (3316 modules)
+ ✓ Compiled in 6.6s (7141 modules)
+ ✓ Compiled in 1177ms (3316 modules)
+ ✓ Compiled in 965ms (3316 modules)
+ ✓ Compiled in 2.3s (3316 modules)
+ ✓ Compiled in 1190ms (3316 modules)
+ ✓ Compiled in 1895ms (3316 modules)
+ ✓ Compiled in 923ms (3316 modules)
+ ✓ Compiled in 636ms (3316 modules)
+ ✓ Compiled in 2.1s (3316 modules)
+ ✓ Compiled in 2.5s (3316 modules)
+ ✓ Compiled in 1250ms (3316 modules)
+ ✓ Compiled in 1730ms (3316 modules)
+ ✓ Compiled in 1082ms (3316 modules)
+ ✓ Compiled in 778ms (3316 modules)
+ ✓ Compiled in 2.3s (3316 modules)
+ ✓ Compiled in 931ms (3316 modules)
+ ✓ Compiled in 1392ms (3316 modules)
+ ✓ Compiled in 1477ms (3316 modules)
+ ✓ Compiled in 1210ms (3316 modules)
+ ✓ Compiled in 1118ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /me/dashboard 200 in 447ms
+ ✓ Compiled in 1401ms (3316 modules)
+ ✓ Compiled in 902ms (3316 modules)
+ ✓ Compiled in 3.8s (7141 modules)
+ ✓ Compiled in 5.1s (7141 modules)
+ ✓ Compiled in 1230ms (3316 modules)
+ ✓ Compiled in 924ms (3316 modules)
+ ✓ Compiled in 815ms (3316 modules)
+ ✓ Compiled in 3.5s (7141 modules)
+ ✓ Compiled in 1020ms (3316 modules)
+ ✓ Compiled in 754ms (3316 modules)
+ ✓ Compiled in 2s (3316 modules)
+ ✓ Compiled in 1153ms (3316 modules)
+ ✓ Compiled in 2.1s (3316 modules)
+ ✓ Compiled in 1136ms (3316 modules)
+ ✓ Compiled in 763ms (3316 modules)
+ ✓ Compiled in 4.7s (7141 modules)
+ ✓ Compiled in 763ms (3316 modules)
+ ✓ Compiled in 2.5s (3316 modules)
+ ✓ Compiled in 1019ms (3316 modules)
+ ✓ Compiled in 759ms (3316 modules)
+ ✓ Compiled in 2.4s (3316 modules)
+ ✓ Compiled in 1272ms (3316 modules)
+ ✓ Compiled in 754ms (3316 modules)
+ ✓ Compiled in 1625ms (3316 modules)
+ ✓ Compiled in 1216ms (3316 modules)
+ ✓ Compiled in 1576ms (3316 modules)
+ ✓ Compiled in 1633ms (3316 modules)
+ ✓ Compiled in 1129ms (3316 modules)
+ ✓ Compiled in 1406ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /me/dashboard 200 in 441ms
+ ✓ Compiled in 5.9s (7141 modules)
+ ✓ Compiled in 1165ms (3316 modules)
+ ✓ Compiled in 6.5s (7141 modules)
+ ✓ Compiled in 1374ms (3316 modules)
+ ✓ Compiled in 1396ms (3316 modules)
+ ✓ Compiled in 1005ms (3316 modules)
+ GET /auth/login?reason=timeout 200 in 418ms
+ GET /auth/login?returnUrl=%2Fme%2Fdashboard 200 in 137ms
+ GET /auth/login?returnUrl=%2Fme%2Fdashboard 200 in 116ms
+ ✓ Compiled in 10.9s (3329 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /me/dashboard 200 in 362ms
+ ✓ Compiled in 3s (3329 modules)
+ ✓ Compiled in 3.2s (3329 modules)
+ ✓ Compiled in 3.1s (3329 modules)
+ ✓ Compiled in 2.7s (3329 modules)
+ ✓ Compiled in 5.6s (7141 modules)
+ ✓ Compiled in 4.2s (7141 modules)
+ ✓ Compiled in 12s (7141 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 15.4s (7141 modules)
+ GET /me/dashboard 200 in 7904ms
+ ✓ Compiled in 2.8s (7141 modules)
+ ✓ Compiled in 3.7s (7141 modules)
+ ✓ Compiled in 2.6s (7141 modules)
+ ✓ Compiled in 3.4s (7141 modules)
+ ✓ Compiled in 2.9s (7141 modules)
+ ✓ Compiled in 2.7s (7141 modules)
+ ✓ Compiled in 2.7s (7141 modules)
+ ✓ Compiled in 3s (7141 modules)
+ ✓ Compiled in 4.1s (7141 modules)
+ ✓ Compiled in 3.2s (7141 modules)
+ ✓ Compiled in 6s (7141 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /me/dashboard 200 in 2197ms
+ ✓ Compiled in 27.5s (7141 modules)
+ ✓ Compiled in 1469ms (3316 modules)
+ ✓ Compiled in 1206ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 20.6s (7141 modules)
+ GET /me/dashboard 200 in 9996ms
+ GET /me/dashboard 200 in 175ms
+ GET /me/dashboard 200 in 248ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.7s (3833 modules)
+ GET / 200 in 3345ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.1s (7136 modules)
+ GET /apple-touch-icon-precomposed.png 404 in 2168ms
+ GET /apple-touch-icon.png 404 in 2167ms
+ ✓ Compiled in 18.4s (7153 modules)
+ ✓ Compiled in 3.4s (7203 modules)
+ ✓ Compiled in 13.3s (7203 modules)
+ ✓ Compiled in 3.8s (7203 modules)
+ ✓ Compiled in 2.4s (7203 modules)
+ ✓ Compiled in 5.6s (7217 modules)
+ ✓ Compiled in 3.9s (7203 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 6.6s (3831 modules)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'clientModules')
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:40:25679
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:191:62
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:122:103
+    at NoopContextManager.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NextTracerImpl.trace (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:122:28)
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:191:31
+    at ne (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:42:1678)
+    at async doRender (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/base-server.js:1427:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/base-server.js:1588:28) {
+  page: '/'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 4.6s (7363 modules)
+ GET / 500 in 12249ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 523ms (3873 modules)
+ GET /_next/static/css/app/layout.css?v=1773600575406 404 in 905ms
+ GET /_next/static/css/app/layout.css?v=1773600575406 404 in 35ms
+ GET /me/dashboard 200 in 289ms
+ GET /_next/static/css/app/layout.css?v=1773600615166 404 in 25ms
+ GET /_next/static/chunks/main-app.js?v=1773600615166 404 in 27ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 756ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 758ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 757ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 762ms
+ GET /_next/static/chunks/app/me/error.js 404 in 773ms
+ GET /_next/static/chunks/app/layout.js 404 in 1187ms
+ GET /_next/static/chunks/app/error.js 404 in 47ms
+ GET /_next/static/chunks/app/not-found.js 404 in 47ms
+ GET /_next/static/chunks/app/global-error.js 404 in 48ms
+ GET /_next/static/chunks/app/loading.js 404 in 49ms
+ GET /me/dashboard 200 in 165ms
+ GET /me/dashboard 200 in 125ms
+ GET /_next/static/css/app/layout.css?v=1773600617490 404 in 19ms
+ GET /_next/static/chunks/main-app.js?v=1773600617490 404 in 18ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 57ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 56ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 58ms
+ GET /_next/static/chunks/app/me/error.js 404 in 57ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 56ms
+ GET /_next/static/chunks/app/layout.js 404 in 54ms
+ GET /me/dashboard 200 in 165ms
+ GET /_next/static/css/app/layout.css?v=1773600619706 404 in 16ms
+ GET /_next/static/chunks/main-app.js?v=1773600619706 404 in 49ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 45ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 45ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 46ms
+ GET /_next/static/chunks/app/me/error.js 404 in 45ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 45ms
+ GET /_next/static/chunks/app/layout.js 404 in 64ms
+ GET /_next/static/chunks/app/error.js 404 in 63ms
+ GET /_next/static/chunks/app/global-error.js 404 in 63ms
+ GET /_next/static/chunks/app/not-found.js 404 in 63ms
+ GET /_next/static/chunks/app/loading.js 404 in 63ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/es-object-atoms' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js', but to 'Error: Can't resolve './vendor-chunks/es-object-atoms' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/es-object-atoms (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/handle-externals.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/has-tostringtag' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/has-tostringtag.js', but to 'Error: Can't resolve './vendor-chunks/has-tostringtag' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/has-tostringtag (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/has-tostringtag.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/use-isomorphic-layout-effect' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/use-isomorphic-layout-effect.js', but to 'Error: Can't resolve './vendor-chunks/use-isomorphic-layout-effect' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/use-isomorphic-layout-effect (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/use-isomorphic-layout-effect.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/es-object-atoms' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js', but to 'Error: Can't resolve './vendor-chunks/es-object-atoms' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/es-object-atoms (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET /me/dashboard 200 in 165ms
+ GET /_next/static/css/app/layout.css?v=1773600640656 404 in 20ms
+ GET /_next/static/chunks/main-app.js?v=1773600640656 404 in 50ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 45ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 46ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 48ms
+ GET /_next/static/chunks/app/me/error.js 404 in 45ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 46ms
+ GET /_next/static/chunks/app/layout.js 404 in 33ms
+ GET /_next/static/chunks/app/error.js 404 in 32ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 32ms
+ GET /_next/static/chunks/app/global-error.js 404 in 32ms
+ GET /me/dashboard 200 in 195ms
+ GET /_next/static/css/app/layout.css?v=1773600654188 404 in 16ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 42ms
+ GET /_next/static/chunks/main-app.js?v=1773600654188 404 in 43ms
+ GET /_next/static/chunks/app/me/error.js 404 in 41ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 43ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 41ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 42ms
+ GET /_next/static/chunks/app/layout.js 404 in 35ms
+ GET /_next/static/chunks/app/error.js 404 in 34ms
+ GET /_next/static/chunks/app/global-error.js 404 in 34ms
+ GET /_next/static/chunks/app/not-found.js 404 in 35ms
+ GET /_next/static/chunks/app/loading.js 404 in 35ms
+ GET /me/dashboard 200 in 138ms
+ GET /_next/static/css/app/layout.css?v=1773600664471 404 in 20ms
+ GET /_next/static/chunks/main-app.js?v=1773600664471 404 in 59ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 60ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 60ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 60ms
+ GET /_next/static/chunks/app/me/error.js 404 in 61ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 61ms
+ GET /_next/static/chunks/app/layout.js 404 in 35ms
+ GET /_next/static/chunks/app/error.js 404 in 34ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/global-error.js 404 in 33ms
+ GET /me/dashboard 200 in 171ms
+ GET /_next/static/css/app/layout.css?v=1773600665601 404 in 17ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 50ms
+ GET /_next/static/chunks/main-app.js?v=1773600665601 404 in 55ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 51ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 52ms
+ GET /_next/static/chunks/app/me/error.js 404 in 54ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 55ms
+ GET /_next/static/chunks/app/layout.js 404 in 34ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/error.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET /_next/static/chunks/app/global-error.js 404 in 32ms
+ GET /me/dashboard 200 in 92ms
+ GET /me/dashboard 200 in 64ms
+ GET /me/dashboard 200 in 67ms
+ GET /me/dashboard 200 in 59ms
+ GET /me/dashboard 200 in 83ms
+ GET /me/dashboard 200 in 80ms
+ GET /me/dashboard 200 in 79ms
+ GET /me/dashboard 200 in 72ms
+ GET /me/dashboard 200 in 61ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 66ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 69ms
+ GET /me/dashboard 200 in 66ms
+ GET /me/dashboard 200 in 68ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 85ms
+ GET /me/dashboard 200 in 85ms
+ GET /_next/static/css/app/layout.css?v=1773600667472 404 in 14ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 31ms
+ GET /_next/static/chunks/main-app.js?v=1773600667472 404 in 32ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 31ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/app/me/error.js 404 in 31ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 31ms
+ GET /_next/static/chunks/app/layout.js 404 in 30ms
+ GET /_next/static/chunks/app/loading.js 404 in 29ms
+ GET /_next/static/chunks/app/not-found.js 404 in 30ms
+ GET /_next/static/chunks/app/error.js 404 in 31ms
+ GET /_next/static/chunks/app/global-error.js 404 in 30ms
+ GET /me/dashboard 200 in 140ms
+ GET /_next/static/css/app/layout.css?v=1773600672037 404 in 18ms
+ GET /_next/static/chunks/main-app.js?v=1773600672037 404 in 40ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 36ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 37ms
+ GET /_next/static/chunks/app/me/error.js 404 in 36ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 37ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 37ms
+ GET /_next/static/chunks/app/layout.js 404 in 39ms
+ GET /_next/static/chunks/app/error.js 404 in 36ms
+ GET /_next/static/chunks/app/not-found.js 404 in 35ms
+ GET /_next/static/chunks/app/loading.js 404 in 35ms
+ GET /_next/static/chunks/app/global-error.js 404 in 36ms
+motion() is deprecated. Use motion.create() instead.
+ GET / 200 in 194ms
+ GET /_next/static/css/app/layout.css?v=1773600674207 404 in 14ms
+ GET /_next/static/chunks/main-app.js?v=1773600674207 404 in 20ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/app/page.js 404 in 30ms
+ GET /_next/static/chunks/app/layout.js 404 in 37ms
+ GET /_next/static/chunks/app/error.js 404 in 25ms
+ GET /_next/static/chunks/app/not-found.js 404 in 26ms
+ GET /_next/static/chunks/app/global-error.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET / 200 in 174ms
+ GET /_next/static/css/app/layout.css?v=1773600676368 404 in 22ms
+ GET /_next/static/chunks/main-app.js?v=1773600676368 404 in 56ms
+ GET /_next/static/chunks/app/page.js 404 in 49ms
+ GET /_next/static/chunks/app/layout.js 404 in 49ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 51ms
+ GET /_next/static/chunks/app/not-found.js 404 in 50ms
+ GET /_next/static/chunks/app/error.js 404 in 50ms
+ GET /_next/static/chunks/app/loading.js 404 in 20ms
+ GET /_next/static/chunks/app/global-error.js 404 in 20ms
+ GET / 200 in 226ms
+ GET /_next/static/css/app/layout.css?v=1773600677710 404 in 32ms
+ GET /_next/static/chunks/main-app.js?v=1773600677710 404 in 73ms
+ GET /_next/static/chunks/app/layout.js 404 in 62ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 63ms
+ GET /_next/static/chunks/app/page.js 404 in 62ms
+ GET /_next/static/chunks/app/not-found.js 404 in 62ms
+ GET /_next/static/chunks/app/error.js 404 in 58ms
+ GET /_next/static/chunks/app/loading.js 404 in 22ms
+ GET /_next/static/chunks/app/global-error.js 404 in 22ms

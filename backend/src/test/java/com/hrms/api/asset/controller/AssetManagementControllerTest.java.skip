@@ -1,0 +1,425 @@
+package com.hrms.api.asset.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.asset.dto.AssetRequest;
+import com.hrms.api.asset.dto.AssetResponse;
+import com.hrms.application.asset.service.AssetManagementService;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.TenantFilter;
+import com.hrms.domain.asset.Asset;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(AssetManagementController.class)
+@ContextConfiguration(classes = {AssetManagementController.class, AssetManagementControllerTest.TestConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
+@DisplayName("AssetManagementController Unit Tests")
+class AssetManagementControllerTest {
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
+            return new JpaMetamodelMappingContext(Collections.emptySet());
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private AssetManagementService assetService;
+
+    @MockBean
+    private DataScopeService dataScopeService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private TenantFilter tenantFilter;
+
+    private UUID assetId;
+    private UUID employeeId;
+    private AssetRequest assetRequest;
+    private AssetResponse assetResponse;
+
+    @BeforeEach
+    void setUp() {
+        assetId = UUID.randomUUID();
+        employeeId = UUID.randomUUID();
+
+        assetRequest = new AssetRequest();
+        assetRequest.setAssetName("MacBook Pro 16\"");
+        assetRequest.setAssetTag("ASSET-001");
+        assetRequest.setAssetType("LAPTOP");
+        assetRequest.setSerialNumber("C02XG0ADJGH7");
+        assetRequest.setPurchaseDate(LocalDate.of(2024, 1, 15));
+        assetRequest.setStatus(Asset.AssetStatus.AVAILABLE);
+
+        assetResponse = new AssetResponse();
+        assetResponse.setId(assetId);
+        assetResponse.setAssetName("MacBook Pro 16\"");
+        assetResponse.setAssetTag("ASSET-001");
+        assetResponse.setAssetType("LAPTOP");
+        assetResponse.setStatus(Asset.AssetStatus.AVAILABLE);
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/assets — Create Asset")
+    class CreateAssetTests {
+
+        @Test
+        @DisplayName("Should create asset successfully")
+        void shouldCreateAssetSuccessfully() throws Exception {
+            when(assetService.createAsset(any(AssetRequest.class))).thenReturn(assetResponse);
+
+            mockMvc.perform(post("/api/v1/assets")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(assetRequest)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(assetId.toString()))
+                    .andExpect(jsonPath("$.assetName").value("MacBook Pro 16\""))
+                    .andExpect(jsonPath("$.assetTag").value("ASSET-001"))
+                    .andExpect(jsonPath("$.status").value("AVAILABLE"));
+
+            verify(assetService).createAsset(any(AssetRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 400 for invalid asset request")
+        void shouldReturn400ForInvalidRequest() throws Exception {
+            AssetRequest invalidRequest = new AssetRequest(); // missing required fields
+
+            when(assetService.createAsset(any(AssetRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Asset tag is required"));
+
+            mockMvc.perform(post("/api/v1/assets")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when asset tag already exists")
+        void shouldReturn400WhenAssetTagDuplicated() throws Exception {
+            when(assetService.createAsset(any(AssetRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Asset tag ASSET-001 already exists"));
+
+            mockMvc.perform(post("/api/v1/assets")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(assetRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /api/v1/assets/{assetId} — Update Asset")
+    class UpdateAssetTests {
+
+        @Test
+        @DisplayName("Should update asset successfully")
+        void shouldUpdateAssetSuccessfully() throws Exception {
+            assetResponse.setAssetName("MacBook Pro 14\"");
+            when(assetService.updateAsset(eq(assetId), any(AssetRequest.class)))
+                    .thenReturn(assetResponse);
+
+            mockMvc.perform(put("/api/v1/assets/{assetId}", assetId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(assetRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(assetId.toString()));
+
+            verify(assetService).updateAsset(eq(assetId), any(AssetRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 400 when updating non-existent asset")
+        void shouldReturn400WhenAssetNotFound() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            when(assetService.updateAsset(eq(unknownId), any(AssetRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Asset not found"));
+
+            mockMvc.perform(put("/api/v1/assets/{assetId}", unknownId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(assetRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/assets/{assetId}/assign — Assign Asset")
+    class AssignAssetTests {
+
+        @Test
+        @DisplayName("Should assign asset to employee successfully")
+        void shouldAssignAssetSuccessfully() throws Exception {
+            assetResponse.setAssignedTo(employeeId);
+            assetResponse.setStatus(Asset.AssetStatus.ASSIGNED);
+            when(assetService.assignAsset(assetId, employeeId)).thenReturn(assetResponse);
+
+            mockMvc.perform(post("/api/v1/assets/{assetId}/assign", assetId)
+                            .param("employeeId", employeeId.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("ASSIGNED"))
+                    .andExpect(jsonPath("$.assignedTo").value(employeeId.toString()));
+
+            verify(assetService).assignAsset(assetId, employeeId);
+        }
+
+        @Test
+        @DisplayName("Should return 400 when assigning already-assigned asset")
+        void shouldReturn400WhenAlreadyAssigned() throws Exception {
+            when(assetService.assignAsset(assetId, employeeId))
+                    .thenThrow(new IllegalStateException("Asset is already assigned"));
+
+            mockMvc.perform(post("/api/v1/assets/{assetId}/assign", assetId)
+                            .param("employeeId", employeeId.toString()))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when employee not found")
+        void shouldReturn400WhenEmployeeNotFound() throws Exception {
+            UUID unknownEmployeeId = UUID.randomUUID();
+            when(assetService.assignAsset(assetId, unknownEmployeeId))
+                    .thenThrow(new IllegalArgumentException("Employee not found"));
+
+            mockMvc.perform(post("/api/v1/assets/{assetId}/assign", assetId)
+                            .param("employeeId", unknownEmployeeId.toString()))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/assets/{assetId}/return — Return Asset")
+    class ReturnAssetTests {
+
+        @Test
+        @DisplayName("Should return asset successfully")
+        void shouldReturnAssetSuccessfully() throws Exception {
+            assetResponse.setAssignedTo(null);
+            assetResponse.setStatus(Asset.AssetStatus.AVAILABLE);
+            when(assetService.returnAsset(assetId)).thenReturn(assetResponse);
+
+            mockMvc.perform(post("/api/v1/assets/{assetId}/return", assetId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("AVAILABLE"));
+
+            verify(assetService).returnAsset(assetId);
+        }
+
+        @Test
+        @DisplayName("Should return 400 when returning unassigned asset")
+        void shouldReturn400WhenReturningUnassignedAsset() throws Exception {
+            when(assetService.returnAsset(assetId))
+                    .thenThrow(new IllegalStateException("Asset is not currently assigned"));
+
+            mockMvc.perform(post("/api/v1/assets/{assetId}/return", assetId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/assets/{assetId} — Get Asset By ID")
+    class GetAssetByIdTests {
+
+        @Test
+        @DisplayName("Should get asset by ID")
+        void shouldGetAssetById() throws Exception {
+            when(assetService.getAssetById(assetId)).thenReturn(assetResponse);
+
+            mockMvc.perform(get("/api/v1/assets/{assetId}", assetId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(assetId.toString()))
+                    .andExpect(jsonPath("$.assetName").value("MacBook Pro 16\""))
+                    .andExpect(jsonPath("$.assetTag").value("ASSET-001"));
+
+            verify(assetService).getAssetById(assetId);
+        }
+
+        @Test
+        @DisplayName("Should return 400 when asset not found")
+        void shouldReturn400WhenAssetNotFound() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            when(assetService.getAssetById(unknownId))
+                    .thenThrow(new IllegalArgumentException("Asset not found"));
+
+            mockMvc.perform(get("/api/v1/assets/{assetId}", unknownId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/assets — Get All Assets (Paginated, Scoped)")
+    class GetAllAssetsTests {
+
+        @Test
+        @DisplayName("Should return paginated assets")
+        void shouldReturnPaginatedAssets() throws Exception {
+            Page<AssetResponse> page = new PageImpl<>(List.of(assetResponse));
+
+            when(dataScopeService.getScopeSpecification(any())).thenReturn(null);
+            when(assetService.getAllAssets(any(Specification.class), any(Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get("/api/v1/assets")
+                            .param("page", "0")
+                            .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(1))
+                    .andExpect(jsonPath("$.content[0].assetTag").value("ASSET-001"));
+
+            verify(assetService).getAllAssets(any(), any(Pageable.class));
+        }
+
+        @Test
+        @DisplayName("Should return empty page when no assets exist")
+        void shouldReturnEmptyPageWhenNoAssets() throws Exception {
+            Page<AssetResponse> emptyPage = new PageImpl<>(List.of());
+            when(dataScopeService.getScopeSpecification(any())).thenReturn(null);
+            when(assetService.getAllAssets(any(Specification.class), any(Pageable.class)))
+                    .thenReturn(emptyPage);
+
+            mockMvc.perform(get("/api/v1/assets"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(0));
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/assets/employee/{employeeId}")
+    class GetAssetsByEmployeeTests {
+
+        @Test
+        @DisplayName("Should return assets for a given employee")
+        void shouldReturnAssetsByEmployee() throws Exception {
+            assetResponse.setAssignedTo(employeeId);
+            when(assetService.getAssetsByEmployee(employeeId))
+                    .thenReturn(List.of(assetResponse));
+
+            mockMvc.perform(get("/api/v1/assets/employee/{employeeId}", employeeId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1))
+                    .andExpect(jsonPath("$[0].assignedTo").value(employeeId.toString()));
+
+            verify(assetService).getAssetsByEmployee(employeeId);
+        }
+
+        @Test
+        @DisplayName("Should return empty list when employee has no assets")
+        void shouldReturnEmptyListWhenEmployeeHasNoAssets() throws Exception {
+            when(assetService.getAssetsByEmployee(employeeId)).thenReturn(List.of());
+
+            mockMvc.perform(get("/api/v1/assets/employee/{employeeId}", employeeId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(0));
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/assets/status/{status}")
+    class GetAssetsByStatusTests {
+
+        @Test
+        @DisplayName("Should return assets filtered by AVAILABLE status")
+        void shouldReturnAvailableAssets() throws Exception {
+            when(assetService.getAssetsByStatus(Asset.AssetStatus.AVAILABLE))
+                    .thenReturn(List.of(assetResponse));
+
+            mockMvc.perform(get("/api/v1/assets/status/AVAILABLE"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1))
+                    .andExpect(jsonPath("$[0].status").value("AVAILABLE"));
+
+            verify(assetService).getAssetsByStatus(Asset.AssetStatus.AVAILABLE);
+        }
+
+        @Test
+        @DisplayName("Should return assets filtered by ASSIGNED status")
+        void shouldReturnAssignedAssets() throws Exception {
+            assetResponse.setStatus(Asset.AssetStatus.ASSIGNED);
+            when(assetService.getAssetsByStatus(Asset.AssetStatus.ASSIGNED))
+                    .thenReturn(List.of(assetResponse));
+
+            mockMvc.perform(get("/api/v1/assets/status/ASSIGNED"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0].status").value("ASSIGNED"));
+        }
+
+        @Test
+        @DisplayName("Should return 400 for invalid status value")
+        void shouldReturn400ForInvalidStatus() throws Exception {
+            mockMvc.perform(get("/api/v1/assets/status/INVALID_STATUS"))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /api/v1/assets/{assetId}")
+    class DeleteAssetTests {
+
+        @Test
+        @DisplayName("Should delete asset successfully")
+        void shouldDeleteAssetSuccessfully() throws Exception {
+            doNothing().when(assetService).deleteAsset(assetId);
+
+            mockMvc.perform(delete("/api/v1/assets/{assetId}", assetId))
+                    .andExpect(status().isNoContent());
+
+            verify(assetService).deleteAsset(assetId);
+        }
+
+        @Test
+        @DisplayName("Should return 400 when deleting assigned asset")
+        void shouldReturn400WhenDeletingAssignedAsset() throws Exception {
+            doThrow(new IllegalStateException("Cannot delete an assigned asset"))
+                    .when(assetService).deleteAsset(assetId);
+
+            mockMvc.perform(delete("/api/v1/assets/{assetId}", assetId))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when asset not found")
+        void shouldReturn400WhenAssetNotFoundOnDelete() throws Exception {
+            UUID unknownId = UUID.randomUUID();
+            doThrow(new IllegalArgumentException("Asset not found"))
+                    .when(assetService).deleteAsset(unknownId);
+
+            mockMvc.perform(delete("/api/v1/assets/{assetId}", unknownId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+}

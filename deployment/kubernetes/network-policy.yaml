@@ -1,0 +1,190 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hrms-backend-network-policy
+  namespace: hrms
+  labels:
+    app: hrms
+    component: backend
+spec:
+  podSelector:
+    matchLabels:
+      app: hrms
+      component: backend
+  policyTypes:
+  - Ingress
+  - Egress
+
+  ingress:
+  # Allow traffic from frontend pods (same namespace)
+  - from:
+    - podSelector:
+        matchLabels:
+          app: hrms
+          component: frontend
+    ports:
+    - protocol: TCP
+      port: 8080
+
+  # Allow traffic from GCE Load Balancer health checks and forwarding rules.
+  # GKE's native GCE ingress bypasses an in-cluster controller: the GCE LB
+  # connects directly to Node IPs, so the source appears as GCP health-check
+  # ranges (130.211.0.0/22, 35.191.0.0/16) and VPC-internal IPs.
+  # We allow from 0.0.0.0/0 on port 8080 here; further restriction should be
+  # done via Cloud Armor security policy (ingress.yaml armor-config annotation).
+
+  # SECURITY NOTE (2026-03-19):
+  # The 0.0.0.0/0 CIDR on port 8080 is required for GKE GCE ingress which
+  # bypasses in-cluster controllers and connects directly to node IPs.
+  # To restrict this:
+  #   1. Configure Cloud Armor security policy 'hrms-security-policy' in GCP
+  #   2. Verify Cloud Armor is active on the backend backend-config
+  #   3. Then replace 0.0.0.0/0 with GCP LB health check ranges:
+  #      - 130.211.0.0/22
+  #      - 35.191.0.0/16
+  # DO NOT tighten without Cloud Armor — it will break production ingress.
+  - ports:
+    - protocol: TCP
+      port: 8080
+
+  # Allow traffic from monitoring namespace (Prometheus)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8081
+
+  egress:
+  # Allow DNS resolution
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+
+  # Allow access to PostgreSQL
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgresql
+    ports:
+    - protocol: TCP
+      port: 5432
+
+  # Allow access to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+
+  # Allow HTTPS egress (for external APIs, OAuth, etc.)
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+
+  # Allow SMTP egress (for email)
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 587
+    - protocol: TCP
+      port: 465
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hrms-frontend-network-policy
+  namespace: hrms
+  labels:
+    app: hrms
+    component: frontend
+spec:
+  podSelector:
+    matchLabels:
+      app: hrms
+      component: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+
+  ingress:
+  # Allow traffic from GCE Load Balancer (same reasoning as backend above)
+  - ports:
+    - protocol: TCP
+      port: 3000
+
+  # Allow traffic from monitoring namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 3000
+
+  egress:
+  # Allow DNS resolution
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+
+  # Allow access to backend
+  - to:
+    - podSelector:
+        matchLabels:
+          app: hrms
+          component: backend
+    ports:
+    - protocol: TCP
+      port: 8080
+
+  # Allow HTTPS egress (for CDNs, external resources)
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+
+---
+# Default deny all ingress traffic to namespace (except what's explicitly allowed)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: hrms
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+---
+# Allow egress to internet for all pods in namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-internet-egress
+  namespace: hrms
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}

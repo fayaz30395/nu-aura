@@ -1,0 +1,53 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Frontend - TypeScript, JavaScript, JSON, YAML
+[*.{ts,tsx,js,jsx,json,yml,yaml}]
+indent_size = 2
+max_line_length = 120
+
+# Backend - Java
+[*.java]
+indent_size = 4
+max_line_length = 140
+continuation_indent_size = 8
+
+# Build files - Maven, Gradle
+[*.{xml,gradle,kts,groovy}]
+indent_size = 4
+
+# SQL migrations
+[*.sql]
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bash}]
+indent_size = 2
+
+# Markdown - preserve trailing whitespace for line breaks
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 100
+
+# YAML - strict 2-space indentation
+[*.{yml,yaml}]
+indent_size = 2
+
+# Makefiles - must use tabs
+[Makefile]
+indent_style = tab
+
+# Properties files
+[*.properties]
+indent_size = 2
