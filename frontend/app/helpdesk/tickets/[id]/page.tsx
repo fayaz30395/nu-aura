@@ -327,7 +327,7 @@ export default function TicketDetailPage() {
                 </div>
                 <div className="space-y-2">
                   {escalations.map((esc) => (
-                    <div key={esc.id} className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-4 py-2">
+                    <div key={esc.id} className="flex items-center justify-between bg-[var(--bg-surface)] rounded-lg px-4 py-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="warning" size="sm">{esc.escalationLevel}</Badge>
                         <span className="text-xs text-[var(--text-secondary)]">

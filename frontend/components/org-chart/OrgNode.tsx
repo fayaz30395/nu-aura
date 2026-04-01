@@ -173,7 +173,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
               className="h-9 w-9 rounded-full object-cover border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0"
             />
           ) : (
-            <div className="h-9 w-9 rounded-full bg-white/80 dark:bg-surface-700 flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
+            <div className="h-9 w-9 rounded-full bg-[var(--bg-card)] flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
               <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {getInitials(employee)}
               </span>

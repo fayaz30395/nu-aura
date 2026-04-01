@@ -115,7 +115,7 @@ export default function HelpdeskPage() {
               {escalations.slice(0, 5).map((esc) => (
                 <div
                   key={esc.id}
-                  className="flex items-center justify-between bg-white/60 dark:bg-white/5 rounded-lg px-4 py-2"
+                  className="flex items-center justify-between bg-[var(--bg-surface)] rounded-lg px-4 py-2"
                 >
                   <div>
                     <span className="text-sm font-medium text-[var(--text-primary)]">
