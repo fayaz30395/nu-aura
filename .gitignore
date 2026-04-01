@@ -67,6 +67,9 @@ Thumbs.db
 *.swp
 *~
 
+# Test results
+test-results.txt
+
 # Test coverage
 coverage/
 .nyc_output/
