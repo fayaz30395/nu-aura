@@ -1,13 +1,10 @@
 package com.hrms.application.document.scheduler;
 
-import io.minio.ListObjectsArgs;
-import io.minio.MinioClient;
-import io.minio.Result;
-import io.minio.messages.Item;
+import com.hrms.application.document.service.StorageProvider;
+import com.hrms.application.document.service.StorageProvider.StoredObjectInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,11 +16,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Scheduled job for detecting orphaned files in MinIO storage.
+ * Scheduled job for detecting orphaned files in storage.
  *
- * <p>Runs weekly at 2:00 AM UTC on Sunday. Lists all objects in the MinIO bucket,
- * cross-references them against the generated_documents and document_versions tables,
- * and logs any orphaned files (files in storage not tracked by any DB record).</p>
+ * <p>Runs weekly at 2:00 AM UTC on Sunday. Lists all objects via the active
+ * {@link StorageProvider}, cross-references them against the generated_documents
+ * and document_versions tables, and logs any orphaned files (files in storage
+ * not tracked by any DB record).</p>
  *
  * <p><strong>Phase 1 (current):</strong> Report-only — orphaned files are logged
  * but not deleted. Review logs before enabling deletion in Phase 2.</p>
@@ -36,11 +34,8 @@ import java.util.Set;
 @Slf4j
 public class OrphanFileCleanupScheduler {
 
-    private final MinioClient minioClient;
+    private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
-
-    @Value("${app.minio.bucket:hrms-files}")
-    private String defaultBucket;
 
     /** Minimum age in hours before a file is considered potentially orphaned. */
     private static final int ORPHAN_AGE_THRESHOLD_HOURS = 48;
@@ -59,23 +54,18 @@ public class OrphanFileCleanupScheduler {
             Set<String> knownPaths = collectKnownFilePaths();
             log.info("OrphanFileCleanupScheduler: found {} tracked file paths in database", knownPaths.size());
 
-            // 2. List all objects in MinIO bucket older than threshold
+            // 2. List all objects in storage older than threshold
             ZonedDateTime cutoff = ZonedDateTime.now().minusHours(ORPHAN_AGE_THRESHOLD_HOURS);
             List<String> orphanedFiles = new ArrayList<>();
             long totalObjects = 0;
 
-            Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder()
-                            .bucket(defaultBucket)
-                            .recursive(true)
-                            .build());
+            List<StoredObjectInfo> storedObjects = storageProvider.listObjects(null);
 
-            for (Result<Item> result : results) {
-                Item item = result.get();
+            for (StoredObjectInfo item : storedObjects) {
                 totalObjects++;
 
                 // Skip directories
-                if (item.isDir()) {
+                if (item.isDirectory()) {
                     continue;
                 }
 

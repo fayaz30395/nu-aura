@@ -1,11 +1,13 @@
 package com.hrms.application.document.service;
 
 import java.io.InputStream;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Abstraction for file storage operations.
- * Implementations include MinIO (dev) and Google Drive (prod).
+ * Current implementation: Google Drive (all environments).
  */
 public interface StorageProvider {
 
@@ -66,4 +68,18 @@ public interface StorageProvider {
      * Ensure the storage backend is ready (e.g., bucket exists, folder hierarchy created).
      */
     void ensureStorageReady();
+
+    /**
+     * List all stored object names/identifiers, optionally filtered by prefix.
+     * Used by orphan file detection to cross-reference against database records.
+     *
+     * @param prefix optional path prefix to filter (e.g., tenantId); null or empty lists all
+     * @return a list of {@link StoredObjectInfo} entries
+     */
+    List<StoredObjectInfo> listObjects(String prefix);
+
+    /**
+     * Metadata about a stored object, used for orphan detection.
+     */
+    record StoredObjectInfo(String objectName, ZonedDateTime lastModified, boolean isDirectory) {}
 }

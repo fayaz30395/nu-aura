@@ -83,7 +83,7 @@ public class CircuitBreakerRegistry {
     }
 
     /**
-     * Get or create a circuit breaker for storage (MinIO/S3).
+     * Get or create a circuit breaker for file storage (Google Drive).
      */
     public CircuitBreaker forStorage() {
         return getOrCreate(STORAGE, ServiceConfig.STORAGE);

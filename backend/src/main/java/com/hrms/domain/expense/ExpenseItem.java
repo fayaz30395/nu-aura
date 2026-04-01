@@ -13,7 +13,7 @@ import java.util.UUID;
 /**
  * Individual line item within an ExpenseClaim.
  * Each claim can have multiple items (e.g., hotel + meals + taxi).
- * Receipt is stored via MinIO and referenced by storagePath.
+ * Receipt is stored via Google Drive and referenced by storagePath.
  */
 @Where(clause = "is_deleted = false")
 @Entity

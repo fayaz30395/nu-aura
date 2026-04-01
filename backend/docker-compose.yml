@@ -17,9 +17,8 @@ services:
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-that-is-at-least-256-bits-long-for-hs512}
-      - MINIO_ENDPOINT=http://minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
+      - GOOGLE_DRIVE_CREDENTIALS_PATH=/etc/secrets/google-drive/credentials.json
+      - GOOGLE_DRIVE_ROOT_FOLDER_ID=${GOOGLE_DRIVE_ROOT_FOLDER_ID}
     depends_on:
       postgres:
         condition: service_healthy
@@ -72,26 +71,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # MinIO Object Storage
-  minio:
-    image: minio/minio:latest
-    container_name: hrms-minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      - hrms-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+  # MinIO removed — using Google Drive for file storage
 
   # pgAdmin for database management (optional)
   pgadmin:
@@ -114,7 +94,6 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  minio_data:
   pgadmin_data:
 
 networks:

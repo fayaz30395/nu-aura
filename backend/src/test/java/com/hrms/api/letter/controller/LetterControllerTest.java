@@ -502,7 +502,7 @@ class LetterControllerTest {
         @Test
         @DisplayName("POST /{letterId}/generate-pdf — generates PDF and returns URL")
         void generatePdf_ReturnsUrlResponse() throws Exception {
-            String pdfUrl = "https://minio/bucket/tenant/letters/letter123.pdf";
+            String pdfUrl = "https://storage.example.com/tenant/letters/letter123.pdf";
             when(letterPdfService.generatePdf(LETTER_ID)).thenReturn(pdfUrl);
 
             mockMvc.perform(post("/api/v1/letters/{letterId}/generate-pdf", LETTER_ID))

@@ -100,11 +100,13 @@ app:
   frontend:
     url: http://localhost:3000
 
-  minio:
-    endpoint: http://localhost:9000
-    access-key: minioadmin
-    secret-key: minioadmin
-    bucket: hrms-test-files
+  google-drive:
+    credentials-path: ${GOOGLE_DRIVE_CREDENTIALS_PATH:config/test-credentials.json}
+    root-folder-id: ${GOOGLE_DRIVE_ROOT_FOLDER_ID:test-root-folder}
+    application-name: NU-AURA-HRMS-TEST
+
+  storage:
+    url-expiry-hours: 1
 
 # Disable AI features in tests
 ai:
