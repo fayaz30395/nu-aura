@@ -187,7 +187,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       {showCloseButton && onClose && (
         <button
           onClick={onClose}
-          className="ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-colors"
+          className="ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Close modal"
         >
           <X className="h-5 w-5" />

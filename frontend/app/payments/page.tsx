@@ -251,7 +251,7 @@ export default function PaymentsPage() {
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
+              className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 showFilters
                   ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
@@ -270,7 +270,7 @@ export default function PaymentsPage() {
               filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
+                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 Clear filters
               </button>
@@ -393,7 +393,7 @@ export default function PaymentsPage() {
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-6 py-4 font-medium transition-colors ${
+              className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 activeTab === 'all'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'

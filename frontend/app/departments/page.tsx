@@ -439,22 +439,25 @@ export default function DepartmentsPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleEdit(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               title="Edit"
+                              aria-label="Edit department"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleToggleClick(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               title={dept.isActive ? 'Deactivate' : 'Activate'}
+                              aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
                             >
                               {dept.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                             </button>
                             <button
                               onClick={() => handleDeleteClick(dept.id)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               title="Delete"
+                              aria-label="Delete department"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -489,7 +492,8 @@ export default function DepartmentsPage() {
                       setEditingDepartment(null);
                       reset();
                     }}
-                    className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+                    className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    aria-label="Close modal"
                   >
                     <X className="h-5 w-5" />
                   </button>
