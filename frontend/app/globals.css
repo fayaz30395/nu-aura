@@ -3,29 +3,23 @@
 @tailwind utilities;
 
 /* ================================================================
-   NU-AURA DESIGN SYSTEM — NULogic Brand Identity
+   NU-AURA DESIGN SYSTEM — Blue Monochrome
 
-   Brand: NULogic — Infinite Innovation
-   Palette: Lapis Blue (#050766) + Red-Orange/Purple gradient accents
-   Typography: Montserrat (headings) + Open Sans (body)
+   Philosophy: Single-hue blue monochrome. Every surface, border,
+   shadow, and text tone derives from one blue (hue ~228).
+   Color is a functional signal, not decoration.
 
-   Core Principles:
-   - NULogic Lapis Blue as dominant authority color
-   - Red-Orange → Purple gradient for energy and CTAs
-   - Dark Teal (#133E49) for deep sections and sidebar
-   - Near-White (#F4F5F6) surfaces for clarity
-   - Meaningful motion, professional depth
-
-   Differentiation: Enterprise clarity infused with NULogic brand energy.
+   Anchor: #2952A3 (NU-AURA Blue — unique, not standard Tailwind)
+   Principle: Clean, elegant, professional. Swiss minimalism.
    ================================================================ */
 
 @layer base {
   :root {
-    /* ── Typography (Montserrat + Open Sans) ───────────────────────── */
+    /* ── Typography ───────────────────────────────────────────────── */
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
 
-    /* ── NULogic Brand Colors ──────────────────────────────────────── */
+    /* ── NULogic Brand Colors (preserved for logo/brand contexts) ── */
     --nu-lapis-blue: #050766;
     --nu-navy: #25255C;
     --nu-red-orange: #E62A32;
@@ -37,84 +31,81 @@
     --nu-light-purple: #B17DC1;
     --nu-dusty-indigo: #61629D;
 
-    /* ── NULogic Gradients ─────────────────────────────────────────── */
+    /* ── NULogic Gradients (preserved for brand contexts) ──────── */
     --nu-gradient-logo: linear-gradient(to bottom, #F32820, #8539A6);
-    --nu-gradient-primary: linear-gradient(135deg, #D42F7B, #E8623A);
-    --nu-gradient-dark: linear-gradient(135deg, #1B1F4E, #7B2D8E);
+    --nu-gradient-primary: linear-gradient(135deg, #2952A3, #1d3d7a);
+    --nu-gradient-dark: linear-gradient(135deg, #0e1528, #1a2340);
     --nu-gradient-brand: linear-gradient(to right, #ED3027, #7B469B);
 
-    /* ── Surface Hierarchy (Clean, Soft Near-White) ──────────────── */
-    --bg-main: #f8f9fa;
-    --bg-surface: #FFFFFF;
-    --bg-elevated: #FFFFFF;
-    --bg-card: #FFFFFF;
-    --bg-card-hover: #f1f3f5;
-    --bg-page: #f8f9fa;
-    --bg-input: #FFFFFF;
-    --bg-sidebar: #133E49;
-    --bg-overlay: rgba(5, 7, 102, 0.35);
+    /* ── Surface Hierarchy (Blue-tinted whites) ──────────────────── */
+    --bg-main: #f7f8fb;
+    --bg-surface: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f0f2f7;
+    --bg-page: #f7f8fb;
+    --bg-input: #ffffff;
+    --bg-sidebar: #0e1528;
+    --bg-overlay: rgba(14, 21, 40, 0.40);
 
-    /* ── Background Atmosphere (Subtle Lapis Tint + Faint Grid) ──── */
+    /* ── Background Atmosphere (Single blue wash) ────────────────── */
     --bg-pattern:
-      radial-gradient(1200px 600px at -10% -10%, rgba(5, 7, 102, 0.03), transparent 60%),
-      radial-gradient(900px 500px at 110% 0%, rgba(137, 57, 161, 0.02), transparent 55%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 249, 250, 1) 60%),
-      linear-gradient(0deg, rgba(5, 7, 102, 0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(5, 7, 102, 0.015) 1px, transparent 1px);
-    --bg-pattern-size: auto, auto, auto, 32px 32px, 32px 32px;
+      radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.03), transparent 60%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 251, 1) 50%);
+    --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy (Dark Teal body, Lapis Blue headings) ──────── */
-    --text-primary: #1a2b33;
-    --text-heading: #050766;
-    --text-secondary: #3E616A;
-    --text-muted: #797E85;
-    --text-inverse: #FFFFFF;
+    /* ── Text Hierarchy (Blue-tinted darks) ───────────────────────── */
+    --text-primary: #1c2033;
+    --text-heading: #0e1225;
+    --text-secondary: #4e5270;
+    --text-muted: #8186a0;
+    --text-inverse: #ffffff;
 
-    /* ── Border & Divider (Soft Neutral) ────────────────────────── */
-    --border-main: #dee2e6;
-    --border-subtle: #e9ecef;
-    --border-strong: #adb5bd;
-    --border-focus: #050766;
+    /* ── Border & Divider (Blue-tinted grays) ──────────────────── */
+    --border-main: #dfe2ed;
+    --border-subtle: #eceef5;
+    --border-strong: #b8bccf;
+    --border-focus: #2952A3;
 
-    /* ── Accent Scale (NULogic Lapis Blue) ─────────────────────── */
-    --accent-50: #eeeeff;
-    --accent-100: #d4d4f7;
-    --accent-200: #a8a8ef;
-    --accent-300: #7c7ce6;
-    --accent-400: #5050de;
-    --accent-500: #2525b0;
-    --accent-600: #0f0f8a;
-    --accent-700: #050766;
-    --accent-800: #040555;
-    --accent-900: #030344;
-    --accent-950: #020233;
-    --accent-primary: #050766;
-    --accent-primary-hover: #040555;
-    --accent-primary-subtle: #eeeeff;
+    /* ── Accent Scale (NU-AURA Blue — hue ~228) ──────────────────── */
+    --accent-50: #f0f3fc;
+    --accent-100: #dce3f8;
+    --accent-200: #bcc9f2;
+    --accent-300: #92a8e8;
+    --accent-400: #6884dc;
+    --accent-500: #4463cf;
+    --accent-600: #3350b8;
+    --accent-700: #2952A3;
+    --accent-800: #244288;
+    --accent-900: #1d356d;
+    --accent-950: #121f44;
+    --accent-primary: #2952A3;
+    --accent-primary-hover: #244288;
+    --accent-primary-subtle: #f0f3fc;
 
-    /* ── Sidebar (NULogic Dark Teal) ──────────────────────────────── */
-    --sidebar-active-bg: rgba(5, 7, 102, 0.22);
-    --sidebar-active-border: #E62A32;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.10);
-    --sidebar-text: rgba(255, 255, 255, 0.78);
+    /* ── Sidebar (Deep navy — monochrome) ────────────────────────── */
+    --sidebar-active-bg: rgba(41, 82, 163, 0.18);
+    --sidebar-active-border: #4463cf;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+    --sidebar-text: rgba(255, 255, 255, 0.72);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.42);
-    --sidebar-border: rgba(255, 255, 255, 0.12);
-    --sidebar-section-text: rgba(255, 255, 255, 0.48);
-    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.25) 100%);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.38);
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-section-text: rgba(255, 255, 255, 0.42);
+    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.20) 100%);
 
-    /* ── Shadows (Subtle, Clean Depth) ──────────────────────────── */
-    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 4px rgba(16, 24, 40, 0.03);
-    --shadow-card-hover: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 12px rgba(16, 24, 40, 0.06);
-    --shadow-elevated: 0 1px 2px rgba(16, 24, 40, 0.06), 0 8px 20px rgba(16, 24, 40, 0.08);
-    --shadow-dropdown: 0 1px 2px rgba(16, 24, 40, 0.08), 0 12px 28px rgba(16, 24, 40, 0.12);
+    /* ── Shadows (Blue-tinted, minimal) ──────────────────────────── */
+    --shadow-card: 0 1px 2px rgba(14, 18, 37, 0.04), 0 1px 3px rgba(14, 18, 37, 0.03);
+    --shadow-card-hover: 0 1px 2px rgba(14, 18, 37, 0.06), 0 4px 12px rgba(14, 18, 37, 0.05);
+    --shadow-elevated: 0 1px 2px rgba(14, 18, 37, 0.06), 0 8px 20px rgba(14, 18, 37, 0.07);
+    --shadow-dropdown: 0 4px 16px rgba(14, 18, 37, 0.10), 0 1px 2px rgba(14, 18, 37, 0.06);
 
-    /* ── Ring / Focus (Soft Lapis Blue) ──────────────────────────── */
-    --ring-primary: rgba(5, 7, 102, 0.25);
+    /* ── Ring / Focus ────────────────────────────────────────────── */
+    --ring-primary: rgba(41, 82, 163, 0.30);
     --ring-danger: rgba(220, 38, 38, 0.25);
     --ring-success: rgba(21, 128, 61, 0.25);
 
-    /* ── Semantic Colors (Muted, Professional States) ───────────── */
+    /* ── Semantic Colors (Clean, muted) ──────────────────────────── */
     --status-success-bg: #f0fdf4;
     --status-success-text: #15803d;
     --status-success-border: #dcfce7;
@@ -124,82 +115,59 @@
     --status-warning-bg: #fffbeb;
     --status-warning-text: #b45309;
     --status-warning-border: #fef3c7;
-    --status-info-bg: #eff6ff;
-    --status-info-text: #2563eb;
-    --status-info-border: #dbeafe;
-    --status-neutral-bg: #f1f3f5;
-    --status-neutral-text: #495057;
-    --status-neutral-border: #dee2e6;
+    --status-info-bg: #f0f3fc;
+    --status-info-text: #2952A3;
+    --status-info-border: #dce3f8;
+    --status-neutral-bg: #f0f2f7;
+    --status-neutral-text: #4e5270;
+    --status-neutral-border: #dfe2ed;
 
-    /* ── Header (Light, Clean Surface) ──────────────────────────── */
-    --header-bg: rgba(255, 255, 255, 0.92);
-    --header-border: #e9ecef;
-    --header-text: #1a2b33;
-    --header-text-muted: #3E616A;
-    --header-hover-bg: rgba(5, 7, 102, 0.05);
-    --header-divider: #e9ecef;
+    /* ── Header (Clean white, blue-tinted border) ────────────────── */
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --header-border: #eceef5;
+    --header-text: #1c2033;
+    --header-text-muted: #4e5270;
+    --header-hover-bg: rgba(41, 82, 163, 0.05);
+    --header-divider: #eceef5;
 
-    /* ── Dropdown (Clean, Soft) ─────────────────────────────────── */
+    /* ── Dropdown ─────────────────────────────────────────────────── */
     --dropdown-bg: #ffffff;
-    --dropdown-border: #e9ecef;
-    --dropdown-hover: #f1f3f5;
-    --dropdown-text: #1a2b33;
-    --dropdown-text-secondary: #3E616A;
-    --dropdown-divider: #e9ecef;
+    --dropdown-border: #eceef5;
+    --dropdown-hover: #f0f2f7;
+    --dropdown-text: #1c2033;
+    --dropdown-text-secondary: #4e5270;
+    --dropdown-divider: #eceef5;
 
-    /* ── Skeuomorphism Design Tokens (Modern Tactile) ────────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      0 2px 8px rgba(0, 0, 0, 0.08),
-      0 8px 24px rgba(0, 0, 0, 0.04);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.7),
-      0 4px 12px rgba(0, 0, 0, 0.10),
-      0 12px 32px rgba(0, 0, 0, 0.06);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(0, 0, 0, 0.12),
-      inset 0 1px 2px rgba(0, 0, 0, 0.08);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(255, 255, 255, 0.4),
-      0 1px 3px rgba(0, 0, 0, 0.12),
-      0 2px 6px rgba(0, 0, 0, 0.08);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      0 2px 6px rgba(0, 0, 0, 0.14),
-      0 4px 10px rgba(0, 0, 0, 0.10);
-    --shadow-skeuo-input:
-      inset 0 2px 4px rgba(0, 0, 0, 0.06),
-      0 1px 0 rgba(255, 255, 255, 0.8);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(255, 255, 255, 0.6),
-      0 -1px 0 rgba(0, 0, 0, 0.04);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.05) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(255, 255, 255, 0.35);
+    /* ── Shadows (Flat, clean — no skeuomorphism) ────────────────── */
+    --shadow-skeuo-card: var(--shadow-card);
+    --shadow-skeuo-card-hover: var(--shadow-card-hover);
+    --shadow-skeuo-pressed: inset 0 1px 3px rgba(14, 18, 37, 0.10);
+    --shadow-skeuo-button: 0 1px 2px rgba(14, 18, 37, 0.08);
+    --shadow-skeuo-button-hover: 0 1px 4px rgba(14, 18, 37, 0.12);
+    --shadow-skeuo-input: inset 0 1px 2px rgba(14, 18, 37, 0.05);
+    --shadow-skeuo-emboss: none;
+    --shadow-skeuo-table-header: inset 0 -1px 0 rgba(14, 18, 37, 0.06);
+    --gradient-skeuo-surface: none;
+    --gradient-skeuo-button: none;
+    --gradient-skeuo-card: none;
+    --glass-bg: rgba(255, 255, 255, 0.80);
+    --glass-border: rgba(223, 226, 237, 0.60);
     --glass-blur: 12px;
-    --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    --skeuo-noise: none;
 
-    /* ── Chart Colors (NULogic Brand Spectrum) ──────────────────── */
-    --chart-primary: #050766;
-    --chart-secondary: #8939A1;
+    /* ── Chart Colors (Blue monochrome + semantic) ────────────────── */
+    --chart-primary: #2952A3;
+    --chart-secondary: #6884dc;
     --chart-success: #16a34a;
-    --chart-warning: #f59e0b;
-    --chart-danger: #E62A32;
-    --chart-info: #61629D;
-    --chart-accent: #EE777C;
-    --chart-muted: #c0c3c8;
-    --chart-grid: #d8dadd;
+    --chart-warning: #d97706;
+    --chart-danger: #dc2626;
+    --chart-info: #4463cf;
+    --chart-accent: #92a8e8;
+    --chart-muted: #b8bccf;
+    --chart-grid: #eceef5;
     --chart-tooltip-bg: #ffffff;
-    --chart-tooltip-border: #c0c3c8;
-    --chart-tooltip-text: #050766;
+    --chart-tooltip-border: #dfe2ed;
+    --chart-tooltip-text: #1c2033;
   }
 
   .dark {

@@ -214,7 +214,7 @@ export default function RestrictedHolidaysPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeTab === tab.id
                       ? 'border-accent-700 text-accent-700'
                       : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300'
@@ -595,13 +595,13 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                     setRejectReason('');
                   }}
                   disabled={isActing}
-                  className="px-4 py-1.5 text-sm bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
+                  className="px-4 py-1.5 text-sm bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Confirm
                 </button>
                 <button
                   onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                  className="px-4 py-1.5 text-sm text-surface-600 hover:text-surface-800"
+                  className="px-4 py-1.5 text-sm text-surface-600 hover:text-surface-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
                 </button>

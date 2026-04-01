@@ -134,7 +134,8 @@ export default function CreateBlogPost() {
             <div className="flex items-center gap-4 mb-2">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Go back"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>

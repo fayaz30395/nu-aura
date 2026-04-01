@@ -185,7 +185,7 @@ function FluenceDriveContent() {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-4 font-medium border-b-2 transition-colors whitespace-nowrap',
+                  'flex items-center gap-2 px-4 py-4 font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   activeCategory === cat.id
                     ? 'text-accent-600 dark:text-accent-400 border-accent-600 dark:border-accent-400'
                     : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
