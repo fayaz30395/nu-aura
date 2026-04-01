@@ -668,7 +668,7 @@ export default function MyAttendancePage() {
       {/* Regularization Modal — DEF-42: React Hook Form + Zod */}
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md card-aura">
+          <div className="bg-[var(--bg-elevated)] rounded-lg p-6 w-full max-w-md card-aura">
             <h3 className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>

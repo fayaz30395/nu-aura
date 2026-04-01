@@ -115,7 +115,7 @@ export default function FeedbackRequestForm({
   const canSubmit = selectedPeers.length >= minPeers && selectedPeers.length <= maxPeers;
 
   return (
-    <div className="bg-white rounded-lg shadow-[var(--shadow-dropdown)] max-w-3xl w-full mx-4">
+    <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-3xl w-full mx-4">
       <div className="px-6 py-4 border-b border-[var(--border-main)]">
         <h2 className="text-xl font-semibold text-[var(--text-primary)]">Request 360 Feedback</h2>
         <p className="text-sm text-[var(--text-muted)] mt-1">{cycleName}</p>

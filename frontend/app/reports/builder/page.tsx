@@ -236,7 +236,7 @@ export default function ReportBuilderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Left panel: Module + Columns ─────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Data Source</h2>
               <div className="grid grid-cols-2 gap-2">
                 {MODULES.map(m => (
@@ -246,7 +246,7 @@ export default function ReportBuilderPage() {
                     className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                       module === m.value
                         ? 'bg-accent-600 text-white border-accent-600'
-                        : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
+                        : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
                     }`}
                   >
                     {m.label}
@@ -255,7 +255,7 @@ export default function ReportBuilderPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Columns</h2>
               <div className="space-y-2">
                 {columns.map(col => (
@@ -275,7 +275,7 @@ export default function ReportBuilderPage() {
 
           {/* ── Middle panel: Filters + Sort + Save ──────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
                 {filters.length < 5 && (
@@ -333,7 +333,7 @@ export default function ReportBuilderPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Sort</h2>
               <div className="flex gap-2">
                 <select
@@ -359,7 +359,7 @@ export default function ReportBuilderPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Save Template</h2>
               <input
                 type="text"
@@ -382,7 +382,7 @@ export default function ReportBuilderPage() {
 
           {/* ── Right panel: Actions ──────────────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Actions</h2>
               <div className="space-y-2">
                 <PermissionGate permission={Permissions.REPORT_VIEW}>
@@ -398,7 +398,7 @@ export default function ReportBuilderPage() {
                   <button
                     onClick={handleExport}
                     disabled={loading || selectedCols.length === 0}
-                    className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="w-full bg-[var(--bg-card)] hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Export CSV
                   </button>
@@ -410,7 +410,7 @@ export default function ReportBuilderPage() {
 
         {/* ── Preview Table ───────────────────────────────────────────────── */}
         {previewRows.length > 0 && (
-          <div className="bg-white border border-[var(--border-main)] rounded-lg overflow-hidden">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
             <div className="px-4 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Preview — {previewRows.length} row{previewRows.length !== 1 ? 's' : ''}

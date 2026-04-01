@@ -149,7 +149,7 @@ export default function NewOnboardingPage() {
                             <div key={step.id} className="flex items-center">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
                                         ? 'bg-accent-700 border-accent-700 text-white shadow-[var(--shadow-dropdown)]'
-                                        : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]'
+                                        : 'bg-[var(--bg-card)] border-[var(--border-main)] text-[var(--text-muted)]'
                                     }`}>
                                     <step.icon className="h-5 w-5" />
                                 </div>

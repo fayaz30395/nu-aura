@@ -137,7 +137,7 @@ export default function ShiftDashboardPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => router.push(link.href)}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="flex items-center gap-4 p-4 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <div className="p-2 rounded-lg bg-accent-50 dark:bg-accent-900/30">
                   <link.icon className="w-5 h-5 text-accent-700 dark:text-accent-400" />
@@ -169,7 +169,7 @@ export default function ShiftDashboardPage() {
           )}
 
           {/* Week Navigation */}
-          <div className="flex items-center justify-between bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+          <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             <button
               onClick={() => setCurrentWeekOffset((p) => p - 1)}
               className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -208,7 +208,7 @@ export default function ShiftDashboardPage() {
               description="No shift assignments found for this week. Generate a schedule or assign shifts to team members."
             />
           ) : (
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-x-auto">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-x-auto">
               <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b border-surface-200 dark:border-surface-700">

@@ -365,7 +365,7 @@ export default function OKRPage() {
       {/* Objectives List */}
       <div className="space-y-4">
         {filteredObjectives.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+          <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
             <Flag className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
             <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No objectives</h3>
             <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -376,7 +376,7 @@ export default function OKRPage() {
           filteredObjectives.map((objective: Objective) => (
             <div
               key={objective.id}
-              className="bg-white rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] overflow-hidden"
+              className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] overflow-hidden"
             >
               {/* Objective Header */}
               <div className="p-4">
@@ -481,7 +481,7 @@ export default function OKRPage() {
                       {objective.keyResults.map((kr: KeyResult) => (
                         <div
                           key={kr.id}
-                          className="bg-white rounded-md border border-[var(--border-main)] p-4"
+                          className="bg-[var(--bg-card)] rounded-md border border-[var(--border-main)] p-4"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-2 flex-1">
@@ -558,7 +558,7 @@ export default function OKRPage() {
       {/* Objective Modal */}
       {showObjectiveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 {editingObjective ? 'Edit Objective' : 'Create Objective'}
@@ -661,7 +661,7 @@ export default function OKRPage() {
                   setEditingObjective(null);
                   resetObjectiveForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
@@ -680,7 +680,7 @@ export default function OKRPage() {
       {/* Key Result Modal */}
       {showKeyResultModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Add Key Result</h2>
             </div>
@@ -793,7 +793,7 @@ export default function OKRPage() {
                   setSelectedObjectiveId(null);
                   resetKeyResultForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>

@@ -169,7 +169,7 @@ export default function JobBoardsPage() {
               className={`px-4 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 filterStatus === s
                   ? 'bg-accent-600 text-white border-accent-600'
-                  : 'bg-white text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-accent-400'
+                  : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-accent-400'
               }`}
             >
               {s}
@@ -302,7 +302,7 @@ export default function JobBoardsPage() {
                               );
                             }}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                              isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
+                              isSelected ? `${bc.color} text-white border-transparent` : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
                             }`}
                           >
                             <Globe className="w-4 h-4" />

@@ -94,7 +94,7 @@ function DistributionChart({
       <div className="flex gap-2 text-xs text-[var(--text-muted)] flex-wrap">
         {ratings.map((r, i) => (
           <span key={r} className="flex items-center gap-1">
-            <span className={`inline-block w-2 h-2 rounded-sm ${colors[i]}`} />
+            <span className={`inline-block w-2 h-2 rounded-md ${colors[i]}`} />
             {r}: {counts[r] || 0} ({total > 0 ? (((counts[r] || 0) / total) * 100).toFixed(0) : 0}%)
           </span>
         ))}

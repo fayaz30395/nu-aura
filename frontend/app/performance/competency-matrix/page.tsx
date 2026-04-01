@@ -456,7 +456,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                             {[1, 2, 3, 4, 5].map((level) => (
                               <div
                                 key={level}
-                                className={`w-5 h-5 rounded-sm flex items-center justify-center text-2xs font-bold ${
+                                className={`w-5 h-5 rounded-md flex items-center justify-center text-2xs font-bold ${
                                   level <= skill.proficiencyLevel
                                     ? getHeatmapClass(level)
                                     : 'bg-surface-100 dark:bg-surface-800 text-surface-300 dark:text-surface-600'

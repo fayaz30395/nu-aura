@@ -248,7 +248,7 @@ export default function ShiftPatternsPage() {
                   key={pattern.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4"
+                  className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -320,7 +320,7 @@ export default function ShiftPatternsPage() {
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.95, opacity: 0 }}
-                  className="bg-white dark:bg-surface-800 rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                  className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
                   <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
                     <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
@@ -341,7 +341,7 @@ export default function ShiftPatternsPage() {
                       </label>
                       <input
                         {...form.register('name')}
-                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         placeholder="e.g., 4-on-2-off Rotation"
                       />
                     </div>
@@ -353,7 +353,7 @@ export default function ShiftPatternsPage() {
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                        className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                       />
                     </div>
 
@@ -364,7 +364,7 @@ export default function ShiftPatternsPage() {
                         </label>
                         <select
                           {...form.register('rotationType')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {ROTATION_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -384,7 +384,7 @@ export default function ShiftPatternsPage() {
                           })}
                           min={1}
                           max={60}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -405,7 +405,7 @@ export default function ShiftPatternsPage() {
                                 next[idx] = e.target.value;
                                 setPatternSlots(next);
                               }}
-                              className="w-full px-1 py-1.5 border border-surface-300 dark:border-surface-600 rounded text-xs bg-white dark:bg-surface-900 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              className="w-full px-1 py-1.5 border border-surface-300 dark:border-surface-600 rounded text-xs bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             >
                               <option value="OFF">OFF</option>
                               {activeShifts.map((s) => (

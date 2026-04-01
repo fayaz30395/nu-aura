@@ -864,7 +864,7 @@ function KekaMigrationSection() {
                     <select
                       value={mapping.targetField}
                       onChange={(e) => updateMapping(index, 'targetField', e.target.value)}
-                      className="w-full text-sm rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className="w-full text-sm rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     >
                       <option value="">-- Skip --</option>
                       {targetFields.map((tf) => (
@@ -1156,7 +1156,7 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                    ? 'bg-white dark:bg-surface-700 text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
+                    ? 'bg-[var(--bg-card)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
                     : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200'
                   }
                 `}
@@ -1175,7 +1175,7 @@ export default function ImportExportPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 p-6"
+              className="rounded-xl border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] p-6"
             >
               {activeTab === 'import' && <ImportSection />}
               {activeTab === 'export' && <ExportSection />}

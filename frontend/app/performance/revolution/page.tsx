@@ -110,7 +110,7 @@ export default function PerformanceRevolutionPage() {
                                                 </div>
                                             </div>
                                             {/* Tooltip on hover */}
-                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white text-[var(--text-primary)] p-2 rounded text-xs whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
+                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[var(--bg-elevated)] text-[var(--text-primary)] p-2 rounded text-xs whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
                                                 <p className="font-bold">{node.title}</p>
                                                 <p className="text-[var(--text-muted)]">{node.ownerName}</p>
                                             </div>

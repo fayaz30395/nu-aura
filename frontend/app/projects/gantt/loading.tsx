@@ -36,7 +36,7 @@ export default function GanttLoading() {
           <div key={i} className="flex border-b border-[var(--border-subtle)] last:border-b-0">
             {/* Task name column */}
             <div className="w-64 flex-shrink-0 p-4 border-r border-[var(--border-main)] flex items-center gap-2">
-              {i % 3 === 0 && <div className="w-3 h-3 bg-[var(--bg-surface)] rounded-sm flex-shrink-0" />}
+              {i % 3 === 0 && <div className="w-3 h-3 bg-[var(--bg-surface)] rounded-md flex-shrink-0" />}
               {i % 3 !== 0 && <div className="w-3 h-3 flex-shrink-0" />}
               <div className="h-4 bg-[var(--bg-surface)] rounded"
                 style={{ width: `${60 + (i % 4) * 20}px` }} />

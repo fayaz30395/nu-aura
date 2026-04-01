@@ -154,7 +154,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
             { color: 'bg-accent-500', label: 'Holiday' },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
-              <div className={`h-3 w-3 rounded-sm ${l.color} shadow-[var(--shadow-card)]`} />
+              <div className={`h-3 w-3 rounded-md ${l.color} shadow-[var(--shadow-card)]`} />
               <span className="font-medium text-[var(--text-secondary)]">{l.label}</span>
             </div>
           ))}

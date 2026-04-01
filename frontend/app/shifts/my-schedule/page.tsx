@@ -113,7 +113,7 @@ export default function MySchedulePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}
-          <div className="lg:col-span-2 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+          <div className="lg:col-span-2 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             {/* Month navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -210,7 +210,7 @@ export default function MySchedulePage() {
 
           {/* Upcoming Shifts Sidebar */}
           <div className="space-y-4">
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <h3 className="font-semibold text-surface-900 dark:text-white mb-3 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400" />
                 Upcoming Shifts
@@ -266,7 +266,7 @@ export default function MySchedulePage() {
             </div>
 
             {/* Legend */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <h3 className="text-sm font-medium text-surface-500 dark:text-surface-400 mb-2">Legend</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
