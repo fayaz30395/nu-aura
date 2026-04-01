@@ -685,7 +685,7 @@ export default function Feedback360Page() {
 
                   <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)] mt-4">
                     <button
-                      className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)]"
+                      className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View Details
@@ -931,7 +931,7 @@ export default function Feedback360Page() {
                 <button
                   onClick={handleCreateCycle}
                   disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
-                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Create Cycle
                 </button>

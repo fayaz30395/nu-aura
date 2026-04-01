@@ -114,7 +114,7 @@ export default function HeadcountReportPage() {
               <button
                 onClick={exportCSV}
                 disabled={!metrics}
-                className="btn-primary !h-auto !rounded-md"
+                className="btn-primary !h-auto !rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Download className="h-4 w-4" />
                 Export CSV

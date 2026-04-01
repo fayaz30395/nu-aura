@@ -59,7 +59,7 @@ export function PayrollRunsTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreateRun}
-            className="btn-primary px-4 py-2 rounded-lg"
+            className="btn-primary px-4 py-2 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Create Payroll Run
           </button>

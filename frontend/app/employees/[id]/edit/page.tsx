@@ -1116,7 +1116,7 @@ export default function EditEmployeePage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 btn-primary !h-auto disabled:opacity-50"
+                className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSubmitting ? 'Saving...' : 'Save Changes'}
               </button>

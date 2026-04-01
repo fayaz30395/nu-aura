@@ -173,7 +173,7 @@ export default function LeaveCalendarPage() {
               </h2>
               <button
                 onClick={goToToday}
-                className="px-4 py-1 text-sm bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg text-[var(--text-primary)]"
+                className="px-4 py-1 text-sm bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Today
               </button>
@@ -181,13 +181,13 @@ export default function LeaveCalendarPage() {
             <div className="flex gap-2">
               <button
                 onClick={previousMonth}
-                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)]"
+                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 ← Previous
               </button>
               <button
                 onClick={nextMonth}
-                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)]"
+                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Next →
               </button>

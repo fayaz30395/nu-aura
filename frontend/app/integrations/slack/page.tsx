@@ -392,19 +392,17 @@ export default function SlackIntegrationPage() {
 
           {/* Actions */}
           <div className="flex items-center justify-between">
-            <button
-              type="button"
+            <button type="button"
               onClick={handleTestConnection}
               disabled={!isEnabled || testResult === 'testing'}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <RefreshCw className={`h-4 w-4 ${testResult === 'testing' ? 'animate-spin' : ''}`} />
               {testResult === 'testing' ? 'Testing...' : testResult === 'success' ? 'Connected!' : testResult === 'error' ? 'Failed' : 'Test Connection'}
             </button>
-            <button
-              type="submit"
+            <button type="submit"
               disabled={isSubmitting || !isDirty}
-              className="btn-primary !h-auto disabled:opacity-50"
+              className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? 'Saving...' : 'Save Configuration'}
             </button>

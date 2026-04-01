@@ -210,7 +210,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Performance Improvement Plan</h2>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             ✕
           </button>
@@ -446,7 +446,7 @@ function PIPDetailModal({
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             ✕
           </button>
@@ -607,7 +607,7 @@ function PIPDetailModal({
               <button
                 type="submit"
                 disabled={closeSubmitting}
-                className="w-full px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <CheckCircle2 size={16} />
                 Update Status
@@ -667,7 +667,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
 
       <button
         onClick={onView}
-        className="w-full px-4 py-2 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/40 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+        className="w-full px-4 py-2 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/40 transition-colors flex items-center justify-center gap-2 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <Eye size={14} />
         View Details
@@ -833,7 +833,7 @@ export default function PIPPage() {
                 className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
               />
             </div>
-            <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <Filter size={16} />
               Filter
             </button>

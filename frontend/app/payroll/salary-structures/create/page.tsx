@@ -189,7 +189,7 @@ export default function CreateSalaryStructurePage() {
                     <button
                       type="submit"
                       disabled={isPending}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isPending ? (
                         <Loader size="xs" color="white" />

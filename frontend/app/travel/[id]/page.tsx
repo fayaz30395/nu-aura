@@ -317,7 +317,7 @@ export default function TravelRequestDetailsPage() {
               <button
                 onClick={handleComplete}
                 disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-success-500 to-success-600 text-white rounded-xl hover:from-success-600 hover:to-success-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-success-500 to-success-600 text-white rounded-xl hover:from-success-600 hover:to-success-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <CheckCircle className="h-4 w-4" />
                 Mark Completed

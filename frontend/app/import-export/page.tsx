@@ -188,10 +188,9 @@ function FileDropZone({
             </p>
           </div>
         </div>
-        <button
-          type="button"
+        <button type="button"
           onClick={onClear}
-          className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors"
+          className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Remove file"
         >
           <Trash2 className="h-4 w-4" />
@@ -555,11 +554,10 @@ function ImportSection() {
       {/* Action buttons */}
       <div className="flex items-center gap-4">
         {step === 'upload' && file && (
-          <button
-            type="button"
+          <button type="button"
             onClick={handleValidateAndPreview}
             disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             {(previewEmployeeMutation.isPending || validateMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
             Validate & Preview
@@ -567,11 +565,10 @@ function ImportSection() {
           </button>
         )}
         {step === 'preview' && (
-          <button
-            type="button"
+          <button type="button"
             onClick={handleImport}
             disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             {(importMutation.isPending || executeEmployeeMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
             Start Import
@@ -579,10 +576,9 @@ function ImportSection() {
           </button>
         )}
         {(step === 'preview' || step === 'result') && (
-          <button
-            type="button"
+          <button type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Start Over
           </button>
@@ -668,11 +664,10 @@ function ExportSection() {
       </div>
 
       {/* Export button */}
-      <button
-        type="button"
+      <button type="button"
         onClick={handleExport}
         disabled={exportMutation.isPending}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         {exportMutation.isPending ? (
           <RefreshCw className="h-4 w-4 animate-spin" />
@@ -831,11 +826,10 @@ function KekaMigrationSection() {
             onClear={() => setFile(null)}
           />
           {file && (
-            <button
-              type="button"
+            <button type="button"
               onClick={handleUpload}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {uploadMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Upload & Detect Columns
@@ -886,20 +880,18 @@ function KekaMigrationSection() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              type="button"
+            <button type="button"
               onClick={handlePreview}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {previewMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Preview Import
               <ArrowRight className="h-4 w-4" />
             </button>
-            <button
-              type="button"
+            <button type="button"
               onClick={handleReset}
-              className="px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+              className="px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Start Over
             </button>
@@ -968,11 +960,10 @@ function KekaMigrationSection() {
           )}
 
           <div className="flex items-center gap-4">
-            <button
-              type="button"
+            <button type="button"
               onClick={handleExecute}
               disabled={isProcessing || previewData.validRows === 0}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {executeMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
               Execute Import ({previewData.validRows} rows)
@@ -1023,10 +1014,9 @@ function KekaMigrationSection() {
               <p className="text-xl font-bold text-warning-700 dark:text-warning-300">{executeMutation.data.skipped}</p>
             </div>
           </div>
-          <button
-            type="button"
+          <button type="button"
             onClick={handleReset}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Import Another File
           </button>

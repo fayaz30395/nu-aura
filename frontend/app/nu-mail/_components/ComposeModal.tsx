@@ -72,7 +72,7 @@ export const ComposeModal = React.memo(function ComposeModal({
           </h3>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>

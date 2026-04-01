@@ -263,7 +263,7 @@ export default function MyProfilePage() {
               <button
                 onClick={handleCancel}
                 disabled={updateMutation.isPending}
-                className="btn-secondary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
+                className="btn-secondary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <X className="h-4 w-4" />
                 Cancel
@@ -271,7 +271,7 @@ export default function MyProfilePage() {
               <button
                 onClick={profileForm.handleSubmit(handleSave)}
                 disabled={updateMutation.isPending}
-                className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
+                className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {updateMutation.isPending ? (
                   <>
@@ -813,7 +813,7 @@ export default function MyProfilePage() {
                   <button
                     onClick={bankChangeForm.handleSubmit(handleBankChangeRequest)}
                     disabled={bankChangeSubmitting}
-                    className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50"
+                    className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {bankChangeSubmitting ? (
                       <>

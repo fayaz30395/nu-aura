@@ -550,7 +550,7 @@ export default function ReviewCyclesPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
                       </button>
@@ -583,7 +583,7 @@ export default function ReviewCyclesPage() {
                   <button
                     onClick={handleDelete}
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {loading ? 'Deleting...' : 'Delete'}
                   </button>
@@ -780,7 +780,7 @@ export default function ReviewCyclesPage() {
                     type="button"
                     onClick={handleActivate}
                     disabled={loading || (activateFormData.scopeType === 'DEPARTMENT' && (!activateFormData.departmentIds || activateFormData.departmentIds.length === 0)) || (activateFormData.scopeType === 'LOCATION' && (!activateFormData.locationIds || activateFormData.locationIds.length === 0))}
-                    className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {loading ? (
                       <>
