@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -64,7 +65,9 @@ class TimesheetControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .build();
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -501,7 +504,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(TIMESHEET_SUBMIT);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(TIMESHEET_SUBMIT);
         }
 
         @Test
@@ -512,7 +515,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(TIMESHEET_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(TIMESHEET_APPROVE);
         }
 
         @Test
@@ -523,7 +526,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(TIMESHEET_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(TIMESHEET_APPROVE);
         }
 
         @Test
@@ -534,7 +537,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(PROJECT_CREATE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(PROJECT_CREATE);
         }
 
         @Test
@@ -545,7 +548,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(TIMESHEET_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(TIMESHEET_APPROVE);
         }
 
         @Test
@@ -556,7 +559,7 @@ class TimesheetControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(TIMESHEET_SUBMIT);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(TIMESHEET_SUBMIT);
         }
     }
 }

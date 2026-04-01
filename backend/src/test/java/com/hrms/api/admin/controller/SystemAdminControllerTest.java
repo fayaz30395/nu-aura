@@ -7,7 +7,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.*;
 import com.hrms.domain.user.RoleScope;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(SystemAdminController.class)
 @ContextConfiguration(classes = {SystemAdminController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -71,8 +73,6 @@ class SystemAdminControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     @Autowired
     private MockMvc mockMvc;
@@ -108,7 +108,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -118,7 +118,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -128,7 +128,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -138,7 +138,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -148,7 +148,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -158,7 +158,7 @@ class SystemAdminControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
             // Impersonation is a high-privilege operation — must revalidate fresh from DB
             assertThat(annotation.revalidate()).isTrue();
         }
@@ -471,7 +471,7 @@ class SystemAdminControllerTest {
             // CRITICAL: impersonation is the most sensitive endpoint in the platform.
             // revalidate=true forces a fresh DB permission check, preventing stale JWT abuse.
             assertThat(annotation.revalidate()).isTrue();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test

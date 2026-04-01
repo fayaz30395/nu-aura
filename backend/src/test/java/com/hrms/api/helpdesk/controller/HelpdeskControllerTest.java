@@ -6,7 +6,8 @@ import com.hrms.application.helpdesk.service.HelpdeskService;
 import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.helpdesk.Ticket;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(HelpdeskController.class)
 @ContextConfiguration(classes = {HelpdeskController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -57,8 +59,6 @@ class HelpdeskControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/helpdesk";
 
@@ -570,7 +570,7 @@ class HelpdeskControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.EMPLOYEE_VIEW_SELF));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.EMPLOYEE_VIEW_SELF));
         }
 
         @Test
@@ -581,7 +581,7 @@ class HelpdeskControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
 
         @Test
@@ -592,7 +592,7 @@ class HelpdeskControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
 
         @Test
@@ -602,7 +602,7 @@ class HelpdeskControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
     }
 }

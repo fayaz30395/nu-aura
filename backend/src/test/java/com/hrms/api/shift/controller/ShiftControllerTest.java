@@ -339,6 +339,9 @@ class ShiftControllerTest {
         private ShiftPatternRequest buildPatternRequest() {
             return ShiftPatternRequest.builder()
                     .name("Standard 5-Day")
+                    .rotationType("FIXED")
+                    .pattern("DDDDDOO")
+                    .cycleDays(7)
                     .build();
         }
 
@@ -441,6 +444,7 @@ class ShiftControllerTest {
         @DisplayName("POST /generate-schedule creates schedule entries")
         void generateSchedule_returns201() throws Exception {
             GenerateScheduleRequest request = GenerateScheduleRequest.builder()
+                    .shiftPatternId(PATTERN_ID)
                     .startDate(LocalDate.now())
                     .endDate(LocalDate.now().plusDays(6))
                     .build();
@@ -543,7 +547,7 @@ class ShiftControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -554,7 +558,7 @@ class ShiftControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            List<String> perms = Arrays.asList(annotation.value());
+            List<String> perms = Arrays.asList(annotation.value()[0]);
             assertThat(perms).containsAnyOf(
                     Permission.ATTENDANCE_VIEW_ALL,
                     Permission.ATTENDANCE_VIEW_TEAM);
@@ -568,7 +572,7 @@ class ShiftControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -579,7 +583,7 @@ class ShiftControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.SHIFT_MANAGE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.SHIFT_MANAGE);
         }
 
         @Test
@@ -590,7 +594,7 @@ class ShiftControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.SHIFT_ASSIGN);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.SHIFT_ASSIGN);
         }
     }
 }

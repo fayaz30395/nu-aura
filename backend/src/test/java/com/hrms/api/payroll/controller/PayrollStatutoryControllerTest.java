@@ -179,7 +179,7 @@ class PayrollStatutoryControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.PAYROLL_VIEW);
+            assertThat(annotation.value()[0]).contains(Permission.PAYROLL_VIEW);
         }
 
         @Test
@@ -251,7 +251,7 @@ class PayrollStatutoryControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.PAYROLL_PROCESS);
+            assertThat(annotation.value()[0]).contains(Permission.PAYROLL_PROCESS);
         }
 
         @Test

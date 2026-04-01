@@ -3,7 +3,8 @@ package com.hrms.api.expense.controller;
 import com.hrms.application.expense.service.ExpenseReportService;
 import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ExpenseReportController.class)
 @ContextConfiguration(classes = {ExpenseReportController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -48,8 +50,6 @@ class ExpenseReportControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/expenses/reports";
 
@@ -262,7 +262,7 @@ class ExpenseReportControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation,
                     "getExpenseReport must have @RequiresPermission");
-            var values = java.util.Arrays.asList(annotation.value());
+            var values = java.util.Arrays.asList(annotation.value()[0]);
             Assertions.assertTrue(
                     values.contains(Permission.EXPENSE_VIEW_ALL) || values.contains(Permission.EXPENSE_MANAGE),
                     "Must require EXPENSE_VIEW_ALL or EXPENSE_MANAGE");

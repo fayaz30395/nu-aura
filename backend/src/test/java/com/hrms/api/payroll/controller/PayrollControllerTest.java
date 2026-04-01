@@ -7,6 +7,7 @@ import com.hrms.application.payroll.service.PayslipService;
 import com.hrms.application.payroll.service.SalaryStructureService;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.TenantFilter;
+import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.domain.payroll.SalaryStructure;
@@ -74,6 +75,9 @@ class PayrollControllerTest {
 
     @MockitoBean
     private com.hrms.application.employee.service.EmployeeService employeeService;
+
+    @MockitoBean
+    private EventPublisher eventPublisher;
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;

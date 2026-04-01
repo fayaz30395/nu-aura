@@ -7,7 +7,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.*;
 import com.hrms.domain.user.RoleScope;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(RoleController.class)
 @ContextConfiguration(classes = {RoleController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -63,8 +65,6 @@ class RoleControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     @Autowired
     private MockMvc mockMvc;
@@ -113,7 +113,7 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -123,7 +123,7 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -133,7 +133,7 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -143,7 +143,7 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -153,7 +153,7 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -163,9 +163,9 @@ class RoleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_READ);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_READ);
             // Distinct from ROLE_MANAGE — read-only check
-            assertThat(annotation.value()).doesNotContain(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).doesNotContain(Permission.ROLE_MANAGE);
         }
 
         @Test

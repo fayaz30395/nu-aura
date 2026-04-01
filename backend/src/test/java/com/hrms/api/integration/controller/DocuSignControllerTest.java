@@ -1,8 +1,11 @@
 package com.hrms.api.integration.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.api.integration.dto.*;
 import com.hrms.application.integration.service.IntegrationConnectorConfigService;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.integration.ConnectorConfig;
 import com.hrms.domain.integration.docusign.DocuSignEnvelope;
@@ -39,7 +42,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DocuSignController.class)
-@ContextConfiguration(classes = {DocuSignController.class, DocuSignControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {DocuSignController.class, GlobalExceptionHandler.class, DocuSignControllerTest.TestConfig.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -53,6 +57,7 @@ class DocuSignControllerTest {
             return () -> Optional.of(UUID.randomUUID());
         }
     }
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -445,7 +450,7 @@ class DocuSignControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0].documentType").value("OfferLetter"))
                     .andExpect(jsonPath("$[0].docusignTemplateId").value("TPL-001"))
-                    .andExpect(jsonPath("$[0].isActive").value(true));
+                    .andExpect(jsonPath("$[0].active").value(true));
 
             verify(templateMappingRepository).findByTenantIdAndIsDeletedFalse(TENANT_ID);
         }
@@ -490,7 +495,7 @@ class DocuSignControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.documentType").value("TerminationLetter"))
                     .andExpect(jsonPath("$.docusignTemplateId").value("TPL-TERM-001"))
-                    .andExpect(jsonPath("$.isActive").value(true));
+                    .andExpect(jsonPath("$.active").value(true));
 
             verify(templateMappingRepository).save(any(DocuSignTemplateMapping.class));
         }

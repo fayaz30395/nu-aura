@@ -370,7 +370,7 @@ class OvertimeControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_MARK);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_MARK);
         }
 
         @Test
@@ -381,7 +381,7 @@ class OvertimeControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -392,7 +392,7 @@ class OvertimeControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            List<String> perms = Arrays.asList(annotation.value());
+            List<String> perms = Arrays.asList(annotation.value()[0]);
             assertThat(perms).containsAnyOf(
                     Permission.ATTENDANCE_VIEW_ALL,
                     Permission.ATTENDANCE_VIEW_TEAM);
@@ -406,7 +406,7 @@ class OvertimeControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -417,7 +417,7 @@ class OvertimeControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
     }
 }

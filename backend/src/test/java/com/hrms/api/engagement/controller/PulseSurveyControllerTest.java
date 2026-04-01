@@ -6,6 +6,8 @@ import com.hrms.api.engagement.dto.PulseSurveyResponse;
 import com.hrms.api.engagement.dto.SurveySubmissionRequest;
 import com.hrms.application.engagement.service.PulseSurveyService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.engagement.PulseSurvey;
 import com.hrms.domain.engagement.PulseSurvey.SurveyStatus;
@@ -36,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(PulseSurveyController.class)
 @ContextConfiguration(classes = {PulseSurveyController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -44,6 +47,7 @@ class PulseSurveyControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -483,7 +487,7 @@ class PulseSurveyControllerTest {
                     "createSurvey", PulseSurveyRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createSurvey must have @RequiresPermission");
-            Assertions.assertEquals(Permission.SURVEY_MANAGE, annotation.value());
+            Assertions.assertEquals(Permission.SURVEY_MANAGE, annotation.value()[0]);
         }
 
         @Test
@@ -492,7 +496,7 @@ class PulseSurveyControllerTest {
             var method = PulseSurveyController.class.getMethod("getSurvey", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getSurvey must have @RequiresPermission");
-            Assertions.assertEquals(Permission.SURVEY_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.SURVEY_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -501,7 +505,7 @@ class PulseSurveyControllerTest {
             var method = PulseSurveyController.class.getMethod("publishSurvey", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "publishSurvey must have @RequiresPermission");
-            Assertions.assertEquals(Permission.SURVEY_MANAGE, annotation.value());
+            Assertions.assertEquals(Permission.SURVEY_MANAGE, annotation.value()[0]);
         }
     }
 }

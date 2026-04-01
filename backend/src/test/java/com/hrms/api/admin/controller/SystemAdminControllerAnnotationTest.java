@@ -70,7 +70,7 @@ class SystemAdminControllerAnnotationTest {
             assertThat(annotation).isNotNull();
             // Either value() or allOf() must contain SYSTEM_ADMIN
             boolean hasSystemAdmin =
-                    containsSystemAdmin(annotation.value()) ||
+                    containsSystemAdmin(annotation.value()[0]) ||
                     containsSystemAdmin(annotation.allOf());
 
             assertThat(hasSystemAdmin)
@@ -104,7 +104,7 @@ class SystemAdminControllerAnnotationTest {
 
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
-                    containsSystemAdmin(annotation.value()) ||
+                    containsSystemAdmin(annotation.value()[0]) ||
                     containsSystemAdmin(annotation.allOf());
 
             assertThat(hasSystemAdmin).isTrue();
@@ -138,7 +138,7 @@ class SystemAdminControllerAnnotationTest {
 
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
-                    containsSystemAdmin(annotation.value()) ||
+                    containsSystemAdmin(annotation.value()[0]) ||
                     containsSystemAdmin(annotation.allOf());
             assertThat(hasSystemAdmin).isTrue();
         }
@@ -150,7 +150,7 @@ class SystemAdminControllerAnnotationTest {
 
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
-                    containsSystemAdmin(annotation.value()) ||
+                    containsSystemAdmin(annotation.value()[0]) ||
                     containsSystemAdmin(annotation.allOf());
             assertThat(hasSystemAdmin).isTrue();
         }

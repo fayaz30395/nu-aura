@@ -1,11 +1,14 @@
 package com.hrms.api.tax.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.api.tax.dto.TaxDeclarationRequest;
 import com.hrms.api.tax.dto.TaxDeclarationResponse;
 import com.hrms.api.tax.dto.TaxProofRequest;
 import com.hrms.api.tax.dto.TaxProofResponse;
 import com.hrms.application.tax.service.TaxDeclarationService;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -46,7 +49,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * and permission annotation presence on every endpoint.
  */
 @WebMvcTest(TaxDeclarationController.class)
-@ContextConfiguration(classes = {TaxDeclarationController.class})
+@ContextConfiguration(classes = {TaxDeclarationController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -55,6 +59,7 @@ class TaxDeclarationControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -175,7 +180,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_DECLARE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_DECLARE);
         }
     }
 
@@ -232,7 +237,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_DECLARE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_DECLARE);
         }
     }
 
@@ -274,7 +279,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_DECLARE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_DECLARE);
         }
     }
 
@@ -326,7 +331,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_APPROVE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_APPROVE);
         }
     }
 
@@ -382,7 +387,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_APPROVE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_APPROVE);
         }
     }
 
@@ -424,7 +429,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value()))
+            assertThat(Arrays.asList(annotation.value()[0]))
                     .containsAnyOf(Permission.STATUTORY_VIEW, Permission.TDS_DECLARE);
         }
     }
@@ -462,7 +467,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.STATUTORY_VIEW);
+            assertThat(annotation.value()[0]).contains(Permission.STATUTORY_VIEW);
         }
     }
 
@@ -528,7 +533,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_DECLARE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_DECLARE);
         }
     }
 
@@ -581,7 +586,7 @@ class TaxDeclarationControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.TDS_DECLARE);
+            assertThat(annotation.value()[0]).contains(Permission.TDS_DECLARE);
         }
     }
 
