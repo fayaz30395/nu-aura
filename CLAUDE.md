@@ -89,7 +89,7 @@ nu-aura/
 ### Next.js / Frontend
 - **Next.js 14 App Router** with TypeScript (strict mode)
 - **Mantine UI** as primary component library (NOT Material UI)
-- **Tailwind CSS** for utility styling (Sky color palette — NOT purple)
+- **Tailwind CSS** for utility styling — **Blue Monochrome palette (hue ~228, anchor #2952A3)**
 - **Zustand** for global client state (auth, UI preferences)
 - **React Query (TanStack)** for all server state / data fetching
 - **React Hook Form + Zod** for all forms — no uncontrolled inputs
@@ -99,6 +99,19 @@ nu-aura/
 - **No raw CSS files** — use Tailwind utilities or Mantine components
 - **Never use `any`** in TypeScript — define proper interfaces
 - Tests: Playwright (E2E), React Testing Library (component)
+- **Design System Rules (ENFORCED):**
+  - All colors via CSS variables in `globals.css` — NO hardcoded `bg-white`, `shadow-sm/md/lg`, raw hex
+  - Allowed Tailwind color tokens: `accent-*`, `success-*`, `danger-*`, `warning-*`, `info-*`, `surface-*`, `nu-red-*`, `nu-purple-*`, `nu-teal-*`
+  - BANNED: `sky-*`, `rose-*`, `amber-*`, `emerald-*`, `lime-*`, `fuchsia-*`, `cyan-*`, `slate-*`, `gray-*`, `red-*`, `green-*`, `yellow-*`, `blue-*`
+  - Charts: `var(--chart-*)` CSS variables only — never raw hex
+  - Spacing: 8px grid only (p-1/2/4/6/8, gap-1/2/4/6/8) — NO p-3, p-5, gap-3, gap-5
+  - Border radius: `rounded-md` (small), `rounded-lg` (standard), `rounded-xl` (cards)
+  - Shadows: `shadow-[var(--shadow-card)]`, `shadow-[var(--shadow-elevated)]`, `shadow-[var(--shadow-dropdown)]`
+  - Buttons: skeuomorphic — gradient-to-b, skeuo-button class, active:translate-y-px
+  - Logo dark mode: separate SVGs (`dark:hidden` + `hidden dark:block`), never `brightness-0 invert`
+  - Focus: `focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]` (NOT `focus:ring`)
+  - All icon-only buttons must have `aria-label`
+  - All interactive elements must have `cursor-pointer`
 
 ### Database
 - Table names: `snake_case`, plural (e.g., `user_roles`)
@@ -290,6 +303,19 @@ cd backend && mvn verify  # Swagger at http://localhost:8080/swagger-ui.html
 
 ## References
 - See `.claude/CLAUDE.md` for detailed engineering instructions and locked-in architectural decisions
+- See `themes/nulogic.md` for NULogic brand identity + product design system (blue monochrome, skeuomorphism, typography, spacing, chart palette, governance rules)
+- See `themes/DESIGN_SYSTEM_COMPLIANCE_PLAN.md` and `themes/PHASE_2_COMPLIANCE_PLAN.md` for migration history
+- See `themes/nu_aura_single_hue_design_system.pdf` and `themes/nu_aura_typography_spacing_alignment_balanced.pdf` for design spec PDFs
+
+## Redis Architecture (Fully Implemented — No Gaps)
+- **Config**: `RedisConfig.java`, `CacheConfig.java` (20+ named caches, tiered TTLs)
+- **Warm-up**: `CacheWarmUpService.java` — pre-loads 5 long-lived caches per tenant on demand
+- **Rate limiting**: `DistributedRateLimiter.java` (Redis Lua) + `RateLimitingFilter.java` (Bucket4j fallback)
+- **Security**: `TokenBlacklistService.java` (Redis + fallback), `AccountLockoutService.java` (Redis TTL)
+- **Distributed locks**: `FluenceEditLockService.java` (5min TTL)
+- **Kafka dedup**: `IdempotencyService.java` (atomic SETNX, 24hr TTL)
+- **WebSocket relay**: `RedisWebSocketRelay.java` + `RedisWebSocketSubscriber.java` (Pub/Sub multi-pod)
+- **Monitoring**: `RedisHealthIndicator.java` (PING + memory), `CacheMetricsConfig.java` (Micrometer)
 - See `AGENTS.md` for subagent spawn prompts (6 roles)
 - See `TEAMS.md` for Agent Teams parallel workflow configs
 - See `USAGE-GUIDE.md` for agent usage decision matrix and examples
