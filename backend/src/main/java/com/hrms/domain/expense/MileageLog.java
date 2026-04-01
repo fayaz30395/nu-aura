@@ -2,6 +2,7 @@ package com.hrms.domain.expense;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "mileage_logs", indexes = {
     @Index(name = "idx_mileage_log_tenant", columnList = "tenantId"),

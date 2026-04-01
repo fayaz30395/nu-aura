@@ -2,6 +2,7 @@ package com.hrms.domain.overtime;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 /**
  * Overtime request for pre-approval or post-facto recording.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "overtime_requests")
 @Getter

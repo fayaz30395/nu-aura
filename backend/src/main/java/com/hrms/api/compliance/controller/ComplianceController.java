@@ -16,6 +16,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.PageImpl;
+
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -87,18 +89,17 @@ public class ComplianceController {
     @GetMapping("/policies/active")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get all active policies")
-    public ResponseEntity<List<CompliancePolicyResponse>> getActivePolicies() {
-        return ResponseEntity.ok(complianceService.getActivePolicies().stream()
-                .map(CompliancePolicyResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<CompliancePolicyResponse>> getActivePolicies(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getActivePolicies(pageable).map(CompliancePolicyResponse::from));
     }
 
     @GetMapping("/policies/category/{category}")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get policies by category")
-    public ResponseEntity<List<CompliancePolicyResponse>> getPoliciesByCategory(
-            @PathVariable CompliancePolicy.PolicyCategory category) {
-        return ResponseEntity.ok(complianceService.getPoliciesByCategory(category).stream()
-                .map(CompliancePolicyResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<CompliancePolicyResponse>> getPoliciesByCategory(
+            @PathVariable CompliancePolicy.PolicyCategory category,
+            Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getPoliciesByCategory(category, pageable).map(CompliancePolicyResponse::from));
     }
 
     // ==================== Policy Acknowledgment Endpoints ====================
@@ -117,23 +118,30 @@ public class ComplianceController {
     @GetMapping("/acknowledgments/employee/{employeeId}")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get acknowledgments for an employee")
-    public ResponseEntity<List<PolicyAcknowledgment>> getEmployeeAcknowledgments(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(complianceService.getEmployeeAcknowledgments(employeeId));
+    public ResponseEntity<Page<PolicyAcknowledgment>> getEmployeeAcknowledgments(
+            @PathVariable UUID employeeId, Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getEmployeeAcknowledgments(employeeId, pageable));
     }
 
     @GetMapping("/policies/{policyId}/acknowledgments")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get acknowledgments for a policy")
-    public ResponseEntity<List<PolicyAcknowledgment>> getPolicyAcknowledgments(@PathVariable UUID policyId) {
-        return ResponseEntity.ok(complianceService.getPolicyAcknowledgments(policyId));
+    public ResponseEntity<Page<PolicyAcknowledgment>> getPolicyAcknowledgments(
+            @PathVariable UUID policyId, Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getPolicyAcknowledgments(policyId, pageable));
     }
 
     @GetMapping("/acknowledgments/pending/{employeeId}")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get pending policy acknowledgments for an employee")
-    public ResponseEntity<List<CompliancePolicyResponse>> getPendingAcknowledgments(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(complianceService.getPendingAcknowledgments(employeeId).stream()
-                .map(CompliancePolicyResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<CompliancePolicyResponse>> getPendingAcknowledgments(
+            @PathVariable UUID employeeId, Pageable pageable) {
+        List<CompliancePolicyResponse> all = complianceService.getPendingAcknowledgments(employeeId).stream()
+                .map(CompliancePolicyResponse::from).collect(Collectors.toList());
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), all.size());
+        List<CompliancePolicyResponse> subList = start >= all.size() ? List.of() : all.subList(start, end);
+        return ResponseEntity.ok(new PageImpl<>(subList, pageable, all.size()));
     }
 
     // ==================== Checklist Endpoints ====================
@@ -171,25 +179,22 @@ public class ComplianceController {
     @GetMapping("/checklists/active")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get active checklists")
-    public ResponseEntity<List<ComplianceChecklistResponse>> getActiveChecklists() {
-        return ResponseEntity.ok(complianceService.getActiveChecklists().stream()
-                .map(ComplianceChecklistResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceChecklistResponse>> getActiveChecklists(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getActiveChecklists(pageable).map(ComplianceChecklistResponse::from));
     }
 
     @GetMapping("/checklists/my")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get my assigned checklists")
-    public ResponseEntity<List<ComplianceChecklistResponse>> getMyChecklists() {
-        return ResponseEntity.ok(complianceService.getMyChecklists().stream()
-                .map(ComplianceChecklistResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceChecklistResponse>> getMyChecklists(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getMyChecklists(pageable).map(ComplianceChecklistResponse::from));
     }
 
     @GetMapping("/checklists/overdue")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get overdue checklists")
-    public ResponseEntity<List<ComplianceChecklistResponse>> getOverdueChecklists() {
-        return ResponseEntity.ok(complianceService.getOverdueChecklists().stream()
-                .map(ComplianceChecklistResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceChecklistResponse>> getOverdueChecklists(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getOverdueChecklists(pageable).map(ComplianceChecklistResponse::from));
     }
 
     // ==================== Audit Log Endpoints ====================
@@ -204,10 +209,11 @@ public class ComplianceController {
     @GetMapping("/audit-logs/entity/{entityType}/{entityId}")
     @RequiresPermission(Permission.AUDIT_VIEW)
     @Operation(summary = "Get audit history for an entity")
-    public ResponseEntity<List<AuditLog>> getEntityAuditHistory(
+    public ResponseEntity<Page<AuditLog>> getEntityAuditHistory(
             @PathVariable String entityType,
-            @PathVariable UUID entityId) {
-        return ResponseEntity.ok(complianceService.getEntityAuditHistory(entityType, entityId));
+            @PathVariable UUID entityId,
+            Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getEntityAuditHistory(entityType, entityId, pageable));
     }
 
     @GetMapping("/audit-logs/user/{userId}")
@@ -275,25 +281,22 @@ public class ComplianceController {
     @GetMapping("/alerts/active")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get active alerts")
-    public ResponseEntity<List<ComplianceAlertResponse>> getActiveAlerts() {
-        return ResponseEntity.ok(complianceService.getActiveAlerts().stream()
-                .map(ComplianceAlertResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceAlertResponse>> getActiveAlerts(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getActiveAlerts(pageable).map(ComplianceAlertResponse::from));
     }
 
     @GetMapping("/alerts/my")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get my assigned alerts")
-    public ResponseEntity<List<ComplianceAlertResponse>> getMyAlerts() {
-        return ResponseEntity.ok(complianceService.getMyAlerts().stream()
-                .map(ComplianceAlertResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceAlertResponse>> getMyAlerts(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getMyAlerts(pageable).map(ComplianceAlertResponse::from));
     }
 
     @GetMapping("/alerts/critical")
     @RequiresPermission(Permission.COMPLIANCE_VIEW)
     @Operation(summary = "Get critical and high priority alerts")
-    public ResponseEntity<List<ComplianceAlertResponse>> getCriticalAlerts() {
-        return ResponseEntity.ok(complianceService.getCriticalAlerts().stream()
-                .map(ComplianceAlertResponse::from).collect(Collectors.toList()));
+    public ResponseEntity<Page<ComplianceAlertResponse>> getCriticalAlerts(Pageable pageable) {
+        return ResponseEntity.ok(complianceService.getCriticalAlerts(pageable).map(ComplianceAlertResponse::from));
     }
 
     // ==================== Dashboard ====================

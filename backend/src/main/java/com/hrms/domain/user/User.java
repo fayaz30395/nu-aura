@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "users", indexes = {
     @Index(name = "idx_user_email_tenant", columnList = "email,tenantId", unique = true),

@@ -2,6 +2,7 @@ package com.hrms.domain.overtime;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 /**
  * Compensatory Time Balance for employees who opt for comp time instead of OT pay.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "comp_time_balances")
 @Getter

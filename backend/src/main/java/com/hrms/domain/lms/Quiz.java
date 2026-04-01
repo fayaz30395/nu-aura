@@ -2,6 +2,7 @@ package com.hrms.domain.lms;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "lms_quizzes", indexes = {
     @Index(name = "idx_lms_quiz_tenant", columnList = "tenantId"),

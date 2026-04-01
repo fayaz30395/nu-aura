@@ -1,6 +1,8 @@
 package com.hrms.application.leave.service;
 
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
@@ -39,6 +41,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final LeaveTypeRepository leaveTypeRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
+    private final AuditLogService auditLogService;
 
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
@@ -46,7 +49,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                                EmployeeRepository employeeRepository,
                                LeaveTypeRepository leaveTypeRepository,
                                DomainEventPublisher domainEventPublisher,
-                               @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
+                               @org.springframework.context.annotation.Lazy WorkflowService workflowService,
+                               AuditLogService auditLogService) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveBalanceService = leaveBalanceService;
         this.webSocketNotificationService = webSocketNotificationService;
@@ -54,6 +58,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         this.leaveTypeRepository = leaveTypeRepository;
         this.domainEventPublisher = domainEventPublisher;
         this.workflowService = workflowService;
+        this.auditLogService = auditLogService;
     }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
@@ -80,6 +85,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         leaveRequest.setTenantId(tenantId);
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
+
+        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.CREATE, null, null, "Leave request created: " + requestNumber); } catch (Exception e) { log.warn("Audit log failed for leave request create: {}", e.getMessage()); }
 
         // Add to pending in balance
         leaveBalanceService.getOrCreateBalance(
@@ -136,6 +143,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         request.approve(approverId);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
+        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.APPROVE, null, null, "Leave request approved by " + approverId); } catch (Exception e) { log.warn("Audit log failed for leave request approve: {}", e.getMessage()); }
+
         leaveBalanceService.deductLeave(
                 saved.getEmployeeId(),
                 saved.getLeaveTypeId(),
@@ -169,6 +178,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         request.reject(approverId, reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
+
+        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.REJECT, null, null, "Leave request rejected by " + approverId + ": " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request reject: {}", e.getMessage()); }
 
         // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -213,6 +224,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         boolean wasApproved = request.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED;
         request.cancel(reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
+
+        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Leave request cancelled: " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request cancel: {}", e.getMessage()); }
 
         // Credit back if was approved
         if (wasApproved) {

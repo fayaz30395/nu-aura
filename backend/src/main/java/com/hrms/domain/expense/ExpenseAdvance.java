@@ -2,6 +2,7 @@ package com.hrms.domain.expense;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Expense advance — upfront money given to an employee before they incur expenses.
  * Must be settled (linked to expense claims) after the trip/event.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_advances", indexes = {
     @Index(name = "idx_expense_adv_tenant", columnList = "tenantId"),

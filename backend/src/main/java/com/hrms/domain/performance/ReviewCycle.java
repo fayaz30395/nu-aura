@@ -2,11 +2,13 @@ package com.hrms.domain.performance;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "review_cycles")
 @Getter

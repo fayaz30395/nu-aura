@@ -262,10 +262,11 @@ public class ContractController {
     })
     @GetMapping("/expiring")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<List<ContractListDto>> getExpiringContracts(
+    public ResponseEntity<Page<ContractListDto>> getExpiringContracts(
             @Parameter(description = "Number of days to look ahead", example = "30")
-            @RequestParam(defaultValue = "30") int days) {
-        List<ContractListDto> contracts = contractService.getExpiringContracts(days);
+            @RequestParam(defaultValue = "30") int days,
+            Pageable pageable) {
+        Page<ContractListDto> contracts = contractService.getExpiringContracts(days, pageable);
         return ResponseEntity.ok(contracts);
     }
 
@@ -276,8 +277,8 @@ public class ContractController {
     })
     @GetMapping("/expired")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<List<ContractListDto>> getExpiredContracts() {
-        List<ContractListDto> contracts = contractService.getExpiredContracts();
+    public ResponseEntity<Page<ContractListDto>> getExpiredContracts(Pageable pageable) {
+        Page<ContractListDto> contracts = contractService.getExpiredContracts(pageable);
         return ResponseEntity.ok(contracts);
     }
 
@@ -288,8 +289,8 @@ public class ContractController {
     })
     @GetMapping("/active")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<List<ContractListDto>> getActiveContracts() {
-        List<ContractListDto> contracts = contractService.getActiveContracts();
+    public ResponseEntity<Page<ContractListDto>> getActiveContracts(Pageable pageable) {
+        Page<ContractListDto> contracts = contractService.getActiveContracts(pageable);
         return ResponseEntity.ok(contracts);
     }
 
@@ -303,9 +304,10 @@ public class ContractController {
     })
     @GetMapping("/{contractId}/versions")
     @RequiresPermission(Permission.CONTRACT_VIEW)
-    public ResponseEntity<List<Map<String, Object>>> getVersionHistory(
-            @Parameter(description = "Contract UUID") @PathVariable UUID contractId) {
-        List<Map<String, Object>> versions = contractService.getVersionHistory(contractId);
+    public ResponseEntity<Page<Map<String, Object>>> getVersionHistory(
+            @Parameter(description = "Contract UUID") @PathVariable UUID contractId,
+            Pageable pageable) {
+        Page<Map<String, Object>> versions = contractService.getVersionHistory(contractId, pageable);
         return ResponseEntity.ok(versions);
     }
 

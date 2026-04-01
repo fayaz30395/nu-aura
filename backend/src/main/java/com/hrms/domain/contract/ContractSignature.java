@@ -2,6 +2,7 @@ package com.hrms.domain.contract;
 
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 /**
  * ContractSignature entity for tracking signature workflow and status
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "contract_signatures", indexes = {
         @Index(name = "idx_contract_signatures_contract_id", columnList = "contract_id"),

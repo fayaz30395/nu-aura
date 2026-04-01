@@ -8,6 +8,8 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.training.repository.TrainingEnrollmentRepository;
 import com.hrms.infrastructure.training.repository.TrainingProgramRepository;
 import com.hrms.common.security.TenantContext;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.event.training.TrainingCompletedEvent;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class TrainingManagementService {
     private final TrainingEnrollmentRepository enrollmentRepository;
     private final EmployeeRepository employeeRepository;
     private final DomainEventPublisher domainEventPublisher;
+    private final AuditLogService auditLogService;
 
     // ==================== Training Program Operations ====================
 
@@ -172,6 +175,9 @@ public class TrainingManagementService {
         enrollment.setNotes(request.getNotes());
 
         TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
+
+        try { auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.CREATE, null, null, "Employee " + request.getEmployeeId() + " enrolled in program " + request.getProgramId()); } catch (Exception e) { log.warn("Audit log failed for training enroll: {}", e.getMessage()); }
+
         return mapToEnrollmentResponse(savedEnrollment);
     }
 
@@ -244,6 +250,8 @@ public class TrainingManagementService {
                 programName,
                 savedEnrollment.getCompletedAt()
         ));
+
+        try { auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.STATUS_CHANGE, null, null, "Training completed for program " + programName); } catch (Exception e) { log.warn("Audit log failed for training complete: {}", e.getMessage()); }
 
         log.info("Training enrollment {} marked as COMPLETED, event published", enrollmentId);
         return mapToEnrollmentResponse(savedEnrollment);

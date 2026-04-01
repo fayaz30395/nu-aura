@@ -2,9 +2,11 @@ package com.hrms.domain.shift;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "shift_patterns", indexes = {
     @Index(name = "idx_shift_pattern_tenant", columnList = "tenantId"),

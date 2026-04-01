@@ -2,11 +2,13 @@ package com.hrms.domain.notification;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "email_notifications", indexes = {
     @Index(name = "idx_email_tenant", columnList = "tenantId"),

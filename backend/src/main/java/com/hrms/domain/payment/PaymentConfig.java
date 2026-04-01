@@ -2,11 +2,13 @@ package com.hrms.domain.payment;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_configs", indexes = {
     @Index(name = "idx_payment_config_tenant", columnList = "tenantId"),

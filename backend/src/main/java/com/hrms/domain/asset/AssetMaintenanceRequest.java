@@ -2,6 +2,7 @@ package com.hrms.domain.asset;
 
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "asset_maintenance_requests")
 @Getter

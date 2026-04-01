@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
  * API keys for biometric device authentication.
  * Devices use API key auth (not JWT) since they cannot perform OAuth flows.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "biometric_api_keys", indexes = {

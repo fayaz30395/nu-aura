@@ -3,12 +3,14 @@ package com.hrms.domain.employee;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "employees", indexes = {
         @Index(name = "idx_employee_code_tenant", columnList = "employeeCode,tenantId", unique = true),

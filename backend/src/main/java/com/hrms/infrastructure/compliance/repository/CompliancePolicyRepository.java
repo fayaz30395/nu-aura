@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +31,16 @@ public interface CompliancePolicyRepository extends JpaRepository<CompliancePoli
            "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
     List<CompliancePolicy> findActivePolicies(@Param("tenantId") UUID tenantId, @Param("today") LocalDate today);
 
+    @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.status = 'PUBLISHED' " +
+           "AND (p.effectiveDate IS NULL OR p.effectiveDate <= :today) " +
+           "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
+    Page<CompliancePolicy> findActivePolicies(@Param("tenantId") UUID tenantId, @Param("today") LocalDate today, Pageable pageable);
+
     @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.category = :category AND p.status = 'PUBLISHED'")
     List<CompliancePolicy> findByCategory(@Param("tenantId") UUID tenantId, @Param("category") CompliancePolicy.PolicyCategory category);
+
+    @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.category = :category AND p.status = 'PUBLISHED'")
+    Page<CompliancePolicy> findByCategory(@Param("tenantId") UUID tenantId, @Param("category") CompliancePolicy.PolicyCategory category, Pageable pageable);
 
     @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.requiresAcknowledgment = true AND p.status = 'PUBLISHED'")
     List<CompliancePolicy> findPoliciesRequiringAcknowledgment(@Param("tenantId") UUID tenantId);

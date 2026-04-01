@@ -2,6 +2,7 @@ package com.hrms.domain.benefits;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 /**
  * Flexible benefit credits allocation and usage tracking.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "flex_benefit_allocations")
 @Getter

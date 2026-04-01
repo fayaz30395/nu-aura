@@ -2,6 +2,7 @@ package com.hrms.domain.workflow;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Approval Delegate - Allows users to delegate their approval authority to others.
  * Supports time-bound delegation and entity-type specific delegation.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "approval_delegates")
 @Getter

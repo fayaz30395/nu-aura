@@ -32,6 +32,10 @@ public interface AttendanceRecordRepository
         List<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
                         UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate);
 
+        // Paginated tenant-aware version
+        Page<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+                        UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+
         List<AttendanceRecord> findAllByTenantIdAndAttendanceDateBetween(
                         UUID tenantId, LocalDate startDate, LocalDate endDate);
 

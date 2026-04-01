@@ -2,6 +2,7 @@ package com.hrms.domain.benefits;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 /**
  * Benefit claims for insurance reimbursement and wellness expenses.
  */
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "benefit_claims")
 @Getter
