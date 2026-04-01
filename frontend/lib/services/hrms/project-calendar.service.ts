@@ -29,7 +29,7 @@ class ProjectCalendarService {
     if (filters?.priorities?.length) params.priorities = filters.priorities.join(',');
 
     const response = await apiClient.get<CalendarEvent[]>('/projects/calendar/events', { params });
-    return response.data.map(event => ({
+    return (Array.isArray(response.data) ? response.data : []).map(event => ({
       ...event,
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
@@ -56,7 +56,7 @@ class ProjectCalendarService {
     if (filters?.showOnlyAtRisk) params.showOnlyAtRisk = 'true';
 
     const response = await apiClient.get<GanttTask[]>('/projects/gantt/tasks', { params });
-    return response.data.map(task => ({
+    return (Array.isArray(response.data) ? response.data : []).map(task => ({
       ...task,
       startDate: new Date(task.startDate),
       endDate: new Date(task.endDate),

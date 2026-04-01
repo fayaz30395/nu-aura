@@ -145,6 +145,7 @@ function ExportMenu<T extends Record<string, unknown>>({
               className={cn(
                 'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
               )}
             >
@@ -159,6 +160,7 @@ function ExportMenu<T extends Record<string, unknown>>({
               className={cn(
                 'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
               )}
             >
@@ -175,6 +177,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                 className={cn(
                   'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
                   'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                  'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   'min-h-[44px]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}

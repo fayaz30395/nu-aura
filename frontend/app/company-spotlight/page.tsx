@@ -160,7 +160,7 @@ export default function CompanySpotlightPage() {
                   setEditingSpotlight(null);
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Plus className="w-5 h-5" />
                 Add Slide
@@ -282,15 +282,17 @@ export default function CompanySpotlightPage() {
                         <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleEditSpotlight(spotlight)}
-                            className="p-2 text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
+                            className="p-2 text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Edit"
+                            aria-label="Edit spotlight"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setShowDeleteConfirm(spotlight.id)}
-                            className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
+                            className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Delete"
+                            aria-label="Delete spotlight"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -446,7 +448,8 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
