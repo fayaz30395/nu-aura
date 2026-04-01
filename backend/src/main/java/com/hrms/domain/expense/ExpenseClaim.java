@@ -105,6 +105,9 @@ public class ExpenseClaim extends TenantAware {
     @Builder.Default
     private int totalItems = 0;
 
+    @Column(name = "receipt_scan_status", length = 20)
+    private String receiptScanStatus;
+
     public enum ExpenseStatus {
         DRAFT,
         SUBMITTED,

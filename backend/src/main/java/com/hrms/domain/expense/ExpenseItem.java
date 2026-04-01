@@ -72,4 +72,14 @@ public class ExpenseItem extends BaseEntity {
 
     @Column(length = 1000)
     private String notes;
+
+    // OCR receipt scanning fields (GAP-002)
+    @Column(name = "ocr_raw_text", columnDefinition = "TEXT")
+    private String ocrRawText;
+
+    @Column(name = "ocr_confidence", precision = 5, scale = 4)
+    private java.math.BigDecimal ocrConfidence;
+
+    @Column(name = "ocr_processed_at")
+    private java.time.LocalDateTime ocrProcessedAt;
 }

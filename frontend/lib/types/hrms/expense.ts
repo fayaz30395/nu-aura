@@ -221,10 +221,95 @@ export interface ExpenseReportData {
   endDate: string;
 }
 
+// ─── OCR Receipt Scanning ──────────────────────────────────────────────────
+export interface OcrResult {
+  merchantName: string | null;
+  amount: number | null;
+  currency: string;
+  receiptDate: string | null;
+  rawText: string;
+  confidence: number;
+  receiptStoragePath: string;
+  receiptFileName: string;
+}
+
 export interface Page<T> {
   content: T[];
   totalElements: number;
   totalPages: number;
   size: number;
   number: number;
+}
+
+// ─── Mileage Tracking ────────────────────────────────────────────────────────
+
+export type VehicleType = 'CAR' | 'MOTORCYCLE' | 'BICYCLE' | 'PUBLIC_TRANSPORT';
+
+export type MileageStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'PAID';
+
+export interface MileageLogEntry {
+  id: string;
+  employeeId: string;
+  employeeName?: string;
+  travelDate: string;
+  fromLocation: string;
+  toLocation: string;
+  distanceKm: number;
+  purpose?: string;
+  vehicleType: VehicleType;
+  ratePerKm: number;
+  reimbursementAmount: number;
+  status: MileageStatus;
+  expenseClaimId?: string;
+  approvedBy?: string;
+  approvedByName?: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMileageLogRequest {
+  travelDate: string;
+  fromLocation: string;
+  toLocation: string;
+  distanceKm: number;
+  purpose?: string;
+  vehicleType: VehicleType;
+  notes?: string;
+}
+
+export interface MileagePolicyEntity {
+  id: string;
+  name: string;
+  ratePerKm: number;
+  maxDailyKm?: number;
+  maxMonthlyKm?: number;
+  vehicleRates?: string;
+  isActive: boolean;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMileagePolicyRequest {
+  name: string;
+  ratePerKm: number;
+  maxDailyKm?: number;
+  maxMonthlyKm?: number;
+  vehicleRates?: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+}
+
+export interface MileageSummary {
+  year: number;
+  month: number;
+  totalDistanceKm: number;
+  totalReimbursement: number;
+  totalTrips: number;
+  policyMaxMonthlyKm?: number;
+  remainingMonthlyKm?: number;
 }

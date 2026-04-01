@@ -26,6 +26,7 @@ import {
 } from '@/lib/hooks/queries';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ConfirmDialog } from '@/components/ui';
 import { ExpenseStatus, CreateExpenseItemRequest } from '@/lib/types/hrms/expense';
+import { ReceiptScanner, ConfirmedOcrData } from '@/components/expenses';
 
 const itemSchema = z.object({
   description: z.string().min(1, 'Description required'),
@@ -77,6 +78,7 @@ export default function ExpenseDetailPage() {
   const rejectMutation = useRejectExpenseClaim();
 
   const [showAddItem, setShowAddItem] = useState(false);
+  const [showReceiptScanner, setShowReceiptScanner] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
@@ -104,6 +106,19 @@ export default function ExpenseDetailPage() {
         },
       }
     );
+  };
+
+  const onReceiptConfirm = (ocrData: ConfirmedOcrData) => {
+    setShowReceiptScanner(false);
+    // Pre-fill the add item form with OCR data and open it
+    resetForm({
+      description: ocrData.merchantName ? `Receipt from ${ocrData.merchantName}` : 'Scanned receipt',
+      amount: ocrData.amount || 0,
+      expenseDate: ocrData.receiptDate || new Date().toISOString().split('T')[0],
+      merchantName: ocrData.merchantName || '',
+      isBillable: false,
+    });
+    setShowAddItem(true);
   };
 
   const onDeleteItem = () => {
@@ -227,13 +242,22 @@ export default function ExpenseDetailPage() {
               Expense Items ({items.length})
             </h2>
             {isDraft && isOwner && (
-              <button
-                onClick={() => setShowAddItem(true)}
-                className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                Add Item
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowReceiptScanner(true)}
+                  className="flex items-center gap-1.5 px-4 py-1.5 border border-accent-700 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg text-sm transition-colors"
+                >
+                  <Receipt className="w-4 h-4" />
+                  Scan Receipt
+                </button>
+                <button
+                  onClick={() => setShowAddItem(true)}
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
+              </div>
             )}
           </div>
           {itemsLoading ? (
@@ -461,6 +485,17 @@ export default function ExpenseDetailPage() {
           type="danger"
           loading={deleteItemMutation.isPending}
         />
+
+        {/* Receipt Scanner Modal */}
+        <Modal isOpen={showReceiptScanner} onClose={() => setShowReceiptScanner(false)} size="lg">
+          <ModalHeader>Scan Receipt</ModalHeader>
+          <ModalBody>
+            <ReceiptScanner
+              onConfirm={onReceiptConfirm}
+              onCancel={() => setShowReceiptScanner(false)}
+            />
+          </ModalBody>
+        </Modal>
       </div>
     </AppLayout>
   );
