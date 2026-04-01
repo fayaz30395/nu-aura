@@ -5,16 +5,21 @@ import com.hrms.api.onboarding.dto.OnboardingProcessRequest;
 import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.application.onboarding.service.OnboardingManagementService;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.compensation.SalaryRevision;
 import com.hrms.domain.event.recruitment.CandidateHiredEvent;
 import com.hrms.domain.onboarding.OnboardingProcess;
+import com.hrms.domain.payroll.SalaryStructure;
 import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.domain.employee.Employee;
+import com.hrms.infrastructure.compensation.repository.SalaryRevisionRepository;
+import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -26,6 +31,7 @@ import java.util.UUID;
  * <ul>
  *   <li>Creates an Employee record from candidate data</li>
  *   <li>Initiates the onboarding process</li>
+ *   <li>Creates an initial SalaryStructure and SalaryRevision from the offered CTC</li>
  * </ul>
  *
  * <p>Uses {@link TransactionalEventListener} to ensure operations complete after
@@ -40,6 +46,8 @@ public class CandidateHiredEventListener {
 
     private final EmployeeService employeeService;
     private final OnboardingManagementService onboardingService;
+    private final SalaryStructureRepository salaryStructureRepository;
+    private final SalaryRevisionRepository salaryRevisionRepository;
 
     /**
      * Handles the candidate hired event by:
@@ -81,6 +89,46 @@ public class CandidateHiredEventListener {
             } catch (RuntimeException e) {
                 log.warn("Could not create onboarding process for employee {}: {}", employeeId, e.getMessage());
                 // Don't fail the entire flow if onboarding creation fails
+            }
+
+            // Step C: Create initial salary structure and revision from offered CTC
+            if (event.getOfferedCtc() != null && event.getOfferedCtc().compareTo(BigDecimal.ZERO) > 0) {
+                try {
+                    LocalDate effectiveDate = event.getProposedJoiningDate() != null
+                            ? event.getProposedJoiningDate() : LocalDate.now();
+
+                    SalaryStructure structure = SalaryStructure.builder()
+                            .tenantId(tenantId)
+                            .employeeId(employeeId)
+                            .basicSalary(event.getOfferedCtc())
+                            .effectiveDate(effectiveDate)
+                            .isActive(true)
+                            .build();
+                    salaryStructureRepository.save(structure);
+                    log.info("Initial salary structure created for employee {} with CTC {}",
+                            employeeId, event.getOfferedCtc());
+
+                    SalaryRevision revision = SalaryRevision.builder()
+                            .tenantId(tenantId)
+                            .employeeId(employeeId)
+                            .revisionType(SalaryRevision.RevisionType.PROBATION_CONFIRMATION)
+                            .previousSalary(BigDecimal.ZERO)
+                            .newSalary(event.getOfferedCtc())
+                            .incrementAmount(event.getOfferedCtc())
+                            .effectiveDate(effectiveDate)
+                            .status(SalaryRevision.RevisionStatus.APPLIED)
+                            .justification("Initial salary from offer acceptance")
+                            .newDesignation(event.getOfferedDesignation())
+                            .currency("USD")
+                            .build();
+                    revision.calculateIncrement();
+                    salaryRevisionRepository.save(revision);
+                    log.info("Initial salary revision created for employee {}", employeeId);
+                } catch (RuntimeException e) {
+                    log.warn("Could not create initial salary structure for employee {}: {}",
+                            employeeId, e.getMessage());
+                    // Don't fail the entire flow if salary creation fails
+                }
             }
 
             log.info("CandidateHiredEvent processing completed successfully for candidate: {}", event.getCandidateId());
