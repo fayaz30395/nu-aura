@@ -28,8 +28,7 @@
 
     <properties>
         <java.version>17</java.version>
-<minio.version>8.6.0</minio.version>
-        <jjwt.version>0.12.6</jjwt.version>
+<jjwt.version>0.12.6</jjwt.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <poi.version>5.3.0</poi.version>
         <openpdf.version>2.0.3</openpdf.version>
@@ -159,14 +158,11 @@
             <version>v3-rev20231123-2.0.0</version>
         </dependency>
 
-        <!-- Google Drive API for file storage (production).
-             Optional: only needed when app.storage.provider=google-drive.
-             Marked optional so environments without this jar still boot normally. -->
+        <!-- Google Drive API for file storage (all environments) -->
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
             <version>v3-rev20231128-2.0.0</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- Google Auth Library for service account credentials -->
@@ -195,20 +191,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- MinIO -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>${minio.version}</version>
-        </dependency>
-
-        <!-- OkHttp3 (required by MinIO) -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
         </dependency>
 
         <!-- Apache POI for Excel -->

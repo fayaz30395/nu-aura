@@ -71,7 +71,7 @@ class StatutoryFilingServiceTest {
     }
 
     @Test
-    @DisplayName("generateFiling creates run and uploads to MinIO")
+    @DisplayName("generateFiling creates run and uploads to storage")
     void generateFiling_success() {
         TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setCurrentUser(USER_ID, null, Set.of("HR_ADMIN"), Map.of());

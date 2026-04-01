@@ -119,10 +119,7 @@ app:
       # Enable CSRF protection in production
       enabled: true
 
-  # Production uses Google Drive for file storage
-  storage:
-    provider: google-drive
-
+  # Google Drive file storage (production service account)
   google-drive:
     credentials-path: ${GOOGLE_DRIVE_CREDENTIALS_PATH:/etc/secrets/google-drive/credentials.json}
     root-folder-id: ${GOOGLE_DRIVE_ROOT_FOLDER_ID}

@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for file storage operations.
- * Delegates to a StorageProvider implementation (MinIO or Google Drive)
- * based on the active profile configuration.
+ * Delegates to the active {@link StorageProvider} implementation (Google Drive).
  */
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class FileStorageService {
 
     private final StorageProvider storageProvider;
 
-    @Value("${app.minio.url-expiry-hours:24}")
+    @Value("${app.storage.url-expiry-hours:24}")
     private int urlExpiryHours;
 
     // File categories

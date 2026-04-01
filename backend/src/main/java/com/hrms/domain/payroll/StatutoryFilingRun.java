@@ -11,7 +11,7 @@ import java.util.UUID;
 
 /**
  * Tracks each statutory filing generation run.
- * Records the filing type, period, generation status, file location in MinIO,
+ * Records the filing type, period, generation status, file location in storage,
  * validation results, and submission tracking.
  */
 @Where(clause = "is_deleted = false")
@@ -50,7 +50,7 @@ public class StatutoryFilingRun extends TenantAware {
     private LocalDateTime generatedAt;
 
     /**
-     * MinIO object name for the generated file.
+     * Storage object name for the generated file.
      * Follows pattern: {tenantId}/statutory-filings/{entityId}/{timestamp}_{uniqueId}.ext
      */
     @Column(length = 500)

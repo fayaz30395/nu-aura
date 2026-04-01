@@ -85,7 +85,7 @@ public class PublicCareerController {
      * Returns 200 if successfully submitted (or if already applied),
      * with {@code success=true/false} and a human-readable {@code message}.
      *
-     * @param resume Optional resume file (PDF, DOCX; max 20 MB enforced by MinIO service).
+     * @param resume Optional resume file (PDF, DOCX; max 20 MB enforced by storage service).
      */
     @PostMapping(value = "/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Submit a job application")

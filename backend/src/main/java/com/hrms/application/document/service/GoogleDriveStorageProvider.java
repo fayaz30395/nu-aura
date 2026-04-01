@@ -8,8 +8,11 @@ import com.hrms.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -165,6 +168,56 @@ public class GoogleDriveStorageProvider implements StorageProvider {
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive root folder not accessible: {}", rootFolderId, e);
             throw new BusinessException("Failed to initialize Google Drive storage: root folder not accessible");
+        }
+    }
+
+    @Override
+    public List<StoredObjectInfo> listObjects(String prefix) {
+        try {
+            List<StoredObjectInfo> results = new ArrayList<>();
+            String pageToken = null;
+
+            do {
+                // Query all non-trashed files under root folder; filter by objectName property prefix if provided
+                StringBuilder query = new StringBuilder("trashed = false");
+                if (prefix != null && !prefix.isBlank()) {
+                    query.append(" and properties has { key='objectName' and value='")
+                            .append(escapeDriveQuery(prefix)).append("' }");
+                }
+
+                var request = driveService.files().list()
+                        .setQ(query.toString())
+                        .setFields("nextPageToken, files(id, name, mimeType, modifiedTime, properties)")
+                        .setPageSize(1000)
+                        .setPageToken(pageToken)
+                        .setCorpora("user");
+
+                var fileList = request.execute();
+                if (fileList.getFiles() != null) {
+                    for (File file : fileList.getFiles()) {
+                        boolean isDir = "application/vnd.google-apps.folder".equals(file.getMimeType());
+                        String objectName = file.getId();
+                        // Prefer the logical objectName stored in properties
+                        if (file.getProperties() != null && file.getProperties().containsKey("objectName")) {
+                            objectName = file.getProperties().get("objectName");
+                        }
+
+                        ZonedDateTime lastModified = null;
+                        if (file.getModifiedTime() != null) {
+                            lastModified = ZonedDateTime.parse(file.getModifiedTime().toStringRfc3339());
+                        }
+
+                        results.add(new StoredObjectInfo(objectName, lastModified, isDir));
+                    }
+                }
+                pageToken = fileList.getNextPageToken();
+            } while (pageToken != null);
+
+            log.info("Google Drive listObjects: found {} items (prefix={})", results.size(), prefix);
+            return results;
+        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
+            log.error("Google Drive listObjects failed (prefix={})", prefix, e);
+            throw new BusinessException("Failed to list files in Google Drive");
         }
     }
 

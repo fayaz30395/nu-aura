@@ -121,7 +121,7 @@ class FileUploadControllerTest {
             when(fileStorageService.uploadFile(any(), eq("documents"), eq(ENTITY_ID)))
                     .thenReturn(result);
             when(fileStorageService.getDownloadUrl(objectName))
-                    .thenReturn("https://minio/download/" + objectName);
+                    .thenReturn("https://storage.example.com/download/" + objectName);
 
             mockMvc.perform(multipart("/api/v1/files/upload")
                             .file(file)
@@ -151,7 +151,7 @@ class FileUploadControllerTest {
 
             when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_PROFILE_PHOTO), eq(employeeId)))
                     .thenReturn(result);
-            when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://minio/" + objectName);
+            when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://storage.example.com/" + objectName);
 
             mockMvc.perform(multipart("/api/v1/files/upload/profile-photo/{employeeId}", employeeId)
                             .file(photo))
@@ -175,7 +175,7 @@ class FileUploadControllerTest {
 
             when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_DOCUMENTS), eq(employeeId)))
                     .thenReturn(result);
-            when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://minio/" + objectName);
+            when(fileStorageService.getDownloadUrl(objectName)).thenReturn("https://storage.example.com/" + objectName);
 
             mockMvc.perform(multipart("/api/v1/files/upload/document/{employeeId}", employeeId)
                             .file(doc)
@@ -198,7 +198,7 @@ class FileUploadControllerTest {
         @DisplayName("GET /download — returns pre-signed download URL for tenant-owned file")
         void getDownloadUrl_OwnedByTenant_ReturnsUrl() throws Exception {
             String objectName = TENANT_ID + "/documents/resume.pdf";
-            String url = "https://minio/presigned/" + objectName;
+            String url = "https://storage.example.com/presigned/" + objectName;
             when(fileStorageService.getDownloadUrl(objectName)).thenReturn(url);
 
             mockMvc.perform(get("/api/v1/files/download")
