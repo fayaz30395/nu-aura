@@ -388,8 +388,8 @@ export default function QuizPage() {
                   <div className="space-y-4">
                     {currentQuestion.options.map(option => (
                       <label key={option.id} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors" style={{
-                        borderColor: answerValue === option.id ? '#3b82f6' : '#e5e7eb',
-                        backgroundColor: answerValue === option.id ? '#eff6ff' : '',
+                        borderColor: answerValue === option.id ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                        backgroundColor: answerValue === option.id ? 'var(--status-info-bg)' : '',
                       }}>
                         <input
                           type="radio"
@@ -411,8 +411,8 @@ export default function QuizPage() {
                       const selectedAnswers = Array.isArray(answerValue) ? answerValue : (answerValue ? [answerValue] : []);
                       return (
                         <label key={option.id} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors" style={{
-                          borderColor: selectedAnswers.includes(option.id) ? '#3b82f6' : '#e5e7eb',
-                          backgroundColor: selectedAnswers.includes(option.id) ? '#eff6ff' : '',
+                          borderColor: selectedAnswers.includes(option.id) ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                          backgroundColor: selectedAnswers.includes(option.id) ? 'var(--status-info-bg)' : '',
                         }}>
                           <input
                             type="checkbox"
@@ -439,8 +439,8 @@ export default function QuizPage() {
                   <div className="space-y-4">
                     {['True', 'False'].map(option => (
                       <label key={option} className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors" style={{
-                        borderColor: answerValue === option ? '#3b82f6' : '#e5e7eb',
-                        backgroundColor: answerValue === option ? '#eff6ff' : '',
+                        borderColor: answerValue === option ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                        backgroundColor: answerValue === option ? 'var(--status-info-bg)' : '',
                       }}>
                         <input
                           type="radio"

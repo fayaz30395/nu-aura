@@ -99,11 +99,11 @@ export interface BulkActionBarProps {
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-accent-700 hover:bg-accent-800 text-white focus:ring-accent-700',
+    'bg-accent-700 hover:bg-accent-800 text-white focus-visible:ring-accent-700',
   danger:
-    'bg-red-600 hover:bg-red-700 text-white focus:ring-red-600',
+    'bg-danger-600 hover:bg-danger-700 text-white focus-visible:ring-danger-600',
   secondary:
-    'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus:ring-accent-700',
+    'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus-visible:ring-accent-700',
 };
 
 export function BulkActionBar({
@@ -136,7 +136,7 @@ export function BulkActionBar({
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
               'min-h-[36px] min-w-[36px]',
-              'focus:outline-none focus:ring-2 focus:ring-offset-2',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
               variantStyles[action.variant || 'secondary']
             )}
           >
@@ -152,7 +152,7 @@ export function BulkActionBar({
             'inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm transition-colors',
             'min-h-[36px] min-w-[36px]',
             'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
-            'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
           )}
           aria-label="Clear selection"
         >
@@ -204,7 +204,7 @@ function ColumnVisibilityToggle<T>({
           'min-h-[44px] min-w-[44px]',
           'border border-[var(--border-main)] bg-[var(--bg-surface)]',
           'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
-          'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
         )}
         aria-haspopup="true"
         aria-expanded={open}
@@ -548,7 +548,7 @@ function DataTable<T>({
                         if (el) el.indeterminate = someSelected;
                       }}
                       onChange={handleSelectAll}
-                      className="h-4 w-4 rounded border-surface-300 text-accent-700 focus:ring-accent-700"
+                      className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
                       aria-label="Select all rows"
                     />
                   </div>
@@ -615,7 +615,7 @@ function DataTable<T>({
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectRow(key)}
-                          className="h-4 w-4 rounded border-surface-300 text-accent-700 focus:ring-accent-700"
+                          className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
                           aria-label={`Select row ${key}`}
                         />
                       </div>
@@ -679,7 +679,7 @@ function DataTable<T>({
                   className={cn(
                     'text-sm rounded-md px-2 py-1.5',
                     'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)]',
-                    'focus:outline-none focus:ring-2 focus:ring-accent-700'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700'
                   )}
                   aria-label="Rows per page"
                 >
@@ -703,7 +703,7 @@ function DataTable<T>({
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
                   aria-label="First page"
                 >
@@ -717,7 +717,7 @@ function DataTable<T>({
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
                   aria-label="Previous page"
                 >
@@ -736,7 +736,7 @@ function DataTable<T>({
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
                   aria-label="Next page"
                 >
@@ -750,7 +750,7 @@ function DataTable<T>({
                     'p-2 rounded-md transition-colors',
                     'min-h-[44px] min-w-[44px] flex items-center justify-center',
                     'hover:bg-[var(--bg-secondary)] disabled:opacity-40 disabled:cursor-not-allowed',
-                    'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2'
                   )}
                   aria-label="Last page"
                 >

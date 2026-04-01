@@ -136,9 +136,9 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
   };
 
   const confidenceColor = (confidence: number): string => {
-    if (confidence >= 0.7) return 'text-green-600 dark:text-green-400';
-    if (confidence >= 0.4) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
+    if (confidence >= 0.7) return 'text-success-600 dark:text-success-400';
+    if (confidence >= 0.4) return 'text-warning-600 dark:text-warning-400';
+    return 'text-danger-600 dark:text-danger-400';
   };
 
   const confidenceLabel = (confidence: number): string => {
@@ -196,9 +196,9 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
             />
           </div>
           {validationError && (
-            <div className="mt-3 flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
-              <p className="text-sm text-red-600 dark:text-red-400">{validationError}</p>
+            <div className="mt-3 flex items-center gap-2 p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+              <AlertTriangle className="w-4 h-4 text-danger-500 flex-shrink-0" />
+              <p className="text-sm text-danger-600 dark:text-danger-400">{validationError}</p>
             </div>
           )}
         </div>
@@ -225,8 +225,8 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
       {/* Error Stage */}
       {stage === 'error' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
-          <div className="p-3 rounded-full bg-red-100 dark:bg-red-900/30">
-            <AlertTriangle className="w-8 h-8 text-red-500" />
+          <div className="p-3 rounded-full bg-danger-100 dark:bg-danger-900/30">
+            <AlertTriangle className="w-8 h-8 text-danger-500" />
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-surface-700 dark:text-surface-300">

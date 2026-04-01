@@ -891,14 +891,14 @@ function MailContent() {
           height: auto;
         }
         .email-content a {
-          color: #3b82f6;
+          color: var(--accent-primary);
           text-decoration: underline;
         }
         .email-content blockquote {
-          border-left: 3px solid #e5e7eb;
+          border-left: 3px solid var(--border-subtle);
           padding-left: 1rem;
           margin-left: 0;
-          color: #6b7280;
+          color: var(--text-muted);
         }
         .signature-preview {
           font-size: 13px;
@@ -918,7 +918,7 @@ function MailContent() {
           display: block;
         }
         .signature-preview a {
-          color: #3b82f6;
+          color: var(--accent-primary);
           text-decoration: none;
         }
         .signature-preview a:hover {
