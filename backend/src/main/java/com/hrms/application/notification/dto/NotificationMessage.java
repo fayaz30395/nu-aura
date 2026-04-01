@@ -49,6 +49,10 @@ public class NotificationMessage {
         REVIEW_COMPLETED,
         GOAL_DEADLINE,
 
+        // Approval decision notifications
+        APPROVAL_APPROVED,
+        APPROVAL_REJECTED,
+
         // General notifications
         ANNOUNCEMENT,
         SYSTEM_ALERT,

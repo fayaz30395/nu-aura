@@ -2,6 +2,7 @@ package com.hrms.application.event.listener;
 
 import com.hrms.application.notification.dto.NotificationMessage;
 import com.hrms.application.notification.service.NotificationService;
+import com.hrms.application.notification.service.SlackNotificationService;
 import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
@@ -37,6 +38,7 @@ public class ApprovalNotificationListener {
 
     private final NotificationService notificationService;
     private final WebSocketNotificationService wsNotificationService;
+    private final SlackNotificationService slackNotificationService;
 
     /**
      * Handles approval task assignment events.
@@ -127,6 +129,13 @@ public class ApprovalNotificationListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onApprovalDecision(ApprovalDecisionEvent event) {
         UUID tenantId = event.getTenantId();
+        UUID requesterId = event.getRequesterId();
+
+        if (requesterId == null) {
+            log.warn("ApprovalDecisionEvent for instance {} has no requesterId — skipping requester notification",
+                    event.getInstanceId());
+            return;
+        }
 
         try {
             // Set tenant context for notification operations
@@ -135,31 +144,76 @@ public class ApprovalNotificationListener {
             UUID instanceId = event.getInstanceId();
             String action = event.getAction(); // APPROVED or REJECTED
             String module = event.getModule();
+            String actorName = event.getActorName() != null ? event.getActorName() : "An approver";
+            String moduleLabel = getEntityTypeLabel(module);
 
             // Build notification title and message
-            String title = action.equals("APPROVED")
-                    ? "Request Approved"
-                    : "Request Rejected";
+            boolean approved = "APPROVED".equals(action);
+            String title = approved ? "Request Approved" : "Request Rejected";
 
-            String message = String.format("Your %s request has been %s",
-                    getEntityTypeLabel(module),
-                    action.toLowerCase());
+            String message = String.format("Your %s request has been %s by %s",
+                    moduleLabel, action.toLowerCase(), actorName);
+            if (!approved && event.getComments() != null && !event.getComments().isBlank()) {
+                message += String.format(". Reason: %s", event.getComments());
+            }
 
             String actionUrl = buildActionUrl(module);
 
-            // Note: The event contains the step executor (approver), not the requester
-            // We need to get the requester from the workflow execution (handled in domain event)
-            // For now, we'll use the aggregateId which is the workflow execution ID
+            // 1. Create persistent in-app notification for the requester
+            Notification.NotificationType notifType = resolveNotificationType(module, approved);
+            notificationService.createNotification(
+                    requesterId,
+                    notifType,
+                    title,
+                    message,
+                    instanceId,
+                    module,
+                    actionUrl,
+                    approved ? Notification.Priority.NORMAL : Notification.Priority.HIGH
+            );
+            log.debug("Persistent approval decision notification created for requester {} (instance: {})",
+                    requesterId, instanceId);
 
-            // Notification would be sent to the requester - this would be fetched from WorkflowExecution
-            // Since ApprovalDecisionEvent doesn't directly contain requester ID, we log a warning
-            // This should be enhanced to include requester information in the event
+            // 2. Send real-time WebSocket notification to requester
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("instanceId", instanceId.toString());
+            metadata.put("module", module);
+            metadata.put("action", action);
+            metadata.put("actorName", actorName);
+            if (event.getComments() != null) {
+                metadata.put("comments", event.getComments());
+            }
+            metadata.put("decidedAt", LocalDateTime.now().toString());
 
-            log.info("Approval decision {} event received for {} request (execution: {})",
-                    action, module, instanceId);
+            NotificationMessage wsNotification = NotificationMessage.builder()
+                    .type(approved
+                            ? NotificationMessage.NotificationType.APPROVAL_APPROVED
+                            : NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                    .title(title)
+                    .message(message)
+                    .priority(approved
+                            ? NotificationMessage.Priority.NORMAL
+                            : NotificationMessage.Priority.HIGH)
+                    .actionUrl(actionUrl)
+                    .metadata(metadata)
+                    .build();
 
-            // Additional: Notify the approver's manager if they delegated
-            // This is typically handled by a separate delegation notification service
+            wsNotificationService.sendToUser(requesterId, wsNotification);
+
+            // 3. Send Slack DM to requester if configured and email is available
+            String requesterEmail = event.getRequesterEmail();
+            if (requesterEmail != null && !requesterEmail.isBlank()) {
+                String emoji = approved ? ":white_check_mark:" : ":x:";
+                String slackMessage = String.format("%s *%s %s*\nYour %s request has been %s by *%s*.",
+                        emoji, moduleLabel, action, moduleLabel.toLowerCase(), action.toLowerCase(), actorName);
+                if (!approved && event.getComments() != null && !event.getComments().isBlank()) {
+                    slackMessage += String.format("\n*Reason:* %s", event.getComments());
+                }
+                slackNotificationService.sendDirectMessage(requesterEmail, slackMessage, null);
+            }
+
+            log.info("Approval decision notification sent to requester {} for {} request (decision: {}, instance: {})",
+                    requesterId, module, action, instanceId);
 
         } catch (Exception e) { // Intentional broad catch — best-effort after-commit notification listener
             log.error("Error processing ApprovalDecisionEvent for execution {}",
@@ -183,6 +237,25 @@ public class ApprovalNotificationListener {
             case "TRAVEL_REQUEST" -> "Travel Request";
             case "RECRUITMENT_OFFER" -> "Recruitment Offer";
             default -> entityType.replace("_", " ");
+        };
+    }
+
+    /**
+     * Resolves the persistent notification type based on the workflow module and decision.
+     * Maps to specific types where available (LEAVE, EXPENSE), falls back to APPROVAL_UPDATE.
+     */
+    private Notification.NotificationType resolveNotificationType(String module, boolean approved) {
+        if (module == null) {
+            return Notification.NotificationType.APPROVAL_UPDATE;
+        }
+        return switch (module.toUpperCase()) {
+            case "LEAVE_REQUEST" -> approved
+                    ? Notification.NotificationType.LEAVE_APPROVED
+                    : Notification.NotificationType.LEAVE_REJECTED;
+            case "EXPENSE_CLAIM" -> approved
+                    ? Notification.NotificationType.EXPENSE_APPROVED
+                    : Notification.NotificationType.EXPENSE_REJECTED;
+            default -> Notification.NotificationType.APPROVAL_UPDATE;
         };
     }
 

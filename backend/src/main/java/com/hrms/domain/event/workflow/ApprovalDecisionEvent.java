@@ -25,8 +25,14 @@ public class ApprovalDecisionEvent extends DomainEvent {
     private final UUID taskId;
     private final String module;
     private final UUID actorUserId;
+    private final String actorName;
     private final String comments;
     private final boolean instanceTerminal; // true if the whole workflow is now complete
+
+    // Requester information for downstream notification listeners
+    private final UUID requesterId;
+    private final String requesterName;
+    private final String requesterEmail;
 
     public ApprovalDecisionEvent(
             Object source,
@@ -35,15 +41,21 @@ public class ApprovalDecisionEvent extends DomainEvent {
             StepExecution step,
             String action,
             UUID actorUserId,
-            String comments) {
+            String actorName,
+            String comments,
+            String requesterEmail) {
         super(source, tenantId, execution.getId(), "WorkflowExecution");
         this.action = action;
         this.instanceId = execution.getId();
         this.taskId = step.getId();
         this.module = execution.getEntityType() != null ? execution.getEntityType().name() : "UNKNOWN";
         this.actorUserId = actorUserId;
+        this.actorName = actorName;
         this.comments = comments;
         this.instanceTerminal = execution.isCompleted();
+        this.requesterId = execution.getRequesterId();
+        this.requesterName = execution.getRequesterName();
+        this.requesterEmail = requesterEmail;
     }
 
     @Override
@@ -60,9 +72,21 @@ public class ApprovalDecisionEvent extends DomainEvent {
         payload.put("module", module);
         payload.put("action", action);
         payload.put("actorUserId", actorUserId.toString());
+        if (actorName != null) {
+            payload.put("actorName", actorName);
+        }
         payload.put("instanceTerminal", instanceTerminal);
         if (comments != null) {
             payload.put("comments", comments);
+        }
+        if (requesterId != null) {
+            payload.put("requesterId", requesterId.toString());
+        }
+        if (requesterName != null) {
+            payload.put("requesterName", requesterName);
+        }
+        if (requesterEmail != null) {
+            payload.put("requesterEmail", requesterEmail);
         }
         return payload;
     }
@@ -74,7 +98,9 @@ public class ApprovalDecisionEvent extends DomainEvent {
             StepExecution step,
             String action,
             UUID actorUserId,
-            String comments) {
-        return new ApprovalDecisionEvent(source, tenantId, execution, step, action, actorUserId, comments);
+            String actorName,
+            String comments,
+            String requesterEmail) {
+        return new ApprovalDecisionEvent(source, tenantId, execution, step, action, actorUserId, actorName, comments, requesterEmail);
     }
 }

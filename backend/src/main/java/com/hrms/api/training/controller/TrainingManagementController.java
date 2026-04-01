@@ -77,6 +77,13 @@ public class TrainingManagementController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/enrollments/{enrollmentId}/complete")
+    @RequiresPermission(Permission.TRAINING_APPROVE)
+    public ResponseEntity<TrainingEnrollmentResponse> completeTraining(@PathVariable UUID enrollmentId) {
+        TrainingEnrollmentResponse response = trainingService.completeTraining(enrollmentId);
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/enrollments/{enrollmentId}/status")
     @RequiresPermission(Permission.TRAINING_APPROVE)
     public ResponseEntity<TrainingEnrollmentResponse> updateEnrollmentStatus(

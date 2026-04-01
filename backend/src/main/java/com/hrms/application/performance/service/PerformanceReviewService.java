@@ -8,6 +8,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.performance.PerformanceReview;
 import com.hrms.domain.performance.ReviewCompetency;
 
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.hrms.infrastructure.performance.repository.ReviewCompetencyRepository;
@@ -33,15 +35,18 @@ public class PerformanceReviewService {
     private final ReviewCompetencyRepository competencyRepository;
     private final EmployeeRepository employeeRepository;
     private final ReviewCycleRepository reviewCycleRepository;
+    private final DomainEventPublisher domainEventPublisher;
 
     public PerformanceReviewService(PerformanceReviewRepository reviewRepository,
                                     ReviewCompetencyRepository competencyRepository,
                                     EmployeeRepository employeeRepository,
-                                    ReviewCycleRepository reviewCycleRepository) {
+                                    ReviewCycleRepository reviewCycleRepository,
+                                    DomainEventPublisher domainEventPublisher) {
         this.reviewRepository = reviewRepository;
         this.competencyRepository = competencyRepository;
         this.employeeRepository = employeeRepository;
         this.reviewCycleRepository = reviewCycleRepository;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Transactional
@@ -190,6 +195,29 @@ public class PerformanceReviewService {
         review.setCompletedAt(LocalDateTime.now());
 
         review = reviewRepository.save(review);
+
+        // Resolve reviewer name for the event payload
+        String reviewerName = null;
+        if (review.getReviewerId() != null) {
+            reviewerName = employeeRepository.findById(review.getReviewerId())
+                    .map(emp -> emp.getFullName())
+                    .orElse(null);
+        }
+
+        // Publish domain event — deferred to AFTER_COMMIT by DomainEventPublisher
+        domainEventPublisher.publish(PerformanceReviewCompletedEvent.of(
+                this,
+                tenantId,
+                review.getEmployeeId(),
+                review.getId(),
+                review.getReviewCycleId(),
+                review.getOverallRating(),
+                reviewerName,
+                review.getCompletedAt()
+        ));
+
+        log.info("Performance review {} completed for employee {} with rating {}",
+                reviewId, review.getEmployeeId(), review.getOverallRating());
 
         return mapToResponse(review);
     }

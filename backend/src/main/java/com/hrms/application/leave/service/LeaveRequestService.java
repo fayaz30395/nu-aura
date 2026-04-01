@@ -415,9 +415,12 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
 
+            // FIX-005: Include isPaid flag so payroll knows if this is LOP (loss-of-pay)
+            boolean isPaid = leaveType != null && Boolean.TRUE.equals(leaveType.getIsPaid());
             domainEventPublisher.publish(LeaveApprovedEvent.of(
                     this, tenantId, saved.getId(),
                     saved.getEmployeeId(), approverId, leaveTypeName,
+                    isPaid,
                     saved.getStartDate(), saved.getEndDate(), daysDeducted));
         } catch (RuntimeException e) {
             log.warn("Failed to publish LeaveApprovedEvent for {}: {}", saved.getId(), e.getMessage());

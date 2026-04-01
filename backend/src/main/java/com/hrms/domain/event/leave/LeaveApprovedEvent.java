@@ -26,6 +26,7 @@ public class LeaveApprovedEvent extends DomainEvent {
     private final UUID employeeId;
     private final UUID approverId;
     private final String leaveType;
+    private final boolean isPaidLeave;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final BigDecimal daysDeducted;
@@ -33,10 +34,18 @@ public class LeaveApprovedEvent extends DomainEvent {
     public LeaveApprovedEvent(Object source, UUID tenantId, UUID leaveRequestId,
                               UUID employeeId, UUID approverId, String leaveType,
                               LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
+        this(source, tenantId, leaveRequestId, employeeId, approverId, leaveType, true, startDate, endDate, daysDeducted);
+    }
+
+    public LeaveApprovedEvent(Object source, UUID tenantId, UUID leaveRequestId,
+                              UUID employeeId, UUID approverId, String leaveType,
+                              boolean isPaidLeave,
+                              LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
         super(source, tenantId, leaveRequestId, "LeaveRequest");
         this.employeeId = employeeId;
         this.approverId = approverId;
         this.leaveType = leaveType;
+        this.isPaidLeave = isPaidLeave;
         this.startDate = startDate;
         this.endDate = endDate;
         this.daysDeducted = daysDeducted;
@@ -57,6 +66,7 @@ public class LeaveApprovedEvent extends DomainEvent {
         payload.put("startDate", startDate.toString());
         payload.put("endDate", endDate.toString());
         payload.put("daysDeducted", daysDeducted.toString());
+        payload.put("isPaidLeave", isPaidLeave);
         return payload;
     }
 
@@ -65,5 +75,13 @@ public class LeaveApprovedEvent extends DomainEvent {
                                         LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
         return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
                 employeeId, approverId, leaveType, startDate, endDate, daysDeducted);
+    }
+
+    public static LeaveApprovedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
+                                        UUID employeeId, UUID approverId, String leaveType,
+                                        boolean isPaidLeave,
+                                        LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
+        return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
+                employeeId, approverId, leaveType, isPaidLeave, startDate, endDate, daysDeducted);
     }
 }
