@@ -7,6 +7,12 @@
 -- after V54 ran, by re-seeding for the default NuLogic tenant.
 -- ============================================================================
 
+-- First, drop the check constraint on entity_type if it exists, then re-add with PERFORMANCE_REVIEW
+ALTER TABLE workflow_definitions DROP CONSTRAINT IF EXISTS workflow_definitions_entity_type_check;
+ALTER TABLE workflow_definitions ADD CONSTRAINT workflow_definitions_entity_type_check
+    CHECK (entity_type IN ('LEAVE_REQUEST', 'EXPENSE_CLAIM', 'ASSET_REQUEST', 'TRAVEL_REQUEST',
+                           'LOAN_REQUEST', 'ONBOARDING', 'TIMESHEET', 'PERFORMANCE_REVIEW'));
+
 DO $$
 DECLARE
     v_tenant_id UUID := '660e8400-e29b-41d4-a716-446655440001';

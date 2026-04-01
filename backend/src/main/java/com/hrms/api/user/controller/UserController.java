@@ -24,6 +24,12 @@ public class UserController {
 
     private final RoleManagementService roleManagementService;
 
+    /**
+     * BUG-022 FIX: Self-service endpoint intentionally lacks @RequiresPermission.
+     * This endpoint is open to all authenticated users and returns only their own profile data.
+     * The JWT authentication layer (JwtAuthenticationFilter) ensures the user is authenticated.
+     * No additional permission check is needed since users only see their own data.
+     */
     @GetMapping("/me")
     @Operation(summary = "Get current user profile", description = "Returns the profile of the currently authenticated user with roles")
     public ResponseEntity<UserResponse> getCurrentUser() {

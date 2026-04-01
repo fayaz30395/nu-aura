@@ -180,4 +180,12 @@ public class RecruitmentController {
         recruitmentManagementService.deleteInterview(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ==================== OFFERS ====================
+
+    @GetMapping("/offers")
+    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    public ResponseEntity<Page<CandidateResponse>> getAllOffers(Pageable pageable) {
+        return ResponseEntity.ok(recruitmentManagementService.getAllOffers(pageable));
+    }
 }

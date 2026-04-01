@@ -37,7 +37,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
-import { NuAuraLoader } from '@/components/ui/Loading';
+import { NuAuraLoader, Skeleton, SkeletonStatCard, SkeletonChart } from '@/components/ui/Loading';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
 import {
@@ -103,7 +103,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { hasPermission, isReady: permissionsReady } = usePermissions();
-  const [isClockingIn, setIsClockingIn] = useState(false);
   const [clockError, setClockError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
@@ -322,7 +321,6 @@ export default function DashboardPage() {
   const handleCheckIn = async () => {
     if (!user?.employeeId) return;
     try {
-      setIsClockingIn(true);
       setClockError(null);
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
@@ -334,15 +332,12 @@ export default function DashboardPage() {
       });
     } catch (err: unknown) {
       setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
-    } finally {
-      setIsClockingIn(false);
     }
   };
 
   const handleCheckOut = async () => {
     if (!user?.employeeId) return;
     try {
-      setIsClockingIn(true);
       setClockError(null);
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
@@ -354,8 +349,6 @@ export default function DashboardPage() {
       });
     } catch (err: unknown) {
       setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
-    } finally {
-      setIsClockingIn(false);
     }
   };
 
@@ -473,7 +466,60 @@ export default function DashboardPage() {
 
   // Show loading state while hydrating or loading analytics
   if (!hasHydrated || isLoading) {
-    return <NuAuraLoader message="Loading dashboard..." />;
+    return (
+      <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
+        <div className="space-y-8">
+          {/* Header skeleton */}
+          <div className="card-aura p-6 sm:p-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-2 flex-1">
+                <Skeleton className="h-8 w-64 rounded" />
+                <Skeleton className="h-4 w-48 rounded" />
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <Skeleton className="h-16 w-32 rounded-lg" />
+                <Skeleton className="h-16 w-32 rounded-lg hidden sm:block" />
+              </div>
+            </div>
+          </div>
+
+          {/* Attendance card skeleton */}
+          <div className="card-aura p-6 pl-7 sm:p-8 sm:pl-9">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-4 flex-1">
+                <Skeleton className="h-14 w-14 rounded-xl flex-shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-6 w-40 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </div>
+              </div>
+              <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+                <Skeleton className="h-10 w-24 rounded-lg" />
+                <Skeleton className="h-10 w-24 rounded-lg" />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats grid skeleton */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonStatCard key={i} />
+            ))}
+          </div>
+
+          {/* Charts skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SkeletonChart height="h-80" />
+            <SkeletonChart height="h-80" />
+          </div>
+
+          {/* Additional sections skeleton */}
+          <div className="space-y-6">
+            <SkeletonChart height="h-64" />
+          </div>
+        </div>
+      </AppLayout>
+    );
   }
 
   if (error || !analytics) {
@@ -620,12 +666,12 @@ export default function DashboardPage() {
               <div className="flex items-center gap-4">
                 {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
                 {canCheckIn && (
-                  <Button variant="success" onClick={handleCheckIn} isLoading={isClockingIn} leftIcon={<LogIn className="h-4 w-4" />}>
+                  <Button variant="success" onClick={handleCheckIn} isLoading={checkInMutation.isPending} leftIcon={<LogIn className="h-4 w-4" />}>
                     Check In
                   </Button>
                 )}
                 {canCheckOut && (
-                  <Button variant="danger" onClick={handleCheckOut} isLoading={isClockingIn} leftIcon={<LogOut className="h-4 w-4" />}>
+                  <Button variant="danger" onClick={handleCheckOut} isLoading={checkOutMutation.isPending} leftIcon={<LogOut className="h-4 w-4" />}>
                     Check Out
                   </Button>
                 )}

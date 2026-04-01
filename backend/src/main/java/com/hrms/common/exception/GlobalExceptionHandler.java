@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -404,6 +405,27 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Feature Disabled",
                 ex.getMessage(), path);
         errorResponse.setErrorCode("FEATURE_DISABLED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * BUG-012 FIX: Handle NoHandlerFoundException (404s) so they don't become 500s.
+     * Occurs when a request path does not match any registered endpoint.
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoHandlerFound(
+            NoHandlerFoundException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        logError("request", "endpoint_not_found", ex, status, path);
+        recordErrorMetric("request", "endpoint_not_found", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Found",
+                String.format("No endpoint found for %s %s", ex.getHttpMethod(), ex.getRequestURL()), path);
+        errorResponse.setErrorCode("ENDPOINT_NOT_FOUND");
 
         return jsonResponse(status, errorResponse);
     }

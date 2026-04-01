@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -556,8 +557,18 @@ public class AttendanceRecordService {
         Integer totalWork = timeEntryRepository.getTotalWorkMinutes(record.getId());
         Integer totalBreak = timeEntryRepository.getTotalBreakMinutes(record.getId());
 
-        record.setWorkDurationMinutes(totalWork != null ? totalWork : 0);
-        record.setBreakDurationMinutes(totalBreak != null ? totalBreak : 0);
+        // BUG-015 FIX: If time entries exist, use their totals. Otherwise, use the
+        // direct check-in/check-out time calculation from the record itself.
+        // This prevents workDurationMinutes from being reset to 0 when both
+        // checkInTime and checkOutTime are present.
+        if (totalWork != null && totalWork > 0) {
+            record.setWorkDurationMinutes(totalWork);
+        }
+        // workDurationMinutes should already be calculated in record.checkOut() if not from time entries
+
+        if (totalBreak != null && totalBreak > 0) {
+            record.setBreakDurationMinutes(totalBreak);
+        }
 
         // Load tenant-specific thresholds for status calculation
         TenantAttendanceConfigService.TenantAttendanceConfig tenantConfig =
@@ -660,9 +671,13 @@ public class AttendanceRecordService {
     // ===================== Kafka Event Publishing =====================
 
     /**
-     * Publishes an audit event for attendance operations. Best-effort: logs errors
+     * Publishes an audit event for attendance operations asynchronously. Best-effort: logs errors
      * but never fails the business operation.
+     *
+     * BUG-014 FIX: Made async to prevent blocking check-in/out operations.
+     * Kafka event publishing is now non-blocking.
      */
+    @Async
     private void publishAttendanceAuditEvent(UUID userId, String action, String entityType,
             UUID entityId, UUID tenantId, String description) {
         try {

@@ -11,7 +11,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,7 +50,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/upload/profile-photo/{employeeId}")
-    @PreAuthorize("hasPermission('HRMS:EMPLOYEE:UPDATE') or @securityService.isCurrentEmployee(#employeeId)")
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Upload profile photo", description = "Upload a profile photo for an employee")
     public ResponseEntity<FileUploadResponse> uploadProfilePhoto(
             @PathVariable UUID employeeId,
@@ -74,7 +73,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/upload/document/{employeeId}")
-    @PreAuthorize("hasPermission('HRMS:DOCUMENT:UPLOAD')")
+    @RequiresPermission(Permission.DOCUMENT_UPLOAD)
     @Operation(summary = "Upload employee document", description = "Upload a document for an employee")
     public ResponseEntity<FileUploadResponse> uploadDocument(
             @PathVariable UUID employeeId,
@@ -147,7 +146,7 @@ public class FileUploadController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasPermission('HRMS:DOCUMENT:DELETE')")
+    @RequiresPermission(Permission.DOCUMENT_DELETE)
     @Operation(summary = "Delete a file", description = "Delete a file from storage")
     public ResponseEntity<Void> deleteFile(@RequestParam("objectName") String objectName) {
         // SEC-008 FIX: Verify the objectName belongs to the current tenant

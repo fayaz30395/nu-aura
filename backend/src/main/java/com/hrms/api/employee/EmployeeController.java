@@ -137,7 +137,7 @@ public class EmployeeController {
      * (department, status, designation, etc.) are silently ignored.
      */
     @PutMapping("/me")
-    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Update current user's own profile (self-service)")
     public ResponseEntity<EmployeeResponse> updateMyEmployee(
             @Valid @RequestBody UpdateEmployeeRequest request) {

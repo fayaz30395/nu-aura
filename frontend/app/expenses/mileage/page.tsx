@@ -242,8 +242,8 @@ export default function MileagePage() {
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <MapPin className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                  <MapPin className="h-5 w-5 text-sky-600" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Trips This Month</p>
