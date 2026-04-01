@@ -2,12 +2,16 @@ package com.hrms.application.asset.service;
 
 import com.hrms.api.asset.dto.AssetRequest;
 import com.hrms.api.asset.dto.AssetResponse;
+import com.hrms.api.audit.dto.AuditLogResponse;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.asset.Asset;
+import com.hrms.domain.asset.AssetMaintenanceRequest;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.workflow.WorkflowDefinition;
+import com.hrms.infrastructure.asset.repository.AssetMaintenanceRequestRepository;
 import com.hrms.infrastructure.asset.repository.AssetRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +36,26 @@ import java.util.stream.Collectors;
 public class AssetManagementService implements ApprovalCallbackHandler {
 
     private final AssetRepository assetRepository;
+    private final AssetMaintenanceRequestRepository maintenanceRequestRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkflowService workflowService;
     private final EventPublisher eventPublisher;
+    private final AuditLogService auditLogService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AssetManagementService(
             AssetRepository assetRepository,
+            AssetMaintenanceRequestRepository maintenanceRequestRepository,
             EmployeeRepository employeeRepository,
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
-            EventPublisher eventPublisher) {
+            EventPublisher eventPublisher,
+            AuditLogService auditLogService) {
         this.assetRepository = assetRepository;
+        this.maintenanceRequestRepository = maintenanceRequestRepository;
         this.employeeRepository = employeeRepository;
         this.workflowService = workflowService;
         this.eventPublisher = eventPublisher;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional
@@ -299,6 +310,106 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         }
 
         return mapToAssetResponse(saved);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Maintenance Requests
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Creates a maintenance request for an asset and transitions the asset to
+     * {@link Asset.AssetStatus#IN_MAINTENANCE}.
+     */
+    @Transactional
+    public AssetMaintenanceRequest createMaintenanceRequest(
+            UUID assetId, UUID requestedBy, String type, String description, String priority) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Creating maintenance request for asset {} by employee {} (tenant {})", assetId, requestedBy, tenantId);
+
+        Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
+
+        asset.setStatus(Asset.AssetStatus.IN_MAINTENANCE);
+        assetRepository.save(asset);
+
+        AssetMaintenanceRequest request = AssetMaintenanceRequest.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .assetId(assetId)
+                .requestedBy(requestedBy)
+                .maintenanceType(AssetMaintenanceRequest.MaintenanceType.valueOf(type))
+                .issueDescription(description)
+                .priority(AssetMaintenanceRequest.MaintenancePriority.valueOf(priority))
+                .status(AssetMaintenanceRequest.MaintenanceStatus.REQUESTED)
+                .build();
+
+        AssetMaintenanceRequest saved = maintenanceRequestRepository.save(request);
+
+        publishAssetAuditEvent(requestedBy, "MAINTENANCE_REQUEST", assetId, tenantId,
+                "Maintenance request created for asset " + asset.getAssetCode() + " — type: " + type);
+
+        return saved;
+    }
+
+    /**
+     * Returns the maintenance history for a given asset, scoped to the current tenant.
+     */
+    @Transactional(readOnly = true)
+    public List<AssetMaintenanceRequest> getMaintenanceHistory(UUID assetId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return maintenanceRequestRepository.findByTenantIdAndAssetId(tenantId, assetId);
+    }
+
+    /**
+     * Updates the status of a maintenance request. When the new status is
+     * {@link AssetMaintenanceRequest.MaintenanceStatus#COMPLETED}, the associated
+     * asset is restored to {@link Asset.AssetStatus#AVAILABLE}.
+     */
+    @Transactional
+    public AssetMaintenanceRequest updateMaintenanceStatus(
+            UUID requestId, AssetMaintenanceRequest.MaintenanceStatus status, String notes) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Updating maintenance request {} to status {} (tenant {})", requestId, status, tenantId);
+
+        AssetMaintenanceRequest request = maintenanceRequestRepository.findById(requestId)
+                .filter(r -> r.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Maintenance request not found"));
+
+        request.setStatus(status);
+        if (notes != null && !notes.isBlank()) {
+            request.setResolutionNotes(notes);
+        }
+
+        if (status == AssetMaintenanceRequest.MaintenanceStatus.COMPLETED) {
+            request.setCompletedDate(LocalDate.now());
+
+            Asset asset = assetRepository.findByIdAndTenantId(request.getAssetId(), tenantId)
+                    .orElse(null);
+            if (asset != null && asset.getStatus() == Asset.AssetStatus.IN_MAINTENANCE) {
+                asset.setStatus(Asset.AssetStatus.AVAILABLE);
+                assetRepository.save(asset);
+                log.info("Asset {} restored to AVAILABLE after maintenance completion", request.getAssetId());
+            }
+        }
+
+        AssetMaintenanceRequest updated = maintenanceRequestRepository.save(request);
+
+        publishAssetAuditEvent(null, "MAINTENANCE_STATUS_UPDATE", request.getAssetId(), tenantId,
+                "Maintenance request " + requestId + " status updated to " + status);
+
+        return updated;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Audit Trail
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns recent audit log entries for a specific asset.
+     */
+    @Transactional(readOnly = true)
+    public List<AuditLogResponse> getAssetAuditTrail(UUID assetId) {
+        return auditLogService.getRecentAuditLogsForEntity("ASSET", assetId);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
