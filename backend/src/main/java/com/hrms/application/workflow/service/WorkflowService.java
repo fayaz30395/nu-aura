@@ -761,8 +761,18 @@ public class WorkflowService {
         if (request.getAction() == StepExecution.ApprovalAction.APPROVE ||
                 request.getAction() == StepExecution.ApprovalAction.REJECT) {
             String eventAction = request.getAction() == StepExecution.ApprovalAction.APPROVE ? "APPROVED" : "REJECTED";
+
+            // Look up actor name and requester email for downstream notification listeners
+            String actorName = userRepository.findByIdAndTenantId(currentUser, tenantId)
+                    .map(u -> u.getFullName())
+                    .orElse("Unknown");
+            String requesterEmail = userRepository.findByIdAndTenantId(saved.getRequesterId(), tenantId)
+                    .map(u -> u.getEmail())
+                    .orElse(null);
+
             domainEventPublisher.publish(
-                    ApprovalDecisionEvent.of(this, tenantId, saved, currentStep, eventAction, currentUser, request.getComments()));
+                    ApprovalDecisionEvent.of(this, tenantId, saved, currentStep, eventAction,
+                            currentUser, actorName, request.getComments(), requesterEmail));
         }
 
         // Invoke module callback when workflow reaches terminal state

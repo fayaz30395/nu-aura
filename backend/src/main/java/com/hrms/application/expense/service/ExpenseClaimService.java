@@ -11,6 +11,8 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
+import com.hrms.domain.event.expense.ExpenseApprovedEvent;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -48,6 +50,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final DataScopeService dataScopeService;
     private final WorkflowService workflowService;
     private final ExpensePolicyService expensePolicyService;
+    private final DomainEventPublisher domainEventPublisher;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
@@ -55,12 +58,14 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             EmployeeRepository employeeRepository,
             DataScopeService dataScopeService,
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
-            @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService) {
+            @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService,
+            DomainEventPublisher domainEventPublisher) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
         this.workflowService = workflowService;
         this.expensePolicyService = expensePolicyService;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     @Transactional
@@ -151,6 +156,13 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         claim.approve(approverId);
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverId);
+
+        // FIX-002: Publish event for payroll to add expense reimbursement earning
+        domainEventPublisher.publish(ExpenseApprovedEvent.of(
+                this, tenantId, saved.getId(),
+                saved.getEmployeeId(), approverId,
+                saved.getAmount(), saved.getCurrency(),
+                saved.getClaimNumber(), saved.getCategory().name()));
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }

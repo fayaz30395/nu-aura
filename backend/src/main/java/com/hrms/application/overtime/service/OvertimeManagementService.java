@@ -21,6 +21,8 @@ import com.hrms.infrastructure.shift.repository.ShiftRepository;
 
 import com.hrms.domain.overtime.CompTimeBalance;
 import com.hrms.domain.overtime.CompTimeTransaction;
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.domain.event.overtime.OvertimeApprovedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,7 @@ public class OvertimeManagementService {
     private final CompTimeTransactionRepository compTimeTransactionRepository;
     private final EmployeeRepository employeeRepository;
     private final ShiftRepository shiftRepository;
+    private final DomainEventPublisher domainEventPublisher;
 
     @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {
@@ -112,6 +115,13 @@ public class OvertimeManagementService {
             record.setApprovedBy(approverId);
             record.setApprovedAt(LocalDateTime.now());
             log.info("Approved overtime record: {}", recordId);
+
+            // FIX-001: Publish event for payroll to pick up overtime earnings
+            domainEventPublisher.publish(OvertimeApprovedEvent.of(
+                    this, tenantId, recordId,
+                    record.getEmployeeId(), approverId,
+                    record.getOvertimeDate(), record.getOvertimeHours(),
+                    record.getMultiplier()));
         } else if ("REJECT".equalsIgnoreCase(request.getAction())) {
             record.setStatus(OvertimeRecord.OvertimeStatus.REJECTED);
             record.setRejectedBy(approverId);

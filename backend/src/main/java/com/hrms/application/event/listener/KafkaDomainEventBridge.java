@@ -2,6 +2,7 @@ package com.hrms.application.event.listener;
 
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.event.employee.*;
+import com.hrms.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.hrms.domain.event.workflow.ApprovalDecisionEvent;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.workflow.WorkflowExecution;
@@ -187,6 +188,64 @@ public class KafkaDomainEventBridge {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onEmployeeDepartmentChanged(EmployeeDepartmentChangedEvent event) {
         publishEmployeeLifecycle(event, "TRANSFERRED");
+    }
+
+    // =========================================================================
+    // PERFORMANCE REVIEW EVENTS
+    // =========================================================================
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onPerformanceReviewCompleted(PerformanceReviewCompletedEvent event) {
+        UUID tenantId = event.getTenantId();
+        UUID employeeId = event.getEmployeeId();
+
+        try {
+            TenantContext.setCurrentTenant(tenantId);
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("reviewId", event.getReviewId().toString());
+            if (event.getReviewCycleId() != null) {
+                metadata.put("reviewCycleId", event.getReviewCycleId().toString());
+            }
+            if (event.getOverallRating() != null) {
+                metadata.put("overallRating", event.getOverallRating().toString());
+            }
+            if (event.getReviewerName() != null) {
+                metadata.put("reviewerName", event.getReviewerName());
+            }
+            if (event.getCompletedAt() != null) {
+                metadata.put("completedAt", event.getCompletedAt().toString());
+            }
+
+            eventPublisher.publishEmployeeLifecycleEvent(
+                    employeeId,
+                    "PERFORMANCE_REVIEW_COMPLETED",
+                    null,
+                    tenantId,
+                    null,    // email not available at this level
+                    event.getReviewerName(),
+                    null,    // departmentId
+                    null,    // managerId
+                    null,    // jobTitle
+                    null,    // employmentType
+                    metadata,
+                    false
+            ).whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.error("KafkaDomainEventBridge: Failed to publish PERFORMANCE_REVIEW_COMPLETED " +
+                            "event for employee {}: {}", employeeId, ex.getMessage(), ex);
+                } else {
+                    log.info("KafkaDomainEventBridge: Published PERFORMANCE_REVIEW_COMPLETED " +
+                            "lifecycle event for employee {}", employeeId);
+                }
+            });
+
+        } catch (Exception e) {
+            log.error("KafkaDomainEventBridge: Error bridging PERFORMANCE_REVIEW_COMPLETED " +
+                    "event for employee {}: {}", employeeId, e.getMessage(), e);
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     // =========================================================================

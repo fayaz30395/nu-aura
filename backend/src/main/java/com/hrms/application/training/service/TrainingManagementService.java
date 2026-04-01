@@ -8,6 +8,8 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.training.repository.TrainingEnrollmentRepository;
 import com.hrms.infrastructure.training.repository.TrainingProgramRepository;
 import com.hrms.common.security.TenantContext;
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.domain.event.training.TrainingCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +32,7 @@ public class TrainingManagementService {
     private final TrainingProgramRepository programRepository;
     private final TrainingEnrollmentRepository enrollmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final DomainEventPublisher domainEventPublisher;
 
     // ==================== Training Program Operations ====================
 
@@ -200,6 +204,49 @@ public class TrainingManagementService {
         return enrollmentRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
                 .map(this::mapToEnrollmentResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public TrainingEnrollmentResponse completeTraining(UUID enrollmentId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Completing training enrollment {} for tenant {}", enrollmentId, tenantId);
+
+        TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Training enrollment not found"));
+
+        if (enrollment.getStatus() == TrainingEnrollment.EnrollmentStatus.COMPLETED) {
+            throw new IllegalArgumentException("Training enrollment is already completed");
+        }
+
+        if (enrollment.getStatus() == TrainingEnrollment.EnrollmentStatus.CANCELLED
+                || enrollment.getStatus() == TrainingEnrollment.EnrollmentStatus.DROPPED) {
+            throw new IllegalArgumentException(
+                    "Cannot complete a training enrollment with status " + enrollment.getStatus());
+        }
+
+        enrollment.setStatus(TrainingEnrollment.EnrollmentStatus.COMPLETED);
+        enrollment.setCompletionDate(LocalDate.now());
+        enrollment.setCompletedAt(LocalDateTime.now());
+
+        TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
+
+        // Look up program name for the event
+        String programName = programRepository.findByIdAndTenantId(enrollment.getProgramId(), tenantId)
+                .map(TrainingProgram::getProgramName)
+                .orElse("Unknown");
+
+        domainEventPublisher.publish(TrainingCompletedEvent.of(
+                this,
+                tenantId,
+                savedEnrollment.getId(),
+                savedEnrollment.getEmployeeId(),
+                savedEnrollment.getProgramId(),
+                programName,
+                savedEnrollment.getCompletedAt()
+        ));
+
+        log.info("Training enrollment {} marked as COMPLETED, event published", enrollmentId);
+        return mapToEnrollmentResponse(savedEnrollment);
     }
 
     // ==================== Mapper Methods ====================
