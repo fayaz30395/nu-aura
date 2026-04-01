@@ -99,10 +99,10 @@ function PatternPreview({
           className="text-center py-1 rounded text-xs font-medium"
           style={{
             backgroundColor: pd.isOff
-              ? '#F3F4F6'
+              ? 'var(--bg-secondary)'
               : pd.shift?.colorCode
                 ? pd.shift.colorCode + '30'
-                : '#E5E7EB',
+                : 'var(--border-main)',
             color: pd.isOff ? '#9CA3AF' : pd.shift?.colorCode || '#6B7280',
           }}
         >

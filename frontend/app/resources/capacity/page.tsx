@@ -23,8 +23,10 @@ interface ProjectBand {
 
 // Deterministic pastel color from project id string
 const PROJECT_COLORS = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
-  '#3b82f6', '#3e63dd', '#f97316', '#a855f7', '#06b6d4',
+  'var(--chart-primary)', 'var(--chart-secondary)', 'var(--chart-accent)',
+  'var(--chart-warning)', 'var(--chart-success)',
+  'var(--chart-info)', 'var(--chart-primary)', 'var(--chart-warning)',
+  'var(--chart-secondary)', 'var(--chart-info)',
 ];
 function projectColor(id: string): string {
   let hash = 0;
@@ -43,7 +45,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
     color: projectColor(p.projectId),
   }));
 
-  const barColor = total >= 100 ? '#ef4444' : total >= 81 ? '#f97316' : '#10b981';
+  const barColor = total >= 100 ? 'var(--chart-danger)' : total >= 81 ? 'var(--chart-warning)' : 'var(--chart-success)';
 
   return (
     <div className="flex items-center gap-4 py-2 border-b border-[var(--border-main)] last:border-0 hover:bg-[var(--bg-secondary)] transition-colors group">

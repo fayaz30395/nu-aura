@@ -185,11 +185,11 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
             <p className="text-xs font-semibold text-[var(--text-primary)] truncate leading-tight">
               {employee.fullName}
             </p>
-            <p className="text-[10px] text-[var(--text-secondary)] truncate leading-tight mt-0.5">
+            <p className="text-2xs text-[var(--text-secondary)] truncate leading-tight mt-0.5">
               {employee.designation ?? 'No designation'}
             </p>
             {employee.departmentName && (
-              <p className="text-[10px] text-[var(--text-tertiary)] truncate leading-tight mt-0.5">
+              <p className="text-2xs text-[var(--text-tertiary)] truncate leading-tight mt-0.5">
                 {employee.departmentName}
               </p>
             )}
@@ -213,7 +213,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
             {expanded ? (
               <ChevronDown className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
             ) : (
-              <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
+              <span className="text-2xs font-semibold text-accent-700 dark:text-accent-400">
                 {children.length}
               </span>
             )}
@@ -331,7 +331,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
               {employee.fullName}
             </span>
             {employee.level && (
-              <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded', style.badge)}>
+              <span className={cn('text-2xs font-semibold px-1.5 py-0.5 rounded', style.badge)}>
                 {employee.level.replace('_', ' ')}
               </span>
             )}

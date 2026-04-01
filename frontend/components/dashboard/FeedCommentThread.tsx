@@ -127,7 +127,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLikeComment}
               aria-label={liked ? 'Unlike comment' : 'Like comment'}
-              className={`inline-flex items-center gap-0.5 text-[10px] font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+              className={`inline-flex items-center gap-0.5 text-2xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
@@ -137,12 +137,12 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             {depth < MAX_REPLY_DEPTH && (
               <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="text-[10px] font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="text-2xs font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Reply
               </button>
             )}
-            <span className="text-[10px] text-[var(--text-muted)]">
+            <span className="text-2xs text-[var(--text-muted)]">
               {formatFeedDate(comment.createdAt)}
             </span>
           </div>
@@ -181,7 +181,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLoadReplies}
               disabled={isLoadingReplies}
-              className="text-[10px] font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 mt-1 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="text-2xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 mt-1 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isLoadingReplies ? 'Loading...' : `View ${comment.replyCount || childReplies.length} ${(comment.replyCount || childReplies.length) === 1 ? 'reply' : 'replies'}`}
             </button>
@@ -189,7 +189,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
           {showReplies && childReplies.length > 0 && (
             <button
               onClick={() => setShowReplies(false)}
-              className="text-[10px] font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] mt-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="text-2xs font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] mt-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Hide replies
             </button>

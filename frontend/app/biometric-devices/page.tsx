@@ -335,19 +335,19 @@ function DeviceCard({
             <p className="text-lg font-bold text-[var(--text-primary)]">
               {device.totalPunchesToday}
             </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Today</p>
+            <p className="text-2xs text-[var(--text-muted)]">Today</p>
           </div>
           <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-2 text-center">
             <p className="text-lg font-bold text-danger-600 dark:text-danger-400">
               {device.failedPunchesToday}
             </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Failed</p>
+            <p className="text-2xs text-[var(--text-muted)]">Failed</p>
           </div>
           <div className="rounded-lg bg-warning-50 dark:bg-warning-900/20 p-2 text-center">
             <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
               {device.pendingPunches}
             </p>
-            <p className="text-[10px] text-[var(--text-muted)]">Pending</p>
+            <p className="text-2xs text-[var(--text-muted)]">Pending</p>
           </div>
         </div>
 
@@ -656,7 +656,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">
               {log.employeeIdentifier}
-              <span className={`ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+              <span className={`ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-2xs font-semibold ${
                 log.punchType === 'IN' ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
               }`}>
                 {log.punchType}
@@ -667,7 +667,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
             </p>
           </div>
         </div>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${status.text}`}>
+        <span className={`rounded-full px-2 py-0.5 text-2xs font-medium ${status.text}`}>
           {log.processedStatus}
         </span>
       </div>

@@ -191,7 +191,7 @@ export default function MySchedulePage() {
                             style={{ backgroundColor: entry.colorCode || '#6B7280' }}
                           >
                             <div>{entry.shiftCode}</div>
-                            <div className="opacity-80 text-[10px]">
+                            <div className="opacity-80 text-2xs">
                               {formatTime(entry.startTime)}
                             </div>
                           </div>

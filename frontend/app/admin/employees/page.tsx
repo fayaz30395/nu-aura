@@ -195,7 +195,7 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
           <p className="font-medium text-[var(--text-primary)]">{employee.fullName || `${employee.firstName} ${employee.lastName}`}</p>
           <p className="text-xs text-[var(--text-muted)]">{employee.workEmail}</p>
         </div>
-        <button onClick={onClose} className="p-1 hover:bg-[var(--bg-surface)] rounded">
+        <button onClick={onClose} className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 p-1 hover:bg-[var(--bg-surface)] rounded">
           <X className="h-4 w-4 text-[var(--text-muted)]" />
         </button>
       </div>
@@ -638,7 +638,7 @@ export default function AdminEmployeesPage() {
                               <div className="flex items-center gap-2">
                                 <div className={`h-2 w-2 rounded-full ${role.color}`} />
                                 <span className="font-medium text-sm text-[var(--text-primary)]">{role.label}</span>
-                                {role.value === Roles.SUPER_ADMIN && <span className="badge-status status-danger text-[10px]">System</span>}
+                                {role.value === Roles.SUPER_ADMIN && <span className="badge-status status-danger text-2xs">System</span>}
                               </div>
                               <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">{role.description}</p>
                             </div>

@@ -215,7 +215,7 @@ export default function ManagerDashboardPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="h-1.5 w-1.5 rounded-full bg-accent-500 animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400">Live Insights</span>
+              <span className="text-2xs font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400">Live Insights</span>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
               Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400 skeuo-emboss">Pulse</span>
@@ -244,12 +244,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
+                  <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-[var(--text-primary)]">{teamOverview.totalTeamSize}</span>
                     <div className="h-6 w-0.5 rounded-full bg-accent-500" />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)]">Reports</span>
+                      <span className="text-2xs font-bold text-[var(--text-muted)]">Reports</span>
                       <span className="text-xs font-bold text-accent-700">{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
@@ -265,12 +265,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Availability Today</p>
+                  <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Availability Today</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-[var(--text-primary)]">{teamAttendance.presentToday}</span>
                     <div className="h-6 w-0.5 rounded-full bg-success-500" />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)]">On-Site</span>
+                      <span className="text-2xs font-bold text-[var(--text-muted)]">On-Site</span>
                       <span className="text-xs font-bold text-success-600 dark:text-success-400">{teamAttendance.workFromHomeToday} WFH</span>
                     </div>
                   </div>
@@ -286,12 +286,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Out of Office</p>
+                  <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Out of Office</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-[var(--text-primary)]">{teamAttendance.onLeaveToday}</span>
                     <div className="h-6 w-0.5 rounded-full bg-warning-500" />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)]">Confirmed</span>
+                      <span className="text-2xs font-bold text-[var(--text-muted)]">Confirmed</span>
                       <span className="text-xs font-bold text-warning-600 dark:text-warning-400">{teamLeave.pendingApprovals} Pending</span>
                     </div>
                   </div>
@@ -307,12 +307,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Active Tasks</p>
+                  <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Active Tasks</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-[var(--text-primary)]">{actionItems.totalActionItems}</span>
                     <div className="h-6 w-0.5 rounded-full bg-accent-500" />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)]">Total</span>
+                      <span className="text-2xs font-bold text-[var(--text-muted)]">Total</span>
                       <span className="text-xs font-bold text-accent-600 dark:text-accent-400">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
                     </div>
                   </div>
@@ -333,20 +333,20 @@ export default function ManagerDashboardPage() {
                     <Activity className="h-4 w-4 text-accent-500" />
                     <span className="text-sm">Attendance Flow</span>
                   </div>
-                  <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter self-center">Real-time</Badge>
+                  <Badge variant="outline" className="text-2xs font-bold uppercase tracking-tighter self-center">Real-time</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-2.5 bg-accent-500/5 rounded-xl border border-accent-500/10">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly Rate</p>
+                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly Rate</p>
                       <span className="text-xl font-black text-accent-600 dark:text-accent-400 font-mono tracking-tighter">
                         {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
                     <div className="p-2.5 bg-success-500/5 rounded-xl border border-success-500/10">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Stability</p>
+                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Stability</p>
                       <div className="flex items-center gap-2">
                         <span className="text-xl font-black text-success-600 dark:text-success-400 font-mono tracking-tighter">
                           {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
@@ -381,14 +381,14 @@ export default function ManagerDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                   <div className="space-y-4">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Avg Rating</p>
+                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Avg Rating</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl font-black text-[var(--text-primary)]">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
                         <span className="text-sm font-bold text-[var(--text-muted)]">/ 5.0</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Goal Execution</p>
+                      <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Goal Execution</p>
                       <div className="relative h-3 w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
@@ -424,7 +424,7 @@ export default function ManagerDashboardPage() {
                     <FileText className="h-4 w-4 text-accent-500" />
                     <span className="text-sm">Approval Pipeline</span>
                   </div>
-                  <Badge className="bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20 text-[10px]">
+                  <Badge className="bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20 text-2xs">
                     {teamLeave.pendingLeaveRequests.length} Active
                   </Badge>
                 </CardTitle>
@@ -448,7 +448,7 @@ export default function ManagerDashboardPage() {
                                 <span className="animate-pulse flex h-1.5 w-1.5 rounded-full bg-danger-500" />
                               )}
                             </div>
-                            <p className="text-[10px] font-bold text-[var(--text-muted)]">
+                            <p className="text-2xs font-bold text-[var(--text-muted)]">
                               {leave.leaveType} • {formatDate(leave.startDate)} to {formatDate(leave.endDate)}
                             </p>
                           </div>
@@ -507,7 +507,7 @@ export default function ManagerDashboardPage() {
                       <AlertCircle className="h-4 w-4 animate-bounce" />
                       <div>
                         <p className="font-black text-xs leading-tight">{actionItems.overdueApprovals + actionItems.overdueReviews} Overdue</p>
-                        <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">Immediate attention</p>
+                        <p className="text-2xs font-bold uppercase tracking-widest opacity-70">Immediate attention</p>
                       </div>
                     </div>
                   )}
@@ -527,7 +527,7 @@ export default function ManagerDashboardPage() {
                   <span className="text-sm">Team Projects & Allocations</span>
                 </div>
                 {teamProjectsData?.summary && (
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-2xs font-bold text-[var(--text-muted)]">
                     <span>{teamProjectsData.summary.totalReports} Reports</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
                     <span className="text-success-600 dark:text-success-400">{teamProjectsData.summary.allocatedCount} Allocated</span>
@@ -642,7 +642,7 @@ export default function ManagerDashboardPage() {
                                 </button>
                                 <Badge
                                   variant="outline"
-                                  className={`text-[10px] font-bold uppercase tracking-tighter border ${statusBadgeStyles[project.projectStatus] || statusBadgeStyles.DRAFT}`}
+                                  className={`text-2xs font-bold uppercase tracking-tighter border ${statusBadgeStyles[project.projectStatus] || statusBadgeStyles.DRAFT}`}
                                 >
                                   {project.projectStatus.replace(/_/g, ' ')}
                                 </Badge>
@@ -690,14 +690,14 @@ export default function ManagerDashboardPage() {
                     {teamAlerts.slice(0, 3).map((alert) => (
                       <div key={alert.id} className="p-4 rounded-xl bg-white/40 dark:bg-black/20 border border-danger-500/10">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge className="bg-danger-500 text-white font-black px-1.5 py-0 text-[10px]">CRITICAL</Badge>
-                          <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
+                          <Badge className="bg-danger-500 text-white font-black px-1.5 py-0 text-2xs">CRITICAL</Badge>
+                          <span className="text-2xs font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
                         </div>
                         <h4 className="font-extrabold text-xs text-[var(--text-primary)] mb-0.5">{alert.title}</h4>
-                        <p className="text-[10px] font-bold text-[var(--text-muted)] leading-relaxed line-clamp-2">{alert.description}</p>
+                        <p className="text-2xs font-bold text-[var(--text-muted)] leading-relaxed line-clamp-2">{alert.description}</p>
                         <div className="mt-2 pt-2 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase text-accent-500">Action: {alert.actionRequired}</span>
-                          <Button variant="ghost" size="sm" className="font-black text-[10px] h-6 px-2">RESOLVE</Button>
+                          <span className="text-2xs font-black uppercase text-accent-500">Action: {alert.actionRequired}</span>
+                          <Button variant="ghost" size="sm" className="font-black text-2xs h-6 px-2">RESOLVE</Button>
                         </div>
                       </div>
                     ))}
@@ -725,7 +725,7 @@ export default function ManagerDashboardPage() {
                     <p className="text-lg font-bold text-success-600 dark:text-success-400">
                       {teamPerformance.goalsOnTrack}
                     </p>
-                    <p className="text-[10px] text-[var(--text-secondary)]">
+                    <p className="text-2xs text-[var(--text-secondary)]">
                       On Track
                     </p>
                   </div>
@@ -733,7 +733,7 @@ export default function ManagerDashboardPage() {
                     <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
                       {teamPerformance.goalsAtRisk}
                     </p>
-                    <p className="text-[10px] text-[var(--text-secondary)]">
+                    <p className="text-2xs text-[var(--text-secondary)]">
                       At Risk
                     </p>
                   </div>
@@ -741,7 +741,7 @@ export default function ManagerDashboardPage() {
                     <p className="text-lg font-bold text-accent-600 dark:text-accent-400">
                       {teamPerformance.goalsCompleted}
                     </p>
-                    <p className="text-[10px] text-[var(--text-secondary)]">
+                    <p className="text-2xs text-[var(--text-secondary)]">
                       Completed
                     </p>
                   </div>
@@ -786,7 +786,7 @@ export default function ManagerDashboardPage() {
                       {teamPerformance.oneOnOnesCompletedThisMonth}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] mt-0.5">
+                  <div className="flex items-center gap-2 text-2xs mt-0.5">
                     <span className="text-[var(--text-muted)]">Scheduled:</span>
                     <span className="font-semibold text-[var(--text-primary)]">
                       {teamPerformance.oneOnOnesScheduled}
@@ -810,7 +810,7 @@ export default function ManagerDashboardPage() {
                     </span>
                   </div>
                   {teamPerformance.pendingFeedbackRequests > 0 && (
-                    <div className="flex items-center gap-1 text-[10px] mt-0.5">
+                    <div className="flex items-center gap-1 text-2xs mt-0.5">
                       <Clock className="h-3 w-3 text-warning-600" />
                       <span className="text-warning-600 dark:text-warning-400">
                         {teamPerformance.pendingFeedbackRequests} pending

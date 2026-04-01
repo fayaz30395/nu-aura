@@ -394,7 +394,7 @@ export default function HolidaysPage() {
                           <div className="text-lg font-bold text-[var(--text-primary)] leading-tight">
                             {new Date(holiday.holidayDate).getDate()}
                           </div>
-                          <div className="text-[10px] text-[var(--text-muted)] uppercase font-medium">
+                          <div className="text-2xs text-[var(--text-muted)] uppercase font-medium">
                             {new Date(holiday.holidayDate).toLocaleDateString('en-US', { weekday: 'short' })}
                           </div>
                         </div>

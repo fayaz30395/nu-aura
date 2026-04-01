@@ -172,7 +172,7 @@ export default function WorkflowListPage() {
                   key={s}
                   type="button"
                   onClick={() => { setStatusFilter(s); setPage(0); }}
-                  className={`rounded-full px-4 py-1 font-medium transition-colors ${
+                  className={`rounded-full px-4 py-1 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     statusFilter === s
                       ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:text-[var(--text-muted)]'
@@ -312,7 +312,8 @@ export default function WorkflowListPage() {
                                 e.stopPropagation();
                                 setMenuOpenId(menuOpenId === wf.id ? null : wf.id);
                               }}
-                              className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]"
+                              aria-label="Actions menu"
+                              className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               <MoreVertical className="h-4 w-4" />
                             </button>
@@ -323,7 +324,7 @@ export default function WorkflowListPage() {
                               >
                                 <button
                                   type="button"
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   onClick={() => {
                                     router.push(`/workflows/${wf.id}`);
                                     setMenuOpenId(null);
@@ -335,7 +336,7 @@ export default function WorkflowListPage() {
                                   <>
                                     <button
                                       type="button"
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       onClick={() => {
                                         router.push(`/workflows/${wf.id}?edit=true`);
                                         setMenuOpenId(null);
@@ -345,7 +346,7 @@ export default function WorkflowListPage() {
                                     </button>
                                     <button
                                       type="button"
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       onClick={() => {
                                         setDeleteTarget(wf);
                                         setMenuOpenId(null);
@@ -400,7 +401,7 @@ export default function WorkflowListPage() {
 
       {/* Click outside to close menu */}
       {menuOpenId && (
-        <div className="fixed inset-0 z-40" onClick={() => setMenuOpenId(null)} />
+        <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setMenuOpenId(null)} />
       )}
 
       {/* Deactivate Confirmation Modal */}
