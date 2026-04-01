@@ -24,6 +24,7 @@ import java.util.UUID;
 public class TenantCacheManager {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final org.springframework.context.ApplicationContext ctx;
 
     // Cache name patterns
     private static final String TENANT_KEY_PREFIX = "tenant:";
@@ -179,13 +180,19 @@ public class TenantCacheManager {
 
     /**
      * Warm up cache for a tenant by pre-loading common data.
-     * Implementations should call relevant services to populate caches.
+     *
+     * <p>Delegates to {@link CacheWarmUpService} which calls cacheable service methods
+     * to populate Redis with frequently accessed, slow-changing data (leave types,
+     * departments, holidays, etc.). Runs asynchronously to avoid blocking the caller.</p>
      *
      * @param tenantId The tenant ID to warm cache for
      */
     public void warmCache(UUID tenantId) {
-        log.info("Cache warm-up requested for tenant: {}. Implement specific warm-up logic as needed.", tenantId);
-        // This is a hook for implementing cache warming strategies
-        // Services can override or extend this to pre-load their specific caches
+        try {
+            CacheWarmUpService warmUpService = ctx.getBean(CacheWarmUpService.class);
+            warmUpService.warmCachesForTenant(tenantId);
+        } catch (Exception e) {
+            log.warn("Cache warm-up unavailable for tenant {}: {}", tenantId, e.getMessage());
+        }
     }
 }
