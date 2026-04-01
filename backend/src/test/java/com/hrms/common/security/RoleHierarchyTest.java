@@ -132,6 +132,7 @@ class RoleHierarchyTest {
         @ValueSource(strings = {
                 RoleHierarchy.SUPER_ADMIN,
                 RoleHierarchy.TENANT_ADMIN,
+                RoleHierarchy.HR_ADMIN,
                 RoleHierarchy.HR_MANAGER,
                 RoleHierarchy.HR_EXECUTIVE,
                 RoleHierarchy.DEPARTMENT_MANAGER,

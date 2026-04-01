@@ -16,6 +16,7 @@ public final class RoleHierarchy {
     // Core Roles
     public static final String SUPER_ADMIN = "SUPER_ADMIN";
     public static final String TENANT_ADMIN = "TENANT_ADMIN";
+    public static final String HR_ADMIN = "HR_ADMIN";
     public static final String HR_MANAGER = "HR_MANAGER";
     public static final String HR_EXECUTIVE = "HR_EXECUTIVE";
     public static final String DEPARTMENT_MANAGER = "DEPARTMENT_MANAGER";
@@ -47,7 +48,7 @@ public final class RoleHierarchy {
 
     // All explicit roles list (unmodifiable)
     public static final List<String> ALL_EXPLICIT_ROLES = List.of(
-            SUPER_ADMIN, TENANT_ADMIN, HR_MANAGER, PAYROLL_ADMIN, HR_EXECUTIVE,
+            SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN, HR_EXECUTIVE,
             RECRUITMENT_ADMIN, DEPARTMENT_MANAGER, PROJECT_ADMIN, ASSET_MANAGER,
             EXPENSE_MANAGER, HELPDESK_ADMIN, TRAVEL_ADMIN, COMPLIANCE_OFFICER,
             LMS_ADMIN, TEAM_LEAD, EMPLOYEE, CONTRACTOR, INTERN
@@ -67,6 +68,7 @@ public final class RoleHierarchy {
             // Core Roles
             case SUPER_ADMIN -> getSuperAdminPermissions();
             case TENANT_ADMIN -> getTenantAdminPermissions();
+            case HR_ADMIN -> getHRAdminPermissions();
             case HR_MANAGER -> getHRManagerPermissions();
             case HR_EXECUTIVE -> getHRExecutivePermissions();
             case DEPARTMENT_MANAGER -> getDepartmentManagerPermissions();
@@ -158,6 +160,32 @@ public final class RoleHierarchy {
             FieldPermission.EMPLOYEE_TAX_ID_VIEW,
             FieldPermission.EMPLOYEE_ID_DOCS_VIEW
         ));
+    }
+
+    private static Set<String> getHRAdminPermissions() {
+        Set<String> perms = new HashSet<>(getHRManagerPermissions());
+        perms.addAll(Arrays.asList(
+            // Elevated permissions beyond HR_MANAGER
+            Permission.ROLE_MANAGE,
+            Permission.USER_MANAGE,
+            Permission.SETTINGS_VIEW,
+            Permission.SETTINGS_UPDATE,
+            Permission.AUDIT_VIEW,
+            Permission.CUSTOM_FIELD_MANAGE,
+            Permission.WORKFLOW_MANAGE,
+            Permission.DEPARTMENT_MANAGE,
+            Permission.STATUTORY_MANAGE,
+            Permission.LEAVE_TYPE_MANAGE,
+            Permission.LEAVE_BALANCE_MANAGE,
+            Permission.ANALYTICS_EXPORT,
+            Permission.REPORT_SCHEDULE,
+            Permission.INTEGRATION_MANAGE,
+            // Field-level: salary/bank edit access (HR_MANAGER only has view)
+            FieldPermission.EMPLOYEE_SALARY_EDIT,
+            FieldPermission.EMPLOYEE_BANK_EDIT,
+            FieldPermission.EMPLOYEE_ID_DOCS_VIEW
+        ));
+        return perms;
     }
 
     private static Set<String> getHRManagerPermissions() {
@@ -685,6 +713,7 @@ public final class RoleHierarchy {
         return switch (role) {
             case SUPER_ADMIN -> 100;
             case TENANT_ADMIN -> 90;
+            case HR_ADMIN -> 85;
             case HR_MANAGER -> 80;
             case PAYROLL_ADMIN -> 75;
             case HR_EXECUTIVE -> 70;
@@ -726,6 +755,7 @@ public final class RoleHierarchy {
         return switch (role) {
             case SUPER_ADMIN -> "Complete system control across all tenants";
             case TENANT_ADMIN -> "Full organization administration";
+            case HR_ADMIN -> "Senior HR leadership with elevated permissions and salary edit access";
             case HR_MANAGER -> "Complete HR operations including salary access";
             case PAYROLL_ADMIN -> "Payroll and compensation management only";
             case HR_EXECUTIVE -> "HR operations without salary access";
