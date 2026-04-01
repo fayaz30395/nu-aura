@@ -106,7 +106,7 @@ class ApprovalChainIntegrationTest {
         // --- Setup: LeaveRequestService as callback handler ---
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
-                employeeRepository, leaveTypeRepository, domainEventPublisher, null);
+                employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService);
 
         List<ApprovalCallbackHandler> handlers = List.of(leaveService);
 
