@@ -171,163 +171,137 @@
   }
 
   .dark {
-    /* ── Surface Hierarchy (NULogic Dark Teal + Navy) ──────────────── */
-    --bg-main: #0a1218;
-    --bg-surface: #0e1e25;
-    --bg-elevated: #1a3540;
-    --bg-card: #0e1e25;
-    --bg-card-hover: #1a3540;
-    --bg-page: #0a1218;
-    --bg-input: #0e1e25;
-    --bg-sidebar: #0a1218;
-    --bg-overlay: rgba(0, 0, 0, 0.75);
+    /* ── Surface Hierarchy (Deep navy — monochrome) ────────────────── */
+    --bg-main: #080c18;
+    --bg-surface: #0e1322;
+    --bg-elevated: #161c30;
+    --bg-card: #0e1322;
+    --bg-card-hover: #161c30;
+    --bg-page: #080c18;
+    --bg-input: #0e1322;
+    --bg-sidebar: #060a14;
+    --bg-overlay: rgba(8, 12, 24, 0.80);
 
-    /* ── Background Atmosphere (NULogic Night Glow) ──────────────── */
+    /* ── Background Atmosphere (Deep blue wash) ──────────────────── */
     --bg-pattern:
-      radial-gradient(1000px 600px at 0% 0%, rgba(5, 7, 102, 0.10), transparent 60%),
-      radial-gradient(800px 500px at 100% 0%, rgba(137, 57, 161, 0.06), transparent 55%),
-      linear-gradient(180deg, rgba(10, 18, 24, 0.90), rgba(10, 18, 24, 1) 60%),
-      linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    --bg-pattern-size: auto, auto, auto, 32px 32px, 32px 32px;
+      radial-gradient(800px 400px at 0% 0%, rgba(41, 82, 163, 0.08), transparent 60%),
+      linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(8, 12, 24, 1) 50%);
+    --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy (Light on Dark) ────────────────────────────── */
-    --text-primary: #FFFFFF;
-    --text-heading: #FFFFFF;
-    --text-secondary: #9aa8af;
-    --text-muted: #5e6e75;
-    --text-inverse: #050766;
+    /* ── Text Hierarchy (Blue-tinted whites) ─────────────────────── */
+    --text-primary: #e8eaf0;
+    --text-heading: #f0f2f7;
+    --text-secondary: #8b90aa;
+    --text-muted: #5a5f78;
+    --text-inverse: #0e1225;
 
-    /* ── Border & Divider (Night Teal) ──────────────────────────── */
-    --border-main: #2a4a55;
-    --border-subtle: #1a3540;
-    --border-strong: #3E616A;
-    --border-focus: #a8a8ef;
+    /* ── Border & Divider (Dark blue) ─────────────────────────── */
+    --border-main: #1e2440;
+    --border-subtle: #161c30;
+    --border-strong: #2a3255;
+    --border-focus: #6884dc;
 
-    /* ── Accent Scale (Dark mode — lighter Lapis for dark backgrounds) ─ */
-    --accent-50: rgba(5, 7, 102, 0.10);
-    --accent-100: rgba(5, 7, 102, 0.18);
-    --accent-200: #61629D;
-    --accent-300: #7c7ce6;
-    --accent-400: #a8a8ef;
-    --accent-500: #9494e0;
-    --accent-600: #a8a8ef;
-    --accent-700: #c4c4f5;
-    --accent-800: #d4d4f7;
-    --accent-900: #eeeeff;
-    --accent-950: #f8f8ff;
-    --accent-primary: #a8a8ef;
-    --accent-primary-hover: #c4c4f5;
-    --accent-primary-subtle: rgba(5, 7, 102, 0.18);
+    /* ── Accent Scale (Dark — lighter blues for visibility) ──────── */
+    --accent-50: rgba(41, 82, 163, 0.10);
+    --accent-100: rgba(41, 82, 163, 0.18);
+    --accent-200: #2a3255;
+    --accent-300: #4463cf;
+    --accent-400: #6884dc;
+    --accent-500: #7e9ae4;
+    --accent-600: #92a8e8;
+    --accent-700: #a8baee;
+    --accent-800: #bcc9f2;
+    --accent-900: #dce3f8;
+    --accent-950: #f0f3fc;
+    --accent-primary: #6884dc;
+    --accent-primary-hover: #92a8e8;
+    --accent-primary-subtle: rgba(41, 82, 163, 0.18);
 
-    /* ── Sidebar (Dark Teal Night) ─────────────────────────────── */
-    --sidebar-active-bg: rgba(230, 42, 50, 0.18);
-    --sidebar-active-border: #EE777C;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
-    --sidebar-text: rgba(255, 255, 255, 0.78);
+    /* ── Sidebar (Deepest navy) ──────────────────────────────────── */
+    --sidebar-active-bg: rgba(68, 99, 207, 0.15);
+    --sidebar-active-border: #4463cf;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+    --sidebar-text: rgba(255, 255, 255, 0.68);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.42);
-    --sidebar-border: rgba(255, 255, 255, 0.12);
-    --sidebar-section-text: rgba(255, 255, 255, 0.48);
-    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.45) 100%);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.35);
+    --sidebar-border: rgba(255, 255, 255, 0.06);
+    --sidebar-section-text: rgba(255, 255, 255, 0.38);
+    --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
 
-    /* ── Shadows (Deep, Focused) ────────────────────────────────── */
-    --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 12px 28px rgba(0, 0, 0, 0.55);
-    --shadow-card-hover: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 36px rgba(0, 0, 0, 0.65);
-    --shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 48px rgba(0, 0, 0, 0.70);
-    --shadow-dropdown: 0 0 0 1px rgba(255, 255, 255, 0.10), 0 32px 60px rgba(0, 0, 0, 0.75);
+    /* ── Shadows (Minimal, dark) ─────────────────────────────────── */
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 1px 3px rgba(0, 0, 0, 0.20);
+    --shadow-card-hover: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25);
+    --shadow-elevated: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.30);
+    --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.40), 0 1px 2px rgba(0, 0, 0, 0.30);
 
-    /* ── Ring / Focus (NULogic Lapis Light) ──────────────────────── */
-    --ring-primary: rgba(168, 168, 239, 0.40);
-    --ring-danger: rgba(238, 119, 124, 0.35);
+    /* ── Ring / Focus ────────────────────────────────────────────── */
+    --ring-primary: rgba(104, 132, 220, 0.40);
+    --ring-danger: rgba(248, 113, 113, 0.35);
     --ring-success: rgba(74, 222, 128, 0.35);
 
-    /* ── Semantic Colors (Dark Mode) ────────────────────────────── */
-    --status-success-bg: rgba(22, 163, 74, 0.18);
+    /* ── Semantic Colors (Dark Mode) ──────────────────────────────── */
+    --status-success-bg: rgba(22, 163, 74, 0.15);
     --status-success-text: #86efac;
-    --status-success-border: rgba(22, 163, 74, 0.35);
-    --status-danger-bg: rgba(230, 42, 50, 0.18);
-    --status-danger-text: #EE777C;
-    --status-danger-border: rgba(230, 42, 50, 0.35);
-    --status-warning-bg: rgba(245, 158, 11, 0.18);
+    --status-success-border: rgba(22, 163, 74, 0.30);
+    --status-danger-bg: rgba(220, 38, 38, 0.15);
+    --status-danger-text: #fca5a5;
+    --status-danger-border: rgba(220, 38, 38, 0.30);
+    --status-warning-bg: rgba(217, 119, 6, 0.15);
     --status-warning-text: #fcd34d;
-    --status-warning-border: rgba(245, 158, 11, 0.35);
-    --status-info-bg: rgba(97, 98, 157, 0.18);
-    --status-info-text: #c4c4f5;
-    --status-info-border: rgba(97, 98, 157, 0.35);
-    --status-neutral-bg: rgba(148, 163, 184, 0.12);
-    --status-neutral-text: #c0c3c8;
-    --status-neutral-border: rgba(148, 163, 184, 0.25);
+    --status-warning-border: rgba(217, 119, 6, 0.30);
+    --status-info-bg: rgba(68, 99, 207, 0.15);
+    --status-info-text: #92a8e8;
+    --status-info-border: rgba(68, 99, 207, 0.30);
+    --status-neutral-bg: rgba(139, 144, 170, 0.10);
+    --status-neutral-text: #8b90aa;
+    --status-neutral-border: rgba(139, 144, 170, 0.20);
 
-    /* ── Header (NULogic Dark Surface) ─────────────────────────── */
-    --header-bg: rgba(10, 18, 24, 0.92);
-    --header-border: #2a4a55;
-    --header-text: #FFFFFF;
-    --header-text-muted: #9aa8af;
-    --header-hover-bg: rgba(168, 168, 239, 0.12);
-    --header-divider: #2a4a55;
+    /* ── Header (Dark navy surface) ──────────────────────────────── */
+    --header-bg: rgba(8, 12, 24, 0.95);
+    --header-border: #1e2440;
+    --header-text: #e8eaf0;
+    --header-text-muted: #8b90aa;
+    --header-hover-bg: rgba(68, 99, 207, 0.10);
+    --header-divider: #1e2440;
 
-    /* ── Dropdown (NULogic Dark) ────────────────────────────────── */
-    --dropdown-bg: #0e1e25;
-    --dropdown-border: #2a4a55;
-    --dropdown-hover: #1a3540;
-    --dropdown-text: #FFFFFF;
-    --dropdown-text-secondary: #9aa8af;
-    --dropdown-divider: #2a4a55;
+    /* ── Dropdown (Dark navy) ────────────────────────────────────── */
+    --dropdown-bg: #0e1322;
+    --dropdown-border: #1e2440;
+    --dropdown-hover: #161c30;
+    --dropdown-text: #e8eaf0;
+    --dropdown-text-secondary: #8b90aa;
+    --dropdown-divider: #1e2440;
 
-    /* ── Skeuomorphism Design Tokens (Dark Mode) ────────────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 2px 8px rgba(0, 0, 0, 0.30),
-      0 8px 24px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 4px 12px rgba(0, 0, 0, 0.35),
-      0 12px 32px rgba(0, 0, 0, 0.25);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(0, 0, 0, 0.30),
-      inset 0 1px 2px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 1px 3px rgba(0, 0, 0, 0.25),
-      0 2px 6px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.10),
-      0 2px 6px rgba(0, 0, 0, 0.30),
-      0 4px 10px rgba(0, 0, 0, 0.25);
-    --shadow-skeuo-input:
-      inset 0 2px 4px rgba(0, 0, 0, 0.20),
-      0 1px 0 rgba(255, 255, 255, 0.04);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(255, 255, 255, 0.06),
-      0 -1px 0 rgba(0, 0, 0, 0.15);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(0, 0, 0, 0.20),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.10) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-    --glass-bg: rgba(14, 30, 37, 0.78);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    /* ── Flat Shadows (Dark Mode) ────────────────────────────────── */
+    --shadow-skeuo-card: var(--shadow-card);
+    --shadow-skeuo-card-hover: var(--shadow-card-hover);
+    --shadow-skeuo-pressed: inset 0 1px 3px rgba(0, 0, 0, 0.30);
+    --shadow-skeuo-button: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-skeuo-button-hover: 0 1px 4px rgba(0, 0, 0, 0.30);
+    --shadow-skeuo-input: inset 0 1px 2px rgba(0, 0, 0, 0.20);
+    --shadow-skeuo-emboss: none;
+    --shadow-skeuo-table-header: inset 0 -1px 0 rgba(0, 0, 0, 0.20);
+    --gradient-skeuo-surface: none;
+    --gradient-skeuo-button: none;
+    --gradient-skeuo-card: none;
+    --glass-bg: rgba(14, 19, 34, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.06);
     --glass-blur: 12px;
-    --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    --skeuo-noise: none;
 
-    /* ── Chart Colors (NULogic Dark Mode) ─────────────────────── */
-    --chart-primary: #a8a8ef;
-    --chart-secondary: #B17DC1;
+    /* ── Chart Colors (Dark — lighter blue palette) ──────────────── */
+    --chart-primary: #6884dc;
+    --chart-secondary: #92a8e8;
     --chart-success: #4ade80;
     --chart-warning: #fbbf24;
-    --chart-danger: #EE777C;
-    --chart-info: #c4c4f5;
-    --chart-accent: #EE777C;
-    --chart-muted: #2a4a55;
-    --chart-grid: #2a4a55;
-    --chart-tooltip-bg: #0e1e25;
-    --chart-tooltip-border: #2a4a55;
-    --chart-tooltip-text: #FFFFFF;
+    --chart-danger: #f87171;
+    --chart-info: #a8baee;
+    --chart-accent: #bcc9f2;
+    --chart-muted: #1e2440;
+    --chart-grid: #1e2440;
+    --chart-tooltip-bg: #0e1322;
+    --chart-tooltip-border: #1e2440;
+    --chart-tooltip-text: #e8eaf0;
   }
 
   /* ── Theme Transition (Crisp, Calm) ──────────────────────────── */
@@ -359,7 +333,7 @@
     background-color: var(--bg-main);
     background-image: var(--bg-pattern);
     background-size: var(--bg-pattern-size);
-    background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
+    background-repeat: no-repeat, no-repeat;
     color: var(--text-primary);
     font-family: var(--font-body), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.6;
