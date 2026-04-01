@@ -140,7 +140,8 @@ class CompensationServiceTest {
         cycle.setTenantId(tenantId);
 
         when(cycleRepository.findByIdAndTenantId(cycleId, tenantId)).thenReturn(Optional.of(cycle));
-        when(revisionRepository.countByCycleAndTenant(cycleId, tenantId)).thenReturn(0L);
+        when(revisionRepository.getAverageIncrementPercentageByCycle(tenantId, cycleId)).thenReturn(null);
+        when(revisionRepository.countPromotionsByCycle(tenantId, cycleId)).thenReturn(0L);
 
         CompensationCycleResponse result = compensationService.getCycleById(cycleId);
 
@@ -191,7 +192,7 @@ class CompensationServiceTest {
 
         SalaryRevisionRequest request = SalaryRevisionRequest.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now().plusMonths(1))
                 .justification("Annual increment")
@@ -219,7 +220,7 @@ class CompensationServiceTest {
     void createRevision_employeeNotFound() {
         SalaryRevisionRequest request = SalaryRevisionRequest.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
                 .build();
@@ -238,7 +239,7 @@ class CompensationServiceTest {
 
         SalaryRevisionRequest request = SalaryRevisionRequest.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
                 .build();
@@ -259,7 +260,7 @@ class CompensationServiceTest {
     void submitRevision_success() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
@@ -282,7 +283,7 @@ class CompensationServiceTest {
     void submitRevision_wrongStatus() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
@@ -303,7 +304,7 @@ class CompensationServiceTest {
     void rejectRevision_success() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
@@ -326,7 +327,7 @@ class CompensationServiceTest {
     void rejectRevision_appliedThrows() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
@@ -346,7 +347,7 @@ class CompensationServiceTest {
     void applyRevision_wrongStatus() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())
@@ -366,7 +367,7 @@ class CompensationServiceTest {
     void applyRevision_beforeEffectiveDate() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now().plusMonths(2))
@@ -389,7 +390,7 @@ class CompensationServiceTest {
     void getEmployeeRevisionHistory_success() {
         SalaryRevision revision = SalaryRevision.builder()
                 .employeeId(employeeId)
-                .revisionType(RevisionType.INCREMENT)
+                .revisionType(RevisionType.ANNUAL_INCREMENT)
                 .previousSalary(new BigDecimal("100000"))
                 .newSalary(new BigDecimal("120000"))
                 .effectiveDate(LocalDate.now())

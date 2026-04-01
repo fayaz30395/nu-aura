@@ -84,7 +84,7 @@ class LoanServiceTest {
         EmployeeLoan loan = EmployeeLoan.builder()
                 .employeeId(employeeId)
                 .loanNumber("LN-001")
-                .loanType(LoanType.PERSONAL)
+                .loanType(LoanType.PERSONAL_LOAN)
                 .principalAmount(new BigDecimal("100000"))
                 .interestRate(BigDecimal.ZERO)
                 .totalAmount(new BigDecimal("100000"))
@@ -106,7 +106,7 @@ class LoanServiceTest {
     @DisplayName("applyForLoan - creates loan application successfully")
     void applyForLoan_success() {
         CreateLoanRequest request = CreateLoanRequest.builder()
-                .loanType(LoanType.PERSONAL)
+                .loanType(LoanType.PERSONAL_LOAN)
                 .principalAmount(new BigDecimal("50000"))
                 .interestRate(new BigDecimal("5.0"))
                 .tenureMonths(12)
@@ -122,7 +122,7 @@ class LoanServiceTest {
         EmployeeLoanDto result = loanService.applyForLoan(request);
 
         assertThat(result).isNotNull();
-        assertThat(result.getLoanType()).isEqualTo(LoanType.PERSONAL);
+        assertThat(result.getLoanType()).isEqualTo(LoanType.PERSONAL_LOAN);
         assertThat(result.getPrincipalAmount()).isEqualByComparingTo(new BigDecimal("50000"));
         verify(loanRepository).save(any(EmployeeLoan.class));
     }

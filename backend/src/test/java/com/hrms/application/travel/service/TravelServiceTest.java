@@ -84,7 +84,7 @@ class TravelServiceTest {
         TravelRequest tr = TravelRequest.builder()
                 .employeeId(employeeId)
                 .requestNumber("TR-001")
-                .travelType(TravelType.DOMESTIC)
+                .travelType(TravelType.BUSINESS)
                 .purpose("Client meeting")
                 .originCity("New York")
                 .destinationCity("Chicago")
@@ -100,7 +100,7 @@ class TravelServiceTest {
 
     private CreateTravelRequest buildCreateRequest() {
         CreateTravelRequest req = new CreateTravelRequest();
-        req.setTravelType(TravelType.DOMESTIC);
+        req.setTravelType(TravelType.BUSINESS);
         req.setPurpose("Client meeting");
         req.setOriginCity("New York");
         req.setDestinationCity("Chicago");
