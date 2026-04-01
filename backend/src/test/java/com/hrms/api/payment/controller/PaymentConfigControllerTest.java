@@ -1,9 +1,12 @@
 package com.hrms.api.payment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.api.payment.dto.PaymentConfigDto;
 import com.hrms.application.payment.service.PaymentService;
 import com.hrms.common.exception.FeatureDisabledException;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.PaymentFeatureGuard;
 import com.hrms.common.security.Permission;
@@ -37,7 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * and permission annotation presence on every endpoint.
  */
 @WebMvcTest(PaymentConfigController.class)
-@ContextConfiguration(classes = {PaymentConfigController.class})
+@ContextConfiguration(classes = {PaymentConfigController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -46,6 +50,7 @@ class PaymentConfigControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -170,7 +175,7 @@ class PaymentConfigControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.PAYMENT_CONFIG_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.PAYMENT_CONFIG_MANAGE);
         }
     }
 
@@ -218,7 +223,7 @@ class PaymentConfigControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.PAYMENT_CONFIG_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.PAYMENT_CONFIG_MANAGE);
         }
 
         @Test

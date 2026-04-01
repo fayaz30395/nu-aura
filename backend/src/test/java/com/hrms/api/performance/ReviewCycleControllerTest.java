@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.performance.dto.*;
 import com.hrms.application.performance.service.ReviewCycleService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.performance.ReviewCycle;
 import org.junit.jupiter.api.*;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ReviewCycleController.class)
 @ContextConfiguration(classes = {ReviewCycleController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -39,6 +42,7 @@ class ReviewCycleControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -418,7 +422,7 @@ class ReviewCycleControllerTest {
             var method = ReviewCycleController.class.getMethod("createCycle", ReviewCycleRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createCycle must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.REVIEW_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -428,7 +432,7 @@ class ReviewCycleControllerTest {
                     UUID.class, ActivateCycleRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "activateCycle must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_APPROVE, annotation.value());
+            Assertions.assertEquals(Permission.REVIEW_APPROVE, annotation.value()[0]);
         }
 
         @Test
@@ -438,7 +442,7 @@ class ReviewCycleControllerTest {
                     int.class, int.class, String.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getAllCycles must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.REVIEW_VIEW, annotation.value()[0]);
         }
     }
 }

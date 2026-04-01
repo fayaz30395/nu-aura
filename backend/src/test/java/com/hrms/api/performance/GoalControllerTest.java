@@ -5,6 +5,8 @@ import com.hrms.application.performance.dto.GoalRequest;
 import com.hrms.application.performance.dto.GoalResponse;
 import com.hrms.application.performance.service.GoalService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.performance.Goal;
 import org.junit.jupiter.api.*;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(GoalController.class)
 @ContextConfiguration(classes = {GoalController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -41,6 +44,7 @@ class GoalControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -396,7 +400,7 @@ class GoalControllerTest {
             var method = GoalController.class.getMethod("createGoal", GoalRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createGoal must have @RequiresPermission");
-            Assertions.assertEquals(Permission.GOAL_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.GOAL_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -405,7 +409,7 @@ class GoalControllerTest {
             var method = GoalController.class.getMethod("approveGoal", UUID.class, UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "approveGoal must have @RequiresPermission");
-            Assertions.assertEquals(Permission.GOAL_APPROVE, annotation.value());
+            Assertions.assertEquals(Permission.GOAL_APPROVE, annotation.value()[0]);
         }
 
         @Test
@@ -415,7 +419,7 @@ class GoalControllerTest {
                     int.class, int.class, String.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getAllGoals must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.REVIEW_VIEW, annotation.value()[0]);
         }
     }
 }

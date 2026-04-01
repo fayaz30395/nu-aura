@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.training.dto.*;
 import com.hrms.application.training.service.TrainingManagementService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.training.TrainingEnrollment;
 import com.hrms.domain.training.TrainingProgram;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TrainingManagementController.class)
 @ContextConfiguration(classes = {TrainingManagementController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -41,6 +44,7 @@ class TrainingManagementControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -379,7 +383,7 @@ class TrainingManagementControllerTest {
                     "createProgram", TrainingProgramRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createProgram must have @RequiresPermission");
-            Assertions.assertEquals(Permission.TRAINING_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.TRAINING_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -389,7 +393,7 @@ class TrainingManagementControllerTest {
                     "getAllPrograms", Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getAllPrograms must have @RequiresPermission");
-            Assertions.assertEquals(Permission.TRAINING_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.TRAINING_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -399,7 +403,7 @@ class TrainingManagementControllerTest {
                     "enrollEmployee", TrainingEnrollmentRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "enrollEmployee must have @RequiresPermission");
-            Assertions.assertEquals(Permission.TRAINING_ENROLL, annotation.value());
+            Assertions.assertEquals(Permission.TRAINING_ENROLL, annotation.value()[0]);
         }
 
         @Test
@@ -409,7 +413,7 @@ class TrainingManagementControllerTest {
                     "updateEnrollmentStatus", UUID.class, TrainingEnrollment.EnrollmentStatus.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "updateEnrollmentStatus must have @RequiresPermission");
-            Assertions.assertEquals(Permission.TRAINING_APPROVE, annotation.value());
+            Assertions.assertEquals(Permission.TRAINING_APPROVE, annotation.value()[0]);
         }
     }
 }

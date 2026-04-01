@@ -19,7 +19,8 @@ import com.hrms.common.security.Permission;
 import com.hrms.infrastructure.user.repository.ImplicitRoleRuleRepository;
 import com.hrms.infrastructure.user.repository.ImplicitUserRoleRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -52,6 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(ImplicitRoleRuleController.class)
 @ContextConfiguration(classes = {ImplicitRoleRuleController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -86,8 +88,6 @@ class ImplicitRoleRuleControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     @Autowired
     private MockMvc mockMvc;
@@ -149,7 +149,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -159,7 +159,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -170,7 +170,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -181,7 +181,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -191,7 +191,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -201,7 +201,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -212,7 +212,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
 
         @Test
@@ -223,7 +223,7 @@ class ImplicitRoleRuleControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
         }
     }
 

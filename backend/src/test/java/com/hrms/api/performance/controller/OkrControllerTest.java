@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.performance.dto.*;
 import com.hrms.application.performance.service.OkrService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.performance.KeyResult;
 import com.hrms.domain.performance.Objective;
@@ -36,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(OkrController.class)
 @ContextConfiguration(classes = {OkrController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -44,6 +47,7 @@ class OkrControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -610,7 +614,7 @@ class OkrControllerTest {
             var method = OkrController.class.getMethod("createObjective", ObjectiveRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createObjective must have @RequiresPermission");
-            Assertions.assertEquals(Permission.OKR_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.OKR_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -620,7 +624,7 @@ class OkrControllerTest {
                     ObjectiveLevel.class, ObjectiveStatus.class, UUID.class, UUID.class, Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getObjectives must have @RequiresPermission");
-            Assertions.assertEquals(Permission.OKR_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.OKR_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -629,7 +633,7 @@ class OkrControllerTest {
             var method = OkrController.class.getMethod("approveObjective", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "approveObjective must have @RequiresPermission");
-            Assertions.assertEquals(Permission.OKR_APPROVE, annotation.value());
+            Assertions.assertEquals(Permission.OKR_APPROVE, annotation.value()[0]);
         }
 
         @Test
@@ -638,7 +642,7 @@ class OkrControllerTest {
             var method = OkrController.class.getMethod("getCompanyObjectives");
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getCompanyObjectives must have @RequiresPermission");
-            Assertions.assertEquals(Permission.OKR_VIEW_ALL, annotation.value());
+            Assertions.assertEquals(Permission.OKR_VIEW_ALL, annotation.value()[0]);
         }
     }
 }

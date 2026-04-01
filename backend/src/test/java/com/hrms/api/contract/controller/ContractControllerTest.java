@@ -296,12 +296,13 @@ class ContractControllerTest {
                     .status(ContractStatus.ACTIVE)
                     .build();
 
-            when(contractService.getExpiringContracts(30)).thenReturn(List.of(dto));
+            when(contractService.getExpiringContracts(eq(30), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(dto)));
 
             mockMvc.perform(get(BASE_URL + "/expiring")
                             .param("days", "30"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].title").value("Expiring Soon"));
+                    .andExpect(jsonPath("$.content[0].title").value("Expiring Soon"));
         }
 
         @Test
@@ -336,12 +337,13 @@ class ContractControllerTest {
             Map<String, Object> v1 = Map.of("versionNumber", 1, "changeNotes", "Initial");
             Map<String, Object> v2 = Map.of("versionNumber", 2, "changeNotes", "Updated");
 
-            when(contractService.getVersionHistory(contractId)).thenReturn(List.of(v2, v1));
+            when(contractService.getVersionHistory(eq(contractId), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(v2, v1)));
 
             mockMvc.perform(get(BASE_URL + "/" + contractId + "/versions"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(2));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(2));
         }
     }
 
@@ -435,11 +437,12 @@ class ContractControllerTest {
                     .status(ContractStatus.EXPIRED)
                     .build();
 
-            when(contractService.getExpiredContracts()).thenReturn(List.of(dto));
+            when(contractService.getExpiredContracts(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(dto)));
 
             mockMvc.perform(get(BASE_URL + "/expired"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].status").value("EXPIRED"));
+                    .andExpect(jsonPath("$.content[0].status").value("EXPIRED"));
         }
 
         @Test
@@ -452,11 +455,12 @@ class ContractControllerTest {
                     .status(ContractStatus.ACTIVE)
                     .build();
 
-            when(contractService.getActiveContracts()).thenReturn(List.of(dto));
+            when(contractService.getActiveContracts(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(dto)));
 
             mockMvc.perform(get(BASE_URL + "/active"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].status").value("ACTIVE"));
+                    .andExpect(jsonPath("$.content[0].status").value("ACTIVE"));
         }
 
         @Test
@@ -469,11 +473,12 @@ class ContractControllerTest {
                     .status(ContractStatus.ACTIVE)
                     .build();
 
-            when(contractService.getExpiringContracts(7)).thenReturn(List.of(dto));
+            when(contractService.getExpiringContracts(eq(7), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(dto)));
 
             mockMvc.perform(get(BASE_URL + "/expiring").param("days", "7"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content.length()").value(1));
         }
     }
 

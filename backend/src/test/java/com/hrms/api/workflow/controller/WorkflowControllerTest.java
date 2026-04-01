@@ -7,7 +7,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.domain.workflow.WorkflowExecution;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(WorkflowController.class)
 @ContextConfiguration(classes = {WorkflowController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -58,8 +60,6 @@ class WorkflowControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/workflow";
 
@@ -632,7 +632,7 @@ class WorkflowControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains("WORKFLOW:MANAGE"));
+                    java.util.Arrays.asList(annotation.value()[0]).contains("WORKFLOW:MANAGE"));
         }
 
         @Test
@@ -642,7 +642,7 @@ class WorkflowControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains("WORKFLOW:VIEW"));
+                    java.util.Arrays.asList(annotation.value()[0]).contains("WORKFLOW:VIEW"));
         }
 
         @Test
@@ -653,7 +653,7 @@ class WorkflowControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.WORKFLOW_EXECUTE));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.WORKFLOW_EXECUTE));
         }
     }
 }

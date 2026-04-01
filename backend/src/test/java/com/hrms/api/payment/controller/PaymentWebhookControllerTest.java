@@ -1,7 +1,10 @@
 package com.hrms.api.payment.controller;
 
 import com.hrms.application.payment.service.PaymentService;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.common.exception.FeatureDisabledException;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.PaymentFeatureGuard;
 import com.hrms.common.security.TenantFilter;
@@ -35,7 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * - Health endpoint returns 200 when payments are enabled
  */
 @WebMvcTest(PaymentWebhookController.class)
-@ContextConfiguration(classes = {PaymentWebhookController.class})
+@ContextConfiguration(classes = {PaymentWebhookController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -44,6 +48,7 @@ class PaymentWebhookControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -79,14 +84,14 @@ class PaymentWebhookControllerTest {
             doNothing().when(paymentService).processWebhook(eq("razorpay"), eq(VALID_PAYLOAD),
                     eq(VALID_SIGNATURE));
 
-            mockMvc.perform(post(BASE_URL + "/razorpay")
+            mockMvc.perform(post(BASE_URL + "/generic-provider")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Signature", VALID_SIGNATURE)
                             .content(VALID_PAYLOAD))
                     .andExpect(status().isOk())
                     .andExpect(content().string("Webhook processed successfully"));
 
-            verify(paymentService).processWebhook(eq("razorpay"), eq(VALID_PAYLOAD),
+            verify(paymentService).processWebhook(eq("generic-provider"), eq(VALID_PAYLOAD),
                     eq(VALID_SIGNATURE));
         }
 
@@ -95,7 +100,7 @@ class PaymentWebhookControllerTest {
         void shouldReturn401WhenNoSignatureHeader() throws Exception {
             doNothing().when(paymentFeatureGuard).requirePaymentsEnabled();
 
-            mockMvc.perform(post(BASE_URL + "/razorpay")
+            mockMvc.perform(post(BASE_URL + "/generic-provider")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(VALID_PAYLOAD))
                     .andExpect(status().isUnauthorized())
@@ -172,7 +177,7 @@ class PaymentWebhookControllerTest {
 
             MvcResult result = mockMvc.perform(post(BASE_URL + "/razorpay")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-Signature", VALID_SIGNATURE)
+                            .header("X-Razorpay-Signature", VALID_SIGNATURE)
                             .content(VALID_PAYLOAD))
                     .andExpect(status().isInternalServerError())
                     .andReturn();

@@ -6,6 +6,8 @@ import com.hrms.api.recognition.dto.RecognitionRequest;
 import com.hrms.api.recognition.dto.RecognitionResponse;
 import com.hrms.application.recognition.service.RecognitionService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.recognition.EmployeePoints;
 import com.hrms.domain.recognition.Milestone;
@@ -36,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(RecognitionController.class)
 @ContextConfiguration(classes = {RecognitionController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -44,6 +47,7 @@ class RecognitionControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -479,7 +483,7 @@ class RecognitionControllerTest {
                     "giveRecognition", RecognitionRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "giveRecognition must have @RequiresPermission");
-            Assertions.assertEquals(Permission.RECOGNITION_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.RECOGNITION_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -488,7 +492,7 @@ class RecognitionControllerTest {
             var method = RecognitionController.class.getMethod("getRecognition", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getRecognition must have @RequiresPermission");
-            Assertions.assertEquals(Permission.RECOGNITION_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.RECOGNITION_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -497,7 +501,7 @@ class RecognitionControllerTest {
             var method = RecognitionController.class.getMethod("getLeaderboard", int.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getLeaderboard must have @RequiresPermission");
-            Assertions.assertEquals(Permission.RECOGNITION_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.RECOGNITION_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -506,7 +510,7 @@ class RecognitionControllerTest {
             var method = RecognitionController.class.getMethod("getUpcomingMilestones", int.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getUpcomingMilestones must have @RequiresPermission");
-            Assertions.assertEquals(Permission.MILESTONE_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.MILESTONE_VIEW, annotation.value()[0]);
         }
     }
 }

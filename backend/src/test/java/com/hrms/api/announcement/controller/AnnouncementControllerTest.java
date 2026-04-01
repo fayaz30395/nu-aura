@@ -9,7 +9,8 @@ import com.hrms.common.security.*;
 import com.hrms.domain.announcement.Announcement.AnnouncementCategory;
 import com.hrms.domain.announcement.Announcement.AnnouncementPriority;
 import com.hrms.domain.announcement.Announcement.TargetAudience;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AnnouncementController.class)
 @ContextConfiguration(classes = {AnnouncementController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -61,8 +63,6 @@ class AnnouncementControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     private static final String BASE_URL = "/api/v1/announcements";
 
@@ -472,7 +472,7 @@ class AnnouncementControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
 
         @Test
@@ -483,7 +483,7 @@ class AnnouncementControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
 
         @Test
@@ -494,7 +494,7 @@ class AnnouncementControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.EMPLOYEE_VIEW_SELF));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.EMPLOYEE_VIEW_SELF));
         }
 
         @Test
@@ -505,7 +505,7 @@ class AnnouncementControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
         }
     }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.integration.dto.*;
 import com.hrms.common.security.*;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.infrastructure.payment.PaymentGatewayService;
 import com.hrms.infrastructure.payment.PaymentRequest;
 import com.hrms.infrastructure.payment.PaymentResponse;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(IntegrationController.class)
 @ContextConfiguration(classes = {IntegrationController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -41,6 +44,7 @@ class IntegrationControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -437,7 +441,7 @@ class IntegrationControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getSmsStatus must have @RequiresPermission");
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN),
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN),
                     "getSmsStatus must require SYSTEM_ADMIN permission"
             );
         }
@@ -449,7 +453,7 @@ class IntegrationControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "testSms must have @RequiresPermission");
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN)
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN)
             );
         }
 
@@ -460,7 +464,7 @@ class IntegrationControllerTest {
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getAllIntegrationsStatus must have @RequiresPermission");
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()).contains(Permission.SYSTEM_ADMIN)
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN)
             );
         }
     }

@@ -10,7 +10,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.TenantFilter;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(AuthController.class)
 @ContextConfiguration(classes = {AuthController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class AuthControllerSecurityTest {
@@ -75,8 +77,6 @@ class AuthControllerSecurityTest {
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     @BeforeEach
     void setUp() {

@@ -15,7 +15,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.user.RoleScope;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AttendanceController.class)
 @ContextConfiguration(classes = {AttendanceController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -79,8 +81,6 @@ class AttendanceControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     private UUID attendanceId;
     private UUID employeeId;
@@ -211,10 +211,10 @@ class AttendanceControllerTest {
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee already checked in today"));
 
-            assertThrows(Exception.class, () ->
-                    mockMvc.perform(post("/api/v1/attendance/check-in")
+            mockMvc.perform(post("/api/v1/attendance/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))));
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -273,10 +273,10 @@ class AttendanceControllerTest {
                     any(LocalDate.class)))
                     .thenThrow(new IllegalArgumentException("Employee has not checked in today"));
 
-            assertThrows(Exception.class, () ->
-                    mockMvc.perform(post("/api/v1/attendance/check-out")
+            mockMvc.perform(post("/api/v1/attendance/check-out")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))));
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -309,23 +309,25 @@ class AttendanceControllerTest {
             List<AttendanceRecord> records = new ArrayList<>();
             records.add(attendanceRecord);
 
+            Page<AttendanceRecord> page = new PageImpl<>(records, PageRequest.of(0, 20), 1);
             when(attendanceService.getAttendanceByDateRange(
                     eq(employeeId),
                     any(LocalDate.class),
-                    any(LocalDate.class)))
-                    .thenReturn(records);
+                    any(LocalDate.class),
+                    any(Pageable.class)))
+                    .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/attendance/employee/{employeeId}/range", employeeId)
                             .param("startDate", "2024-03-01")
                             .param("endDate", "2024-03-31"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content.length()").value(1));
 
             verify(attendanceService).getAttendanceByDateRange(
                     eq(employeeId),
                     any(LocalDate.class),
-                    any(LocalDate.class));
+                    any(LocalDate.class),
+                    any(Pageable.class));
         }
 
         @Test
@@ -378,18 +380,19 @@ class AttendanceControllerTest {
             List<AttendanceRecord> records = new ArrayList<>();
             records.add(attendanceRecord);
 
+            Page<AttendanceRecord> page = new PageImpl<>(records, PageRequest.of(0, 20), 1);
             when(attendanceService.getAttendanceByDateRange(
                     any(UUID.class),
                     any(LocalDate.class),
-                    any(LocalDate.class)))
-                    .thenReturn(records);
+                    any(LocalDate.class),
+                    any(Pageable.class)))
+                    .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/attendance/my-attendance")
                             .param("startDate", "2024-03-01")
                             .param("endDate", "2024-03-31"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1));
+                    .andExpect(jsonPath("$.content.length()").value(1));
         }
     }
 

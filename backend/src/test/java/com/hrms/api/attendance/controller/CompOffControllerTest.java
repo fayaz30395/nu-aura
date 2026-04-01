@@ -54,7 +54,10 @@ class CompOffControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new com.hrms.common.exception.GlobalExceptionHandler(
+                        new io.micrometer.core.instrument.simple.SimpleMeterRegistry()))
+                .build();
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -129,7 +132,7 @@ class CompOffControllerTest {
             mockMvc.perform(post("/api/v1/comp-off/request")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -281,7 +284,7 @@ class CompOffControllerTest {
             mockMvc.perform(post("/api/v1/comp-off/{requestId}/approve", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -299,7 +302,7 @@ class CompOffControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_REGULARIZE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_REGULARIZE);
         }
 
         @Test
@@ -310,7 +313,7 @@ class CompOffControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            List<String> perms = Arrays.asList(annotation.value());
+            List<String> perms = Arrays.asList(annotation.value()[0]);
             assertThat(perms).containsAnyOf(
                     Permission.ATTENDANCE_VIEW_ALL,
                     Permission.ATTENDANCE_VIEW_TEAM);
@@ -324,7 +327,7 @@ class CompOffControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -335,7 +338,7 @@ class CompOffControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -346,7 +349,7 @@ class CompOffControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
     }
 }

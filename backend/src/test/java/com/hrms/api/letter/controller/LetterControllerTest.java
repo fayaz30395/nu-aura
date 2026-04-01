@@ -1,9 +1,12 @@
 package com.hrms.api.letter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.api.letter.dto.*;
 import com.hrms.application.letter.service.LetterPdfService;
 import com.hrms.application.letter.service.LetterService;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.letter.GeneratedLetter.LetterStatus;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
@@ -36,7 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LetterController.class)
-@ContextConfiguration(classes = {LetterController.class, LetterControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {LetterController.class, GlobalExceptionHandler.class, LetterControllerTest.TestConfig.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -50,6 +54,7 @@ class LetterControllerTest {
             return () -> Optional.of(UUID.randomUUID());
         }
     }
+
 
     @Autowired
     private MockMvc mockMvc;

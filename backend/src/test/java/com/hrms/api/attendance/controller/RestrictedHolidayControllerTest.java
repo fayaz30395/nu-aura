@@ -55,7 +55,10 @@ class RestrictedHolidayControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new com.hrms.common.exception.GlobalExceptionHandler(
+                        new io.micrometer.core.instrument.simple.SimpleMeterRegistry()))
+                .build();
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -455,7 +458,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_MANAGE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_MANAGE);
         }
 
         @Test
@@ -466,7 +469,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_MANAGE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_MANAGE);
         }
 
         @Test
@@ -477,7 +480,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_MANAGE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_MANAGE);
         }
 
         @Test
@@ -488,7 +491,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_APPROVE);
         }
 
         @Test
@@ -499,7 +502,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_APPROVE);
 
             // Verify @Valid is present on SelectionActionRequest parameter (index 1)
             java.lang.annotation.Annotation[] paramAnnotations =
@@ -519,7 +522,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_REQUEST);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_REQUEST);
         }
 
         @Test
@@ -530,7 +533,7 @@ class RestrictedHolidayControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.LEAVE_VIEW_SELF);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.LEAVE_VIEW_SELF);
         }
     }
 
@@ -562,7 +565,7 @@ class RestrictedHolidayControllerTest {
             mockMvc.perform(post("/api/v1/restricted-holidays")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -572,7 +575,7 @@ class RestrictedHolidayControllerTest {
                     .thenThrow(new IllegalStateException("Annual quota exceeded"));
 
             mockMvc.perform(post("/api/v1/restricted-holidays/{holidayId}/select", HOLIDAY_ID))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isBadRequest());
         }
     }
 }

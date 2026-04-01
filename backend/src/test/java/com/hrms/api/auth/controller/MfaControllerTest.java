@@ -168,7 +168,7 @@ class MfaControllerTest {
         void verifyMfa_ValidCode_EnablesMfa() throws Exception {
             MfaVerifyRequest request = MfaVerifyRequest.builder().code("123456").build();
 
-            doNothing().when(mfaService).verifyAndEnableMfa(eq(USER_ID), eq("123456"));
+            when(mfaService.verifyAndEnableMfa(eq(USER_ID), eq("123456"))).thenReturn(true);
             when(mfaService.getMfaStatus(USER_ID)).thenReturn(enabledStatus);
 
             mockMvc.perform(post("/api/v1/auth/mfa/verify")
@@ -230,7 +230,7 @@ class MfaControllerTest {
         void verifyMfa_BackupCode_ReturnsSuccess() throws Exception {
             MfaVerifyRequest request = MfaVerifyRequest.builder().code("BACKUP-001").build();
 
-            doNothing().when(mfaService).verifyAndEnableMfa(eq(USER_ID), eq("BACKUP-001"));
+            when(mfaService.verifyAndEnableMfa(eq(USER_ID), eq("BACKUP-001"))).thenReturn(true);
             when(mfaService.getMfaStatus(USER_ID)).thenReturn(enabledStatus);
 
             mockMvc.perform(post("/api/v1/auth/mfa/verify")

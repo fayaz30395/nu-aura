@@ -1,12 +1,15 @@
 package com.hrms.api.loan.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.api.loan.dto.ApproveLoanRequest;
 import com.hrms.api.loan.dto.CreateLoanRequest;
 import com.hrms.api.loan.dto.EmployeeLoanDto;
 import com.hrms.api.loan.dto.RecordRepaymentRequest;
 import com.hrms.api.loan.dto.RejectLoanRequest;
 import com.hrms.application.loan.service.LoanService;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -48,7 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * permission annotation presence on every endpoint.
  */
 @WebMvcTest(LoanController.class)
-@ContextConfiguration(classes = {LoanController.class})
+@ContextConfiguration(classes = {LoanController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -57,6 +61,7 @@ class LoanControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -174,7 +179,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_CREATE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_CREATE);
         }
     }
 
@@ -208,7 +213,7 @@ class LoanControllerTest {
                     .thenThrow(new EntityNotFoundException("Loan not found"));
 
             mockMvc.perform(get(BASE_URL + "/{id}", UUID.randomUUID()))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(status().isNotFound());
         }
 
         @Test
@@ -225,7 +230,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_VIEW);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_VIEW);
         }
     }
 
@@ -289,7 +294,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_APPROVE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_APPROVE);
         }
     }
 
@@ -362,7 +367,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_APPROVE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_APPROVE);
         }
     }
 
@@ -400,7 +405,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_MANAGE);
         }
     }
 
@@ -461,7 +466,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_MANAGE);
         }
     }
 
@@ -498,7 +503,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_UPDATE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_UPDATE);
         }
     }
 
@@ -534,7 +539,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_VIEW);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_VIEW);
         }
     }
 
@@ -567,7 +572,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_APPROVE);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_APPROVE);
         }
     }
 
@@ -616,7 +621,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_VIEW_ALL);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_VIEW_ALL);
         }
     }
 
@@ -665,7 +670,7 @@ class LoanControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.LOAN_VIEW_ALL);
+            assertThat(annotation.value()[0]).contains(Permission.LOAN_VIEW_ALL);
         }
     }
 }

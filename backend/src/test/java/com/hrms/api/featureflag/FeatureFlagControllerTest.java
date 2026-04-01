@@ -6,7 +6,8 @@ import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.user.RoleScope;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(FeatureFlagController.class)
 @ContextConfiguration(classes = {FeatureFlagController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -65,8 +67,6 @@ class FeatureFlagControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @MockitoBean
-    private MeterRegistry meterRegistry;
 
     @Autowired
     private MockMvc mockMvc;
@@ -119,7 +119,7 @@ class FeatureFlagControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -129,7 +129,7 @@ class FeatureFlagControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -140,7 +140,7 @@ class FeatureFlagControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -150,7 +150,7 @@ class FeatureFlagControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test
@@ -170,7 +170,7 @@ class FeatureFlagControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()).contains(Permission.SYSTEM_ADMIN);
+            assertThat(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN);
         }
 
         @Test

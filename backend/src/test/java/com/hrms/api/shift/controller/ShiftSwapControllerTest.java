@@ -316,7 +316,7 @@ class ShiftSwapControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_REGULARIZE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_REGULARIZE);
         }
 
         @Test
@@ -327,7 +327,7 @@ class ShiftSwapControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_REGULARIZE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_REGULARIZE);
         }
 
         @Test
@@ -338,7 +338,7 @@ class ShiftSwapControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -349,7 +349,7 @@ class ShiftSwapControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_APPROVE);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_APPROVE);
         }
 
         @Test
@@ -360,7 +360,7 @@ class ShiftSwapControllerTest {
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(Arrays.asList(annotation.value())).contains(Permission.ATTENDANCE_VIEW_ALL);
+            assertThat(Arrays.asList(annotation.value()[0])).contains(Permission.ATTENDANCE_VIEW_ALL);
         }
     }
 }

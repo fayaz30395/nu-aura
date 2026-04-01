@@ -17,6 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.SpringDataJacksonConfiguration;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -27,6 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -45,9 +52,15 @@ class LWFControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(lwfController).build();
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        // Register Spring Data's page serialization module
+        objectMapper.registerModule(new SpringDataJacksonConfiguration().pageModule());
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(objectMapper);
+        mockMvc = MockMvcBuilders.standaloneSetup(lwfController)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .setMessageConverters(converter)
+                .build();
     }
 
     @Test
@@ -66,16 +79,17 @@ class LWFControllerTest {
                 .effectiveFrom(LocalDate.of(2024, 4, 1))
                 .build();
 
-        when(lwfService.getStateConfigurations()).thenReturn(List.of(config));
+        when(lwfService.getStateConfigurations(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(config)));
 
         mockMvc.perform(get("/api/v1/payroll/lwf/configurations")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].stateCode").value("MH"))
-                .andExpect(jsonPath("$[0].stateName").value("Maharashtra"))
-                .andExpect(jsonPath("$[0].employeeContribution").value(25.00))
-                .andExpect(jsonPath("$[0].employerContribution").value(75.00))
-                .andExpect(jsonPath("$[0].frequency").value("HALF_YEARLY"));
+                .andExpect(jsonPath("$.content[0].stateCode").value("MH"))
+                .andExpect(jsonPath("$.content[0].stateName").value("Maharashtra"))
+                .andExpect(jsonPath("$.content[0].employeeContribution").value(25.00))
+                .andExpect(jsonPath("$.content[0].employerContribution").value(75.00))
+                .andExpect(jsonPath("$.content[0].frequency").value("HALF_YEARLY"));
     }
 
     @Test
@@ -117,14 +131,15 @@ class LWFControllerTest {
     @Test
     @DisplayName("GET /deductions returns deductions for period")
     void getDeductions() throws Exception {
-        when(lwfService.getDeductionsByPeriod(6, 2025)).thenReturn(Collections.emptyList());
+        when(lwfService.getDeductionsByPeriod(eq(6), eq(2025), any(Pageable.class)))
+                .thenReturn(Page.empty());
 
         mockMvc.perform(get("/api/v1/payroll/lwf/deductions")
                         .param("month", "6")
                         .param("year", "2025")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test

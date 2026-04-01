@@ -1,5 +1,8 @@
 package com.hrms.api.document.controller;
 
+import com.hrms.common.exception.GlobalExceptionHandler;
+import org.springframework.context.annotation.Import;
+import com.hrms.common.config.TestMeterRegistryConfig;
 import com.hrms.application.document.service.FileStorageService;
 import com.hrms.application.document.service.FileStorageService.FileUploadResult;
 import com.hrms.common.security.*;
@@ -32,7 +35,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(FileUploadController.class)
-@ContextConfiguration(classes = {FileUploadController.class, FileUploadControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {FileUploadController.class, GlobalExceptionHandler.class, FileUploadControllerTest.TestConfig.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -46,6 +50,7 @@ class FileUploadControllerTest {
             return () -> Optional.of(UUID.randomUUID());
         }
     }
+
 
     @Autowired
     private MockMvc mockMvc;

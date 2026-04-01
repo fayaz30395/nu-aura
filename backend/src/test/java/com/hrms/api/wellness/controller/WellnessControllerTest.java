@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.wellness.dto.*;
 import com.hrms.application.wellness.service.WellnessService;
 import com.hrms.common.exception.GlobalExceptionHandler;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import org.springframework.context.annotation.Import;
 import com.hrms.common.security.*;
 import com.hrms.domain.wellness.HealthLog.MetricType;
 import org.junit.jupiter.api.*;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(WellnessController.class)
 @ContextConfiguration(classes = {WellnessController.class, GlobalExceptionHandler.class})
+@Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -38,6 +41,7 @@ class WellnessControllerTest {
 
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -480,7 +484,7 @@ class WellnessControllerTest {
             var method = WellnessController.class.getMethod("getDashboard");
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getDashboard must have @RequiresPermission");
-            Assertions.assertEquals(Permission.WELLNESS_VIEW, annotation.value());
+            Assertions.assertEquals(Permission.WELLNESS_VIEW, annotation.value()[0]);
         }
 
         @Test
@@ -489,7 +493,7 @@ class WellnessControllerTest {
             var method = WellnessController.class.getMethod("createProgram", WellnessProgramDto.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "createProgram must have @RequiresPermission");
-            Assertions.assertEquals(Permission.WELLNESS_MANAGE, annotation.value());
+            Assertions.assertEquals(Permission.WELLNESS_MANAGE, annotation.value()[0]);
         }
 
         @Test
@@ -499,7 +503,7 @@ class WellnessControllerTest {
                     "joinChallenge", UUID.class, UUID.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "joinChallenge must have @RequiresPermission");
-            Assertions.assertEquals(Permission.WELLNESS_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.WELLNESS_CREATE, annotation.value()[0]);
         }
 
         @Test
@@ -508,7 +512,7 @@ class WellnessControllerTest {
             var method = WellnessController.class.getMethod("logHealth", HealthLogDto.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "logHealth must have @RequiresPermission");
-            Assertions.assertEquals(Permission.WELLNESS_CREATE, annotation.value());
+            Assertions.assertEquals(Permission.WELLNESS_CREATE, annotation.value()[0]);
         }
     }
 }
