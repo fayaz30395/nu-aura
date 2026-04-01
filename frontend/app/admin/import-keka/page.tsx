@@ -332,7 +332,7 @@ export default function KekaImportPage() {
           <div className="mb-8">
             <button
               onClick={() => router.push('/admin')}
-              className="flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] mb-4"
+              className="flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Admin
@@ -366,7 +366,8 @@ export default function KekaImportPage() {
               </div>
               <button
                 onClick={() => setError(null)}
-                className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200 ml-2"
+                className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200 ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close error message"
               >
                 ×
               </button>

@@ -239,14 +239,14 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
           <div className="flex gap-3">
             <button
               onClick={handleReScan}
-              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
               <RotateCcw className="w-4 h-4" />
               Try Again
             </button>
             <button
               onClick={onCancel}
-              className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors"
+              className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
               Cancel
             </button>
@@ -335,21 +335,21 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
           <div className="flex gap-3 justify-end pt-2">
             <button
               onClick={handleReScan}
-              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
               <RotateCcw className="w-4 h-4" />
               Re-scan
             </button>
             <button
               onClick={onCancel}
-              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
               <X className="w-4 h-4" />
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
               <CheckCircle className="w-4 h-4" />
               Confirm &amp; Fill

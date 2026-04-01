@@ -86,7 +86,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({ toast, on
         {toast.action && (
           <button
             onClick={toast.action.onClick}
-            className="mt-2 text-sm font-medium underline hover:no-underline"
+            className="mt-2 text-sm font-medium underline hover:no-underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
             {toast.action.label}
           </button>
@@ -94,7 +94,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({ toast, on
       </div>
       <button
         onClick={onRemove}
-        className="flex-shrink-0 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+        className="flex-shrink-0 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
         <X className="h-4 w-4" />
       </button>

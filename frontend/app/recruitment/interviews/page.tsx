@@ -102,7 +102,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-50 transition-colors ${
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   option.value === value ? 'bg-accent-50 text-accent-700' : 'text-[var(--text-primary)]'
                 }`}
               >
@@ -743,23 +743,26 @@ const formatDateTime = (dateString?: string): string => {
                             {interview.status === 'SCHEDULED' && (
                               <button
                                 onClick={() => handleProvideFeedback(interview)}
-                                className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 title="Provide Feedback"
+                                aria-label="Provide feedback"
                               >
                                 <CheckCircle className="h-4 w-4" />
                               </button>
                             )}
                             <button
                               onClick={() => handleEdit(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               title="Edit"
+                              aria-label="Edit interview"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
-                              className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               title="Delete"
+                              aria-label="Delete interview"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -783,7 +786,7 @@ const formatDateTime = (dateString?: string): string => {
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -911,7 +914,7 @@ const formatDateTime = (dateString?: string): string => {
                             });
                           }
                         }}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent-500/20 ${
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                           createMeetToggle ? 'bg-accent-500' : 'bg-[var(--bg-secondary)]'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
@@ -974,7 +977,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="button"
                         onClick={handleGenerateQuestions}
                         disabled={generateQuestionsMutation.isPending}
-                        className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         <Sparkles className="h-3 w-3" />
                         Generate AI Questions
@@ -1009,7 +1012,7 @@ const formatDateTime = (dateString?: string): string => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
-                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1029,7 +1032,7 @@ const formatDateTime = (dateString?: string): string => {
                           key={rating}
                           type="button"
                           onClick={() => setValueFeedback('rating', rating)}
-                          className={`p-2 rounded-xl transition-colors ${
+                          className={`p-2 rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                             watchFeedback('rating') === rating
                               ? 'bg-warning-100 text-warning-600'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-warning-500'
@@ -1114,7 +1117,7 @@ const formatDateTime = (dateString?: string): string => {
                     <Sparkles className="h-5 w-5 text-accent-500" />
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
-                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     <X className="h-6 w-6" />
                   </button>
                 </div>

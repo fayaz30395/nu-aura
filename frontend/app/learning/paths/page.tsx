@@ -263,7 +263,7 @@ export default function LearningPathsPage() {
                   {path.isEnrolled ? (
                     <button
                       onClick={() => router.push(`/learning/paths/${path.id}`)}
-                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {path.status === 'COMPLETED' ? (
                         <>
@@ -279,7 +279,7 @@ export default function LearningPathsPage() {
                     <button
                       onClick={() => handleEnrollPath(path.id)}
                       disabled={enrollPathMutation.isPending}
-                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {enrollPathMutation.isPending ? (
                         <>
@@ -314,7 +314,7 @@ export default function LearningPathsPage() {
                   setSearchQuery('');
                   setSelectedDifficulty('ALL');
                 }}
-                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm"
+                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Clear Filters
               </button>

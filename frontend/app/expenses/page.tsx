@@ -491,7 +491,7 @@ export default function ExpenseClaims() {
             {(filters.category !== 'ALL' || filters.amountMin || filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
+                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Clear filters
               </button>
@@ -663,7 +663,7 @@ export default function ExpenseClaims() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {isSubmitting ? 'Creating...' : 'Create Claim'}
                   </button>
@@ -699,7 +699,7 @@ export default function ExpenseClaims() {
                 <button
                   onClick={handleBulkApprove}
                   disabled={bulkProcessing}
-                  className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+                  className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <CheckCircle className="w-4 h-4" />
                   {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
@@ -991,7 +991,7 @@ export default function ExpenseClaims() {
             <button
               onClick={handleBulkReject}
               disabled={!bulkRejectReason.trim() || bulkProcessing}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <XCircle className="w-4 h-4" />
               {bulkProcessing ? 'Rejecting...' : `Reject ${selectedClaims.size} Claims`}
@@ -1063,7 +1063,7 @@ export default function ExpenseClaims() {
             <button
               onClick={handleRejectConfirm}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <XCircle className="w-4 h-4" />
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

@@ -147,7 +147,7 @@ export function TimeClockWidget({
         <button
           onClick={isCheckedIn ? onCheckOut : onCheckIn}
           disabled={isLoading}
-          className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 ${
+          className={`relative flex w-full items-center justify-center gap-2.5 rounded-xl py-4 px-4 text-sm font-semibold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
             isCheckedIn
               ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
               : 'text-white border-0'

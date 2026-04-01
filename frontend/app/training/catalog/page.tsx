@@ -251,7 +251,7 @@ export default function CourseCatalogPage() {
                 Try clearing the search or{' '}
                 <button
                   onClick={() => { setSearchQuery(''); setFilterMandatory(false); }}
-                  className="text-accent-600 hover:underline"
+                  className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   reset filters
                 </button>

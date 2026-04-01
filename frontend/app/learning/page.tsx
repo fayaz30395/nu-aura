@@ -116,19 +116,19 @@ export default function LearningPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
           >
             Course Catalog
           </button>
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
           >
             My Courses
           </button>
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
           >
             Certificates

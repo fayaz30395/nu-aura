@@ -311,7 +311,7 @@ export function TaskDetailsModal({
                   <button
                     onClick={isEditingProgress ? handleSaveProgress : handleStartEditProgress}
                     disabled={isSaving}
-                    className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1"
+                    className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                   >
                     {isEditingProgress ? (
                       <>
@@ -495,7 +495,7 @@ export function TaskDetailsModal({
       <ModalFooter>
         <button
           onClick={onClose}
-          className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+          className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
         >
           Close
         </button>

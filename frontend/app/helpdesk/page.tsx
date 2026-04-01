@@ -138,7 +138,7 @@ export default function HelpdeskPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/helpdesk/tickets')}
-            className="flex items-center justify-between card-interactive p-4 text-left"
+            className="flex items-center justify-between card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <div className="flex items-center gap-4">
               <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400" />

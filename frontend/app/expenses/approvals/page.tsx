@@ -129,7 +129,7 @@ export default function ExpenseApprovalsPage() {
                       <td className="px-4 py-4">
                         <button
                           onClick={() => router.push(`/expenses/${claim.id}`)}
-                          className="text-accent-700 hover:underline font-medium"
+                          className="text-accent-700 hover:underline font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         >
                           {claim.claimNumber}
                         </button>
@@ -150,23 +150,26 @@ export default function ExpenseApprovalsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => router.push(`/expenses/${claim.id}`)}
-                            className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors"
+                            className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="View details"
+                            aria-label="View expense details"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleApprove(claim.id)}
                             disabled={approveMutation.isPending}
-                            className="p-1.5 text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 rounded transition-colors"
+                            className="p-1.5 text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Approve"
+                            aria-label="Approve expense"
                           >
                             <CheckCircle className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => openReject(claim)}
-                            className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
+                            className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Reject"
+                            aria-label="Reject expense"
                           >
                             <XCircle className="w-4 h-4" />
                           </button>
@@ -201,13 +204,13 @@ export default function ExpenseApprovalsPage() {
               </div>
             </ModalBody>
             <ModalFooter>
-              <button onClick={() => setShowRejectModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors">
+              <button onClick={() => setShowRejectModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 Cancel
               </button>
               <button
                 onClick={handleReject}
                 disabled={!rejectReason.trim() || rejectMutation.isPending}
-                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject Claim'}
               </button>

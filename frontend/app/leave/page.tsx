@@ -157,13 +157,13 @@ export default function LeavePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Retry
               </button>
               <button
                 onClick={() => router.push('/me/dashboard')}
-                className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors text-sm font-medium border border-[var(--border-main)]"
+                className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors text-sm font-medium border border-[var(--border-main)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Go to Home
               </button>
@@ -195,9 +195,9 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               Apply for Leave
             </button>
           </PermissionGate>
@@ -275,10 +275,10 @@ export default function LeavePage() {
             </h2>
             <button
               onClick={() => router.push('/leave/my-leaves')}
-              className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 text-sm font-medium transition-colors"
+              className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               View All
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
           </div>
 
@@ -386,10 +386,10 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
+            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
@@ -404,10 +404,10 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
+            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
@@ -422,10 +422,10 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
+            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />

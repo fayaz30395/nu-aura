@@ -207,7 +207,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="absolute -bottom-3 left-1/2 -transurface-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-sm flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10"
+            className="absolute -bottom-3 left-1/2 -transurface-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-sm flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (

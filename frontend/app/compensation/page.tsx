@@ -280,8 +280,8 @@ export default function CompensationPage() {
           <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500" />
-                <p className="text-danger-700 dark:text-danger-400">{error}</p>
+                <AlertCircle className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                <p className="text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error}</p>
               </div>
             </CardContent>
           </Card>
@@ -295,7 +295,7 @@ export default function CompensationPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <DollarSign className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <DollarSign className="h-6 w-6 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Total Budget</p>
@@ -313,7 +313,7 @@ export default function CompensationPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Total Revisions</p>
@@ -331,7 +331,7 @@ export default function CompensationPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Pending Approvals</p>
@@ -349,7 +349,7 @@ export default function CompensationPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600" />
+                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-secondary)]">Avg. Increment</p>
@@ -601,8 +601,8 @@ export default function CompensationPage() {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <ArrowUpRight className="h-4 w-4 text-success-500" />
-                            <span className="text-success-600 dark:text-success-400 font-medium">
+                            <ArrowUpRight className="h-4 w-4 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                            <span className="text-success-600 dark:text-success-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               {revision.incrementPercentage?.toFixed(1)}%
                             </span>
                           </div>
@@ -635,7 +635,7 @@ export default function CompensationPage() {
             {pendingRevisions.length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
-                  <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-4" />
+                  <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                     All Caught Up!
                   </h3>
@@ -652,7 +652,7 @@ export default function CompensationPage() {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className="bg-warning-100 dark:bg-warning-900 rounded-full p-4">
-                            <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                            <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -681,13 +681,13 @@ export default function CompensationPage() {
                           <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
                           <div className="text-center">
                             <p className="text-sm text-[var(--text-muted)]">Proposed</p>
-                            <p className="text-lg font-bold text-success-600 dark:text-success-400">
+                            <p className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               ${revision.newSalary.toLocaleString()}
                             </p>
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-[var(--text-muted)]">Increment</p>
-                            <p className="text-lg font-medium text-success-600 dark:text-success-400">
+                            <p className="text-lg font-medium text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               +{revision.incrementPercentage?.toFixed(1)}%
                             </p>
                           </div>
@@ -725,7 +725,7 @@ export default function CompensationPage() {
               {selectedCycle && (
                 <>
                   <div className="rounded-lg bg-accent-100 dark:bg-accent-900 p-2">
-                    <PieChart className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                    <PieChart className="h-5 w-5 text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -793,7 +793,7 @@ export default function CompensationPage() {
                       <p className="text-sm text-[var(--text-muted)]">Minimum</p>
                     </div>
                     <div className="text-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
-                      <p className="text-2xl font-bold text-accent-700 dark:text-accent-400">
+                      <p className="text-2xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Target Avg</p>
@@ -819,19 +819,19 @@ export default function CompensationPage() {
                       <p className="text-sm text-[var(--text-muted)]">Total</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-accent-600 dark:text-accent-400">
+                      <p className="text-2xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsDrafted}
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Drafted</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-success-600 dark:text-success-400">
+                      <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApproved}
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Approved</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-accent-800 dark:text-accent-600">
+                      <p className="text-2xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApplied}
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Applied</p>
@@ -893,7 +893,7 @@ export default function CompensationPage() {
                   </div>
                   <div>
                     <p className="text-sm text-[var(--text-muted)] mb-1">Proposed Salary</p>
-                    <p className="text-2xl font-bold text-success-600 dark:text-success-400">
+                    <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       ${selectedRevision.newSalary.toLocaleString()}
                     </p>
                   </div>
@@ -902,19 +902,19 @@ export default function CompensationPage() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
                     <p className="text-sm text-[var(--text-muted)]">Increment Amount</p>
-                    <p className="text-xl font-bold text-success-600 dark:text-success-400">
+                    <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +${selectedRevision.incrementAmount?.toLocaleString()}
                     </p>
                   </div>
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
                     <p className="text-sm text-[var(--text-muted)]">Increment %</p>
-                    <p className="text-xl font-bold text-success-600 dark:text-success-400">
+                    <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +{selectedRevision.incrementPercentage?.toFixed(2)}%
                     </p>
                   </div>
                   <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-center">
                     <p className="text-sm text-[var(--text-muted)]">Performance</p>
-                    <p className="text-xl font-bold text-accent-600 dark:text-accent-400">
+                    <p className="text-xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {selectedRevision.performanceRating?.toFixed(1) || 'N/A'}
                     </p>
                   </div>
@@ -960,7 +960,7 @@ export default function CompensationPage() {
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
               <div className="w-full space-y-4 border-t border-[var(--border-main)] pt-4">
                 <label className="block text-sm font-medium text-[var(--text-secondary)]">
-                  Rejection Reason <span className="text-danger-600">*</span>
+                  Rejection Reason <span className="text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
                 </label>
                 <Textarea
                   placeholder="Please provide a reason for rejecting this revision..."
@@ -1001,7 +1001,7 @@ export default function CompensationPage() {
                       <PermissionGate permission={Permissions.COMPENSATION_APPROVE}>
                         <Button
                           variant="outline"
-                          className="text-danger-600 border-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/40 dark:text-danger-400 dark:border-danger-700"
+                          className="text-danger-600 border-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/40 dark:text-danger-400 dark:border-danger-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
                           onClick={() => setShowRejectionReasonInput(true)}
                         >

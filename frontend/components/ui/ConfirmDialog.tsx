@@ -130,11 +130,10 @@ export function ConfirmDialog({
               {message}
             </p>
             <div className="flex gap-2">
-              <button
-                ref={cancelButtonRef}
+              <button ref={cancelButtonRef}
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)]"
+                className="flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {cancelText}
               </button>

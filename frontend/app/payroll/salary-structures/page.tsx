@@ -46,7 +46,8 @@ export default function SalaryStructuresPage() {
               </Badge>
               <button
                 onClick={() => router.push('/payroll/salary-structures/create')}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors"
+                aria-label="Create new salary structure"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Plus className="w-4 h-4" />
                 Create Structure
@@ -96,7 +97,8 @@ export default function SalaryStructuresPage() {
                 </Text>
                 <button
                   onClick={() => router.push('/payroll/salary-structures/create')}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors mt-2"
+                  aria-label="Create new salary structure"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Plus className="w-4 h-4" />
                   Create Structure

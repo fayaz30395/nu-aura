@@ -64,7 +64,8 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
     <div className="skeuo-card overflow-hidden">
       <button
         onClick={() => setExpanded(p => !p)}
-        className="w-full flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors"
+        aria-label={`Toggle ${departmentName} department expansion`}
+        className="w-full flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />

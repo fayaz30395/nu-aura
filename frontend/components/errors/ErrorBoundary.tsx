@@ -79,7 +79,7 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
       </p>
       <button
         onClick={onReset}
-        className="px-4 py-1.5 text-xs font-medium rounded-lg bg-danger-100 dark:bg-danger-900/40 text-danger-700 dark:text-danger-300 hover:bg-danger-200 dark:hover:bg-danger-900/60 transition-colors"
+        className="px-4 py-1.5 text-xs font-medium rounded-lg bg-danger-100 dark:bg-danger-900/40 text-danger-700 dark:text-danger-300 hover:bg-danger-200 dark:hover:bg-danger-900/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
         Try again
       </button>

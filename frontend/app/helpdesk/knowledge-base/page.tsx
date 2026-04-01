@@ -432,7 +432,7 @@ export default function KnowledgeBasePage() {
                   onClick={() => {
                     setSelectedCategory('');
                   }}
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategory === ''
                       ? 'bg-accent-700 text-white'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -449,7 +449,7 @@ export default function KnowledgeBasePage() {
                       onClick={() => {
                         setSelectedCategory(category);
                       }}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         selectedCategory === category
                           ? 'bg-accent-700 text-white'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'

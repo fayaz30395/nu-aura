@@ -551,13 +551,15 @@ function CalendarContent() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={goToPrevious}
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        aria-label="Previous month"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                       <button
                         onClick={goToNext}
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        aria-label="Next month"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
@@ -571,7 +573,7 @@ function CalendarContent() {
                       <button
                         key={mode}
                         onClick={() => setViewMode(mode)}
-                        className={`px-4 py-1.5 text-sm font-medium capitalize transition-colors ${
+                        className={`px-4 py-1.5 text-sm font-medium capitalize transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                           viewMode === mode
                             ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
@@ -785,7 +787,8 @@ function CalendarContent() {
                   setShowEventModal(false);
                   setSelectedEvent(null);
                 }}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close event modal"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -898,7 +901,8 @@ function CalendarContent() {
               <h3 className="font-semibold text-[var(--text-primary)]">Create Event</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Close create modal"
               >
                 <X className="h-5 w-5" />
               </button>

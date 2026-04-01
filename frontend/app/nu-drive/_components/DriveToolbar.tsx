@@ -133,13 +133,13 @@ export function DriveToolbar({
               onClick={() => onViewModeChange('grid')}
               className={`p-2 ${viewMode === 'grid' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
-              <Grid className="h-4 w-4" />
+              <Grid className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
             <button
               onClick={() => onViewModeChange('list')}
               className={`p-2 ${viewMode === 'list' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
-              <List className="h-4 w-4" />
+              <List className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
           </div>
         </div>

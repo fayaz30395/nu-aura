@@ -138,7 +138,7 @@ export default function AnalyticsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-4 text-danger-600">
+              <div className="flex items-center gap-4 text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Analytics</CardTitle>
               </div>
@@ -242,9 +242,9 @@ export default function AnalyticsPage() {
                   </p>
                   <div className="flex items-center gap-1 mt-2">
                     {analytics.headcount.growthPercentage >= 0 ? (
-                      <TrendingUp className="h-4 w-4 text-success-600" />
+                      <TrendingUp className="h-4 w-4 text-success-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     ) : (
-                      <TrendingDown className="h-4 w-4 text-danger-600" />
+                      <TrendingDown className="h-4 w-4 text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     )}
                     <span
                       className={`text-sm font-medium ${
@@ -257,7 +257,7 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <Users className="h-6 w-6 text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
               </div>
             </CardContent>
@@ -272,12 +272,12 @@ export default function AnalyticsPage() {
                     {analytics.attendance.attendancePercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-success-600">{analytics.attendance.present}</span>
+                    <span className="text-sm text-success-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{analytics.attendance.present}</span>
                     <span className="text-xs text-[var(--text-muted)]">present today</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/30 flex items-center justify-center">
-                  <UserCheck className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <UserCheck className="h-6 w-6 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
               </div>
             </CardContent>
@@ -292,12 +292,12 @@ export default function AnalyticsPage() {
                     {analytics.leave.utilizationPercentage}%
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-warning-600">{analytics.leave.pending}</span>
+                    <span className="text-sm text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{analytics.leave.pending}</span>
                     <span className="text-xs text-[var(--text-muted)]">pending approvals</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
               </div>
             </CardContent>
@@ -313,14 +313,14 @@ export default function AnalyticsPage() {
                       {formatCurrency(analytics.payroll.currentMonth.total)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-accent-600">
+                      <span className="text-sm text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {analytics.payroll.currentMonth.processed}
                       </span>
                       <span className="text-xs text-[var(--text-muted)]">processed</span>
                     </div>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
-                    <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                    <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   </div>
                 </div>
               </CardContent>
@@ -334,7 +334,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-accent-700" />
+                <Activity className="h-5 w-5 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Attendance Trend
               </CardTitle>
               <CardDescription>Daily attendance over time</CardDescription>
@@ -356,7 +356,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-success-600" />
+                <UserCheck className="h-5 w-5 text-success-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Today&apos;s Attendance
               </CardTitle>
               <CardDescription>Current attendance breakdown</CardDescription>
@@ -381,7 +381,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-accent-800" />
+                <Users className="h-5 w-5 text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Department Distribution
               </CardTitle>
               <CardDescription>Employees by department</CardDescription>
@@ -403,7 +403,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-warning-600" />
+                <Calendar className="h-5 w-5 text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Leave by Type
               </CardTitle>
               <CardDescription>Leave requests by category</CardDescription>
@@ -427,7 +427,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-accent-600" />
+                <DollarSign className="h-5 w-5 text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Payroll Trend
               </CardTitle>
               <CardDescription>Monthly payroll costs over time</CardDescription>
@@ -445,7 +445,7 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-success-600" />
+                <TrendingUp className="h-5 w-5 text-success-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 Headcount Trend
               </CardTitle>
               <CardDescription>Employee count over time</CardDescription>
@@ -462,34 +462,34 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="bg-success-50 dark:bg-success-950/30 border-success-200 dark:border-success-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-success-700 dark:text-success-400">
+              <p className="text-3xl font-bold text-success-700 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {analytics.attendance.onTime}
               </p>
-              <p className="text-sm text-success-600 dark:text-success-500 mt-1">On Time Today</p>
+              <p className="text-sm text-success-600 dark:text-success-500 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">On Time Today</p>
             </CardContent>
           </Card>
           <Card className="bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-warning-700 dark:text-warning-400">
+              <p className="text-3xl font-bold text-warning-700 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {analytics.attendance.late}
               </p>
-              <p className="text-sm text-warning-600 dark:text-warning-500 mt-1">Late Today</p>
+              <p className="text-sm text-warning-600 dark:text-warning-500 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Late Today</p>
             </CardContent>
           </Card>
           <Card className="bg-accent-50 dark:bg-accent-950/30 border-accent-200 dark:border-accent-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-accent-700 dark:text-accent-400">
+              <p className="text-3xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {analytics.headcount.newJoinees}
               </p>
-              <p className="text-sm text-accent-600 dark:text-accent-500 mt-1">New Joiners</p>
+              <p className="text-sm text-accent-600 dark:text-accent-500 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">New Joiners</p>
             </CardContent>
           </Card>
           <Card className="bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-danger-700 dark:text-danger-400">
+              <p className="text-3xl font-bold text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {analytics.headcount.exits}
               </p>
-              <p className="text-sm text-danger-600 dark:text-danger-500 mt-1">Exits This Month</p>
+              <p className="text-sm text-danger-600 dark:text-danger-500 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Exits This Month</p>
             </CardContent>
           </Card>
         </div>
@@ -503,22 +503,22 @@ export default function AnalyticsPage() {
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-warning-600 dark:text-warning-400">
+                <p className="text-4xl font-bold text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {analytics.leave.pending}
                 </p>
-                <p className="text-sm text-warning-700 dark:text-warning-500 mt-2">Pending</p>
+                <p className="text-sm text-warning-700 dark:text-warning-500 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Pending</p>
               </div>
               <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-success-600 dark:text-success-400">
+                <p className="text-4xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {analytics.leave.approved}
                 </p>
-                <p className="text-sm text-success-700 dark:text-success-500 mt-2">Approved</p>
+                <p className="text-sm text-success-700 dark:text-success-500 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Approved</p>
               </div>
               <div className="text-center p-4 bg-danger-50 dark:bg-danger-950/30 rounded-xl">
-                <p className="text-4xl font-bold text-danger-600 dark:text-danger-400">
+                <p className="text-4xl font-bold text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {analytics.leave.rejected}
                 </p>
-                <p className="text-sm text-danger-700 dark:text-danger-500 mt-2">Rejected</p>
+                <p className="text-sm text-danger-700 dark:text-danger-500 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Rejected</p>
               </div>
             </div>
           </CardContent>

@@ -257,7 +257,7 @@ export default function CustomFieldsPage() {
         {error && (
           <div className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/20 border border-danger-400 dark:border-danger-600 text-danger-700 dark:text-danger-400 rounded-lg">
             {error}
-            <button onClick={() => setError(null)} className="ml-2 text-danger-900 dark:text-danger-200">
+            <button onClick={() => setError(null)} className="ml-2 text-danger-900 dark:text-danger-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close error message">
               &times;
             </button>
           </div>
@@ -291,7 +291,7 @@ export default function CustomFieldsPage() {
               setSelectedDefinition(null);
               setShowCreateModal(true);
             }}
-            className="btn-primary !h-auto"
+            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Create Custom Field
           </button>
@@ -356,11 +356,12 @@ export default function CustomFieldsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleToggleActive(definition)}
-                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                           definition.isActive
                             ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
                             : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
+                        aria-label={`Toggle ${definition.fieldName} status`}
                       >
                         {definition.isActive ? 'Active' : 'Inactive'}
                       </button>
@@ -368,13 +369,13 @@ export default function CustomFieldsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => openEditModal(definition)}
-                        className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-3"
+                        className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteField(definition)}
-                        className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300"
+                        className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         Delete
                       </button>
@@ -670,14 +671,14 @@ export default function CustomFieldsPage() {
                       setShowEditModal(false);
                       setSelectedDefinition(null);
                     }}
-                    className="btn-secondary"
+                    className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting || createMutation.isPending}
-                    className="btn-primary !h-auto disabled:opacity-50"
+                    className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {isSubmitting || createMutation.isPending ? 'Saving...' : (showCreateModal ? 'Create Field' : 'Update Field')}
                   </button>

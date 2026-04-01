@@ -268,7 +268,7 @@ export default function LeaveTypesManagementPage() {
               setEditingLeaveType(null);
               setShowModal(true);
             }}
-            className="btn-primary !h-auto"
+            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             + Add Leave Type
           </button>
@@ -678,14 +678,14 @@ export default function LeaveTypesManagementPage() {
                         setEditingLeaveType(null);
                         resetForm();
                       }}
-                      className="btn-secondary"
+                      className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                      className="btn-primary !h-auto disabled:opacity-50"
+                      className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave Type
                     </button>

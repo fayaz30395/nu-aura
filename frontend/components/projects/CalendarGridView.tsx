@@ -105,7 +105,7 @@ export function CalendarGridView({
               ))}
               {dayEvents.length > 4 && (
                 <button 
-                  className="w-full text-center text-xs text-surface-500 hover:text-accent-700 dark:hover:text-accent-400 p-1"
+                  className="w-full text-center text-xs text-surface-500 hover:text-accent-700 dark:hover:text-accent-400 p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDateChange(day);

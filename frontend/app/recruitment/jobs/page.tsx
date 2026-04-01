@@ -468,23 +468,26 @@ export default function JobOpeningsPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         title="View Candidates"
+                        aria-label="View candidates"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleEdit(job)}
-                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         title="Edit"
+                        aria-label="Edit job"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
                         <button
                           onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
-                          className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
+                          className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           title="Delete"
+                          aria-label="Delete job"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -507,7 +510,7 @@ export default function JobOpeningsPage() {
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -681,7 +684,7 @@ export default function JobOpeningsPage() {
                         type="button"
                         onClick={handleGenerateJobDescription}
                         disabled={generateJDMutation.isPending}
-                        className="flex items-center gap-1 text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50"
+                        className="flex items-center gap-1 text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         <Sparkles className="h-3.5 w-3.5" />
                         Generate with AI
@@ -788,7 +791,8 @@ export default function JobOpeningsPage() {
                   </h2>
                   <button
                     onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                    aria-label="Close modal"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <X className="h-6 w-6" />
                   </button>

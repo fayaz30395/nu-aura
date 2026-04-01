@@ -99,7 +99,7 @@ export default function MyLeavesPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             ← Back
           </button>
@@ -109,7 +109,7 @@ export default function MyLeavesPage() {
           <h1 className="text-2xl font-bold skeuo-emboss">My Leaves</h1>
           <button
             onClick={() => router.push('/leave/apply')}
-            className="btn-primary !h-auto"
+            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Apply for Leave
           </button>
@@ -142,9 +142,9 @@ export default function MyLeavesPage() {
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300"
+              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
           </div>
         )}
@@ -169,7 +169,7 @@ export default function MyLeavesPage() {
               <p className="text-sm text-[var(--text-secondary)] mb-6">Get started by applying for your first leave</p>
               <button
                 onClick={() => router.push('/leave/apply')}
-                className="btn-primary !h-auto"
+                className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Apply for Leave
               </button>
@@ -220,7 +220,7 @@ export default function MyLeavesPage() {
                           {request.status === 'PENDING' && (
                             <button
                               onClick={() => handleCancelClick(request.id)}
-                              className="text-danger-600 dark:text-danger-500 hover:text-danger-700 dark:hover:text-danger-400 font-medium"
+                              className="text-danger-600 dark:text-danger-500 hover:text-danger-700 dark:hover:text-danger-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               Cancel
                             </button>
@@ -228,7 +228,7 @@ export default function MyLeavesPage() {
                           {request.status === 'REJECTED' && request.rejectionReason && (
                             <button
                               onClick={() => toast.error(`Rejection Reason: ${request.rejectionReason}`)}
-                              className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium"
+                              className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               View Reason
                             </button>
@@ -246,7 +246,7 @@ export default function MyLeavesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)]"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Previous
                   </button>
@@ -258,7 +258,7 @@ export default function MyLeavesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)]"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Next
                   </button>

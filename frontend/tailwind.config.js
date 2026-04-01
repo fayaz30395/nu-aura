@@ -299,14 +299,32 @@ module.exports = {
         },
         '.surface-hover:hover': {
           backgroundColor: 'var(--bg-card-hover)',
-          borderColor: 'var(--border-strong)',
+          borderColor: 'var(--border-main)',
         },
-        // Skeuomorphic glass background utilities
+        // Skeuomorphic glass background
         '.glass-bg': {
           background: 'var(--glass-bg)',
           backdropFilter: 'blur(var(--glass-blur))',
           '-webkit-backdrop-filter': 'blur(var(--glass-blur))',
           border: '1px solid var(--glass-border)',
+        },
+        // Skeuomorphic emboss text
+        '.skeuo-emboss': {
+          textShadow: '0 1px 0 rgba(255, 255, 255, 0.4)',
+        },
+        // Skeuomorphic inset shadow
+        '.skeuo-inset': {
+          boxShadow: 'var(--shadow-skeuo-input)',
+        },
+        // Skeuomorphic button depth
+        '.skeuo-button': {
+          backgroundImage: 'var(--gradient-skeuo-button)',
+          boxShadow: 'var(--shadow-skeuo-button)',
+        },
+        // Skeuomorphic card depth
+        '.skeuo-card': {
+          backgroundImage: 'var(--gradient-skeuo-card)',
+          boxShadow: 'var(--shadow-skeuo-card)',
         },
         // Noise texture overlay
         '.noise-texture': {
@@ -320,7 +338,7 @@ module.exports = {
           backgroundImage: 'var(--skeuo-noise)',
           backgroundRepeat: 'repeat',
           pointerEvents: 'none',
-          opacity: '0.35',
+          opacity: '0.40',
         },
       });
     },

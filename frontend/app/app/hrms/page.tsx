@@ -29,7 +29,7 @@ export default function HrmsEntryPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="skeuo-card p-8 text-center max-w-md">
-          <ShieldAlert className="h-12 w-12 text-danger-500 mx-auto mb-4" />
+          <ShieldAlert className="h-12 w-12 text-danger-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Access Denied</h2>
           <p className="text-[var(--text-muted)] mb-4">You do not have permission to access NU-HRMS.</p>
           <button

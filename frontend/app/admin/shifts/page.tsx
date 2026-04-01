@@ -245,7 +245,7 @@ export default function ShiftsManagementPage() {
                 setEditingShift(null);
                 setShowModal(true);
               }}
-              className="btn-primary flex items-center gap-2"
+              className="btn-primary flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-5 w-5" />
               Add Shift
@@ -641,14 +641,14 @@ export default function ShiftsManagementPage() {
                           setEditingShift(null);
                           resetForm();
                         }}
-                        className="btn-secondary"
+                        className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending}
-                        className="btn-primary disabled:opacity-50"
+                        className="btn-primary disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         {(form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending) ? 'Saving...' : editingShift ? 'Update' : 'Create'} Shift
                       </button>

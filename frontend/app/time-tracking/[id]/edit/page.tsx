@@ -159,7 +159,8 @@ export default function EditTimeEntryPage() {
             <p className="text-[var(--text-secondary)]">Time entry not found</p>
             <button
               onClick={() => router.push('/time-tracking')}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+              aria-label="Back to Time Tracking"
+              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Back to Time Tracking
             </button>

@@ -127,7 +127,7 @@ export default function LeaveApprovalsPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
+            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             ← Back
           </button>
@@ -144,9 +144,9 @@ export default function LeaveApprovalsPage() {
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300"
+              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
             </button>
           </div>
         )}
@@ -235,7 +235,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleApproveClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                             </button>
@@ -244,7 +244,7 @@ export default function LeaveApprovalsPage() {
                             <button
                               onClick={() => handleRejectClick(request.id)}
                               disabled={isProcessing}
-                              className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium"
+                              className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               Reject
                             </button>

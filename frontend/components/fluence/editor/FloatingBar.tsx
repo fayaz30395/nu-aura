@@ -203,7 +203,7 @@ export default function FloatingBar({ editor }: FloatingBarProps) {
                 />
                 <button
                   onClick={handleLinkSubmit}
-                  className="fluence-floating-btn text-xs px-2 py-1"
+                  className="fluence-floating-btn text-xs px-2 py-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   Apply
                 </button>

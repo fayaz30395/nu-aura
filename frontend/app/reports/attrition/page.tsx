@@ -139,7 +139,8 @@ export default function AttritionReportPage() {
               <button
                 key={level}
                 onClick={() => setSelectedRisk(prev => prev === level ? 'ALL' : level)}
-                className={`p-4 rounded-lg border text-left transition-all ${colors.bg} ${selectedRisk === level ? 'ring-2 ring-offset-1 ring-accent-500' : 'hover:opacity-80'}`}
+                aria-label={`Filter by ${label}`}
+                className={`p-4 rounded-lg border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${colors.bg} ${selectedRisk === level ? 'ring-2 ring-offset-1 ring-accent-500' : 'hover:opacity-80'}`}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <Icon className={`h-4 w-4 ${colors.text}`} />

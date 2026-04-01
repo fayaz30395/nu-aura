@@ -236,8 +236,9 @@ export default function CertificateGalleryPage() {
                       <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
                       <button
                         onClick={() => handleCopyCertificateNumber(cert.certificateNumber)}
-                        className="p-1 hover:bg-[var(--bg-surface)] rounded transition-colors"
+                        className="p-1 hover:bg-[var(--bg-surface)] rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         title="Copy certificate number"
+                        aria-label="Copy certificate number"
                       >
                         {copiedId === cert.certificateNumber ? (
                           <Check className="h-4 w-4 text-success-600" />
@@ -277,24 +278,27 @@ export default function CertificateGalleryPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => handleDownload(cert.id, cert.certificateNumber)}
-                      className="btn-primary flex items-center justify-center gap-1 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 text-xs font-medium transition-colors"
+                      className="btn-primary flex items-center justify-center gap-1 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       title="Download PDF"
+                      aria-label="Download certificate"
                     >
                       <Download className="h-4 w-4" />
                       <span className="hidden sm:inline">Download</span>
                     </button>
                     <button
                       onClick={() => handlePrint(cert.id)}
-                      className="flex items-center justify-center gap-1 px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)] text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)] text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       title="Print certificate"
+                      aria-label="Print certificate"
                     >
                       <Printer className="h-4 w-4" />
                       <span className="hidden sm:inline">Print</span>
                     </button>
                     <button
                       onClick={() => handleShareLinkedIn(cert)}
-                      className="flex items-center justify-center gap-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       title="Share on LinkedIn"
+                      aria-label="Share certificate on LinkedIn"
                     >
                       <Share2 className="h-4 w-4" />
                       <span className="hidden sm:inline">Share</span>
@@ -332,7 +336,7 @@ export default function CertificateGalleryPage() {
                   setSearchQuery('');
                   setDateFilter('ALL');
                 }}
-                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm inline-flex items-center gap-2"
+                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm inline-flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Clear Filters
               </button>

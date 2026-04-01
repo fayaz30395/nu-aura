@@ -185,8 +185,8 @@ export default function NewEventPage() {
 
         {createEventMutation.isError && (
           <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-danger-500" />
-            <p className="text-sm text-danger-700 dark:text-danger-400">Failed to create event. Please try again.</p>
+            <AlertCircle className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+            <p className="text-sm text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Failed to create event. Please try again.</p>
           </div>
         )}
 
@@ -209,7 +209,7 @@ export default function NewEventPage() {
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-danger-500">{errors.title.message}</p>
+              <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.title.message}</p>
             )}
           </div>
 
@@ -219,7 +219,7 @@ export default function NewEventPage() {
               <input
                 type="checkbox"
                 {...register('allDay')}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-500 focus:ring-accent-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-500 focus:ring-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               />
               <span className="text-sm font-medium text-[var(--text-secondary)]">All Day Event</span>
             </label>
@@ -242,7 +242,7 @@ export default function NewEventPage() {
                 />
               </div>
               {errors.startTime && (
-                <p className="mt-1 text-sm text-danger-500">{errors.startTime.message}</p>
+                <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.startTime.message}</p>
               )}
             </div>
             <div>
@@ -260,7 +260,7 @@ export default function NewEventPage() {
                 />
               </div>
               {errors.endTime && (
-                <p className="mt-1 text-sm text-danger-500">{errors.endTime.message}</p>
+                <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.endTime.message}</p>
               )}
             </div>
           </div>
@@ -315,7 +315,7 @@ export default function NewEventPage() {
               />
             </div>
             {errors.meetingLink && (
-              <p className="mt-1 text-sm text-danger-500">{errors.meetingLink.message}</p>
+              <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.meetingLink.message}</p>
             )}
           </div>
 

@@ -112,9 +112,10 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
             <button
               key={idx}
               onClick={() => setSelectedIndex(idx)}
-              className={`h-1.5 rounded-full transition-all ${
+              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 idx === selectedIndex ? 'w-4 bg-[var(--text-muted)]' : 'w-1.5 bg-[var(--border-main)]'
               }`}
+              aria-label={`Leave type ${idx + 1}`}
             />
           ))}
         </div>

@@ -62,7 +62,7 @@ export function FeedDateSection({
     <div>
       <button
         onClick={handleToggle}
-        className="w-full flex items-center gap-2 py-2 px-1 group transition-colors"
+        className="w-full flex items-center gap-2 py-2 px-1 group transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
         <span className="text-[var(--text-muted)] transition-transform duration-200">
           {expanded

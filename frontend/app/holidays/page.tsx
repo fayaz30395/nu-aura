@@ -225,7 +225,7 @@ export default function HolidaysPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedYear((y) => y - 1)}
-              className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Previous year"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default function HolidaysPage() {
             </span>
             <button
               onClick={() => setSelectedYear((y) => y + 1)}
-              className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
+              className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Next year"
             >
               <ChevronRight className="h-4 w-4" />
@@ -251,7 +251,7 @@ export default function HolidaysPage() {
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
-              className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-4 w-4" />
               Add Holiday
@@ -268,7 +268,8 @@ export default function HolidaysPage() {
           </span>
           <button
             onClick={() => setUiError(null)}
-            className="absolute top-0 bottom-0 right-0 px-4 py-4 text-danger-500 dark:text-danger-400"
+            className="absolute top-0 bottom-0 right-0 px-4 py-4 text-danger-500 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            aria-label="Close error message"
           >
             <span className="text-xl">&times;</span>
           </button>
@@ -326,7 +327,7 @@ export default function HolidaysPage() {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setFilterType('ALL')}
-          className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors ${
+          className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
             filterType === 'ALL'
               ? 'bg-accent-500 text-white'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -341,7 +342,7 @@ export default function HolidaysPage() {
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors ${
+              className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 filterType === type
                   ? 'bg-accent-500 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -437,15 +438,17 @@ export default function HolidaysPage() {
                         <div className="flex items-center gap-1 ml-4">
                           <button
                             onClick={() => handleEdit(holiday)}
-                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
+                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Edit holiday"
+                            aria-label={`Edit ${holiday.holidayName}`}
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
-                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
+                            className="p-2 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             title="Delete holiday"
+                            aria-label={`Delete ${holiday.holidayName}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -490,7 +493,8 @@ export default function HolidaysPage() {
                     setEditingHoliday(null);
                     resetForm();
                   }}
-                  className="p-2 rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="p-2 rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  aria-label="Close modal"
                 >
                   <span className="text-xl">&times;</span>
                 </button>
@@ -620,14 +624,14 @@ export default function HolidaysPage() {
                       setEditingHoliday(null);
                       resetForm();
                     }}
-                    className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors text-sm"
+                    className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                    className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 transition-colors text-sm font-medium"
+                    className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending
                       ? 'Saving...'

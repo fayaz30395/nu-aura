@@ -34,7 +34,7 @@ function SectionErrorFallback({ error, onReset, sectionName }: SectionErrorFallb
       </div>
       <button
         onClick={onReset}
-        className="flex-shrink-0 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+        className="flex-shrink-0 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
         Retry
       </button>

@@ -311,7 +311,7 @@ export default function QuizPage() {
               <button
                 onClick={handleStartQuiz}
                 disabled={startQuizMutation.isPending}
-                className="w-full px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {startQuizMutation.isPending ? (
                   <>
@@ -518,7 +518,7 @@ export default function QuizPage() {
               <button
                 onClick={handleSubmitQuiz}
                 disabled={submitQuizMutation.isPending || questionsAnswered < quiz.questions.length}
-                className="px-6 py-2 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {submitQuizMutation.isPending ? (
                   <>
@@ -624,14 +624,14 @@ export default function QuizPage() {
                 {canRetry && (
                   <button
                     onClick={handleRetry}
-                    className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700"
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <RefreshCw className="h-4 w-4" /> Retry Quiz
                   </button>
                 )}
                 {passed && (
                   <button
-                    className="flex items-center justify-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700"
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     <Award className="h-4 w-4" /> View Certificate
                   </button>

@@ -203,7 +203,7 @@ export default function OfficeLocationsPage() {
               setEditingId(null);
               setShowForm(true);
             }}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Add Location
           </button>
@@ -304,7 +304,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="button"
                   onClick={getCurrentLocation}
-                  className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                  className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Get Current Location
                 </button>
@@ -313,7 +313,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
@@ -324,7 +324,7 @@ export default function OfficeLocationsPage() {
                     setEditingId(null);
                     reset();
                   }}
-                  className="px-6 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                  className="px-6 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
                 </button>
@@ -379,13 +379,13 @@ export default function OfficeLocationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleEdit(location)}
-                        className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4"
+                        className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(location)}
-                        className="text-danger-600 hover:text-danger-800"
+                        className="text-danger-600 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         Delete
                       </button>

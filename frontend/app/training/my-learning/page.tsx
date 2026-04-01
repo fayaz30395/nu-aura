@@ -215,7 +215,7 @@ export default function MyLearningPage() {
               Browse the{' '}
               <button
                 onClick={() => router.push('/training/catalog')}
-                className="text-accent-600 hover:underline"
+                className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 course catalog
               </button>{' '}
