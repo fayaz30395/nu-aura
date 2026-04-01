@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -23,6 +24,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { apiClient } from '@/lib/api/client';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { getInitials } from '@/lib/utils';
 
 interface Employee {
@@ -100,8 +102,18 @@ const statusOptions = [
 ];
 
 export default function TeamDirectory() {
+  const router = useRouter();
   useAuth();
+  const { hasAnyPermission, isReady: permReady } = usePermissions();
   const [employees, setEmployees] = useState<Employee[]>([]);
+
+  // A3: Permission gate — directory requires VIEW_ALL or VIEW_TEAM
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasAnyPermission(Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_TEAM)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasAnyPermission, router]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);

@@ -25,6 +25,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import dynamic from 'next/dynamic';
 import { useEmployeeDashboard } from '@/lib/hooks/queries';
 import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 const EmployeeAttendanceChart = dynamic(
   () => import('./EmployeeAttendanceChart'),
@@ -33,7 +34,16 @@ const EmployeeAttendanceChart = dynamic(
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const { data, isLoading: loading, error } = useEmployeeDashboard();
+
+  // A3: Permission gate — redirect if user lacks DASHBOARD:EMPLOYEE
+  React.useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.DASHBOARD_EMPLOYEE)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

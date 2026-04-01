@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useEmployeeLeaveRequests, useLeaveRequestsByStatus, useActiveLeaveTypes } from '@/lib/hooks/queries/useLeaves';
 import { LeaveRequest } from '@/lib/types/hrms/leave';
 
@@ -25,7 +26,16 @@ interface CalendarDay {
 export default function LeaveCalendarPage() {
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.LEAVE_VIEW_SELF)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [viewMode, setViewMode] = useState<'team' | 'my'>('my');
 

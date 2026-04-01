@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar,
@@ -17,6 +18,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Loading';
@@ -153,6 +155,8 @@ function SkeletonLogRow() {
 // MAIN PAGE COMPONENT
 // ════════════════════════════════════════════════════════════════════
 export default function MyAttendancePage() {
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<TabView>('log');
   const [use24h, setUse24h] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -160,6 +164,14 @@ export default function MyAttendancePage() {
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('30days');
   const [liveTime, setLiveTime] = useState(new Date());
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+  // A3: Permission gate — redirect if user lacks ATTENDANCE:VIEW_SELF
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.ATTENDANCE_VIEW_SELF)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
 
   // Live clock
   useEffect(() => {
