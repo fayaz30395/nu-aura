@@ -195,7 +195,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
               Apply for Leave
@@ -219,7 +219,7 @@ export default function LeavePage() {
               return (
                 <div
                   key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200 skeuo-card"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-dropdown)] transition-all duration-200 skeuo-card"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>

@@ -17,7 +17,7 @@ export function TrainingTabs({ activeTab, onTabChange }: TrainingTabsProps) {
     'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]';
 
   return (
-    <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+    <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)]">
       <div className="flex border-b border-[var(--border-main)]">
         <button
           onClick={() => onTabChange('my-trainings')}

@@ -120,7 +120,7 @@ export default function OrgHierarchyPage() {
           <div
             className={`
               ${colors.bg} ${colors.border} ${colors.text}
-              border-2 rounded-xl shadow-lg hover:shadow-xl transition-all
+              border-2 rounded-xl shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-all
               w-80 overflow-hidden cursor-pointer
               ${hasSubordinates ? 'mb-12' : 'mb-6'}
             `}

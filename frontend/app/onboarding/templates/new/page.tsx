@@ -117,7 +117,7 @@ export default function NewTemplatePage() {
                                             type="submit"
                                             isLoading={isSubmitting}
                                             disabled={isSubmitting}
-                                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-lg py-6 px-10"
+                                            className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
                                             leftIcon={<Save className="h-4 w-4" />}
                                         >
                                             Create & Configure Tasks

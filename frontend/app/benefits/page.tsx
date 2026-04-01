@@ -502,7 +502,7 @@ export default function BenefitsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)]">
           <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => setActiveTab('plans')}

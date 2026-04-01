@@ -288,7 +288,7 @@ export default function GoalsPage() {
             {filteredGoals.map((goal) => {
               const progress = calculateProgress(goal.currentValue, goal.targetValue);
               return (
-                <div key={goal.id} className="skeuo-card p-6 hover:shadow-lg transition-shadow">
+                <div key={goal.id} className="skeuo-card p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold mb-2">{goal.title}</h3>

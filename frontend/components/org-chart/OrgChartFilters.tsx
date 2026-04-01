@@ -77,7 +77,7 @@ export function OrgChartFilters({
             className={cn(
               'flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-all',
               viewMode === opt.value
-                ? 'bg-accent-700 text-white shadow-sm'
+                ? 'bg-accent-700 text-white shadow-[var(--shadow-card)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]',
             )}
             aria-pressed={viewMode === opt.value}

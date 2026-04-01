@@ -380,10 +380,10 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
               key={holiday.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`rounded-xl border p-6 transition-shadow hover:shadow-md ${
+              className={`rounded-xl border p-6 transition-shadow hover:shadow-[var(--shadow-elevated)] ${
                 isSelected
                   ? 'border-accent-300 bg-accent-50 dark:bg-accent-900/20'
-                  : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                  : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-card)]'
               }`}
             >
               <div className="flex items-start justify-between mb-3">
@@ -479,7 +479,7 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
             className={`flex items-center justify-between rounded-lg border p-4 ${config.bgColor}`}
           >
             <div className="flex items-center gap-4">
-              <div className={`p-2 rounded-lg ${config.color} bg-white dark:bg-surface-800`}>
+              <div className={`p-2 rounded-lg ${config.color} bg-[var(--bg-card)]`}>
                 <CalendarDays className="w-5 h-5" />
               </div>
               <div>
@@ -623,7 +623,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                   onClick={() => setRejectingId(selection.id)}
                   disabled={isActing}
                   className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium
-                    bg-white text-danger-600 border border-danger-300 rounded-lg hover:bg-danger-50
+                    bg-[var(--bg-card)] text-danger-600 border border-danger-300 rounded-lg hover:bg-danger-50
                     disabled:opacity-50 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 >
@@ -688,7 +688,7 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
             </thead>
             <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
               {holidays.map((holiday) => (
-                <tr key={holiday.id} className="bg-white dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-750">
+                <tr key={holiday.id} className="bg-[var(--bg-card)] hover:bg-surface-50 dark:hover:bg-surface-750">
                   <td className="px-4 py-4">
                     <div>
                       <p className="font-medium text-surface-900 dark:text-white">{holiday.holidayName}</p>
@@ -784,7 +784,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
 
   return (
     <div className="max-w-lg">
-      <div className="rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-6">
+      <div className="rounded-xl border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] p-6">
         <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-6">
           Restricted Holiday Policy ({year})
         </h3>
@@ -910,8 +910,8 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative w-full max-w-lg rounded-lg bg-white dark:bg-surface-800
-          shadow-xl border border-surface-200 dark:border-surface-700 p-6 mx-4"
+        className="relative w-full max-w-lg rounded-lg bg-[var(--bg-elevated)]
+          shadow-[var(--shadow-dropdown)] border border-surface-200 dark:border-surface-700 p-6 mx-4"
       >
         <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-5">
           {holiday ? 'Edit Restricted Holiday' : 'Add Restricted Holiday'}
@@ -1023,7 +1023,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300
-                bg-white dark:bg-surface-700 border border-surface-300 dark:border-surface-600
+                bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600
                 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-600 transition-colors
                 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
             >

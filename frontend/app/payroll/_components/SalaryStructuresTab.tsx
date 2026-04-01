@@ -73,7 +73,7 @@ export function SalaryStructuresTab({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filtered.map((structure) => (
-            <div key={structure.id} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div key={structure.id} className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{structure.employeeName}</h3>

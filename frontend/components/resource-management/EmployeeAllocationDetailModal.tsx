@@ -544,7 +544,7 @@ function AllocationCard({
   return (
     <div
       className={`rounded-lg border p-4 transition-all ${
-        onClick ? 'cursor-pointer hover:border-accent-300 hover:shadow-sm dark:hover:border-accent-700' : ''
+        onClick ? 'cursor-pointer hover:border-accent-300 hover:shadow-[var(--shadow-card)] dark:hover:border-accent-700' : ''
       } ${
         allocation.isPendingApproval
           ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'

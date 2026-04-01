@@ -115,7 +115,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
   return (
     <div className="relative">
       {/* Zoom controls */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-sm p-1">
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-card)] p-1">
         <button
           onClick={zoomOut}
           disabled={zoom <= MIN_ZOOM}

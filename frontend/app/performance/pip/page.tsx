@@ -204,7 +204,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Performance Improvement Plan</h2>
@@ -437,7 +437,7 @@ function PIPDetailModal({
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
           <div>
@@ -626,7 +626,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-shadow">
+    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>

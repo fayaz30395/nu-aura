@@ -213,7 +213,7 @@ export default function EmployeeDashboardPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -234,7 +234,7 @@ export default function EmployeeDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -253,7 +253,7 @@ export default function EmployeeDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -272,7 +272,7 @@ export default function EmployeeDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
+          <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -343,7 +343,7 @@ export default function EmployeeDashboardPage() {
                         className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-sm">
+                          <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-[var(--shadow-card)]">
                             <span className="text-sm font-semibold text-[var(--text-primary)]">
                               {new Date(record.date).getDate()}
                             </span>
@@ -569,7 +569,7 @@ export default function EmployeeDashboardPage() {
                       key={event.id}
                       className={`flex items-start gap-4 p-4 rounded-lg ${getEventColor(event.type)}`}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-sm">
+                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-[var(--shadow-card)]">
                         {getEventIcon(event.type)}
                       </div>
                       <div className="flex-1 min-w-0">

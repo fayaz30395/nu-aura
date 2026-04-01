@@ -47,7 +47,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
         transition={{ duration: 0.2 }}
       >
         <Card
-          className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-md transition-all cursor-pointer"
+          className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer"
           onClick={() => onClick(employee.id)}
         >
           <CardContent className="p-4">
@@ -97,7 +97,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
       transition={{ duration: 0.2 }}
     >
       <Card
-        className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-lg transition-all cursor-pointer h-full flex flex-col"
+        className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer h-full flex flex-col"
         onClick={() => onClick(employee.id)}
       >
         <CardContent className="p-4 flex flex-col h-full">

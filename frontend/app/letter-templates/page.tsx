@@ -520,7 +520,7 @@ export default function LetterTemplatesPage() {
             {filteredTemplates.map((template) => (
               <Card
                 key={template.id}
-                className="hover:shadow-md transition-shadow"
+                className="hover:shadow-[var(--shadow-elevated)] transition-shadow"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">

@@ -242,7 +242,7 @@ export default function ShiftDefinitionsPage() {
                   key={shift.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 p-4 hover:shadow-md transition-shadow"
+                  className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -363,7 +363,7 @@ export default function ShiftDefinitionsPage() {
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.95, opacity: 0 }}
-                  className="bg-white dark:bg-surface-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                  className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
                   <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
                     <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
@@ -387,7 +387,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           {...form.register('shiftCode')}
                           disabled={!!editingShift}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 disabled:opacity-50"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 disabled:opacity-50"
                           placeholder="e.g., GEN"
                         />
                         {form.formState.errors.shiftCode && (
@@ -402,7 +402,7 @@ export default function ShiftDefinitionsPage() {
                         </label>
                         <input
                           {...form.register('shiftName')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                           placeholder="e.g., General Shift"
                         />
                         {form.formState.errors.shiftName && (
@@ -422,7 +422,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="time"
                           {...form.register('startTime')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -432,7 +432,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="time"
                           {...form.register('endTime')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -445,7 +445,7 @@ export default function ShiftDefinitionsPage() {
                         </label>
                         <select
                           {...form.register('shiftType')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         >
                           {SHIFT_TYPES.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -528,7 +528,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('gracePeriodInMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -538,7 +538,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('breakDurationMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                       <div>
@@ -548,7 +548,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('minGapBetweenShiftsHours')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     </div>
@@ -592,7 +592,7 @@ export default function ShiftDefinitionsPage() {
                         <input
                           type="number"
                           {...form.register('flexibleWindowMinutes')}
-                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                          className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         />
                       </div>
                     )}

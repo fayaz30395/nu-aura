@@ -95,7 +95,7 @@ export function MobileBottomNav({
                   strokeWidth={active ? 2.5 : 2}
                 />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-danger-500 rounded-full">
+                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-danger-500 rounded-full">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>
                 )}

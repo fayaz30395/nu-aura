@@ -601,7 +601,7 @@ function EditRoleModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
+        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
@@ -747,7 +747,7 @@ function CreateRoleModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
+        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
@@ -904,7 +904,7 @@ function EditUserModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col"
+        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">

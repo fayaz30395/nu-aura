@@ -173,7 +173,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-lg shadow-accent-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5" />
               Log Time
@@ -430,7 +430,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div />}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
@@ -449,7 +449,7 @@ export default function TimeTrackingPage() {
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">

@@ -252,7 +252,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handlePost}
               disabled={!postContent.trim() || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
               {isSubmitting ? 'Posting...' : 'Post'}
@@ -317,7 +317,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleCreatePoll}
               disabled={!canSubmitPoll || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
               {isSubmitting ? 'Creating...' : 'Create Poll'}
@@ -370,7 +370,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   />
                 </div>
                 {showRecipientDropdown && searchResults && searchResults.content.length > 0 && (
-                  <div ref={dropdownRef} className="absolute z-30 left-4 right-4 mt-1 max-h-48 overflow-y-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg">
+                  <div ref={dropdownRef} className="absolute z-30 left-4 right-4 mt-1 max-h-48 overflow-y-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]">
                     {searchResults.content
                       .filter((emp) => emp.id !== user?.employeeId)
                       .map((emp) => (
@@ -447,7 +447,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <button
               onClick={handleSendPraise}
               disabled={!canSubmitPraise || isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
               {isSubmitting ? 'Sending...' : 'Send Praise'}

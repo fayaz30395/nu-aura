@@ -183,7 +183,7 @@ export function EmployeeStep({
           onFocus={() => onShowEmployeeDropdownChange(true)}
         />
         {showEmployeeDropdown && employeeSearch && (
-          <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
+          <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)]">
             {filteredEmployees.length === 0 ? (
               <div className="px-4 py-4 text-sm text-surface-500">No employees found</div>
             ) : (

@@ -105,7 +105,7 @@ function NineBoxGrid({
                   <div
                     key={key}
                     onClick={() => onSelectBox(isSelected ? null : key)}
-                    className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg ${meta.bg} ${meta.border} ${
+                    className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-[var(--shadow-dropdown)] ${meta.bg} ${meta.border} ${
                       isSelected
                         ? 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-800'
                         : ''

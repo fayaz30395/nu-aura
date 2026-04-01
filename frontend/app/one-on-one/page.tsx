@@ -199,7 +199,7 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-sm skeuo-card">
+    <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
@@ -486,7 +486,7 @@ export default function OneOnOnePage() {
           ) : (
             <>
               {/* Meeting Header */}
-              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-sm skeuo-card mb-6">
+              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card mb-6">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-4 mb-2">
@@ -581,7 +581,7 @@ export default function OneOnOnePage() {
               </div>
 
               {/* Detail Tabs */}
-              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-sm skeuo-card">
+              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card">
                 <div className="flex border-b border-[var(--border-main)]">
                   {(['agenda', 'actions', 'notes', 'feedback'] as const).map((tab) => (
                     <button
@@ -1055,7 +1055,7 @@ export default function OneOnOnePage() {
               {/* Cancel Modal */}
               {showCancelModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
+                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cancel Meeting</h3>
                     <textarea
                       value={cancelReason}
@@ -1086,7 +1086,7 @@ export default function OneOnOnePage() {
               {/* Reschedule Modal */}
               {showRescheduleModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
+                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Reschedule Meeting</h3>
                     <div className="space-y-4 mb-4">
                       <div>
@@ -1130,7 +1130,7 @@ export default function OneOnOnePage() {
               {/* Complete Modal */}
               {showCompleteModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                  <div className="bg-[var(--bg-card)] rounded-lg shadow-xl max-w-md w-full p-6">
+                  <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-md w-full p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Complete Meeting</h3>
                     <textarea
                       value={completeSummary}
@@ -1197,7 +1197,7 @@ export default function OneOnOnePage() {
             <ArrowLeft className="h-4 w-4" /> Back to meetings
           </button>
 
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-sm skeuo-card">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card">
             <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-6 skeuo-emboss">
               Schedule 1-on-1 Meeting
             </h1>
@@ -1463,7 +1463,7 @@ export default function OneOnOnePage() {
         )}
 
         {/* Tabs + Filters */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-sm skeuo-card mb-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card mb-6">
           <div className="flex border-b border-[var(--border-main)]">
             {([
               { key: 'upcoming', label: 'Upcoming' },

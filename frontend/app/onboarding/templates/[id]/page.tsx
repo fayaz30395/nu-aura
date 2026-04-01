@@ -199,7 +199,7 @@ export default function TemplateEditorPage() {
 
                     <Button
                         variant="primary"
-                        className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-lg py-6 px-10"
+                        className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
                         leftIcon={<Save className="h-4 w-4" />}
                         isLoading={updateTemplateMutation.isPending && !editingTask}
                         onClick={handleSaveTemplate}
@@ -239,7 +239,7 @@ export default function TemplateEditorPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 bg-accent-600/5 dark:bg-accent-600/10 border-l-4 border-accent-600 rounded-lg shadow-xl shadow-accent-500/10">
+                        <Card className="border-0 bg-accent-600/5 dark:bg-accent-600/10 border-l-4 border-accent-600 rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10">
                             <CardContent className="p-8 space-y-4">
                                 <div className="flex items-center gap-2 text-accent-600 font-black uppercase tracking-widest text-xs">
                                     <AlertCircle className="h-4 w-4" />
@@ -255,7 +255,7 @@ export default function TemplateEditorPage() {
                     {/* Right Panel: Task Orchestration */}
                     <div className="lg:col-span-2 space-y-6">
                         <Card className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden min-h-[600px]">
-                            <CardHeader className="p-8 flex flex-row items-center justify-between border-b border-white/20">
+                            <CardHeader className="p-8 flex flex-row items-center justify-between border-b border-[var(--border-subtle)]">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                     <ListChecks className="h-4 w-4" />
                                     Task Sequence ({tasks.length})
@@ -271,7 +271,7 @@ export default function TemplateEditorPage() {
                                 </Button>
                             </CardHeader>
                             <CardContent className="p-0">
-                                <div className="divide-y divide-white/20">
+                                <div className="divide-y divide-[var(--border-subtle)]">
                                     <AnimatePresence>
                                         {tasks.map((task, _idx) => (
                                             <motion.div
@@ -296,7 +296,7 @@ export default function TemplateEditorPage() {
                                                             </div>
                                                             <p className="text-sm text-[var(--text-muted)] font-bold line-clamp-1">{task.description}</p>
                                                             <div className="flex items-center gap-4 pt-1">
-                                                                <Badge variant="outline" className="rounded-xl px-2 py-0.5 border-white/40 text-[var(--text-muted)] font-black text-[9px] uppercase tracking-widest">
+                                                                <Badge variant="outline" className="rounded-xl px-2 py-0.5 border-[var(--border-subtle)] text-[var(--text-muted)] font-black text-2xs uppercase tracking-widest">
                                                                     {task.category?.replace('_', ' ')}
                                                                 </Badge>
                                                                 <div className="flex items-center gap-1.5 text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
@@ -315,7 +315,7 @@ export default function TemplateEditorPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-10 w-10 p-0 rounded-lg border-white/20 opacity-0 group-hover:opacity-100 transition-all"
+                                                            className="h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] opacity-0 group-hover:opacity-100 transition-all"
                                                             onClick={() => editTask(task)}
                                                         >
                                                             <Edit3 className="h-4 w-4" />
@@ -323,7 +323,7 @@ export default function TemplateEditorPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-10 w-10 p-0 rounded-lg border-white/20 text-danger-500 hover:bg-danger-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
+                                                            className="h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] text-danger-500 hover:bg-danger-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
                                                             onClick={() => handleDeleteTask(task.id)}
                                                         >
                                                             <Trash2 className="h-4 w-4" />
@@ -464,7 +464,7 @@ export default function TemplateEditorPage() {
 
                             <div className="pt-10 flex gap-4">
                                 <Button
-                                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-xl shadow-accent-500/20 rounded-lg py-6"
+                                    className="btn-primary flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6"
                                     leftIcon={<Save className="h-4 w-4" />}
                                     isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
                                     onClick={handleSaveTask}
@@ -473,7 +473,7 @@ export default function TemplateEditorPage() {
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="font-black tracking-widest uppercase text-xs border-white/20 rounded-lg px-8"
+                                    className="font-black tracking-widest uppercase text-xs border-[var(--border-subtle)] rounded-lg px-8"
                                     onClick={() => setEditingTask(null)}
                                 >
                                     Cancel

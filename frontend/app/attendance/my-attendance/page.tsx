@@ -618,7 +618,7 @@ export default function MyAttendancePage() {
                         className={`
                           cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                           ${periodFilter === '30days'
-                            ? 'bg-accent-500 text-white shadow-md'
+                            ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
                             : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                           }
                         `}
@@ -638,7 +638,7 @@ export default function MyAttendancePage() {
                             className={`
                               cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                               ${periodFilter === key
-                                ? 'bg-accent-500 text-white shadow-md'
+                                ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
                                 : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                               }
                             `}
@@ -858,23 +858,23 @@ export default function MyAttendancePage() {
                   {/* Legend */}
                   <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-sm bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800" />
+                      <div className="w-3 h-3 rounded-md bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800" />
                       <span className="text-xs text-[var(--text-muted)]">Full day</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-sm bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800" />
+                      <div className="w-3 h-3 rounded-md bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800" />
                       <span className="text-xs text-[var(--text-muted)]">Partial</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-sm bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800" />
+                      <div className="w-3 h-3 rounded-md bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800" />
                       <span className="text-xs text-[var(--text-muted)]">Absent</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-sm bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800" />
+                      <div className="w-3 h-3 rounded-md bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800" />
                       <span className="text-xs text-[var(--text-muted)]">Leave</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-sm bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700" />
+                      <div className="w-3 h-3 rounded-md bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700" />
                       <span className="text-xs text-[var(--text-muted)]">Off / Holiday</span>
                     </div>
                   </div>

@@ -324,7 +324,7 @@ export default function LeaveCalendarPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow text-left"
           >
             <div className="text-accent-700 dark:text-accent-400 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,7 +337,7 @@ export default function LeaveCalendarPage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow text-left"
           >
             <div className="text-success-600 dark:text-success-500 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

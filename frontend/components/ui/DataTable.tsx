@@ -117,7 +117,7 @@ export function BulkActionBar({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-3 rounded-lg px-4 py-3',
+        'flex flex-wrap items-center gap-2 rounded-lg px-4 py-2',
         'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
       )}
       role="toolbar"
@@ -134,7 +134,7 @@ export function BulkActionBar({
             type="button"
             onClick={action.onClick}
             className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+              'inline-flex items-center gap-1.5 px-2 py-1.5 rounded-md text-sm font-medium transition-colors',
               'min-h-[36px] min-w-[36px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
               variantStyles[action.variant || 'secondary']
@@ -200,7 +200,7 @@ function ColumnVisibilityToggle<T>({
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
-          'inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+          'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
           'min-h-[44px] min-w-[44px]',
           'border border-[var(--border-main)] bg-[var(--bg-surface)]',
           'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]',
@@ -218,14 +218,14 @@ function ColumnVisibilityToggle<T>({
       {open && (
         <div
           className={cn(
-            'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-lg',
+            'absolute right-0 z-50 mt-2 w-56 rounded-lg border shadow-[var(--shadow-dropdown)]',
             'border-[var(--border-main)] bg-[var(--bg-surface)]',
             'animate-in fade-in-0 zoom-in-95'
           )}
           role="menu"
           aria-label="Column visibility options"
         >
-          <div className="px-3 py-2 border-b border-[var(--border-main)]">
+          <div className="px-4 py-2 border-b border-[var(--border-main)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
               Toggle columns
             </span>
@@ -241,7 +241,7 @@ function ColumnVisibilityToggle<T>({
                   aria-checked={isVisible}
                   onClick={() => onToggle(col.key)}
                   className={cn(
-                    'flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors',
+                    'flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors',
                     'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                     'min-h-[40px]'
                   )}
@@ -462,7 +462,7 @@ function DataTable<T>({
 
   if (isLoading) {
     return (
-      <div className={cn('space-y-3', className)}>
+      <div className={cn('space-y-2', className)}>
         {/* Column toggle placeholder */}
         <div className="flex justify-end">
           <Skeleton width={120} height={40} className="rounded-lg" />
@@ -473,7 +473,7 @@ function DataTable<T>({
             <thead>
               <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
                 {visibleColumns.map((col) => (
-                  <th key={col.key} className="px-4 py-3">
+                  <th key={col.key} className="px-4 py-2">
                     <Skeleton height={14} width={80} />
                   </th>
                 ))}
@@ -502,7 +502,7 @@ function DataTable<T>({
 
   if (data.length === 0 && !isLoading) {
     return (
-      <div className={cn('space-y-3', className)}>
+      <div className={cn('space-y-2', className)}>
         <div className="flex justify-end">
           <ColumnVisibilityToggle
             columns={columns}
@@ -522,7 +522,7 @@ function DataTable<T>({
   // -----------------------------------------------------------------------
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-2', className)}>
       {/* Toolbar: column toggle */}
       <div className="flex justify-end">
         <ColumnVisibilityToggle
@@ -539,7 +539,7 @@ function DataTable<T>({
             <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
               {/* Selection checkbox header */}
               {selectable && (
-                <th className="w-12 px-4 py-3 text-left sticky left-0 z-10 bg-[var(--bg-secondary)]">
+                <th className="w-12 px-4 py-2 text-left sticky left-0 z-10 bg-[var(--bg-secondary)]">
                   <div className="flex items-center justify-center">
                     <input
                       type="checkbox"
@@ -559,7 +559,7 @@ function DataTable<T>({
                 <th
                   key={col.key}
                   className={cn(
-                    'px-4 py-3 text-xs font-semibold uppercase tracking-wider',
+                    'px-4 py-2 text-xs font-semibold uppercase tracking-wider',
                     'text-[var(--text-muted)]',
                     alignClass(col.align),
                     col.sortable && 'cursor-pointer select-none hover:text-[var(--text-primary)]',
@@ -586,7 +586,7 @@ function DataTable<T>({
 
               {/* Actions header */}
               {actions && (
-                <th className="w-16 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                <th className="w-16 px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                   Actions
                 </th>
               )}
@@ -651,7 +651,7 @@ function DataTable<T>({
 
       {/* Pagination */}
       {(onPageChange || onPageSizeChange) && (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
           {/* Info */}
           <div className="text-sm text-[var(--text-muted)]">
             {total > 0 ? (
@@ -724,7 +724,7 @@ function DataTable<T>({
                   <ChevronLeft className="h-4 w-4" />
                 </button>
 
-                <span className="px-3 py-1 text-sm text-[var(--text-primary)] select-none">
+                <span className="px-2 py-1 text-sm text-[var(--text-primary)] select-none">
                   {page + 1} / {totalPages}
                 </span>
 

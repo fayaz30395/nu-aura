@@ -218,7 +218,7 @@ export default function OnboardingDetailPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <Card className="border-0 shadow-xl bg-[var(--bg-card)] overflow-hidden">
+                                <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] overflow-hidden">
                                     <div
                                         onClick={() => toggleCategory(category)}
                                         className="p-6 flex items-center justify-between cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
@@ -304,7 +304,7 @@ export default function OnboardingDetailPage() {
 
                     {/* Sidebar Area */}
                     <div className="space-y-8">
-                        <Card className="border-0 shadow-xl bg-gradient-to-br from-accent-600 to-accent-700 text-white p-1">
+                        <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-gradient-to-br from-accent-600 to-accent-700 text-white p-1">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-white flex items-center gap-2">
                                     <Zap className="h-5 w-5" />
@@ -326,7 +326,7 @@ export default function OnboardingDetailPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
+                        <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <HardDrive className="h-5 w-5 text-[var(--text-muted)]" />
@@ -337,7 +337,7 @@ export default function OnboardingDetailPage() {
                                 {!driveToken ? (
                                     <Button
                                         variant="primary"
-                                        className="w-full rounded-lg bg-accent-600 hover:bg-accent-700 border-0 shadow-lg shadow-accent-500/20 font-black uppercase text-xs tracking-widest py-6"
+                                        className="w-full rounded-lg bg-accent-600 hover:bg-accent-700 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 font-black uppercase text-xs tracking-widest py-6"
                                         onClick={() => googleLogin()}
                                     >
                                         Connect Google Drive
@@ -360,7 +360,7 @@ export default function OnboardingDetailPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
+                        <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <ClipboardList className="h-5 w-5 text-[var(--text-muted)]" />

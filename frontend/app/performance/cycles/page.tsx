@@ -251,7 +251,7 @@ export default function ReviewCyclesPage() {
           </PermissionGate>
         </div>
 
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -296,7 +296,7 @@ export default function ReviewCyclesPage() {
             <div className="text-[var(--text-secondary)]">Loading review cycles...</div>
           </div>
         ) : filteredCycles.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
             <PermissionGate permission={Permissions.REVIEW_CREATE}>
               <button

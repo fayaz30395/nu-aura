@@ -157,7 +157,7 @@ const StatCard = ({
   icon: React.ElementType;
   color: string;
 }) => (
-  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-sm skeuo-card">
+  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
     <div className="flex items-start justify-between">
       <div>
         <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
@@ -345,7 +345,7 @@ export default function PerformancePage() {
             <Link
               href={module.href}
               aria-label={`Go to ${module.title} management`}
-              className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden skeuo-card"
+              className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all duration-200 overflow-hidden skeuo-card"
             >
               <div className="p-4">
                 <div className="flex items-start gap-4">

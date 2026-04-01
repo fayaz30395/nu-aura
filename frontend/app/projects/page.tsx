@@ -243,7 +243,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}
@@ -380,7 +380,7 @@ function MultiOwnerTypeahead({
         </div>
       </div>
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}

@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
         <div className="max-w-md w-full">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-lg shadow-accent-500/25">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold skeuo-emboss">
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
             </h1>
           </div>
 
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
               {isSsoUser ? (
                 <>
@@ -183,7 +183,7 @@ export default function ForgotPasswordPage() {
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-lg shadow-accent-500/25">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold skeuo-emboss">
@@ -195,7 +195,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl skeuo-emboss">Forgot Password</CardTitle>
             <CardDescription>
@@ -203,7 +203,7 @@ export default function ForgotPasswordPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Error Alert */}
               {error && (
                 <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
@@ -231,7 +231,7 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`input-aura block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.email
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'

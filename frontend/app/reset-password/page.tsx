@@ -66,12 +66,12 @@ function ResetPasswordForm() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-lg shadow-accent-500/25">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4">
                 <AlertCircle className="w-8 h-8 text-danger-600 dark:text-danger-400" />
@@ -106,12 +106,12 @@ function ResetPasswordForm() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-lg shadow-accent-500/25">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
                 <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400" />
@@ -164,7 +164,7 @@ function ResetPasswordForm() {
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-lg shadow-accent-500/25">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
@@ -174,7 +174,7 @@ function ResetPasswordForm() {
         </div>
 
         {/* Reset Password Card */}
-        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
+        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl skeuo-emboss">Reset Password</CardTitle>
             <CardDescription>

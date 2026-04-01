@@ -20,7 +20,7 @@ export default function CareersLayout({
   return (
     <div className="min-h-screen bg-[var(--bg-card)]">
       {/* Public Navbar */}
-      <header className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border-main)] shadow-sm">
+      <header className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border-main)] shadow-[var(--shadow-card)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/careers" className="flex items-center gap-4">
             <Image

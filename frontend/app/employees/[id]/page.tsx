@@ -319,7 +319,7 @@ export default function EmployeeDetailPage() {
     return (
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)]">
-          <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-sm border-b border-[var(--border-main)]">
+          <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-4">

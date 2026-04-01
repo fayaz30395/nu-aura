@@ -570,7 +570,7 @@ export default function OffboardingPage() {
                             <button aria-label="Open exit process menu" className="p-1 rounded hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(process)}
                                 aria-label={`View exit process details for ${process.employeeName}`}

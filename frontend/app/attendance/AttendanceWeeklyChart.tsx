@@ -29,7 +29,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
   const d = payload[0].payload;
 
   return (
-    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-xl p-4 min-w-[180px]">
+    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] p-4 min-w-[180px]">
       <div className="text-xs font-semibold text-[var(--text-primary)] mb-2">
         {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
       </div>
@@ -93,11 +93,11 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
   attendanceRate,
 }: AttendanceWeeklyChartProps) {
   return (
-    <Card className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-md">
+    <Card className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
       <CardHeader className="border-b border-[var(--border-main)] pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-sm">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
               <BarChart3 className="h-4 w-4 text-white" />
             </div>
             Weekly Overview
@@ -154,7 +154,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
             { color: 'bg-accent-500', label: 'Holiday' },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
-              <div className={`h-3 w-3 rounded-sm ${l.color} shadow-sm`} />
+              <div className={`h-3 w-3 rounded-sm ${l.color} shadow-[var(--shadow-card)]`} />
               <span className="font-medium text-[var(--text-secondary)]">{l.label}</span>
             </div>
           ))}

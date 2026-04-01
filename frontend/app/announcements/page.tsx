@@ -262,7 +262,7 @@ export default function AnnouncementsPage() {
             <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
               >
                 <Plus className="w-5 h-5" />
                 New Announcement
@@ -293,7 +293,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all group"
+                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
                   >
                     <div className="flex items-start gap-4">
                       <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
@@ -413,7 +413,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
+                    className={`bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group border-l-4 ${
                       announcement.isRead
                         ? 'border-l-[var(--border-main)]'
                         : 'border-l-accent-600'

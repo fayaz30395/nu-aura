@@ -389,7 +389,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-sm">
+        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-[var(--shadow-card)]">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('all')}
@@ -435,7 +435,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-[var(--shadow-card)] p-6">
           {paymentsLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
@@ -451,7 +451,7 @@ export default function PaymentsPage() {
               {filteredPayments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-start gap-4">

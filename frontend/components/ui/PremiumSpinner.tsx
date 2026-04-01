@@ -46,7 +46,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-lg shadow-accent-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbit ring 2 - middle */}
@@ -55,7 +55,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: -360 }}
         transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 shadow-lg shadow-accent-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbit ring 3 - inner */}
@@ -64,7 +64,7 @@ export function OrbitSpinner({ size = 'md', className }: Omit<PremiumSpinnerProp
         animate={{ rotate: 360 }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-lg shadow-accent-500/50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/50" />
       </motion.div>
 
       {/* Orbiting particles */}

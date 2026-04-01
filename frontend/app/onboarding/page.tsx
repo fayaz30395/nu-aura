@@ -95,7 +95,7 @@ export default function OnboardingPage() {
                         <PermissionGate permission={Permissions.ONBOARDING_CREATE}>
                             <Button
                                 variant="primary"
-                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-xl shadow-accent-500/20 rounded-xl py-4 px-6"
+                                className="btn-primary font-black tracking-widest uppercase text-xs border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-xl py-4 px-6"
                                 leftIcon={<UserPlus className="h-4 w-4" />}
                                 onClick={() => router.push('/onboarding/new')}
                             >
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                                                         {process.status.replace('_', ' ')}
                                                     </Badge>
 
-                                                    <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[var(--bg-input)] shadow-sm border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                                    <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-[var(--bg-input)] shadow-[var(--shadow-card)] border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
                                                         <ChevronRight className="h-5 w-5 text-accent-700" />
                                                     </div>
                                                 </div>

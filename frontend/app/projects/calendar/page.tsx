@@ -414,7 +414,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
-                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >
@@ -424,7 +424,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('calendar')}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
-                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >

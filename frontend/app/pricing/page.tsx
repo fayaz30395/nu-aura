@@ -198,7 +198,7 @@ export default function PricingPage() {
                 aria-label="Switch to monthly billing"
                 className={`px-6 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   billingCycle === 'monthly'
-                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-muted)]'
                 }`}
               >
@@ -209,7 +209,7 @@ export default function PricingPage() {
                 aria-label="Switch to annual billing"
                 className={`px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   billingCycle === 'annual'
-                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-muted)]'
                 }`}
               >
@@ -237,7 +237,7 @@ export default function PricingPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center z-10">
-                    <Badge variant="primary" size="md" className="shadow-lg">
+                    <Badge variant="primary" size="md" className="shadow-[var(--shadow-dropdown)]">
                       Most Popular
                     </Badge>
                   </div>

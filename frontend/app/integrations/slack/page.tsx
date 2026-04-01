@@ -178,7 +178,7 @@ export default function SlackIntegrationPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
               <Zap className="h-6 w-6 text-white" />
             </div>
@@ -192,7 +192,7 @@ export default function SlackIntegrationPage() {
             </div>
           </div>
           {configQuery.data && (
-            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${
+            <span className={`ml-auto px-2 py-1 rounded-full text-xs font-medium ${
               configQuery.data.isEnabled
                 ? 'bg-success-100 text-success-800'
                 : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
@@ -208,8 +208,8 @@ export default function SlackIntegrationPage() {
             <Shield className="h-5 w-5 text-accent-700" />
             Setup Guide
           </h2>
-          <ol className="space-y-3 text-sm text-[var(--text-secondary)]">
-            <li className="flex gap-3">
+          <ol className="space-y-2 text-sm text-[var(--text-secondary)]">
+            <li className="flex gap-2">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
               <span>
                 Create a Slack App at{' '}
@@ -218,15 +218,15 @@ export default function SlackIntegrationPage() {
                 </a>
               </span>
             </li>
-            <li className="flex gap-3">
+            <li className="flex gap-2">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">2</span>
               <span>Add Bot Token Scopes: <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">chat:write</code>, <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">users:read.email</code>, <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">commands</code></span>
             </li>
-            <li className="flex gap-3">
+            <li className="flex gap-2">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">3</span>
               <span>Install the app to your workspace and copy the Bot Token below</span>
             </li>
-            <li className="flex gap-3">
+            <li className="flex gap-2">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">4</span>
               <span>Configure Slash Commands using the webhook URLs below</span>
             </li>
@@ -242,13 +242,13 @@ export default function SlackIntegrationPage() {
           <p className="text-sm text-[var(--text-muted)] mb-4">
             Use these URLs when configuring your Slack App&apos;s slash commands and event subscriptions.
           </p>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {[
               { label: 'Slash Commands', url: `${webhookBaseUrl}/api/v1/integrations/slack/commands` },
               { label: 'Interactive Components', url: `${webhookBaseUrl}/api/v1/integrations/slack/interactions` },
               { label: 'Event Subscriptions', url: `${webhookBaseUrl}/api/v1/integrations/slack/events` },
             ].map(({ label, url }) => (
-              <div key={label} className="flex items-center justify-between p-3 bg-[var(--bg-secondary)] rounded-lg">
+              <div key={label} className="flex items-center justify-between p-2 bg-[var(--bg-secondary)] rounded-lg">
                 <div>
                   <div className="text-xs font-medium text-[var(--text-muted)]">{label}</div>
                   <code className="text-sm text-[var(--text-primary)]">{url}</code>
@@ -266,7 +266,7 @@ export default function SlackIntegrationPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 p-3 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
+          <div className="mt-4 p-2 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
             <p className="text-xs text-accent-800 dark:text-accent-400">
               <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code> — both pointing to the Slash Commands URL above.
             </p>
@@ -425,7 +425,7 @@ export default function SlackIntegrationPage() {
               { title: 'New joinee welcome', desc: 'Welcome new team members', status: 'active' },
               { title: 'Approval buttons', desc: 'Approve/reject directly from Slack', status: 'coming' },
             ].map((feature) => (
-              <div key={feature.title} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-secondary)]">
+              <div key={feature.title} className="flex items-start gap-2 p-2 rounded-lg bg-[var(--bg-secondary)]">
                 <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
                   feature.status === 'active'
                     ? 'bg-success-100 text-success-600'

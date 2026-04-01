@@ -194,7 +194,7 @@ export default function ResourcePoolPage() {
               <button
                 key={stat.filter}
                 onClick={() => setStatusFilter(statusFilter === stat.filter ? 'ALL' : stat.filter)}
-                className={`rounded-xl border p-4 text-left transition-all hover:shadow-sm ${
+                className={`rounded-xl border p-4 text-left transition-all hover:shadow-[var(--shadow-card)] ${
                   statusFilter === stat.filter
                     ? 'border-accent-400 ring-2 ring-accent-200 bg-accent-50'
                     : 'border-[var(--border-main)] bg-[var(--bg-card)]'

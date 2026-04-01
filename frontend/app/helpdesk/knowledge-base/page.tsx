@@ -98,7 +98,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
 
   return (
     <Card
-      className="p-6 hover:shadow-md transition-all cursor-pointer group"
+      className="p-6 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer group"
       onClick={() => onView(article)}
     >
       <div className="flex items-start justify-between gap-4">

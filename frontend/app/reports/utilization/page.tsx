@@ -126,7 +126,7 @@ export default function UtilizationReportsPage() {
     trendDirection?: 'up' | 'down';
     color: string;
   }) => (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div className="space-y-2">

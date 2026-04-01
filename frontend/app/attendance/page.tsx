@@ -184,7 +184,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
             </div>
           )}
           {/* Live Clock */}
-          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
+          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-[var(--shadow-card)] border border-[var(--border-main)]">
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
               <Clock className="h-5 w-5 text-white animate-pulse" />
             </div>
@@ -210,7 +210,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Attendance Card */}
         <div className="lg:col-span-2">
-          <Card className="bg-gradient-to-br from-accent-600 via-accent-600 to-accent-700 text-white overflow-hidden relative border-0 shadow-lg">
+          <Card className="bg-gradient-to-br from-accent-600 via-accent-600 to-accent-700 text-white overflow-hidden relative border-0 shadow-[var(--shadow-dropdown)]">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
             </div>
@@ -289,7 +289,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-white text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In
@@ -300,7 +300,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckOutRequest}
                         isLoading={checkOutPending}
-                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-danger-500 to-accent-600 text-white hover:from-danger-600 hover:to-accent-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-danger-500 to-accent-600 text-white hover:from-danger-600 hover:to-accent-700 border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
                       >
                         <LogOut className="h-5 w-5 mr-2" />
                         Check Out
@@ -316,7 +316,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
         {/* Progress Ring + Today Stats */}
         <div className="space-y-4">
           {/* Work Progress */}
-          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md overflow-hidden">
+          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-[var(--shadow-elevated)] overflow-hidden">
             <CardContent className="p-6 flex items-center gap-6 relative">
               <div className={`absolute inset-0 opacity-[0.04] ${isOvertime ? 'bg-gradient-to-br from-warning-500 to-warning-500' : workProgress >= 100 ? 'bg-gradient-to-br from-success-500 to-success-500' : 'bg-gradient-to-br from-accent-500 to-accent-500'}`} />
               <ProgressRing
@@ -361,12 +361,12 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
           </Card>
 
           {/* Weekly Averages */}
-          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-md">
+          <Card className="card-aura skeuo-card border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
                       <Sunrise className="h-4 w-4 text-white" />
                     </div>
                     <p className="text-micro text-accent-600 dark:text-accent-400">Avg In</p>
@@ -375,7 +375,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center shadow-sm">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-card)]">
                       <Target className="h-4 w-4 text-white" />
                     </div>
                     <p className="text-micro text-warning-600 dark:text-warning-400">Avg Hrs</p>

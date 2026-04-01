@@ -77,8 +77,8 @@ export function HolidayCarousel({
 
   if (isLoading) {
     return (
-      <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-5 text-white">
-        <div className="flex items-center justify-between mb-3">
+      <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4text-white">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <span className="text-xs opacity-60">View All</span>
         </div>
@@ -93,8 +93,8 @@ export function HolidayCarousel({
 
   if (displayedHolidays.length === 0) {
     return (
-      <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-5 text-white">
-        <div className="flex items-center justify-between mb-3">
+      <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4text-white">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <a href="/holidays" className="text-xs opacity-60 hover:opacity-100 transition-opacity">View All</a>
         </div>
@@ -115,14 +115,14 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-5 text-white"
+      className="relative overflow-hidden rounded-lg bg-gradient-to-br from-accent-600 to-accent-800 p-4text-white"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <HolidayIllustration />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-3 relative z-10">
+      <div className="flex items-center justify-between mb-2 relative z-10">
         <span className="text-xs font-semibold uppercase tracking-wider text-accent-200">
           Holidays
         </span>
@@ -184,7 +184,7 @@ export function HolidayCarousel({
 
       {/* Dot Indicators */}
       {displayedHolidays.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-3 relative z-10">
+        <div className="flex justify-center gap-1.5 mt-2 relative z-10">
           {displayedHolidays.map((_, idx) => (
             <button
               key={idx}

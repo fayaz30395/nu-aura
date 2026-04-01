@@ -79,7 +79,7 @@ export function RelatedContent({
             transition={{ delay: index * 0.05 }}
           >
             <Card
-              className="group cursor-pointer h-full transition-all hover:shadow-lg"
+              className="group cursor-pointer h-full transition-all hover:shadow-[var(--shadow-dropdown)]"
               onClick={() => router.push(getRoute(item))}
             >
               <CardHeader className="pb-3">

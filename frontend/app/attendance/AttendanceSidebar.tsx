@@ -27,10 +27,10 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
           transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.06 }}
         >
           <Link href={action.href} className="block group">
-            <Card className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5">
+            <Card className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer hover:-translate-y-0.5">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all`}>
+                  <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-[var(--shadow-elevated)] group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all`}>
                     <action.icon className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -62,10 +62,10 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
   if (!holidays.length) return null;
 
   return (
-    <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-sm">
+    <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-card)]">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
             <CalendarDays className="h-3.5 w-3.5 text-white" />
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">Upcoming Holidays</h4>
@@ -113,10 +113,10 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
   );
 
   return (
-    <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-sm">
+    <Card className="skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-card)]">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
             <Coffee className="h-3.5 w-3.5 text-white" />
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">This Week</h4>

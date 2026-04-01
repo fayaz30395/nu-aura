@@ -86,7 +86,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
   };
 
   return (
-    <Card className="card-interactive p-6 hover:shadow-lg transition-shadow cursor-pointer group"
+    <Card className="card-interactive p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow cursor-pointer group"
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>

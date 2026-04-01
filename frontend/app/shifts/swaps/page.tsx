@@ -180,7 +180,7 @@ export default function ShiftSwapsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-[var(--shadow-card)]'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
               }`}
             >

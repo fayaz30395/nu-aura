@@ -274,7 +274,7 @@ export default function EmployeeImportPage() {
 
         {/* Step 1: Upload */}
         {step === 'upload' && (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
             {/* Download Templates */}
             <div className="mb-6">
               <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
@@ -405,7 +405,7 @@ export default function EmployeeImportPage() {
 
         {/* Step 2: Preview */}
         {step === 'preview' && preview && (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)]">
             {/* Summary Cards */}
             <div className="p-6 border-b border-[var(--border-main)]">
               <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
@@ -594,7 +594,7 @@ export default function EmployeeImportPage() {
 
         {/* Step 3: Result */}
         {step === 'result' && result && (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
             {/* Result Header */}
             <div className="text-center mb-8">
               {result.status === 'COMPLETED' ? (

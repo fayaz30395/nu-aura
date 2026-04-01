@@ -101,7 +101,7 @@ export default function BlogsPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-4 mb-2">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
                 <Pen className="w-6 h-6 text-white" />
               </div>
               <h1 className={`${typography.pageTitle} text-[var(--text-primary)]`}>
@@ -115,7 +115,7 @@ export default function BlogsPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
             <Button
               onClick={handleNewPost}
-              className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-md hover:shadow-lg transition-all"
+              className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
             >
               <Plus className="w-4 h-4" />
               New Post
@@ -161,7 +161,7 @@ export default function BlogsPage() {
                 onClick={() => setSelectedCategoryId(undefined)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   selectedCategoryId === undefined
-                    ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                 }`}
                 whileHover={{ scale: 1.05 }}
@@ -183,7 +183,7 @@ export default function BlogsPage() {
                   onClick={() => setSelectedCategoryId(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategoryId === category.id
-                      ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-md'
+                      ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                   }`}
                   whileHover={{ scale: 1.05 }}
@@ -248,7 +248,7 @@ export default function BlogsPage() {
                 <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
                   <Button
                     onClick={handleNewPost}
-                    className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-md hover:shadow-lg transition-all"
+                    className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Create First Post
@@ -268,7 +268,7 @@ export default function BlogsPage() {
                 whileHover={{ y: -2, transition: { duration: 0.2 } }}
               >
                 <Card
-                  className="cursor-pointer overflow-hidden shadow-lg hover:shadow-2xl transition-shadow h-full"
+                  className="cursor-pointer overflow-hidden shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-shadow h-full"
                   onClick={() => handlePostClick(featuredPost.id)}
                 >
                   <CardContent className="p-0">
@@ -435,7 +435,7 @@ export default function BlogsPage() {
                       exit={{ opacity: 0, y: -20 }}
                     >
                       <Card
-                        className="card-interactive cursor-pointer overflow-hidden h-full flex flex-col shadow-md hover:shadow-xl transition-all duration-300"
+                        className="card-interactive cursor-pointer overflow-hidden h-full flex flex-col shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
                         onClick={() => handlePostClick(post.id)}
                       >
                         {/* Cover Image */}

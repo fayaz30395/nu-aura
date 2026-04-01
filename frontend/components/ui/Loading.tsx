@@ -157,14 +157,14 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
         <div className="relative w-24 h-24">
           {/* Outer orbit ring */}
           <div className="absolute inset-0 rounded-full border-2 border-accent-400 dark:border-accent-500 animate-[spin_3s_linear_infinite]">
-            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-accent-500 dark:bg-accent-400 shadow-lg shadow-accent-500/60" />
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-accent-500 dark:bg-accent-400 shadow-[var(--shadow-dropdown)] shadow-accent-500/60" />
           </div>
           {/* Middle orbit ring */}
           <div className="absolute inset-4 rounded-full border-2 border-accent-400 dark:border-accent-500 animate-[spin_2s_linear_infinite_reverse]">
-            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-accent-500 dark:bg-accent-400 shadow-lg shadow-accent-500/60" />
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-accent-500 dark:bg-accent-400 shadow-[var(--shadow-dropdown)] shadow-accent-500/60" />
           </div>
           {/* Inner pulsing core */}
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 shadow-xl shadow-accent-500/40 dark:shadow-accent-400/30 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/40 dark:shadow-accent-400/30 animate-pulse flex items-center justify-center">
             <span className="text-white font-bold text-lg tracking-tight">N</span>
           </div>
         </div>

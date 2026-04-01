@@ -217,7 +217,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
         <MoreHorizontal size={14} />
       </button>
       {open && (
-        <div className="absolute right-0 top-6 z-30 w-44 bg-white border border-[var(--border-main)] rounded-lg shadow-lg py-1 text-sm">
+        <div className="absolute right-0 top-6 z-30 w-44 bg-[var(--bg-elevated)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] py-1 text-sm">
           <button
             type="button"
             className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -313,7 +313,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Total Active */}
-      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <User size={14} className="text-accent-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
@@ -323,7 +323,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       </div>
 
       {/* Conversion Rate */}
-      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp size={14} className="text-success-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Conversion Rate</span>
@@ -333,7 +333,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       </div>
 
       {/* Avg Time in Stage */}
-      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <Clock size={14} className="text-warning-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Avg. Time in Stage</span>
@@ -343,7 +343,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       </div>
 
       {/* Top Sources */}
-      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 size={14} className="text-accent-500" />
           <span className="text-xs text-[var(--text-muted)] font-medium">Top Sources</span>
@@ -382,7 +382,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
   const maxCount = Math.max(...counts, 1);
 
   return (
-    <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
       <p className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-1.5">
         <TrendingUp size={13} className="text-accent-500" />
         Hiring Funnel
@@ -399,7 +399,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
                 className={`w-full rounded-t-sm ${colors.badge.split(' ')[0]}`}
                 style={{ height: `${height}%`, minHeight: '2px' }}
               />
-              <span className="text-[9px] text-[var(--text-muted)] truncate w-full text-center">{STAGE_LABELS[stage].split(' ')[0]}</span>
+              <span className="text-2xs text-[var(--text-muted)] truncate w-full text-center">{STAGE_LABELS[stage].split(' ')[0]}</span>
             </div>
           );
         })}
@@ -801,7 +801,7 @@ export default function ApplicantPipelinePage() {
             {/* Job Selector */}
             <div className="w-72">
               {jobsLoading ? (
-                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-4 border border-[var(--border-main)] rounded-lg bg-white">
+                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
                   <Loader2 size={14} className="animate-spin" />
                   Loading job openings...
                 </div>
@@ -912,7 +912,7 @@ export default function ApplicantPipelinePage() {
                   placeholder="Search by candidate name..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
                 />
                 {searchQuery && (
                   <button
@@ -930,7 +930,7 @@ export default function ApplicantPipelinePage() {
                 className={`flex items-center gap-1.5 px-4 py-2 text-sm border rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   hasActiveFilters
                     ? 'border-accent-300 bg-accent-50 text-accent-700'
-                    : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
+                    : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 <Filter size={14} />
@@ -955,13 +955,13 @@ export default function ApplicantPipelinePage() {
 
             {/* ── Filter Dropdowns ───────────────────────────────────── */}
             {showFilters && (
-              <div className="flex flex-wrap items-end gap-4 bg-white border border-[var(--border-main)] rounded-xl p-4 animate-in fade-in slide-in-from-top-1">
+              <div className="flex flex-wrap items-end gap-4 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4 animate-in fade-in slide-in-from-top-1">
                 <div className="min-w-[160px]">
                   <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                   <select
                     value={sourceFilter}
                     onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
-                    className="w-full px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"
+                    className="w-full px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20"
                   >
                     <option value="">All sources</option>
                     {Object.values(ApplicationSource).map(src => (
@@ -972,7 +972,7 @@ export default function ApplicantPipelinePage() {
 
                 <div className="min-w-[140px]">
                   <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</label>
-                  <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-white">
+                  <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
                     <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15} />
                     {minRating > 0 && (
                       <button onClick={() => setMinRating(0)} aria-label="Clear rating filter" className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
@@ -1006,7 +1006,7 @@ export default function ApplicantPipelinePage() {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-4 ${colors.col} overflow-hidden transition-colors ${
-                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-accent-300` : 'bg-white'
+                              snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-accent-300` : 'bg-[var(--bg-card)]'
                             }`}
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
@@ -1040,10 +1040,10 @@ export default function ApplicantPipelinePage() {
                                         <div
                                           ref={dragProvided.innerRef}
                                           {...dragProvided.draggableProps}
-                                          className={`bg-white border rounded-lg p-4 transition-all cursor-pointer group ${
+                                          className={`bg-[var(--bg-card)] border rounded-lg p-4 transition-all cursor-pointer group ${
                                             dragSnapshot.isDragging
-                                              ? 'shadow-lg border-accent-300 ring-2 ring-accent-200 rotate-1'
-                                              : 'border-[var(--border-main)] shadow-sm hover:shadow-md hover:border-[var(--border-main)]'
+                                              ? 'shadow-[var(--shadow-dropdown)] border-accent-300 ring-2 ring-accent-200 rotate-1'
+                                              : 'border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-[var(--border-main)]'
                                           } ${isMoving ? 'opacity-50' : ''}`}
                                           onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
                                         >
@@ -1469,7 +1469,7 @@ export default function ApplicantPipelinePage() {
                 onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 disabled={offerLoading}
-                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
               />
             </div>
 

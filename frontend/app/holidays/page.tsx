@@ -481,7 +481,7 @@ export default function HolidaysPage() {
       {/* Add/Edit Holiday Modal (Admin only) */}
       {showModal && isAdmin && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
-          <div className="bg-[var(--bg-card)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+          <div className="bg-[var(--bg-card)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-dropdown)]">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">

@@ -211,7 +211,7 @@ export default function AboutPage() {
                 className="flex gap-6"
               >
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-[var(--shadow-dropdown)]">
                     {milestone.year}
                   </div>
                 </div>

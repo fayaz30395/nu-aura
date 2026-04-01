@@ -199,7 +199,7 @@ function DemoLoginPanel({
               className="w-full flex items-center gap-4 px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <div
-                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm`}
+                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-[var(--shadow-card)]`}
               >
                 {account.name.split(' ').map(n => n[0]).join('')}
               </div>
@@ -487,7 +487,7 @@ function LoginPage() {
                   style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
                 >
                   <div
-                    className="w-14 h-14 rounded-lg flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-xl transition-all duration-300"
+                    className="w-14 h-14 rounded-lg flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
                     style={{
                       background: app.bg,
                       boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',

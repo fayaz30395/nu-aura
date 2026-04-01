@@ -248,7 +248,7 @@ export default function AdminIntegrationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-lg shadow-accent-500/25">
+          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>

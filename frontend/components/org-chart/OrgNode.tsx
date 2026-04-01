@@ -55,11 +55,11 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -8, scale: 0.96 }}
       transition={{ duration: 0.15 }}
-      className="absolute top-full left-1/2 -transurface-x-1/2 mt-2 z-50 w-72 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-xl p-4"
+      className="absolute top-full left-1/2 -transurface-x-1/2 mt-2 z-50 w-72 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4"
       onClick={e => e.stopPropagation()}
     >
       {/* Header */}
-      <div className="flex items-center gap-4 mb-3">
+      <div className="flex items-center gap-4 mb-2">
         {employee.profilePhotoUrl ? (
           <Image
             src={employee.profilePhotoUrl}
@@ -71,7 +71,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
           />
         ) : (
           <div className="h-12 w-12 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center border-2 border-accent-200 dark:border-accent-700">
-            <span className="text-sm font-bold text-accent-700 dark:text-accent-300">
+            <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
           </div>
@@ -86,7 +86,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       </div>
 
       {/* Details */}
-      <div className="space-y-2 text-xs border-t border-[var(--border-subtle)] pt-3">
+      <div className="space-y-2 text-xs border-t border-[var(--border-subtle)] pt-2">
         {employee.workEmail && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
             <Mail className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
@@ -108,7 +108,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       {/* Link to full profile */}
       <Link
         href={`/employees/${employee.id}`}
-        className="mt-3 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-xs font-medium py-2 transition-colors"
+        className="mt-2 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-xs font-medium py-2 transition-colors"
       >
         View Full Profile
         <ExternalLink className="h-3 w-3" />
@@ -148,12 +148,12 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
       {/* ── Card ──────────────────────────────────────────────────── */}
       <div
         className={cn(
-          'relative rounded-xl border-2 shadow-sm transition-all duration-200 cursor-pointer select-none',
+          'relative rounded-xl border-2 shadow-[var(--shadow-card)] transition-all duration-200 cursor-pointer select-none',
           'min-w-[220px] max-w-[220px] p-4',
           style.bg,
           style.border,
-          isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-900 shadow-lg scale-105',
-          !isHighlighted && 'hover:shadow-md hover:-transurface-y-0.5',
+          isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-900 shadow-[var(--shadow-dropdown)] scale-105',
+          !isHighlighted && 'hover:shadow-[var(--shadow-elevated)] hover:-transurface-y-0.5',
         )}
         onClick={togglePopover}
         role="button"
@@ -170,11 +170,11 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
               width={36}
               height={36}
               unoptimized
-              className="h-9 w-9 rounded-full object-cover border border-white/60 dark:border-surface-600 flex-shrink-0"
+              className="h-9 w-9 rounded-full object-cover border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0"
             />
           ) : (
-            <div className="h-9 w-9 rounded-full bg-white/80 dark:bg-surface-700 flex items-center justify-center border border-white/60 dark:border-surface-600 flex-shrink-0">
-              <span className="text-xs font-bold text-[var(--text-primary)]">
+            <div className="h-9 w-9 rounded-full bg-white/80 dark:bg-surface-700 flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {getInitials(employee)}
               </span>
             </div>
@@ -198,7 +198,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
 
         {/* Level badge */}
         {employee.level && (
-          <span className={cn('mt-2 inline-block text-[9px] font-semibold px-1.5 py-0.5 rounded', style.badge)}>
+          <span className={cn('mt-2 inline-block text-2xs font-semibold px-1.5 py-0.5 rounded', style.badge)}>
             {employee.level.replace('_', ' ')}
           </span>
         )}
@@ -207,7 +207,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="absolute -bottom-3 left-1/2 -transurface-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-sm flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="absolute -bottom-3 left-1/2 -transurface-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-card)] flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
@@ -318,7 +318,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
           />
         ) : (
           <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-accent-700 dark:text-accent-300">
+            <span className="text-xs font-semibold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
           </div>

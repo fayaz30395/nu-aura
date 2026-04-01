@@ -19,7 +19,7 @@ export function FileGridView({ files, onFileClick, onContextMenu }: FileGridView
           key={file.id}
           onClick={() => onFileClick(file)}
           onContextMenu={(e) => onContextMenu(e, file)}
-          className="group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 hover:shadow-md transition-all cursor-pointer relative"
+          className="group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer relative"
         >
           <button
             onClick={(e) => onContextMenu(e, file)}

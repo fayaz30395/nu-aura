@@ -38,7 +38,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-lg border border-[var(--border-main)]">
+      <div className="bg-[var(--bg-input)] p-4 rounded-lg shadow-[var(--shadow-dropdown)] border border-[var(--border-main)]">
         <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>

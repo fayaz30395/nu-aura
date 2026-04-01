@@ -130,7 +130,7 @@ function ExportMenu<T extends Record<string, unknown>>({
       {open && (
         <div
           className={cn(
-            'absolute right-0 z-50 mt-2 w-48 rounded-lg border shadow-lg',
+            'absolute right-0 z-50 mt-2 w-48 rounded-lg border shadow-[var(--shadow-dropdown)]',
             'border-[var(--border-main)] bg-[var(--bg-surface)]',
             'animate-in fade-in-0 zoom-in-95'
           )}
@@ -143,7 +143,7 @@ function ExportMenu<T extends Record<string, unknown>>({
               role="menuitem"
               onClick={handleCsv}
               className={cn(
-                'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
+                'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
@@ -158,7 +158,7 @@ function ExportMenu<T extends Record<string, unknown>>({
               role="menuitem"
               onClick={handleExcel}
               className={cn(
-                'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
+                'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                 'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
@@ -175,7 +175,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                 onClick={handlePdf}
                 disabled={!onExportPdf}
                 className={cn(
-                  'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors',
+                  'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
                   'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
                   'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   'min-h-[44px]',

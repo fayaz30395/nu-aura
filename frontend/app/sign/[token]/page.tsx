@@ -375,7 +375,7 @@ export default function SignPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)]">
       {/* Header */}
-      <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] shadow-sm">
+      <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] shadow-[var(--shadow-card)]">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-accent-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white" />
@@ -520,7 +520,7 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'DRAWN'
-                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
@@ -534,7 +534,7 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'TYPED'
-                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-[var(--shadow-card)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >

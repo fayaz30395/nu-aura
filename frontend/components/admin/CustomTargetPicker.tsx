@@ -264,7 +264,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             disabled={disabled}
             className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               targetType === type
-                ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-white'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
@@ -306,7 +306,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
         {/* Search Results Dropdown */}
         {showDropdown && (searchResults.length > 0 || (searchQuery && !isSearching)) && (
-          <div className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto">
             {searchResults.length > 0 ? (
               searchResults.map((result) => (
                 <button

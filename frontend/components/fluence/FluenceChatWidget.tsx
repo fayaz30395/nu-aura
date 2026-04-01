@@ -93,7 +93,7 @@ export const FluenceChatWidget: React.FC = () => {
             onClick={() => setIsOpen(true)}
             className={cn(
               'fixed bottom-6 right-6 z-50 flex items-center justify-center',
-              'w-14 h-14 rounded-full shadow-lg cursor-pointer',
+              'w-14 h-14 rounded-full shadow-[var(--shadow-dropdown)] cursor-pointer',
               'bg-accent-700 hover:bg-accent-700 text-white',
               'transition-colors duration-200',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
@@ -220,7 +220,7 @@ export const FluenceChatWidget: React.FC = () => {
                   exit={{ opacity: 0, y: 4 }}
                   onClick={scrollToBottom}
                   aria-label="Scroll to new messages"
-                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-md text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-elevated)] text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <ChevronDown className="h-3 w-3" />
                   New messages
