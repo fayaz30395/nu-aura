@@ -634,7 +634,7 @@ export default function LettersPage() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                      <tbody className="divide-y divide-[var(--border-subtle)]">
                         {filteredLetters.map((letter) => (
                           <tr key={letter.id} className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                             <td className="px-4 py-4 whitespace-nowrap">

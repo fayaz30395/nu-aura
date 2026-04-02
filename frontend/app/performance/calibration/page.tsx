@@ -613,7 +613,7 @@ export default function CalibrationPage() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                    <tbody className="divide-y divide-[var(--border-subtle)]">
                       {filteredAndSorted.map(row => {
                         const finalVal = finalOverrides[row.employeeId] ?? row.finalRating;
                         const isDirty =

@@ -46,7 +46,7 @@ import dynamic from 'next/dynamic';
 // Both chart files live in CompetencyCharts.tsx so the entire recharts bundle is
 // excluded from the initial page JS.
 const ChartSkeleton = () => (
-  <div className="w-full h-[280px] animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg" />
+  <div className="w-full h-[280px] animate-pulse bg-[var(--bg-secondary)] rounded-lg" />
 );
 const GapAnalysisRadarChart = dynamic(
   () => import('./CompetencyCharts').then(m => ({ default: m.GapAnalysisRadarChart })),
@@ -156,7 +156,7 @@ const HEATMAP_COLORS = [
 ];
 
 function getHeatmapClass(level: number): string {
-  if (level <= 0) return 'bg-surface-100 text-surface-400 dark:bg-surface-800 dark:text-surface-500';
+  if (level <= 0) return 'bg-[var(--bg-secondary)] text-[var(--text-muted)]';
   return HEATMAP_COLORS[Math.min(level - 1, 4)];
 }
 
@@ -207,7 +207,7 @@ function FrameworkAdminTab() {
               <div className={`w-3 h-3 rounded-full bg-${stat.color}-500`} />
             </div>
             {filterCategory === stat.category && (
-              <Badge size="xs" color="sky" mt={4}>Active Filter</Badge>
+              <Badge size="xs" color="indigo" mt={4}>Active Filter</Badge>
             )}
           </Paper>
         ))}
@@ -283,7 +283,7 @@ function FrameworkAdminTab() {
                   <div className="flex items-center gap-2">
                     <Progress
                       value={(comp.requiredLevel / 5) * 100}
-                      color="sky"
+                      color="indigo"
                       size="sm"
                       className="w-16"
                     />
@@ -371,7 +371,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
   if (skillsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader color="blue" size="lg" />
+        <Loader color="indigo" size="lg" />
       </div>
     );
   }
@@ -459,7 +459,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                                 className={`w-5 h-5 rounded-md flex items-center justify-center text-2xs font-bold ${
                                   level <= skill.proficiencyLevel
                                     ? getHeatmapClass(level)
-                                    : 'bg-surface-100 dark:bg-surface-800 text-surface-300 dark:text-surface-600'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                                 }`}
                               >
                                 {level}
@@ -493,7 +493,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
           </Title>
           {gapQuery.isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader color="blue" size="md" />
+              <Loader color="indigo" size="md" />
             </div>
           ) : radarData.length === 0 ? (
             <div className="text-center py-10">
@@ -664,7 +664,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
   if (skillsQuery.isLoading || gapQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader color="blue" size="lg" />
+        <Loader color="indigo" size="lg" />
       </div>
     );
   }
