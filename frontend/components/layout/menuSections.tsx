@@ -297,6 +297,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
             { id: 'recruitment-pipeline', label: 'Pipeline', href: '/recruitment/pipeline', icon: sm.folderKanban, requiredPermission: Permissions.RECRUITMENT_VIEW },
             { id: 'interviews', label: 'Interviews', href: '/recruitment/interviews', icon: sm.messageCircle, requiredPermission: Permissions.RECRUITMENT_VIEW },
             { id: 'job-boards', label: 'Job Boards', href: '/recruitment/job-boards', icon: sm.newspaper, requiredPermission: Permissions.RECRUITMENT_VIEW },
+            { id: 'career-page-cms', label: 'Career Page CMS', href: '/recruitment/career-page', icon: sm.fileStack, requiredPermission: Permissions.RECRUITMENT_MANAGE },
           ],
         },
         {
@@ -343,6 +344,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'fluence-templates', label: 'Templates', icon: icon.fileStack, href: '/fluence/templates', requiredPermission: Permissions.KNOWLEDGE_VIEW },
         { id: 'fluence-drive', label: 'Drive', icon: icon.hardDrive, href: '/fluence/drive', requiredPermission: Permissions.KNOWLEDGE_VIEW },
         { id: 'fluence-search', label: 'Search', icon: icon.target, href: '/fluence/search', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-analytics', label: 'Analytics', icon: icon.barChart3, href: '/fluence/analytics', requiredPermission: Permissions.KNOWLEDGE_VIEW },
       ],
     },
     // ─── 6. PAY & FINANCE ───────────────────────────────────────────

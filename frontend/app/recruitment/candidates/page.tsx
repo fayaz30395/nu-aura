@@ -22,6 +22,7 @@ import {
   useDeleteCandidate,
   useCreateOffer,
   useParseResume,
+  useParseResumeFromUpload,
   useCalculateMatchScore,
   useGenerateScreeningSummary,
   useSynthesizeFeedback,
@@ -59,9 +60,11 @@ import {
   DeleteCandidateModal,
   ScreeningSummaryModal,
   FeedbackSynthesisModal,
+  InterviewScorecardModal,
   CreateOfferModal,
   AcceptOfferModal,
   DeclineOfferModal,
+  OfferESignModal,
 } from './_components';
 
 // ==================== Loading Fallback ====================
@@ -100,9 +103,13 @@ function CandidatesPage() {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [showESignModal, setShowESignModal] = useState(false);
+  const [eSignCandidate, setESignCandidate] = useState<Candidate | null>(null);
   const [showParseResumeModal, setShowParseResumeModal] = useState(false);
   const [showScreeningSummaryModal, setShowScreeningSummaryModal] = useState(false);
   const [showFeedbackSynthesisModal, setShowFeedbackSynthesisModal] = useState(false);
+  const [showScorecardModal, setShowScorecardModal] = useState(false);
+  const [scorecardCandidate, setScorecardCandidate] = useState<Candidate | null>(null);
 
   const [candidateToDelete, setCandidateToDelete] = useState<Candidate | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
@@ -131,6 +138,7 @@ function CandidatesPage() {
   const deleteCandidateMutation = useDeleteCandidate();
   const createOfferMutation = useCreateOffer();
   const parseResumeMutation = useParseResume();
+  const parseResumeFromUploadMutation = useParseResumeFromUpload();
   const calculateMatchScoreMutation = useCalculateMatchScore();
   const generateScreeningSummaryMutation = useGenerateScreeningSummary();
   const synthesizeFeedbackMutation = useSynthesizeFeedback();
@@ -401,6 +409,23 @@ function CandidatesPage() {
     }
   };
 
+  const handleParseResumeFile = async (file: File) => {
+    setAiLoadingState('parse');
+    try {
+      const result = await parseResumeFromUploadMutation.mutateAsync(file);
+      setParsedResume(result);
+      notifications.show({ title: 'Success', message: 'Resume parsed successfully', color: 'green' });
+    } catch (err: unknown) {
+      notifications.show({
+        title: 'Error',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to parse resume',
+        color: 'red',
+      });
+    } finally {
+      setAiLoadingState(null);
+    }
+  };
+
   const applyParsedResume = (parsed: ResumeParseResponse) => {
     const [firstName, ...lastNameParts] = (parsed.fullName || '').split(' ');
     const lastName = lastNameParts.join(' ');
@@ -520,6 +545,16 @@ function CandidatesPage() {
       setAiLoadingState(null);
     }
   }, [synthesizeFeedbackMutation]);
+
+  const handleViewScorecard = (candidate: Candidate) => {
+    setScorecardCandidate(candidate);
+    setShowScorecardModal(true);
+  };
+
+  const handleStartESign = (candidate: Candidate) => {
+    setESignCandidate(candidate);
+    setShowESignModal(true);
+  };
 
   // ==================== Derived Data (memoized) ====================
 
@@ -643,6 +678,8 @@ function CandidatesPage() {
                         onCalculateMatch={handleCalculateMatchScore}
                         onScreeningSummary={handleGenerateScreeningSummary}
                         onSynthesizeFeedback={handleSynthesizeFeedback}
+                        onViewScorecard={handleViewScorecard}
+                        onESign={handleStartESign}
                       />
                     ))}
                   </tbody>
@@ -660,6 +697,7 @@ function CandidatesPage() {
           aiLoadingState={aiLoadingState}
           resumeParseForm={resumeParseForm}
           onSubmit={handleParseResume}
+          onFileUpload={handleParseResumeFile}
           onApply={applyParsedResume}
           onClose={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }}
         />
@@ -703,6 +741,17 @@ function CandidatesPage() {
           onClose={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }}
         />
 
+        <InterviewScorecardModal
+          open={showScorecardModal}
+          candidateId={scorecardCandidate?.id ?? ''}
+          candidateName={scorecardCandidate?.fullName ?? ''}
+          onSynthesizeFeedback={() => {
+            setShowScorecardModal(false);
+            if (scorecardCandidate) handleSynthesizeFeedback(scorecardCandidate);
+          }}
+          onClose={() => { setShowScorecardModal(false); setScorecardCandidate(null); }}
+        />
+
         <CreateOfferModal
           open={showOfferModal}
           candidate={candidateForOffer}
@@ -728,6 +777,11 @@ function CandidatesPage() {
           onDeclineReasonChange={setDeclineReason}
           onConfirm={handleDeclineOffer}
           onClose={() => { setShowDeclineModal(false); setCandidateForOffer(null); }}
+        />
+        <OfferESignModal
+          open={showESignModal}
+          candidate={eSignCandidate}
+          onClose={() => { setShowESignModal(false); setESignCandidate(null); }}
         />
       </motion.div>
     </AppLayout>

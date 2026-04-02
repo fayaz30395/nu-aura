@@ -27,6 +27,7 @@ import {
   UpdateCommentRequest,
   WikiPageRevision,
   FavoriteContentType,
+  WatchStatus,
 } from '../../types/platform/fluence';
 
 class FluenceService {
@@ -538,6 +539,23 @@ class FluenceService {
     const response = await apiClient.put<EditLockResponse>(
       `/fluence/edit-lock/${contentType}/${contentId}/heartbeat`,
       {}
+    );
+    return response.data;
+  }
+
+  // ─── Watch / Subscribe ───────────────────────────────────────────────────────
+
+  async toggleWatchWikiPage(pageId: string): Promise<WatchStatus> {
+    const response = await apiClient.post<WatchStatus>(
+      `/fluence/engagement/watches/wiki/${pageId}`,
+      {}
+    );
+    return response.data;
+  }
+
+  async getWatchStatusWikiPage(pageId: string): Promise<WatchStatus> {
+    const response = await apiClient.get<WatchStatus>(
+      `/fluence/engagement/watches/wiki/${pageId}/status`
     );
     return response.data;
   }

@@ -19,6 +19,7 @@ import {
   Trash2,
   Heart,
   MessageCircle,
+  Shield,
 } from 'lucide-react';
 import { Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -34,6 +35,7 @@ import {
 import { usePermissions } from '@/lib/hooks/usePermissions';
 import { SpaceFormDrawer, type SpaceFormValues } from '@/components/fluence/SpaceFormDrawer';
 import { DeleteSpaceModal } from '@/components/fluence/DeleteSpaceModal';
+import { SpacePermissionsDrawer } from '@/components/fluence/SpacePermissionsDrawer';
 import type { WikiSpace } from '@/lib/types/platform/fluence';
 import {
   layout,
@@ -70,6 +72,10 @@ export default function WikiPage() {
   const [editingSpace, setEditingSpace] = useState<WikiSpace | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingSpace, setDeletingSpace] = useState<WikiSpace | null>(null);
+
+  // Permissions drawer state
+  const [permissionsDrawerOpen, setPermissionsDrawerOpen] = useState(false);
+  const [permissionsSpace, setPermissionsSpace] = useState<WikiSpace | null>(null);
 
   // Queries
   const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
@@ -133,6 +139,15 @@ export default function WikiPage() {
       e.stopPropagation();
       setDeletingSpace(space);
       setDeleteModalOpen(true);
+    },
+    []
+  );
+
+  const handleOpenPermissionsSpace = useCallback(
+    (space: WikiSpace, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setPermissionsSpace(space);
+      setPermissionsDrawerOpen(true);
     },
     []
   );
@@ -365,7 +380,7 @@ export default function WikiPage() {
                           </div>
                         </button>
 
-                        {/* Edit / Delete actions — show on hover for authorized roles */}
+                        {/* Edit / Permissions / Delete actions — show on hover for authorized roles */}
                         {canManageSpaces && (
                           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Tooltip label="Edit space" withArrow>
@@ -377,6 +392,17 @@ export default function WikiPage() {
                                 aria-label="Edit space"
                               >
                                 <Pencil className="h-3 w-3" />
+                              </motion.button>
+                            </Tooltip>
+                            <Tooltip label="Space permissions" withArrow>
+                              <motion.button
+                                whileHover={{ scale: 1.15 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={(e) => handleOpenPermissionsSpace(space, e)}
+                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-700)] hover:border-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                aria-label="Space permissions"
+                              >
+                                <Shield className="h-3 w-3" />
                               </motion.button>
                             </Tooltip>
                             <Tooltip label="Delete space" withArrow>
@@ -596,6 +622,16 @@ export default function WikiPage() {
         allSpaces={spaces}
         onConfirmDelete={handleConfirmDelete}
         isDeleting={deleteSpace.isPending}
+      />
+
+      {/* ═══ Space Permissions Drawer ═══ */}
+      <SpacePermissionsDrawer
+        opened={permissionsDrawerOpen}
+        onClose={() => {
+          setPermissionsDrawerOpen(false);
+          setPermissionsSpace(null);
+        }}
+        space={permissionsSpace}
       />
     </AppLayout>
   );

@@ -39,4 +39,8 @@ export const performanceKeys = {
   // 360 Feedback
   feedback360: () => [...performanceKeys.all, 'feedback360'] as const,
   feedback360Cycles: () => [...performanceKeys.feedback360(), 'cycles'] as const,
+  // Competencies
+  competencies: () => [...performanceKeys.all, 'competencies'] as const,
+  reviewCompetencies: (reviewId: string) =>
+    [...performanceKeys.competencies(), 'review', reviewId] as const,
 };

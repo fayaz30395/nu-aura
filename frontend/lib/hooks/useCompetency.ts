@@ -114,11 +114,11 @@ export function useRemoveSkill(employeeId: string) {
 
 // ─── Review Competency Hooks ─────────────────────────────────────────────
 
-export function useReviewCompetencies(reviewId: string) {
+export function useReviewCompetencies(reviewId: string, enabled: boolean = true) {
   return useQuery({
     queryKey: competencyKeys.reviewCompetencies(reviewId),
     queryFn: () => competencyService.getByReview(reviewId),
-    enabled: !!reviewId,
+    enabled: enabled && !!reviewId,
     staleTime: 5 * 60 * 1000,
     retry: 2,
     retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 10000),

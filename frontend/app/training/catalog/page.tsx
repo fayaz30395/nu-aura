@@ -345,33 +345,46 @@ export default function CourseCatalogPage() {
                       )}
                     </div>
 
-                    {/* Enroll button */}
-                    <PermissionGate permission={Permissions.TRAINING_ENROLL}>
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
                       <Button
                         size="sm"
-                        className="w-full"
-                        onClick={() => handleEnroll(course)}
-                        disabled={isEnrolled || isEnrolling}
-                        variant={isEnrolled ? 'outline' : 'default'}
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => router.push(`/training/catalog/${course.id}`)}
                       >
-                        {isEnrolling ? (
-                          <span className="flex items-center gap-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Enrolling…
-                          </span>
-                        ) : isEnrolled ? (
-                          <span className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-success-500" />
-                            Enrolled
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-2">
-                            <Award className="h-4 w-4" />
-                            Enroll
-                          </span>
-                      )}
+                        <span className="flex items-center gap-1.5">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          Details
+                        </span>
                       </Button>
-                    </PermissionGate>
+                      <PermissionGate permission={Permissions.TRAINING_ENROLL}>
+                        <Button
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => handleEnroll(course)}
+                          disabled={isEnrolled || isEnrolling}
+                          variant={isEnrolled ? 'outline' : 'default'}
+                        >
+                          {isEnrolling ? (
+                            <span className="flex items-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Enrolling…
+                            </span>
+                          ) : isEnrolled ? (
+                            <span className="flex items-center gap-2">
+                              <CheckCircle className="h-4 w-4 text-success-500" />
+                              Enrolled
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-2">
+                              <Award className="h-4 w-4" />
+                              Enroll
+                            </span>
+                          )}
+                        </Button>
+                      </PermissionGate>
+                    </div>
                   </CardContent>
                 </Card>
               );
