@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Calendar, ArrowRight } from 'lucide-react';
 
 interface LeaveBalance {
@@ -82,12 +83,12 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
-        <a
-          href="/leaves"
+        <Link
+          href="/leave"
           className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
         >
           View All <ArrowRight className="h-3 w-3" />
-        </a>
+        </Link>
       </div>
 
       {/* Circular Progress */}
@@ -123,8 +124,8 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
 
       {/* Actions */}
       <div className="space-y-2 pt-3 border-t border-[var(--border-subtle)]">
-        <a
-          href="/leaves/request"
+        <Link
+          href="/leave/apply"
           className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"
           style={{
             background: 'var(--nu-gradient-dark)',
@@ -132,13 +133,13 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
           }}
         >
           Request Leave
-        </a>
-        <a
-          href="/leaves/balance"
+        </Link>
+        <Link
+          href="/leave/my-leaves"
           className="block w-full rounded-xl border border-[var(--border-main)] py-2.5 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)] transition-all duration-200"
         >
           View All Balances
-        </a>
+        </Link>
       </div>
     </div>
   );
