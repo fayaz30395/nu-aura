@@ -171,7 +171,7 @@ export default function BlogsPage() {
                 All Posts
                 {selectedCategoryId === undefined && (
                   <motion.div
-                    className="absolute bottom-0 left-0 h-0.5 bg-white"
+                    className="absolute bottom-0 left-0 h-0.5 bg-accent-300"
                     layoutId="category-indicator"
                     transition={{ type: 'spring', stiffness: 380, damping: 40 }}
                   />
@@ -193,7 +193,7 @@ export default function BlogsPage() {
                   {category.name}
                   {selectedCategoryId === category.id && (
                     <motion.div
-                      className="absolute bottom-0 left-0 h-0.5 bg-white"
+                      className="absolute bottom-0 left-0 h-0.5 bg-accent-300"
                       layoutId="category-indicator"
                       transition={{ type: 'spring', stiffness: 380, damping: 40 }}
                     />

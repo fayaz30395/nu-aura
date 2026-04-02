@@ -399,17 +399,10 @@ public class DocuSignController {
         // If completed, update time
         if ("COMPLETED".equals(event.getStatus()) || "completed".equalsIgnoreCase(event.getStatus())) {
             try {
-                // TODO(P1): Download signed PDF from DocuSign after completion and store via FileStorageService.
-                // Current behavior: signedDocUrl points to DocuSign's temporary URL which expires.
-                // Required: Call DocuSign API to download document bytes, upload to Google Drive, update signedDocUrl.
-                //
-                // Implementation steps:
-                //   1. Call GET /v2.1/accounts/{accountId}/envelopes/{envelopeId}/documents/{documentId}
-                //      with Authorization: Bearer <access_token> to download PDF bytes.
-                //   2. Upload the bytes via FileStorageService.uploadFile() with category "signed-documents".
-                //   3. Generate a download URL via FileStorageService.getDownloadUrl() and set envelope.setSignedDocUrl().
-                //   4. Call envelopeRepository.save(envelope) — already done below, so just set the field here.
-                //   5. Handle DocuSign API errors (rate limits, expired tokens) with retry logic.
+                // FUTURE: NUAURA-DOCUSIGN-001 — Download signed PDF from DocuSign on completion and persist via FileStorageService.
+                // Current behavior: signedDocUrl points to DocuSign's temporary URL (expires after ~30 days).
+                // Steps: GET /v2.1/accounts/{accountId}/envelopes/{envelopeId}/documents/{documentId}
+                // → FileStorageService.uploadFile(bytes, "signed-documents") → set envelope.signedDocUrl().
                 envelope.setCompletedAt(java.time.Instant.now());
             } catch (Exception e) { // Intentional broad catch — DocuSign API integration
                 log.error("Failed to process completed envelope: {}", envelope.getId(), e);

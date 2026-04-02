@@ -79,7 +79,7 @@ public class TravelService implements ApprovalCallbackHandler {
         travelRequest.setTenantId(tenantId);
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request created: {}", saved.getRequestNumber());
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -118,7 +118,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request updated: {}", saved.getRequestNumber());
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -141,7 +141,7 @@ public class TravelService implements ApprovalCallbackHandler {
         // Start approval workflow
         startTravelApprovalWorkflow(saved, tenantId);
 
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -163,7 +163,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request approved: {} by {}", saved.getRequestNumber(), approverId);
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -185,7 +185,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request rejected: {} by {}", saved.getRequestNumber(), approverId);
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -203,7 +203,7 @@ public class TravelService implements ApprovalCallbackHandler {
 
         TravelRequest saved = travelRequestRepository.save(travelRequest);
         log.info("Travel request cancelled: {}", saved.getRequestNumber());
-        return TravelRequestDto.fromEntity(saved);
+        return TravelRequestDto.fromEntity(saved, getEmployeeFullName(saved.getEmployeeId(), tenantId));
     }
 
     @Transactional
@@ -226,7 +226,7 @@ public class TravelService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
-        return TravelRequestDto.fromEntity(travelRequest);
+        return TravelRequestDto.fromEntity(travelRequest, getEmployeeFullName(travelRequest.getEmployeeId(), tenantId));
     }
 
     @Transactional(readOnly = true)

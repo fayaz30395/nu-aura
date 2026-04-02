@@ -419,9 +419,9 @@ public class ExecutiveDashboardService {
             terminationsByYearMonth.put(key, ((Number) row[2]).longValue());
         }
 
-        // 4. Single query: current active headcount (point-in-time per month not yet supported;
-        //    a true point-in-time headcount would require an audit/snapshot table — tracked as
-        //    TODO(P2): add monthly_headcount_snapshot table populated by scheduled job).
+        // 4. Single query: current active headcount (point-in-time per month not yet supported).
+        //    FUTURE: NUAURA-ANALYTICS-001 — Add monthly_headcount_snapshot table (Flyway V94+)
+        //    populated by a monthly scheduled job for true point-in-time headcount trend data.
         Long currentHeadcount = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
 
         // Build trend lists from the pre-fetched maps — no further DB calls in this loop
@@ -430,7 +430,7 @@ public class ExecutiveDashboardService {
             String period = month.format(formatter);
             String key = month.getYear() + "-" + month.getMonthValue();
 
-            // Headcount trend (approximated with current count — see TODO above)
+            // Headcount trend (approximated with current count — see FUTURE NUAURA-ANALYTICS-001 above)
             headcountTrend.add(TrendPoint.builder()
                     .period(period)
                     .value(BigDecimal.valueOf(currentHeadcount))

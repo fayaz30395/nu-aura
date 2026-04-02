@@ -179,7 +179,7 @@ export default function SlackIntegrationPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>

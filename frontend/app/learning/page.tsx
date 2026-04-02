@@ -21,7 +21,7 @@ export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
 
   // React Query hooks
-  const { data: dashboard, isLoading: dashboardLoading } = useLearningDashboard();
+  const { data: dashboard, isLoading: dashboardLoading, isError: dashboardError } = useLearningDashboard();
   const { data: coursesData, isLoading: coursesLoading } = usePublishedCourses(
     0,
     20,
@@ -82,31 +82,35 @@ export default function LearningPage() {
         {dashboardLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
                 <Skeleton className="h-8 w-12 mb-2" />
                 <Skeleton className="h-4 w-20" />
               </div>
             ))}
           </div>
+        ) : dashboardError ? (
+          <div className="mb-6 p-4 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
+            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load learning dashboard. Please try refreshing the page.</p>
+          </div>
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
               <div className="text-[var(--text-secondary)]">Total Enrollments</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboard.inProgress}</div>
               <div className="text-[var(--text-secondary)]">In Progress</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboard.completed}</div>
               <div className="text-[var(--text-secondary)]">Completed</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%</div>
               <div className="text-[var(--text-secondary)]">Avg Progress</div>
             </div>
-            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
               <div className="text-[var(--text-secondary)]">Certificates</div>
             </div>

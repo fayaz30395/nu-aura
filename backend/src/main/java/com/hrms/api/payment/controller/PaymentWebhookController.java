@@ -17,11 +17,18 @@ import jakarta.validation.Valid;
  * Gated behind the ENABLE_PAYMENTS feature flag — when payments are disabled,
  * all webhook endpoints return 403 (AccessDenied via FeatureFlagAspect).
  *
- * TODO: When enabling for production:
- * 1. Move webhook endpoints to permitAll in SecurityConfig (they are provider-initiated)
- * 2. Implement real signature verification in RazorpayAdapter and StripeAdapter
- * 3. Add idempotency check using externalEventId to prevent duplicate processing
- * 4. Add rate limiting to prevent webhook flood attacks
+ * <p>These endpoints are listed under {@code permitAll} in SecurityConfig because
+ * they are provider-initiated and carry no JWT. Provider signature verification
+ * is performed inside the respective adapters (RazorpayAdapter, StripeAdapter).</p>
+ *
+ * <p>Pre-production checklist (tracked per FUTURE notes in adapters):
+ * <ul>
+ *   <li>FUTURE: NUAURA-PAYMENT-001 — Wire real Stripe signature verification in StripeAdapter</li>
+ *   <li>FUTURE: NUAURA-PAYMENT-002 — Wire real Razorpay signature verification in RazorpayAdapter</li>
+ *   <li>FUTURE: NUAURA-PAYMENT-003 — Add idempotency check using externalEventId</li>
+ *   <li>FUTURE: NUAURA-PAYMENT-004 — Add rate limiting on webhook flood</li>
+ * </ul>
+ * </p>
  */
 @Slf4j
 @RestController

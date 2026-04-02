@@ -270,7 +270,8 @@ public class SlackCommandService {
     private Optional<Employee> findEmployeeBySlackUser(String slackUserId, UUID tenantId) {
         // Look up employee by matching tenant — in production, we'd store the Slack↔Employee
         // mapping in a table. For now, we use the tenant's employee list.
-        // TODO: Add slack_user_id column to employees table for direct mapping
+        // FUTURE: NUAURA-SLACK-001 — Add slack_user_id column to employees table for direct Slack↔Employee mapping
+        // (requires Flyway migration and UI to link accounts).
         return employeeRepository.findByTenantId(tenantId).stream().findFirst();
     }
 

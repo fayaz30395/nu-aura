@@ -6,11 +6,9 @@ import {
   Filter, Clock, TrendingUp, ChevronDown, GripVertical, AlertCircle,
   DollarSign, BarChart3, X,
 } from 'lucide-react';
-// TODO(bundle): DragDropContext/Droppable/Draggable from @hello-pangea/dnd cannot be
-// dynamically imported here because Droppable and Draggable are used inside .map()
-// callbacks that are deeply coupled with local state and handlers. To code-split
-// this library, extract the entire KanbanBoard section into a separate
-// PipelineKanbanBoard.tsx component and dynamic-import that file instead.
+// FUTURE: NUAURA-003 — Code-split the DnD library: extract the entire KanbanBoard
+// section into a separate PipelineKanbanBoard.tsx component and dynamic-import that
+// file instead of importing DragDropContext/Droppable/Draggable directly here.
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
 import { AppLayout } from '@/components/layout/AppLayout';

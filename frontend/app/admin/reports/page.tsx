@@ -40,7 +40,7 @@ export default function AdminReportsPage() {
           </div>
 
           <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-10 flex flex-col items-center text-center skeuo-card">
-            <div className="rounded-full bg-accent-50 dark:bg-accent-950/20 p-5 mb-4">
+            <div className="rounded-full bg-accent-50 dark:bg-accent-950/20 p-4 mb-4">
               <FileText className="h-10 w-10 text-accent-500" />
             </div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2 skeuo-emboss">

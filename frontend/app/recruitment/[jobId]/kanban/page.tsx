@@ -28,11 +28,9 @@ import {
   IconSparkles,
   IconGripVertical,
 } from '@tabler/icons-react';
-// TODO(bundle): DragDropContext/Droppable/Draggable from @hello-pangea/dnd cannot be
-// trivially dynamic-imported because CandidateCard (uses Draggable) and KanbanColumn
-// (uses Droppable) are defined in this file and coupled to local types/handlers.
-// To code-split the DnD library, move CandidateCard, KanbanColumn, and the
-// DragDropContext wrapper into a separate KanbanBoard.tsx file and dynamic-import that.
+// FUTURE: NUAURA-002 — Code-split the DnD library: move CandidateCard, KanbanColumn,
+// and the DragDropContext wrapper into a separate KanbanBoard.tsx file and dynamic-import
+// that file instead of importing DragDropContext/Droppable/Draggable directly here.
 import {
   DragDropContext,
   Droppable,

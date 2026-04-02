@@ -175,7 +175,7 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
             `}
             aria-label="Upload receipt image"
           >
-            <div className={`p-3 rounded-full ${isDragOver ? 'bg-accent-100 dark:bg-accent-900/40' : 'bg-surface-100 dark:bg-surface-700'}`}>
+            <div className={`p-4 rounded-full ${isDragOver ? 'bg-accent-100 dark:bg-accent-900/40' : 'bg-surface-100 dark:bg-surface-700'}`}>
               <Upload className={`w-8 h-8 ${isDragOver ? 'text-accent-600' : 'text-surface-400'}`} />
             </div>
             <div className="text-center">
@@ -225,7 +225,7 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
       {/* Error Stage */}
       {stage === 'error' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
-          <div className="p-3 rounded-full bg-danger-100 dark:bg-danger-900/30">
+          <div className="p-4 rounded-full bg-danger-100 dark:bg-danger-900/30">
             <AlertTriangle className="w-8 h-8 text-danger-500" />
           </div>
           <div className="text-center">

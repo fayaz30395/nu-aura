@@ -135,7 +135,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                   type="button"
                   onClick={() => handleNotificationClick(notification)}
                   className={cn(
-                    'w-full text-left px-4 py-3 flex items-start gap-3 min-h-[44px]',
+                    'w-full text-left px-4 py-4 flex items-start gap-4 min-h-[44px]',
                     'hover:bg-[var(--bg-secondary)] transition-colors duration-150',
                     'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-700',
                     'border-b border-[var(--border-main)] last:border-b-0',

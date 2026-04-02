@@ -1,6 +1,7 @@
 package com.hrms.application.employee.service;
 
 import com.hrms.api.employee.dto.*;
+import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.customfield.CustomFieldDefinition;
 import com.hrms.domain.customfield.CustomFieldValue;
@@ -54,6 +55,7 @@ public class EmployeeImportService {
     private final PasswordEncoder passwordEncoder;
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
     private final CustomFieldValueRepository customFieldValueRepository;
+    private final EmailNotificationService emailNotificationService;
 
     private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -223,7 +225,6 @@ public class EmployeeImportService {
 
     private User createUserForEmployee(EmployeeImportRow row, UUID tenantId, Role defaultRole) {
         // Generate a secure random password for each imported user
-        // TODO: Send password reset email to user after import completes
         String randomPassword = generateSecurePassword(16);
 
         User user = User.builder()
@@ -237,9 +238,13 @@ public class EmployeeImportService {
 
         user.setTenantId(tenantId);
 
-        log.info("Created user account for {} with temporary password (should send reset email)", row.getWorkEmail());
+        User saved = userRepository.save(user);
 
-        return userRepository.save(user);
+        String displayName = row.getFirstName() + " " + (row.getLastName() != null ? row.getLastName() : "");
+        emailNotificationService.sendWelcomeEmail(row.getWorkEmail(), displayName.trim(), randomPassword);
+        log.info("Sent welcome email with temporary password to {}", row.getWorkEmail());
+
+        return saved;
     }
 
     /**

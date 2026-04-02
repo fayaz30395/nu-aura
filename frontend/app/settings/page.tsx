@@ -113,7 +113,10 @@ export default function SettingsPage() {
       successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       logger.error('Failed to save notification preferences:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save preferences');
+      const message = err instanceof Error
+        ? (err as Error & { response?: { data?: { message?: string } } }).response?.data?.message ?? err.message
+        : 'Failed to save preferences';
+      setError(message);
     }
   };
 
@@ -515,7 +518,7 @@ export default function SettingsPage() {
                         Account Secure
                       </p>
                       <p className="text-xs text-success-700 dark:text-success-300 mt-1">
-                        Your password meets security requirements
+                        Your account is protected via Google SSO
                       </p>
                     </div>
                   </div>
@@ -525,9 +528,9 @@ export default function SettingsPage() {
                     For additional security, we recommend:
                   </p>
                   <ul className="list-disc list-inside mt-2 space-y-1 ml-2">
-                    <li>Use a strong, unique password</li>
-                    <li>Change your password regularly</li>
-                    <li>Never share your password with anyone</li>
+                    <li>Enable 2-Step Verification on your Google account</li>
+                    <li>Review your Google account security settings regularly</li>
+                    <li>Never share your login credentials with anyone</li>
                     <li>Log out when using shared devices</li>
                   </ul>
                 </div>

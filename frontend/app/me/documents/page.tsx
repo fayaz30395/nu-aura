@@ -46,7 +46,7 @@ import {
 // UI metadata for known document types. Used to enrich API-returned type values with
 // human-readable labels and descriptions. If the backend introduces a new type that is
 // not listed here, the UI will fall back to a formatted label derived from the enum value.
-// TODO: Consider moving label/description to a backend endpoint when the API supports it.
+// FUTURE: NUAURA-001 — Consider moving label/description to a backend endpoint when the API supports it.
 const DOCUMENT_TYPE_META: Partial<Record<DocumentType, { label: string; description: string }>> = {
   EMPLOYMENT_CERTIFICATE: { label: 'Employment Certificate', description: 'Confirms your employment status' },
   SALARY_CERTIFICATE:     { label: 'Salary Certificate',     description: 'Shows your current salary details' },

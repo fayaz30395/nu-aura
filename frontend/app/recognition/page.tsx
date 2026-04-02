@@ -207,6 +207,7 @@ export default function RecognitionPage() {
   const activeQuery = getActiveQuery();
   const recognitions = activeQuery.data?.content || [];
   const isLoading = activeQuery.isLoading;
+  const isError = activeQuery.isError;
   const leaderboard = leaderboardQuery.data || [];
   const myPoints = myPointsQuery.data || null;
 
@@ -365,6 +366,17 @@ export default function RecognitionPage() {
                   </Card>
                 ))}
               </div>
+            ) : isError ? (
+              <div className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
+                <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2" />
+                <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load recognitions.</p>
+                <button
+                  onClick={() => activeQuery.refetch()}
+                  className="mt-2 text-sm text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+                >
+                  Try again
+                </button>
+              </div>
             ) : recognitions.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
@@ -484,6 +496,7 @@ export default function RecognitionPage() {
                                 <input
                                   type="text"
                                   placeholder="Write a comment..."
+                                  aria-label="Write a comment"
                                   value={commentText[recognition.id] || ''}
                                   onChange={(e) =>
                                     setCommentText((prev) => ({
@@ -491,9 +504,10 @@ export default function RecognitionPage() {
                                       [recognition.id]: e.target.value,
                                     }))
                                   }
-                                  className="flex-1 px-4 py-1.5 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                                  className="flex-1 px-4 py-1.5 text-sm input-skeuo bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
                                 />
                                 <button
+                                  aria-label="Send comment"
                                   className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   disabled={!commentText[recognition.id]?.trim()}
                                 >

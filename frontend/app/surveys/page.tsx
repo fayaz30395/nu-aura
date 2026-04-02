@@ -21,6 +21,7 @@ import {
   BarChart3,
   FileText,
   Send,
+  AlertCircle,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -81,42 +82,8 @@ const surveyFormSchema = z.object({
 
 type SurveyFormData = z.infer<typeof surveyFormSchema>;
 
-const _getStatusColor = (status: SurveyStatus) => {
-  switch (status) {
-    case SurveyStatus.DRAFT:
-      return 'default';
-    case SurveyStatus.ACTIVE:
-      return 'success';
-    case SurveyStatus.PAUSED:
-      return 'warning';
-    case SurveyStatus.COMPLETED:
-      return 'info';
-    case SurveyStatus.ARCHIVED:
-      return 'danger';
-    default:
-      return 'default';
-  }
-};
-
-const _getTypeColor = (type: SurveyType) => {
-  switch (type) {
-    case SurveyType.ENGAGEMENT:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
-    case SurveyType.SATISFACTION:
-      return 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200';
-    case SurveyType.PULSE:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
-    case SurveyType.EXIT:
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200';
-    case SurveyType.FEEDBACK:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
-    default:
-      return 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
-  }
-};
-
 export default function SurveysPage() {
-  const { data: surveysResponse, isLoading } = useAllSurveys();
+  const { data: surveysResponse, isLoading, isError, refetch } = useAllSurveys();
   const surveys = surveysResponse?.content || [];
 
   const createMutation = useCreateSurvey();
@@ -388,6 +355,17 @@ export default function SurveysPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"></div>
+          </div>
+        ) : isError ? (
+          <div className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
+            <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2" />
+            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load surveys.</p>
+            <button
+              onClick={() => refetch()}
+              className="mt-2 text-sm text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+            >
+              Try again
+            </button>
           </div>
         ) : filteredSurveys.length === 0 ? (
           <Card>

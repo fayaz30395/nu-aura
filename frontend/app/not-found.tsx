@@ -48,7 +48,7 @@ export default function NotFound() {
         </p>
 
         {/* Actions — primary + secondary, consistent button styling */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/me/dashboard"
             className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
