@@ -106,7 +106,7 @@ export function TimeClockWidget({
       </div>
 
       {/* Time Display — large monospace with accent period */}
-      <div className="mb-5">
+      <div className="mb-6">
         <div className="flex items-baseline gap-1.5">
           <span className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
             {timeValue}

@@ -385,7 +385,7 @@ export default function SearchPage() {
                         <button
                           key={label}
                           onClick={() => setSelectedVisibility(value)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                             selectedVisibility === value
                               ? 'bg-[var(--accent-700)] text-white'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
@@ -456,7 +456,7 @@ export default function SearchPage() {
                     {savedSearches.map((saved) => (
                       <div
                         key={saved.id}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] text-sm cursor-pointer group hover:bg-[var(--bg-card-hover)] transition-colors"
+                        className="flex items-center gap-1 px-4 py-1.5 rounded-full bg-[var(--bg-secondary)] text-sm cursor-pointer group hover:bg-[var(--bg-card-hover)] transition-colors"
                       >
                         <button
                           onClick={() => applySavedSearch(saved)}

@@ -121,7 +121,7 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
   if (wishers.length === 0) return null;
 
   return (
-    <div className="flex items-center justify-center -space-x-2 mt-3">
+    <div className="flex items-center justify-center -space-x-2 mt-4">
       {wishers.slice(0, 5).map((w, i) => {
         const initials = w.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
         return (

@@ -343,7 +343,7 @@ export default function MyDocumentsPage() {
                         {request.purpose}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-body-muted">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-body-muted">
                         <span>
                           Requested: {format(new Date(request.createdAt), 'MMM d, yyyy')}
                         </span>
@@ -356,7 +356,7 @@ export default function MyDocumentsPage() {
                       </div>
 
                       {request.rejectionReason && (
-                        <div className="mt-3 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
+                        <div className="mt-4 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
                           <p className="text-sm text-danger-700 dark:text-danger-400">
                             <strong>Rejection Reason:</strong> {request.rejectionReason}
                           </p>

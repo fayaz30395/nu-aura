@@ -110,7 +110,7 @@ export default function CreateSalaryStructurePage() {
                       type="text"
                       placeholder="e.g. EMP-001"
                       {...register('employeeId')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.employeeId && (
                       <p className="mt-1 text-xs text-danger-500">{errors.employeeId.message}</p>
@@ -129,7 +129,7 @@ export default function CreateSalaryStructurePage() {
                       id="effectiveDate"
                       type="date"
                       {...register('effectiveDate')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.effectiveDate && (
                       <p className="mt-1 text-xs text-danger-500">{errors.effectiveDate.message}</p>
@@ -151,7 +151,7 @@ export default function CreateSalaryStructurePage() {
                       step={1}
                       placeholder="e.g. 50000"
                       {...register('baseSalary', { valueAsNumber: true })}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.baseSalary && (
                       <p className="mt-1 text-xs text-danger-500">{errors.baseSalary.message}</p>
@@ -169,7 +169,7 @@ export default function CreateSalaryStructurePage() {
                     <select
                       id="status"
                       {...register('status')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
+                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="ACTIVE">Active</option>

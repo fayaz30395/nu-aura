@@ -137,9 +137,9 @@ function ReviewCompetencyPanel({
       {/* Header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full row-between px-5 py-4 bg-[var(--bg-input)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className="w-full row-between px-6 py-4 bg-[var(--bg-input)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {expanded ? (
             <ChevronDown size={16} className="text-[var(--text-muted)]" />
           ) : (
@@ -150,7 +150,7 @@ function ReviewCompetencyPanel({
             {competencies.length} competenc{competencies.length !== 1 ? 'ies' : 'y'}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {avgRating != null && (
             <span className="text-xs text-[var(--text-secondary)]">
               Avg: {avgRating.toFixed(1)}
@@ -173,7 +173,7 @@ function ReviewCompetencyPanel({
 
       {/* Body */}
       {expanded && (
-        <div className="bg-[var(--bg-surface)] px-5 py-4">
+        <div className="bg-[var(--bg-surface)] px-6 py-4">
           {isLoading ? (
             <div className="flex items-center gap-2 py-4 text-[var(--text-muted)]">
               <RefreshCw size={14} className="animate-spin" />
@@ -201,7 +201,7 @@ function ReviewCompetencyPanel({
                     {items.map((comp) => (
                       <div
                         key={comp.id}
-                        className="flex items-start justify-between gap-4 p-3 rounded-lg bg-[var(--bg-input)] border border-[var(--border-subtle)]"
+                        className="flex items-start justify-between gap-4 p-4 rounded-lg bg-[var(--bg-input)] border border-[var(--border-subtle)]"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -306,7 +306,7 @@ function AddCompetencyModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
           {/* Hidden reviewId */}
           <input type="hidden" {...register('reviewId')} value={reviewId ?? ''} />
 
@@ -319,7 +319,7 @@ function AddCompetencyModal({
               {...register('competencyName')}
               type="text"
               placeholder="e.g. System Design, Communication"
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
             {errors.competencyName && (
               <p className="text-xs text-danger-500 mt-1">{errors.competencyName.message}</p>
@@ -333,7 +333,7 @@ function AddCompetencyModal({
             </label>
             <select
               {...register('category')}
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             >
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -357,7 +357,7 @@ function AddCompetencyModal({
               min={1}
               max={5}
               step={0.5}
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
             />
             {errors.rating && (
               <p className="text-xs text-danger-500 mt-1">{errors.rating.message}</p>
@@ -373,11 +373,11 @@ function AddCompetencyModal({
               {...register('comments')}
               rows={3}
               placeholder="Add observations or development notes…"
-              className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
+              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2">
+          <div className="flex items-center justify-end gap-4 pt-2">
             <button
               type="button"
               onClick={onClose}
@@ -418,11 +418,11 @@ function CategorySummaryBar({ competencies }: { competencies: ReviewCompetency[]
   if (Object.keys(byCategory).length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-4">
       {Object.entries(byCategory).map(([category, stats]) => (
         <div
           key={category}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold ${
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold ${
             CATEGORY_COLORS[category as CompetencyCategory] ?? 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
           }`}
         >
@@ -513,8 +513,8 @@ export default function CompetencyFrameworkPage() {
             </div>
 
             {/* Category Legend */}
-            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg px-5 py-4">
-              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-3">
+            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg px-6 py-4">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-4">
                 Categories
               </p>
               <div className="flex flex-wrap gap-2">
@@ -524,7 +524,7 @@ export default function CompetencyFrameworkPage() {
                     onClick={() =>
                       setCategoryFilter(categoryFilter === opt.value ? '' : opt.value)
                     }
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 ${
+                    className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 ${
                       categoryFilter === opt.value
                         ? `${CATEGORY_COLORS[opt.value]} ring-2 ring-accent-500`
                         : `${CATEGORY_COLORS[opt.value]} opacity-70 hover:opacity-100`
@@ -538,7 +538,7 @@ export default function CompetencyFrameworkPage() {
             </div>
 
             {/* Cycle Selector + Search */}
-            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5">
+            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -550,7 +550,7 @@ export default function CompetencyFrameworkPage() {
                     <select
                       value={selectedCycleId}
                       onChange={(e) => setSelectedCycleId(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                     >
                       <option value="">Select a cycle…</option>
                       {cycles.map((c) => (
@@ -577,7 +577,7 @@ export default function CompetencyFrameworkPage() {
                         placeholder="Filter by name or department…"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2.5 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                        className="w-full pl-9 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       />
                     </div>
                   </div>
@@ -585,9 +585,9 @@ export default function CompetencyFrameworkPage() {
               </div>
 
               {selectedCycle && (
-                <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[var(--border-subtle)]">
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    className={`px-4 py-1 rounded-full text-xs font-semibold ${
                       selectedCycle.status === 'ACTIVE'
                         ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
@@ -605,7 +605,7 @@ export default function CompetencyFrameworkPage() {
             {/* Review List */}
             {!selectedCycleId ? (
               <div className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-3" />
+                <Info size={32} className="text-[var(--text-muted)] mb-4" />
                 <p className="text-[var(--text-secondary)] font-medium">Select a review cycle</p>
                 <p className="text-[var(--text-muted)] text-sm mt-1">
                   Choose a cycle above to manage competencies for its reviews
@@ -613,19 +613,19 @@ export default function CompetencyFrameworkPage() {
               </div>
             ) : allReviewsQuery.isLoading ? (
               <div className="flex items-center justify-center py-16">
-                <RefreshCw size={20} className="animate-spin text-accent-500 mr-3" />
+                <RefreshCw size={20} className="animate-spin text-accent-500 mr-4" />
                 <span className="text-[var(--text-muted)]">Loading reviews…</span>
               </div>
             ) : filteredReviews.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-3" />
+                <Info size={32} className="text-[var(--text-muted)] mb-4" />
                 <p className="text-[var(--text-secondary)] font-medium">No reviews found</p>
                 <p className="text-[var(--text-muted)] text-sm mt-1">
                   {searchQuery ? 'Try a different search term' : 'No reviews exist for this cycle yet'}
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <p className="text-caption font-medium uppercase tracking-wide">
                   {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''} — click to expand & manage competencies
                 </p>

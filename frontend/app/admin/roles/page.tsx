@@ -410,7 +410,7 @@ export default function RolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     onClick={() => openPermissionsModal(role)}
-                    className="text-accent-700 hover:text-accent-700 mr-3"
+                    className="text-accent-700 hover:text-accent-700 mr-4"
                   >
                     Permissions
                   </button>
@@ -418,7 +418,7 @@ export default function RolesPage() {
                     <>
                       <button
                         onClick={() => openEditModal(role)}
-                        className="text-[var(--text-link)] hover:text-[var(--text-link-hover)] mr-3"
+                        className="text-[var(--text-link)] hover:text-[var(--text-link-hover)] mr-4"
                       >
                         Edit
                       </button>
@@ -674,7 +674,7 @@ export default function RolesPage() {
               {/* Inherited Permissions Section */}
               {selectedParentRoleId && inheritedPermissionsQuery.data && inheritedPermissionsQuery.data.length > 0 && (
                 <div className="mb-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
-                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                     Inherited Permissions from {selectedRole.parentRoleName || 'Parent Role'}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -732,7 +732,7 @@ export default function RolesPage() {
             <div className="space-y-4">
               {Object.entries(groupedPermissions).map(([resource, perms]) => (
                 <div key={resource} className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-surface)]">
-                  <h3 className="font-semibold text-[var(--text-primary)] mb-3">{resource}</h3>
+                  <h3 className="font-semibold text-[var(--text-primary)] mb-4">{resource}</h3>
                   <div className="space-y-4">
                     {perms.map((permission) => {
                       const isSelected = selectedPermissions.includes(permission.code);
@@ -782,7 +782,7 @@ export default function RolesPage() {
 
                           {/* Scope selector with custom target picker - only show when permission is selected */}
                           {isSelected && !selectedRole.isSystemRole && (
-                            <div className="mt-3 pl-6">
+                            <div className="mt-4 pl-6">
                               <ScopeSelector
                                 value={currentScope}
                                 onChange={(scope) => updatePermissionScope(permission.code, scope)}

@@ -83,7 +83,7 @@ function ResetPasswordForm() {
                 This password reset link is invalid or missing a token. Please request a new reset link.
               </p>
               <Link href="/auth/forgot-password">
-                <Button variant="primary" className="w-full mb-3">
+                <Button variant="primary" className="w-full mb-4">
                   Request New Reset Link
                 </Button>
               </Link>
@@ -182,7 +182,7 @@ function ResetPasswordForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Error Alert */}
               {error && (
                 <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
@@ -199,7 +199,7 @@ function ResetPasswordForm() {
                   New Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-[var(--text-muted)]" />
                   </div>
                   <input
@@ -208,7 +208,7 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="Enter new password"
-                    className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.newPassword
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
@@ -217,7 +217,7 @@ function ResetPasswordForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
                     tabIndex={-1}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -241,7 +241,7 @@ function ResetPasswordForm() {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-[var(--text-muted)]" />
                   </div>
                   <input
@@ -250,7 +250,7 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="Confirm new password"
-                    className={`input-aura block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
+                    className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.confirmPassword
                         ? 'border-danger-500 dark:border-danger-500'
                         : 'border-[var(--border-main)]'
@@ -259,7 +259,7 @@ function ResetPasswordForm() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
                     tabIndex={-1}
                     aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
@@ -293,7 +293,7 @@ function ResetPasswordForm() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-3"
+                className="btn-primary w-full py-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

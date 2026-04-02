@@ -288,7 +288,7 @@ function ResponsiveTable<T>({
                 </div>
 
                 {/* Actions and checkbox */}
-                <div className="flex items-start gap-2 ml-3">
+                <div className="flex items-start gap-2 ml-4">
                   {selectable && (
                     <input
                       type="checkbox"

@@ -212,7 +212,7 @@ export default function SecuritySettingsPage() {
                   >
                     Enable Two-Factor Authentication
                   </Button>
-                  <p className="text-caption mt-3">
+                  <p className="text-caption mt-4">
                     You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
                   </p>
                 </div>

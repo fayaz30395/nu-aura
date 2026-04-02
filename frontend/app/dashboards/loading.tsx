@@ -21,8 +21,8 @@ export default function DashboardsLoading() {
             key={index}
             className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
           >
-            <Skeleton height={16} width="60%" className="mb-3" />
-            <Skeleton height={32} width="80%" className="mb-3" />
+            <Skeleton height={16} width="60%" className="mb-4" />
+            <Skeleton height={32} width="80%" className="mb-4" />
             <Skeleton height={14} width="50%" />
           </div>
         ))}

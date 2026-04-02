@@ -197,7 +197,7 @@ export const NotificationBell: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-2xl border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="row-between p-4 border-b">
             <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">

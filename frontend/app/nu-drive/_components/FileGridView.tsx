@@ -28,7 +28,7 @@ export function FileGridView({ files, onFileClick, onContextMenu }: FileGridView
             <MoreVertical className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
           </button>
           <div className="flex flex-col items-center text-center">
-            <div className="mb-3 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-accent-50 dark:group-hover:bg-accent-950/30 transition-colors">
+            <div className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-accent-50 dark:group-hover:bg-accent-950/30 transition-colors">
               {getFileIcon(file.mimeType)}
             </div>
             <p className="text-sm font-medium text-[var(--text-primary)] truncate w-full">

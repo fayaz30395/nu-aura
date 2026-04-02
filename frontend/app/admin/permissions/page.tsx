@@ -275,7 +275,7 @@ export default function PermissionsPage() {
               >
                 {filteredRoles.length === 0 ? (
                   <div className="text-center py-12 text-[var(--text-muted)]">
-                    <ShieldCheck className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)]" />
+                    <ShieldCheck className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
                     <p>No roles found</p>
                   </div>
                 ) : (
@@ -359,7 +359,7 @@ export default function PermissionsPage() {
                             className="border-t border-[var(--border-main)]"
                           >
                             <div className="p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/50">
-                              <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-3">
+                              <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-4">
                                 Assigned Permissions
                               </h4>
                               {role.permissions.length === 0 ? (
@@ -396,7 +396,7 @@ export default function PermissionsPage() {
               >
                 {filteredUsers.length === 0 ? (
                   <div className="text-center py-12 text-[var(--text-muted)]">
-                    <Users className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)]" />
+                    <Users className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
                     <p>No users found</p>
                   </div>
                 ) : (
@@ -649,7 +649,7 @@ function EditRoleModal({
                 <>
                   {Object.entries(permissionsByResource).map(([resource, perms]) => (
                     <div key={resource} className="mb-6">
-                      <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3 uppercase tracking-wider">{resource}</h3>
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4 uppercase tracking-wider">{resource}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                         {perms.map((perm) => {
                           const isChecked = field.value.includes(perm.code);
@@ -798,7 +798,7 @@ function CreateRoleModal({
               />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">
+              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">
                 Permissions ({selectedPermissions.length} selected)
               </h3>
               <Controller

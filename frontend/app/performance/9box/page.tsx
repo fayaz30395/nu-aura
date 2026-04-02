@@ -88,9 +88,9 @@ function NineBoxGrid({
         <div className="flex-1">
           {/* Rows (potential high to low) */}
           {gridRows.map(({ potBand, label: potLabel }) => (
-            <div key={potBand} className="flex gap-4 mb-3">
+            <div key={potBand} className="flex gap-4 mb-4">
               {/* Potential label */}
-              <div className="w-28 flex-shrink-0 flex items-center justify-end pr-3">
+              <div className="w-28 flex-shrink-0 flex items-center justify-end pr-4">
                 <span className="text-caption text-right font-medium">{potLabel}</span>
               </div>
 
@@ -381,7 +381,7 @@ export default function NineBoxPage() {
           <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-accent-800 dark:text-accent-300">
             <strong>X-axis:</strong> Performance = manager review rating.
-            <strong className="ml-3">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to view
+            <strong className="ml-4">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to view
             employees and override potential scores.
           </p>
         </div>
@@ -439,12 +439,12 @@ export default function NineBoxPage() {
 
         {reviewsLoading ? (
           <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-accent-500 mr-3" />
+            <RefreshCw size={24} className="animate-spin text-accent-500 mr-4" />
             <span className="text-[var(--text-muted)]">Loading reviews...</span>
           </div>
         ) : points.length === 0 && selectedCycleId ? (
           <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-            <Info size={32} className="text-[var(--text-muted)] mb-3" />
+            <Info size={32} className="text-[var(--text-muted)] mb-4" />
             <p className="text-[var(--text-secondary)] font-medium">
               No rated reviews found
             </p>
@@ -554,7 +554,7 @@ export default function NineBoxPage() {
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                    className="ml-auto w-full md:w-64 pl-10 pr-4 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   />
                 </div>
               </div>

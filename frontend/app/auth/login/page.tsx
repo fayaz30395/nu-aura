@@ -18,6 +18,9 @@ import {
   ChevronDown,
   ChevronUp,
   LogIn,
+  Target,
+  TrendingUp,
+  Lightbulb,
 } from 'lucide-react';
 import { createLogger } from '@/lib/utils/logger';
 
@@ -187,7 +190,7 @@ function DemoLoginPanel({
 
       {isExpanded && (
         <div
-          className="mt-3 space-y-2 max-h-[320px] overflow-y-auto pr-1"
+          className="mt-4 space-y-2 max-h-[320px] overflow-y-auto pr-1"
           style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
         >
           {DEMO_ACCOUNTS.map((account) => (
@@ -476,10 +479,10 @@ function LoginPage() {
             {/* App icons row — NULogic brand gradient palette */}
             <div className="flex gap-4 mb-8">
               {[
-                { name: 'HRMS', bg: 'var(--nu-gradient-dark)', icon: '👥' },
-                { name: 'Hire', bg: 'var(--nu-gradient-primary)', icon: '🎯' },
-                { name: 'Grow', bg: 'linear-gradient(135deg, var(--nu-purple), #61629D)', icon: '📈' },
-                { name: 'Fluence', bg: 'linear-gradient(135deg, var(--nu-dark-teal), #3E616A)', icon: '💡' },
+                { name: 'HRMS', bg: 'var(--nu-gradient-dark)', Icon: Users },
+                { name: 'Hire', bg: 'var(--nu-gradient-primary)', Icon: Target },
+                { name: 'Grow', bg: 'linear-gradient(135deg, var(--nu-purple), #61629D)', Icon: TrendingUp },
+                { name: 'Fluence', bg: 'linear-gradient(135deg, var(--nu-dark-teal), #3E616A)', Icon: Lightbulb },
               ].map((app, i) => (
                 <div
                   key={app.name}
@@ -487,14 +490,14 @@ function LoginPage() {
                   style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
                 >
                   <div
-                    className="w-14 h-14 rounded-lg flex items-center justify-center text-2xl group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
+                    className="w-14 h-14 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
                     style={{
                       background: app.bg,
                       boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
                       animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
                     }}
                   >
-                    {app.icon}
+                    <app.Icon className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-[var(--text-secondary)] text-xs font-semibold tracking-wide">
                     NU-{app.name}
@@ -583,7 +586,7 @@ function LoginPage() {
               {/* Google SSO Button */}
               <button
                 type="button"
-                className="w-full relative group flex items-center justify-center gap-4 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
+                className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
                 onClick={() => { handleGoogleSSO(); }}
                 disabled={isGoogleLoading}
               >
@@ -631,7 +634,7 @@ function LoginPage() {
                   <div className="w-full border-t border-[var(--border-subtle)]" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-3 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
+                  <span className="px-4 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
                     secure enterprise SSO
                   </span>
                 </div>

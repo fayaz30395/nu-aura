@@ -247,7 +247,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
               <div key={child.employee.id} className="relative flex flex-col items-center">
                 {/* Vertical connector to child */}
                 <div className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2" />
-                <div className="pt-5">
+                <div className="pt-6">
                   <OrgNode
                     node={child}
                     isHighlighted={child.employee.id === highlightedId}

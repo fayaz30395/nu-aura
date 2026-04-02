@@ -270,7 +270,7 @@ function SkeletonDashboard({
                         borderColor: 'var(--border-main)',
                     }}
                 >
-                    <Skeleton height={16} width={128} className="mb-3" />
+                    <Skeleton height={16} width={128} className="mb-4" />
                     <Skeleton height={200} width="100%" />
                 </div>
                 <div

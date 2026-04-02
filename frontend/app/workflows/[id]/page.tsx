@@ -815,7 +815,7 @@ export default function WorkflowDetailPage() {
                     </div>
 
                     {/* Toggles */}
-                    <div className="mt-3 flex flex-wrap gap-4">
+                    <div className="mt-4 flex flex-wrap gap-4">
                       <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                         <input
                           type="checkbox"
@@ -852,7 +852,7 @@ export default function WorkflowDetailPage() {
 
                     {/* Escalation hours (conditional) */}
                     {form.watch(`steps.${idx}.escalationEnabled`) && (
-                      <div className="mt-3 max-w-[200px]">
+                      <div className="mt-4 max-w-[200px]">
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Escalate After (hours)
                         </label>

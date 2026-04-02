@@ -523,7 +523,7 @@ export default function LetterTemplatesPage() {
                 className="hover:shadow-[var(--shadow-elevated)] transition-shadow"
               >
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30">
                         <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
@@ -548,7 +548,7 @@ export default function LetterTemplatesPage() {
                   </div>
 
                   {/* Category badge */}
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
                       {getCategoryLabel(template.category)}
                     </span>
@@ -556,7 +556,7 @@ export default function LetterTemplatesPage() {
 
                   {/* Description */}
                   {template.description && (
-                    <p className="text-body-secondary mb-3 line-clamp-2">
+                    <p className="text-body-secondary mb-4 line-clamp-2">
                       {template.description}
                     </p>
                   )}
@@ -791,7 +791,7 @@ export default function LetterTemplatesPage() {
 
               {/* Signature Settings */}
               <div className="border border-[var(--border-main)] rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Signature Settings</h4>
+                <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Signature Settings</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-4">
                     <input

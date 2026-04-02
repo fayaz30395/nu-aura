@@ -78,7 +78,7 @@ const DebouncedTextInput: React.FC<DebouncedTextInputProps> = ({
       onChange={(e) => setLocalValue(e.target.value)}
       placeholder={placeholder}
       className={cn(
-        'h-10 w-full rounded-md border px-3 text-sm',
+        'h-10 w-full rounded-md border px-4 text-sm',
         'bg-[var(--bg-surface)] text-[var(--text-primary)]',
         'border-[var(--border-main)]',
         'placeholder:text-[var(--text-muted)]',
@@ -143,7 +143,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
               value={fieldValue}
               onChange={(e) => onChange(filter.key, e.target.value)}
               className={cn(
-                'h-10 w-full rounded-md border px-3 pr-9 text-sm appearance-none',
+                'h-10 w-full rounded-md border px-4 pr-9 text-sm appearance-none',
                 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
                 'border-[var(--border-main)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -167,7 +167,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
               value={fieldValue}
               onChange={(e) => onChange(filter.key, e.target.value)}
               className={cn(
-                'h-10 w-full rounded-md border px-3 text-sm',
+                'h-10 w-full rounded-md border px-4 text-sm',
                 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
                 'border-[var(--border-main)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -187,7 +187,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
                 onChange={(e) => onChange(filter.key, `${e.target.value}|${end}`)}
                 aria-label={`${filter.label} start date`}
                 className={cn(
-                  'h-10 w-full rounded-md border px-3 text-sm',
+                  'h-10 w-full rounded-md border px-4 text-sm',
                   'bg-[var(--bg-surface)] text-[var(--text-primary)]',
                   'border-[var(--border-main)]',
                   'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -202,7 +202,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
                 onChange={(e) => onChange(filter.key, `${start}|${e.target.value}`)}
                 aria-label={`${filter.label} end date`}
                 className={cn(
-                  'h-10 w-full rounded-md border px-3 text-sm',
+                  'h-10 w-full rounded-md border px-4 text-sm',
                   'bg-[var(--bg-surface)] text-[var(--text-primary)]',
                   'border-[var(--border-main)]',
                   'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
@@ -230,7 +230,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
       aria-label="Table filters"
     >
       {/* ── Header row ────────────────────────────────────────────── */}
-      <div className="row-between px-4 py-3">
+      <div className="row-between px-4 py-2">
         <button
           type="button"
           onClick={handleToggle}
@@ -263,7 +263,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
               type="button"
               onClick={onClear}
               className={cn(
-                'flex items-center gap-1.5 px-3 min-h-[44px] text-sm rounded-md',
+                'flex items-center gap-1.5 px-4 min-h-[44px] text-sm rounded-md',
                 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                 'hover:bg-[var(--bg-secondary)]',
                 'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',

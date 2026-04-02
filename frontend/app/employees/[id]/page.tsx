@@ -939,7 +939,7 @@ export default function EmployeeDetailPage() {
                     >
                       <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
                         <CardContent className="p-6 text-center">
-                          <div className="h-12 w-12 mx-auto mb-3 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                          <div className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                             <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                           </div>
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
@@ -957,7 +957,7 @@ export default function EmployeeDetailPage() {
 
               {filteredDocCategories.length === 0 && (
                 <div className="text-center py-12">
-                  <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3" />
+                  <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4" />
                   <p className="text-body-muted">No matching categories found.</p>
                 </div>
               )}

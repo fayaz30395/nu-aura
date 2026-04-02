@@ -460,7 +460,7 @@ export default function OKRPage() {
               {/* Key Results */}
               {expandedObjectives.has(objective.id) && (
                 <div className="border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-4 py-4">
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <h4 className="text-sm font-medium text-[var(--text-primary)]">
                       Key Results ({objective.keyResults?.length || 0})
                     </h4>

@@ -374,7 +374,7 @@ export default function WorkloadDashboardPage() {
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-3 text-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className="w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-4 text-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
             />
           </div>
         </div>
@@ -417,7 +417,7 @@ export default function WorkloadDashboardPage() {
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as ViewTab)}
                     className={cn(
-                      'border-b-2 pb-3 text-sm font-medium transition-colors',
+                      'border-b-2 pb-4 text-sm font-medium transition-colors',
                       activeTab === tab.key
                         ? 'border-[var(--border-main)] text-[var(--text-primary)] dark:border-[var(--border-main)] dark:text-[var(--text-primary)]'
                         : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)]'
@@ -435,7 +435,7 @@ export default function WorkloadDashboardPage() {
                 <div className="grid gap-8 lg:grid-cols-2">
                   {/* Over-allocated */}
                   <div>
-                    <div className="mb-3 row-between">
+                    <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-danger-600 dark:text-danger-400">
                         Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
@@ -463,7 +463,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Under-utilized */}
                   <div>
-                    <div className="mb-3 row-between">
+                    <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-warning-600 dark:text-warning-400">
                         Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
@@ -491,7 +491,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Unassigned */}
                   <div>
-                    <div className="mb-3 row-between">
+                    <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-[var(--text-muted)]">
                         Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
                       </h3>
@@ -519,7 +519,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Optimal */}
                   <div>
-                    <div className="mb-3 row-between">
+                    <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-success-600 dark:text-success-400">
                         Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
@@ -547,7 +547,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Departments */}
                   <div className="lg:col-span-2">
-                    <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">
+                    <h3 className="mb-4 text-sm font-medium text-[var(--text-primary)]">
                       By Department
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -648,7 +648,7 @@ function DepartmentCard({
       </div>
 
       {/* Progress bar */}
-      <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
+      <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
         <div
           className={cn(
             'h-full rounded-full transition-all',
@@ -659,7 +659,7 @@ function DepartmentCard({
       </div>
 
       {expanded && (
-        <div className="mt-3 row-between text-xs">
+        <div className="mt-4 row-between text-xs">
           <div className="flex items-center gap-4">
             <span className="text-danger-600">{department.overAllocatedCount} over</span>
             <span className="text-success-600">{department.optimalCount} optimal</span>

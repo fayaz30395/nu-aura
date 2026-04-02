@@ -200,7 +200,7 @@ export default function FluenceAnalyticsPage() {
           transition={{ duration: 0.3 }}
         >
           <div className="flex items-start gap-4 mb-2">
-            <div className="p-3 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
+            <div className="p-4 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
               <TrendingUp className={`${iconSize.pageHeader} text-white`} />
             </div>
             <div className="flex-1">
@@ -391,19 +391,19 @@ export default function FluenceAnalyticsPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[var(--border-main)]">
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
                           Title
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
                           Type
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
                           Views
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
                           Likes
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
                           Author
                         </th>
                       </tr>
@@ -481,11 +481,11 @@ export default function FluenceAnalyticsPage() {
               ) : recentActivities.length === 0 ? (
                 <p className={typography.bodySecondary}>No recent activities</p>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {recentActivities.map((activity) => (
                     <motion.div
                       key={activity.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
                       whileHover={{ x: 4 }}
                     >
                       <span

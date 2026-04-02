@@ -317,7 +317,7 @@ export default function ReviewCyclesPage() {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-2">{cycle.name}</h3>
-                    <div className="flex gap-2 mb-3 flex-wrap">
+                    <div className="flex gap-2 mb-4 flex-wrap">
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(cycle.cycleType)}>
                         {cycle.cycleType}
                       </span>
@@ -611,7 +611,7 @@ export default function ReviewCyclesPage() {
                 <div className="space-y-6">
                   {/* Scope Type Selection */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                       Activation Scope
                     </label>
                     <div className="grid grid-cols-3 gap-4">
@@ -663,7 +663,7 @@ export default function ReviewCyclesPage() {
                   {/* Department Selection */}
                   {activateFormData.scopeType === 'DEPARTMENT' && (
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Departments
                       </label>
                       <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
@@ -697,7 +697,7 @@ export default function ReviewCyclesPage() {
                   {/* Location Selection */}
                   {activateFormData.scopeType === 'LOCATION' && (
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Locations
                       </label>
                       <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
@@ -733,7 +733,7 @@ export default function ReviewCyclesPage() {
 
                   {/* Review Options */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                       Review Types to Create
                     </label>
                     <div className="space-y-4">

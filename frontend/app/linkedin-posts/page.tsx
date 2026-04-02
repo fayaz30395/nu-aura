@@ -224,7 +224,7 @@ export default function LinkedInPostsPage() {
                       )}
 
                       {/* Engagement Stats */}
-                      <div className="grid grid-cols-3 gap-4 pt-3 border-t border-[var(--border-main)]">
+                      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[var(--border-main)]">
                         <div className="flex items-center gap-2 text-sm">
                           <Heart className="w-4 h-4 text-danger-500" />
                           <span className="text-[var(--text-secondary)]">
@@ -462,7 +462,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -600,7 +600,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
 
           {/* Engagement Stats */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
               Engagement Stats
             </label>
             <div className="grid grid-cols-3 gap-4">

@@ -262,7 +262,7 @@ function ComponentsTable({
   if (components.length === 0) {
     return (
       <div className="py-16 text-center">
-        <Code className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3" />
+        <Code className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4" />
         <p className="text-sm font-medium text-[var(--text-primary)]">No components in this category</p>
         <p className="text-caption mt-1">Add a component using the button above</p>
       </div>
@@ -484,7 +484,7 @@ export default function PayrollComponentsPage() {
             ].map(({ label, color }) => (
               <span
                 key={label}
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${color}`}
+                className={`px-4 py-1 rounded-full text-xs font-semibold ${color}`}
               >
                 {label}
               </span>
@@ -539,7 +539,7 @@ export default function PayrollComponentsPage() {
               ].map(({ label, formula }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5"
+                  className="flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg px-4 py-1.5"
                 >
                   <span className="text-caption">{label}:</span>
                   <code className="text-xs text-accent-600 dark:text-accent-400 font-mono">{formula}</code>

@@ -90,7 +90,7 @@ export default function ExpenseApprovalsPage() {
             </div>
           ) : claims.length === 0 ? (
             <div className="text-center py-20">
-              <CheckCircle className="w-12 h-12 text-success-400 mx-auto mb-3" />
+              <CheckCircle className="w-12 h-12 text-success-400 mx-auto mb-4" />
               <p className="text-lg font-medium text-surface-700 dark:text-surface-300">All caught up!</p>
               <p className="text-surface-500">No pending expense claims to approve.</p>
             </div>

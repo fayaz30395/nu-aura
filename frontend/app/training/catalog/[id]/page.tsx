@@ -139,7 +139,7 @@ function ScormLauncher({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {!launched ? (
         <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-[var(--border-main)] rounded-lg bg-[var(--bg-muted)] gap-4">
           <BookOpen className="h-10 w-10 text-[var(--text-muted)]" />
@@ -151,7 +151,7 @@ function ScormLauncher({
         </div>
       ) : (
         <div className="rounded-lg overflow-hidden border border-[var(--border-main)]">
-          <div className="row-between px-3 py-2 bg-[var(--bg-muted)] border-b border-[var(--border-main)]">
+          <div className="row-between px-4 py-2 bg-[var(--bg-muted)] border-b border-[var(--border-main)]">
             <span className="text-xs font-medium text-[var(--text-secondary)]">{title}</span>
             <a
               href={url}
@@ -238,7 +238,7 @@ function ContentViewer({
 
     case 'DOCUMENT':
       return content.documentUrl ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <a
             href={content.documentUrl}
             target="_blank"
@@ -264,7 +264,7 @@ function ContentViewer({
 
     case 'EXTERNAL_LINK':
       return content.documentUrl ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <a
             href={content.documentUrl}
             target="_blank"
@@ -283,7 +283,7 @@ function ContentViewer({
 
     default:
       return (
-        <div className="flex flex-col items-center justify-center py-8 text-[var(--text-muted)] gap-3">
+        <div className="flex flex-col items-center justify-center py-8 text-[var(--text-muted)] gap-4">
           <GraduationCap className="h-8 w-8" />
           <p className="text-sm">Content type &quot;{content.contentType}&quot; will be available soon.</p>
           <Button size="sm" onClick={handleComplete} variant="outline">
@@ -322,9 +322,9 @@ function ModuleItem({
       {/* Module header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full row-between px-4 py-3 bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] transition-colors text-left"
+        className="w-full row-between px-4 py-2 bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] transition-colors text-left"
       >
-        <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
           {expanded ? (
             <ChevronDown className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
           ) : (
@@ -337,7 +337,7 @@ function ModuleItem({
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3 shrink-0 ml-3">
+        <div className="flex items-center gap-4 shrink-0 ml-4">
           {module.durationMinutes && (
             <span className="text-caption flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -357,7 +357,7 @@ function ModuleItem({
       {expanded && (
         <div className="border-t border-[var(--border-main)]">
           {contents.length === 0 ? (
-            <p className="text-body-muted px-4 py-3">No content in this module yet.</p>
+            <p className="text-body-muted px-4 py-2">No content in this module yet.</p>
           ) : (
             <div className="divide-y divide-[var(--border-main)]">
               {contents.map((content) => {
@@ -369,7 +369,7 @@ function ModuleItem({
                     {/* Content row */}
                     <button
                       onClick={() => setActiveContentId(isActive ? null : content.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                      className={`w-full flex items-center gap-4 px-4 py-2.5 text-left transition-colors ${
                         isActive
                           ? 'bg-accent-50'
                           : 'hover:bg-[var(--bg-muted)]'
@@ -479,7 +479,7 @@ export default function CourseDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-96 text-[var(--text-muted)]">
-          <Loader2 className="h-8 w-8 animate-spin mr-3" />
+          <Loader2 className="h-8 w-8 animate-spin mr-4" />
           <span>Loading course…</span>
         </div>
       </AppLayout>
@@ -536,7 +536,7 @@ export default function CourseDetailPage() {
               </div>
 
               {/* Info */}
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-4">
                 <div className="flex flex-wrap gap-2 items-center">
                   <Badge variant={difficultyVariant} className="text-xs">
                     {course.difficultyLevel}
@@ -589,11 +589,11 @@ export default function CourseDetailPage() {
                 </div>
 
                 {/* Enrollment CTA */}
-                <div className="flex items-center gap-3 pt-1">
+                <div className="flex items-center gap-4 pt-1">
                   {enrollmentLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin text-[var(--text-muted)]" />
                   ) : isEnrolled ? (
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-4 flex-1">
                       <div className="flex items-center gap-2 text-success-600 text-sm font-medium">
                         <CheckCircle className="h-5 w-5" />
                         Enrolled
@@ -637,11 +637,11 @@ export default function CourseDetailPage() {
         {/* Two-column layout: modules + sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Modules list */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Course Content</h2>
             {modules.length === 0 ? (
               <Card className="border border-[var(--border-main)]">
-                <CardContent className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)] gap-3">
+                <CardContent className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)] gap-4">
                   <BookOpen className="h-10 w-10" />
                   <p className="text-sm">No modules available yet.</p>
                 </CardContent>
@@ -669,7 +669,7 @@ export default function CourseDetailPage() {
             {/* Overall progress card */}
             {isEnrolled && (
               <Card className="border border-[var(--border-main)]">
-                <CardContent className="p-4 space-y-3">
+                <CardContent className="p-4 space-y-4">
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">Your Progress</h3>
                   <div className="space-y-1">
                     <div className="flex justify-between text-caption">
@@ -695,7 +695,7 @@ export default function CourseDetailPage() {
 
             {/* Course info card */}
             <Card className="border border-[var(--border-main)]">
-              <CardContent className="p-4 space-y-3">
+              <CardContent className="p-4 space-y-4">
                 <h3 className="text-sm font-semibold text-[var(--text-primary)]">Course Info</h3>
                 <dl className="space-y-2 text-sm">
                   {course.code && (

@@ -119,7 +119,7 @@ export default function PayrollReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Payroll Period <span className="text-danger-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
@@ -146,7 +146,7 @@ export default function PayrollReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Export Format
                 </label>
                 <div className="grid grid-cols-3 gap-4">

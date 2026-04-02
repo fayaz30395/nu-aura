@@ -167,7 +167,7 @@ export default function OnboardingDetailPage() {
                             Back to List
                         </Button>
                         <div className="flex items-center gap-6">
-                            <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-4xl shadow-2xl shadow-accent-500/30 ring-4 ring-white dark:ring-surface-900">
+                            <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-4xl shadow-[var(--shadow-elevated)] shadow-accent-500/30 ring-4 ring-white dark:ring-surface-900">
                                 {process.employeeName?.charAt(0)}
                             </div>
                             <div>
@@ -315,7 +315,7 @@ export default function OnboardingDetailPage() {
                                 <div className="bg-white/10 rounded-lg p-4">
                                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
                                     <p className="font-bold text-lg mt-1">{process.assignedBuddyName || 'Not Assigned'}</p>
-                                    <Button variant="ghost" size="sm" className="w-full mt-3 bg-white/10 hover:bg-white/20 border-0 text-white text-xs">
+                                    <Button variant="ghost" size="sm" className="w-full mt-4 bg-white/10 hover:bg-white/20 border-0 text-white text-xs">
                                         Send Message
                                     </Button>
                                 </div>

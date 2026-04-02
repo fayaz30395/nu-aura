@@ -851,11 +851,11 @@ export default function DashboardPage() {
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
                       <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
                     </div>
-                    <p className="text-stat-large mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
+                    <p className="text-stat-large mt-4">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
                     <p className="text-body-secondary mt-1">Current Month</p>
                   </div>
                   <div className="border-t border-[var(--border-main)] pt-4 mt-4">
-                    <div className="row-between mb-3">
+                    <div className="row-between mb-4">
                       <span className="text-body-secondary">Processed</span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
                     </div>
@@ -932,10 +932,10 @@ export default function DashboardPage() {
               <CardContent>
                 {!hasGoogleToken ? (
                   <div className="text-center py-6">
-                    <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
                       <Bell className="h-6 w-6 text-[var(--text-muted)]" />
                     </div>
-                    <p className="text-body-secondary mb-3">Connect Google to see notifications</p>
+                    <p className="text-body-secondary mb-4">Connect Google to see notifications</p>
                     <Button
                       variant="outline"
                       size="sm"

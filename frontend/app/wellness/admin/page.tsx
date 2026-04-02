@@ -115,7 +115,7 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
   return (
     <Card className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow">
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="font-semibold text-sm text-[var(--text-primary)] truncate">
@@ -136,7 +136,7 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
                 {program.description}
               </p>
             )}
-            <div className="flex items-center gap-3 text-caption">
+            <div className="flex items-center gap-4 text-caption">
               <span className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
                 {CATEGORY_LABELS[program.category] ?? program.category}
               </span>
@@ -171,7 +171,7 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
   return (
     <Card className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow">
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="font-semibold text-sm text-[var(--text-primary)] truncate">
@@ -192,7 +192,7 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
                 {challenge.description}
               </p>
             )}
-            <div className="flex items-center gap-3 text-caption">
+            <div className="flex items-center gap-4 text-caption">
               <span className="flex items-center gap-1">
                 <Calendar size={10} />
                 {start.toLocaleDateString()} – {end.toLocaleDateString()}
@@ -538,7 +538,7 @@ function CreateChallengeModal({
               </div>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Controller
                   name="isTeamBased"
@@ -640,8 +640,8 @@ export default function WellnessAdminPage() {
           {/* Stats */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Card>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="rounded-lg bg-accent-100 p-3 dark:bg-accent-900/30">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900/30">
                   <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
@@ -651,8 +651,8 @@ export default function WellnessAdminPage() {
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="rounded-lg bg-success-100 p-3 dark:bg-success-900/30">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900/30">
                   <Target className="h-5 w-5 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
@@ -662,8 +662,8 @@ export default function WellnessAdminPage() {
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="rounded-lg bg-warning-100 p-3 dark:bg-warning-900/30">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900/30">
                   <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
@@ -695,14 +695,14 @@ export default function WellnessAdminPage() {
           {/* Content */}
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <RefreshCw className="h-6 w-6 animate-spin text-accent-500 mr-3" />
+              <RefreshCw className="h-6 w-6 animate-spin text-accent-500 mr-4" />
               <span className="text-[var(--text-muted)]">Loading…</span>
             </div>
           ) : activeTab === 'programs' ? (
             programs.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-3" />
+                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4" />
                   <p className="font-medium text-[var(--text-secondary)]">No programs yet</p>
                   <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness program to get started
@@ -724,7 +724,7 @@ export default function WellnessAdminPage() {
             allChallenges.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-3" />
+                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4" />
                   <p className="font-medium text-[var(--text-secondary)]">No challenges yet</p>
                   <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness challenge
@@ -736,7 +736,7 @@ export default function WellnessAdminPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {allChallenges.map((challenge) => (
                   <ChallengeCard key={challenge.id} challenge={challenge} />
                 ))}

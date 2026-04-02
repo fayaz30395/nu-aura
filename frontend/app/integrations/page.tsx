@@ -263,7 +263,7 @@ export default function IntegrationsPage() {
               >
                 <Card hover padding="lg" className="h-full">
                   {integration.popular && (
-                    <Badge variant="success" size="sm" className="mb-3">
+                    <Badge variant="success" size="sm" className="mb-4">
                       Popular
                     </Badge>
                   )}
@@ -330,7 +330,7 @@ export default function IntegrationsPage() {
               },
             ].map((feature, index) => (
               <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-3" />
+                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-4" />
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>

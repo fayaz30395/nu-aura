@@ -171,7 +171,7 @@ export default function NewOnboardingPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-6"
                         >
-                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
+                            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
                                         <User className="h-6 w-6 text-accent-500" />
@@ -217,7 +217,7 @@ export default function NewOnboardingPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                         >
-                            <Card className="lg:col-span-2 border-0 shadow-2xl bg-[var(--bg-card)]">
+                            <Card className="lg:col-span-2 border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
                                         <ClipboardList className="h-6 w-6 text-accent-500" />
@@ -254,7 +254,7 @@ export default function NewOnboardingPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
+                            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-4">
                                         <Calendar className="h-6 w-6 text-success-500" />
@@ -312,7 +312,7 @@ export default function NewOnboardingPage() {
                                 </div>
                             </div>
 
-                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
+                            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle>Final Notes</CardTitle>
                                 </CardHeader>

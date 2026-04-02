@@ -47,7 +47,7 @@ export function MailSidebar({
       <CardContent className="p-2">
         <Button
           variant="primary"
-          className="w-full mb-3"
+          className="w-full mb-4"
           onClick={onCompose}
           leftIcon={<Plus className="h-4 w-4" />}
         >

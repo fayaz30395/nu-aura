@@ -425,7 +425,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         </div>
 
         {/* Post content — inline edit mode */}
-        <div className="px-4 pb-3">
+        <div className="px-4 pb-4">
           {isEditing ? (
             <div className="space-y-2">
               <textarea

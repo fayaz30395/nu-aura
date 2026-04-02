@@ -232,7 +232,7 @@ export default function CalibrationMatrix({
     <div className="space-y-4">
       {/* Legend */}
       <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">9-Box Grid Legend</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-success-500"></div>
@@ -403,7 +403,7 @@ export default function CalibrationMatrix({
 
       {/* Summary Statistics */}
       <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Distribution Summary</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Distribution Summary</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <div className="text-2xl font-bold text-[var(--text-primary)]">{employees.length}</div>

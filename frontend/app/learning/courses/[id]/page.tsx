@@ -159,7 +159,7 @@ export default function CourseDetailPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
           {course.isMandatory && (
-            <span className="inline-block mb-3 px-2 py-0.5 bg-warning-400 text-white text-xs font-semibold rounded-full">
+            <span className="inline-block mb-4 px-2 py-0.5 bg-warning-400 text-white text-xs font-semibold rounded-full">
               Mandatory
             </span>
           )}
@@ -202,7 +202,7 @@ export default function CourseDetailPage() {
           {/* Description */}
           {course.description && (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6">
-              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-3">About this course</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">About this course</h2>
               <p className="text-[var(--text-secondary)] text-sm leading-relaxed">{course.description}</p>
             </div>
           )}
@@ -214,7 +214,7 @@ export default function CourseDetailPage() {
               
               {/* Completion percentage */}
               <div className="mb-6">
-                <div className="flex items-center gap-4 mb-3">
+                <div className="flex items-center gap-4 mb-4">
                   <div className="flex-1 h-3 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-accent-600 to-accent-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>

@@ -140,7 +140,7 @@ export default function SignupPage() {
               </p>
               <Button
                 variant="primary"
-                className="w-full py-3 mt-4"
+                className="w-full py-2 mt-4"
                 onClick={() => router.push('/auth/login')}
               >
                 Sign In to Your Account
@@ -224,7 +224,7 @@ export default function SignupPage() {
                     <span className="ml-1 text-caption">(used in URLs, lowercase)</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Hash className="h-4 w-4 text-[var(--text-muted)]" />
                     </div>
                     <input
@@ -297,7 +297,7 @@ export default function SignupPage() {
                     Work Email
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                     </div>
                     <input
@@ -324,7 +324,7 @@ export default function SignupPage() {
                     <span className="ml-1 text-caption">(min. 8 characters)</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-[var(--text-muted)]" />
                     </div>
                     <input
@@ -341,7 +341,7 @@ export default function SignupPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -357,7 +357,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-3 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="btn-primary w-full py-2 mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

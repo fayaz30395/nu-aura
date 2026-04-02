@@ -152,7 +152,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] max-w-md w-full overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -178,7 +178,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         <div className="p-6 space-y-6">
           {/* Format Selection */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
               Export Format
             </label>
             <div className="grid grid-cols-3 gap-4">
@@ -245,7 +245,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           {/* Date Range (if required) */}
           {report.requiresDateRange && (
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                 Date Range <span className="text-danger-500">*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">

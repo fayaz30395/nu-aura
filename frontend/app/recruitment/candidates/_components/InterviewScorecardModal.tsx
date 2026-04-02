@@ -178,7 +178,7 @@ export function InterviewScorecardModal({
 
           {!isLoading && !isError && interviews.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)]">
-              <Users className="h-10 w-10 mb-3 opacity-40" />
+              <Users className="h-10 w-10 mb-4 opacity-40" />
               <p className="text-sm font-medium">No interviews scheduled yet</p>
               <p className="text-xs mt-1">Interviews will appear here once scheduled for this candidate.</p>
             </div>
@@ -221,10 +221,10 @@ export function InterviewScorecardModal({
               {/* Result Breakdown */}
               {Object.keys(stats.resultCounts).length > 0 && (
                 <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                  <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                  <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
                     Result Breakdown
                   </p>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-4">
                     {Object.entries(stats.resultCounts).map(([result, count]) => (
                       <div key={result} className="flex items-center gap-2">
                         <ResultBadge result={result as InterviewResult} />
@@ -237,14 +237,14 @@ export function InterviewScorecardModal({
 
               {/* Per-Interview Scorecards */}
               <div>
-                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
                   Interviewer Scorecards
                 </p>
                 <div className="space-y-4">
                   {interviews.map((interview) => (
                     <div
                       key={interview.id}
-                      className="p-4 border border-[var(--border-main)] rounded-xl bg-[var(--bg-card)] space-y-3"
+                      className="p-4 border border-[var(--border-main)] rounded-xl bg-[var(--bg-card)] space-y-4"
                     >
                       {/* Row 1: Round + Status + Result */}
                       <div className="flex flex-wrap items-center gap-2">
@@ -290,7 +290,7 @@ export function InterviewScorecardModal({
 
                       {/* Row 4: Feedback */}
                       {interview.feedback && (
-                        <div className="p-3 bg-[var(--bg-secondary)] rounded-lg">
+                        <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                           <div className="flex items-center gap-1 mb-1">
                             <MessageSquare className="h-3.5 w-3.5 text-[var(--text-muted)]" />
                             <span className="text-xs font-medium text-[var(--text-muted)]">Feedback</span>

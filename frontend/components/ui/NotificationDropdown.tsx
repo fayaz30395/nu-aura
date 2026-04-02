@@ -87,7 +87,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
       aria-label="Notifications"
     >
       {/* Header */}
-      <div className="row-between px-4 py-3 border-b border-[var(--border-main)]">
+      <div className="row-between px-4 py-2 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-[var(--text-muted)]" />
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">

@@ -359,7 +359,7 @@ export default function KekaImportPage() {
           {/* Error Alert */}
           {error && (
             <div className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start">
-              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-3 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-4 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-danger-800 dark:text-danger-100 font-medium">Error</p>
                 <p className="text-danger-700 dark:text-danger-200 text-sm mt-1">{error}</p>
@@ -379,7 +379,7 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               {/* Download Templates */}
               <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
                   <Download className="w-5 h-5 mr-2" />
                   Download Template
                 </h3>
@@ -419,7 +419,7 @@ export default function KekaImportPage() {
 
               {/* File Upload */}
               <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
                   <Upload className="w-5 h-5 mr-2" />
                   Upload File
                 </h3>
@@ -446,7 +446,7 @@ export default function KekaImportPage() {
 
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
-                      <CheckCircle className="w-12 h-12 text-success-500 mb-3" />
+                      <CheckCircle className="w-12 h-12 text-success-500 mb-4" />
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
@@ -463,18 +463,18 @@ export default function KekaImportPage() {
                             fileInputRef.current.value = '';
                           }
                         }}
-                        className="mt-3"
+                        className="mt-4"
                       >
                         Remove file
                       </Button>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <Upload className="w-12 h-12 text-[var(--text-muted)] mb-3" />
+                      <Upload className="w-12 h-12 text-[var(--text-muted)] mb-4" />
                       <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                         Drag and drop your file here
                       </p>
-                      <p className="text-body-muted mb-3">
+                      <p className="text-body-muted mb-4">
                         or
                       </p>
                       <Button
@@ -482,7 +482,7 @@ export default function KekaImportPage() {
                       >
                         Browse Files
                       </Button>
-                      <p className="text-caption mt-3">
+                      <p className="text-caption mt-4">
                         Supports CSV, XLS, and XLSX files (max 50MB)
                       </p>
                     </div>
@@ -519,7 +519,7 @@ export default function KekaImportPage() {
 
               {unmappedColumns.length > 0 && (
                 <div className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg flex items-start mb-6">
-                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-3 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-4 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-warning-800 dark:text-warning-100 font-medium">Unmapped Columns</p>
                     <p className="text-warning-700 dark:text-warning-200 text-sm mt-1">
@@ -669,7 +669,7 @@ export default function KekaImportPage() {
 
               {/* Preview Table */}
               <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
                   <Eye className="w-5 h-5 mr-2" />
                   Data Preview (First 10 rows)
                 </h3>
@@ -743,7 +743,7 @@ export default function KekaImportPage() {
                     onChange={(e) => setSkipInvalidRows(e.target.checked)}
                     className="w-4 h-4"
                   />
-                  <div className="ml-3">
+                  <div className="ml-4">
                     <p className="font-medium text-[var(--text-primary)]">
                       Skip Invalid Rows
                     </p>
@@ -760,7 +760,7 @@ export default function KekaImportPage() {
                     onChange={(e) => setUpdateExistingEmployees(e.target.checked)}
                     className="w-4 h-4"
                   />
-                  <div className="ml-3">
+                  <div className="ml-4">
                     <p className="font-medium text-[var(--text-primary)]">
                       Update Existing Employees
                     </p>
@@ -777,7 +777,7 @@ export default function KekaImportPage() {
                     onChange={(e) => setSendWelcomeEmail(e.target.checked)}
                     className="w-4 h-4"
                   />
-                  <div className="ml-3">
+                  <div className="ml-4">
                     <p className="font-medium text-[var(--text-primary)]">
                       Send Welcome Emails
                     </p>
@@ -794,7 +794,7 @@ export default function KekaImportPage() {
                     onChange={(e) => setAutoApproveEmployees(e.target.checked)}
                     className="w-4 h-4"
                   />
-                  <div className="ml-3">
+                  <div className="ml-4">
                     <p className="font-medium text-[var(--text-primary)]">
                       Auto-approve Employees
                     </p>
@@ -913,7 +913,7 @@ export default function KekaImportPage() {
               {result.errors.length > 0 && (
                 <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
                   <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
-                  <div className="text-sm space-y-1 mb-3">
+                  <div className="text-sm space-y-1 mb-4">
                     {result.errors.slice(0, 5).map((err, idx) => (
                       <div key={idx} className="text-danger-700 dark:text-danger-200">
                         Row {err.row}, {err.field}: {err.message}

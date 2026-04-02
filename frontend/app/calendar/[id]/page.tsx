@@ -204,7 +204,7 @@ export default function EventDetailPage() {
             </div>
           </div>
           {event.allDay && (
-            <p className="mt-3 text-sm opacity-80">All day event</p>
+            <p className="mt-4 text-sm opacity-80">All day event</p>
           )}
         </div>
 
@@ -323,7 +323,7 @@ export default function EventDetailPage() {
         {/* Description */}
         {event.description && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Description
             </h3>
             <p className="text-[var(--text-secondary)] whitespace-pre-wrap">
@@ -335,7 +335,7 @@ export default function EventDetailPage() {
         {/* Notes */}
         {event.notes && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Notes
             </h3>
             <p className="text-[var(--text-secondary)]">{event.notes}</p>

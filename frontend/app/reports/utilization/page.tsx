@@ -496,14 +496,14 @@ export default function UtilizationReportsPage() {
                         key={dept.departmentId}
                         className="p-4 rounded-lg border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
                       >
-                        <div className="row-between mb-3">
+                        <div className="row-between mb-4">
                           <h4 className="font-medium text-[var(--text-primary)]">
                             {dept.departmentName}
                           </h4>
                           <Badge variant="secondary">{dept.employeeCount} members</Badge>
                         </div>
                         <UtilizationBar rate={dept.averageUtilization} />
-                        <div className="mt-3 flex justify-between text-body-muted">
+                        <div className="mt-4 flex justify-between text-body-muted">
                           <span>{formatHours(dept.billableHours)} billable</span>
                           <span>of {formatHours(dept.totalHours)} total</span>
                         </div>
@@ -628,7 +628,7 @@ export default function UtilizationReportsPage() {
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t border-[var(--border-main)]">
+                      <div className="pt-4 border-t border-[var(--border-main)]">
                         <div className="flex justify-between">
                           <span className="text-body-muted">Total Hours</span>
                           <span className="font-semibold text-[var(--text-primary)]">

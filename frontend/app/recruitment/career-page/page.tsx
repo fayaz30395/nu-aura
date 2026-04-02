@@ -120,7 +120,7 @@ function JobPostingsPanel() {
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {[1, 2, 3].map((n) => <Skeleton key={n} className="h-16 w-full rounded-xl" />)}
       </div>
     );
@@ -164,7 +164,7 @@ function JobPostingsPanel() {
       {/* Job List */}
       {jobs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)]">
-          <Briefcase className="h-10 w-10 mb-3 opacity-40" />
+          <Briefcase className="h-10 w-10 mb-4 opacity-40" />
           <p className="text-sm font-medium">No job openings found</p>
           <p className="text-xs mt-1">Create job postings in the Jobs section first.</p>
         </div>
@@ -173,20 +173,20 @@ function JobPostingsPanel() {
           <table className="w-full">
             <thead className="bg-[var(--bg-secondary)]">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                   Job Title
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider hidden sm:table-cell">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider hidden sm:table-cell">
                   Department
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-4 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="px-4 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                   Openings
                 </th>
                 {canManage && (
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                  <th className="px-4 py-2 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                     Visibility
                   </th>
                 )}
@@ -198,7 +198,7 @@ function JobPostingsPanel() {
                   key={job.id}
                   className="hover:bg-[var(--bg-secondary)] transition-colors"
                 >
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2">
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{job.jobTitle}</p>
                       {job.location && (
@@ -206,17 +206,17 @@ function JobPostingsPanel() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-body-secondary hidden sm:table-cell">
+                  <td className="px-4 py-2 text-body-secondary hidden sm:table-cell">
                     {job.departmentName ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-2 text-center">
                     <JobStatusBadge status={job.status} />
                   </td>
-                  <td className="px-4 py-3 text-center text-body-secondary">
+                  <td className="px-4 py-2 text-center text-body-secondary">
                     {job.numberOfOpenings ?? 1}
                   </td>
                   {canManage && (
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-2 text-right">
                       <button
                         onClick={() => handleToggleVisibility(job)}
                         disabled={
@@ -337,7 +337,7 @@ function CareerContentEditor() {
 
   return (
     <form onSubmit={handleSubmit(onSave)} className="space-y-6">
-      <div className="p-3 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
+      <div className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
         <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
         <span>
           This content is stored locally in your browser session. To persist it across devices and
@@ -410,7 +410,7 @@ export default function CareerPageCMS() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-[var(--text-muted)]">
-          <XCircle className="h-10 w-10 mb-3 text-danger-400" />
+          <XCircle className="h-10 w-10 mb-4 text-danger-400" />
           <p className="text-sm font-medium">You don&apos;t have permission to view this page.</p>
         </div>
       </AppLayout>

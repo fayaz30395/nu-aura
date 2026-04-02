@@ -106,7 +106,7 @@ export default function ForgotPasswordPage() {
                     href="https://myaccount.google.com/security"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-full gap-2 px-4 py-3 mb-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
+                    className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path
@@ -222,7 +222,7 @@ export default function ForgotPasswordPage() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                   </div>
                   <input
@@ -249,7 +249,7 @@ export default function ForgotPasswordPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="btn-primary w-full py-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="btn-primary w-full py-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 isLoading={isLoading}
                 disabled={isLoading}
               >

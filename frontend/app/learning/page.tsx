@@ -178,9 +178,9 @@ export default function LearningPage() {
                           )}
                         </div>
                         {course.shortDescription && (
-                          <p className="text-[var(--text-secondary)] text-sm mb-3 line-clamp-2">{course.shortDescription}</p>
+                          <p className="text-[var(--text-secondary)] text-sm mb-4 line-clamp-2">{course.shortDescription}</p>
                         )}
-                        <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="flex flex-wrap gap-2 mb-4">
                           <span className={`px-2 py-1 rounded-full text-xs ${getDifficultyColor(course.difficultyLevel)}`} aria-label={`Difficulty: ${course.difficultyLevel}`}>
                             {course.difficultyLevel}
                           </span>

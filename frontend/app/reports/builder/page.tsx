@@ -237,7 +237,7 @@ export default function ReportBuilderPage() {
           {/* ── Left panel: Module + Columns ─────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Data Source</h2>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Data Source</h2>
               <div className="grid grid-cols-2 gap-2">
                 {MODULES.map(m => (
                   <button
@@ -256,7 +256,7 @@ export default function ReportBuilderPage() {
             </div>
 
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Columns</h2>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Columns</h2>
               <div className="space-y-2">
                 {columns.map(col => (
                   <label key={col.key} className="flex items-center gap-2 cursor-pointer">
@@ -276,7 +276,7 @@ export default function ReportBuilderPage() {
           {/* ── Middle panel: Filters + Sort + Save ──────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <div className="row-between mb-3">
+              <div className="row-between mb-4">
                 <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
                 {filters.length < 5 && (
                   <button
@@ -334,7 +334,7 @@ export default function ReportBuilderPage() {
             </div>
 
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Sort</h2>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Sort</h2>
               <div className="flex gap-2">
                 <select
                   value={sortBy}
@@ -360,7 +360,7 @@ export default function ReportBuilderPage() {
             </div>
 
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Save Template</h2>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Save Template</h2>
               <input
                 type="text"
                 placeholder="Template name"
@@ -383,7 +383,7 @@ export default function ReportBuilderPage() {
           {/* ── Right panel: Actions ──────────────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Actions</h2>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Actions</h2>
               <div className="space-y-2">
                 <PermissionGate permission={Permissions.REPORT_VIEW}>
                   <button

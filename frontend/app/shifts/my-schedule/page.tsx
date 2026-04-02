@@ -211,7 +211,7 @@ export default function MySchedulePage() {
           {/* Upcoming Shifts Sidebar */}
           <div className="space-y-4">
             <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
-              <h3 className="font-semibold text-surface-900 dark:text-white mb-3 flex items-center gap-2">
+              <h3 className="font-semibold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400" />
                 Upcoming Shifts
               </h3>

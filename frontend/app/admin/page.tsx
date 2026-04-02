@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-5">
+    <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-4">
       <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>

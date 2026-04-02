@@ -419,7 +419,7 @@ export default function CalibrationPage() {
               {/* Current vs Target */}
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
                 <div>
-                  <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                     Current Distribution
                   </h2>
                   <DistributionChart
@@ -516,7 +516,7 @@ export default function CalibrationPage() {
                     placeholder="Search employee..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                    className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                   />
                 </div>
 
@@ -542,13 +542,13 @@ export default function CalibrationPage() {
               <div className="flex items-center justify-center py-16">
                 <RefreshCw
                   size={24}
-                  className="animate-spin text-accent-500 mr-3"
+                  className="animate-spin text-accent-500 mr-4"
                 />
                 <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
             ) : filteredAndSorted.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-3" />
+                <Info size={32} className="text-[var(--text-muted)] mb-4" />
                 <p className="text-[var(--text-secondary)] font-medium">
                   No reviews found
                 </p>
@@ -681,7 +681,7 @@ export default function CalibrationPage() {
           </>
         ) : !selectedCycleId && !cyclesLoading ? (
           <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-            <Info size={32} className="text-[var(--text-muted)] mb-3" />
+            <Info size={32} className="text-[var(--text-muted)] mb-4" />
             <p className="text-[var(--text-secondary)] font-medium">
               No review cycle selected
             </p>

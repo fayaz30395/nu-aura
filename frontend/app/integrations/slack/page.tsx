@@ -289,7 +289,7 @@ export default function SlackIntegrationPage() {
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" {...register('isEnabled')} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
+                  <div className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
                 </label>
               </div>
 

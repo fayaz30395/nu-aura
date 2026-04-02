@@ -169,7 +169,7 @@ export default function FeedbackRequestForm({
               Add Peer Reviewers ({selectedPeers.length}/{maxPeers})
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-[var(--text-muted)]" />
               </div>
               <input
@@ -218,7 +218,7 @@ export default function FeedbackRequestForm({
         {/* Selected Peers */}
         {selectedPeers.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">Selected Reviewers</h3>
+            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">Selected Reviewers</h3>
             <div className="space-y-2">
               {selectedPeers.map((peer) => (
                 <div

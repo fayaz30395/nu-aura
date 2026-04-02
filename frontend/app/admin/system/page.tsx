@@ -464,7 +464,7 @@ export default function SystemDashboard() {
               <Text fw={500} size="sm" className="text-[var(--text-secondary)] mb-2">
                 Access Method
               </Text>
-              <Text size="sm" className="text-[var(--text-secondary)] mb-3">
+              <Text size="sm" className="text-[var(--text-secondary)] mb-4">
                 Click the button below to impersonate this tenant and access their dashboard.
               </Text>
               <Button

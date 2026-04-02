@@ -50,7 +50,7 @@ export function RejectRequestModal({
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
           >
-            <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl pointer-events-auto flex flex-col border-0">
+            <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
                 <div className="row-between">
@@ -72,7 +72,7 @@ export function RejectRequestModal({
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                      <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                         Reason for Rejection <span className="text-danger-500">*</span>
                       </label>
                       <textarea

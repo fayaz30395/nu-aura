@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
+  Check,
   Circle,
   Play,
   FileText,
@@ -194,7 +195,7 @@ export default function CoursePlayerPage() {
               ) : (
                 <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
                   <Play className="h-16 w-16 opacity-30" />
-                  <span className="ml-3">Video not available</span>
+                  <span className="ml-4">Video not available</span>
                 </div>
               )}
             </div>
@@ -208,7 +209,7 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -234,7 +235,7 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -279,7 +280,7 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -304,7 +305,7 @@ export default function CoursePlayerPage() {
                   : 'bg-accent-800 text-white hover:bg-accent-900'
               }`}
             >
-              {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Take Quiz'}
+              {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Take Quiz'}
             </button>
           </div>
         );
@@ -334,7 +335,7 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? '✓ Completed' : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -353,7 +354,7 @@ export default function CoursePlayerPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
+          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4" />
           <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>

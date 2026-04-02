@@ -276,7 +276,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Duration
             </label>
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-2 mb-4">
               {DURATION_PRESETS.map(preset => (
                 <button
                   key={preset.days}
@@ -517,7 +517,7 @@ function PIPDetailModal({
 
           {/* Check-ins */}
           <div>
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Check-ins</h3>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Check-ins</h3>
             {pip.checkIns && pip.checkIns.length > 0 ? (
               <div className="space-y-4 mb-4">
                 {pip.checkIns.map((checkIn, idx) => (
@@ -627,7 +627,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
 
   return (
     <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
           <p className="text-body-muted">{pip.reason || 'General'}</p>
@@ -830,7 +830,7 @@ export default function PIPPage() {
                 placeholder="Search by employee name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
               />
             </div>
             <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
@@ -847,7 +847,7 @@ export default function PIPPage() {
           </div>
         ) : pips.length === 0 ? (
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
-            <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-3" />
+            <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
             <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
             <p className="text-[var(--text-muted)] text-sm mt-1">Create your first PIP to get started</p>
           </div>

@@ -109,7 +109,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
           </div>
 
           {/* Name & Designation */}
-          <div className="text-center mb-3 flex-1">
+          <div className="text-center mb-4 flex-1">
             <h3 className="font-semibold text-[var(--text-primary)] truncate">
               {employee.firstName} {employee.lastName}
             </h3>
@@ -120,14 +120,14 @@ function EmployeeCard({ employee, viewMode, onClick }: {
 
           {/* Department & Level Badge */}
           {employee.departmentName && (
-            <div className="flex items-center justify-center gap-1.5 px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs mb-3 text-[var(--text-secondary)] truncate">
+            <div className="flex items-center justify-center gap-1.5 px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs mb-4 text-[var(--text-secondary)] truncate">
               <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{employee.departmentName}</span>
             </div>
           )}
 
           {/* Contact Info */}
-          <div className="space-y-2 text-xs border-t border-[var(--border-main)] pt-3">
+          <div className="space-y-2 text-xs border-t border-[var(--border-main)] pt-4">
             {employee.workEmail && (
               <div className="flex items-center gap-2 text-[var(--text-secondary)] truncate">
                 <Mail className="h-3.5 w-3.5 flex-shrink-0" />

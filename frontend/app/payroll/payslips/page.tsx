@@ -159,7 +159,7 @@ export default function PayslipsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Employee name..."
-                    className="input-aura w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="input-aura w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
               </div>

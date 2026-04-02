@@ -114,7 +114,8 @@ function StatCard({ label, value, icon, color, sub }: StatCardProps) {
 // ─── Policies Tab ─────────────────────────────────────────────────────────────
 
 function PoliciesTab() {
-  const { data: policies = [], isLoading } = useActivePolicies();
+  const { data: policiesPage, isLoading } = useActivePolicies();
+  const policies = policiesPage?.content ?? [];
   const publishMutation = usePublishPolicy();
   const archiveMutation = useArchivePolicy();
 
@@ -233,7 +234,8 @@ function PoliciesTab() {
 // ─── Checklists Tab ───────────────────────────────────────────────────────────
 
 function ChecklistsTab() {
-  const { data: checklists = [], isLoading } = useActiveChecklists();
+  const { data: checklistsPage, isLoading } = useActiveChecklists();
+  const checklists = checklistsPage?.content ?? [];
   const completeMutation = useCompleteChecklist();
 
   const handleComplete = async (checklist: ComplianceChecklist) => {
@@ -315,7 +317,8 @@ function ChecklistsTab() {
 // ─── Alerts Tab ───────────────────────────────────────────────────────────────
 
 function AlertsTab() {
-  const { data: alerts = [], isLoading } = useActiveAlerts();
+  const { data: alertsPage, isLoading } = useActiveAlerts();
+  const alerts = alertsPage?.content ?? [];
   const updateMutation = useUpdateAlertStatus();
   const escalateMutation = useEscalateAlert();
 
@@ -441,7 +444,8 @@ export default function CompliancePage() {
   const [activeTab, setActiveTab] = useState<string | null>('overview');
 
   const { data: dashboard, isLoading: dashLoading, refetch } = useComplianceDashboard();
-  const { data: criticalAlerts = [] } = useCriticalAlerts();
+  const { data: criticalAlertsPage } = useCriticalAlerts();
+  const criticalAlerts = criticalAlertsPage?.content ?? [];
 
   const stats = dashboard as Record<string, number> | undefined;
 

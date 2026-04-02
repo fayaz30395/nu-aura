@@ -352,7 +352,7 @@ function DeviceCard({
         </div>
 
         {/* Meta */}
-        <div className="mt-3 space-y-1 text-caption">
+        <div className="mt-4 space-y-1 text-caption">
           {device.manufacturer && (
             <p>
               {device.manufacturer} {device.model || ''}
@@ -363,7 +363,7 @@ function DeviceCard({
         </div>
 
         {/* Actions */}
-        <div className="mt-4 flex items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+        <div className="mt-4 flex items-center gap-2 border-t border-[var(--border-subtle)] pt-4">
           <button
             onClick={onViewLogs}
             className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
@@ -718,7 +718,7 @@ function PendingPunchesPanel({
       ) : data?.content.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <CheckCircle className="h-12 w-12 text-success-500 mb-3" />
+            <CheckCircle className="h-12 w-12 text-success-500 mb-4" />
             <p className="text-[var(--text-muted)]">All punches have been processed</p>
           </CardContent>
         </Card>
@@ -828,7 +828,7 @@ function ApiKeysPanel({
       ) : keys?.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Key className="h-12 w-12 text-[var(--text-muted)] mb-3" />
+            <Key className="h-12 w-12 text-[var(--text-muted)] mb-4" />
             <p className="text-[var(--text-muted)]">
               No API keys. Generate one to connect biometric devices.
             </p>

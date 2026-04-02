@@ -61,7 +61,7 @@ interface DefaultErrorFallbackProps {
 function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-      <div className="text-danger-500 dark:text-danger-400 mb-3">
+      <div className="text-danger-500 dark:text-danger-400 mb-4">
         <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"

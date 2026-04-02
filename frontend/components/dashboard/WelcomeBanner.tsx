@@ -169,7 +169,7 @@ export function QuickAccessWidget({
         {/* Inbox row */}
         <a
           href="/inbox"
-          className="row-between rounded-xl px-4 py-2.5 text-sm transition-all duration-200 hover:bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] mt-2 pt-3 group"
+          className="row-between rounded-xl px-4 py-2.5 text-sm transition-all duration-200 hover:bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] mt-2 pt-4 group"
         >
           <div className="flex items-center gap-2.5">
             <Bell className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] transition-colors" />

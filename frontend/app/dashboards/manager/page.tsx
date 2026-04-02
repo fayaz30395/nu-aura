@@ -326,7 +326,7 @@ export default function ManagerDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Team Attendance Analytics */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[220px]">
+            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden max-h-[220px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="row-between">
                   <div className="flex items-center gap-4">
@@ -370,7 +370,7 @@ export default function ManagerDashboardPage() {
 
           {/* Team Pulse Radar & Performance */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[280px]">
+            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden max-h-[280px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-4">
                   <Star className="h-4 w-4 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
@@ -417,7 +417,7 @@ export default function ManagerDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Pending Approvals */}
           <motion.div variants={itemVariants} className="lg:col-span-2">
-            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="row-between">
                   <div className="flex items-center gap-2">
@@ -476,7 +476,7 @@ export default function ManagerDashboardPage() {
 
           {/* Action Items Summary */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] h-full">
+            <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] h-full">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
@@ -519,7 +519,7 @@ export default function ManagerDashboardPage() {
 
         {/* Team Projects & Allocations */}
         <motion.div variants={itemVariants}>
-          <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+          <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden">
             <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
               <CardTitle className="row-between">
                 <div className="flex items-center gap-2">
@@ -552,7 +552,7 @@ export default function ManagerDashboardPage() {
               {/* Error / Coming Soon state */}
               {!teamProjectsLoading && teamProjectsError && (
                 <div className="p-8 text-center">
-                  <div className="h-14 w-14 rounded-full bg-accent-500/10 flex items-center justify-center mx-auto mb-3">
+                  <div className="h-14 w-14 rounded-full bg-accent-500/10 flex items-center justify-center mx-auto mb-4">
                     <Briefcase className="h-7 w-7 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">Coming Soon</p>
@@ -565,7 +565,7 @@ export default function ManagerDashboardPage() {
               {/* Empty state */}
               {!teamProjectsLoading && !teamProjectsError && teamProjectsData && teamProjectsData.teamMembers.length === 0 && (
                 <div className="p-8 text-center">
-                  <div className="h-14 w-14 rounded-full bg-surface-500/10 flex items-center justify-center mx-auto mb-3">
+                  <div className="h-14 w-14 rounded-full bg-surface-500/10 flex items-center justify-center mx-auto mb-4">
                     <FolderKanban className="h-7 w-7 text-surface-400" />
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">No Project Data</p>
@@ -676,7 +676,7 @@ export default function ManagerDashboardPage() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
             >
-              <Card className="border-0 shadow-2xl bg-danger-50 dark:bg-danger-950 overflow-hidden">
+              <Card className="border-0 shadow-[var(--shadow-elevated)] bg-danger-50 dark:bg-danger-950 overflow-hidden">
                 <CardContent className="p-4">
                   <div className="row-between mb-2">
                     <div className="flex items-center gap-2">
@@ -718,7 +718,7 @@ export default function ManagerDashboardPage() {
                 Team Goals
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-4 pb-3 pt-0">
+            <CardContent className="px-4 pb-4 pt-0">
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
@@ -747,7 +747,7 @@ export default function ManagerDashboardPage() {
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-[var(--border-main)]">
+                <div className="pt-4 border-t border-[var(--border-main)]">
                   <div className="row-between mb-1">
                     <span className="text-xs text-[var(--text-secondary)]">
                       Completion Rate
@@ -775,7 +775,7 @@ export default function ManagerDashboardPage() {
                 Engagement & Feedback
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-4 pb-3 pt-0">
+            <CardContent className="px-4 pb-4 pt-0">
               <div className="space-y-1.5">
                 <div className="p-2.5 bg-[var(--bg-secondary)] rounded-lg">
                   <div className="row-between">

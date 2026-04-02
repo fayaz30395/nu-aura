@@ -86,7 +86,7 @@ export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProp
   const dotColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
-    white: 'bg-white',
+    white: 'bg-[var(--bg-card)]',
   };
 
   const dotColor = dotColors[variant];
@@ -121,7 +121,7 @@ export function WaveSpinner({ variant = 'primary', className }: Omit<SpinnerProp
   const barColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
-    white: 'bg-white',
+    white: 'bg-[var(--bg-card)]',
   };
 
   const barColor = barColors[variant];

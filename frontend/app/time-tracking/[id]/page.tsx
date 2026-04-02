@@ -171,7 +171,7 @@ export default function TimeEntryDetailPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400" />
               </div>
@@ -183,7 +183,7 @@ export default function TimeEntryDetailPage() {
           </div>
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
@@ -198,7 +198,7 @@ export default function TimeEntryDetailPage() {
 
           {entry.billingAmount && (
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-              <div className="flex items-center gap-4 mb-3">
+              <div className="flex items-center gap-4 mb-4">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                   <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
                 </div>
@@ -258,7 +258,7 @@ export default function TimeEntryDetailPage() {
         {/* Description */}
         {entry.description && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Description
             </h3>
             <p className="text-[var(--text-secondary)]">{entry.description}</p>
@@ -268,7 +268,7 @@ export default function TimeEntryDetailPage() {
         {/* Notes */}
         {entry.notes && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Notes
             </h3>
             <p className="text-[var(--text-secondary)]">{entry.notes}</p>
@@ -309,7 +309,7 @@ export default function TimeEntryDetailPage() {
         {/* Rejection Reason */}
         {entry.status === 'REJECTED' && entry.rejectionReason && (
           <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-center gap-4 mb-4">
               <XCircle className="h-5 w-5 text-danger-500" />
               <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
                 Rejection Reason

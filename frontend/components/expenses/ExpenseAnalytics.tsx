@@ -382,10 +382,10 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
             <table className="w-full">
               <thead>
                 <tr className="text-left text-sm text-surface-500 border-b border-surface-200 dark:border-surface-700">
-                  <th className="pb-3 font-medium">Rank</th>
-                  <th className="pb-3 font-medium">Employee</th>
-                  <th className="pb-3 font-medium text-right">Claims</th>
-                  <th className="pb-3 font-medium text-right">Total Amount</th>
+                  <th className="pb-4 font-medium">Rank</th>
+                  <th className="pb-4 font-medium">Employee</th>
+                  <th className="pb-4 font-medium text-right">Claims</th>
+                  <th className="pb-4 font-medium text-right">Total Amount</th>
                 </tr>
               </thead>
               <tbody>

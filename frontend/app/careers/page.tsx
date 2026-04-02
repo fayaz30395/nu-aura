@@ -180,7 +180,7 @@ const JobDetailModal: React.FC<{
 
           {/* Description */}
           <div>
-            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-4">
               About this role
             </h4>
             <p className="text-body-secondary whitespace-pre-wrap">
@@ -190,7 +190,7 @@ const JobDetailModal: React.FC<{
 
           {/* Responsibilities */}
           <div>
-            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-4">
               Responsibilities
             </h4>
             <ul className="space-y-2">
@@ -205,7 +205,7 @@ const JobDetailModal: React.FC<{
 
           {/* Requirements */}
           <div>
-            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-4">
               Requirements
             </h4>
             <ul className="space-y-2">
@@ -567,10 +567,10 @@ export default function CareersPage() {
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
             <div className="skeuo-card p-6 sticky top-24">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-5">Filters</h3>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-6">Filters</h3>
 
               {/* Department Filter */}
-              <div className="mb-5">
+              <div className="mb-6">
                 <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Department
                 </label>
@@ -592,7 +592,7 @@ export default function CareersPage() {
               </div>
 
               {/* Location Filter */}
-              <div className="mb-5">
+              <div className="mb-6">
                 <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Location
                 </label>
@@ -614,7 +614,7 @@ export default function CareersPage() {
               </div>
 
               {/* Employment Type Filter */}
-              <div className="mb-5">
+              <div className="mb-6">
                 <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide mb-2">
                   Employment Type
                 </label>

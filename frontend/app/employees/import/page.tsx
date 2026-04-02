@@ -264,7 +264,7 @@ export default function EmployeeImportPage() {
         {/* Error Alert */}
         {error && (
           <div className="mb-6 bg-danger-50 border border-danger-200 rounded-lg p-4 flex items-start">
-            <AlertCircle className="w-5 h-5 text-danger-600 mr-3 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-danger-600 mr-4 flex-shrink-0 mt-0.5" />
             <div>
               <h3 className="text-danger-800 font-medium">Error</h3>
               <p className="text-danger-700 text-sm">{error}</p>
@@ -277,7 +277,7 @@ export default function EmployeeImportPage() {
           <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
             {/* Download Templates */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
+              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                 Download Template
               </h3>
               <p className="text-body-secondary mb-4">
@@ -309,7 +309,7 @@ export default function EmployeeImportPage() {
 
             {/* File Upload Area */}
             <div className="border-t border-[var(--border-main)] pt-6">
-              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
+              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                 Upload File
               </h3>
               <div
@@ -335,7 +335,7 @@ export default function EmployeeImportPage() {
 
                 {selectedFile ? (
                   <div className="flex flex-col items-center">
-                    <CheckCircle className="w-12 h-12 text-success-500 mb-3" />
+                    <CheckCircle className="w-12 h-12 text-success-500 mb-4" />
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       {selectedFile.name}
                     </p>
@@ -349,18 +349,18 @@ export default function EmployeeImportPage() {
                           fileInputRef.current.value = '';
                         }
                       }}
-                      className="mt-3 text-sm text-danger-600 hover:text-danger-700"
+                      className="mt-4 text-sm text-danger-600 hover:text-danger-700"
                     >
                       Remove file
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <Upload className="w-12 h-12 text-[var(--text-muted)] mb-3" />
+                    <Upload className="w-12 h-12 text-[var(--text-muted)] mb-4" />
                     <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                       Drag and drop your file here
                     </p>
-                    <p className="text-body-muted mb-3">
+                    <p className="text-body-muted mb-4">
                       or
                     </p>
                     <button
@@ -369,7 +369,7 @@ export default function EmployeeImportPage() {
                     >
                       Browse Files
                     </button>
-                    <p className="text-caption mt-3">
+                    <p className="text-caption mt-4">
                       Supports CSV, XLS, and XLSX files
                     </p>
                   </div>
@@ -414,7 +414,7 @@ export default function EmployeeImportPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-4">
                   <div className="flex items-center">
-                    <Users className="w-8 h-8 text-accent-700 dark:text-accent-400 mr-3" />
+                    <Users className="w-8 h-8 text-accent-700 dark:text-accent-400 mr-4" />
                     <div>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {preview.totalRows}
@@ -427,7 +427,7 @@ export default function EmployeeImportPage() {
                 </div>
                 <div className="bg-success-50 dark:bg-success-900/30 rounded-lg p-4">
                   <div className="flex items-center">
-                    <CheckCircle className="w-8 h-8 text-success-500 mr-3" />
+                    <CheckCircle className="w-8 h-8 text-success-500 mr-4" />
                     <div>
                       <p className="text-2xl font-bold text-success-700 dark:text-success-400">
                         {preview.validRows}
@@ -440,7 +440,7 @@ export default function EmployeeImportPage() {
                 </div>
                 <div className="bg-danger-50 dark:bg-danger-900/30 rounded-lg p-4">
                   <div className="flex items-center">
-                    <XCircle className="w-8 h-8 text-danger-500 mr-3" />
+                    <XCircle className="w-8 h-8 text-danger-500 mr-4" />
                     <div>
                       <p className="text-2xl font-bold text-danger-700 dark:text-danger-400">
                         {preview.invalidRows}
@@ -539,13 +539,13 @@ export default function EmployeeImportPage() {
             {preview.hasErrors && (
               <div className="px-6 py-4 bg-warning-50 dark:bg-warning-900/20 border-t border-warning-200 dark:border-warning-800">
                 <div className="flex items-start">
-                  <AlertTriangle className="w-5 h-5 text-warning-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-warning-600 mr-4 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm text-warning-800 dark:text-warning-200">
                       Some rows have validation errors. You can either fix the file and re-upload,
                       or proceed with importing only the valid rows.
                     </p>
-                    <label className="flex items-center mt-3">
+                    <label className="flex items-center mt-4">
                       <input
                         type="checkbox"
                         checked={skipInvalid}
@@ -645,7 +645,7 @@ export default function EmployeeImportPage() {
             {/* Imported Employees */}
             {result.importedEmployees && result.importedEmployees.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
+                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                   Imported Employees
                 </h3>
                 <div className="overflow-x-auto">
@@ -691,7 +691,7 @@ export default function EmployeeImportPage() {
             {/* Failed Imports */}
             {result.failedImports && result.failedImports.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
+                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                   Failed Imports
                 </h3>
                 <div className="bg-danger-50 dark:bg-danger-900/20 rounded-lg p-4">

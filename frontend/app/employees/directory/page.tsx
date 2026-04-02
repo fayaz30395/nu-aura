@@ -494,7 +494,7 @@ export default function TeamDirectory() {
                           {employee.designation || employee.jobRole}
                         </p>
 
-                        <div className="mt-3 flex justify-center">
+                        <div className="mt-4 flex justify-center">
                           <span
                             className={`inline-block px-4 py-1 text-xs font-medium rounded-full ${getStatusColor(
                               employee.status
@@ -505,7 +505,7 @@ export default function TeamDirectory() {
                         </div>
 
                         {employee.departmentName && (
-                          <div className="mt-3 flex items-center justify-center gap-1 text-body-muted">
+                          <div className="mt-4 flex items-center justify-center gap-1 text-body-muted">
                             <Building2 className="w-4 h-4" />
                             <span>{employee.departmentName}</span>
                           </div>

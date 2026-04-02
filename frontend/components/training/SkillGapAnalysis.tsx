@@ -36,7 +36,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
         return (
             <Card>
                 <CardContent className="p-8 text-center">
-                    <AlertTriangle className="h-8 w-8 text-warning-500 mx-auto mb-3" />
+                    <AlertTriangle className="h-8 w-8 text-warning-500 mx-auto mb-4" />
                     <p className="text-surface-600 dark:text-surface-400 mb-4">
                         Failed to load skill gap analysis.
                     </p>

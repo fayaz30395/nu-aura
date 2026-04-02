@@ -453,7 +453,7 @@ export default function PaymentsPage() {
                   key={payment.id}
                   className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
-                  <div className="flex justify-between items-start mb-3">
+                  <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-4">
                       {getStatusIcon(payment.status)}
                       <div>

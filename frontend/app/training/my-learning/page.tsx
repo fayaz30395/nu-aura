@@ -204,7 +204,7 @@ export default function MyLearningPage() {
         {/* Course list */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20 text-[var(--text-muted)]">
-            <Loader2 className="h-8 w-8 animate-spin mr-3" />
+            <Loader2 className="h-8 w-8 animate-spin mr-4" />
             <span>Loading your courses…</span>
           </div>
         ) : enrollments.length === 0 ? (
@@ -244,7 +244,7 @@ export default function MyLearningPage() {
                           </Badge>
                         </div>
 
-                        <div className="flex items-center gap-4 text-caption mb-3">
+                        <div className="flex items-center gap-4 text-caption mb-4">
                           <span>
                             Enrolled{' '}
                             {enrollment.enrolledAt

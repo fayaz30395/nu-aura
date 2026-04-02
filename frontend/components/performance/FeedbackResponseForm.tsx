@@ -204,7 +204,7 @@ export default function FeedbackResponseForm({
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-3 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
+        <div className="mt-4 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
           <div
             className="h-full bg-accent-500 transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
@@ -213,7 +213,7 @@ export default function FeedbackResponseForm({
 
         {/* Anonymous Notice */}
         {isAnonymous && reviewerType !== 'SELF' && (
-          <div className="mt-3 p-4 bg-accent-250 border border-accent-400 rounded-lg">
+          <div className="mt-4 p-4 bg-accent-250 border border-accent-400 rounded-lg">
             <p className="text-xs text-accent-900 flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               Your feedback will be anonymous and combined with other responses
@@ -263,7 +263,7 @@ export default function FeedbackResponseForm({
                   </p>
                 </div>
               </div>
-              <div className="mt-3 flex items-center gap-4">
+              <div className="mt-4 flex items-center gap-4">
                 <RatingStars
                   rating={formData.overallRating || 0}
                   onChange={(r) => updateRating('overallRating', r)}
@@ -287,7 +287,7 @@ export default function FeedbackResponseForm({
                     key={category.key}
                     className="p-4 border border-[var(--border-main)] rounded-lg hover:border-[var(--border-strong)] transition-colors"
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-[var(--text-primary)]">{category.label}</h4>
                         <p className="text-caption mt-1">{category.description}</p>

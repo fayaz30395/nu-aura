@@ -346,7 +346,7 @@ export default function TravelRequestDetailsPage() {
               <div className="p-6 space-y-6">
                 {/* Journey */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-4">
                     <MapPin className="h-4 w-4 text-[var(--text-muted)]" />
                     <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                       Journey
@@ -372,7 +372,7 @@ export default function TravelRequestDetailsPage() {
                     </div>
                   </div>
                   {travelRequest.isInternational && (
-                    <div className="mt-3 flex items-center gap-2">
+                    <div className="mt-4 flex items-center gap-2">
                       <span className="inline-block text-xs px-2 py-1 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
                         International Travel
                       </span>
@@ -475,7 +475,7 @@ export default function TravelRequestDetailsPage() {
                 {/* Accommodation */}
                 {travelRequest.accommodationRequired && (
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-4">
                       <Hotel className="h-4 w-4 text-[var(--text-muted)]" />
                       <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Accommodation
@@ -642,7 +642,7 @@ export default function TravelRequestDetailsPage() {
 
                 {expenses.length > 0 && (
                   <>
-                    <div className="pt-3 border-t border-[var(--border-main)]" />
+                    <div className="pt-4 border-t border-[var(--border-main)]" />
                     <div className="row-between">
                       <span className="text-body-secondary">
                         Total Expenses

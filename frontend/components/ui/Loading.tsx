@@ -203,7 +203,7 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
               viewBox="0 0 27 38"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="drop-shadow-lg"
+              className="drop-shadow-[var(--shadow-elevated)]"
               aria-hidden="true"
             >
               <path

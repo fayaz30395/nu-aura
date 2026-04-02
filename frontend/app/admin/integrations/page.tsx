@@ -381,7 +381,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Test SMS */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
-            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test SMS Service
             </h3>
@@ -410,7 +410,7 @@ export default function AdminIntegrationsPage() {
             </div>
             {smsTestResult && (
               <div
-                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
+                className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   smsTestResult.success
                     ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
@@ -428,7 +428,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Send SMS */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
-            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Send className="h-4 w-4" />
               Send SMS
             </h3>
@@ -487,7 +487,7 @@ export default function AdminIntegrationsPage() {
             </div>
             {smsSendResult && (
               <div
-                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
+                className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   smsSendResult.success
                     ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
@@ -572,7 +572,7 @@ export default function AdminIntegrationsPage() {
 
           {/* Test Payment Gateway */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
-            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test Payment Gateway
             </h3>
@@ -591,7 +591,7 @@ export default function AdminIntegrationsPage() {
             </Button>
             {paymentTestResult && (
               <div
-                className={`mt-3 p-4 rounded-lg flex items-start gap-2 ${
+                className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   paymentTestResult.success
                     ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
                     : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
@@ -610,7 +610,7 @@ export default function AdminIntegrationsPage() {
           {/* Supported Payment Methods */}
           {paymentStatus?.supportedMethods && paymentStatus.supportedMethods.length > 0 && (
             <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
-              <h3 className="font-semibold text-[var(--text-primary)] mb-3">
+              <h3 className="font-semibold text-[var(--text-primary)] mb-4">
                 Supported Payment Methods
               </h3>
               <div className="flex flex-wrap gap-2">

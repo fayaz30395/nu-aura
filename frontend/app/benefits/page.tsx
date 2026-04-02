@@ -564,7 +564,7 @@ export default function BenefitsPage() {
                             <p className="text-body-secondary mt-1 line-clamp-2">
                               {benefit.description}
                             </p>
-                            <div className="flex items-center gap-4 mt-3 text-body-muted">
+                            <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4" />
                                 ${benefit.monthlyPremium}/mo
@@ -609,7 +609,7 @@ export default function BenefitsPage() {
                             <p className="text-body-secondary mt-1 line-clamp-2">
                               {benefit.description}
                             </p>
-                            <div className="flex items-center gap-4 mt-3 text-body-muted">
+                            <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4" />
                                 ${benefit.monthlyPremium}/mo
@@ -622,7 +622,7 @@ export default function BenefitsPage() {
                             <PermissionGate permission={Permissions.BENEFIT_ENROLL}>
                               <Button
                                 size="sm"
-                                className="mt-3"
+                                className="mt-4"
                                 onClick={() => handleOpenEnrollModal(benefit)}
                               >
                                 <Plus className="h-4 w-4 mr-1" />

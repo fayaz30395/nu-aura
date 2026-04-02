@@ -62,7 +62,7 @@ export function useCompliancePolicies(page = 0, size = 20) {
 export function useActivePolicies() {
   return useQuery({
     queryKey: complianceKeys.policiesActive(),
-    queryFn: () => complianceService.getActivePolicies(),
+    queryFn: () => complianceService.getActivePolicies(0, 20),
   });
 }
 
@@ -103,7 +103,7 @@ export function useComplianceChecklists(page = 0, size = 20) {
 export function useActiveChecklists() {
   return useQuery({
     queryKey: complianceKeys.checklistsActive(),
-    queryFn: () => complianceService.getActiveChecklists(),
+    queryFn: () => complianceService.getActiveChecklists(0, 20),
   });
 }
 
@@ -120,21 +120,21 @@ export function useCompleteChecklist() {
 export function useActiveAlerts() {
   return useQuery({
     queryKey: complianceKeys.alertsActive(0, 100),
-    queryFn: () => complianceService.getActiveAlerts(),
+    queryFn: () => complianceService.getActiveAlerts(0, 100),
   });
 }
 
 export function useCriticalAlerts() {
   return useQuery({
     queryKey: complianceKeys.alertsCritical(0, 100),
-    queryFn: () => complianceService.getCriticalAlerts(),
+    queryFn: () => complianceService.getCriticalAlerts(0, 100),
   });
 }
 
 export function useMyAlerts() {
   return useQuery({
     queryKey: complianceKeys.alertsMine(0, 100),
-    queryFn: () => complianceService.getMyAlerts(),
+    queryFn: () => complianceService.getMyAlerts(0, 100),
   });
 }
 

@@ -251,7 +251,7 @@ export function ProjectStep({
 
           {/* Client Information Section */}
           <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-            <h4 className="text-sm font-medium text-surface-800 dark:text-surface-200 mb-3 flex items-center">
+            <h4 className="text-sm font-medium text-surface-800 dark:text-surface-200 mb-4 flex items-center">
               <Building2 className="h-4 w-4 mr-2" />
               Client Information
             </h4>
@@ -279,7 +279,7 @@ export function ProjectStep({
                 />
               </div>
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                 Client Notes
               </label>
