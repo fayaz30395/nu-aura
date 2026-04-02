@@ -3,6 +3,8 @@ package com.hrms.application.attendance.service;
 import com.hrms.application.shift.service.ShiftAttendanceService;
 import com.hrms.common.config.AttendanceConfigProperties;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.logging.Audited;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
@@ -77,6 +79,7 @@ public class AttendanceRecordService {
      */
     // R2-005 FIX: Same as above — this overload does the actual write work.
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "ATTENDANCE_RECORD", description = "Employee checked in", entityIdParam = 0)
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location,
             String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
@@ -170,6 +173,7 @@ public class AttendanceRecordService {
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
     @Transactional
+    @Audited(action = AuditAction.UPDATE, entityType = "ATTENDANCE_RECORD", description = "Employee checked out", entityIdParam = 0)
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
             String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);

@@ -5,6 +5,8 @@ import com.hrms.api.benefits.dto.BenefitPlanResponse;
 import com.hrms.domain.benefits.BenefitPlan;
 import com.hrms.infrastructure.benefits.repository.BenefitPlanRepository;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.logging.Audited;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ public class BenefitManagementService {
     private final BenefitPlanRepository benefitPlanRepository;
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "BENEFIT_PLAN", description = "Created benefit plan")
     public BenefitPlanResponse createPlan(BenefitPlanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating benefit plan {} for tenant {}", request.getPlanCode(), tenantId);
@@ -54,6 +57,7 @@ public class BenefitManagementService {
     }
 
     @Transactional
+    @Audited(action = AuditAction.UPDATE, entityType = "BENEFIT_PLAN", description = "Updated benefit plan", entityIdParam = 0)
     public BenefitPlanResponse updatePlan(UUID planId, BenefitPlanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating benefit plan {} for tenant {}", planId, tenantId);
@@ -77,6 +81,7 @@ public class BenefitManagementService {
         return mapToResponse(updatedPlan);
     }
 
+    @Audited(action = AuditAction.STATUS_CHANGE, entityType = "BENEFIT_PLAN", description = "Activated benefit plan", entityIdParam = 0)
     public BenefitPlanResponse activatePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Activating benefit plan {} for tenant {}", planId, tenantId);
@@ -89,6 +94,7 @@ public class BenefitManagementService {
         return mapToResponse(updatedPlan);
     }
 
+    @Audited(action = AuditAction.STATUS_CHANGE, entityType = "BENEFIT_PLAN", description = "Deactivated benefit plan", entityIdParam = 0)
     public BenefitPlanResponse deactivatePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Deactivating benefit plan {} for tenant {}", planId, tenantId);
@@ -135,6 +141,7 @@ public class BenefitManagementService {
     }
 
     @Transactional
+    @Audited(action = AuditAction.DELETE, entityType = "BENEFIT_PLAN", description = "Deleted benefit plan", entityIdParam = 0)
     public void deletePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BenefitPlan plan = benefitPlanRepository.findByIdAndTenantId(planId, tenantId)

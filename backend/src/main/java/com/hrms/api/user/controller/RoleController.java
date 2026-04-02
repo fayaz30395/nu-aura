@@ -6,11 +6,14 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,8 +29,9 @@ public class RoleController {
 
     @GetMapping
     @RequiresPermission(ROLE_MANAGE)
-    public ResponseEntity<List<RoleResponse>> getAllRoles() {
-        List<RoleResponse> roles = roleManagementService.getAllRoles();
+    public ResponseEntity<Page<RoleResponse>> getAllRoles(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<RoleResponse> roles = roleManagementService.getAllRoles(pageable);
         return ResponseEntity.ok(roles);
     }
 

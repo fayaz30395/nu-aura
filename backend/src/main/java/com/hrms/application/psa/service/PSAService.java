@@ -5,6 +5,8 @@ import com.hrms.domain.psa.*;
 import com.hrms.infrastructure.psa.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,20 @@ public class PSAService {
         log.debug("Retrieving all PSA projects for tenant {}", tenantId);
 
         return projectRepository.findAllByTenantId(tenantId);
+    }
+
+    /**
+     * Retrieves all PSA projects for the current tenant with pagination.
+     *
+     * @param pageable the pagination parameters
+     * @return page of projects for the current tenant
+     */
+    @Transactional(readOnly = true)
+    public Page<PSAProject> getAllProjects(Pageable pageable) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        log.debug("Retrieving all PSA projects with pagination for tenant {}", tenantId);
+
+        return projectRepository.findAllByTenantId(tenantId, pageable);
     }
 
     /**

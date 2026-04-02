@@ -86,6 +86,8 @@ public class Notification extends TenantAware {
         APPROVAL_REQUIRED,
         APPROVAL_UPDATE,
         APPROVAL_ESCALATED,
+        APPROVAL_APPROVED,
+        APPROVAL_REJECTED,
         REMINDER,
         SYSTEM
     }

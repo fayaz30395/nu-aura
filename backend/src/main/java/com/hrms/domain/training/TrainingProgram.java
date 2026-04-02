@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "training_programs")
 @Getter

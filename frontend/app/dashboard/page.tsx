@@ -37,6 +37,8 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
+import { DashboardGrid } from '@/components/ui/DashboardGrid';
+import type { DashboardWidget } from '@/components/ui/DashboardGrid';
 import { NuAuraLoader, Skeleton, SkeletonStatCard, SkeletonChart } from '@/components/ui/Loading';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
@@ -558,6 +560,353 @@ export default function DashboardPage() {
       ? 'status-warning'
       : 'status-success';
 
+  // Build dashboard widgets
+  const dashboardWidgets: DashboardWidget[] = [];
+
+  // Widget 1: Stats Grid
+  dashboardWidgets.push({
+    id: 'stats-grid',
+    title: 'Key Metrics',
+    defaultVisible: true,
+    component: (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <PremiumMetricCard
+          title={analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
+          value={analytics.headcount.total.toString()}
+          change={analytics.viewType === 'ADMIN' && analytics.headcount.growthPercentage !== 0
+            ? `${Math.abs(analytics.headcount.growthPercentage)}%`
+            : analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
+          isPositive={analytics.headcount.growthPercentage >= 0}
+          icon={<Users className="h-6 w-6" />}
+          delay={0}
+        />
+        <PremiumMetricCard
+          title="Present Today"
+          value={analytics.attendance.present.toString()}
+          change={`${analytics.attendance.attendancePercentage}% attendance`}
+          isPositive={true}
+          icon={<UserCheck className="h-6 w-6" />}
+          delay={0.1}
+        />
+        <PremiumMetricCard
+          title="On Leave"
+          value={analytics.attendance.onLeave.toString()}
+          change="Approved today"
+          isPositive={false}
+          icon={<Calendar className="h-6 w-6" />}
+          delay={0.2}
+        />
+        <PremiumMetricCard
+          title="Pending Approvals"
+          value={analytics.leave.pending.toString()}
+          change="Awaiting action"
+          isPositive={false}
+          icon={<Bell className="h-6 w-6" />}
+          delay={0.3}
+        />
+      </div>
+    ),
+  });
+
+  // Widget 2: Quick Actions
+  dashboardWidgets.push({
+    id: 'quick-actions',
+    title: 'Quick Actions',
+    defaultVisible: true,
+    component: (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply' },
+          { label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll' },
+          { label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses' },
+          { label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees' },
+        ].map((action, idx) => (
+          <button
+            key={idx}
+            onClick={() => router.push(action.href)}
+            className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          >
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
+              <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">
+              {action.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    ),
+  });
+
+  // Widget 3: Attendance Overview
+  dashboardWidgets.push({
+    id: 'attendance-overview',
+    title: 'Attendance Overview',
+    defaultVisible: true,
+    component: (
+      <div>
+        <div className="row-between mb-4">
+          <div />
+          <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
+            View All
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {[
+            { label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success' },
+            { label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning' },
+            { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
+            { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
+          ].map((item) => (
+            <div key={item.label} className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+              <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
+                <item.icon className="h-5 w-5" />
+              </div>
+              <p className="text-stat-medium">{item.value}</p>
+              <p className="text-caption mt-1">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  });
+
+  // Widget 4: Department Distribution (conditional)
+  if (analytics.headcount.departmentDistribution && analytics.headcount.departmentDistribution.length > 0) {
+    dashboardWidgets.push({
+      id: 'department-distribution',
+      title: analytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution',
+      defaultVisible: true,
+      component: (
+        <div className="space-y-4">
+          {analytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
+            const percentage = analytics.headcount.total > 0 ? Math.round((dept.count / analytics.headcount.total) * 100) : 0;
+            const colors = [
+              'var(--accent-primary)',
+              'var(--chart-secondary)',
+              'var(--chart-success)',
+              'var(--chart-warning)',
+              'var(--chart-danger)',
+            ];
+            return (
+              <div key={idx}>
+                <div className="row-between mb-2">
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
+                  <span className="text-body-secondary">{dept.count} ({percentage}%)</span>
+                </div>
+                <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${percentage}%`, backgroundColor: colors[idx % colors.length] }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ),
+    });
+  }
+
+  // Widget 5: Payroll Summary (admin only)
+  if (analytics.viewType === 'ADMIN' && analytics.payroll) {
+    dashboardWidgets.push({
+      id: 'payroll-summary',
+      title: 'Payroll Summary',
+      defaultVisible: true,
+      component: (
+        <div>
+          <div className="text-center py-4">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
+              <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
+            </div>
+            <p className="text-stat-large mt-4">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
+            <p className="text-body-secondary mt-1">Current Month</p>
+          </div>
+          <div className="border-t border-[var(--border-main)] pt-4 mt-4">
+            <div className="row-between mb-4">
+              <span className="text-body-secondary">Processed</span>
+              <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
+            </div>
+            <div className="row-between">
+              <span className="text-body-secondary">Pending</span>
+              <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
+            </div>
+          </div>
+        </div>
+      ),
+    });
+  }
+
+  // Widget 6: Upcoming Events
+  dashboardWidgets.push({
+    id: 'upcoming-events',
+    title: 'Upcoming',
+    defaultVisible: true,
+    component: (
+      <div className="space-y-4">
+        {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
+          <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning flex-shrink-0">
+              <Gift className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.employeeName}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+            </div>
+          </div>
+        ))}
+        {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
+          <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info flex-shrink-0">
+              <Calendar className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.name}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+            </div>
+          </div>
+        ))}
+        {(!analytics.upcomingEvents?.birthdays?.length && !analytics.upcomingEvents?.holidays?.length) && (
+          <p className="text-body-muted text-center py-4">No upcoming events</p>
+        )}
+      </div>
+    ),
+  });
+
+  // Widget 7: Google Notifications
+  dashboardWidgets.push({
+    id: 'notifications',
+    title: 'Notifications',
+    defaultVisible: true,
+    component: (
+      <div>
+        {!hasGoogleToken ? (
+          <div className="text-center py-6">
+            <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+              <Bell className="h-6 w-6 text-[var(--text-muted)]" />
+            </div>
+            <p className="text-body-secondary mb-4">Connect Google to see notifications</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push('/nu-mail')}
+            >
+              Connect Google
+            </Button>
+          </div>
+        ) : notificationsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="text-center py-6">
+            <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2" />
+            <p className="text-body-secondary">All caught up!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                onClick={() => handleNotificationClick(notification)}
+                className="flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all"
+              >
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
+                  {getNotificationIcon(notification.type)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                    {notification.title}
+                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-xs text-[var(--text-secondary)] truncate">
+                      {notification.subtitle}
+                    </p>
+                    {notification.hasVideo && (
+                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" />
+                    )}
+                  </div>
+                </div>
+                <span className="text-caption flex-shrink-0">
+                  {notification.type === 'calendar'
+                    ? notification.subtitle
+                    : formatRelativeTime(notification.timestamp)}
+                </span>
+              </div>
+            ))}
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => router.push('/nu-mail')}
+                leftIcon={<Mail className="h-3 w-3" />}
+              >
+                Mail
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => router.push('/nu-drive')}
+                leftIcon={<HardDrive className="h-3 w-3" />}
+              >
+                Drive
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => router.push('/nu-calendar')}
+                leftIcon={<Calendar className="h-3 w-3" />}
+              >
+                Calendar
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    ),
+  });
+
+  // Widget 8: New Joiners (conditional)
+  if (analytics.viewType !== 'EMPLOYEE') {
+    dashboardWidgets.push({
+      id: 'new-joiners',
+      title: analytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members',
+      defaultVisible: true,
+      component: (
+        <div>
+          <div className="text-center py-4">
+            <div className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
+              <Users className="h-8 w-8 text-[var(--accent-primary)]" />
+            </div>
+            <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
+            <p className="text-body-secondary mt-1">This Month</p>
+          </div>
+          {analytics.viewType === 'ADMIN' && (
+            <div className="space-y-2 mt-4">
+              <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
+                View All Joiners
+              </Button>
+              <Button variant="ghost" className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]" onClick={() => router.push('/onboarding')}>
+                <span className="flex items-center gap-2">
+                  Manage Onboarding
+                  {activeOnboardingCount > 0 && (
+                    <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
+                      {activeOnboardingCount} Active
+                    </span>
+                  )}
+                </span>
+              </Button>
+            </div>
+          )}
+        </div>
+      ),
+    });
+  }
+
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
       <div className="space-y-8">
@@ -689,373 +1038,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Stats Grid - AURA Midnight Premium */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Total Employees / Team Members */}
-          <PremiumMetricCard
-            title={analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
-            value={analytics.headcount.total.toString()}
-            change={analytics.viewType === 'ADMIN' && analytics.headcount.growthPercentage !== 0
-              ? `${Math.abs(analytics.headcount.growthPercentage)}%`
-              : analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
-            isPositive={analytics.headcount.growthPercentage >= 0}
-            icon={<Users className="h-6 w-6" />}
-            delay={0}
-          />
-
-          {/* Present Today */}
-          <PremiumMetricCard
-            title="Present Today"
-            value={analytics.attendance.present.toString()}
-            change={`${analytics.attendance.attendancePercentage}% attendance`}
-            isPositive={true}
-            icon={<UserCheck className="h-6 w-6" />}
-            delay={0.1}
-          />
-
-          {/* On Leave */}
-          <PremiumMetricCard
-            title="On Leave"
-            value={analytics.attendance.onLeave.toString()}
-            change="Approved today"
-            isPositive={false}
-            icon={<Calendar className="h-6 w-6" />}
-            delay={0.2}
-          />
-
-          {/* Pending Approvals */}
-          <PremiumMetricCard
-            title="Pending Approvals"
-            value={analytics.leave.pending.toString()}
-            change="Awaiting action"
-            isPositive={false}
-            icon={<Bell className="h-6 w-6" />}
-            delay={0.3}
-          />
-        </div>
-
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Wider */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-section-title">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[
-                    { label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply' },
-                    { label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll' },
-                    { label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses' },
-                    { label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees' },
-                  ].map((action, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => router.push(action.href)}
-                      className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
-                        <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                      </div>
-                      <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">
-                        {action.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Attendance Overview */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="row-between">
-                  <CardTitle className="text-section-title">Attendance Overview</CardTitle>
-                  <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
-                    View All
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[
-                    { label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success' },
-                    { label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning' },
-                    { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
-                    { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
-                  ].map((item) => (
-                    <div key={item.label} className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-                      <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
-                        <item.icon className="h-5 w-5" />
-                      </div>
-                      <p className="text-stat-medium">{item.value}</p>
-                      <p className="text-caption mt-1">{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Department Distribution - Only for Admin and Manager with team data */}
-            {analytics.headcount.departmentDistribution && analytics.headcount.departmentDistribution.length > 0 && (
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-section-title">
-                    {analytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {analytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
-                      const percentage = analytics.headcount.total > 0 ? Math.round((dept.count / analytics.headcount.total) * 100) : 0;
-                      const colors = [
-                        'var(--accent-primary)',
-                        'var(--chart-secondary)',
-                        'var(--chart-success)',
-                        'var(--chart-warning)',
-                        'var(--chart-danger)',
-                      ];
-                      return (
-                        <div key={idx}>
-                          <div className="row-between mb-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
-                            <span className="text-body-secondary">{dept.count} ({percentage}%)</span>
-                          </div>
-                          <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{ width: `${percentage}%`, backgroundColor: colors[idx % colors.length] }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Payroll Summary - Only visible to Admin */}
-            {analytics.viewType === 'ADMIN' && analytics.payroll && (
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-section-title">Payroll Summary</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-4">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
-                      <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
-                    </div>
-                    <p className="text-stat-large mt-4">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
-                    <p className="text-body-secondary mt-1">Current Month</p>
-                  </div>
-                  <div className="border-t border-[var(--border-main)] pt-4 mt-4">
-                    <div className="row-between mb-4">
-                      <span className="text-body-secondary">Processed</span>
-                      <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
-                    </div>
-                    <div className="row-between">
-                      <span className="text-body-secondary">Pending</span>
-                      <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Upcoming Events */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="row-between">
-                  <CardTitle className="text-section-title">Upcoming</CardTitle>
-                  <CalendarDays className="h-5 w-5 text-[var(--text-muted)]" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning">
-                        <Gift className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.employeeName}</p>
-                        <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info">
-                        <Calendar className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.name}</p>
-                        <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {(!analytics.upcomingEvents?.birthdays?.length && !analytics.upcomingEvents?.holidays?.length) && (
-                    <p className="text-body-muted text-center py-4">No upcoming events</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Google Notifications Widget */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="row-between">
-                  <CardTitle className="text-section-title">
-                    Notifications
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    {hasGoogleToken && (
-                      <button
-                        onClick={loadGoogleNotifications}
-                        disabled={notificationsLoading}
-                        className="p-1.5 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                        aria-label="Refresh notifications"
-                      >
-                        <RefreshCw className={`h-4 w-4 text-[var(--text-muted)] ${notificationsLoading ? 'animate-spin' : ''}`} />
-                      </button>
-                    )}
-                    <Bell className="h-5 w-5 text-[var(--text-muted)]" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {!hasGoogleToken ? (
-                  <div className="text-center py-6">
-                    <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
-                      <Bell className="h-6 w-6 text-[var(--text-muted)]" />
-                    </div>
-                    <p className="text-body-secondary mb-4">Connect Google to see notifications</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push('/nu-mail')}
-                    >
-                      Connect Google
-                    </Button>
-                  </div>
-                ) : notificationsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
-                  </div>
-                ) : notifications.length === 0 ? (
-                  <div className="text-center py-6">
-                    <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2" />
-                    <p className="text-body-secondary">All caught up!</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        onClick={() => handleNotificationClick(notification)}
-                        className="flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all"
-                      >
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
-                          {getNotificationIcon(notification.type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                            {notification.title}
-                          </p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <p className="text-xs text-[var(--text-secondary)] truncate">
-                              {notification.subtitle}
-                            </p>
-                            {notification.hasVideo && (
-                              <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" />
-                            )}
-                          </div>
-                        </div>
-                        <span className="text-caption flex-shrink-0">
-                          {notification.type === 'calendar'
-                            ? notification.subtitle
-                            : formatRelativeTime(notification.timestamp)}
-                        </span>
-                      </div>
-                    ))}
-                    <div className="flex gap-2 pt-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-xs"
-                        onClick={() => router.push('/nu-mail')}
-                        leftIcon={<Mail className="h-3 w-3" />}
-                      >
-                        Mail
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-xs"
-                        onClick={() => router.push('/nu-drive')}
-                        leftIcon={<HardDrive className="h-3 w-3" />}
-                      >
-                        Drive
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-xs"
-                        onClick={() => router.push('/nu-calendar')}
-                        leftIcon={<Calendar className="h-3 w-3" />}
-                      >
-                        Calendar
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* New Joiners - Only for Admin and Manager */}
-            {analytics.viewType !== 'EMPLOYEE' && (
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-section-title">
-                    {analytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-4">
-                    <div className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
-                      <Users className="h-8 w-8 text-[var(--accent-primary)]" />
-                    </div>
-                    <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
-                    <p className="text-body-secondary mt-1">This Month</p>
-                  </div>
-                  {analytics.viewType === 'ADMIN' && (
-                    <div className="space-y-2 mt-4">
-                      <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
-                        View All Joiners
-                      </Button>
-                      <Button variant="ghost" className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]" onClick={() => router.push('/onboarding')}>
-                        <span className="flex items-center gap-2">
-                          Manage Onboarding
-                          {activeOnboardingCount > 0 && (
-                            <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
-                              {activeOnboardingCount} Active
-                            </span>
-                          )}
-                        </span>
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
+        {/* Dashboard Widgets - Drag and Drop Layout */}
+        <DashboardGrid
+          widgets={dashboardWidgets}
+          dashboardId="main-dashboard"
+          columns={2}
+        />
       </div>
 
       {/* Calendar Event Modal */}

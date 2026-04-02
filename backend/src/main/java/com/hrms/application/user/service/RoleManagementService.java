@@ -25,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hrms.common.security.RoleHierarchy;
 import org.springframework.security.access.AccessDeniedException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -87,6 +91,13 @@ public class RoleManagementService {
         return roles.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RoleResponse> getAllRoles(Pageable pageable) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        Page<Role> rolesPage = roleRepository.findByTenantIdWithPermissions(tenantId, pageable);
+        return rolesPage.map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
@@ -494,6 +505,13 @@ public class RoleManagementService {
         return users.stream()
                 .map(this::mapUserToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        Page<com.hrms.domain.user.User> usersPage = userRepository.findByTenantId(tenantId, pageable);
+        return usersPage.map(this::mapUserToResponse);
     }
 
     @Transactional
