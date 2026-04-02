@@ -1,24 +1,23 @@
 #!/bin/bash
-# NU-AURA Frontend Dev Server
-# Kills any existing process on port 3000, clears Next.js cache, and starts fresh.
 
-PORT=3000
+# NU-AURA Frontend — Local Development Startup Script
+# Caps Node.js heap to prevent macOS OOM kills during hot compilation
 
-echo "🔍 Checking for existing process on port $PORT..."
-PID=$(lsof -ti:$PORT 2>/dev/null)
+set -euo pipefail
 
-if [ -n "$PID" ]; then
-  echo "⚠️  Found process $PID on port $PORT — killing it..."
-  kill -9 $PID 2>/dev/null
-  sleep 1
-  echo "✅ Process killed."
-else
-  echo "✅ Port $PORT is free."
+cd "$(dirname "$0")"
+
+# Load .env files
+if [ -f "../.env" ]; then
+  set -a; source "../.env"; set +a
+elif [ -f ".env.local" ]; then
+  set -a; source ".env.local"; set +a
 fi
 
-echo "🧹 Clearing Next.js cache..."
-rm -rf .next/cache
-echo "✅ Cache cleared."
+echo "Starting NU-AURA Frontend..."
+echo "Port: ${PORT:-3001}"
 
-echo "🚀 Starting Next.js dev server..."
-npm run dev
+# NODE_OPTIONS: cap heap at 3GB, use old V8 GC for stability
+export NODE_OPTIONS="--max-old-space-size=3072"
+
+exec npx next dev -p "${PORT:-3001}"
