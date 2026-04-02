@@ -1,0 +1,2885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NU-AURA — 100 Loader Animations</title>
+<style>
+:root {
+  --blue: #2952A3;
+  --purple: #8939A1;
+  --light-blue: #6884dc;
+  --very-light-blue: #a0b4f0;
+  --bg-page: #080c18;
+  --bg-card: #0e1322;
+  --border-card: #1e2440;
+  --text: #e8eaf0;
+  --text-dim: #8090b8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-page);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, var(--bg-page) 60%, transparent);
+  padding: 24px 32px 16px;
+  backdrop-filter: blur(12px);
+}
+
+.sticky-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--light-blue), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sticky-header p {
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.filter-btn:hover {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px 32px 48px;
+}
+
+.section-title {
+  grid-column: 1 / -1;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--light-blue);
+  padding: 24px 0 8px;
+  border-bottom: 1px solid var(--border-card);
+  margin-bottom: 4px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  position: relative;
+}
+
+.card-number {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.spinner-area {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.card-label {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ============================
+   SHARED ICON STYLES
+   ============================ */
+.nu-icon {
+  width: 36px;
+  height: 40px;
+}
+
+/* ============================
+   1. Single Spinning Ring
+   ============================ */
+.s1 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--blue);
+  border-right-color: var(--purple);
+  animation: s1-spin 0.9s linear infinite;
+}
+@keyframes s1-spin { to { transform: rotate(360deg); } }
+
+/* 2. Double counter-rotating rings */
+.s2 { position: relative; width: 56px; height: 56px; }
+.s2::before, .s2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+.s2::before {
+  border-top-color: var(--blue);
+  border-right-color: var(--light-blue);
+  animation: s2-cw 1s linear infinite;
+}
+.s2::after {
+  inset: 6px;
+  border-bottom-color: var(--purple);
+  border-left-color: var(--light-blue);
+  animation: s2-ccw 0.8s linear infinite;
+}
+@keyframes s2-cw { to { transform: rotate(360deg); } }
+@keyframes s2-ccw { to { transform: rotate(-360deg); } }
+
+/* 3. Triple nested rings */
+.s3 { position: relative; width: 60px; height: 60px; }
+.s3-r { position: absolute; border-radius: 50%; border: 2px solid transparent; }
+.s3-r1 { inset: 0; border-top-color: var(--blue); animation: s3-a 1.2s linear infinite; }
+.s3-r2 { inset: 8px; border-right-color: var(--purple); animation: s3-b 0.9s linear infinite reverse; }
+.s3-r3 { inset: 16px; border-bottom-color: var(--light-blue); animation: s3-a 0.6s linear infinite; }
+@keyframes s3-a { to { transform: rotate(360deg); } }
+@keyframes s3-b { to { transform: rotate(360deg); } }
+
+/* 4. Dashed rotating ring */
+.s4 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px dashed var(--blue);
+  animation: s4-spin 2s linear infinite;
+}
+@keyframes s4-spin { to { transform: rotate(360deg); } }
+
+/* 5. Dotted circle spinner */
+.s5 { position: relative; width: 48px; height: 48px; animation: s5-spin 1.5s linear infinite; }
+.s5-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+@keyframes s5-spin { to { transform: rotate(360deg); } }
+
+/* 6. Arc spinner */
+.s6 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--blue);
+  animation: s6-spin 0.8s linear infinite;
+}
+@keyframes s6-spin { to { transform: rotate(360deg); } }
+
+/* 7. Dual arc spinner */
+.s7 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--blue);
+  border-bottom-color: var(--purple);
+  animation: s7-spin 0.8s linear infinite;
+}
+@keyframes s7-spin { to { transform: rotate(360deg); } }
+
+/* 8. Thick ring with traveling dot */
+.s8 { position: relative; width: 52px; height: 52px; }
+.s8-ring {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 4px solid var(--border-card);
+}
+.s8-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  top: -3px; left: 50%;
+  margin-left: -5px;
+  animation: s8-orbit 1s linear infinite;
+  transform-origin: 5px 29px;
+}
+@keyframes s8-orbit { to { transform: rotate(360deg); } }
+
+/* 9. Pulsing concentric circles */
+.s9 { position: relative; width: 52px; height: 52px; }
+.s9-c {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--blue);
+  inset: 0;
+  animation: s9-pulse 1.5s ease-in-out infinite;
+}
+.s9-c:nth-child(2) { inset: 8px; animation-delay: 0.3s; border-color: var(--light-blue); }
+.s9-c:nth-child(3) { inset: 16px; animation-delay: 0.6s; border-color: var(--purple); }
+@keyframes s9-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.5; } }
+
+/* 10. Segmented ring */
+.s10 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--blue) 0deg 30deg, transparent 30deg 60deg,
+    var(--blue) 60deg 90deg, transparent 90deg 120deg,
+    var(--blue) 120deg 150deg, transparent 150deg 180deg,
+    var(--blue) 180deg 210deg, transparent 210deg 240deg,
+    var(--blue) 240deg 270deg, transparent 270deg 300deg,
+    var(--blue) 300deg 330deg, transparent 330deg 360deg
+  );
+  -webkit-mask: radial-gradient(transparent 18px, #000 19px);
+  mask: radial-gradient(transparent 18px, #000 19px);
+  animation: s10-spin 2s linear infinite;
+}
+@keyframes s10-spin { to { transform: rotate(360deg); } }
+
+/* 11. Gradient conic spinner */
+.s11 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(transparent, var(--blue), var(--purple), transparent);
+  -webkit-mask: radial-gradient(transparent 18px, #000 19px);
+  mask: radial-gradient(transparent 18px, #000 19px);
+  animation: s11-spin 1s linear infinite;
+}
+@keyframes s11-spin { to { transform: rotate(360deg); } }
+
+/* 12. Ring with trailing fade */
+.s12 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(transparent 30%, var(--blue));
+  -webkit-mask: radial-gradient(transparent 18px, #000 19px);
+  mask: radial-gradient(transparent 18px, #000 19px);
+  animation: s12-spin 0.9s linear infinite;
+}
+@keyframes s12-spin { to { transform: rotate(360deg); } }
+
+/* 13. Elastic bouncing ring */
+.s13 {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--blue);
+  animation: s13-bounce 1s ease-in-out infinite;
+}
+@keyframes s13-bounce {
+  0%, 100% { transform: scaleX(1) scaleY(1); }
+  25% { transform: scaleX(1.2) scaleY(0.8); }
+  50% { transform: scaleX(0.8) scaleY(1.2); }
+  75% { transform: scaleX(1.1) scaleY(0.9); }
+}
+
+/* 14. Ring morphing to square and back */
+.s14 {
+  width: 44px; height: 44px;
+  border: 3px solid var(--purple);
+  animation: s14-morph 2s ease-in-out infinite;
+}
+@keyframes s14-morph {
+  0%, 100% { border-radius: 50%; transform: rotate(0deg); }
+  25% { border-radius: 30%; transform: rotate(90deg); }
+  50% { border-radius: 4px; transform: rotate(180deg); }
+  75% { border-radius: 30%; transform: rotate(270deg); }
+}
+
+/* 15. Rotating ring with icon center */
+.s15-wrap { position: relative; }
+.s15-ring {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--blue);
+  border-right-color: var(--purple);
+  animation: s15-spin 1s linear infinite;
+}
+.s15-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s15-spin { to { transform: rotate(360deg); } }
+
+/* ============================
+   DOTS & PARTICLES (16-30)
+   ============================ */
+
+/* 16. Three bouncing dots */
+.s16 { display: flex; gap: 6px; align-items: center; }
+.s16-d {
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s16-bounce 0.6s ease-in-out infinite alternate;
+}
+.s16-d:nth-child(2) { animation-delay: 0.2s; background: var(--light-blue); }
+.s16-d:nth-child(3) { animation-delay: 0.4s; background: var(--purple); }
+@keyframes s16-bounce { to { transform: translateY(-16px); } }
+
+/* 17. Four scaling dots */
+.s17 { display: flex; gap: 6px; }
+.s17-d {
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s17-scale 1.2s ease-in-out infinite;
+}
+.s17-d:nth-child(2) { animation-delay: 0.15s; }
+.s17-d:nth-child(3) { animation-delay: 0.3s; }
+.s17-d:nth-child(4) { animation-delay: 0.45s; }
+@keyframes s17-scale { 0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
+
+/* 18. Circular dot spinner (8 dots) */
+.s18 { position: relative; width: 48px; height: 48px; }
+.s18-d {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s18-fade 1s ease-in-out infinite;
+}
+@keyframes s18-fade { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+/* 19. Wave dots */
+.s19 { display: flex; gap: 5px; align-items: center; }
+.s19-d {
+  width: 8px; height: 8px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  animation: s19-wave 1.2s ease-in-out infinite;
+}
+.s19-d:nth-child(2) { animation-delay: 0.1s; }
+.s19-d:nth-child(3) { animation-delay: 0.2s; }
+.s19-d:nth-child(4) { animation-delay: 0.3s; }
+.s19-d:nth-child(5) { animation-delay: 0.4s; }
+.s19-d:nth-child(6) { animation-delay: 0.5s; }
+.s19-d:nth-child(7) { animation-delay: 0.6s; }
+@keyframes s19-wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+
+/* 20. Orbiting particles around icon */
+.s20 { position: relative; width: 64px; height: 64px; }
+.s20-orbit {
+  position: absolute; inset: 0;
+  animation: s20-spin 2s linear infinite;
+}
+.s20-p {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--light-blue);
+  border-radius: 50%;
+}
+.s20-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s20-spin { to { transform: rotate(360deg); } }
+
+/* 21. Staggered fade dots */
+.s21 { display: flex; gap: 5px; }
+.s21-d {
+  width: 8px; height: 8px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s21-fade 1.5s ease-in-out infinite;
+}
+.s21-d:nth-child(2) { animation-delay: 0.2s; }
+.s21-d:nth-child(3) { animation-delay: 0.4s; }
+.s21-d:nth-child(4) { animation-delay: 0.6s; }
+.s21-d:nth-child(5) { animation-delay: 0.8s; }
+@keyframes s21-fade { 0%, 100% { opacity: 0.15; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1); } }
+
+/* 22. Expanding dot grid 3x3 */
+.s22 { display: grid; grid-template-columns: repeat(3, 10px); gap: 4px; }
+.s22-d {
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s22-pop 1.5s ease-in-out infinite;
+}
+.s22-d:nth-child(1) { animation-delay: 0s; }
+.s22-d:nth-child(2) { animation-delay: 0.1s; }
+.s22-d:nth-child(3) { animation-delay: 0.2s; }
+.s22-d:nth-child(4) { animation-delay: 0.1s; }
+.s22-d:nth-child(5) { animation-delay: 0.2s; background: var(--purple); }
+.s22-d:nth-child(6) { animation-delay: 0.3s; }
+.s22-d:nth-child(7) { animation-delay: 0.2s; }
+.s22-d:nth-child(8) { animation-delay: 0.3s; }
+.s22-d:nth-child(9) { animation-delay: 0.4s; }
+@keyframes s22-pop { 0%, 100% { transform: scale(0.3); opacity: 0.3; } 50% { transform: scale(1); opacity: 1; } }
+
+/* 23. DNA helix dots */
+.s23 { display: flex; gap: 4px; align-items: center; height: 40px; }
+.s23-d {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  animation: s23-helix 1.5s ease-in-out infinite;
+}
+.s23-d:nth-child(odd) { background: var(--blue); }
+.s23-d:nth-child(even) { background: var(--purple); animation-direction: reverse; }
+.s23-d:nth-child(1) { animation-delay: 0s; }
+.s23-d:nth-child(2) { animation-delay: 0.1s; }
+.s23-d:nth-child(3) { animation-delay: 0.2s; }
+.s23-d:nth-child(4) { animation-delay: 0.3s; }
+.s23-d:nth-child(5) { animation-delay: 0.4s; }
+.s23-d:nth-child(6) { animation-delay: 0.5s; }
+.s23-d:nth-child(7) { animation-delay: 0.6s; }
+.s23-d:nth-child(8) { animation-delay: 0.7s; }
+@keyframes s23-helix { 0%, 100% { transform: translateY(-12px) scale(0.5); opacity: 0.4; } 50% { transform: translateY(12px) scale(1); opacity: 1; } }
+
+/* 24. Firework burst dots */
+.s24 { position: relative; width: 60px; height: 60px; }
+.s24-d {
+  position: absolute;
+  width: 5px; height: 5px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  animation: s24-burst 1.5s ease-out infinite;
+}
+@keyframes s24-burst {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 25. Atoms: electrons orbiting nucleus */
+.s25 { position: relative; width: 60px; height: 60px; }
+.s25-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(104,132,220,0.3);
+}
+.s25-e {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  top: -3px; left: 50%; margin-left: -3px;
+  transform-origin: 3px 33px;
+}
+.s25-n {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.s25-orbit:nth-child(1) { animation: s25-tilt1 3s linear infinite; }
+.s25-orbit:nth-child(1) .s25-e { animation: s25-spin 1s linear infinite; }
+.s25-orbit:nth-child(2) { transform: rotate(60deg); }
+.s25-orbit:nth-child(2) .s25-e { animation: s25-spin 1.3s linear infinite; }
+.s25-orbit:nth-child(3) { transform: rotate(120deg); }
+.s25-orbit:nth-child(3) .s25-e { animation: s25-spin 0.8s linear infinite; }
+@keyframes s25-spin { to { transform: rotate(360deg); } }
+@keyframes s25-tilt1 { to { transform: rotate(360deg); } }
+
+/* 26. Constellation floating particles */
+.s26 { position: relative; width: 60px; height: 60px; }
+.s26-p {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--very-light-blue);
+  border-radius: 50%;
+  animation: s26-float 3s ease-in-out infinite;
+}
+.s26-p:nth-child(2) { animation-delay: 0.5s; }
+.s26-p:nth-child(3) { animation-delay: 1s; }
+.s26-p:nth-child(4) { animation-delay: 1.5s; }
+.s26-p:nth-child(5) { animation-delay: 2s; }
+@keyframes s26-float {
+  0%, 100% { opacity: 0.3; transform: translate(0, 0); }
+  25% { opacity: 1; transform: translate(5px, -8px); }
+  50% { opacity: 0.6; transform: translate(-3px, 4px); }
+  75% { opacity: 1; transform: translate(7px, 2px); }
+}
+
+/* 27. Newton's cradle */
+.s27 { display: flex; gap: 2px; align-items: flex-start; height: 48px; }
+.s27-ball {
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  margin-top: 30px;
+}
+.s27-ball:first-child { animation: s27-left 0.8s ease-in-out infinite; transform-origin: top center; }
+.s27-ball:last-child { animation: s27-right 0.8s ease-in-out infinite; transform-origin: top center; }
+@keyframes s27-left { 0% { transform: translateX(-12px); } 50%, 100% { transform: translateX(0); } }
+@keyframes s27-right { 0%, 50% { transform: translateX(0); } 100% { transform: translateX(12px); } }
+
+/* 28. Popcorn dots */
+.s28 { position: relative; width: 48px; height: 48px; }
+.s28-d {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  animation: s28-pop 1s ease-in-out infinite;
+}
+.s28-d:nth-child(1) { top: 10px; left: 10px; animation-delay: 0s; }
+.s28-d:nth-child(2) { top: 5px; left: 30px; animation-delay: 0.2s; }
+.s28-d:nth-child(3) { top: 25px; left: 20px; animation-delay: 0.4s; background: var(--purple); }
+.s28-d:nth-child(4) { top: 30px; left: 5px; animation-delay: 0.6s; }
+.s28-d:nth-child(5) { top: 20px; left: 35px; animation-delay: 0.8s; background: var(--blue); }
+@keyframes s28-pop { 0%, 100% { transform: scale(0.3) translateY(0); opacity: 0.3; } 50% { transform: scale(1) translateY(-8px); opacity: 1; } }
+
+/* 29. Spiral dots */
+.s29 { position: relative; width: 56px; height: 56px; animation: s29-spin 3s linear infinite; }
+.s29-d {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--blue);
+}
+@keyframes s29-spin { to { transform: rotate(360deg); } }
+
+/* 30. Molecule structure dots */
+.s30 { position: relative; width: 60px; height: 60px; }
+.s30-atom {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s30-pulse 1.5s ease-in-out infinite;
+}
+.s30-bond {
+  position: absolute;
+  height: 2px;
+  background: rgba(104,132,220,0.4);
+  transform-origin: left center;
+}
+@keyframes s30-pulse { 0%, 100% { transform: scale(0.8); } 50% { transform: scale(1.2); } }
+
+/* ============================
+   BARS & LINES (31-45)
+   ============================ */
+
+/* 31. Equalizer bars */
+.s31 { display: flex; gap: 3px; align-items: flex-end; height: 40px; }
+.s31-bar {
+  width: 6px;
+  background: var(--blue);
+  border-radius: 2px;
+  animation: s31-eq 0.8s ease-in-out infinite;
+}
+.s31-bar:nth-child(1) { animation-delay: 0s; }
+.s31-bar:nth-child(2) { animation-delay: 0.1s; background: linear-gradient(var(--blue), var(--purple)); }
+.s31-bar:nth-child(3) { animation-delay: 0.2s; }
+.s31-bar:nth-child(4) { animation-delay: 0.3s; background: linear-gradient(var(--blue), var(--purple)); }
+.s31-bar:nth-child(5) { animation-delay: 0.4s; }
+@keyframes s31-eq { 0%, 100% { height: 8px; } 50% { height: 36px; } }
+
+/* 32. Progress bar */
+.s32 { width: 80px; height: 6px; background: var(--border-card); border-radius: 3px; overflow: hidden; }
+.s32-fill {
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  border-radius: 3px;
+  animation: s32-fill 1.5s ease-in-out infinite;
+}
+@keyframes s32-fill { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+
+/* 33. Rotating line spinner (iOS style) */
+.s33 { position: relative; width: 40px; height: 40px; }
+.s33-line {
+  position: absolute;
+  width: 3px; height: 10px;
+  background: var(--light-blue);
+  border-radius: 2px;
+  top: 2px; left: 50%;
+  margin-left: -1.5px;
+  transform-origin: 1.5px 18px;
+  animation: s33-fade 1s linear infinite;
+}
+@keyframes s33-fade { 0% { opacity: 1; } 100% { opacity: 0.15; } }
+
+/* 34. Stacking bars */
+.s34 { display: flex; flex-direction: column; gap: 3px; width: 48px; }
+.s34-bar {
+  height: 4px;
+  background: var(--blue);
+  border-radius: 2px;
+  animation: s34-stack 1.2s ease-in-out infinite;
+  transform-origin: left;
+}
+.s34-bar:nth-child(2) { animation-delay: 0.15s; }
+.s34-bar:nth-child(3) { animation-delay: 0.3s; }
+.s34-bar:nth-child(4) { animation-delay: 0.45s; }
+.s34-bar:nth-child(5) { animation-delay: 0.6s; }
+@keyframes s34-stack { 0%, 100% { transform: scaleX(0.2); } 50% { transform: scaleX(1); } }
+
+/* 35. Fading bars in circle */
+.s35 { position: relative; width: 44px; height: 44px; }
+.s35-bar {
+  position: absolute;
+  width: 3px; height: 10px;
+  background: var(--blue);
+  border-radius: 2px;
+  top: 2px; left: 50%;
+  margin-left: -1.5px;
+  transform-origin: 1.5px 20px;
+  animation: s35-fade 1.2s ease-in-out infinite;
+}
+@keyframes s35-fade { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+/* 36. Sliding bars */
+.s36 { display: flex; flex-direction: column; gap: 4px; width: 60px; }
+.s36-bar {
+  height: 4px;
+  background: var(--blue);
+  border-radius: 2px;
+  animation: s36-slide 1s ease-in-out infinite alternate;
+}
+.s36-bar:nth-child(2) { animation-delay: 0.15s; background: var(--light-blue); }
+.s36-bar:nth-child(3) { animation-delay: 0.3s; background: var(--purple); }
+@keyframes s36-slide { 0% { transform: translateX(-10px); width: 30px; } 100% { transform: translateX(10px); width: 50px; } }
+
+/* 37. Growing/shrinking vertical bars */
+.s37 { display: flex; gap: 3px; align-items: center; height: 40px; }
+.s37-bar {
+  width: 5px;
+  background: var(--blue);
+  border-radius: 2px;
+  animation: s37-grow 1s ease-in-out infinite;
+}
+.s37-bar:nth-child(2) { animation-delay: 0.15s; }
+.s37-bar:nth-child(3) { animation-delay: 0.3s; }
+.s37-bar:nth-child(4) { animation-delay: 0.45s; }
+@keyframes s37-grow { 0%, 100% { height: 12px; } 50% { height: 36px; } }
+
+/* 38. Cross-fade line segments */
+.s38 { position: relative; width: 48px; height: 48px; }
+.s38-l {
+  position: absolute;
+  background: var(--blue);
+  border-radius: 2px;
+}
+.s38-h { width: 100%; height: 3px; top: 50%; margin-top: -1.5px; animation: s38-fh 1.5s ease-in-out infinite; }
+.s38-v { height: 100%; width: 3px; left: 50%; margin-left: -1.5px; animation: s38-fv 1.5s ease-in-out infinite 0.75s; }
+@keyframes s38-fh { 0%, 100% { opacity: 0.2; transform: scaleX(0.3); } 50% { opacity: 1; transform: scaleX(1); } }
+@keyframes s38-fv { 0%, 100% { opacity: 0.2; transform: scaleY(0.3); } 50% { opacity: 1; transform: scaleY(1); } }
+
+/* 39. Zigzag line animation */
+.s39 {
+  width: 60px; height: 30px;
+  overflow: hidden;
+}
+.s39-path {
+  stroke: var(--blue);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: s39-draw 1.5s linear infinite;
+}
+@keyframes s39-draw { to { stroke-dashoffset: 0; } }
+
+/* 40. Typewriter cursor blink with icon */
+.s40 { display: flex; align-items: center; gap: 4px; }
+.s40-cursor {
+  width: 2px; height: 28px;
+  background: var(--blue);
+  animation: s40-blink 0.8s step-end infinite;
+}
+@keyframes s40-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* 41. Loading bar with shimmer */
+.s41 { width: 80px; height: 8px; background: var(--border-card); border-radius: 4px; overflow: hidden; position: relative; }
+.s41-bar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--blue), var(--light-blue), var(--blue), transparent);
+  animation: s41-shimmer 1.5s linear infinite;
+}
+@keyframes s41-shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* 42. Pulse line (EKG) */
+.s42 { width: 80px; height: 40px; overflow: hidden; }
+.s42-path {
+  stroke: var(--blue);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: s42-draw 2s linear infinite;
+}
+@keyframes s42-draw { to { stroke-dashoffset: 0; } }
+
+/* 43. Rotating square frame */
+.s43 {
+  width: 36px; height: 36px;
+  border: 3px solid var(--blue);
+  animation: s43-spin 1.5s linear infinite;
+}
+@keyframes s43-spin { to { transform: rotate(360deg); } }
+
+/* 44. Corner-chasing lines */
+.s44 { position: relative; width: 44px; height: 44px; }
+.s44::before, .s44::after {
+  content: '';
+  position: absolute;
+  background: var(--blue);
+  border-radius: 1px;
+}
+.s44::before {
+  width: 16px; height: 3px;
+  top: 0; left: 0;
+  animation: s44-top 1.5s linear infinite;
+}
+.s44::after {
+  width: 3px; height: 16px;
+  top: 0; right: 0;
+  animation: s44-right 1.5s linear infinite;
+}
+.s44-b, .s44-l {
+  position: absolute;
+  background: var(--purple);
+  border-radius: 1px;
+}
+.s44-b { width: 16px; height: 3px; bottom: 0; right: 0; animation: s44-bottom 1.5s linear infinite; }
+.s44-l { width: 3px; height: 16px; bottom: 0; left: 0; animation: s44-left 1.5s linear infinite; }
+@keyframes s44-top { 0% { left: 0; } 25% { left: 28px; } 50%, 100% { left: 28px; } }
+@keyframes s44-right { 0%, 25% { top: 0; } 50% { top: 28px; } 75%, 100% { top: 28px; } }
+@keyframes s44-bottom { 0%, 50% { right: 0; } 75% { right: 28px; } 100% { right: 28px; } }
+@keyframes s44-left { 0%, 75% { bottom: 0; } 100% { bottom: 28px; } }
+
+/* 45. Pendulum swing */
+.s45 { position: relative; width: 48px; height: 48px; }
+.s45-arm {
+  position: absolute;
+  width: 2px; height: 30px;
+  background: rgba(104,132,220,0.4);
+  top: 0; left: 50%; margin-left: -1px;
+  transform-origin: top center;
+  animation: s45-swing 1.2s ease-in-out infinite;
+}
+.s45-bob {
+  position: absolute;
+  width: 12px; height: 12px;
+  background: var(--blue);
+  border-radius: 50%;
+  bottom: -6px; left: -5px;
+}
+@keyframes s45-swing { 0%, 100% { transform: rotate(-30deg); } 50% { transform: rotate(30deg); } }
+
+/* ============================
+   SHAPES & GEOMETRY (46-60)
+   ============================ */
+
+/* 46. Rotating cube (3D) */
+.s46 {
+  width: 32px; height: 32px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: s46-rotate 2s linear infinite;
+}
+.s46-face {
+  position: absolute;
+  width: 32px; height: 32px;
+  border: 2px solid var(--blue);
+  background: rgba(41,82,163,0.1);
+}
+.s46-f { transform: translateZ(16px); }
+.s46-b { transform: translateZ(-16px) rotateY(180deg); }
+.s46-l { transform: translateX(-16px) rotateY(-90deg); }
+.s46-r { transform: translateX(16px) rotateY(90deg); border-color: var(--purple); }
+.s46-t { transform: translateY(-16px) rotateX(90deg); }
+.s46-bo { transform: translateY(16px) rotateX(-90deg); border-color: var(--purple); }
+@keyframes s46-rotate {
+  0% { transform: rotateX(0deg) rotateY(0deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+/* 47. Morphing blob */
+.s47 {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  animation: s47-morph 3s ease-in-out infinite;
+}
+@keyframes s47-morph {
+  0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+  50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+  75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+}
+
+/* 48. Hexagon spinner */
+.s48 { width: 48px; height: 48px; animation: s48-spin 2s linear infinite; }
+.s48-hex { stroke: var(--blue); fill: none; stroke-width: 2; }
+@keyframes s48-spin { to { transform: rotate(360deg); } }
+
+/* 49. Triangle rotating */
+.s49 {
+  width: 0; height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 35px solid var(--blue);
+  animation: s49-spin 1.5s linear infinite;
+}
+@keyframes s49-spin { to { transform: rotate(360deg); } }
+
+/* 50. Diamond bouncing */
+.s50 {
+  width: 28px; height: 28px;
+  background: var(--purple);
+  transform: rotate(45deg);
+  animation: s50-bounce 0.8s ease-in-out infinite;
+}
+@keyframes s50-bounce { 0%, 100% { transform: rotate(45deg) translateY(0) scale(1); } 50% { transform: rotate(45deg) translateY(-16px) scale(0.8); } }
+
+/* 51. Pentagon pulse */
+.s51 { width: 48px; height: 48px; animation: s51-pulse 1.5s ease-in-out infinite; }
+.s51-pent { stroke: var(--light-blue); fill: none; stroke-width: 2; }
+@keyframes s51-pulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+
+/* 52. Star rotating with trail */
+.s52 {
+  width: 48px; height: 48px;
+  animation: s52-spin 1.5s linear infinite;
+  filter: drop-shadow(0 0 6px var(--blue));
+}
+@keyframes s52-spin { to { transform: rotate(360deg); } }
+
+/* 53. Gear spinning */
+.s53 { width: 48px; height: 48px; animation: s53-spin 3s linear infinite; }
+@keyframes s53-spin { to { transform: rotate(360deg); } }
+
+/* 54. Infinity loop */
+.s54 { width: 64px; height: 32px; }
+.s54-path {
+  stroke: var(--blue);
+  fill: none;
+  stroke-width: 3;
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: s54-draw 2s linear infinite;
+  stroke-linecap: round;
+}
+@keyframes s54-draw { to { stroke-dashoffset: 0; } }
+
+/* 55. Mobius strip */
+.s55 {
+  width: 56px; height: 28px;
+  border: 3px solid var(--blue);
+  border-radius: 50%;
+  animation: s55-twist 2s linear infinite;
+  transform-style: preserve-3d;
+}
+@keyframes s55-twist {
+  0% { transform: rotateY(0deg) rotateX(0deg); }
+  100% { transform: rotateY(360deg) rotateX(180deg); }
+}
+
+/* 56. Folding square */
+.s56 { position: relative; width: 40px; height: 40px; transform-style: preserve-3d; }
+.s56-half {
+  position: absolute;
+  width: 20px; height: 40px;
+  background: var(--blue);
+  border-radius: 2px;
+}
+.s56-l { left: 0; transform-origin: right center; animation: s56-fold-l 1.5s ease-in-out infinite; }
+.s56-r { right: 0; background: var(--purple); transform-origin: left center; animation: s56-fold-r 1.5s ease-in-out infinite; }
+@keyframes s56-fold-l { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(-90deg); } }
+@keyframes s56-fold-r { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(90deg); } }
+
+/* 57. Rotating squares nested */
+.s57 { position: relative; width: 48px; height: 48px; }
+.s57-sq {
+  position: absolute;
+  border: 2px solid var(--blue);
+}
+.s57-sq:nth-child(1) { inset: 0; animation: s57-a 2s linear infinite; }
+.s57-sq:nth-child(2) { inset: 8px; border-color: var(--light-blue); animation: s57-a 2s linear infinite reverse; }
+.s57-sq:nth-child(3) { inset: 16px; border-color: var(--purple); animation: s57-a 1.5s linear infinite; }
+@keyframes s57-a { to { transform: rotate(360deg); } }
+
+/* 58. Morphing circle to triangle */
+.s58 {
+  width: 40px; height: 40px;
+  background: var(--blue);
+  animation: s58-morph 2s ease-in-out infinite;
+}
+@keyframes s58-morph {
+  0%, 100% { border-radius: 50%; clip-path: circle(50%); }
+  50% { border-radius: 0; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+}
+
+/* 59. Kaleidoscope rotation */
+.s59 { position: relative; width: 52px; height: 52px; }
+.s59-tri {
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 14px solid var(--blue);
+  top: 50%; left: 50%;
+  transform-origin: 0 -8px;
+  animation: s59-kal 3s linear infinite;
+}
+@keyframes s59-kal { to { transform: rotate(360deg); } }
+
+/* 60. Flower of life rotating */
+.s60 { width: 56px; height: 56px; animation: s60-spin 6s linear infinite; }
+.s60-c {
+  stroke: var(--light-blue);
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.6;
+}
+@keyframes s60-spin { to { transform: rotate(360deg); } }
+
+/* ============================
+   LOGO-CENTRIC (61-80)
+   ============================ */
+
+/* 61. Icon with orbit rings */
+.s61 { position: relative; width: 72px; height: 72px; }
+.s61-orbit {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--blue);
+}
+.s61-orbit:nth-child(1) { animation: s61-a 1.5s linear infinite; }
+.s61-orbit:nth-child(2) { inset: 6px; border-top-color: var(--purple); animation: s61-a 1.2s linear infinite reverse; }
+.s61-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s61-a { to { transform: rotate(360deg); } }
+
+/* 62. Icon with ripple pulse rings */
+.s62 { position: relative; width: 72px; height: 72px; }
+.s62-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--blue);
+  animation: s62-ripple 2s ease-out infinite;
+}
+.s62-ring:nth-child(2) { animation-delay: 0.5s; }
+.s62-ring:nth-child(3) { animation-delay: 1s; }
+.s62-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s62-ripple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+/* 63. Icon with radar sweep */
+.s63 { position: relative; width: 72px; height: 72px; }
+.s63-sweep {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(transparent 0deg, rgba(41,82,163,0.3) 60deg, transparent 60deg);
+  animation: s63-spin 2s linear infinite;
+}
+.s63-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(104,132,220,0.2); }
+.s63-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s63-spin { to { transform: rotate(360deg); } }
+
+/* 64. Icon with particle constellation */
+.s64 { position: relative; width: 72px; height: 72px; }
+.s64-p {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--very-light-blue);
+  border-radius: 50%;
+  animation: s64-orbit 3s linear infinite;
+}
+.s64-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s64-orbit { to { transform: rotate(360deg); } }
+
+/* 65. Icon with morphing blob background */
+.s65 { position: relative; width: 72px; height: 72px; }
+.s65-blob {
+  position: absolute;
+  inset: 8px;
+  background: linear-gradient(135deg, rgba(41,82,163,0.3), rgba(137,57,161,0.3));
+  animation: s65-morph 3s ease-in-out infinite;
+}
+.s65-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s65-morph {
+  0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+}
+
+/* 66. Icon with heartbeat pulse */
+.s66 { position: relative; }
+.s66-icon { animation: s66-beat 1s ease-in-out infinite; }
+@keyframes s66-beat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.25); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+  60% { transform: scale(1); }
+}
+
+/* 67. Icon with glitch effect */
+.s67 { position: relative; }
+.s67-icon { animation: s67-glitch 2s ease-in-out infinite; }
+.s67-ghost {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.4;
+  animation: s67-ghost-a 2s ease-in-out infinite;
+}
+.s67-ghost:nth-child(2) { animation: s67-ghost-b 2s ease-in-out infinite; }
+@keyframes s67-glitch {
+  0%, 90%, 100% { transform: translate(0); filter: none; }
+  92% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+  94% { transform: translate(2px, -1px); filter: hue-rotate(-90deg); }
+  96% { transform: translate(-1px, -1px); }
+  98% { transform: translate(1px, 1px); filter: hue-rotate(45deg); }
+}
+@keyframes s67-ghost-a {
+  0%, 90%, 100% { transform: translate(-50%, -50%); opacity: 0; }
+  92%, 96% { transform: translate(calc(-50% + 3px), -50%); opacity: 0.3; }
+}
+@keyframes s67-ghost-b {
+  0%, 90%, 100% { transform: translate(-50%, -50%); opacity: 0; }
+  94%, 98% { transform: translate(calc(-50% - 3px), -50%); opacity: 0.3; }
+}
+
+/* 68. Icon in spinning hexagon frame */
+.s68 { position: relative; width: 64px; height: 64px; }
+.s68-hex { animation: s68-spin 3s linear infinite; }
+.s68-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s68-spin { to { transform: rotate(360deg); } }
+
+/* 69. Icon with warp portal rings */
+.s69 { position: relative; width: 72px; height: 72px; }
+.s69-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--blue);
+  animation: s69-warp 2s ease-in-out infinite;
+}
+.s69-ring:nth-child(2) { animation-delay: 0.3s; border-color: var(--light-blue); }
+.s69-ring:nth-child(3) { animation-delay: 0.6s; border-color: var(--purple); }
+.s69-ring:nth-child(4) { animation-delay: 0.9s; }
+.s69-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s69-warp { 0% { transform: scale(0.3) rotate(0deg); opacity: 1; } 100% { transform: scale(1.5) rotate(180deg); opacity: 0; } }
+
+/* 70. Icon with galaxy spiral arms */
+.s70 { position: relative; width: 72px; height: 72px; }
+.s70-arm {
+  position: absolute; inset: 0;
+  animation: s70-spin 4s linear infinite;
+}
+.s70-a {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--very-light-blue);
+  border-radius: 50%;
+}
+.s70-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s70-spin { to { transform: rotate(360deg); } }
+
+/* 71. Icon with matrix rain */
+.s71 { position: relative; width: 72px; height: 72px; overflow: hidden; }
+.s71-col {
+  position: absolute;
+  top: -20px;
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--blue);
+  animation: s71-rain 1.5s linear infinite;
+  opacity: 0.5;
+}
+.s71-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s71-rain { 0% { transform: translateY(-20px); opacity: 0.8; } 100% { transform: translateY(92px); opacity: 0; } }
+
+/* 72. Icon with rotating gradient ring */
+.s72 { position: relative; width: 64px; height: 64px; }
+.s72-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--blue), var(--purple), var(--light-blue), var(--blue));
+  -webkit-mask: radial-gradient(transparent 24px, #000 25px);
+  mask: radial-gradient(transparent 24px, #000 25px);
+  animation: s72-spin 1.5s linear infinite;
+}
+.s72-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s72-spin { to { transform: rotate(360deg); } }
+
+/* 73. Icon bounce in/out */
+.s73-icon { animation: s73-bounce 1.5s ease-in-out infinite; }
+@keyframes s73-bounce {
+  0%, 100% { transform: scale(0.5); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* 74. Icon with expanding glow rings */
+.s74 { position: relative; width: 72px; height: 72px; }
+.s74-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--blue);
+  animation: s74-expand 1.5s ease-out infinite;
+  box-shadow: 0 0 8px var(--blue);
+}
+.s74-glow:nth-child(2) { animation-delay: 0.5s; }
+.s74-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s74-expand { 0% { transform: scale(0.4); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+
+/* 75. Icon flip (3D card) */
+.s75 { perspective: 200px; }
+.s75-icon { animation: s75-flip 2s ease-in-out infinite; }
+@keyframes s75-flip {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+/* 76. Icon with rotating dashed orbit */
+.s76 { position: relative; width: 64px; height: 64px; }
+.s76-orbit {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px dashed rgba(104,132,220,0.4);
+  animation: s76-spin 3s linear infinite;
+}
+.s76-dot {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  top: -4px; left: 50%; margin-left: -4px;
+}
+.s76-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s76-spin { to { transform: rotate(360deg); } }
+
+/* 77. Icon with clock sweep (pie reveal) */
+.s77 { position: relative; width: 56px; height: 56px; }
+.s77-pie {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(rgba(41,82,163,0.3) var(--s77-angle, 0deg), transparent 0deg);
+  animation: s77-sweep 2s linear infinite;
+}
+.s77-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s77-sweep {
+  0% { background: conic-gradient(rgba(41,82,163,0.3) 0deg, transparent 0deg); }
+  99% { background: conic-gradient(rgba(41,82,163,0.3) 360deg, transparent 360deg); }
+  100% { background: conic-gradient(rgba(41,82,163,0.3) 0deg, transparent 0deg); }
+}
+
+/* 78. Icon shatter and reassemble */
+.s78 { position: relative; }
+.s78-icon { animation: s78-shatter 2s ease-in-out infinite; }
+@keyframes s78-shatter {
+  0%, 80%, 100% { transform: scale(1); opacity: 1; filter: blur(0); }
+  40% { transform: scale(1.3); opacity: 0.2; filter: blur(4px); }
+  60% { transform: scale(0.8); opacity: 0.5; filter: blur(2px); }
+}
+
+/* 79. Icon with aurora glow */
+.s79 { position: relative; }
+.s79-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(41,82,163,0.4), rgba(137,57,161,0.2), transparent);
+  animation: s79-aurora 2s ease-in-out infinite;
+  filter: blur(6px);
+}
+.s79-icon { position: relative; z-index: 2; }
+@keyframes s79-aurora {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+  50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+}
+
+/* 80. Icon with sonar ping waves */
+.s80 { position: relative; width: 72px; height: 72px; }
+.s80-ping {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(transparent 30%, rgba(41,82,163,0.15) 70%, transparent 100%);
+  animation: s80-sonar 1.5s ease-out infinite;
+}
+.s80-ping:nth-child(2) { animation-delay: 0.5s; }
+.s80-ping:nth-child(3) { animation-delay: 1s; }
+.s80-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s80-sonar { 0% { transform: scale(0.3); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+
+/* ============================
+   CREATIVE & UNIQUE (81-100)
+   ============================ */
+
+/* 81. Hourglass rotating */
+.s81 { width: 48px; height: 48px; animation: s81-flip 2s ease-in-out infinite; }
+@keyframes s81-flip { 0%, 45% { transform: rotate(0deg); } 50%, 95% { transform: rotate(180deg); } 100% { transform: rotate(360deg); } }
+
+/* 82. Clock hands spinning */
+.s82 { position: relative; width: 44px; height: 44px; }
+.s82-face {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--blue);
+}
+.s82-h, .s82-m {
+  position: absolute;
+  background: var(--light-blue);
+  border-radius: 1px;
+  bottom: 50%; left: 50%;
+  transform-origin: bottom center;
+}
+.s82-h { width: 2px; height: 12px; margin-left: -1px; animation: s82-hour 4s linear infinite; }
+.s82-m { width: 2px; height: 16px; margin-left: -1px; animation: s82-min 1s linear infinite; }
+.s82-dot { position: absolute; width: 4px; height: 4px; background: var(--blue); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+@keyframes s82-hour { to { transform: rotate(360deg); } }
+@keyframes s82-min { to { transform: rotate(360deg); } }
+
+/* 83. Pac-Man chomping */
+.s83 { position: relative; width: 48px; height: 48px; }
+.s83-pac {
+  width: 36px; height: 36px;
+  background: var(--blue);
+  border-radius: 50%;
+  position: relative;
+  animation: s83-chomp 0.4s linear infinite alternate;
+}
+@keyframes s83-chomp {
+  0% { clip-path: polygon(100% 50%, 50% 50%, 85% 15%, 100% 0%, 100% 100%, 85% 85%); background: var(--blue); border-radius: 50%; clip-path: polygon(100% 0%, 50% 50%, 100% 100%, 0% 100%, 0% 0%); }
+  0% { clip-path: polygon(100% 0%, 100% 50%, 50% 50%, 100% 50%, 100% 100%, 0% 100%, 0% 0%); }
+  100% { clip-path: polygon(100% 0%, 100% 35%, 50% 50%, 100% 65%, 100% 100%, 0% 100%, 0% 0%); }
+}
+.s83-dots { display: flex; gap: 6px; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); }
+.s83-dd {
+  width: 5px; height: 5px;
+  background: var(--very-light-blue);
+  border-radius: 50%;
+  animation: s83-dot-fade 0.8s ease-in-out infinite;
+}
+.s83-dd:nth-child(2) { animation-delay: 0.2s; }
+.s83-dd:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes s83-dot-fade { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* 84. Yin-Yang spinning */
+.s84 {
+  width: 44px; height: 44px;
+  animation: s84-spin 1.5s linear infinite;
+}
+@keyframes s84-spin { to { transform: rotate(360deg); } }
+
+/* 85. Solar system (icon as sun) */
+.s85 { position: relative; width: 80px; height: 80px; }
+.s85-orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(104,132,220,0.15);
+}
+.s85-planet {
+  position: absolute;
+  border-radius: 50%;
+}
+.s85-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+@keyframes s85-orbit { to { transform: rotate(360deg); } }
+
+/* 86. Radar screen sweep */
+.s86 { position: relative; width: 56px; height: 56px; }
+.s86-bg {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(104,132,220,0.3);
+  position: relative;
+}
+.s86-sweep {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(transparent 0deg, rgba(41,82,163,0.4) 30deg, transparent 30deg);
+  animation: s86-spin 2s linear infinite;
+}
+.s86-cross-h, .s86-cross-v {
+  position: absolute;
+  background: rgba(104,132,220,0.15);
+}
+.s86-cross-h { width: 100%; height: 1px; top: 50%; }
+.s86-cross-v { height: 100%; width: 1px; left: 50%; }
+@keyframes s86-spin { to { transform: rotate(360deg); } }
+
+/* 87. Typing dots (chat bubble) */
+.s87 {
+  display: flex;
+  gap: 5px;
+  background: var(--border-card);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+}
+.s87-d {
+  width: 7px; height: 7px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  animation: s87-type 1.2s ease-in-out infinite;
+}
+.s87-d:nth-child(2) { animation-delay: 0.2s; }
+.s87-d:nth-child(3) { animation-delay: 0.4s; }
+@keyframes s87-type { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+/* 88. Neon sign flicker */
+.s88 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--blue);
+  text-shadow: 0 0 8px var(--blue), 0 0 16px var(--blue), 0 0 32px rgba(41,82,163,0.5);
+  animation: s88-flicker 3s ease-in-out infinite;
+  font-family: monospace;
+}
+@keyframes s88-flicker {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px var(--blue), 0 0 16px var(--blue); }
+  5% { opacity: 0.4; text-shadow: none; }
+  6% { opacity: 1; }
+  10% { opacity: 0.6; text-shadow: 0 0 4px var(--blue); }
+  11% { opacity: 1; text-shadow: 0 0 8px var(--blue), 0 0 16px var(--blue); }
+  50% { opacity: 1; }
+  52% { opacity: 0.5; }
+  53% { opacity: 1; }
+}
+
+/* 89. Water ripple effect */
+.s89 { position: relative; width: 56px; height: 56px; }
+.s89-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--blue);
+  animation: s89-ripple 2s ease-out infinite;
+}
+.s89-ring:nth-child(2) { animation-delay: 0.4s; }
+.s89-ring:nth-child(3) { animation-delay: 0.8s; }
+.s89-ring:nth-child(4) { animation-delay: 1.2s; }
+@keyframes s89-ripple { 0% { transform: scale(0.3); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
+/* 90. Breathing circle */
+.s90 {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(var(--blue), var(--purple));
+  animation: s90-breathe 3s ease-in-out infinite;
+}
+@keyframes s90-breathe { 0%, 100% { transform: scale(0.7); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+
+/* 91. Rotating coin (3D) */
+.s91 {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  animation: s91-coin 1.5s ease-in-out infinite;
+  box-shadow: inset 0 0 0 2px rgba(160,180,240,0.3);
+}
+@keyframes s91-coin { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg); } }
+
+/* 92. Spiral hypnotic */
+.s92 { width: 56px; height: 56px; animation: s92-spin 4s linear infinite; }
+@keyframes s92-spin { to { transform: rotate(360deg); } }
+
+/* 93. Bouncing ball */
+.s93 { position: relative; height: 48px; width: 48px; }
+.s93-ball {
+  width: 16px; height: 16px;
+  background: var(--blue);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0; left: 50%; margin-left: -8px;
+  animation: s93-bounce 0.6s ease-in infinite alternate;
+}
+.s93-shadow {
+  width: 16px; height: 4px;
+  background: rgba(41,82,163,0.3);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0; left: 50%; margin-left: -8px;
+  animation: s93-shadow 0.6s ease-in infinite alternate;
+}
+@keyframes s93-bounce { 0% { transform: translateY(0) scaleX(1.1) scaleY(0.9); } 100% { transform: translateY(-32px) scaleX(1) scaleY(1); } }
+@keyframes s93-shadow { 0% { transform: scaleX(1); opacity: 0.4; } 100% { transform: scaleX(0.5); opacity: 0.1; } }
+
+/* 94. Metronome tick */
+.s94 { position: relative; width: 32px; height: 48px; }
+.s94-arm {
+  width: 2px; height: 40px;
+  background: var(--light-blue);
+  position: absolute;
+  bottom: 0; left: 50%; margin-left: -1px;
+  transform-origin: bottom center;
+  animation: s94-tick 1s ease-in-out infinite alternate;
+}
+.s94-bob {
+  width: 8px; height: 8px;
+  background: var(--blue);
+  border-radius: 50%;
+  position: absolute;
+  top: -4px; left: -3px;
+}
+.s94-base {
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 3px;
+  background: var(--border-card);
+  border-radius: 2px;
+}
+@keyframes s94-tick { 0% { transform: rotate(-25deg); } 100% { transform: rotate(25deg); } }
+
+/* 95. Rotating fan blades */
+.s95 { position: relative; width: 48px; height: 48px; animation: s95-spin 1s linear infinite; }
+.s95-blade {
+  position: absolute;
+  width: 8px; height: 20px;
+  background: var(--blue);
+  border-radius: 4px 4px 0 0;
+  top: 4px; left: 50%; margin-left: -4px;
+  transform-origin: 4px 20px;
+}
+.s95-center {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 2;
+}
+@keyframes s95-spin { to { transform: rotate(360deg); } }
+
+/* 96. Rolling circle */
+.s96 {
+  width: 20px; height: 20px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: s96-roll 1.5s ease-in-out infinite;
+  position: relative;
+}
+.s96-dot {
+  width: 4px; height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px; left: 50%; margin-left: -2px;
+}
+@keyframes s96-roll { 0% { transform: translateX(-24px) rotate(0deg); } 100% { transform: translateX(24px) rotate(720deg); } }
+
+/* 97. Wave sine animation */
+.s97 { width: 80px; height: 40px; }
+.s97-path {
+  stroke: var(--blue);
+  fill: none;
+  stroke-width: 2.5;
+  stroke-dasharray: 160;
+  stroke-dashoffset: 160;
+  animation: s97-draw 2s linear infinite;
+  stroke-linecap: round;
+}
+@keyframes s97-draw { to { stroke-dashoffset: 0; } }
+
+/* 98. Glowing orb */
+.s98 {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--very-light-blue), var(--blue), var(--purple));
+  animation: s98-glow 2s ease-in-out infinite;
+  box-shadow: 0 0 16px var(--blue), 0 0 32px rgba(41,82,163,0.4);
+}
+@keyframes s98-glow {
+  0%, 100% { box-shadow: 0 0 16px var(--blue), 0 0 32px rgba(41,82,163,0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 24px var(--blue), 0 0 48px rgba(41,82,163,0.6), 0 0 64px rgba(137,57,161,0.3); transform: scale(1.1); }
+}
+
+/* 99. Atom with 3D elliptical orbits */
+.s99 { position: relative; width: 64px; height: 64px; }
+.s99-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(104,132,220,0.3);
+}
+.s99-e {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--light-blue);
+  border-radius: 50%;
+  top: -3px; left: 50%; margin-left: -3px;
+  transform-origin: 3px 35px;
+  animation: s99-electron 1.2s linear infinite;
+}
+.s99-nucleus {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 2;
+}
+@keyframes s99-electron { to { transform: rotate(360deg); } }
+
+/* 100. Grand finale */
+.s100 { position: relative; width: 100px; height: 100px; }
+.s100-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--blue);
+  animation: s100-ring-spin 2s linear infinite;
+}
+.s100-ring:nth-child(2) { inset: 8px; border-top-color: var(--purple); animation-duration: 1.5s; animation-direction: reverse; }
+.s100-ring:nth-child(3) { inset: 16px; border-top-color: var(--light-blue); animation-duration: 1s; }
+.s100-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(transparent 40%, rgba(41,82,163,0.15) 70%, transparent 100%);
+  animation: s100-glow-pulse 2s ease-in-out infinite;
+}
+.s100-icon { position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); z-index: 3; animation: s100-icon-beat 1.5s ease-in-out infinite; }
+.s100-text {
+  position: absolute;
+  bottom: 4px; left: 50%; transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--purple), var(--light-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 100%;
+  animation: s100-shimmer 2s linear infinite;
+  white-space: nowrap;
+}
+.s100-particles {
+  position: absolute; inset: 0;
+  animation: s100-p-spin 6s linear infinite;
+}
+.s100-p {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--very-light-blue);
+  border-radius: 50%;
+  animation: s100-p-twinkle 1.5s ease-in-out infinite;
+}
+@keyframes s100-ring-spin { to { transform: rotate(360deg); } }
+@keyframes s100-glow-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+@keyframes s100-icon-beat { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } }
+@keyframes s100-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes s100-p-spin { to { transform: rotate(360deg); } }
+@keyframes s100-p-twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG defs for shared icon and gradient -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <linearGradient id="nuGrad" x1="13.5" y1="0" x2="13.5" y2="38" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2952A3"/><stop offset="1" stop-color="#8939A1"/>
+    </linearGradient>
+    <symbol id="nu-logo" viewBox="0 0 27 38">
+      <path d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" fill="url(#nuGrad)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sticky-header">
+  <h1>NU-AURA &mdash; 100 Loader Animations</h1>
+  <p>Pick your favourite. Tell me the number.</p>
+  <div class="filter-bar">
+    <a href="#rings" class="filter-btn">Rings &amp; Circles (1-15)</a>
+    <a href="#dots" class="filter-btn">Dots &amp; Particles (16-30)</a>
+    <a href="#bars" class="filter-btn">Bars &amp; Lines (31-45)</a>
+    <a href="#shapes" class="filter-btn">Shapes &amp; Geometry (46-60)</a>
+    <a href="#logo" class="filter-btn">Logo-Centric (61-80)</a>
+    <a href="#creative" class="filter-btn">Creative &amp; Unique (81-100)</a>
+  </div>
+</div>
+
+<div class="grid">
+
+  <!-- ================= RINGS & CIRCLES ================= -->
+  <div class="section-title" id="rings">Rings &amp; Circles (1-15)</div>
+
+  <!-- 1 -->
+  <div class="card">
+    <div class="card-number">1</div>
+    <div class="spinner-area"><div class="s1"></div></div>
+    <div class="card-label">Gradient Ring</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card">
+    <div class="card-number">2</div>
+    <div class="spinner-area"><div class="s2"></div></div>
+    <div class="card-label">Counter Rings</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card">
+    <div class="card-number">3</div>
+    <div class="spinner-area">
+      <div class="s3">
+        <div class="s3-r s3-r1"></div>
+        <div class="s3-r s3-r2"></div>
+        <div class="s3-r s3-r3"></div>
+      </div>
+    </div>
+    <div class="card-label">Triple Nested</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card">
+    <div class="card-number">4</div>
+    <div class="spinner-area"><div class="s4"></div></div>
+    <div class="card-label">Dashed Ring</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <div class="card-number">5</div>
+    <div class="spinner-area">
+      <div class="s5">
+        <div class="s5-dot" style="top:0;left:50%;margin-left:-3px"></div>
+        <div class="s5-dot" style="top:14%;left:85%;margin-left:-3px"></div>
+        <div class="s5-dot" style="top:50%;right:0;margin-right:-3px"></div>
+        <div class="s5-dot" style="top:85%;left:85%;margin-left:-3px"></div>
+        <div class="s5-dot" style="bottom:0;left:50%;margin-left:-3px"></div>
+        <div class="s5-dot" style="top:85%;left:9%;margin-left:-3px"></div>
+        <div class="s5-dot" style="top:50%;left:0;margin-left:-3px"></div>
+        <div class="s5-dot" style="top:14%;left:9%;margin-left:-3px"></div>
+      </div>
+    </div>
+    <div class="card-label">Dotted Circle</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <div class="card-number">6</div>
+    <div class="spinner-area"><div class="s6"></div></div>
+    <div class="card-label">Arc Spinner</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card">
+    <div class="card-number">7</div>
+    <div class="spinner-area"><div class="s7"></div></div>
+    <div class="card-label">Dual Arc</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card">
+    <div class="card-number">8</div>
+    <div class="spinner-area">
+      <div class="s8">
+        <div class="s8-ring"></div>
+        <div class="s8-dot"></div>
+      </div>
+    </div>
+    <div class="card-label">Ring + Dot</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card">
+    <div class="card-number">9</div>
+    <div class="spinner-area">
+      <div class="s9">
+        <div class="s9-c"></div>
+        <div class="s9-c"></div>
+        <div class="s9-c"></div>
+      </div>
+    </div>
+    <div class="card-label">Concentric Pulse</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="card">
+    <div class="card-number">10</div>
+    <div class="spinner-area"><div class="s10"></div></div>
+    <div class="card-label">Segmented Ring</div>
+  </div>
+
+  <!-- 11 -->
+  <div class="card">
+    <div class="card-number">11</div>
+    <div class="spinner-area"><div class="s11"></div></div>
+    <div class="card-label">Conic Gradient</div>
+  </div>
+
+  <!-- 12 -->
+  <div class="card">
+    <div class="card-number">12</div>
+    <div class="spinner-area"><div class="s12"></div></div>
+    <div class="card-label">Trailing Fade</div>
+  </div>
+
+  <!-- 13 -->
+  <div class="card">
+    <div class="card-number">13</div>
+    <div class="spinner-area"><div class="s13"></div></div>
+    <div class="card-label">Elastic Bounce</div>
+  </div>
+
+  <!-- 14 -->
+  <div class="card">
+    <div class="card-number">14</div>
+    <div class="spinner-area"><div class="s14"></div></div>
+    <div class="card-label">Ring to Square</div>
+  </div>
+
+  <!-- 15 -->
+  <div class="card">
+    <div class="card-number">15</div>
+    <div class="spinner-area">
+      <div class="s15-wrap">
+        <div class="s15-ring"></div>
+        <div class="s15-icon">
+          <svg class="nu-icon" width="24" height="27"><use href="#nu-logo"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="card-label">Ring + Icon</div>
+  </div>
+
+  <!-- ================= DOTS & PARTICLES ================= -->
+  <div class="section-title" id="dots">Dots &amp; Particles (16-30)</div>
+
+  <!-- 16 -->
+  <div class="card">
+    <div class="card-number">16</div>
+    <div class="spinner-area">
+      <div class="s16">
+        <div class="s16-d"></div><div class="s16-d"></div><div class="s16-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Bouncing Dots</div>
+  </div>
+
+  <!-- 17 -->
+  <div class="card">
+    <div class="card-number">17</div>
+    <div class="spinner-area">
+      <div class="s17">
+        <div class="s17-d"></div><div class="s17-d"></div><div class="s17-d"></div><div class="s17-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Scaling Dots</div>
+  </div>
+
+  <!-- 18 -->
+  <div class="card">
+    <div class="card-number">18</div>
+    <div class="spinner-area">
+      <div class="s18">
+        <div class="s18-d" style="top:0;left:50%;margin-left:-3px;animation-delay:0s"></div>
+        <div class="s18-d" style="top:7px;left:calc(50% + 14px);animation-delay:0.125s"></div>
+        <div class="s18-d" style="top:50%;right:0;margin-top:-3px;animation-delay:0.25s"></div>
+        <div class="s18-d" style="bottom:7px;left:calc(50% + 14px);animation-delay:0.375s"></div>
+        <div class="s18-d" style="bottom:0;left:50%;margin-left:-3px;animation-delay:0.5s"></div>
+        <div class="s18-d" style="bottom:7px;right:calc(50% + 14px);animation-delay:0.625s"></div>
+        <div class="s18-d" style="top:50%;left:0;margin-top:-3px;animation-delay:0.75s"></div>
+        <div class="s18-d" style="top:7px;right:calc(50% + 14px);animation-delay:0.875s"></div>
+      </div>
+    </div>
+    <div class="card-label">Circle Dots</div>
+  </div>
+
+  <!-- 19 -->
+  <div class="card">
+    <div class="card-number">19</div>
+    <div class="spinner-area">
+      <div class="s19">
+        <div class="s19-d"></div><div class="s19-d"></div><div class="s19-d"></div><div class="s19-d"></div><div class="s19-d"></div><div class="s19-d"></div><div class="s19-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Wave Dots</div>
+  </div>
+
+  <!-- 20 -->
+  <div class="card">
+    <div class="card-number">20</div>
+    <div class="spinner-area">
+      <div class="s20">
+        <div class="s20-orbit">
+          <div class="s20-p" style="top:-3px;left:50%;margin-left:-3px"></div>
+        </div>
+        <div class="s20-orbit" style="animation-delay:-0.7s">
+          <div class="s20-p" style="top:50%;right:-3px;margin-top:-3px"></div>
+        </div>
+        <div class="s20-orbit" style="animation-delay:-1.4s">
+          <div class="s20-p" style="bottom:-3px;left:50%;margin-left:-3px"></div>
+        </div>
+        <div class="s20-icon">
+          <svg class="nu-icon" width="24" height="27"><use href="#nu-logo"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="card-label">Orbiting Particles</div>
+  </div>
+
+  <!-- 21 -->
+  <div class="card">
+    <div class="card-number">21</div>
+    <div class="spinner-area">
+      <div class="s21">
+        <div class="s21-d"></div><div class="s21-d"></div><div class="s21-d"></div><div class="s21-d"></div><div class="s21-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Staggered Fade</div>
+  </div>
+
+  <!-- 22 -->
+  <div class="card">
+    <div class="card-number">22</div>
+    <div class="spinner-area">
+      <div class="s22">
+        <div class="s22-d"></div><div class="s22-d"></div><div class="s22-d"></div>
+        <div class="s22-d"></div><div class="s22-d"></div><div class="s22-d"></div>
+        <div class="s22-d"></div><div class="s22-d"></div><div class="s22-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Dot Grid</div>
+  </div>
+
+  <!-- 23 -->
+  <div class="card">
+    <div class="card-number">23</div>
+    <div class="spinner-area">
+      <div class="s23">
+        <div class="s23-d"></div><div class="s23-d"></div><div class="s23-d"></div><div class="s23-d"></div>
+        <div class="s23-d"></div><div class="s23-d"></div><div class="s23-d"></div><div class="s23-d"></div>
+      </div>
+    </div>
+    <div class="card-label">DNA Helix</div>
+  </div>
+
+  <!-- 24 -->
+  <div class="card">
+    <div class="card-number">24</div>
+    <div class="spinner-area">
+      <div class="s24">
+        <div class="s24-d" style="animation-delay:0s;--dx:20px;--dy:-20px"></div>
+        <div class="s24-d" style="animation-delay:0.1s;--dx:-15px;--dy:-22px"></div>
+        <div class="s24-d" style="animation-delay:0.2s;--dx:25px;--dy:10px;background:var(--purple)"></div>
+        <div class="s24-d" style="animation-delay:0.3s;--dx:-20px;--dy:15px"></div>
+        <div class="s24-d" style="animation-delay:0.4s;--dx:10px;--dy:25px;background:var(--blue)"></div>
+        <div class="s24-d" style="animation-delay:0.5s;--dx:-25px;--dy:-5px"></div>
+        <div class="s24-d" style="animation-delay:0.6s;--dx:5px;--dy:-28px;background:var(--purple)"></div>
+        <div class="s24-d" style="animation-delay:0.7s;--dx:-10px;--dy:22px"></div>
+      </div>
+    </div>
+    <div class="card-label">Firework Burst</div>
+  </div>
+  <style>
+    .s24-d:nth-child(1) { animation-name: s24-b1; }
+    .s24-d:nth-child(2) { animation-name: s24-b2; }
+    .s24-d:nth-child(3) { animation-name: s24-b3; }
+    .s24-d:nth-child(4) { animation-name: s24-b4; }
+    .s24-d:nth-child(5) { animation-name: s24-b5; }
+    .s24-d:nth-child(6) { animation-name: s24-b6; }
+    .s24-d:nth-child(7) { animation-name: s24-b7; }
+    .s24-d:nth-child(8) { animation-name: s24-b8; }
+    @keyframes s24-b1 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% + 20px), calc(-50% - 20px)); opacity:0; } }
+    @keyframes s24-b2 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% - 15px), calc(-50% - 22px)); opacity:0; } }
+    @keyframes s24-b3 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% + 25px), calc(-50% + 10px)); opacity:0; } }
+    @keyframes s24-b4 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% - 20px), calc(-50% + 15px)); opacity:0; } }
+    @keyframes s24-b5 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% + 10px), calc(-50% + 25px)); opacity:0; } }
+    @keyframes s24-b6 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% - 25px), calc(-50% - 5px)); opacity:0; } }
+    @keyframes s24-b7 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% + 5px), calc(-50% - 28px)); opacity:0; } }
+    @keyframes s24-b8 { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 100% { transform: translate(calc(-50% - 10px), calc(-50% + 22px)); opacity:0; } }
+  </style>
+
+  <!-- 25 -->
+  <div class="card">
+    <div class="card-number">25</div>
+    <div class="spinner-area">
+      <div class="s25">
+        <div class="s25-orbit"><div class="s25-e"></div></div>
+        <div class="s25-orbit" style="transform:rotate(60deg)"><div class="s25-e" style="animation-duration:1.3s"></div></div>
+        <div class="s25-orbit" style="transform:rotate(120deg)"><div class="s25-e" style="animation-duration:0.8s"></div></div>
+        <div class="s25-n"></div>
+      </div>
+    </div>
+    <div class="card-label">Atom Orbits</div>
+  </div>
+
+  <!-- 26 -->
+  <div class="card">
+    <div class="card-number">26</div>
+    <div class="spinner-area">
+      <div class="s26">
+        <div class="s26-p" style="top:10px;left:15px"></div>
+        <div class="s26-p" style="top:30px;left:40px"></div>
+        <div class="s26-p" style="top:15px;left:48px"></div>
+        <div class="s26-p" style="top:42px;left:20px"></div>
+        <div class="s26-p" style="top:8px;left:32px"></div>
+      </div>
+    </div>
+    <div class="card-label">Constellation</div>
+  </div>
+
+  <!-- 27 -->
+  <div class="card">
+    <div class="card-number">27</div>
+    <div class="spinner-area">
+      <div class="s27">
+        <div class="s27-ball"></div>
+        <div class="s27-ball"></div>
+        <div class="s27-ball"></div>
+        <div class="s27-ball"></div>
+        <div class="s27-ball"></div>
+      </div>
+    </div>
+    <div class="card-label">Newton's Cradle</div>
+  </div>
+
+  <!-- 28 -->
+  <div class="card">
+    <div class="card-number">28</div>
+    <div class="spinner-area">
+      <div class="s28">
+        <div class="s28-d"></div><div class="s28-d"></div><div class="s28-d"></div><div class="s28-d"></div><div class="s28-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Popcorn Dots</div>
+  </div>
+
+  <!-- 29 -->
+  <div class="card">
+    <div class="card-number">29</div>
+    <div class="spinner-area">
+      <div class="s29">
+        <div class="s29-d" style="width:4px;height:4px;top:0;left:50%;margin-left:-2px"></div>
+        <div class="s29-d" style="width:4px;height:4px;top:6px;left:66%"></div>
+        <div class="s29-d" style="width:5px;height:5px;top:16px;left:76%"></div>
+        <div class="s29-d" style="width:5px;height:5px;top:28px;left:78%;background:var(--purple)"></div>
+        <div class="s29-d" style="width:5px;height:5px;top:40px;left:70%"></div>
+        <div class="s29-d" style="width:6px;height:6px;top:46px;left:50%;margin-left:-3px;background:var(--light-blue)"></div>
+        <div class="s29-d" style="width:5px;height:5px;top:40px;left:20%"></div>
+        <div class="s29-d" style="width:5px;height:5px;top:28px;left:14%;background:var(--purple)"></div>
+        <div class="s29-d" style="width:4px;height:4px;top:16px;left:18%"></div>
+        <div class="s29-d" style="width:4px;height:4px;top:6px;left:30%"></div>
+      </div>
+    </div>
+    <div class="card-label">Spiral Dots</div>
+  </div>
+
+  <!-- 30 -->
+  <div class="card">
+    <div class="card-number">30</div>
+    <div class="spinner-area">
+      <div class="s30">
+        <div class="s30-bond" style="width:20px;top:30px;left:10px;transform:rotate(-20deg)"></div>
+        <div class="s30-bond" style="width:18px;top:28px;left:30px;transform:rotate(30deg)"></div>
+        <div class="s30-bond" style="width:15px;top:20px;left:22px;transform:rotate(-70deg)"></div>
+        <div class="s30-atom" style="top:25px;left:5px"></div>
+        <div class="s30-atom" style="top:22px;left:28px;animation-delay:0.3s;background:var(--purple)"></div>
+        <div class="s30-atom" style="top:30px;left:48px;animation-delay:0.6s"></div>
+        <div class="s30-atom" style="top:10px;left:18px;animation-delay:0.9s;background:var(--light-blue);width:8px;height:8px"></div>
+      </div>
+    </div>
+    <div class="card-label">Molecule</div>
+  </div>
+
+  <!-- ================= BARS & LINES ================= -->
+  <div class="section-title" id="bars">Bars &amp; Lines (31-45)</div>
+
+  <!-- 31 -->
+  <div class="card">
+    <div class="card-number">31</div>
+    <div class="spinner-area">
+      <div class="s31">
+        <div class="s31-bar"></div><div class="s31-bar"></div><div class="s31-bar"></div><div class="s31-bar"></div><div class="s31-bar"></div>
+      </div>
+    </div>
+    <div class="card-label">Equalizer</div>
+  </div>
+
+  <!-- 32 -->
+  <div class="card">
+    <div class="card-number">32</div>
+    <div class="spinner-area"><div class="s32"><div class="s32-fill"></div></div></div>
+    <div class="card-label">Progress Bar</div>
+  </div>
+
+  <!-- 33 -->
+  <div class="card">
+    <div class="card-number">33</div>
+    <div class="spinner-area">
+      <div class="s33">
+        <div class="s33-line" style="transform:rotate(0deg);animation-delay:0s"></div>
+        <div class="s33-line" style="transform:rotate(30deg);animation-delay:-0.083s;opacity:0.92"></div>
+        <div class="s33-line" style="transform:rotate(60deg);animation-delay:-0.166s;opacity:0.83"></div>
+        <div class="s33-line" style="transform:rotate(90deg);animation-delay:-0.25s;opacity:0.75"></div>
+        <div class="s33-line" style="transform:rotate(120deg);animation-delay:-0.333s;opacity:0.67"></div>
+        <div class="s33-line" style="transform:rotate(150deg);animation-delay:-0.416s;opacity:0.58"></div>
+        <div class="s33-line" style="transform:rotate(180deg);animation-delay:-0.5s;opacity:0.5"></div>
+        <div class="s33-line" style="transform:rotate(210deg);animation-delay:-0.583s;opacity:0.42"></div>
+        <div class="s33-line" style="transform:rotate(240deg);animation-delay:-0.666s;opacity:0.33"></div>
+        <div class="s33-line" style="transform:rotate(270deg);animation-delay:-0.75s;opacity:0.25"></div>
+        <div class="s33-line" style="transform:rotate(300deg);animation-delay:-0.833s;opacity:0.17"></div>
+        <div class="s33-line" style="transform:rotate(330deg);animation-delay:-0.916s;opacity:0.08"></div>
+      </div>
+    </div>
+    <div class="card-label">iOS Spinner</div>
+  </div>
+
+  <!-- 34 -->
+  <div class="card">
+    <div class="card-number">34</div>
+    <div class="spinner-area">
+      <div class="s34">
+        <div class="s34-bar"></div><div class="s34-bar"></div><div class="s34-bar"></div><div class="s34-bar"></div><div class="s34-bar"></div>
+      </div>
+    </div>
+    <div class="card-label">Stacking Bars</div>
+  </div>
+
+  <!-- 35 -->
+  <div class="card">
+    <div class="card-number">35</div>
+    <div class="spinner-area">
+      <div class="s35">
+        <div class="s35-bar" style="transform:rotate(0deg);animation-delay:0s"></div>
+        <div class="s35-bar" style="transform:rotate(45deg);animation-delay:0.15s"></div>
+        <div class="s35-bar" style="transform:rotate(90deg);animation-delay:0.3s"></div>
+        <div class="s35-bar" style="transform:rotate(135deg);animation-delay:0.45s"></div>
+        <div class="s35-bar" style="transform:rotate(180deg);animation-delay:0.6s"></div>
+        <div class="s35-bar" style="transform:rotate(225deg);animation-delay:0.75s"></div>
+        <div class="s35-bar" style="transform:rotate(270deg);animation-delay:0.9s"></div>
+        <div class="s35-bar" style="transform:rotate(315deg);animation-delay:1.05s"></div>
+      </div>
+    </div>
+    <div class="card-label">Clock Bars</div>
+  </div>
+
+  <!-- 36 -->
+  <div class="card">
+    <div class="card-number">36</div>
+    <div class="spinner-area">
+      <div class="s36">
+        <div class="s36-bar"></div><div class="s36-bar"></div><div class="s36-bar"></div>
+      </div>
+    </div>
+    <div class="card-label">Sliding Bars</div>
+  </div>
+
+  <!-- 37 -->
+  <div class="card">
+    <div class="card-number">37</div>
+    <div class="spinner-area">
+      <div class="s37">
+        <div class="s37-bar"></div><div class="s37-bar"></div><div class="s37-bar"></div><div class="s37-bar"></div>
+      </div>
+    </div>
+    <div class="card-label">Vertical Pulse</div>
+  </div>
+
+  <!-- 38 -->
+  <div class="card">
+    <div class="card-number">38</div>
+    <div class="spinner-area">
+      <div class="s38">
+        <div class="s38-l s38-h"></div>
+        <div class="s38-l s38-v"></div>
+      </div>
+    </div>
+    <div class="card-label">Cross Fade</div>
+  </div>
+
+  <!-- 39 -->
+  <div class="card">
+    <div class="card-number">39</div>
+    <div class="spinner-area">
+      <svg class="s39" viewBox="0 0 60 30">
+        <polyline class="s39-path" points="0,25 10,5 20,25 30,5 40,25 50,5 60,25"/>
+      </svg>
+    </div>
+    <div class="card-label">Zigzag Line</div>
+  </div>
+
+  <!-- 40 -->
+  <div class="card">
+    <div class="card-number">40</div>
+    <div class="spinner-area">
+      <div class="s40">
+        <svg class="nu-icon" width="24" height="27"><use href="#nu-logo"/></svg>
+        <div class="s40-cursor"></div>
+      </div>
+    </div>
+    <div class="card-label">Typewriter</div>
+  </div>
+
+  <!-- 41 -->
+  <div class="card">
+    <div class="card-number">41</div>
+    <div class="spinner-area"><div class="s41"><div class="s41-bar"></div></div></div>
+    <div class="card-label">Shimmer Bar</div>
+  </div>
+
+  <!-- 42 -->
+  <div class="card">
+    <div class="card-number">42</div>
+    <div class="spinner-area">
+      <svg class="s42" viewBox="0 0 80 40">
+        <path class="s42-path" d="M0,20 L15,20 L20,5 L25,35 L30,10 L35,25 L40,20 L80,20"/>
+      </svg>
+    </div>
+    <div class="card-label">Heartbeat EKG</div>
+  </div>
+
+  <!-- 43 -->
+  <div class="card">
+    <div class="card-number">43</div>
+    <div class="spinner-area"><div class="s43"></div></div>
+    <div class="card-label">Rotating Square</div>
+  </div>
+
+  <!-- 44 -->
+  <div class="card">
+    <div class="card-number">44</div>
+    <div class="spinner-area">
+      <div class="s44">
+        <div class="s44-b"></div>
+        <div class="s44-l"></div>
+      </div>
+    </div>
+    <div class="card-label">Corner Chase</div>
+  </div>
+
+  <!-- 45 -->
+  <div class="card">
+    <div class="card-number">45</div>
+    <div class="spinner-area">
+      <div class="s45">
+        <div class="s45-arm">
+          <div class="s45-bob"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-label">Pendulum</div>
+  </div>
+
+  <!-- ================= SHAPES & GEOMETRY ================= -->
+  <div class="section-title" id="shapes">Shapes &amp; Geometry (46-60)</div>
+
+  <!-- 46 -->
+  <div class="card">
+    <div class="card-number">46</div>
+    <div class="spinner-area" style="perspective:200px">
+      <div class="s46">
+        <div class="s46-face s46-f"></div>
+        <div class="s46-face s46-b"></div>
+        <div class="s46-face s46-l"></div>
+        <div class="s46-face s46-r"></div>
+        <div class="s46-face s46-t"></div>
+        <div class="s46-face s46-bo"></div>
+      </div>
+    </div>
+    <div class="card-label">3D Cube</div>
+  </div>
+
+  <!-- 47 -->
+  <div class="card">
+    <div class="card-number">47</div>
+    <div class="spinner-area"><div class="s47"></div></div>
+    <div class="card-label">Morphing Blob</div>
+  </div>
+
+  <!-- 48 -->
+  <div class="card">
+    <div class="card-number">48</div>
+    <div class="spinner-area">
+      <svg class="s48" viewBox="0 0 52 52" width="48" height="48">
+        <polygon class="s48-hex" points="26,2 49,14 49,38 26,50 3,38 3,14"/>
+      </svg>
+    </div>
+    <div class="card-label">Hexagon Spin</div>
+  </div>
+
+  <!-- 49 -->
+  <div class="card">
+    <div class="card-number">49</div>
+    <div class="spinner-area"><div class="s49"></div></div>
+    <div class="card-label">Triangle Spin</div>
+  </div>
+
+  <!-- 50 -->
+  <div class="card">
+    <div class="card-number">50</div>
+    <div class="spinner-area"><div class="s50"></div></div>
+    <div class="card-label">Diamond Bounce</div>
+  </div>
+
+  <!-- 51 -->
+  <div class="card">
+    <div class="card-number">51</div>
+    <div class="spinner-area">
+      <svg class="s51" viewBox="0 0 52 52" width="48" height="48">
+        <polygon class="s51-pent" points="26,2 50,18 41,46 11,46 2,18"/>
+      </svg>
+    </div>
+    <div class="card-label">Pentagon Pulse</div>
+  </div>
+
+  <!-- 52 -->
+  <div class="card">
+    <div class="card-number">52</div>
+    <div class="spinner-area">
+      <svg class="s52" viewBox="0 0 52 52" width="48" height="48">
+        <polygon points="26,2 33,18 50,18 36,29 41,46 26,36 11,46 16,29 2,18 19,18" fill="url(#nuGrad)"/>
+      </svg>
+    </div>
+    <div class="card-label">Star Trail</div>
+  </div>
+
+  <!-- 53 -->
+  <div class="card">
+    <div class="card-number">53</div>
+    <div class="spinner-area">
+      <svg class="s53" viewBox="0 0 52 52" width="48" height="48">
+        <circle cx="26" cy="26" r="20" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <circle cx="26" cy="26" r="10" fill="none" stroke="var(--light-blue)" stroke-width="2"/>
+        <rect x="0" y="24" width="8" height="4" rx="1" fill="var(--blue)"/>
+        <rect x="44" y="24" width="8" height="4" rx="1" fill="var(--blue)"/>
+        <rect x="24" y="0" width="4" height="8" rx="1" fill="var(--blue)"/>
+        <rect x="24" y="44" width="4" height="8" rx="1" fill="var(--blue)"/>
+        <rect x="4" y="4" width="6" height="3.5" rx="1" fill="var(--blue)" transform="rotate(45 7 5.75)"/>
+        <rect x="42" y="4" width="6" height="3.5" rx="1" fill="var(--blue)" transform="rotate(-45 45 5.75)"/>
+        <rect x="4" y="44.5" width="6" height="3.5" rx="1" fill="var(--blue)" transform="rotate(-45 7 46.25)"/>
+        <rect x="42" y="44.5" width="6" height="3.5" rx="1" fill="var(--blue)" transform="rotate(45 45 46.25)"/>
+      </svg>
+    </div>
+    <div class="card-label">Gear</div>
+  </div>
+
+  <!-- 54 -->
+  <div class="card">
+    <div class="card-number">54</div>
+    <div class="spinner-area">
+      <svg class="s54" viewBox="0 0 64 32" width="64" height="32">
+        <path class="s54-path" d="M0,16 C0,8 8,0 16,0 C24,0 24,16 32,16 C40,16 40,0 48,0 C56,0 64,8 64,16 C64,24 56,32 48,32 C40,32 40,16 32,16 C24,16 24,32 16,32 C8,32 0,24 0,16Z"/>
+      </svg>
+    </div>
+    <div class="card-label">Infinity Loop</div>
+  </div>
+
+  <!-- 55 -->
+  <div class="card">
+    <div class="card-number">55</div>
+    <div class="spinner-area" style="perspective:200px"><div class="s55"></div></div>
+    <div class="card-label">Mobius Strip</div>
+  </div>
+
+  <!-- 56 -->
+  <div class="card">
+    <div class="card-number">56</div>
+    <div class="spinner-area" style="perspective:200px">
+      <div class="s56">
+        <div class="s56-half s56-l"></div>
+        <div class="s56-half s56-r"></div>
+      </div>
+    </div>
+    <div class="card-label">Folding Square</div>
+  </div>
+
+  <!-- 57 -->
+  <div class="card">
+    <div class="card-number">57</div>
+    <div class="spinner-area">
+      <div class="s57">
+        <div class="s57-sq"></div><div class="s57-sq"></div><div class="s57-sq"></div>
+      </div>
+    </div>
+    <div class="card-label">Nested Squares</div>
+  </div>
+
+  <!-- 58 -->
+  <div class="card">
+    <div class="card-number">58</div>
+    <div class="spinner-area"><div class="s58"></div></div>
+    <div class="card-label">Circle to Triangle</div>
+  </div>
+
+  <!-- 59 -->
+  <div class="card">
+    <div class="card-number">59</div>
+    <div class="spinner-area">
+      <div class="s59">
+        <div class="s59-tri" style="animation-delay:0s"></div>
+        <div class="s59-tri" style="animation-delay:-0.5s;border-bottom-color:var(--purple)"></div>
+        <div class="s59-tri" style="animation-delay:-1s"></div>
+        <div class="s59-tri" style="animation-delay:-1.5s;border-bottom-color:var(--light-blue)"></div>
+        <div class="s59-tri" style="animation-delay:-2s"></div>
+        <div class="s59-tri" style="animation-delay:-2.5s;border-bottom-color:var(--purple)"></div>
+      </div>
+    </div>
+    <div class="card-label">Kaleidoscope</div>
+  </div>
+
+  <!-- 60 -->
+  <div class="card">
+    <div class="card-number">60</div>
+    <div class="spinner-area">
+      <svg class="s60" viewBox="0 0 56 56" width="56" height="56">
+        <circle class="s60-c" cx="28" cy="28" r="12"/>
+        <circle class="s60-c" cx="28" cy="16" r="12"/>
+        <circle class="s60-c" cx="28" cy="40" r="12"/>
+        <circle class="s60-c" cx="17.6" cy="22" r="12"/>
+        <circle class="s60-c" cx="38.4" cy="22" r="12"/>
+        <circle class="s60-c" cx="17.6" cy="34" r="12"/>
+        <circle class="s60-c" cx="38.4" cy="34" r="12"/>
+      </svg>
+    </div>
+    <div class="card-label">Flower of Life</div>
+  </div>
+
+  <!-- ================= LOGO-CENTRIC ================= -->
+  <div class="section-title" id="logo">Logo-Centric (61-80)</div>
+
+  <!-- 61 -->
+  <div class="card">
+    <div class="card-number">61</div>
+    <div class="spinner-area">
+      <div class="s61">
+        <div class="s61-orbit"></div>
+        <div class="s61-orbit"></div>
+        <div class="s61-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Orbit Rings</div>
+  </div>
+
+  <!-- 62 -->
+  <div class="card">
+    <div class="card-number">62</div>
+    <div class="spinner-area">
+      <div class="s62">
+        <div class="s62-ring"></div><div class="s62-ring"></div><div class="s62-ring"></div>
+        <div class="s62-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Ripple Pulse</div>
+  </div>
+
+  <!-- 63 -->
+  <div class="card">
+    <div class="card-number">63</div>
+    <div class="spinner-area">
+      <div class="s63">
+        <div class="s63-ring"></div>
+        <div class="s63-sweep"></div>
+        <div class="s63-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Radar Sweep</div>
+  </div>
+
+  <!-- 64 -->
+  <div class="card">
+    <div class="card-number">64</div>
+    <div class="spinner-area">
+      <div class="s64">
+        <div class="s64-p" style="top:0;left:50%;transform-origin:0 36px;animation-delay:0s"></div>
+        <div class="s64-p" style="top:50%;right:0;transform-origin:-36px 0;animation-delay:-0.75s"></div>
+        <div class="s64-p" style="bottom:0;left:50%;transform-origin:0 -36px;animation-delay:-1.5s"></div>
+        <div class="s64-p" style="top:50%;left:0;transform-origin:36px 0;animation-delay:-2.25s"></div>
+        <div class="s64-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Constellation</div>
+  </div>
+
+  <!-- 65 -->
+  <div class="card">
+    <div class="card-number">65</div>
+    <div class="spinner-area">
+      <div class="s65">
+        <div class="s65-blob"></div>
+        <div class="s65-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Blob Background</div>
+  </div>
+
+  <!-- 66 -->
+  <div class="card">
+    <div class="card-number">66</div>
+    <div class="spinner-area">
+      <div class="s66">
+        <div class="s66-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Heartbeat</div>
+  </div>
+
+  <!-- 67 -->
+  <div class="card">
+    <div class="card-number">67</div>
+    <div class="spinner-area">
+      <div class="s67" style="position:relative">
+        <div class="s67-ghost"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+        <div class="s67-ghost"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+        <div class="s67-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Glitch Effect</div>
+  </div>
+
+  <!-- 68 -->
+  <div class="card">
+    <div class="card-number">68</div>
+    <div class="spinner-area">
+      <div class="s68">
+        <svg class="s68-hex" viewBox="0 0 64 64" width="64" height="64">
+          <polygon points="32,2 60,18 60,46 32,62 4,46 4,18" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        </svg>
+        <div class="s68-icon"><svg class="nu-icon" width="28" height="32"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Hex Frame</div>
+  </div>
+
+  <!-- 69 -->
+  <div class="card">
+    <div class="card-number">69</div>
+    <div class="spinner-area">
+      <div class="s69">
+        <div class="s69-ring"></div><div class="s69-ring"></div><div class="s69-ring"></div><div class="s69-ring"></div>
+        <div class="s69-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Warp Portal</div>
+  </div>
+
+  <!-- 70 -->
+  <div class="card">
+    <div class="card-number">70</div>
+    <div class="spinner-area">
+      <div class="s70">
+        <div class="s70-arm">
+          <div class="s70-a" style="top:10%;left:50%"></div>
+          <div class="s70-a" style="top:20%;left:65%"></div>
+          <div class="s70-a" style="top:35%;left:75%"></div>
+          <div class="s70-a" style="top:55%;left:70%;background:var(--purple)"></div>
+        </div>
+        <div class="s70-arm" style="animation-direction:reverse;animation-duration:3s">
+          <div class="s70-a" style="top:80%;left:40%"></div>
+          <div class="s70-a" style="top:70%;left:25%"></div>
+          <div class="s70-a" style="top:55%;left:15%;background:var(--purple)"></div>
+          <div class="s70-a" style="top:35%;left:20%"></div>
+        </div>
+        <div class="s70-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Galaxy Spiral</div>
+  </div>
+
+  <!-- 71 -->
+  <div class="card">
+    <div class="card-number">71</div>
+    <div class="spinner-area">
+      <div class="s71">
+        <div class="s71-col" style="left:8px;animation-delay:0s">01</div>
+        <div class="s71-col" style="left:20px;animation-delay:0.3s">10</div>
+        <div class="s71-col" style="left:32px;animation-delay:0.6s">11</div>
+        <div class="s71-col" style="left:44px;animation-delay:0.9s">01</div>
+        <div class="s71-col" style="left:56px;animation-delay:1.2s">10</div>
+        <div class="s71-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Matrix Rain</div>
+  </div>
+
+  <!-- 72 -->
+  <div class="card">
+    <div class="card-number">72</div>
+    <div class="spinner-area">
+      <div class="s72">
+        <div class="s72-ring"></div>
+        <div class="s72-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Gradient Ring</div>
+  </div>
+
+  <!-- 73 -->
+  <div class="card">
+    <div class="card-number">73</div>
+    <div class="spinner-area">
+      <div class="s73-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+    </div>
+    <div class="card-label">Bounce Scale</div>
+  </div>
+
+  <!-- 74 -->
+  <div class="card">
+    <div class="card-number">74</div>
+    <div class="spinner-area">
+      <div class="s74">
+        <div class="s74-glow"></div><div class="s74-glow"></div>
+        <div class="s74-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Glow Rings</div>
+  </div>
+
+  <!-- 75 -->
+  <div class="card">
+    <div class="card-number">75</div>
+    <div class="spinner-area">
+      <div class="s75">
+        <div class="s75-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">3D Flip</div>
+  </div>
+
+  <!-- 76 -->
+  <div class="card">
+    <div class="card-number">76</div>
+    <div class="spinner-area">
+      <div class="s76">
+        <div class="s76-orbit"><div class="s76-dot"></div></div>
+        <div class="s76-icon"><svg class="nu-icon" width="28" height="32"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Dashed Orbit</div>
+  </div>
+
+  <!-- 77 -->
+  <div class="card">
+    <div class="card-number">77</div>
+    <div class="spinner-area">
+      <div class="s77">
+        <div class="s77-pie"></div>
+        <div class="s77-icon"><svg class="nu-icon" width="28" height="32"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Clock Sweep</div>
+  </div>
+
+  <!-- 78 -->
+  <div class="card">
+    <div class="card-number">78</div>
+    <div class="spinner-area">
+      <div class="s78">
+        <div class="s78-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Shatter</div>
+  </div>
+
+  <!-- 79 -->
+  <div class="card">
+    <div class="card-number">79</div>
+    <div class="spinner-area">
+      <div class="s79" style="position:relative">
+        <div class="s79-glow"></div>
+        <div class="s79-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Aurora Glow</div>
+  </div>
+
+  <!-- 80 -->
+  <div class="card">
+    <div class="card-number">80</div>
+    <div class="spinner-area">
+      <div class="s80">
+        <div class="s80-ping"></div><div class="s80-ping"></div><div class="s80-ping"></div>
+        <div class="s80-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Sonar Ping</div>
+  </div>
+
+  <!-- ================= CREATIVE & UNIQUE ================= -->
+  <div class="section-title" id="creative">Creative &amp; Unique (81-100)</div>
+
+  <!-- 81 -->
+  <div class="card">
+    <div class="card-number">81</div>
+    <div class="spinner-area">
+      <svg class="s81" viewBox="0 0 48 48" width="48" height="48">
+        <polygon points="14,4 34,4 40,22 24,36 8,22" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <polygon points="14,44 34,44 40,26 24,12 8,26" fill="none" stroke="var(--purple)" stroke-width="2"/>
+        <line x1="14" y1="4" x2="14" y2="44" stroke="var(--light-blue)" stroke-width="1" opacity="0.3"/>
+        <line x1="34" y1="4" x2="34" y2="44" stroke="var(--light-blue)" stroke-width="1" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="card-label">Hourglass</div>
+  </div>
+
+  <!-- 82 -->
+  <div class="card">
+    <div class="card-number">82</div>
+    <div class="spinner-area">
+      <div class="s82">
+        <div class="s82-face"></div>
+        <div class="s82-h"></div>
+        <div class="s82-m"></div>
+        <div class="s82-dot"></div>
+      </div>
+    </div>
+    <div class="card-label">Clock</div>
+  </div>
+
+  <!-- 83 -->
+  <div class="card">
+    <div class="card-number">83</div>
+    <div class="spinner-area">
+      <div class="s83">
+        <div class="s83-pac"></div>
+        <div class="s83-dots">
+          <div class="s83-dd"></div><div class="s83-dd"></div><div class="s83-dd"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-label">Pac-Man</div>
+  </div>
+
+  <!-- 84 -->
+  <div class="card">
+    <div class="card-number">84</div>
+    <div class="spinner-area">
+      <svg class="s84" viewBox="0 0 44 44" width="44" height="44">
+        <circle cx="22" cy="22" r="20" fill="var(--blue)"/>
+        <path d="M22,2 A20,20 0 0,1 22,42 A10,10 0 0,0 22,22 A10,10 0 0,1 22,2Z" fill="var(--purple)"/>
+        <circle cx="22" cy="12" r="4" fill="var(--purple)"/>
+        <circle cx="22" cy="32" r="4" fill="var(--blue)"/>
+      </svg>
+    </div>
+    <div class="card-label">Yin-Yang</div>
+  </div>
+
+  <!-- 85 -->
+  <div class="card">
+    <div class="card-number">85</div>
+    <div class="spinner-area">
+      <div class="s85">
+        <div class="s85-orbit-ring" style="inset:12px;animation:s85-orbit 3s linear infinite">
+          <div class="s85-planet" style="width:6px;height:6px;background:var(--light-blue);top:-3px;left:50%;margin-left:-3px;position:absolute;transform-origin:3px calc(50% + 3px);animation:s85-orbit 3s linear infinite"></div>
+        </div>
+        <div class="s85-orbit-ring" style="inset:4px">
+          <div class="s85-planet" style="width:8px;height:8px;background:var(--purple);top:-4px;left:50%;margin-left:-4px;position:absolute;transform-origin:4px calc(50% + 4px);animation:s85-orbit 5s linear infinite"></div>
+        </div>
+        <div class="s85-icon"><svg class="nu-icon" width="24" height="27"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">Solar System</div>
+  </div>
+
+  <!-- 86 -->
+  <div class="card">
+    <div class="card-number">86</div>
+    <div class="spinner-area">
+      <div class="s86">
+        <div class="s86-bg">
+          <div class="s86-cross-h"></div>
+          <div class="s86-cross-v"></div>
+          <div class="s86-sweep"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-label">Radar</div>
+  </div>
+
+  <!-- 87 -->
+  <div class="card">
+    <div class="card-number">87</div>
+    <div class="spinner-area">
+      <div class="s87">
+        <div class="s87-d"></div><div class="s87-d"></div><div class="s87-d"></div>
+      </div>
+    </div>
+    <div class="card-label">Typing Dots</div>
+  </div>
+
+  <!-- 88 -->
+  <div class="card">
+    <div class="card-number">88</div>
+    <div class="spinner-area">
+      <div class="s88">NU</div>
+    </div>
+    <div class="card-label">Neon Flicker</div>
+  </div>
+
+  <!-- 89 -->
+  <div class="card">
+    <div class="card-number">89</div>
+    <div class="spinner-area">
+      <div class="s89">
+        <div class="s89-ring"></div><div class="s89-ring"></div><div class="s89-ring"></div><div class="s89-ring"></div>
+      </div>
+    </div>
+    <div class="card-label">Water Ripple</div>
+  </div>
+
+  <!-- 90 -->
+  <div class="card">
+    <div class="card-number">90</div>
+    <div class="spinner-area"><div class="s90"></div></div>
+    <div class="card-label">Breathing</div>
+  </div>
+
+  <!-- 91 -->
+  <div class="card">
+    <div class="card-number">91</div>
+    <div class="spinner-area" style="perspective:200px"><div class="s91"></div></div>
+    <div class="card-label">Rotating Coin</div>
+  </div>
+
+  <!-- 92 -->
+  <div class="card">
+    <div class="card-number">92</div>
+    <div class="spinner-area">
+      <svg class="s92" viewBox="0 0 56 56" width="56" height="56">
+        <path d="M28,28 m0,-4 a4,4 0 1,1 0,8 a8,8 0 1,0 0,-16 a12,12 0 1,1 0,24 a16,16 0 1,0 0,-32 a20,20 0 1,1 0,40 a24,24 0 1,0 0,-48" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="card-label">Hypnotic Spiral</div>
+  </div>
+
+  <!-- 93 -->
+  <div class="card">
+    <div class="card-number">93</div>
+    <div class="spinner-area">
+      <div class="s93">
+        <div class="s93-ball"></div>
+        <div class="s93-shadow"></div>
+      </div>
+    </div>
+    <div class="card-label">Bouncing Ball</div>
+  </div>
+
+  <!-- 94 -->
+  <div class="card">
+    <div class="card-number">94</div>
+    <div class="spinner-area">
+      <div class="s94">
+        <div class="s94-arm"><div class="s94-bob"></div></div>
+        <div class="s94-base"></div>
+      </div>
+    </div>
+    <div class="card-label">Metronome</div>
+  </div>
+
+  <!-- 95 -->
+  <div class="card">
+    <div class="card-number">95</div>
+    <div class="spinner-area">
+      <div class="s95">
+        <div class="s95-blade" style="transform:rotate(0deg)"></div>
+        <div class="s95-blade" style="transform:rotate(72deg);background:var(--light-blue)"></div>
+        <div class="s95-blade" style="transform:rotate(144deg)"></div>
+        <div class="s95-blade" style="transform:rotate(216deg);background:var(--light-blue)"></div>
+        <div class="s95-blade" style="transform:rotate(288deg)"></div>
+        <div class="s95-center"></div>
+      </div>
+    </div>
+    <div class="card-label">Fan Blades</div>
+  </div>
+
+  <!-- 96 -->
+  <div class="card">
+    <div class="card-number">96</div>
+    <div class="spinner-area">
+      <div class="s96"><div class="s96-dot"></div></div>
+    </div>
+    <div class="card-label">Rolling Circle</div>
+  </div>
+
+  <!-- 97 -->
+  <div class="card">
+    <div class="card-number">97</div>
+    <div class="spinner-area">
+      <svg class="s97" viewBox="0 0 80 40" width="80" height="40">
+        <path class="s97-path" d="M0,20 Q10,0 20,20 Q30,40 40,20 Q50,0 60,20 Q70,40 80,20"/>
+      </svg>
+    </div>
+    <div class="card-label">Sine Wave</div>
+  </div>
+
+  <!-- 98 -->
+  <div class="card">
+    <div class="card-number">98</div>
+    <div class="spinner-area"><div class="s98"></div></div>
+    <div class="card-label">Glowing Orb</div>
+  </div>
+
+  <!-- 99 -->
+  <div class="card">
+    <div class="card-number">99</div>
+    <div class="spinner-area">
+      <div class="s99">
+        <div class="s99-orbit" style="transform:rotateX(70deg) rotateY(20deg)"><div class="s99-e"></div></div>
+        <div class="s99-orbit" style="transform:rotateX(70deg) rotateY(80deg)"><div class="s99-e" style="animation-duration:1.6s;background:var(--purple)"></div></div>
+        <div class="s99-orbit" style="transform:rotateX(70deg) rotateY(140deg)"><div class="s99-e" style="animation-duration:0.9s"></div></div>
+        <div class="s99-nucleus"><svg class="nu-icon" width="20" height="22"><use href="#nu-logo"/></svg></div>
+      </div>
+    </div>
+    <div class="card-label">3D Atom</div>
+  </div>
+
+  <!-- 100 -->
+  <div class="card" style="grid-column: span 2; min-height: 240px;">
+    <div class="card-number" style="width:32px;height:32px;font-size:13px;border-radius:8px">100</div>
+    <div class="spinner-area" style="width:160px;height:160px">
+      <div class="s100">
+        <div class="s100-glow"></div>
+        <div class="s100-ring"></div>
+        <div class="s100-ring"></div>
+        <div class="s100-ring"></div>
+        <div class="s100-particles">
+          <div class="s100-p" style="top:5%;left:20%"></div>
+          <div class="s100-p" style="top:15%;left:78%;animation-delay:0.3s"></div>
+          <div class="s100-p" style="top:70%;left:85%;animation-delay:0.6s"></div>
+          <div class="s100-p" style="top:80%;left:15%;animation-delay:0.9s"></div>
+          <div class="s100-p" style="top:30%;left:10%;animation-delay:1.2s"></div>
+          <div class="s100-p" style="top:60%;left:90%;animation-delay:1.5s"></div>
+        </div>
+        <div class="s100-icon"><svg class="nu-icon" width="36" height="40"><use href="#nu-logo"/></svg></div>
+        <div class="s100-text">NU-AURA</div>
+      </div>
+    </div>
+    <div class="card-label">Grand Finale</div>
+  </div>
+
+</div>
+
+</body>
+</html>
