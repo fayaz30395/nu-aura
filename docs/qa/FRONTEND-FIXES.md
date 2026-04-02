@@ -277,6 +277,16 @@ Live browser testing with SUPER ADMIN logged in, real database data loaded.
 | `/admin/employees` | ⚠️ BACKEND | `GET /users 500` — same backend API error |
 | `/admin/workflows` | ✅ PASS | Loads correctly |
 
+| `/leave/calendar` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/payroll/salary-structures` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/benefits` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/surveys` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/wellness` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/admin` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/admin/roles` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/admin/implicit-roles` | ✅ PASS | Session-2 sweep — loads correctly |
+| `/departments` | ✅ PASS | Session-2 sweep — confirmed clean after FIX-F-009 |
+
 ### Known Pre-Existing Issues (Not Introduced By Our Fixes)
 - **`GET /users 500` on admin permission/employee pages**: Backend `/api/v1/users` endpoint returning 500. Frontend handles this gracefully — pages render with error states, no crash. Backend issue outside frontend scope.
 
@@ -302,3 +312,4 @@ The NU-AURA frontend codebase is **production-ready** with eight bugs fixed:
 - **FIX-F-006**: HolidayCarousel `/me/dashboard` crash fixed (`apiData.map is not a function` — added `Array.isArray` guard)
 - **FIX-F-007**: Mantine SSR hydration mismatch fixed (`defaultColorScheme="auto"` → `"dark"` in layout.tsx + DarkModeProvider initial state)
 - **FIX-F-008**: `/admin/system` invalid HTML nesting fixed (`<Skeleton>` extracted out of `<Text>`/`<p>` in 4 stat cards)
+- **FIX-F-009**: AuthGuard SSR hydration mismatch fixed — removed `useIsomorphicLayoutEffect` optimistic check, reverted to `useState<boolean | null>(null)` so server and client both render `NuAuraLoader` on initial render; `useEffect` runs post-hydration to set authorization state; also removed unused `useLayoutEffect` import (2026-04-02)

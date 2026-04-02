@@ -58,15 +58,10 @@ export function AuthGuard({
   // Note: Middleware handles the primary 401 → login redirect via cookie inspection
   const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
-  // Optimistic initialization: if the user is already authenticated and stores are
-  // hydrated, start as `true` instead of `null`. This prevents the full-screen
-  // loader from flashing on every navigation (AppLayout remounts per page).
-  // The useEffect below still runs asynchronously and will set `false` if the
-  // route requires permissions the user doesn't hold.
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(() => {
-    if (hasHydrated && isReady && isAuthenticated) return true;
-    return null;
-  });
+  // Always start as null (matches SSR render → NuAuraLoader) to prevent hydration mismatch.
+  // Both server and client render NuAuraLoader initially; the useEffect below sets the
+  // correct authorization state after React has hydrated, avoiding any SSR mismatch.
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const restoreAttemptedRef = useRef(false);
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

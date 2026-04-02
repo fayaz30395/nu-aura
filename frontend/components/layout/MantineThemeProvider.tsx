@@ -16,6 +16,13 @@ export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
   const { resolvedTheme } = useDarkMode();
 
   return (
+    // suppressHydrationWarning isolates Mantine's CSS-variable <style> injection from
+    // React's hydration diff. MantineProvider renders a <style dangerouslySetInnerHTML>
+    // whose content depends on the resolved colour scheme; on the very first render the
+    // server and client may disagree by one frame (DarkModeProvider reads localStorage
+    // only in useEffect), so we suppress the warning here rather than force a full
+    // rehydration. The visual result is always correct because DarkModeProvider defaults
+    // to 'dark' matching ColorSchemeScript defaultColorScheme="dark" in layout.tsx.
     <div suppressHydrationWarning>
       <MantineProvider
         theme={theme}
