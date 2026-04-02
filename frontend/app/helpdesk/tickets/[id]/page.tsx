@@ -300,7 +300,7 @@ export default function TicketDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Description */}
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Description</h3>
+              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Description</h3>
               <div className="text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
                 {ticket.description}
               </div>
@@ -319,7 +319,7 @@ export default function TicketDetailPage() {
             {/* Escalations */}
             {escalations.length > 0 && (
               <Card className="p-6 border-warning-200 dark:border-warning-800 bg-warning-50/50 dark:bg-warning-950/10">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle className="h-4 w-4 text-warning-600" />
                   <h3 className="text-sm font-semibold text-warning-800 dark:text-warning-300">
                     Escalations ({escalations.length})
@@ -518,7 +518,7 @@ export default function TicketDetailPage() {
             {/* Resolution Notes */}
             {ticket.resolutionNotes && (
               <Card className="p-6">
-                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Resolution Notes</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Resolution Notes</h3>
                 <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{ticket.resolutionNotes}</p>
               </Card>
             )}

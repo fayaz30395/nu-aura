@@ -381,7 +381,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
 
   return (
     <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
-      <p className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-1.5">
+      <p className="text-xs font-semibold text-[var(--text-secondary)] mb-4 flex items-center gap-1.5">
         <TrendingUp size={13} className="text-accent-500" />
         Hiring Funnel
       </p>
@@ -865,7 +865,7 @@ export default function ApplicantPipelinePage() {
         ) : pipelineLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={32} className="animate-spin text-accent-500" />
-            <span className="ml-3 text-[var(--text-muted)]">
+            <span className="ml-4 text-[var(--text-muted)]">
               Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
             </span>
           </div>
@@ -910,7 +910,7 @@ export default function ApplicantPipelinePage() {
                   placeholder="Search by candidate name..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
+                  className="w-full pl-9 pr-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
                 />
                 {searchQuery && (
                   <button

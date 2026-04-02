@@ -403,7 +403,7 @@ export default function OvertimePage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+                  className={`pb-4 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.key
                       ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
@@ -449,7 +449,7 @@ export default function OvertimePage() {
           <div className="max-w-2xl">
             {submitSuccess ? (
               <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
+                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                   Overtime Request Submitted!
                 </h3>

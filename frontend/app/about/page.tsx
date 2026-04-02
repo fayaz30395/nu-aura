@@ -121,7 +121,7 @@ export default function AboutPage() {
                   <Target className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
+                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
                     Our Mission
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
@@ -137,7 +137,7 @@ export default function AboutPage() {
                   <Zap className="h-6 w-6 text-info-600 dark:text-info-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
+                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
                     Our Vision
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
@@ -240,7 +240,7 @@ export default function AboutPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-3" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4" />
                 <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>

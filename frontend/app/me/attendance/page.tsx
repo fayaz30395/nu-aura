@@ -580,7 +580,7 @@ export default function MyAttendancePage() {
                   )}
 
                   {/* Sessions */}
-                  <div className="pt-3 border-t border-[var(--border-main)]">
+                  <div className="pt-4 border-t border-[var(--border-main)]">
                     <div className="row-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
                       {selectedDateTimeEntries.length > 0 && (

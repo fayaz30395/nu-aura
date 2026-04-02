@@ -235,7 +235,7 @@ export default function FeedbackPage() {
               <div key={feedback.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
-                    <div className="flex gap-2 mb-3 flex-wrap">
+                    <div className="flex gap-2 mb-4 flex-wrap">
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(feedback.feedbackType)}>
                         {feedback.feedbackType}
                       </span>

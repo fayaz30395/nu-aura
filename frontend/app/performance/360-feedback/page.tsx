@@ -364,7 +364,7 @@ export default function Feedback360Page() {
                   key={cycle.id}
                   className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] p-6"
                 >
-                  <div className="flex justify-between items-start mb-3">
+                  <div className="flex justify-between items-start mb-4">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
@@ -375,7 +375,7 @@ export default function Feedback360Page() {
                     </span>
                   </div>
                   {cycle.description && (
-                    <p className="text-body-muted mb-3 line-clamp-2">
+                    <p className="text-body-muted mb-4 line-clamp-2">
                       {cycle.description}
                     </p>
                   )}
@@ -413,7 +413,7 @@ export default function Feedback360Page() {
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-3 border-t border-[var(--border-subtle)]">
+                  <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)]">
                     {cycle.status === 'DRAFT' && (
                       <>
                         <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>

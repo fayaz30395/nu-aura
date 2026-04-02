@@ -340,7 +340,7 @@ export default function SecurityPage() {
               },
             ].map((stat, index) => (
               <Card key={index} padding="lg" className="text-center">
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-3" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4" />
                 <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
                   {stat.value}
                 </div>

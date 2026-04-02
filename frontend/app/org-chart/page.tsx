@@ -239,7 +239,7 @@ export default function OrgChartPage() {
     <AppLayout activeMenuItem="org-chart">
       <div className="max-w-[1400px] mx-auto">
         {/* ── Header ─────────────────────────────────────────────── */}
-        <div className="mb-5">
+        <div className="mb-6">
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Organization Chart
           </h1>
@@ -249,7 +249,7 @@ export default function OrgChartPage() {
         </div>
 
         {/* ── Stats Bar ──────────────────────────────────────────── */}
-        <div className="skeuo-card mb-5 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[var(--border-subtle)]">
+        <div className="skeuo-card mb-6 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[var(--border-subtle)]">
           <StatItem
             icon={<Users className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400" />}
             label="Total Employees"
@@ -273,7 +273,7 @@ export default function OrgChartPage() {
         </div>
 
         {/* ── Filters ────────────────────────────────────────────── */}
-        <div className="skeuo-card p-4 mb-5">
+        <div className="skeuo-card p-4 mb-6">
           <OrgChartFilters
             viewMode={viewMode}
             onViewModeChange={setViewMode}
@@ -318,7 +318,7 @@ export default function OrgChartPage() {
             <div className="flex items-center justify-center h-64">
               <div className="text-center text-[var(--text-secondary)]">
                 <Users className="mx-auto h-12 w-12 text-surface-300 dark:text-surface-600" />
-                <p className="mt-3 text-lg font-medium">No employees found</p>
+                <p className="mt-4 text-lg font-medium">No employees found</p>
                 <p className="text-sm mt-1">
                   {selectedDepartment ? 'Try clearing the department filter' : 'Add employees to see the org chart'}
                 </p>

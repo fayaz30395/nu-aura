@@ -402,7 +402,7 @@ export default function ExecutiveDashboardPage() {
                       <span className="text-body-secondary">Terminations (Month)</span>
                       <span className="text-lg font-bold text-danger-600">{data.workforceSummary.terminationsThisMonth}</span>
                     </div>
-                    <div className="row-between pt-3 border-t border-[var(--border-main)]">
+                    <div className="row-between pt-4 border-t border-[var(--border-main)]">
                       <span className="text-sm font-medium text-[var(--text-secondary)]">Retention Rate</span>
                       <span className="text-xl font-bold text-accent-700">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
                     </div>

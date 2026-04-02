@@ -337,7 +337,7 @@ export default function LeaveTypesManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div
-                          className="h-8 w-8 rounded-full mr-3"
+                          className="h-8 w-8 rounded-full mr-4"
                           style={{ backgroundColor: leaveType.colorCode || '#3B82F6' }}
                         />
                         <div>
@@ -378,13 +378,13 @@ export default function LeaveTypesManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleEdit(leaveType)}
-                        className="text-accent-700 hover:text-accent-900 mr-3"
+                        className="text-accent-700 hover:text-accent-900 mr-4"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleToggleActive(leaveType)}
-                        className="text-warning-600 hover:text-warning-900 mr-3"
+                        className="text-warning-600 hover:text-warning-900 mr-4"
                       >
                         {leaveType.isActive ? 'Deactivate' : 'Activate'}
                       </button>

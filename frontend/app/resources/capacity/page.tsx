@@ -321,7 +321,7 @@ export default function CapacityTimelinePage() {
         ) : (
           <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-6">
             {/* Legend */}
-            <div className="flex items-center gap-4 mb-4 pb-3 border-b border-[var(--border-main)] text-caption">
+            <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)] text-caption">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>
               <span className="flex items-center gap-1">
                 <span className="inline-block w-3 h-3 rounded-md bg-success-500" /> ≤80% optimal
@@ -343,7 +343,7 @@ export default function CapacityTimelinePage() {
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[var(--border-main)] text-caption">
+            <div className="mt-4 pt-4 border-t border-[var(--border-main)] text-caption">
               Allocations reflect current active project assignments. Data from Resource Management API.
             </div>
           </div>

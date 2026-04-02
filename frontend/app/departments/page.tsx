@@ -475,7 +475,7 @@ export default function DepartmentsPage() {
         {/* Add/Edit Department Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-elevated)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
@@ -653,7 +653,7 @@ export default function DepartmentsPage() {
                             onChange={(e) => onChange(e.target.checked)}
                             className="h-5 w-5 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
-                          <span className="ml-3 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
+                          <span className="ml-4 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
                         </label>
                       )}
                     />

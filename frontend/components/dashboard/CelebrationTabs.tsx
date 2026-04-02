@@ -86,7 +86,7 @@ export function CelebrationTabs() {
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mr-3 rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className="mr-4 rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Toggle celebration expansion"
         >
           <ChevronDown size={16} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />

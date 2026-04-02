@@ -354,7 +354,7 @@ export default function WellnessPage() {
                             <p className="text-body-secondary mt-1 line-clamp-2">
                               {program.description || 'Join this wellness program'}
                             </p>
-                            <div className="flex items-center gap-4 mt-3 text-caption">
+                            <div className="flex items-center gap-4 mt-4 text-caption">
                               {program.pointsReward && (
                                 <span className="flex items-center gap-1">
                                   <Trophy className="h-3 w-3" />

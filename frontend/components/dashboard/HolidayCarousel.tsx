@@ -190,7 +190,7 @@ export function HolidayCarousel({
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
-                idx === currentIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/40'
+                idx === currentIndex ? 'w-4 bg-[var(--bg-card)]' : 'w-1.5 bg-white/40'
               }`}
               aria-label={`Holiday ${idx + 1}`}
             />

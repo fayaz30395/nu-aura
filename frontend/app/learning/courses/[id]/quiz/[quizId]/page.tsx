@@ -204,7 +204,7 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
+          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4" />
           <p className="text-[var(--text-muted)]">Loading quiz...</p>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function QuizPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Course
           </Link>
           <div className="bg-danger-50 border border-danger-200 rounded-lg p-6 text-center">
-            <AlertCircle className="h-12 w-12 text-danger-600 mx-auto mb-3" />
+            <AlertCircle className="h-12 w-12 text-danger-600 mx-auto mb-4" />
             <p className="text-danger-600 font-medium">{error || 'Quiz not found'}</p>
           </div>
         </div>
@@ -285,7 +285,7 @@ export default function QuizPage() {
               </div>
 
               <div className="bg-[var(--bg-surface)] rounded-lg p-4 border border-[var(--border-main)]">
-                <h3 className="font-semibold text-[var(--text-primary)] mb-3">Instructions:</h3>
+                <h3 className="font-semibold text-[var(--text-primary)] mb-4">Instructions:</h3>
                 <ul className="space-y-2 text-sm text-[var(--text-primary)]">
                   <li className="flex gap-2">
                     <span className="text-accent-600 font-bold">•</span>
@@ -470,7 +470,7 @@ export default function QuizPage() {
 
             {/* Question navigator */}
             <div className="skeuo-card p-6 mb-6">
-              <h4 className="font-semibold text-[var(--text-primary)] mb-3">Questions ({questionsAnswered}/{quiz.questions.length} answered)</h4>
+              <h4 className="font-semibold text-[var(--text-primary)] mb-4">Questions ({questionsAnswered}/{quiz.questions.length} answered)</h4>
               <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2">
                 {quiz.questions.map((q, idx) => {
                   const qAnswered = answers.has(q.id) && answers.get(q.id) !== '';

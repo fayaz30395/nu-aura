@@ -66,7 +66,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
   if (attachments.length === 0) {
     return (
       <div className={cn('text-center py-8', className)}>
-        <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-3">
+        <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-4">
           <File className="h-6 w-6 text-[var(--text-muted)]" />
         </div>
         <p className="text-body-muted">No files uploaded yet</p>

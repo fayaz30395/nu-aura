@@ -39,7 +39,7 @@ export default function CareersLayout({
               className="h-8 w-auto object-contain hidden dark:block"
               priority
             />
-            <span className="text-sm font-medium text-[var(--text-muted)] border-l border-[var(--border-main)] pl-3">
+            <span className="text-sm font-medium text-[var(--text-muted)] border-l border-[var(--border-main)] pl-4">
               Careers
             </span>
           </Link>

@@ -239,7 +239,7 @@ export default function CourseCatalogPage() {
         {/* Course grid */}
         {loading && courses.length === 0 ? (
           <div className="flex items-center justify-center py-20 text-[var(--text-muted)]">
-            <Loader2 className="h-8 w-8 animate-spin mr-3" />
+            <Loader2 className="h-8 w-8 animate-spin mr-4" />
             <span>Loading catalog…</span>
           </div>
         ) : visibleCourses.length === 0 ? (
@@ -301,14 +301,14 @@ export default function CourseCatalogPage() {
 
                     {/* Description */}
                     {course.shortDescription && (
-                      <p className="text-caption line-clamp-2 mb-3">
+                      <p className="text-caption line-clamp-2 mb-4">
                         {course.shortDescription}
                       </p>
                     )}
 
                     {/* Skills */}
                     {course.skillsCovered && course.skillsCovered.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
+                      <div className="flex flex-wrap gap-1 mb-4">
                         {course.skillsCovered.slice(0, 3).map((skill) => (
                           <span
                             key={skill}

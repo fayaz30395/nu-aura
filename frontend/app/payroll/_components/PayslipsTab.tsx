@@ -120,7 +120,7 @@ export function PayslipsTab({
                   <span className="text-[var(--text-secondary)]">Deductions</span>
                   <span className="text-danger-600 font-medium">{formatCurrency(payslip.deductions)}</span>
                 </div>
-                <div className="border-t pt-3 flex justify-between text-sm font-semibold">
+                <div className="border-t pt-4 flex justify-between text-sm font-semibold">
                   <span className="text-[var(--text-primary)]">Net Amount</span>
                   <span className="text-accent-700 dark:text-accent-400">{formatCurrency(payslip.netAmount)}</span>
                 </div>

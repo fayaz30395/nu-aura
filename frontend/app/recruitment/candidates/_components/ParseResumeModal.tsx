@@ -139,7 +139,7 @@ export function ParseResumeModal({
 
               {/* File Upload */}
               {inputMethod === 'file' && (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div
                     role="button"
                     tabIndex={0}
@@ -148,7 +148,7 @@ export function ParseResumeModal({
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-                    className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors ${
+                    className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-4 cursor-pointer transition-colors ${
                       dragOver
                         ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
                         : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-[var(--bg-secondary)]'
@@ -285,7 +285,7 @@ export function ParseResumeModal({
           ) : (
             /* ==================== Confirmation View ==================== */
             <div className="space-y-4">
-              <div className="flex items-center gap-2 p-3 bg-success-50 dark:bg-success-900/20 rounded-lg">
+              <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
                 <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0" />
                 <p className="text-sm text-success-700 dark:text-success-300">
                   Resume parsed successfully. Review the extracted data below before applying.
@@ -294,11 +294,11 @@ export function ParseResumeModal({
 
               <div className="border border-[var(--border-main)] rounded-xl overflow-hidden divide-y divide-[var(--border-main)]">
                 {/* Basic Info */}
-                <div className="p-4 space-y-3 bg-[var(--bg-secondary)]">
+                <div className="p-4 space-y-4 bg-[var(--bg-secondary)]">
                   <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                     Personal Information
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     {[
                       { label: 'Full Name', value: parsedResume.fullName },
                       { label: 'Email', value: parsedResume.email },
@@ -348,12 +348,12 @@ export function ParseResumeModal({
                 {/* Experience */}
                 {parsedResume.experience && parsedResume.experience.length > 0 && (
                   <div className="p-4">
-                    <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                    <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
                       Work Experience
                     </p>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {parsedResume.experience.map((exp, idx) => (
-                        <div key={idx} className="pl-3 border-l-2 border-accent-300 dark:border-accent-700">
+                        <div key={idx} className="pl-4 border-l-2 border-accent-300 dark:border-accent-700">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{exp.designation}</p>
                           <p className="text-caption">
                             {exp.company}
@@ -371,12 +371,12 @@ export function ParseResumeModal({
                 {/* Education */}
                 {parsedResume.education && parsedResume.education.length > 0 && (
                   <div className="p-4">
-                    <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                    <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-4">
                       Education
                     </p>
                     <div className="space-y-2">
                       {parsedResume.education.map((edu, idx) => (
-                        <div key={idx} className="pl-3 border-l-2 border-info-300 dark:border-info-700">
+                        <div key={idx} className="pl-4 border-l-2 border-info-300 dark:border-info-700">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{edu.degree}</p>
                           <p className="text-caption">
                             {edu.institution}

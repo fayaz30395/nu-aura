@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Info, Send } from 'lucide-react';
+import { Info, Send, Check } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormHandleSubmit } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -89,7 +89,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
           >
-            <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl pointer-events-auto flex flex-col border-0">
+            <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
                 <div className="row-between mb-6">
@@ -120,9 +120,9 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         animate={step.active ? { scale: [1, 1.08, 1] } : {}}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       >
-                        {step.completed ? '✓' : step.step}
+                        {step.completed ? <Check className="h-3.5 w-3.5" /> : step.step}
                       </motion.div>
-                      <div className="hidden sm:block ml-3">
+                      <div className="hidden sm:block ml-4">
                         <p
                           className={`text-xs font-semibold ${
                             step.active
@@ -166,7 +166,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         className="space-y-4"
                       >
                         <div>
-                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Which date do you want to regularize? <span className="text-danger-500">*</span>
                           </label>
                           <input
@@ -200,7 +200,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                       >
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                               Check In Time
                             </label>
                             <input
@@ -219,7 +219,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                               Check Out Time
                             </label>
                             <input
@@ -277,7 +277,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         </Card>
 
                         <div>
-                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Why do you need this regularization? <span className="text-danger-500">*</span>
                           </label>
                           <textarea
@@ -312,7 +312,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
 
                         {/* Quick Templates */}
                         <div>
-                          <label className="block text-xs font-semibold text-[var(--text-muted)] mb-3 uppercase tracking-wide">
+                          <label className="block text-xs font-semibold text-[var(--text-muted)] mb-4 uppercase tracking-wide">
                             Quick Templates
                           </label>
                           <div className="flex flex-wrap gap-2">

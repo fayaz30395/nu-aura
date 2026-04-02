@@ -1381,3 +1381,20 @@
 .fluence-editor-content .ProseMirror mark {
   @apply rounded px-0.5;
 }
+
+/* ── Reduced Motion ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce,
+  .skeleton-shimmer::after,
+  .skeleton-aura {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .card-lift,
+  .card-lift:hover {
+    transform: none !important;
+  }
+}

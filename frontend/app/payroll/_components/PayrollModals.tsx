@@ -367,7 +367,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                 </div>
                 <div className="space-y-4">
                   {allowanceFields.map((field, idx) => (
-                    <div key={field.id} className="flex gap-4 pb-3 border-b">
+                    <div key={field.id} className="flex gap-4 pb-4 border-b">
                       <div className="flex-1">
                         <input
                           type="text"
@@ -411,7 +411,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                 </div>
                 <div className="space-y-4">
                   {deductionFields.map((field, idx) => (
-                    <div key={field.id} className="flex gap-4 pb-3 border-b">
+                    <div key={field.id} className="flex gap-4 pb-4 border-b">
                       <div className="flex-1">
                         <input
                           type="text"

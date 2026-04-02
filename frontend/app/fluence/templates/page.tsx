@@ -192,7 +192,7 @@ export default function TemplatesPage() {
               >
                 <Card className={`${dsCard.interactive} h-full flex flex-col group`}>
                   <CardHeader>
-                    <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex items-start justify-between gap-2 mb-4">
                       <div className="w-10 h-10 rounded-lg bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--accent-200)] dark:group-hover:bg-[var(--accent-900)]/40 transition-colors duration-150">
                         {template.icon ? (
                           <span className="text-xl">{template.icon}</span>

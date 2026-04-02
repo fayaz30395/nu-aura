@@ -213,7 +213,7 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
             </div>
 
             <div className="border-t border-[var(--border-subtle)] pt-4">
-              <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">Cost to Address</h4>
+              <h4 className="text-sm font-medium text-[var(--text-primary)] mb-4">Cost to Address</h4>
               <div className="flex justify-between text-sm">
                 <span className="text-[var(--text-secondary)]">Training Investment</span>
                 <span className="font-medium text-[var(--text-primary)]">{formatCurrency(summary.totalTrainingCostNeeded)}</span>
@@ -226,7 +226,7 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
 
             {/* Top Gaps */}
             <div className="border-t border-[var(--border-subtle)] pt-4">
-              <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">Critical Skill Gaps</h4>
+              <h4 className="text-sm font-medium text-[var(--text-primary)] mb-4">Critical Skill Gaps</h4>
               <div className="space-y-2">
                 {(summary.topGaps || []).slice(0, 5).map((gap) => (
                   <div key={gap.id} className="row-between p-2 rounded-lg bg-[var(--bg-surface)]">

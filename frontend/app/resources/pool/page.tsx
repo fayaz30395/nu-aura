@@ -255,7 +255,7 @@ export default function ResourcePoolPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-14 h-14 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-3">
+            <div className="w-14 h-14 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
               <Users size={24} className="text-[var(--text-muted)]" />
             </div>
             <p className="text-[var(--text-secondary)] font-medium">No employees found</p>

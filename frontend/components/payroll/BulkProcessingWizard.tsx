@@ -448,7 +448,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
                 {/* Summary */}
                 <div className="mt-6 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3">
+                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
                     Summary
                   </h3>
                   <div className="space-y-2 text-sm">

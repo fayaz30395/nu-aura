@@ -82,7 +82,7 @@ export function ScreeningSummaryModal({
             <div className="space-y-4">
               {screeningSummary.strengths && screeningSummary.strengths.length > 0 && (
                 <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800">
-                  <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-3 flex items-center gap-2">
+                  <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-4 flex items-center gap-2">
                     <CheckCircle className="h-4 w-4" />
                     Strengths
                   </p>
@@ -99,7 +99,7 @@ export function ScreeningSummaryModal({
 
               {screeningSummary.followUpQuestions && screeningSummary.followUpQuestions.length > 0 && (
                 <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-xl border border-accent-200 dark:border-accent-800">
-                  <p className="text-sm font-medium text-accent-800 dark:text-accent-300 mb-3 flex items-center gap-2">
+                  <p className="text-sm font-medium text-accent-800 dark:text-accent-300 mb-4 flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
                     Follow-up Questions
                   </p>
@@ -119,7 +119,7 @@ export function ScreeningSummaryModal({
             <div className="space-y-4">
               {screeningSummary.gaps && screeningSummary.gaps.length > 0 && (
                 <div className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl border border-warning-200 dark:border-warning-800">
-                  <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-3 flex items-center gap-2">
+                  <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-4 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
                     Gaps
                   </p>
@@ -136,7 +136,7 @@ export function ScreeningSummaryModal({
 
               {screeningSummary.riskFlags && screeningSummary.riskFlags.length > 0 && (
                 <div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-xl border border-danger-200 dark:border-danger-800">
-                  <p className="text-sm font-medium text-danger-800 dark:text-danger-300 mb-3 flex items-center gap-2">
+                  <p className="text-sm font-medium text-danger-800 dark:text-danger-300 mb-4 flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4" />
                     Risk Flags
                   </p>
@@ -155,7 +155,7 @@ export function ScreeningSummaryModal({
 
           {/* Summary Section */}
           <div className="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-main)]">
-            <p className="text-sm font-medium text-[var(--text-primary)] mb-3">Summary</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-4">Summary</p>
             <p className="text-body-secondary leading-relaxed">{screeningSummary.summary}</p>
           </div>
 

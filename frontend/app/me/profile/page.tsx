@@ -30,6 +30,7 @@ import { useMyEmployee, useUpdateMyProfile } from '@/lib/hooks/queries';
 import { getInitials } from '@/lib/utils';
 import { createLogger } from '@/lib/utils/logger';
 import { employmentChangeRequestService } from '@/lib/services/hrms/employment-change-request.service';
+import { isAxiosError } from 'axios';
 
 const log = createLogger('ProfilePage');
 
@@ -122,10 +123,11 @@ export default function MyProfilePage() {
       await updateMutation.mutateAsync(data);
       setIsEditing(false);
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      const t = window.setTimeout(() => setSuccess(false), 3000);
+      return () => window.clearTimeout(t);
     } catch (err: unknown) {
       log.error('Failed to update profile:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update profile');
+      setError(isAxiosError(err) ? (err.response?.data?.message ?? 'Failed to update profile') : 'Failed to update profile');
     }
   };
 
@@ -163,7 +165,7 @@ export default function MyProfilePage() {
       }, 2000);
     } catch (err: unknown) {
       log.error('Failed to submit bank change request:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit change request');
+      setError(isAxiosError(err) ? (err.response?.data?.message ?? 'Failed to submit change request') : 'Failed to submit change request');
     } finally {
       setBankChangeSubmitting(false);
     }

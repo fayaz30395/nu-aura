@@ -444,7 +444,7 @@ export default function RecognitionPage() {
                             </div>
                           )}
 
-                          <div className="mt-3 flex items-center gap-4 text-body-muted flex-wrap">
+                          <div className="mt-4 flex items-center gap-4 text-body-muted flex-wrap">
                             {/* Reaction button with picker */}
                             <div className="relative">
                               <button
@@ -491,7 +491,7 @@ export default function RecognitionPage() {
 
                           {/* Comment Section */}
                           {expandedComments.has(recognition.id) && (
-                            <div className="mt-3 pt-3 border-t border-[var(--border-main)]">
+                            <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
                               <div className="flex gap-2">
                                 <input
                                   type="text"

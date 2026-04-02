@@ -97,7 +97,7 @@ export default function FluenceDashboardPage() {
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-6 mb-6">
               <div className="flex-1">
-                <div className="flex items-center gap-4 mb-3">
+                <div className="flex items-center gap-4 mb-4">
                   <div className="p-4 bg-white/20 rounded-lg backdrop-blur-sm">
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>

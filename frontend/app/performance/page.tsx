@@ -378,7 +378,7 @@ export default function PerformancePage() {
 
       {/* Getting Started Section */}
       <div className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
-        <h2 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-3 skeuo-emboss">Getting Started</h2>
+        <h2 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-accent-600 dark:text-accent-400 mb-2" />

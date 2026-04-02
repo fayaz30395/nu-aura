@@ -214,7 +214,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
             </div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--bg-card)] opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
             <CardContent className="flex flex-col justify-between p-6 relative z-10">
               <div className="flex items-start justify-between mb-6">
@@ -225,7 +225,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                     <div className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-success-400 animate-pulse' : dayComplete ? 'bg-success-400' : 'bg-white/50'}`} />
                     {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
                   </div>
-                  <div className="text-2xl lg:text-3xl font-extrabold text-white drop-shadow-sm">
+                  <div className="text-2xl lg:text-3xl font-extrabold text-white drop-shadow-[var(--shadow-card)]">
                     {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                   </div>
                   {isLateToday && (
@@ -236,7 +236,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-lg">
+                  <div className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-[var(--shadow-elevated)]">
                     {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}
                   </div>
                   <div className="flex items-center gap-2 text-accent-200/80 justify-end mt-1.5">
@@ -289,7 +289,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-white text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
+                        className="h-14 px-8 text-base font-semibold bg-[var(--bg-card)] text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In

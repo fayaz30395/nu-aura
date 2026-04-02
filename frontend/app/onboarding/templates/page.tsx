@@ -70,7 +70,7 @@ export default function TemplatesPage() {
 
                 {/* Templates Grid */}
                 <div className="space-y-6">
-                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                    <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden">
                         <div className="p-6 border-b border-[var(--border-main)]/50 flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />

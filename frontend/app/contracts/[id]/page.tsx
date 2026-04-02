@@ -95,7 +95,7 @@ export default function ContractDetailPage() {
         {/* Description */}
         {contract.description && (
           <Card>
-            <h3 className="font-semibold mb-3">Description</h3>
+            <h3 className="font-semibold mb-4">Description</h3>
             <p className="text-[var(--text-secondary)]">{contract.description}</p>
           </Card>
         )}

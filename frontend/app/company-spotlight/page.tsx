@@ -224,7 +224,7 @@ export default function CompanySpotlightPage() {
 
                         {/* Details */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-4 mb-3">
+                          <div className="flex items-start justify-between gap-4 mb-4">
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-[var(--text-primary)] text-lg truncate">
                                 {spotlight.title}
@@ -438,7 +438,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[var(--bg-card)] rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-3xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -595,7 +595,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
             {/* Right: Preview */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                 Live Preview
               </label>
               <div

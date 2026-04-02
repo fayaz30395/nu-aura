@@ -60,7 +60,7 @@ function SwapCard({
       animate={{ opacity: 1, y: 0 }}
       className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
     >
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
           <ArrowLeftRight className="w-4 h-4 text-accent-700 dark:text-accent-400" />
           <span className="text-sm font-medium text-surface-900 dark:text-white">
@@ -100,7 +100,7 @@ function SwapCard({
       </div>
 
       {showActions && (swap.status === 'PENDING' || swap.status === 'PENDING_APPROVAL') && (
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-100 dark:border-surface-700">
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700">
           <button
             onClick={onAccept}
             disabled={actionPending}

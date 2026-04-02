@@ -310,7 +310,7 @@ export default function BlogsPage() {
                               </span>
                             )}
                           </div>
-                          <h2 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] mb-3 line-clamp-3">
+                          <h2 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] mb-4 line-clamp-3">
                             {featuredPost.title}
                           </h2>
                           <p className="text-[var(--text-secondary)] text-base leading-relaxed line-clamp-3 mb-6">
@@ -403,7 +403,7 @@ export default function BlogsPage() {
                 animate={{ opacity: 1 }}
                 className="text-center py-12"
               >
-                <Search className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] opacity-50" />
+                <Search className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)] opacity-50" />
                 <p className="text-[var(--text-secondary)] mb-2">
                   No posts match &ldquo;{searchQuery}&rdquo;
                 </p>
@@ -458,7 +458,7 @@ export default function BlogsPage() {
                         )}
 
                         {/* Header */}
-                        <CardHeader className="pb-3">
+                        <CardHeader className="pb-4">
                           {post.categoryName && (
                             <motion.span
                               className="badge-status inline-block px-2.5 py-1 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs font-medium w-fit mb-2"

@@ -139,7 +139,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
   if (isLoading) {
     return (
       <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
-        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-3">Company Feed</h3>
+        <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">Company Feed</h3>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="flex items-start gap-2.5 p-4 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
@@ -159,7 +159,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
   return (
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       {/* Header */}
-      <div className="row-between mb-3">
+      <div className="row-between mb-4">
         <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
           Company Feed
         </h3>
@@ -175,7 +175,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
       </div>
 
       {/* Filter Chips */}
-      <div className="flex flex-wrap gap-1.5 mb-3">
+      <div className="flex flex-wrap gap-1.5 mb-4">
         {FILTER_OPTIONS.map(option => (
           <button
             key={option.value}

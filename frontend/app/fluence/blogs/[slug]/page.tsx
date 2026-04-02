@@ -81,7 +81,7 @@ export default function BlogPostDetailPage() {
   const contentContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: post, isLoading } = useBlogPost(postId, !!postId);
-  const { data: commentsData } = useComments(postId, 'BLOG', 0, 50, !!postId && !!post);
+  const { data: commentsData } = useComments(postId, 'BLOG', 0, 50, !!postId && !!post?.id);
   const { data: viewers } = useContentViewers(postId, 'BLOG', showViewers && !!postId);
 
   const likeMutation = useLikeBlogPost();
@@ -465,7 +465,7 @@ export default function BlogPostDetailPage() {
               className={`${card.base} rounded-xl p-4`}
               whileHover={dsMotion.cardHover}
             >
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Stats</h3>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Stats</h3>
               <div className="space-y-4">
                 <div className="row-between">
                   <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
@@ -498,7 +498,7 @@ export default function BlogPostDetailPage() {
                 className={`${card.base} rounded-xl p-4`}
                 whileHover={dsMotion.cardHover}
               >
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Visibility</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Visibility</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     {post.visibility === 'PUBLIC' || post.visibility === 'ORGANIZATION' ? (
@@ -534,7 +534,7 @@ export default function BlogPostDetailPage() {
                 className={`${card.base} rounded-xl p-4`}
                 whileHover={dsMotion.cardHover}
               >
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Tags</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {post.tags.map((tag, index) => (
                     <motion.span

@@ -285,7 +285,7 @@ export default function SsoSettingsPage() {
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-[var(--bg-card)] transition-transform ${
             checked ? 'translate-x-6' : 'translate-x-1'
           }`}
         />

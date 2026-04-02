@@ -248,7 +248,7 @@ export default function ApprovalsPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="mt-3 grid grid-cols-2 gap-4 text-center">
+                      <div className="mt-4 grid grid-cols-2 gap-4 text-center">
                         <div>
                           <p className="text-lg font-semibold text-accent-700 dark:text-accent-400">
                             +{formatAllocationPercentage(selectedRequest.requestedAllocation)}
@@ -441,7 +441,7 @@ function RequestCard({
           <StatusBadge status={request.status} />
         </div>
 
-        <div className="mt-3 row-between text-sm">
+        <div className="mt-4 row-between text-sm">
           <span className="text-[var(--text-muted)]">
             +{formatAllocationPercentage(request.requestedAllocation)} → {' '}
             <span className="font-medium text-danger-600 dark:text-danger-400">
@@ -454,7 +454,7 @@ function RequestCard({
         </div>
 
         {request.status === 'PENDING' && onApprove && onReject && (
-          <div className="mt-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="sm" className="flex-1 text-danger-600" onClick={onReject}>
               Reject
             </Button>

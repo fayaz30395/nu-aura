@@ -241,7 +241,7 @@ export default function ReferralsPage() {
                   <PermissionGate key={tab.key} permission={tab.permission}>
                     <button
                       onClick={() => setActiveTab(tab.key)}
-                      className={`pb-3 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                      className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         activeTab === tab.key
                           ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                           : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
@@ -256,7 +256,7 @@ export default function ReferralsPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`pb-3 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                  className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeTab === tab.key
                       ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
@@ -357,7 +357,7 @@ export default function ReferralsPage() {
           <div className="max-w-2xl">
             {submitSuccess ? (
               <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
+                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                   Referral Submitted Successfully!
                 </h3>
@@ -529,7 +529,7 @@ export default function ReferralsPage() {
                     key={policy.id}
                     className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 skeuo-card"
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-base font-semibold text-[var(--text-primary)]">
                           {policy.name}

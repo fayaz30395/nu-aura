@@ -150,7 +150,7 @@ export default function NotificationSettingsPage() {
           <CardContent>
             <div className="space-y-1">
               {/* Header */}
-              <div className="grid grid-cols-12 gap-4 pb-3 border-b text-sm font-medium text-muted-foreground">
+              <div className="grid grid-cols-12 gap-4 pb-4 border-b text-sm font-medium text-muted-foreground">
                 <div className="col-span-6">Category</div>
                 <div className="col-span-2 text-center">Email</div>
                 <div className="col-span-2 text-center">Push</div>
@@ -179,7 +179,7 @@ export default function NotificationSettingsPage() {
                       } relative disabled:opacity-50`}
                     >
                       <span
-                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--bg-card)] transition-transform ${
                           pref.email ? 'left-5' : 'left-1'
                         }`}
                       />
@@ -194,7 +194,7 @@ export default function NotificationSettingsPage() {
                       } relative disabled:opacity-50`}
                     >
                       <span
-                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--bg-card)] transition-transform ${
                           pref.push ? 'left-5' : 'left-1'
                         }`}
                       />
@@ -209,7 +209,7 @@ export default function NotificationSettingsPage() {
                       } relative disabled:opacity-50`}
                     >
                       <span
-                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--bg-card)] transition-transform ${
                           pref.inApp ? 'left-5' : 'left-1'
                         }`}
                       />

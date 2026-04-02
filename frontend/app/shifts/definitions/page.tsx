@@ -244,7 +244,7 @@ export default function ShiftDefinitionsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
@@ -300,7 +300,7 @@ export default function ShiftDefinitionsPage() {
                   </div>
 
                   <PermissionGate permission={Permissions.SHIFT_MANAGE}>
-                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-100 dark:border-surface-700">
+                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700">
                       <button
                         onClick={() => openEdit(shift)}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"

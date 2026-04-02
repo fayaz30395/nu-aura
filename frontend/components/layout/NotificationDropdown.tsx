@@ -408,10 +408,10 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             <>
               {!hasGoogleToken ? (
                 <div className="p-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-4">
                     <Bell className="h-6 w-6 text-surface-400" />
                   </div>
-                  <p className="text-sm text-surface-500 mb-3">Connect Google to see emails, drive files & events</p>
+                  <p className="text-sm text-surface-500 mb-4">Connect Google to see emails, drive files & events</p>
                   <Button variant="outline" size="sm" onClick={() => { onClose(); router.push('/nu-mail'); }}>
                     Connect Google
                   </Button>
@@ -422,7 +422,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
               ) : googleNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
-                  <CheckCircle className="h-10 w-10 mx-auto mb-3 text-success-500" />
+                  <CheckCircle className="h-10 w-10 mx-auto mb-4 text-success-500" />
                   <p>All caught up!</p>
                 </div>
               ) : (
@@ -501,7 +501,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
               ) : persistedNotifications.length === 0 && wsNotifications.length === 0 ? (
                 <div className="p-8 text-center text-surface-500 dark:text-surface-300">
-                  <Bell className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                  <Bell className="h-10 w-10 mx-auto mb-4 opacity-20" />
                   <p>No system notifications</p>
                 </div>
               ) : (
@@ -572,7 +572,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer" onClick={() => setSelectedEvent(null)} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-elevated)] max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -615,12 +615,12 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
               )}
               {selectedEvent.calendarEvent.description && (
-                <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
+                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
                   <p className="text-sm text-surface-600 dark:text-surface-300 whitespace-pre-wrap">{selectedEvent.calendarEvent.description}</p>
                 </div>
               )}
               {selectedEvent.calendarEvent.attendees && selectedEvent.calendarEvent.attendees.length > 0 && (
-                <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
+                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
                   <div className="flex items-center gap-2 mb-2">
                     <UsersIcon className="h-4 w-4 text-surface-400" />
                     <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
@@ -667,7 +667,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedEmail && selectedEmail.emailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer" onClick={() => { setSelectedEmail(null); setEmailContent(''); }} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-elevated)] max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-danger-500 to-danger-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -709,7 +709,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[var(--bg-overlay)] cursor-pointer" onClick={() => setSelectedFile(null)} />
-          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-elevated)] max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
             <div className="bg-gradient-to-r from-warning-500 to-warning-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">

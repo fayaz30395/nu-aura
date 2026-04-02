@@ -84,7 +84,7 @@ export function CompanySpotlight() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      <div className={`${gradientClass} flex items-center px-6 py-5 text-white`}>
+      <div className={`${gradientClass} flex items-center px-6 py-4 text-white`}>
         <div className="flex-1 pr-4">
           <h3 className="text-xl font-semibold mb-1 line-clamp-1">{current.title}</h3>
           {current.description && (
@@ -136,7 +136,7 @@ export function CompanySpotlight() {
               key={index}
               onClick={() => { setCurrentIndex(index); setIsAutoPlaying(false); }}
               className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
-                index === currentIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5 hover:bg-white/60'
+                index === currentIndex ? 'bg-[var(--bg-card)] w-4' : 'bg-white/40 w-1.5 hover:bg-white/60'
               }`}
               aria-label={`Spotlight ${index + 1}`}
             />

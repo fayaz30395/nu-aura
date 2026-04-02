@@ -410,7 +410,7 @@ export function TaskDetailsModal({
           {/* Assignees */}
           {normalizedTask.assignees && normalizedTask.assignees.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-3 flex items-center gap-2">
+              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Assigned To ({normalizedTask.assignees.length})
               </label>
@@ -453,7 +453,7 @@ export function TaskDetailsModal({
           {/* Dependencies */}
           {normalizedTask.dependencies && normalizedTask.dependencies.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-3 flex items-center gap-2">
+              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
                 <Link2 className="w-4 h-4" />
                 Dependencies ({normalizedTask.dependencies.length})
               </label>

@@ -59,7 +59,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
 
                 {/* Progress Bar */}
                 {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <div className="flex justify-between text-body-secondary mb-1">
                       <span>Progress</span>
                       <span>{enrollment.attendancePercentage || 0}%</span>

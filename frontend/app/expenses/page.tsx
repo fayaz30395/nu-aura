@@ -566,7 +566,7 @@ export default function ExpenseClaims() {
         {/* New Claim Form */}
         {showForm && (
           <div className="skeuo-card p-4 mb-4">
-            <h2 className="text-base font-semibold mb-3 skeuo-emboss">Create New Expense Claim</h2>
+            <h2 className="text-base font-semibold mb-4 skeuo-emboss">Create New Expense Claim</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
@@ -837,7 +837,7 @@ export default function ExpenseClaims() {
                       : 'border-[var(--border-main)]'
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-3">
+                  <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-4">
                       {/* Checkbox for pending claims */}
                       {activeTab === 'pending' && claim.status === 'SUBMITTED' && (
@@ -871,7 +871,7 @@ export default function ExpenseClaims() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
                     <div>
                       <span className="text-[var(--text-secondary)]">Claim Date:</span>
                       <p className="font-medium">{new Date(claim.claimDate).toLocaleDateString()}</p>
@@ -897,7 +897,7 @@ export default function ExpenseClaims() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-wrap gap-2 pt-3 border-t border-[var(--border-main)]">
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--border-main)]">
                     {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
                       <>
                         <PermissionGate permission={Permissions.EXPENSE_CREATE}>

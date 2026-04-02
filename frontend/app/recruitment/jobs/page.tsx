@@ -411,7 +411,7 @@ export default function JobOpeningsPage() {
               >
               <Card className="bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
                       <p className="text-body-muted">{job.jobCode}</p>
@@ -452,7 +452,7 @@ export default function JobOpeningsPage() {
                     )}
                   </div>
 
-                  <div className="row-between pt-3 border-t border-[var(--border-main)]">
+                  <div className="row-between pt-4 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {job.priority && (
                         <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(job.priority)}`}>

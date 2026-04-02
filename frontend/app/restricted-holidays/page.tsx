@@ -386,7 +386,7 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
                   : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-card)]'
               }`}
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-surface-900 dark:text-white">
                     {holiday.holidayName}
@@ -838,7 +838,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
                   aria-checked={field.value}
                 >
                   <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 rounded-full bg-[var(--bg-card)] transition-transform ${
                       field.value ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -913,7 +913,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
         className="relative w-full max-w-lg rounded-lg bg-[var(--bg-elevated)]
           shadow-[var(--shadow-dropdown)] border border-surface-200 dark:border-surface-700 p-6 mx-4"
       >
-        <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-5">
+        <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-6">
           {holiday ? 'Edit Restricted Holiday' : 'Add Restricted Holiday'}
         </h3>
 
@@ -1008,7 +1008,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
                   aria-checked={field.value}
                 >
                   <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 rounded-full bg-[var(--bg-card)] transition-transform ${
                       field.value ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -1018,7 +1018,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             <span className="text-sm text-surface-700 dark:text-surface-300">Active</span>
           </div>
 
-          <div className="flex justify-end gap-4 pt-3 border-t border-surface-200 dark:border-surface-700">
+          <div className="flex justify-end gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
             <button
               type="button"
               onClick={onClose}

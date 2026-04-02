@@ -179,7 +179,7 @@ export default function AttritionReportPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 skeuo-card">
-            <Shield className="h-12 w-12 text-success-400 mx-auto mb-3" />
+            <Shield className="h-12 w-12 text-success-400 mx-auto mb-4" />
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
             <p className="text-body-muted mt-1">Lower the minimum risk score to see more results</p>
           </div>
@@ -242,7 +242,7 @@ export default function AttritionReportPage() {
 
                     {expanded && (
                       <div className="px-6 pb-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                           {/* Risk factors */}
                           {pred.riskFactors && pred.riskFactors.length > 0 && (
                             <div>
@@ -281,7 +281,7 @@ export default function AttritionReportPage() {
                         </div>
 
                         {!pred.actionTaken && (
-                          <div className="mt-3 flex justify-end">
+                          <div className="mt-4 flex justify-end">
                             <button
                               onClick={() => markActionTaken(pred.id)}
                               disabled={markingAction === pred.id}

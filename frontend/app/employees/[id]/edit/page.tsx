@@ -370,7 +370,7 @@ export default function EditEmployeePage() {
                   Your changes to employment details have been submitted for HR Manager approval.
                   Other profile updates have been saved immediately.
                 </p>
-                <div className="mt-3 flex gap-2">
+                <div className="mt-4 flex gap-2">
                   <button
                     type="button"
                     onClick={() => router.push(`/employees/${employeeId}`)}

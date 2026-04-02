@@ -81,7 +81,7 @@ export default function NewTemplatePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
-                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                    <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden">
                         <CardContent className="p-10">
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                                 <div className="space-y-4">

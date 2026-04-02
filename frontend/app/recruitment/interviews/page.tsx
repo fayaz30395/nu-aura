@@ -920,7 +920,7 @@ const formatDateTime = (dateString?: string): string => {
                         disabled={!hasValidGoogleToken()}
                       >
                         <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[var(--bg-card)] shadow ring-0 transition duration-200 ease-in-out ${
                             createMeetToggle ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
@@ -1126,7 +1126,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Technical Questions */}
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Technical Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Technical Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1150,7 +1150,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Behavioral Questions */}
                   {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Behavioral Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Behavioral Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1165,7 +1165,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Situational Questions */}
                   {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Situational Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Situational Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1180,7 +1180,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Cultural Fit Questions */}
                   {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Cultural Fit Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Cultural Fit Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
@@ -1195,7 +1195,7 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Role-Specific Questions */}
                   {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Role-Specific Questions</h3>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Role-Specific Questions</h3>
                       <div className="space-y-4">
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">

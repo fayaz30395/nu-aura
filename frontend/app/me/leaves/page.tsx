@@ -554,7 +554,7 @@ export default function MyLeavesPage() {
                         </p>
                         {/* Approver Info for PENDING */}
                         {request.status === 'PENDING' && request.pendingApproverName && (
-                          <div className="flex items-center gap-2 mt-3 text-sm">
+                          <div className="flex items-center gap-2 mt-4 text-sm">
                             <User className="h-4 w-4 text-accent-500" />
                             <span className="text-[var(--text-secondary)]">
                               Pending approval from:{' '}
@@ -565,7 +565,7 @@ export default function MyLeavesPage() {
                           </div>
                         )}
                         {(request.status === 'APPROVED' || request.status === 'REJECTED') && request.approverName && (
-                          <div className="flex items-center gap-2 mt-3 text-sm">
+                          <div className="flex items-center gap-2 mt-4 text-sm">
                             <User className="h-4 w-4 text-[var(--text-muted)]" />
                             <span className="text-[var(--text-secondary)]">
                               {request.status === 'APPROVED' ? 'Approved' : 'Rejected'} by:{' '}
@@ -609,7 +609,7 @@ export default function MyLeavesPage() {
                       )}
                     </div>
                     {/* Applied on date - bottom right */}
-                    <div className="flex justify-end mt-4 pt-3 border-t border-[var(--border-subtle)]">
+                    <div className="flex justify-end mt-4 pt-4 border-t border-[var(--border-subtle)]">
                       <div className="text-right">
                         <p className="text-caption ">
                           Applied on {formatDate(request.appliedOn)}
@@ -632,7 +632,7 @@ export default function MyLeavesPage() {
         {/* Apply/Edit Leave Modal */}
         {showApplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
+            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
                 <div className="row-between p-6 border-b border-[var(--border-main)]">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
@@ -765,7 +765,7 @@ export default function MyLeavesPage() {
         {/* Cancel Leave Modal */}
         {showCancelModal && cancellingRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
+            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
               <div className="row-between p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   Cancel Leave Request

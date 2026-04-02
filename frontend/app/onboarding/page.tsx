@@ -114,9 +114,9 @@ export default function OnboardingPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                         >
-                            <Card className="skeuo-card border-0 shadow-2xl">
+                            <Card className="skeuo-card border-0 shadow-[var(--shadow-elevated)]">
                                 <CardContent className="p-4 relative z-10">
-                                    <div className="row-between mb-3">
+                                    <div className="row-between mb-4">
                                         <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color}`}>
                                             <stat.icon className="h-5 w-5" />
                                         </div>
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
 
                 {/* Filters and List */}
                 <div className="space-y-6">
-                    <Card className="card-aura border-0 shadow-2xl overflow-hidden">
+                    <Card className="card-aura border-0 shadow-[var(--shadow-elevated)] overflow-hidden">
                         <div className="p-6 border-b border-[var(--border-main)] flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />

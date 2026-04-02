@@ -103,7 +103,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-start gap-4 mb-3">
+          <div className="flex items-start gap-4 mb-4">
             <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1" />
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors truncate">
@@ -169,7 +169,7 @@ const ArticleDetailModal: React.FC<{
           <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             {article.title}
           </h2>
-          <div className="flex items-center gap-4 mt-3 flex-wrap">
+          <div className="flex items-center gap-4 mt-4 flex-wrap">
             <Badge variant="outline">{article.category}</Badge>
             <span className="text-caption flex items-center gap-1">
               <Eye className="h-3 w-3" />
@@ -236,7 +236,7 @@ const ArticleDetailModal: React.FC<{
 
           {/* Related Articles Section */}
           <div>
-            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
               Related Articles
             </h4>
             <p className="text-body-muted">

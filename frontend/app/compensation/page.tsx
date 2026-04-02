@@ -370,7 +370,7 @@ export default function CompensationPage() {
           <nav className="flex gap-4">
             <button
               onClick={() => setActiveTab('cycles')}
-              className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'cycles'
                   ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
@@ -380,7 +380,7 @@ export default function CompensationPage() {
             </button>
             <button
               onClick={() => setActiveTab('revisions')}
-              className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'revisions'
                   ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
@@ -390,7 +390,7 @@ export default function CompensationPage() {
             </button>
             <button
               onClick={() => setActiveTab('pending')}
-              className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
+              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === 'pending'
                   ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
@@ -449,7 +449,7 @@ export default function CompensationPage() {
               {cycles.map((cycle) => (
                 <Card key={cycle.id} className="hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="font-semibold text-[var(--text-primary)]">
                           {cycle.name}

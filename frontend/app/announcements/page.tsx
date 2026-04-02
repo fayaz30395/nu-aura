@@ -316,7 +316,7 @@ export default function AnnouncementsPage() {
                         <p className="text-body-secondary mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-caption">
+                        <div className="flex items-center gap-4 mt-4 text-caption">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}
@@ -443,7 +443,7 @@ export default function AnnouncementsPage() {
                         <p className="text-body-secondary mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-caption">
+                        <div className="flex items-center gap-4 mt-4 text-caption">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}

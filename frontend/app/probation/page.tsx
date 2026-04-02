@@ -447,7 +447,7 @@ export default function ProbationPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab.key
                     ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
@@ -459,7 +459,7 @@ export default function ProbationPage() {
             {evaluateTarget && (
               <button
                 onClick={() => setActiveTab('evaluate')}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === 'evaluate'
                     ? 'border-accent-700 text-accent-700 dark:text-accent-400'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -539,7 +539,7 @@ export default function ProbationPage() {
             <div className="max-w-3xl">
               {submitSuccess ? (
                 <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-3" />
+                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                     Evaluation Submitted Successfully!
                   </h3>
@@ -609,7 +609,7 @@ export default function ProbationPage() {
 
                   {/* Ratings */}
                   <div>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                       Ratings (1-5)
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">

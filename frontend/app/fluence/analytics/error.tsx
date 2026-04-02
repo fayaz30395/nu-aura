@@ -27,7 +27,7 @@ export default function AnalyticsError({
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <Button onClick={reset} className="gap-2">
           Try again
         </Button>

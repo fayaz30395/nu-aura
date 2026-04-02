@@ -48,7 +48,7 @@ function SignatureStatusBadge({ status }: { status: SignatureStatus }) {
     DRAFT: { label: 'Draft', variant: 'info', Icon: FileSignature },
     PENDING: { label: 'Pending', variant: 'warning', Icon: Clock },
     IN_PROGRESS: { label: 'In Progress', variant: 'warning', Icon: Clock },
-    COMPLETED: { label: 'Signed ✓', variant: 'success', Icon: CheckCircle },
+    COMPLETED: { label: 'Signed', variant: 'success', Icon: CheckCircle },
     DECLINED: { label: 'Declined', variant: 'danger', Icon: XCircle },
     EXPIRED: { label: 'Expired', variant: 'danger', Icon: AlertCircle },
     CANCELLED: { label: 'Cancelled', variant: 'danger', Icon: XCircle },
@@ -70,7 +70,7 @@ function ApprovalStatusBadge({ status }: { status: ApprovalStatus }) {
     PENDING: { label: 'Pending', variant: 'info' },
     SENT: { label: 'Sent', variant: 'info' },
     VIEWED: { label: 'Viewed', variant: 'warning' },
-    SIGNED: { label: 'Signed ✓', variant: 'success' },
+    SIGNED: { label: 'Signed', variant: 'success' },
     DECLINED: { label: 'Declined', variant: 'danger' },
     EXPIRED: { label: 'Expired', variant: 'danger' },
   };
@@ -116,7 +116,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
   return (
     <div className="space-y-4">
       {/* Request Summary */}
-      <div className="p-4 bg-[var(--bg-secondary)] rounded-xl space-y-3">
+      <div className="p-4 bg-[var(--bg-secondary)] rounded-xl space-y-4">
         <div className="row-between">
           <p className="text-sm font-medium text-[var(--text-primary)]">{req.title}</p>
           <SignatureStatusBadge status={req.status} />
@@ -158,7 +158,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
             {approvals.map((approval) => (
               <div
                 key={approval.id}
-                className="row-between p-3 border border-[var(--border-main)] rounded-lg"
+                className="row-between p-4 border border-[var(--border-main)] rounded-lg"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -408,7 +408,7 @@ export function OfferESignModal({
                 </div>
               </div>
 
-              <div className="p-3 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
+              <div className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
                 <Eye className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 <span>
                   The candidate will receive a secure, tokenized link by email to review and sign

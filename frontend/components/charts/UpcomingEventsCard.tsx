@@ -21,7 +21,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {/* Birthdays */}
         {data.birthdays.length > 0 && (
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <Cake className="h-4 w-4 text-accent-600" />
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Birthdays</h4>
             </div>
@@ -47,7 +47,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {/* Anniversaries */}
         {data.anniversaries.length > 0 && (
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <Gift className="h-4 w-4 text-accent-600" />
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Work Anniversaries</h4>
             </div>
@@ -77,7 +77,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {/* Holidays */}
         {data.holidays.length > 0 && (
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <Calendar className="h-4 w-4 text-accent-600" />
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h4>
             </div>

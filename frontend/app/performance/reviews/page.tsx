@@ -313,7 +313,7 @@ export default function PerformanceReviewsPage() {
               <div key={review.id} className="skeuo-card card-interactive rounded-lg border border-[var(--border-main)] p-6 transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
-                    <div className="flex gap-2 mb-3">
+                    <div className="flex gap-2 mb-4">
                       <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(review.reviewType)}>
                         {review.reviewType}
                       </span>

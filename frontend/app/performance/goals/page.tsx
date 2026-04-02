@@ -292,7 +292,7 @@ export default function GoalsPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold mb-2">{goal.title}</h3>
-                      <div className="flex gap-2 mb-3">
+                      <div className="flex gap-2 mb-4">
                         <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(goal.goalType)}>
                           {goal.goalType}
                         </span>

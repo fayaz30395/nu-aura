@@ -117,7 +117,7 @@ export const FluenceChatWidget: React.FC = () => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className={cn(
               'fixed z-50 flex flex-col',
-              'bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-2xl',
+              'bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-elevated)]',
               'overflow-hidden',
               // Desktop: fixed size bottom-right
               'md:bottom-6 md:right-6 md:w-[400px] md:h-[560px]',

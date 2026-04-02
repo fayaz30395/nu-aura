@@ -54,14 +54,21 @@ export const complianceService = {
     return response.data;
   },
 
-  getActivePolicies: async (): Promise<CompliancePolicy[]> => {
-    const response = await apiClient.get<CompliancePolicy[]>('/compliance/policies/active');
+  getActivePolicies: async (page: number = 0, size: number = 20): Promise<Page<CompliancePolicy>> => {
+    const response = await apiClient.get<Page<CompliancePolicy>>('/compliance/policies/active', {
+      params: { page, size },
+    });
     return response.data;
   },
 
-  getPoliciesByCategory: async (category: PolicyCategory): Promise<CompliancePolicy[]> => {
-    const response = await apiClient.get<CompliancePolicy[]>(
-      `/compliance/policies/category/${category}`
+  getPoliciesByCategory: async (
+    category: PolicyCategory,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<CompliancePolicy>> => {
+    const response = await apiClient.get<Page<CompliancePolicy>>(
+      `/compliance/policies/category/${category}`,
+      { params: { page, size } }
     );
     return response.data;
   },
@@ -78,23 +85,38 @@ export const complianceService = {
     return response.data;
   },
 
-  getEmployeeAcknowledgments: async (employeeId: string): Promise<PolicyAcknowledgment[]> => {
-    const response = await apiClient.get<PolicyAcknowledgment[]>(
-      `/compliance/acknowledgments/employee/${employeeId}`
+  getEmployeeAcknowledgments: async (
+    employeeId: string,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<PolicyAcknowledgment>> => {
+    const response = await apiClient.get<Page<PolicyAcknowledgment>>(
+      `/compliance/acknowledgments/employee/${employeeId}`,
+      { params: { page, size } }
     );
     return response.data;
   },
 
-  getPolicyAcknowledgments: async (policyId: string): Promise<PolicyAcknowledgment[]> => {
-    const response = await apiClient.get<PolicyAcknowledgment[]>(
-      `/compliance/policies/${policyId}/acknowledgments`
+  getPolicyAcknowledgments: async (
+    policyId: string,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<PolicyAcknowledgment>> => {
+    const response = await apiClient.get<Page<PolicyAcknowledgment>>(
+      `/compliance/policies/${policyId}/acknowledgments`,
+      { params: { page, size } }
     );
     return response.data;
   },
 
-  getPendingAcknowledgments: async (employeeId: string): Promise<CompliancePolicy[]> => {
-    const response = await apiClient.get<CompliancePolicy[]>(
-      `/compliance/acknowledgments/pending/${employeeId}`
+  getPendingAcknowledgments: async (
+    employeeId: string,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<CompliancePolicy>> => {
+    const response = await apiClient.get<Page<CompliancePolicy>>(
+      `/compliance/acknowledgments/pending/${employeeId}`,
+      { params: { page, size } }
     );
     return response.data;
   },
@@ -125,18 +147,30 @@ export const complianceService = {
     return response.data;
   },
 
-  getActiveChecklists: async (): Promise<ComplianceChecklist[]> => {
-    const response = await apiClient.get<ComplianceChecklist[]>('/compliance/checklists/active');
+  getActiveChecklists: async (
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<ComplianceChecklist>> => {
+    const response = await apiClient.get<Page<ComplianceChecklist>>('/compliance/checklists/active', {
+      params: { page, size },
+    });
     return response.data;
   },
 
-  getMyChecklists: async (): Promise<ComplianceChecklist[]> => {
-    const response = await apiClient.get<ComplianceChecklist[]>('/compliance/checklists/my');
+  getMyChecklists: async (page: number = 0, size: number = 20): Promise<Page<ComplianceChecklist>> => {
+    const response = await apiClient.get<Page<ComplianceChecklist>>('/compliance/checklists/my', {
+      params: { page, size },
+    });
     return response.data;
   },
 
-  getOverdueChecklists: async (): Promise<ComplianceChecklist[]> => {
-    const response = await apiClient.get<ComplianceChecklist[]>('/compliance/checklists/overdue');
+  getOverdueChecklists: async (
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<ComplianceChecklist>> => {
+    const response = await apiClient.get<Page<ComplianceChecklist>>('/compliance/checklists/overdue', {
+      params: { page, size },
+    });
     return response.data;
   },
 
@@ -148,9 +182,15 @@ export const complianceService = {
     return response.data;
   },
 
-  getEntityAuditHistory: async (entityType: string, entityId: string): Promise<AuditLog[]> => {
-    const response = await apiClient.get<AuditLog[]>(
-      `/compliance/audit-logs/entity/${entityType}/${entityId}`
+  getEntityAuditHistory: async (
+    entityType: string,
+    entityId: string,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<AuditLog>> => {
+    const response = await apiClient.get<Page<AuditLog>>(
+      `/compliance/audit-logs/entity/${entityType}/${entityId}`,
+      { params: { page, size } }
     );
     return response.data;
   },
@@ -217,18 +257,24 @@ export const complianceService = {
     return response.data;
   },
 
-  getActiveAlerts: async (): Promise<ComplianceAlert[]> => {
-    const response = await apiClient.get<ComplianceAlert[]>('/compliance/alerts/active');
+  getActiveAlerts: async (page: number = 0, size: number = 20): Promise<Page<ComplianceAlert>> => {
+    const response = await apiClient.get<Page<ComplianceAlert>>('/compliance/alerts/active', {
+      params: { page, size },
+    });
     return response.data;
   },
 
-  getMyAlerts: async (): Promise<ComplianceAlert[]> => {
-    const response = await apiClient.get<ComplianceAlert[]>('/compliance/alerts/my');
+  getMyAlerts: async (page: number = 0, size: number = 20): Promise<Page<ComplianceAlert>> => {
+    const response = await apiClient.get<Page<ComplianceAlert>>('/compliance/alerts/my', {
+      params: { page, size },
+    });
     return response.data;
   },
 
-  getCriticalAlerts: async (): Promise<ComplianceAlert[]> => {
-    const response = await apiClient.get<ComplianceAlert[]>('/compliance/alerts/critical');
+  getCriticalAlerts: async (page: number = 0, size: number = 20): Promise<Page<ComplianceAlert>> => {
+    const response = await apiClient.get<Page<ComplianceAlert>>('/compliance/alerts/critical', {
+      params: { page, size },
+    });
     return response.data;
   },
 

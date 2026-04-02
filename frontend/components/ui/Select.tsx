@@ -14,8 +14,8 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, children, label, error, helper, selectSize = 'md', disabled, ...props }, ref) => {
     const sizeStyles = {
-      sm: 'h-9 text-sm pl-3 pr-9',
-      md: 'h-10 text-sm pl-3 pr-9',
+      sm: 'h-9 text-sm pl-4 pr-9',
+      md: 'h-10 text-sm pl-4 pr-9',
       lg: 'h-12 text-base pl-4 pr-10',
     };
 

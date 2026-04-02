@@ -33,7 +33,7 @@ export default function NotFound() {
         </p>
 
         {/* Icon + heading */}
-        <div className="flex items-center justify-center gap-2 -mt-6 mb-3">
+        <div className="flex items-center justify-center gap-2 -mt-6 mb-4">
           <div className="w-10 h-10 rounded-xl bg-warning-100 dark:bg-warning-950/30 flex items-center justify-center">
             <IconMapPin size={20} className="text-warning-600 dark:text-warning-400" />
           </div>

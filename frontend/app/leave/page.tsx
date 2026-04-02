@@ -234,7 +234,7 @@ export default function LeavePage() {
                     {leaveType?.leaveName || 'Leave'}
                   </h3>
 
-                  <div className="flex items-baseline gap-1 mb-3">
+                  <div className="flex items-baseline gap-1 mb-4">
                     <span className="text-2xl font-bold skeuo-emboss">
                       {balance.available.toFixed(1)}
                     </span>
@@ -244,7 +244,7 @@ export default function LeavePage() {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-3">
+                  <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-4">
                     <div
                       className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-300`}
                       style={{ width: `${Math.min(usedPercentage, 100)}%` }}

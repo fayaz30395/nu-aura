@@ -414,7 +414,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
           </Title>
           {Object.keys(skillsByCategory).length === 0 ? (
             <div className="text-center py-10">
-              <Target className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-3" />
+              <Target className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
               <Text c="dimmed">No skills recorded yet. Add your first skill to get started.</Text>
             </div>
           ) : (
@@ -497,7 +497,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             </div>
           ) : radarData.length === 0 ? (
             <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-3" />
+              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
               <Text c="dimmed">No gap analysis data available.</Text>
             </div>
           ) : (
@@ -731,7 +731,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
           </Title>
           {heatmapData.length === 0 ? (
             <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-3" />
+              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
               <Text c="dimmed">No team skills data available.</Text>
             </div>
           ) : (
@@ -746,7 +746,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
           </Title>
           {skills.filter((s) => !s.isVerified).length === 0 ? (
             <div className="text-center py-10">
-              <CheckCircle className="h-10 w-10 mx-auto text-success-500 mb-3" />
+              <CheckCircle className="h-10 w-10 mx-auto text-success-500 mb-4" />
               <Text c="dimmed">All skills are verified.</Text>
             </div>
           ) : (
@@ -890,7 +890,7 @@ export default function CompetencyMatrixPage() {
               <MyCompetenciesTab employeeId={employeeId} />
             ) : (
               <div className="text-center py-10">
-                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-3" />
+                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
                 <Text c="dimmed">Please log in to view your competencies.</Text>
               </div>
             )}
@@ -901,7 +901,7 @@ export default function CompetencyMatrixPage() {
               <TeamViewTab managerId={employeeId} />
             ) : (
               <div className="text-center py-10">
-                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-3" />
+                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
                 <Text c="dimmed">Please log in to view team competencies.</Text>
               </div>
             )}

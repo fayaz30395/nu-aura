@@ -382,7 +382,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
                 alt={file.name}
                 fill
                 sizes="100vw"
-                className="object-contain rounded-lg shadow-2xl"
+                className="object-contain rounded-lg shadow-[var(--shadow-elevated)]"
                 onError={onImgError}
               />
             )}

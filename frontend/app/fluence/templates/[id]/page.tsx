@@ -153,7 +153,7 @@ export default function TemplateDetailPage() {
             <button
               onClick={() => router.back()}
               aria-label="Go back"
-              className="mb-3 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+              className="mb-4 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Templates

@@ -658,7 +658,7 @@ export default function TimesheetsPage() {
                 )}
 
                 <div>
-                  <div className="row-between mb-3">
+                  <div className="row-between mb-4">
                     <h3 className="font-medium text-[var(--text-primary)]">Time Entries</h3>
                     {selectedTimesheet.status === 'DRAFT' && (
                       <Button size="sm" onClick={handleAddEntry}>

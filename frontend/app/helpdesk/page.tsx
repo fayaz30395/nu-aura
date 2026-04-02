@@ -105,7 +105,7 @@ export default function HelpdeskPage() {
         {/* Pending Escalations */}
         {escalations.length > 0 && (
           <div className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-5 h-5 text-warning-600" />
               <h3 className="font-semibold text-warning-800 dark:text-warning-300">
                 Pending Escalations ({escalations.length})
@@ -210,7 +210,7 @@ export default function HelpdeskPage() {
         {/* Summary Stats */}
         {dashboard && (
           <div className="skeuo-card p-4">
-            <h3 className="font-semibold text-[var(--text-primary)] mb-3">Overview</h3>
+            <h3 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-2xl font-bold text-success-600">{dashboard.slaMetCount}</p>

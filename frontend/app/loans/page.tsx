@@ -162,7 +162,7 @@ export default function LoansPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="skeuo-card p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
                 <CreditCard className="h-5 w-5 text-white" />
               </div>
@@ -178,7 +178,7 @@ export default function LoansPage() {
           </div>
 
           <div className="skeuo-card p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-danger-500 to-danger-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
@@ -194,7 +194,7 @@ export default function LoansPage() {
           </div>
 
           <div className="skeuo-card p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
@@ -210,7 +210,7 @@ export default function LoansPage() {
           </div>
 
           <div className="skeuo-card p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>

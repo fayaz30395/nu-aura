@@ -131,7 +131,7 @@ export default function AdminReportsPage() {
 
   const defaultRequest: ReportRequest = { format: 'EXCEL' };
 
-  const downloadMap: Record<string, { mutate: (req: ReportRequest) => void; isPending: boolean }> = {
+  const downloadMap: Record<string, ReturnType<typeof useDownloadEmployeeReport>> = {
     employee: downloadEmployee,
     attendance: downloadAttendance,
     leave: downloadLeave,
@@ -143,9 +143,7 @@ export default function AdminReportsPage() {
   function handleDownload(report: DownloadReport) {
     setDownloading(report.hookKey);
     const hook = downloadMap[report.hookKey];
-    hook.mutate(defaultRequest);
-    // The service handles the file save; reset after a short delay
-    setTimeout(() => setDownloading(null), 2000);
+    hook.mutate(defaultRequest, { onSettled: () => setDownloading(null) });
   }
 
   function frequencyLabel(freq: string): string {

@@ -120,7 +120,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
 
         {/* Title */}
         <motion.h1
-          className="text-3xl md:text-4xl font-bold text-surface-800 dark:text-surface-100 mb-3"
+          className="text-3xl md:text-4xl font-bold text-surface-800 dark:text-surface-100 mb-4"
           variants={itemVariants}
         >
           {title}

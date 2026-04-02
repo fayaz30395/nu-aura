@@ -69,14 +69,14 @@ export function OnLeaveTodayCard() {
 
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
-      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-3">
+      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
         On Leave Today
       </h3>
 
       {isLoading ? (
         <SkeletonChips />
       ) : onLeaveEmployees.length === 0 ? (
-        <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
+        <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
           <CheckCircle2 className="h-4 w-4 text-success-500" />
           <p className="text-caption">Everyone is working today!</p>
         </div>
@@ -112,7 +112,7 @@ export function WorkingRemotelyCard() {
 
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
-      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-3">
+      <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
         Working Remotely
       </h3>
 

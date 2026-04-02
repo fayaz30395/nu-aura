@@ -498,7 +498,7 @@ export default function OneOnOnePage() {
                       </span>
                     </div>
                     {meeting.description && (
-                      <p className="text-body-muted mb-3">{meeting.description}</p>
+                      <p className="text-body-muted mb-4">{meeting.description}</p>
                     )}
                     <div className="flex flex-wrap gap-4 text-body-muted">
                       <span className="flex items-center gap-1">
@@ -1030,7 +1030,7 @@ export default function OneOnOnePage() {
                           ) : (
                             <div className="text-center py-8">
                               <Star className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-40" />
-                              <p className="text-[var(--text-muted)] mb-3">No feedback submitted yet.</p>
+                              <p className="text-[var(--text-muted)] mb-4">No feedback submitted yet.</p>
                               <button
                                 onClick={() => setShowFeedbackForm(true)}
                                 className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
@@ -1510,7 +1510,7 @@ export default function OneOnOnePage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading meetings...</div>
             ) : displayMeetings.length === 0 ? (
               <div className="p-12 text-center">
-                <Users className="h-10 w-10 mx-auto mb-3 text-[var(--text-muted)] opacity-40" />
+                <Users className="h-10 w-10 mx-auto mb-4 text-[var(--text-muted)] opacity-40" />
                 <p className="text-[var(--text-muted)] mb-1">No meetings found</p>
                 <p className="text-caption">
                   {activeTab === 'upcoming'

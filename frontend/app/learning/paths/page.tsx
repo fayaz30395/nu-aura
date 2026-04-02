@@ -174,7 +174,7 @@ export default function LearningPathsPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-3" />
+              <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4" />
               <p className="text-[var(--text-muted)]">Loading learning paths...</p>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function LearningPathsPage() {
                 {/* Content */}
                 <div className="p-6">
                   {/* Title and Status */}
-                  <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-start justify-between gap-2 mb-4">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
                     {path.status && (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>

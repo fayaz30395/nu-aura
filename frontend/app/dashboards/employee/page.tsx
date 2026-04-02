@@ -320,7 +320,7 @@ export default function EmployeeDashboardPage() {
                 ) : (
                   <div className="h-[300px] flex items-center justify-center">
                     <div className="text-center text-[var(--text-muted)]">
-                      <Clock className="h-12 w-12 mx-auto mb-3" />
+                      <Clock className="h-12 w-12 mx-auto mb-4" />
                       <p className="text-sm font-medium">No attendance data available</p>
                     </div>
                   </div>
@@ -383,7 +383,7 @@ export default function EmployeeDashboardPage() {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-[var(--text-muted)]">
-                    <CheckCircle className="h-12 w-12 mx-auto mb-3" />
+                    <CheckCircle className="h-12 w-12 mx-auto mb-4" />
                     <p className="text-sm">No attendance records found</p>
                   </div>
                 )}

@@ -107,7 +107,7 @@ export default function LeaveReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Date Range <span className="text-danger-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
@@ -134,7 +134,7 @@ export default function LeaveReportsPage() {
 
               {/* Filters */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3 flex items-center gap-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4 flex items-center gap-2">
                   <Filter className="h-4 w-4" />
                   Filters (Optional)
                 </label>
@@ -158,7 +158,7 @@ export default function LeaveReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Export Format
                 </label>
                 <div className="grid grid-cols-3 gap-4">

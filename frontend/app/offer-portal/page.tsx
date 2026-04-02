@@ -221,7 +221,7 @@ function OfferPortalPage() {
         {isOfferAccepted && (
           <Card className="border-success-200 dark:border-success-800 bg-success-50 dark:bg-success-900/20">
             <CardContent className="p-6 text-center">
-              <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400 mx-auto mb-3" />
+              <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-success-700 dark:text-success-300 mb-2">
                 Offer Accepted!
               </h2>
@@ -240,7 +240,7 @@ function OfferPortalPage() {
         {isOfferDeclined && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-6 text-center">
-              <XCircle className="h-12 w-12 text-danger-600 dark:text-danger-400 mx-auto mb-3" />
+              <XCircle className="h-12 w-12 text-danger-600 dark:text-danger-400 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-danger-700 dark:text-danger-300 mb-2">
                 Offer Declined
               </h2>

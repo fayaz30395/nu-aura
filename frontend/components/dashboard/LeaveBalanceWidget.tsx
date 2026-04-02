@@ -92,12 +92,12 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
       </div>
 
       {/* Circular Progress */}
-      <div className="flex justify-center mb-3">
+      <div className="flex justify-center mb-4">
         <CircularProgress used={current.used} total={current.total} />
       </div>
 
       {/* Leave Type Label */}
-      <div className="text-center mb-3">
+      <div className="text-center mb-4">
         <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
           {current.leaveName}
         </p>
@@ -108,7 +108,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
 
       {/* Dots navigation */}
       {balances.length > 1 && (
-        <div className="flex justify-center gap-1.5 mb-3">
+        <div className="flex justify-center gap-1.5 mb-4">
           {balances.map((_, idx) => (
             <button
               key={idx}
@@ -123,7 +123,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
       )}
 
       {/* Actions */}
-      <div className="space-y-2 pt-3 border-t border-[var(--border-subtle)]">
+      <div className="space-y-2 pt-4 border-t border-[var(--border-subtle)]">
         <Link
           href="/leave/apply"
           className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"

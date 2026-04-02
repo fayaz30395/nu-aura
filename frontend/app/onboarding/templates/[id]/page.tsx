@@ -211,7 +211,7 @@ export default function TemplateEditorPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     {/* Left Panel: Template Info */}
                     <div className="space-y-6">
-                        <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                        <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)] overflow-hidden">
                             <CardHeader className="p-8 pb-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                     <Type className="h-4 w-4" />
@@ -362,7 +362,7 @@ export default function TemplateEditorPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-accent-700"
+                        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-[var(--shadow-elevated)] overflow-hidden border-t-8 border-accent-700"
                     >
                         <div className="p-12 space-y-10">
                             <div className="row-between">

@@ -222,7 +222,7 @@ export default function PaymentConfigPage() {
 
         {/* Provider Selection */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3 text-[var(--text-primary)]">Payment Providers</h2>
+          <h2 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Payment Providers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const).map((provider) => {
               const config = configs.find((c) => c.provider === provider);

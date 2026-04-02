@@ -108,7 +108,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
             </div>
 
             {/* Net Amount */}
-            <div className="flex justify-between items-center pt-3 border-t-2 border-surface-300 dark:border-surface-600">
+            <div className="flex justify-between items-center pt-4 border-t-2 border-surface-300 dark:border-surface-600">
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-accent-500" />
                 <span className="font-semibold text-surface-900 dark:text-surface-50">

@@ -65,19 +65,19 @@ export default function MeLoading() {
         <div className="space-y-4">
           {/* Card 1 */}
           <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4">
-            <Skeleton height={16} width="70%" className="mb-3" />
+            <Skeleton height={16} width="70%" className="mb-4" />
             <Skeleton height={28} width="80%" />
           </div>
 
           {/* Card 2 */}
           <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4">
-            <Skeleton height={16} width="70%" className="mb-3" />
+            <Skeleton height={16} width="70%" className="mb-4" />
             <Skeleton height={28} width="80%" />
           </div>
 
           {/* Card 3 */}
           <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4">
-            <Skeleton height={16} width="70%" className="mb-3" />
+            <Skeleton height={16} width="70%" className="mb-4" />
             <Skeleton height={28} width="80%" />
           </div>
         </div>

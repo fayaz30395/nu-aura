@@ -102,7 +102,7 @@ export function ContentGrid({
               className="group h-full cursor-pointer transition-all hover:shadow-[var(--shadow-dropdown)]"
               onClick={() => router.push(getRoute(item))}
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${getTypeColor(item.type)}`}>
                     {item.type === 'WIKI' ? 'Wiki' : 'Blog'}
@@ -119,7 +119,7 @@ export function ContentGrid({
               </CardHeader>
 
               {item.excerpt && (
-                <CardContent className="pb-3">
+                <CardContent className="pb-4">
                   <p className={`${typography.bodySecondary} line-clamp-2 text-sm`}>
                     {item.excerpt}
                   </p>

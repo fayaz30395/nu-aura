@@ -282,7 +282,7 @@ export default function EmploymentChangeRequestsPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Changes */}
                       <div>
-                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                           Proposed Changes
                         </h4>
                         <div className="bg-[var(--bg-surface)] rounded-lg p-4">
@@ -331,7 +331,7 @@ export default function EmploymentChangeRequestsPage() {
 
                       {/* Details */}
                       <div>
-                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
                           Request Details
                         </h4>
                         <div className="space-y-4">

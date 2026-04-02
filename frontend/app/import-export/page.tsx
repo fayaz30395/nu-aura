@@ -225,7 +225,7 @@ function FileDropZone({
         className="hidden"
         aria-label="Upload file"
       />
-      <Upload className="h-10 w-10 text-[var(--text-muted)] dark:text-[var(--text-muted)] mb-3" />
+      <Upload className="h-10 w-10 text-[var(--text-muted)] dark:text-[var(--text-muted)] mb-4" />
       <p className="text-sm font-medium text-[var(--text-secondary)]">
         {isDragActive ? 'Drop file here' : 'Drag & drop a file here, or click to browse'}
       </p>

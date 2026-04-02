@@ -88,7 +88,7 @@ export function EmployeeStep({
     <>
       {/* Project Summary */}
       <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-4 border border-accent-200 dark:border-accent-800">
-        <div className="row-between mb-3">
+        <div className="row-between mb-4">
           <div>
             <h4 className="font-medium text-accent-800 dark:text-accent-200">{createdProject?.name}</h4>
             <p className="text-sm text-accent-700 dark:text-accent-400">
@@ -348,7 +348,7 @@ export function EmployeeStep({
 
       {allocations.length === 0 && (
         <div className="text-center py-8 text-surface-500">
-          <User className="h-12 w-12 mx-auto mb-3 opacity-30" />
+          <User className="h-12 w-12 mx-auto mb-4 opacity-30" />
           <p>No employees added yet</p>
           <p className="text-sm">Search and add employees to allocate to this project</p>
         </div>

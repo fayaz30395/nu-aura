@@ -202,7 +202,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         {/* Header Row */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-4">
           {icon && (
             <div
               className={cn(
@@ -254,7 +254,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
         {/* Action Link */}
         {actionLabel && (
-          <div className="mt-3 pt-3 border-t border-surface-200/50 dark:border-surface-700/50">
+          <div className="mt-4 pt-4 border-t border-surface-200/50 dark:border-surface-700/50">
             <button
               onClick={onAction}
               aria-label={actionLabel}

@@ -208,7 +208,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
         {uploading && selectedFile ? (
           <div className="w-full max-w-xs">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <FileIcon className="h-8 w-8 text-accent-500" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{selectedFile.name}</p>

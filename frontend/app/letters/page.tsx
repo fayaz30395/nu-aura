@@ -839,7 +839,7 @@ export default function LettersPage() {
               templates.map((template) => (
                 <Card key={template.id} className="hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
                           <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
@@ -852,7 +852,7 @@ export default function LettersPage() {
                         </div>
                       </div>
                     </div>
-                    <p className="text-body-secondary line-clamp-2 mb-3 min-h-[40px]">
+                    <p className="text-body-secondary line-clamp-2 mb-4 min-h-[40px]">
                       {template.description || 'No description'}
                     </p>
                     <div className="row-between">
