@@ -8,6 +8,18 @@ spring:
   main:
     lazy-initialization: true
 
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    admin:
+      # Do not fail-fast if Kafka is unavailable — allows app to start without Kafka
+      fail-fast: false
+    producer:
+      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      auto-startup: false
+
   datasource:
     hikari:
       maximum-pool-size: 5
@@ -18,7 +30,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      # none: skip schema validation (Flyway is disabled, schema is pre-migrated)
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
@@ -37,24 +50,10 @@ spring:
     type: simple
 
   flyway:
-    enabled: true
-    clean-disabled: true
-    # Relaxed validation to avoid checksum failures on existing DB
-    validate-on-migrate: false
-    out-of-order: true
-    baseline-on-migrate: true
-    baseline-version: 18
-    locations: classpath:db/migration
+    # DB is already migrated — disable Flyway on startup to avoid
+    # running 100+ migrations and exceeding health check timeout
+    enabled: false
 
-  # Disable Kafka auto-configuration startup connection attempts
-  kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    consumer:
-      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    listener:
-      auto-startup: false
 
 management:
   endpoints:
