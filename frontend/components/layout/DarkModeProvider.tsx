@@ -58,7 +58,10 @@ function getSavedTheme(): ThemeMode {
 
 export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<ThemeMode>('system');
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+  // Default to 'dark' to match the app's enforced dark theme and prevent
+  // a Mantine SSR hydration mismatch (server renders dark CSS vars via
+  // ColorSchemeScript defaultColorScheme="dark", client must match on first render).
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
 
   // Initialize on mount — read from localStorage
   useEffect(() => {

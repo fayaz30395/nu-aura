@@ -50,7 +50,7 @@ export default function RootLayout({
       <head>
         {/* FOUC prevention — runs synchronously before paint */}
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
-        <ColorSchemeScript defaultColorScheme="auto" />
+        <ColorSchemeScript defaultColorScheme="dark" />
       </head>
       <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans`}>
         <Providers>{children}</Providers>

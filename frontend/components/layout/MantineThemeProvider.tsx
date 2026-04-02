@@ -34,5 +34,5 @@ export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
  * This Mantine script is kept for Mantine's internal SSR hydration.
  */
 export function MantineColorSchemeScript() {
-  return <ColorSchemeScript defaultColorScheme="auto" />;
+  return <ColorSchemeScript defaultColorScheme="dark" />;
 }

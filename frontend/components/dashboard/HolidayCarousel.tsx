@@ -54,7 +54,7 @@ export function HolidayCarousel({
 }: HolidayCarouselProps) {
   const { data: apiData, isLoading: queryLoading } = useUpcomingHolidays(90, !propHolidays);
 
-  const holidays = propHolidays ?? (apiData ? apiData.map(mapApiHoliday) : []);
+  const holidays = propHolidays ?? (Array.isArray(apiData) ? apiData.map(mapApiHoliday) : []);
   const isLoading = propLoading || queryLoading;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
