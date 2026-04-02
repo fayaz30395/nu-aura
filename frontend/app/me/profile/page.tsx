@@ -280,7 +280,7 @@ export default function MyProfilePage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <Check className="h-5 w-5 text-success-600" />
             <p className="text-success-800 dark:text-success-200 font-medium">
               Profile updated successfully!
@@ -290,7 +290,7 @@ export default function MyProfilePage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <AlertCircle className="h-5 w-5 text-danger-600" />
             <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>

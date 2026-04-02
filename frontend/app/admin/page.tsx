@@ -13,6 +13,7 @@ import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/c
 import { AdminPageContent } from '@/components/layout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';
+import { Users } from 'lucide-react';
 
 const PAGE_SIZE = 10;
 
@@ -230,18 +231,16 @@ export default function AdminDashboardPage() {
                 </tr>
               ) : filteredByEmail.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-10 text-center text-[var(--text-muted)] text-sm"
-                  >
-                    No users found for the current filters.
+                  <td colSpan={6} className="px-6 py-12 text-center">
+                    <Users className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-2" />
+                    <p className="text-sm text-[var(--text-muted)]">No users found for the current filters.</p>
                   </td>
                 </tr>
               ) : (
                 filteredByEmail.map((user) => (
                   <tr
                     key={user.id}
-                    className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                    className="hover:bg-[var(--bg-card-hover)] transition-colors border-l-2 border-transparent hover:border-accent-400"
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {user.firstName && (user.firstName + (user.lastName ? ' ' + user.lastName : '')) || user.email?.split('@')[0] || '—'}
@@ -357,7 +356,7 @@ export default function AdminDashboardPage() {
           <button
             type="submit"
             disabled={updateRoleMutation.isPending}
-            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="skeuo-button px-6 py-3 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>
@@ -385,7 +384,7 @@ function StatCard(props: { title: string; value: number | string; description?: 
   const { title, value, description } = props;
   return (
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-4">
-      <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
+      <div className="skeuo-deboss text-sm font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>
       <div className="skeuo-emboss mt-2 text-2xl font-semibold text-[var(--text-primary)] relative z-10">
