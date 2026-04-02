@@ -84,15 +84,17 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         leaveRequest.setRequestNumber(requestNumber);
         leaveRequest.setTenantId(tenantId);
 
+        // F-06: Validate balance and reserve days as pending BEFORE persisting the request.
+        // addPendingLeave throws IllegalArgumentException if available < totalDays, which
+        // causes the transaction to roll back so no invalid request is ever saved.
+        leaveBalanceService.addPendingLeave(
+                leaveRequest.getEmployeeId(),
+                leaveRequest.getLeaveTypeId(),
+                leaveRequest.getTotalDays());
+
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
         try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.CREATE, null, null, "Leave request created: " + requestNumber); } catch (Exception e) { log.warn("Audit log failed for leave request create: {}", e.getMessage()); }
-
-        // Add to pending in balance
-        leaveBalanceService.getOrCreateBalance(
-                saved.getEmployeeId(),
-                saved.getLeaveTypeId(),
-                saved.getStartDate().getYear());
 
         // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
         // "Transaction silently rolled back because it has been marked as rollback-only".
@@ -181,6 +183,16 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.REJECT, null, null, "Leave request rejected by " + approverId + ": " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request reject: {}", e.getMessage()); }
 
+        // F-07: Release pending days reserved at request creation
+        try {
+            leaveBalanceService.releasePendingLeave(
+                    saved.getEmployeeId(),
+                    saved.getLeaveTypeId(),
+                    saved.getTotalDays());
+        } catch (Exception e) {
+            log.warn("Failed to release pending leave on rejection for request {}: {}", saved.getId(), e.getMessage());
+        }
+
         // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -222,17 +234,29 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
 
         boolean wasApproved = request.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED;
+        boolean wasPending = request.getStatus() == LeaveRequest.LeaveRequestStatus.PENDING;
         request.cancel(reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Leave request cancelled: " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request cancel: {}", e.getMessage()); }
 
-        // Credit back if was approved
+        // F-07: Release balance based on prior status
         if (wasApproved) {
+            // Was fully approved — credit back from used
             leaveBalanceService.creditLeave(
                     saved.getEmployeeId(),
                     saved.getLeaveTypeId(),
                     saved.getTotalDays());
+        } else if (wasPending) {
+            // Was still pending — release the reserved pending days
+            try {
+                leaveBalanceService.releasePendingLeave(
+                        saved.getEmployeeId(),
+                        saved.getLeaveTypeId(),
+                        saved.getTotalDays());
+            } catch (Exception e) {
+                log.warn("Failed to release pending leave on cancellation for request {}: {}", saved.getId(), e.getMessage());
+            }
         }
 
         return saved;

@@ -551,8 +551,7 @@ export default function EmployeesPage() {
 
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                   {/* Basic Info Tab */}
-                  {currentTab === 'basic' && (
-                    <div className="space-y-4">
+                  <div className={currentTab === 'basic' ? 'space-y-4' : 'hidden'}>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -628,12 +627,10 @@ export default function EmployeesPage() {
                         />
                         {errors.password && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
                       </div>
-                    </div>
-                  )}
+                  </div>
 
                   {/* Personal Details Tab */}
-                  {currentTab === 'personal' && (
-                    <div className="space-y-4">
+                  <div className={currentTab === 'personal' ? 'space-y-4' : 'hidden'}>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -773,12 +770,10 @@ export default function EmployeesPage() {
                           {errors.country && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.country.message}</p>}
                         </div>
                       </div>
-                    </div>
-                  )}
+                  </div>
 
                   {/* Employment Tab */}
-                  {currentTab === 'employment' && (
-                    <div className="space-y-4">
+                  <div className={currentTab === 'employment' ? 'space-y-4' : 'hidden'}>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -1004,12 +999,10 @@ export default function EmployeesPage() {
                       <p className="text-caption">
                         Dotted-line managers represent matrix reporting relationships. They are informational only and do not participate in approval workflows.
                       </p>
-                    </div>
-                  )}
+                  </div>
 
                   {/* Banking & Tax Tab */}
-                  {currentTab === 'bank' && (
-                    <div className="space-y-4">
+                  <div className={currentTab === 'bank' ? 'space-y-4' : 'hidden'}>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -1069,8 +1062,7 @@ export default function EmployeesPage() {
                           <strong>Note:</strong> Banking and tax information is encrypted and stored securely. This information will be used for payroll processing.
                         </p>
                       </div>
-                    </div>
-                  )}
+                  </div>
 
                   <div className="flex gap-4 pt-6 border-t border-[var(--border-subtle)]">
                     <Button

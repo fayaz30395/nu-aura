@@ -118,11 +118,56 @@ public class LeaveBalanceService {
                 .orElse(null);
     }
 
+    /**
+     * F-06 + F-07: Validates that the employee has sufficient leave balance and reserves
+     * the requested days as pending. Called when a leave request is created (pre-approval).
+     *
+     * <p>Uses a pessimistic SELECT…FOR UPDATE lock to prevent concurrent requests from
+     * over-booking the same balance. Throws {@link IllegalArgumentException} if the
+     * available balance is less than the requested days.</p>
+     *
+     * @throws IllegalArgumentException when available &lt; days
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
+    public void addPendingLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
+        if (balance.getAvailable().compareTo(days) < 0) {
+            throw new IllegalArgumentException(String.format(
+                "Insufficient leave balance. Available: %.1f day(s), Requested: %.1f day(s)",
+                balance.getAvailable(), days));
+        }
+        balance.addPending(days);
+        leaveBalanceRepository.save(balance);
+    }
+
+    /**
+     * F-07: Releases reserved pending days when a leave request is rejected or cancelled
+     * while still in PENDING status. Safe to call even if the balance no longer exists.
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
+    public void releasePendingLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        leaveBalanceRepository
+            .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, Year.now().getValue(), tenantId)
+            .ifPresent(balance -> {
+                balance.removePending(days);
+                leaveBalanceRepository.save(balance);
+            });
+    }
+
+    /**
+     * Deducts approved leave: moves days from pending → used.
+     * Calling removePending first ensures available is unchanged (already reserved on create).
+     * Safe for legacy requests where pending=0 — removePending clamps to zero.
+     */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = CacheConfig.LEAVE_BALANCES, allEntries = true)
     public LeaveBalance deductLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
-        balance.deduct(days);
+        balance.removePending(days); // Release from pending (reserved on leave creation)
+        balance.deduct(days);        // Move to used; net effect on available = zero
         return leaveBalanceRepository.save(balance);
     }
 
