@@ -14,10 +14,22 @@ elif [ -f ".env.local" ]; then
   set -a; source ".env.local"; set +a
 fi
 
-echo "Starting NU-AURA Frontend..."
-echo "Port: ${PORT:-3001}"
+echo "Checking for existing processes on port 3000..."
+PORT_PID=$(lsof -ti:3000 || true)
+if [ -n "$PORT_PID" ]; then
+  echo "Found process $PORT_PID on port 3000. Killing it..."
+  kill -9 $PORT_PID
+  sleep 1
+  echo "Process killed."
+else
+  echo "No process found on port 3000."
+fi
 
-# NODE_OPTIONS: cap heap at 3GB, use old V8 GC for stability
+echo ""
+echo "Starting NU-AURA Frontend..."
+echo "Port: 3000"
+
+# NODE_OPTIONS: cap heap at 3GB to prevent macOS OOM kills during compilation
 export NODE_OPTIONS="--max-old-space-size=3072"
 
-exec npx next dev -p "${PORT:-3001}"
+exec npx next dev -p 3000
