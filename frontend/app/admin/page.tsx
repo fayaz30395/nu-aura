@@ -356,7 +356,7 @@ export default function AdminDashboardPage() {
           <button
             type="submit"
             disabled={updateRoleMutation.isPending}
-            className="skeuo-button px-6 py-3 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
           </button>
@@ -384,7 +384,7 @@ function StatCard(props: { title: string; value: number | string; description?: 
   const { title, value, description } = props;
   return (
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-6 sm:py-4">
-      <div className="skeuo-deboss text-sm font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
+      <div className="skeuo-deboss text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide relative z-10">
         {title}
       </div>
       <div className="skeuo-emboss mt-2 text-2xl font-semibold text-[var(--text-primary)] relative z-10">
