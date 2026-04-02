@@ -536,7 +536,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<Candidate> offerSpec = (root, query, cb) ->
-            cb.in(root.get("status")).value(
+            root.get("status").in(
                 Candidate.CandidateStatus.OFFER_EXTENDED,
                 Candidate.CandidateStatus.OFFER_ACCEPTED,
                 Candidate.CandidateStatus.OFFER_DECLINED

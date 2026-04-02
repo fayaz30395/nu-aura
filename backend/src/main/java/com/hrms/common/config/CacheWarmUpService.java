@@ -56,25 +56,25 @@ public class CacheWarmUpService {
             // 2. Departments (4hr TTL) — used in employee lists, filters, org chart
             warmed += warmSafely("departments", () -> {
                 var svc = ctx.getBean(com.hrms.application.employee.service.DepartmentService.class);
-                svc.getAllDepartments();
+                svc.getAllDepartments(org.springframework.data.domain.Pageable.unpaged());
             });
 
             // 3. Office locations (4hr TTL) — used in attendance, employee forms
             warmed += warmSafely("officeLocations", () -> {
                 var svc = ctx.getBean(com.hrms.application.attendance.service.OfficeLocationService.class);
-                svc.getAllLocations();
+                svc.getAllLocations(org.springframework.data.domain.Pageable.unpaged());
             });
 
             // 4. Holidays (24hr TTL) — used in attendance, leave calendar
             warmed += warmSafely("holidays", () -> {
                 var svc = ctx.getBean(com.hrms.application.attendance.service.HolidayService.class);
-                svc.getCurrentYearHolidays();
+                svc.getHolidaysByYear(java.time.LocalDate.now().getYear());
             });
 
             // 5. Feature flags (24hr TTL) — used on every page for feature gating
             warmed += warmSafely("featureFlags", () -> {
                 var svc = ctx.getBean(com.hrms.application.featureflag.FeatureFlagService.class);
-                svc.getAllFlags(tenantId);
+                svc.getAllFlags();
             });
 
             long elapsed = System.currentTimeMillis() - start;
