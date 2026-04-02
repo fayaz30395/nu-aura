@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+// @PreAuthorize removed — @RequiresPermission handles auth + authorization via PermissionAspect
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +30,6 @@ public class QuizController {
      * Get quiz details including questions (student view - no answers revealed)
      */
     @GetMapping("/{quizId}")
-    @PreAuthorize("isAuthenticated()")
     @RequiresPermission(Permission.LMS_COURSE_VIEW)
     public ResponseEntity<QuizDetailResponse> getQuizDetails(@PathVariable UUID quizId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -42,7 +41,6 @@ public class QuizController {
      * Start a new quiz attempt
      */
     @PostMapping("/{quizId}/start")
-    @PreAuthorize("isAuthenticated()")
     @RequiresPermission(Permission.LMS_COURSE_VIEW)
     public ResponseEntity<QuizAttemptResponse> startQuizAttempt(@PathVariable UUID quizId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -56,7 +54,6 @@ public class QuizController {
      * Submit quiz attempt and receive grading results
      */
     @PostMapping("/attempts/{attemptId}/submit")
-    @PreAuthorize("isAuthenticated()")
     @RequiresPermission(Permission.LMS_COURSE_VIEW)
     public ResponseEntity<QuizResultResponse> submitQuizAttempt(
             @PathVariable UUID attemptId,
@@ -70,7 +67,6 @@ public class QuizController {
      * Get attempt history for a quiz
      */
     @GetMapping("/{quizId}/attempts")
-    @PreAuthorize("isAuthenticated()")
     @RequiresPermission(Permission.LMS_COURSE_VIEW)
     public ResponseEntity<List<QuizAttemptResponse>> getAttemptHistory(@PathVariable UUID quizId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -84,7 +80,6 @@ public class QuizController {
      * Generate certificate after course completion
      */
     @PostMapping("/enrollments/{enrollmentId}/certificate")
-    @PreAuthorize("isAuthenticated()")
     @RequiresPermission(Permission.LMS_COURSE_VIEW)
     public ResponseEntity<Certificate> generateCertificate(@PathVariable UUID enrollmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();

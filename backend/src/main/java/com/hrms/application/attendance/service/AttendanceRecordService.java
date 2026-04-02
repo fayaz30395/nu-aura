@@ -363,13 +363,8 @@ public class AttendanceRecordService {
      * successful saves are committed together. Per-employee exceptions are caught to
      * provide partial-success semantics (failed entries are collected, not thrown).
      *
-     * <p>TODO(HIGH-3 / P2): Replace per-employee checkIn() calls with a true batch path:
-     *   1. Fetch all existing AttendanceRecord rows for the target date in one query:
-     *      {@code attendanceRecordRepository.findByTenantIdAndEmployeeIdInAndDate(tenantId, employeeIds, date)}
-     *   2. Build new records for employees without an existing record.
-     *   3. Apply business rules (duplicate check, shift validation) in-memory.
-     *   4. Persist with {@code attendanceRecordRepository.saveAll(records)}.
-     *   This reduces N individual INSERT/SELECT round-trips to 1 SELECT + 1 batch INSERT.
+     * <p>FUTURE: NUAURA-ATTENDANCE-001 — Replace per-employee checkIn() calls with a true batch path:
+     *   1 SELECT (all existing records for date) + 1 batch INSERT via saveAll(), eliminating N round-trips.
      *   Pre-condition: extract shared validation logic from checkIn() into a package-private helper.
      */
     public BulkResult bulkCheckIn(List<UUID> employeeIds, LocalDateTime checkInTime,
@@ -397,9 +392,9 @@ public class AttendanceRecordService {
      * successful saves are committed together. Per-employee exceptions are caught to
      * provide partial-success semantics (failed entries are collected, not thrown).
      *
-     * <p>TODO(HIGH-3 / P2): Replace per-employee checkOut() calls with a true batch path
-     * (mirror of bulkCheckIn TODO above). Fetch existing records in one query, apply
-     * business rules in-memory, then persist with saveAll().
+     * <p>FUTURE: NUAURA-ATTENDANCE-001 — Replace per-employee checkOut() calls with a true batch path
+     * (mirror of bulkCheckIn). Fetch existing records in one query, apply business rules in-memory,
+     * then persist with saveAll().
      */
     public BulkResult bulkCheckOut(List<UUID> employeeIds, LocalDateTime checkOutTime,
             String source, String location, String ip) {

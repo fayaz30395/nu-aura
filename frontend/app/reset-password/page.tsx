@@ -278,7 +278,7 @@ function ResetPasswordForm() {
               </div>
 
               {/* Password Requirements */}
-              <div className="text-xs text-[var(--text-muted)] space-y-1 bg-[var(--bg-secondary)] p-3 rounded-lg">
+              <div className="text-xs text-[var(--text-muted)] space-y-1 bg-[var(--bg-secondary)] p-4 rounded-lg">
                 <p className="font-medium text-[var(--text-secondary)]">Password requirements:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>At least 12 characters</li>

@@ -2,6 +2,7 @@ package com.hrms.application.dataimport.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.dataimport.dto.*;
+import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.dataimport.KekaImportHistory;
@@ -55,6 +56,7 @@ public class KekaImportService {
     private final KekaImportHistoryRepository historyRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+    private final EmailNotificationService emailNotificationService;
 
     private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -265,7 +267,6 @@ public class KekaImportService {
         }
 
         // Generate secure random password for each imported user
-        // TODO: Send password reset email to user after KEKA import completes
         String randomPassword = generateSecurePassword(16);
 
         User user = User.builder()
@@ -279,9 +280,13 @@ public class KekaImportService {
                 .roles(new HashSet<>(Collections.singleton(defaultRole)))
                 .build();
 
-        log.info("Created user account for {} with temporary password (should send reset email)", email);
+        User saved = userRepository.save(user);
 
-        return userRepository.save(user);
+        String displayName = firstName + " " + lastName;
+        emailNotificationService.sendWelcomeEmail(email, displayName.trim(), randomPassword);
+        log.info("Sent welcome email with temporary password to {}", email);
+
+        return saved;
     }
 
     /**

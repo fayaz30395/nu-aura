@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  * Adapter for ZKTeco biometric devices.
- * TODO: Implement ZKTeco SDK push/pull protocol integration.
- * ZKTeco devices typically communicate via their proprietary PUSH protocol
- * or can be polled using the ZK Web API.
+ * FUTURE: NUAURA-BIOMETRIC-002 — Implement ZKTeco SDK push/pull protocol integration.
+ * ZKTeco devices communicate via their proprietary PUSH protocol or the ZK Web API.
  *
  * <p>This bean is only registered when {@code app.biometric.zkteco.enabled=true} is set
  * in application properties. This prevents the unimplemented stub from being loaded
@@ -37,9 +36,7 @@ public class ZKTecoAdapter implements BiometricAdapter {
 
     @Override
     public List<BiometricPunchRequest> parsePunchData(String rawPayload) {
-        // TODO: Implement ZKTeco PUSH protocol payload parsing
-        // ZKTeco devices send attendance logs in a specific binary/text format
-        // that needs to be decoded into punch records.
+        // FUTURE: NUAURA-BIOMETRIC-002 — Parse ZKTeco PUSH protocol payload (binary/text format) into punch records.
         log.warn("ZKTeco parsePunchData not yet implemented. Raw payload length: {}",
                 rawPayload != null ? rawPayload.length() : 0);
         return Collections.emptyList();
@@ -47,9 +44,7 @@ public class ZKTecoAdapter implements BiometricAdapter {
 
     @Override
     public List<BiometricPunchRequest> pullPunches(String deviceIp, int port) {
-        // TODO: Implement ZKTeco SDK pull-based attendance retrieval
-        // This would connect to the device via TCP and use ZK protocol commands
-        // to retrieve attendance logs since the last sync.
+        // FUTURE: NUAURA-BIOMETRIC-002 — Implement ZKTeco TCP pull via ZK protocol commands to retrieve attendance logs.
         log.warn("ZKTeco pullPunches not yet implemented for device at {}:{}", deviceIp, port);
         return Collections.emptyList();
     }

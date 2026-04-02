@@ -142,8 +142,8 @@ export default function FluenceDashboardPage() {
 
           {/* Decorative background */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4" />
           </div>
         </motion.div>
 

@@ -189,6 +189,11 @@ public class EmployeeController {
      * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
      */
     private void enforceEmployeeViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
         // VIEW_ALL: can see any employee within the tenant
         if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
             return;

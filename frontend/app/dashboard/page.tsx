@@ -178,18 +178,19 @@ export default function DashboardPage() {
       if (emailResponse.ok) {
         const emailData = await emailResponse.json();
         if (emailData.messages) {
-          for (const msg of emailData.messages.slice(0, 3)) {
-            const detailResponse = await fetch(
-              `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-            if (detailResponse.ok) {
+          const emailDetails = await Promise.all(
+            emailData.messages.slice(0, 3).map(async (msg: { id: string; threadId: string }) => {
+              const detailResponse = await fetch(
+                `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              if (!detailResponse.ok) return null;
               const detail = await detailResponse.json();
               const fromHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'From');
               const subjectHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'Subject');
-              allNotifications.push({
+              return {
                 id: `email-${msg.id}`,
-                type: 'email',
+                type: 'email' as const,
                 title: subjectHeader?.value || 'No Subject',
                 subtitle: fromHeader?.value?.split('<')[0]?.trim() || 'Unknown Sender',
                 timestamp: new Date(parseInt(detail.internalDate)),
@@ -201,8 +202,11 @@ export default function DashboardPage() {
                   subject: subjectHeader?.value || 'No Subject',
                   snippet: detail.snippet,
                 },
-              });
-            }
+              };
+            })
+          );
+          for (const notif of emailDetails) {
+            if (notif) allNotifications.push(notif);
           }
         }
       }
@@ -493,7 +497,7 @@ export default function DashboardPage() {
                   <Skeleton className="h-4 w-32 rounded" />
                 </div>
               </div>
-              <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+              <div className="flex gap-4 flex-wrap sm:flex-nowrap">
                 <Skeleton className="h-10 w-24 rounded-lg" />
                 <Skeleton className="h-10 w-24 rounded-lg" />
               </div>

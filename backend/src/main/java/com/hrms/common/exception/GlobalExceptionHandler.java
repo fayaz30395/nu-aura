@@ -18,6 +18,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -425,6 +426,30 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = buildErrorResponse(status, "Not Found",
                 String.format("No endpoint found for %s %s", ex.getHttpMethod(), ex.getRequestURL()), path);
+        errorResponse.setErrorCode("ENDPOINT_NOT_FOUND");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * BUG-001 FIX: Handle NoResourceFoundException (Spring Boot 3.2+).
+     * In Spring Boot 3.2+, NoResourceFoundException is thrown instead of
+     * NoHandlerFoundException for unmapped static resource paths.
+     * Without this handler, these exceptions fall through to the generic
+     * Exception handler and return HTTP 500 instead of 404.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(
+            NoResourceFoundException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        logError("request", "resource_not_found", ex, status, path);
+        recordErrorMetric("request", "resource_not_found", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Found",
+                String.format("No endpoint found for %s %s", ex.getHttpMethod(), ex.getResourcePath()), path);
         errorResponse.setErrorCode("ENDPOINT_NOT_FOUND");
 
         return jsonResponse(status, errorResponse);

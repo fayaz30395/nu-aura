@@ -474,7 +474,7 @@ function LoginPage() {
             </p>
 
             {/* App icons row — NULogic brand gradient palette */}
-            <div className="flex gap-5 mb-8">
+            <div className="flex gap-4 mb-8">
               {[
                 { name: 'HRMS', bg: 'var(--nu-gradient-dark)', icon: '👥' },
                 { name: 'Hire', bg: 'var(--nu-gradient-primary)', icon: '🎯' },

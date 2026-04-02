@@ -22,8 +22,8 @@ import java.util.Set;
  * a configured connector instance for a specific tenant.</p>
  *
  * <p><strong>Encryption:</strong> The {@code configJson} field stores sensitive
- * configuration data (API keys, tokens, URLs). TODO: Apply field-level encryption
- * using {@code @Convert(converter = EncryptedStringConverter.class)} when available.</p>
+ * configuration data (API keys, tokens, URLs). Field-level AES-256-GCM encryption
+ * is applied via {@code @Convert(converter = EncryptedStringConverter.class)}.</p>
  *
  * <p><strong>Multi-Tenancy:</strong> Extends {@link TenantAware} which automatically
  * handles tenant isolation via Spring Data JPA queries and PostgreSQL RLS.</p>
