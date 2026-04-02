@@ -67,7 +67,7 @@ class EmployeeDirectoryControllerTest {
         directoryResponse = new EmployeeDirectoryResponse();
         directoryResponse.setId(employeeId);
         directoryResponse.setFullName("John Doe");
-        directoryResponse.setEmail("john.doe@example.com");
+        directoryResponse.setWorkEmail("john.doe@example.com");
         directoryResponse.setStatus("ACTIVE");
 
         directoryPage = new PageImpl<>(List.of(directoryResponse), PageRequest.of(0, 20), 1);
@@ -162,7 +162,7 @@ class EmployeeDirectoryControllerTest {
                             .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1))
-                    .andExpect(jsonPath("$.content[0].email").value("john.doe@example.com"));
+                    .andExpect(jsonPath("$.content[0].workEmail").value("john.doe@example.com"));
 
             verify(employeeDirectoryService).searchEmployees(any(EmployeeSearchRequest.class));
         }
