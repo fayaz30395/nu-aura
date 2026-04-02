@@ -8,15 +8,21 @@
 
 ## Product Vision
 
-**What:** A unified people-operations SaaS platform replacing fragmented HR tools (KEKA/Darwinbox/greytHR). Four sub-apps under one SSO with 500+ granular permissions.
+**NU-AURA** is an internal platform built by NULogic for NULogic. It provides shared SSO, RBAC, and infrastructure for multiple internal applications. It is NOT a SaaS product for external sale.
 
-**Who:** Indian mid-market companies (200-5000 employees). Multi-tenant SaaS product. HR Admins are power users; every employee uses self-service. Walled garden — curated integrations only (Google OAuth, Drive, Twilio, SMTP), no plugin/marketplace system.
+**NU-HRMS** is the immediate priority — a direct replacement for KEKA (which NULogic currently pays for). The goal is to eliminate that cost by building an internal alternative.
 
-**Critical path = 4 end-to-end workflows (not Fluence completion):** hire-to-retire, leave lifecycle, payroll run, performance cycle. Hire-to-retire and payroll are the value differentiators.
+**Distributed workforce:** NULogic employees work across different regions, timezones, and project sections. All features must account for timezone-aware scheduling, region-specific policies, and cross-project visibility.
 
-**NU-AURA is NOT:** a project management tool, a chat platform, a finance/accounting system, a mobile app, an AI product (stubs deferred), or an extensible platform (no webhooks-out, no plugins).
+**Sub-apps on the platform:**
+| App | Purpose | Priority |
+|-----|---------|----------|
+| NU-HRMS | KEKA replacement — HR core (employees, leave, attendance, payroll) | **Highest — active build** |
+| NU-Hire | Internal recruitment & onboarding | High |
+| NU-Grow | Performance reviews, training, engagement | Medium |
+| NU-Fluence | Internal knowledge management & collaboration | Phase 2 |
 
-**Target:** Late April 2026 demo/launch readiness.
+**NU-AURA is NOT:** a SaaS product, a project management tool, a chat platform, a finance/accounting system, or a mobile app.
 
 ---
 
@@ -114,12 +120,12 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ```
 
 ### Sub-Apps
-| App | Scope |
-|-----|-------|
-| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets |
-| NU-Hire | Jobs, candidates, pipeline, onboarding, offboarding |
-| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys |
-| NU-Fluence | Wiki, blogs, templates, Drive (backend done, frontend ~50%) |
+| App | Scope | Status (as of 2026-04-02) |
+|-----|-------|--------------------------|
+| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~96% — Production-ready |
+| NU-Hire | Jobs, candidates, pipeline, onboarding, offboarding, e-signature, career page | ~95% — Production-ready |
+| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~94% — Production-ready |
+| NU-Fluence | Wiki, blogs, templates, Drive, analytics, space permissions | ~65% frontend (backend done) |
 
 ---
 

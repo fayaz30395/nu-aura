@@ -288,7 +288,7 @@ export default function PermissionsPage() {
                     >
                       {/* Role Header */}
                       <div
-                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                        className="row-between p-4 cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         onClick={() => toggleRoleExpanded(role.id)}
                       >
                         <div className="flex items-center gap-4">
@@ -312,7 +312,7 @@ export default function PermissionsPage() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-[var(--text-muted)]">
+                            <p className="text-body-muted">
                               {role.description || role.code} • {role.permissions.length} permissions
                             </p>
                           </div>
@@ -363,7 +363,7 @@ export default function PermissionsPage() {
                                 Assigned Permissions
                               </h4>
                               {role.permissions.length === 0 ? (
-                                <p className="text-sm text-[var(--text-muted)]">No permissions assigned</p>
+                                <p className="text-body-muted">No permissions assigned</p>
                               ) : (
                                 <div className="flex flex-wrap gap-2">
                                   {role.permissions.map((perm) => (
@@ -604,12 +604,12 @@ function EditRoleModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
+        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Edit Role: {role.code}
             </h2>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               {selectedCount} permissions selected
             </p>
           </div>
@@ -671,7 +671,7 @@ function EditRoleModal({
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
-                                <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
+                                <p className="text-caption truncate" title={perm.action}>{perm.action}</p>
                               </div>
                             </button>
                           );
@@ -750,10 +750,10 @@ function CreateRoleModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
+        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">Create New Role</h2>
-            <p className="text-sm text-[var(--text-muted)]">Create a custom role with specific permissions</p>
+            <p className="text-body-muted">Create a custom role with specific permissions</p>
           </div>
           <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
             <X className="w-5 h-5" />
@@ -830,7 +830,7 @@ function CreateRoleModal({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
-                                  <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
+                                  <p className="text-caption truncate" title={perm.action}>{perm.action}</p>
                                 </div>
                               </button>
                             );
@@ -907,12 +907,12 @@ function EditUserModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
+        <div className="row-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Edit User Roles
             </h2>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               Assign roles to {user.fullName}
             </p>
           </div>
@@ -956,7 +956,7 @@ function EditUserModal({
                           <p className="text-sm font-medium text-[var(--text-primary)]">
                             {role.name}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {role.description || role.code}
                           </p>
                         </div>

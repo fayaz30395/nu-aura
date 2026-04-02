@@ -442,7 +442,7 @@ export default function FluenceAnalyticsPage() {
                           <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
                             {item.likes}
                           </td>
-                          <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                          <td className="px-4 py-4 text-body-secondary">
                             {item.author}
                           </td>
                         </motion.tr>
@@ -562,7 +562,7 @@ function KpiCard({ icon: IconComponent, label, value, color }: KpiCardProps) {
       transition={{ duration: 0.2 }}
     >
       <Card className={card.base}>
-        <CardContent className={`${card.paddingLarge} flex items-center justify-between`}>
+        <CardContent className={`${card.paddingLarge} row-between`}>
           <div>
             <p className={typography.caption}>{label}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-2 tabular-nums">

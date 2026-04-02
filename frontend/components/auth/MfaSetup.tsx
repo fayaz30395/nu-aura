@@ -131,7 +131,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Scan QR Code Step */}
         {step === 'scan' && (
           <div className="space-y-4">
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               Scan the QR code with an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy.
             </p>
 
@@ -145,7 +145,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* Manual Entry Code */}
             <div className="space-y-2">
-              <p className="text-xs text-[var(--text-muted)] font-medium uppercase">
+              <p className="text-caption font-medium uppercase">
                 Or enter this code manually:
               </p>
               <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Verify Code Step */}
         {step === 'verify' && (
           <form onSubmit={handleVerify} className="space-y-4">
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               Enter the 6-digit code from your authenticator app to verify and enable two-factor authentication.
             </p>
 
@@ -255,7 +255,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   title="Click to copy"
                   aria-label={`Copy backup code ${index + 1}`}
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="row-between gap-2">
                     <code className="font-mono text-sm text-[var(--text-primary)] flex-1">
                       {code}
                     </code>
@@ -289,7 +289,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
             <p className="text-lg font-semibold text-[var(--text-primary)]">
               Two-Factor Authentication Enabled
             </p>
-            <p className="text-sm text-[var(--text-secondary)] mt-2 text-center">
+            <p className="text-body-secondary mt-2 text-center">
               Your account is now protected with two-factor authentication.
             </p>
           </div>

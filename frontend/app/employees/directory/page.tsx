@@ -232,7 +232,7 @@ export default function TeamDirectory() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                 <Users className="w-7 h-7 text-accent-700 dark:text-accent-400" />
@@ -412,7 +412,7 @@ export default function TeamDirectory() {
                       <div className="flex justify-end mt-4">
                         <button
                           onClick={clearFilters}
-                          className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+                          className="text-body-muted hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
                         >
                           Clear all filters
                         </button>
@@ -423,7 +423,7 @@ export default function TeamDirectory() {
               </AnimatePresence>
 
               {/* Results Count */}
-              <div className="mt-4 flex items-center justify-between text-sm text-[var(--text-secondary)]">
+              <div className="mt-4 row-between text-body-secondary">
                 <span>
                   Found <strong className="text-[var(--text-primary)]">{totalElements}</strong>{' '}
                   employee{totalElements !== 1 ? 's' : ''}
@@ -490,7 +490,7 @@ export default function TeamDirectory() {
                         <h3 className="font-semibold text-[var(--text-primary)] text-lg">
                           {employee.fullName}
                         </h3>
-                        <p className="text-sm text-[var(--text-muted)] mt-1">
+                        <p className="text-body-muted mt-1">
                           {employee.designation || employee.jobRole}
                         </p>
 
@@ -505,7 +505,7 @@ export default function TeamDirectory() {
                         </div>
 
                         {employee.departmentName && (
-                          <div className="mt-3 flex items-center justify-center gap-1 text-sm text-[var(--text-muted)]">
+                          <div className="mt-3 flex items-center justify-center gap-1 text-body-muted">
                             <Building2 className="w-4 h-4" />
                             <span>{employee.departmentName}</span>
                           </div>
@@ -585,7 +585,7 @@ export default function TeamDirectory() {
                                 <p className="font-medium text-[var(--text-primary)]">
                                   {employee.fullName}
                                 </p>
-                                <p className="text-sm text-[var(--text-muted)]">
+                                <p className="text-body-muted">
                                   {employee.employeeCode}
                                 </p>
                               </div>
@@ -595,7 +595,7 @@ export default function TeamDirectory() {
                             <p className="text-[var(--text-primary)]">
                               {employee.departmentName || '-'}
                             </p>
-                            <p className="text-sm text-[var(--text-muted)]">
+                            <p className="text-body-muted">
                               {employee.designation || employee.jobRole}
                             </p>
                           </td>
@@ -603,7 +603,7 @@ export default function TeamDirectory() {
                             <p className="text-[var(--text-primary)] text-sm">
                               {employee.personalEmail || '-'}
                             </p>
-                            <p className="text-sm text-[var(--text-muted)]">
+                            <p className="text-body-muted">
                               {employee.phoneNumber || '-'}
                             </p>
                           </td>
@@ -772,7 +772,7 @@ export default function TeamDirectory() {
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Building2 className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-[var(--text-muted)]">Department</p>
+                          <p className="text-caption">Department</p>
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.departmentName}
                           </p>
@@ -784,7 +784,7 @@ export default function TeamDirectory() {
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Mail className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
-                          <p className="text-xs text-[var(--text-muted)]">Email</p>
+                          <p className="text-caption">Email</p>
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.personalEmail}
                           </p>
@@ -802,7 +802,7 @@ export default function TeamDirectory() {
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Phone className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
-                          <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                          <p className="text-caption">Phone</p>
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.phoneNumber}
                           </p>
@@ -820,7 +820,7 @@ export default function TeamDirectory() {
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <UserCircle className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-[var(--text-muted)]">Reports To</p>
+                          <p className="text-caption">Reports To</p>
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.managerName}
                           </p>
@@ -832,7 +832,7 @@ export default function TeamDirectory() {
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Calendar className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-[var(--text-muted)]">Joined</p>
+                          <p className="text-caption">Joined</p>
                           <p className="font-medium text-[var(--text-primary)]">
                             {new Date(selectedEmployee.joiningDate).toLocaleDateString('en-US', {
                               year: 'numeric',

@@ -78,7 +78,7 @@ export default function AboutPage() {
       {/* Header */}
       <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
@@ -178,7 +178,7 @@ export default function AboutPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {value.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                  <p className="text-body-secondary leading-relaxed">
                     {value.description}
                   </p>
                 </Card>
@@ -244,7 +244,7 @@ export default function AboutPage() {
                 <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-[var(--text-muted)]">{stat.label}</div>
+                <div className="text-body-muted">{stat.label}</div>
               </motion.div>
             ))}
           </div>

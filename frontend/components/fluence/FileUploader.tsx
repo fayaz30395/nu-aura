@@ -152,7 +152,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                 {selectedFile.name}
               </p>
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
               </p>
               <Progress value={uploadProgress} size="sm" color="violet" />
@@ -163,7 +163,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
                 <p className="text-sm font-medium text-[var(--text-primary)]">
                   {isDragging ? 'Drop your file here' : 'Drag and drop a file, or click to browse'}
                 </p>
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   Maximum file size: 50MB
                 </p>
               </div>

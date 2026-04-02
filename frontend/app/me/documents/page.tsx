@@ -257,7 +257,7 @@ export default function MyDocumentsPage() {
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'PENDING').length}
                 </p>
-                <p className="text-sm text-[var(--text-muted)]">Pending</p>
+                <p className="text-body-muted">Pending</p>
               </div>
             </div>
           </Card>
@@ -270,7 +270,7 @@ export default function MyDocumentsPage() {
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'IN_PROGRESS').length}
                 </p>
-                <p className="text-sm text-[var(--text-muted)]">In Progress</p>
+                <p className="text-body-muted">In Progress</p>
               </div>
             </div>
           </Card>
@@ -283,7 +283,7 @@ export default function MyDocumentsPage() {
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'GENERATED' || r.status === 'DELIVERED').length}
                 </p>
-                <p className="text-sm text-[var(--text-muted)]">Ready</p>
+                <p className="text-body-muted">Ready</p>
               </div>
             </div>
           </Card>
@@ -296,7 +296,7 @@ export default function MyDocumentsPage() {
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.length}
                 </p>
-                <p className="text-sm text-[var(--text-muted)]">Total</p>
+                <p className="text-body-muted">Total</p>
               </div>
             </div>
           </Card>
@@ -339,11 +339,11 @@ export default function MyDocumentsPage() {
                         </div>
                       </div>
 
-                      <p className="text-sm text-[var(--text-secondary)] mt-1">
+                      <p className="text-body-secondary mt-1">
                         {request.purpose}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-sm text-[var(--text-muted)]">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-body-muted">
                         <span>
                           Requested: {format(new Date(request.createdAt), 'MMM d, yyyy')}
                         </span>
@@ -408,7 +408,7 @@ export default function MyDocumentsPage() {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   {documentTypeOptions.find((t) => t.value === watchedDocumentType)?.description}
                 </p>
               </div>
@@ -472,7 +472,7 @@ export default function MyDocumentsPage() {
                         value={mode}
                         className="text-accent-700"
                       />
-                      <span className="text-sm text-[var(--text-secondary)] capitalize">
+                      <span className="text-body-secondary capitalize">
                         {mode.toLowerCase()}
                       </span>
                     </label>

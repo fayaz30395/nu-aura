@@ -119,7 +119,7 @@ export default function ContractTemplatesPage() {
                   <h3 className="font-semibold text-lg">{template.name}</h3>
                   {template.isActive && <Badge>Active</Badge>}
                 </div>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                <p className="text-body-secondary mb-4">
                   {contractService.getTypeLabel(template.type)}
                 </p>
                 <div className="flex gap-2">

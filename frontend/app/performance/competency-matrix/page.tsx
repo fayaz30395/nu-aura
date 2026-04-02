@@ -199,7 +199,7 @@ function FrameworkAdminTab() {
             className="p-4 border border-[var(--border-main)] skeuo-card cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-shadow"
             onClick={() => setFilterCategory(filterCategory === stat.category ? null : stat.category)}
           >
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <Text size="xs" c="dimmed">{stat.label}</Text>
                 <Text size="xl" fw={700} className="text-[var(--text-primary)]">{stat.count}</Text>
@@ -389,7 +389,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div>
           <Text size="sm" c="dimmed">
             {skills.length} skill{skills.length !== 1 ? 's' : ''} recorded
@@ -433,7 +433,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                     {catSkills.map((skill) => (
                       <div
                         key={skill.id}
-                        className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
+                        className="row-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                       >
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                           <div className="flex-1 min-w-0">
@@ -509,7 +509,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                 {gapReport?.gaps?.map((gap: SkillGapDetail) => (
                   <div
                     key={gap.skillName}
-                    className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
+                    className="row-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                   >
                     <div className="flex items-center gap-2">
                       <AlertTriangle
@@ -756,7 +756,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
                 .map((skill) => (
                   <div
                     key={skill.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
+                    className="row-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                   >
                     <div>
                       <Text size="sm" fw={500}>{skill.skillName}</Text>
@@ -851,7 +851,7 @@ export default function CompetencyMatrixPage() {
               <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
                 Competency Matrix
               </h1>
-              <p className="text-sm text-[var(--text-muted)] skeuo-deboss">
+              <p className="text-body-muted skeuo-deboss">
                 Manage competency frameworks, assess skills, and identify gaps
               </p>
             </div>

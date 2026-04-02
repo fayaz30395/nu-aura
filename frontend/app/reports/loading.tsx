@@ -3,7 +3,7 @@ export default function ReportsLoading() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-32 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-56 bg-[var(--bg-surface)] rounded" />
@@ -31,7 +31,7 @@ export default function ReportsLoading() {
 
       {/* Main chart */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div className="h-5 w-40 bg-[var(--bg-surface)] rounded" />
           <div className="flex gap-2">
             <div className="h-6 w-16 bg-[var(--bg-surface)] rounded" />
@@ -44,12 +44,12 @@ export default function ReportsLoading() {
 
       {/* Data table */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
+        <div className="row-between p-4 divider-b">
           <div className="h-5 w-28 bg-[var(--bg-surface)] rounded" />
           <div className="h-8 w-24 bg-[var(--bg-surface)] rounded-md" />
         </div>
         {/* Table header */}
-        <div className="flex items-center gap-4 px-4 py-4 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]">
+        <div className="flex items-center gap-4 px-4 py-4 bg-[var(--bg-surface)] divider-b">
           {[40, 28, 24, 20, 20].map((w, i) => (
             <div key={i} className={`h-3 w-${w} bg-[var(--bg-surface)] rounded`} />
           ))}

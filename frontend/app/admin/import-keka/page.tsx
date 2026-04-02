@@ -383,7 +383,7 @@ export default function KekaImportPage() {
                   <Download className="w-5 h-5 mr-2" />
                   Download Template
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                <p className="text-body-secondary mb-4">
                   Download a template file to see the required format for KEKA data export.
                 </p>
                 <div className="flex gap-4 flex-wrap">
@@ -450,7 +450,7 @@ export default function KekaImportPage() {
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         {(selectedFile.size / 1024).toFixed(2)} KB
                       </p>
                       <Button
@@ -474,7 +474,7 @@ export default function KekaImportPage() {
                       <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                         Drag and drop your file here
                       </p>
-                      <p className="text-sm text-[var(--text-muted)] mb-3">
+                      <p className="text-body-muted mb-3">
                         or
                       </p>
                       <Button
@@ -482,7 +482,7 @@ export default function KekaImportPage() {
                       >
                         Browse Files
                       </Button>
-                      <p className="text-xs text-[var(--text-muted)] mt-3">
+                      <p className="text-caption mt-3">
                         Supports CSV, XLS, and XLSX files (max 50MB)
                       </p>
                     </div>
@@ -512,7 +512,7 @@ export default function KekaImportPage() {
                   <MapPin className="w-5 h-5 mr-2" />
                   Column Mapping
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                <p className="text-body-secondary mb-4">
                   Map each column from your KEKA file to the corresponding NU-AURA field.
                 </p>
               </div>
@@ -729,7 +729,7 @@ export default function KekaImportPage() {
                   <Settings className="w-5 h-5 mr-2" />
                   Import Options
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                <p className="text-body-secondary mb-4">
                   Configure how the data should be imported into NU-AURA.
                 </p>
               </div>
@@ -747,7 +747,7 @@ export default function KekaImportPage() {
                     <p className="font-medium text-[var(--text-primary)]">
                       Skip Invalid Rows
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Continue importing even if some rows have errors
                     </p>
                   </div>
@@ -764,7 +764,7 @@ export default function KekaImportPage() {
                     <p className="font-medium text-[var(--text-primary)]">
                       Update Existing Employees
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Update employee data if they already exist in NU-AURA
                     </p>
                   </div>
@@ -781,7 +781,7 @@ export default function KekaImportPage() {
                     <p className="font-medium text-[var(--text-primary)]">
                       Send Welcome Emails
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Send welcome emails to newly created employees
                     </p>
                   </div>
@@ -798,7 +798,7 @@ export default function KekaImportPage() {
                     <p className="font-medium text-[var(--text-primary)]">
                       Auto-approve Employees
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Automatically approve imported employees (SuperAdmin only)
                     </p>
                   </div>
@@ -832,7 +832,7 @@ export default function KekaImportPage() {
           {step === 'result' && result && (
             <div className="skeuo-card p-6 space-y-6">
               {/* Status Badge */}
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
@@ -904,7 +904,7 @@ export default function KekaImportPage() {
 
               {/* Duration */}
               <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
-                <p className="text-sm text-[var(--text-secondary)]">
+                <p className="text-body-secondary">
                   Import completed in {result.duration}ms
                 </p>
               </div>

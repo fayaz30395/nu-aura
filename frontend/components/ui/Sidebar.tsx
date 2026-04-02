@@ -125,7 +125,7 @@ const ChildrenFlyover: React.FC<{
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-main bg-surface/50">
+        <div className="row-between px-4 py-4 border-b border-main bg-surface/50">
           <div className="flex items-center gap-2">
             {item.icon && (
               <span className="text-secondary">
@@ -427,7 +427,7 @@ const SectionDivider: React.FC<{
     <button
       onClick={() => onToggleSection(sectionId)}
       aria-expanded={isSectionExpanded}
-      className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
+      className="w-full row-between px-4 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
     >
       <span
         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
@@ -688,7 +688,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     <button
                       onClick={() => handleToggleSection(section.id)}
                       aria-expanded={isSectionExpanded}
-                      className="w-full flex items-center justify-between px-4 py-2.5 group rounded-md transition-all duration-200"
+                      className="w-full row-between px-4 py-2.5 group rounded-md transition-all duration-200"
                     >
                       <span
                         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"

@@ -213,7 +213,7 @@ export default function GanttChartPage() {
     <AppLayout>
       <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="flex items-center gap-4">
           <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-[var(--shadow-dropdown)]">
             <Calendar className="h-6 w-6 text-white" />
@@ -247,7 +247,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-info-600" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)]">Total Tasks</p>
+              <p className="text-body-muted">Total Tasks</p>
               <p className="text-2xl font-bold">{stats.total}</p>
             </div>
           </CardContent>
@@ -258,7 +258,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-success-600" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)]">Completed</p>
+              <p className="text-body-muted">Completed</p>
               <p className="text-2xl font-bold">{stats.completed}</p>
             </div>
           </CardContent>
@@ -269,7 +269,7 @@ export default function GanttChartPage() {
               <Clock className="h-5 w-5 text-danger-600" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)]">Delayed</p>
+              <p className="text-body-muted">Delayed</p>
               <p className="text-2xl font-bold">{stats.delayed}</p>
             </div>
           </CardContent>
@@ -280,7 +280,7 @@ export default function GanttChartPage() {
               <AlertCircle className="h-5 w-5 text-warning-600" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)]">At Risk</p>
+              <p className="text-body-muted">At Risk</p>
               <p className="text-2xl font-bold">{stats.atRisk}</p>
             </div>
           </CardContent>
@@ -291,7 +291,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-accent-600" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)]">Avg Progress</p>
+              <p className="text-body-muted">Avg Progress</p>
               <p className="text-2xl font-bold">{stats.avgProgress}%</p>
             </div>
           </CardContent>
@@ -299,7 +299,7 @@ export default function GanttChartPage() {
       </div>
 
       {/* Zoom Controls */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -332,7 +332,7 @@ export default function GanttChartPage() {
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-[var(--text-muted)]">Zoom:</span>
+          <span className="text-body-muted">Zoom:</span>
           {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
             <Button
               key={level}
@@ -387,7 +387,7 @@ export default function GanttChartPage() {
                     <span className="truncate">{task.name}</span>
                   </div>
                   {task.type === 'task' && (
-                    <div className="text-xs text-[var(--text-muted)] mt-1">
+                    <div className="text-caption mt-1">
                       {task.progress}% complete
                     </div>
                   )}
@@ -434,7 +434,7 @@ export default function GanttChartPage() {
                   <BarChart3 className="h-8 w-8 text-accent-500" />
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
-                <p className="text-sm text-[var(--text-muted)] max-w-md">
+                <p className="text-body-muted max-w-md">
                   The Gantt chart view is under development. Project timelines will be visualized here once task management is enabled.
                 </p>
               </div>

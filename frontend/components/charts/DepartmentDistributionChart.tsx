@@ -29,13 +29,13 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
               <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
               <XAxis
                 type="number"
-                className="text-xs text-[var(--text-muted)]"
+                className="text-caption"
                 tick={{ fill: 'currentColor' }}
               />
               <YAxis
                 type="category"
                 dataKey="department"
-                className="text-xs text-[var(--text-muted)]"
+                className="text-caption"
                 tick={{ fill: 'currentColor' }}
                 width={90}
               />

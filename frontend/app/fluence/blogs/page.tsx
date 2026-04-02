@@ -321,7 +321,7 @@ export default function BlogsPage() {
                         {/* Metadata */}
                         <div className="space-y-4 pt-4 border-t border-[var(--border-main)]">
                           {/* Author and Date */}
-                          <div className="flex items-center justify-between">
+                          <div className="row-between">
                             <div className="flex items-center gap-4">
                               {featuredPost.authorAvatarUrl ? (
                                 <Image
@@ -345,7 +345,7 @@ export default function BlogsPage() {
                                 <p className="text-sm font-medium text-[var(--text-primary)]">
                                   {featuredPost.authorName || 'Anonymous'}
                                 </p>
-                                <p className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+                                <p className="text-caption flex items-center gap-1">
                                   <Clock className="w-3 h-3" />
                                   {formatDate(featuredPost.publishedAt || featuredPost.updatedAt)}
                                 </p>
@@ -354,7 +354,7 @@ export default function BlogsPage() {
                           </div>
 
                           {/* Stats Row */}
-                          <div className="flex items-center gap-6 text-sm text-[var(--text-muted)]">
+                          <div className="flex items-center gap-6 text-body-muted">
                             <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.1 }}>
                               <Eye className="w-4 h-4" />
                               <span className="font-medium">{featuredPost.viewCount || 0}</span>
@@ -382,7 +382,7 @@ export default function BlogsPage() {
                                 </span>
                               ))}
                               {featuredPost.tags.length > 3 && (
-                                <span className="text-xs text-[var(--text-muted)] px-2.5 py-1">
+                                <span className="text-caption px-2.5 py-1">
                                   +{featuredPost.tags.length - 3}
                                 </span>
                               )}
@@ -474,7 +474,7 @@ export default function BlogsPage() {
 
                         {/* Content */}
                         <CardContent className="flex-1 flex flex-col justify-between space-y-4 pb-4">
-                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+                          <p className="text-body-secondary line-clamp-2 leading-relaxed">
                             {post.excerpt}
                           </p>
 
@@ -491,7 +491,7 @@ export default function BlogsPage() {
                                 </span>
                               ))}
                               {post.tags.length > 2 && (
-                                <span className="text-xs text-[var(--text-muted)]">
+                                <span className="text-caption">
                                   +{post.tags.length - 2}
                                 </span>
                               )}
@@ -524,14 +524,14 @@ export default function BlogsPage() {
                                 <p className="text-xs font-medium text-[var(--text-primary)] truncate">
                                   {post.authorName || 'Anonymous'}
                                 </p>
-                                <p className="text-xs text-[var(--text-muted)]">
+                                <p className="text-caption">
                                   {formatDate(post.publishedAt || post.updatedAt)}
                                 </p>
                               </div>
                             </div>
 
                             {/* Stats */}
-                            <div className="flex items-center justify-between text-xs text-[var(--text-muted)] pt-1">
+                            <div className="row-between text-caption pt-1">
                               <motion.div
                                 className="flex items-center gap-1.5"
                                 whileHover={{ scale: 1.1 }}

@@ -177,7 +177,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4">
+        <div className="row-between bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
@@ -274,11 +274,11 @@ export default function CalendarPage() {
 
         {/* Events List */}
         <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+          <div className="row-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {view === 'week' ? 'This Week' : 'This Month'}
             </h2>
-            <span className="text-sm text-[var(--text-muted)]">
+            <span className="text-body-muted">
               {events.length} events
             </span>
           </div>
@@ -331,7 +331,7 @@ export default function CalendarPage() {
                               : calendarService.formatTime(event.startTime)}
                           </p>
                           {!event.allDay && (
-                            <p className="text-xs text-[var(--text-muted)]">
+                            <p className="text-caption">
                               {calendarService.formatTime(event.endTime)}
                             </p>
                           )}
@@ -341,11 +341,11 @@ export default function CalendarPage() {
                             {event.title}
                           </p>
                           <div className="flex items-center gap-4 mt-1">
-                            <span className="text-xs text-[var(--text-muted)]">
+                            <span className="text-caption">
                               {calendarService.getEventTypeLabel(event.eventType)}
                             </span>
                             {event.location && (
-                              <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+                              <span className="text-caption flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />
                                 {event.location}
                               </span>
@@ -357,7 +357,7 @@ export default function CalendarPage() {
                               </span>
                             )}
                             {event.attendeeIds && event.attendeeIds.length > 0 && (
-                              <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+                              <span className="text-caption flex items-center gap-1">
                                 <Users className="h-3 w-3" />
                                 {event.attendeeIds.length}
                               </span>
@@ -387,7 +387,7 @@ export default function CalendarPage() {
               onClick={() => router.push('/calendar/new')}
               className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
@@ -396,7 +396,7 @@ export default function CalendarPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Schedule Event
             </h3>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               Create a new calendar event
             </p>
             </button>
@@ -406,7 +406,7 @@ export default function CalendarPage() {
             onClick={() => router.push('/calendar?filter=meetings')}
             className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
                 <Video className="h-5 w-5 text-white" />
               </div>
@@ -415,7 +415,7 @@ export default function CalendarPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Meetings
             </h3>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               View all your meetings
             </p>
           </button>

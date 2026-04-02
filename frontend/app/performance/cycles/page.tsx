@@ -329,7 +329,7 @@ export default function ReviewCyclesPage() {
                 </div>
 
                 {cycle.description && (
-                  <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">{cycle.description}</p>
+                  <p className="text-body-secondary mb-4 line-clamp-2">{cycle.description}</p>
                 )}
 
                 <div className="space-y-2 mb-4">
@@ -668,7 +668,7 @@ export default function ReviewCyclesPage() {
                       </label>
                       <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {departments.length === 0 ? (
-                          <p className="p-4 text-sm text-[var(--text-muted)]">No departments available</p>
+                          <p className="p-4 text-body-muted">No departments available</p>
                         ) : (
                           departments.map((dept) => (
                             <label
@@ -687,7 +687,7 @@ export default function ReviewCyclesPage() {
                         )}
                       </div>
                       {activateFormData.departmentIds && activateFormData.departmentIds.length > 0 && (
-                        <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                        <p className="mt-2 text-body-secondary">
                           {activateFormData.departmentIds.length} department(s) selected
                         </p>
                       )}
@@ -702,7 +702,7 @@ export default function ReviewCyclesPage() {
                       </label>
                       <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {locations.length === 0 ? (
-                          <p className="p-4 text-sm text-[var(--text-muted)]">No locations available</p>
+                          <p className="p-4 text-body-muted">No locations available</p>
                         ) : (
                           locations.map((loc) => (
                             <label
@@ -717,14 +717,14 @@ export default function ReviewCyclesPage() {
                               />
                               <div>
                                 <span className="text-sm font-medium">{loc.name}</span>
-                                <span className="text-xs text-[var(--text-muted)] ml-2">{loc.city}, {loc.country}</span>
+                                <span className="text-caption ml-2">{loc.city}, {loc.country}</span>
                               </div>
                             </label>
                           ))
                         )}
                       </div>
                       {activateFormData.locationIds && activateFormData.locationIds.length > 0 && (
-                        <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                        <p className="mt-2 text-body-secondary">
                           {activateFormData.locationIds.length} location(s) selected
                         </p>
                       )}
@@ -746,7 +746,7 @@ export default function ReviewCyclesPage() {
                         />
                         <div>
                           <span className="text-sm font-medium">Self Reviews</span>
-                          <p className="text-xs text-[var(--text-muted)]">Each employee will receive a self-assessment form</p>
+                          <p className="text-caption">Each employee will receive a self-assessment form</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-4 cursor-pointer">
@@ -758,7 +758,7 @@ export default function ReviewCyclesPage() {
                         />
                         <div>
                           <span className="text-sm font-medium">Manager Reviews</span>
-                          <p className="text-xs text-[var(--text-muted)]">Managers will receive review forms for their direct reports</p>
+                          <p className="text-caption">Managers will receive review forms for their direct reports</p>
                         </div>
                       </label>
                     </div>
@@ -817,11 +817,11 @@ export default function ReviewCyclesPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-accent-700">{activationResult.employeesInScope}</div>
-                      <div className="text-sm text-[var(--text-secondary)]">Employees in Scope</div>
+                      <div className="text-body-secondary">Employees in Scope</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-success-600">{activationResult.reviewsCreated}</div>
-                      <div className="text-sm text-[var(--text-secondary)]">Reviews Created</div>
+                      <div className="text-body-secondary">Reviews Created</div>
                     </div>
                   </div>
                 </div>

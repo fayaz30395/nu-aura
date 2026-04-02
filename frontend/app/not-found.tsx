@@ -43,7 +43,7 @@ export default function NotFound() {
         </div>
 
         {/* Description */}
-        <p className="text-sm text-[var(--text-secondary)] max-w-xs mx-auto leading-relaxed mb-8">
+        <p className="text-body-secondary max-w-xs mx-auto leading-relaxed mb-8">
           The page you&apos;re looking for doesn&apos;t exist, has been moved, or you may not have permission to view it.
         </p>
 
@@ -68,7 +68,7 @@ export default function NotFound() {
         </div>
 
         {/* Helpful hint */}
-        <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-[var(--text-muted)]">
+        <div className="mt-8 flex items-center justify-center gap-1.5 text-caption">
           <IconSearch size={14} />
           <span>Try using the search bar to find what you need</span>
         </div>

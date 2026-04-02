@@ -163,8 +163,8 @@ function MatrixCell({
       <div className="mb-2 pb-2 border-b border-[var(--border-main)]">
         <h4 className="text-xs font-semibold text-[var(--text-primary)] leading-tight">{cellInfo.title}</h4>
         <p className="text-xs text-[var(--text-secondary)] mt-0.5 leading-tight">{cellInfo.description}</p>
-        <div className="flex items-center justify-between mt-1">
-          <span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)]">
+        <div className="row-between mt-1">
+          <span className="inline-flex items-center gap-1 text-caption">
             <Users className="h-3 w-3" />
             {employees.length}
           </span>
@@ -248,7 +248,7 @@ export default function CalibrationMatrix({
           </div>
         </div>
         {!readOnly && (
-          <p className="mt-2 text-xs text-[var(--text-muted)] italic">
+          <p className="mt-2 text-caption italic">
             Drag and drop employees between cells to calibrate their performance and potential
             ratings
           </p>
@@ -407,25 +407,25 @@ export default function CalibrationMatrix({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <div className="text-2xl font-bold text-[var(--text-primary)]">{employees.length}</div>
-            <div className="text-xs text-[var(--text-muted)]">Total Employees</div>
+            <div className="text-caption">Total Employees</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-success-600">
               {(distribution['3-3'] || 0) + (distribution['2-3'] || 0) + (distribution['3-2'] || 0)}
             </div>
-            <div className="text-xs text-[var(--text-muted)]">Top Performers</div>
+            <div className="text-caption">Top Performers</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-warning-600">
               {(distribution['2-2'] || 0) + (distribution['2-1'] || 0) + (distribution['3-1'] || 0)}
             </div>
-            <div className="text-xs text-[var(--text-muted)]">Solid Contributors</div>
+            <div className="text-caption">Solid Contributors</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-danger-600">
               {(distribution['1-1'] || 0) + (distribution['1-2'] || 0) + (distribution['1-3'] || 0)}
             </div>
-            <div className="text-xs text-[var(--text-muted)]">Need Development</div>
+            <div className="text-caption">Need Development</div>
           </div>
         </div>
       </div>

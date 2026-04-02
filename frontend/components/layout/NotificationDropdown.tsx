@@ -484,7 +484,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
           ) : (
             // System Notifications
             <>
-              <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
+              <div className="row-between p-4 border-b border-surface-100 dark:border-surface-800">
                 <span className="text-xs text-surface-500">System Alerts</span>
                 {systemUnreadCount > 0 && (
                   <button
@@ -629,7 +629,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                   </div>
                   <div className="space-y-1.5">
                     {selectedEvent.calendarEvent.attendees.slice(0, 5).map((attendee, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs">
+                      <div key={idx} className="row-between text-xs">
                         <span className="text-surface-600 dark:text-surface-300">{attendee.displayName || attendee.email}</span>
                         <span className={cn(
                           "px-2 py-0.5 rounded-full text-xs",

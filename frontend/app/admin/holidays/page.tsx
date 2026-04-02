@@ -215,7 +215,7 @@ export default function HolidayCalendarManagementPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Holiday Calendar Management</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
+            <p className="mt-1 text-body-secondary skeuo-deboss">
               Manage organizational holidays and events
             </p>
           </div>
@@ -263,23 +263,23 @@ export default function HolidayCalendarManagementPage() {
         {/* Statistics */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="skeuo-card p-4">
-            <div className="text-sm text-[var(--text-secondary)]">Total Holidays</div>
+            <div className="text-body-secondary">Total Holidays</div>
             <div className="text-2xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
           </div>
           <div className="skeuo-card p-4">
-            <div className="text-sm text-[var(--text-secondary)]">National</div>
+            <div className="text-body-secondary">National</div>
             <div className="text-2xl font-bold text-danger-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
           <div className="skeuo-card p-4">
-            <div className="text-sm text-[var(--text-secondary)]">Optional</div>
+            <div className="text-body-secondary">Optional</div>
             <div className="text-2xl font-bold text-warning-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
           <div className="skeuo-card p-4">
-            <div className="text-sm text-[var(--text-secondary)]">Restricted</div>
+            <div className="text-body-secondary">Restricted</div>
             <div className="text-2xl font-bold text-warning-600">
               {holidays.filter((h) => h.isRestricted).length}
             </div>
@@ -299,7 +299,7 @@ export default function HolidayCalendarManagementPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <p className="text-[var(--text-secondary)]">No holidays configured for {selectedYear}</p>
-                <p className="text-sm text-[var(--text-muted)] mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
+                <p className="text-body-muted mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
               </div>
             </div>
           ) : (
@@ -311,7 +311,7 @@ export default function HolidayCalendarManagementPage() {
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
-                        className="flex items-center justify-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                        className="row-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <div className="flex-1">
                           <div className="flex items-center space-x-4">
@@ -319,14 +319,14 @@ export default function HolidayCalendarManagementPage() {
                               <div className="text-2xl font-bold text-[var(--text-primary)]">
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
-                              <div className="text-xs text-[var(--text-muted)] uppercase">
+                              <div className="text-caption uppercase">
                                 {new Date(holiday.holidayDate).toLocaleDateString('en-US', { weekday: 'short' })}
                               </div>
                             </div>
                             <div className="flex-1">
                               <div className="font-medium text-[var(--text-primary)]">{holiday.holidayName}</div>
                               {holiday.description && (
-                                <div className="text-sm text-[var(--text-secondary)] mt-1">{holiday.description}</div>
+                                <div className="text-body-secondary mt-1">{holiday.description}</div>
                               )}
                               <div className="flex flex-wrap gap-2 mt-2">
                                 <span className={`px-2 py-1 text-xs font-semibold rounded ${getHolidayTypeColor(holiday.holidayType)}`}>
@@ -486,8 +486,8 @@ export default function HolidayCalendarManagementPage() {
                           {...form.register('isOptional')}
                           className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
-                        <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
+                        <span className="ml-2 text-body-secondary">Optional Holiday</span>
+                        <span className="ml-2 text-caption">(Employees can choose to work)</span>
                       </label>
 
                       <label className="flex items-center cursor-pointer">
@@ -496,8 +496,8 @@ export default function HolidayCalendarManagementPage() {
                           {...form.register('isRestricted')}
                           className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
-                        <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>
+                        <span className="ml-2 text-body-secondary">Restricted Holiday</span>
+                        <span className="ml-2 text-caption">(Limited to certain employees)</span>
                       </label>
                     </div>
                   </div>
@@ -516,7 +516,7 @@ export default function HolidayCalendarManagementPage() {
                           className="input-aura"
                           placeholder="e.g., New York, California (comma-separated)"
                         />
-                        <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all locations</p>
+                        <p className="text-caption mt-1">Leave empty for all locations</p>
                       </div>
 
                       <div>
@@ -529,7 +529,7 @@ export default function HolidayCalendarManagementPage() {
                           className="input-aura"
                           placeholder="e.g., Engineering, Sales (comma-separated)"
                         />
-                        <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all departments</p>
+                        <p className="text-caption mt-1">Leave empty for all departments</p>
                       </div>
                     </div>
                   </div>

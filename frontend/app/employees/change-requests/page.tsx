@@ -160,9 +160,9 @@ export default function EmploymentChangeRequestsPage() {
     if (newValue === currentValue) return null;
 
     return (
-      <div className="flex items-center gap-2 py-2 border-b border-[var(--border-subtle)] last:border-0">
+      <div className="flex items-center gap-2 py-2 divider-b last:border-0">
         <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
-        <span className="text-sm text-[var(--text-muted)]">{currentValue || 'N/A'}</span>
+        <span className="text-body-muted">{currentValue || 'N/A'}</span>
         <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
         <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{newValue || 'N/A'}</span>
       </div>
@@ -186,7 +186,7 @@ export default function EmploymentChangeRequestsPage() {
           </button>
         </div>
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="row-between mb-8">
           <h1 className="text-2xl font-bold skeuo-emboss">
             Employment Change Requests
           </h1>
@@ -217,7 +217,7 @@ export default function EmploymentChangeRequestsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">
+            <div className="text-body-secondary mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
             <div className="text-3xl font-bold text-warning-600 dark:text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
@@ -248,7 +248,7 @@ export default function EmploymentChangeRequestsPage() {
                   className="p-4 cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
                   onClick={() => setExpandedId(expandedId === request.id ? null : request.id)}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="row-between">
                     <div className="flex items-center gap-4">
                       <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                         <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
@@ -259,7 +259,7 @@ export default function EmploymentChangeRequestsPage() {
                         <div className="font-medium text-[var(--text-primary)]">
                           {request.employeeName || 'Unknown Employee'}
                         </div>
-                        <div className="text-sm text-[var(--text-muted)]">
+                        <div className="text-body-muted">
                           {request.employeeCode} • Requested by {request.requesterName}
                         </div>
                       </div>
@@ -425,7 +425,7 @@ export default function EmploymentChangeRequestsPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
               Reject Change Request
             </h3>
-            <p className="text-sm text-[var(--text-secondary)] mb-4">
+            <p className="text-body-secondary mb-4">
               Please provide a reason for rejecting this change request.
             </p>
             <textarea

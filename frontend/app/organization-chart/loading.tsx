@@ -3,7 +3,7 @@ export default function OrgChartLoading() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-44 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-56 bg-[var(--bg-surface)] rounded" />

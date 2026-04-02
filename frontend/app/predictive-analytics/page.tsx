@@ -160,11 +160,11 @@ function AttritionRiskCards({ summary }: { summary: PredictiveAnalyticsDashboard
       {riskCards.map((card) => (
         <Card key={card.label}>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="row-between mb-2">
               <div className={`p-2 rounded-lg ${card.bg}`}>{card.icon}</div>
               <span className={`text-2xl font-bold ${card.color}`}>{card.count}</span>
             </div>
-            <p className="text-sm text-[var(--text-secondary)]">{card.label}</p>
+            <p className="text-body-secondary">{card.label}</p>
           </CardContent>
         </Card>
       ))}
@@ -229,10 +229,10 @@ function SkillGapsSection({ summary }: { summary: PredictiveAnalyticsDashboard['
               <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">Critical Skill Gaps</h4>
               <div className="space-y-2">
                 {(summary.topGaps || []).slice(0, 5).map((gap) => (
-                  <div key={gap.id} className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)]">
+                  <div key={gap.id} className="row-between p-2 rounded-lg bg-[var(--bg-surface)]">
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{gap.skillName}</p>
-                      <p className="text-xs text-[var(--text-muted)]">{gap.departmentName || gap.skillCategory}</p>
+                      <p className="text-caption">{gap.departmentName || gap.skillCategory}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-[var(--text-secondary)]">Gap: {gap.gapCount}</span>
@@ -268,8 +268,8 @@ function KeyMetricsRow({ metrics }: { metrics: KeyMetric[] }) {
       {metrics.slice(0, 8).map((metric) => (
         <Card key={metric.name}>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">{metric.name}</p>
+            <div className="row-between mb-1">
+              <p className="text-caption uppercase tracking-wider">{metric.name}</p>
               <TrendIcon trend={metric.trend} />
             </div>
             <p className="text-xl font-bold text-[var(--text-primary)]">{metric.value}</p>
@@ -285,7 +285,7 @@ function KeyMetricsRow({ metrics }: { metrics: KeyMetric[] }) {
               >
                 {metric.changePercent > 0 ? '+' : ''}{metric.changePercent.toFixed(1)}%
               </span>
-              <span className="text-xs text-[var(--text-muted)]">{metric.description}</span>
+              <span className="text-caption">{metric.description}</span>
             </div>
           </CardContent>
         </Card>
@@ -298,7 +298,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <CardTitle>Critical Insights</CardTitle>
             <CardDescription>
@@ -315,7 +315,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
       <CardContent>
         <div className="space-y-4">
           {insights.length === 0 && (
-            <p className="text-sm text-[var(--text-muted)] text-center py-6">No critical insights at this time.</p>
+            <p className="text-body-muted text-center py-6">No critical insights at this time.</p>
           )}
           {insights.slice(0, 5).map((insight) => (
             <div key={insight.id} className="flex items-start gap-4 p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
@@ -340,7 +340,7 @@ function CriticalInsightsPanel({ insights, total, pending }: { insights: Analyti
                     {insight.recommendation}
                   </p>
                 )}
-                <div className="flex items-center gap-4 mt-2 text-xs text-[var(--text-muted)]">
+                <div className="flex items-center gap-4 mt-2 text-caption">
                   {insight.affectedEmployees > 0 && <span>{insight.affectedEmployees} employees affected</span>}
                   {insight.departmentName && <span>{insight.departmentName}</span>}
                 </div>
@@ -364,7 +364,7 @@ function TopAtRiskEmployeesTable({ employees }: { employees: AttritionPrediction
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--border-subtle)]">
+              <tr className="divider-b">
                 <th className="text-left py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
                 <th className="text-left py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Department</th>
                 <th className="text-center py-2 px-4 text-xs font-medium text-[var(--text-muted)] uppercase">Risk Score</th>
@@ -382,11 +382,11 @@ function TopAtRiskEmployeesTable({ employees }: { employees: AttritionPrediction
               {employees.slice(0, 10).map((emp) => {
                 const topFactor = (emp.riskFactors || []).sort((a, b) => b.score - a.score)[0];
                 return (
-                  <tr key={emp.id} className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-surface)]">
+                  <tr key={emp.id} className="divider-b hover:bg-[var(--bg-surface)]">
                     <td className="py-2.5 px-4">
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">{emp.employeeName || 'Unknown'}</p>
-                        <p className="text-xs text-[var(--text-muted)]">{emp.jobTitle || '-'}</p>
+                        <p className="text-caption">{emp.jobTitle || '-'}</p>
                       </div>
                     </td>
                     <td className="py-2.5 px-4 text-[var(--text-secondary)]">{emp.department || '-'}</td>
@@ -444,7 +444,7 @@ function WorkforceSummaryPanel({ summary }: { summary: PredictiveAnalyticsDashbo
             <div className="p-2 rounded-lg bg-[var(--bg-surface)]">{item.icon}</div>
             <div>
               <p className="text-lg font-bold text-[var(--text-primary)]">{item.value}</p>
-              <p className="text-xs text-[var(--text-muted)]">{item.label}</p>
+              <p className="text-caption">{item.label}</p>
             </div>
           </CardContent>
         </Card>
@@ -622,19 +622,19 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-3xl font-bold text-[var(--text-primary)]">{attritionSummary.avgRiskScore?.toFixed(1) ?? '-'}</p>
-                  <p className="text-sm text-[var(--text-muted)]">Avg Risk Score</p>
+                  <p className="text-body-muted">Avg Risk Score</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-3xl font-bold text-danger-600">{attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%</p>
-                  <p className="text-sm text-[var(--text-muted)]">Predicted Attrition Rate</p>
+                  <p className="text-body-muted">Predicted Attrition Rate</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-3xl font-bold text-accent-600">{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
-                  <p className="text-sm text-[var(--text-muted)]">Total Employees Analyzed</p>
+                  <p className="text-body-muted">Total Employees Analyzed</p>
                 </CardContent>
               </Card>
             </div>
@@ -685,13 +685,13 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-3xl font-bold text-accent-600">{workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}</p>
-                  <p className="text-sm text-[var(--text-muted)]">Avg Engagement (out of 5)</p>
+                  <p className="text-body-muted">Avg Engagement (out of 5)</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p className="text-3xl font-bold text-success-600">{workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}</p>
-                  <p className="text-sm text-[var(--text-muted)]">Avg Performance Rating</p>
+                  <p className="text-body-muted">Avg Performance Rating</p>
                 </CardContent>
               </Card>
               <Card>
@@ -699,7 +699,7 @@ export default function PredictiveAnalyticsPage() {
                   <p className="text-3xl font-bold text-accent-600">
                     {trends.length > 0 ? (trends[trends.length - 1].highPerformersCount ?? 0) : '-'}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">High Performers</p>
+                  <p className="text-body-muted">High Performers</p>
                 </CardContent>
               </Card>
               <Card>
@@ -707,7 +707,7 @@ export default function PredictiveAnalyticsPage() {
                   <p className="text-3xl font-bold text-warning-600">
                     {trends.length > 0 ? (trends[trends.length - 1].lowPerformersCount ?? 0) : '-'}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">Needs Improvement</p>
+                  <p className="text-body-muted">Needs Improvement</p>
                 </CardContent>
               </Card>
             </div>

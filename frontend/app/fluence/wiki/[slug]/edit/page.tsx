@@ -173,7 +173,7 @@ export default function EditWikiPage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 row-between">
           <div>
             <div className="flex items-center gap-4 mb-2">
               <button
@@ -291,7 +291,7 @@ export default function EditWikiPage() {
               onSearchChange={setEditorSearchQuery}
               nothingFoundMessage={editorSearchQuery.length > 1 ? 'No employees found' : 'Type to search...'}
             />
-            <p className="text-xs text-[var(--text-muted)] mt-1">
+            <p className="text-caption mt-1">
               Selected people can edit this page in addition to you
             </p>
           </div>

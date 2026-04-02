@@ -66,7 +66,7 @@ export default function LeaveReportsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between"
+          className="row-between"
         >
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Leave Reports</h1>
@@ -112,7 +112,7 @@ export default function LeaveReportsPage() {
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
+                    <label className="block text-caption mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -121,7 +121,7 @@ export default function LeaveReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
+                    <label className="block text-caption mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -140,7 +140,7 @@ export default function LeaveReportsPage() {
                 </label>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">Leave Status</label>
+                    <label className="block text-caption mb-1">Leave Status</label>
                     <select
                       value={leaveStatus}
                       onChange={(e) => setLeaveStatus(e.target.value)}
@@ -175,7 +175,7 @@ export default function LeaveReportsPage() {
                       <p className={`font-medium text-sm ${format === fmt ? 'text-warning-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

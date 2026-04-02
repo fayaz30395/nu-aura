@@ -138,7 +138,7 @@ export default function ApplyLeavePage() {
               </select>
               {errors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
               {balance && (
-                <div className="mt-2 text-sm text-[var(--text-secondary)]">
+                <div className="mt-2 text-body-secondary">
                   Available Balance: <span className="font-semibold">{balance.available} days</span>
                 </div>
               )}
@@ -197,7 +197,7 @@ export default function ApplyLeavePage() {
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-accent-700"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">First Half (Morning)</span>
+                    <span className="text-body-secondary">First Half (Morning)</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -206,7 +206,7 @@ export default function ApplyLeavePage() {
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-accent-700"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">Second Half (Afternoon)</span>
+                    <span className="text-body-secondary">Second Half (Afternoon)</span>
                   </label>
                 </div>
                 {errors.halfDayPeriod && <p className="text-danger-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
@@ -215,7 +215,7 @@ export default function ApplyLeavePage() {
 
             {/* Total Days */}
             <div className="md:col-span-2 bg-accent-50 dark:bg-accent-950/30 p-4 rounded-lg">
-              <div className="text-sm text-[var(--text-secondary)]">Total Days Requested:</div>
+              <div className="text-body-secondary">Total Days Requested:</div>
               <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
             </div>
 

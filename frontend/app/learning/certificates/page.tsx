@@ -232,7 +232,7 @@ export default function CertificateGalleryPage() {
                   {/* Certificate Number */}
                   <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-4 mb-4">
                     <div className="text-xs text-[var(--text-secondary)] mb-1">Certificate ID</div>
-                    <div className="flex items-center justify-between">
+                    <div className="row-between">
                       <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
                       <button
                         onClick={() => handleCopyCertificateNumber(cert.certificateNumber)}
@@ -251,7 +251,7 @@ export default function CertificateGalleryPage() {
 
                   {/* Details */}
                   <div className="space-y-4 mb-4 text-sm">
-                    <div className="flex items-center justify-between text-[var(--text-primary)]">
+                    <div className="row-between text-[var(--text-primary)]">
                       <span className="text-[var(--text-secondary)]">Issued</span>
                       <span className="font-medium flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
@@ -260,14 +260,14 @@ export default function CertificateGalleryPage() {
                     </div>
 
                     {cert.expiryDate && (
-                      <div className="flex items-center justify-between text-[var(--text-primary)]">
+                      <div className="row-between text-[var(--text-primary)]">
                         <span className="text-[var(--text-secondary)]">Expires</span>
                         <span className="font-medium">{formatDate(cert.expiryDate)}</span>
                       </div>
                     )}
 
                     {cert.scoreAchieved && (
-                      <div className="flex items-center justify-between text-[var(--text-primary)]">
+                      <div className="row-between text-[var(--text-primary)]">
                         <span className="text-[var(--text-secondary)]">Score</span>
                         <span className="font-bold text-accent-600 dark:text-accent-400">{cert.scoreAchieved}%</span>
                       </div>

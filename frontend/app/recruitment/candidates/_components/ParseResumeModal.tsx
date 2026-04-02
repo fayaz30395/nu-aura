@@ -166,7 +166,7 @@ export function ParseResumeModal({
                         <FileText className="h-8 w-8 text-accent-500" />
                         <div className="text-center">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{selectedFile.name}</p>
-                          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                          <p className="text-caption mt-0.5">
                             {(selectedFile.size / 1024).toFixed(1)} KB
                           </p>
                         </div>
@@ -181,7 +181,7 @@ export function ParseResumeModal({
                           <p className="text-sm font-medium text-[var(--text-primary)]">
                             {dragOver ? 'Drop file here' : 'Drag & drop or click to browse'}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)] mt-1">
+                          <p className="text-caption mt-1">
                             PDF, DOCX, DOC, TXT — max 10 MB
                           </p>
                         </div>
@@ -309,7 +309,7 @@ export function ParseResumeModal({
                       { label: 'Total Experience', value: parsedResume.totalExperienceYears != null ? `${parsedResume.totalExperienceYears} years` : undefined },
                     ].filter((f) => f.value).map((field) => (
                       <div key={field.label}>
-                        <p className="text-xs text-[var(--text-muted)]">{field.label}</p>
+                        <p className="text-caption">{field.label}</p>
                         <p className="text-sm font-medium text-[var(--text-primary)]">{field.value}</p>
                       </div>
                     ))}
@@ -322,7 +322,7 @@ export function ParseResumeModal({
                     <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2">
                       Summary
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{parsedResume.summary}</p>
+                    <p className="text-body-secondary leading-relaxed">{parsedResume.summary}</p>
                   </div>
                 )}
 
@@ -355,7 +355,7 @@ export function ParseResumeModal({
                       {parsedResume.experience.map((exp, idx) => (
                         <div key={idx} className="pl-3 border-l-2 border-accent-300 dark:border-accent-700">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{exp.designation}</p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {exp.company}
                             {(exp.startDate || exp.endDate) && ` · ${exp.startDate ?? ''}${exp.endDate ? ` — ${exp.endDate}` : ''}`}
                           </p>
@@ -378,7 +378,7 @@ export function ParseResumeModal({
                       {parsedResume.education.map((edu, idx) => (
                         <div key={idx} className="pl-3 border-l-2 border-info-300 dark:border-info-700">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{edu.degree}</p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {edu.institution}
                             {edu.year && ` · ${edu.year}`}
                             {edu.score && ` · ${edu.score}`}

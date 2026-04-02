@@ -401,7 +401,7 @@ export default function EditEmployeePage() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-[var(--text-primary)]">{employee?.fullName}</h2>
-              <p className="text-sm text-[var(--text-secondary)]">{employee?.employeeCode}</p>
+              <p className="text-body-secondary">{employee?.employeeCode}</p>
             </div>
           </div>
         </div>
@@ -486,7 +486,7 @@ export default function EditEmployeePage() {
                     placeholder="EMP001"
                   />
                   {errors.employeeCode && <p className="text-danger-500 text-sm mt-1">{errors.employeeCode.message}</p>}
-                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  <p className="mt-1 text-caption">
                     Unique identifier for this employee. Changing this may affect integrations.
                   </p>
                 </div>
@@ -966,7 +966,7 @@ export default function EditEmployeePage() {
                       )}
                     />
                     {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    <p className="mt-1 text-caption">
                       Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                     </p>
                   </div>
@@ -1019,7 +1019,7 @@ export default function EditEmployeePage() {
                     />
                   </div>
                 </div>
-                <p className="text-xs text-[var(--text-muted)]">
+                <p className="text-caption">
                   Dotted-line managers represent matrix reporting relationships. They are informational only and do not participate in approval workflows.
                 </p>
               </div>

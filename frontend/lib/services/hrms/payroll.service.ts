@@ -7,6 +7,10 @@ import {
   SalaryStructure,
   SalaryStructureRequest,
   Page,
+  PayrollComponent,
+  PayrollComponentRequest,
+  EvaluateComponentsResponse,
+  ComponentType,
 } from '../../types/hrms/payroll';
 
 class PayrollService {
@@ -267,6 +271,51 @@ class PayrollService {
     errors?: Array<{ employeeId: string; error: string }>;
   }> {
     throw new Error('Bulk processing status is not yet available. This feature is under development.');
+  }
+
+  // ── Payroll Component Methods ──────────────────────────────────────────────
+
+  async getPayrollComponents(page = 0, size = 20): Promise<Page<PayrollComponent>> {
+    const response = await apiClient.get<Page<PayrollComponent>>(`/payroll/components?page=${page}&size=${size}&sort=evaluationOrder,asc`);
+    return response.data;
+  }
+
+  async getActivePayrollComponents(): Promise<PayrollComponent[]> {
+    const response = await apiClient.get<PayrollComponent[]>('/payroll/components/active');
+    return response.data;
+  }
+
+  async getActiveComponentsByType(type: ComponentType): Promise<PayrollComponent[]> {
+    const response = await apiClient.get<PayrollComponent[]>(`/payroll/components/active/type/${type}`);
+    return response.data;
+  }
+
+  async getPayrollComponentById(id: string): Promise<PayrollComponent> {
+    const response = await apiClient.get<PayrollComponent>(`/payroll/components/${id}`);
+    return response.data;
+  }
+
+  async createPayrollComponent(data: PayrollComponentRequest): Promise<PayrollComponent> {
+    const response = await apiClient.post<PayrollComponent>('/payroll/components', data);
+    return response.data;
+  }
+
+  async updatePayrollComponent(id: string, data: PayrollComponentRequest): Promise<PayrollComponent> {
+    const response = await apiClient.put<PayrollComponent>(`/payroll/components/${id}`, data);
+    return response.data;
+  }
+
+  async deletePayrollComponent(id: string): Promise<void> {
+    await apiClient.delete(`/payroll/components/${id}`);
+  }
+
+  async evaluateComponents(inputValues: Record<string, number>): Promise<EvaluateComponentsResponse> {
+    const response = await apiClient.post<EvaluateComponentsResponse>('/payroll/components/evaluate', inputValues);
+    return response.data;
+  }
+
+  async recomputeEvaluationOrder(): Promise<void> {
+    await apiClient.post('/payroll/components/recompute-order', {});
   }
 
   async previewBulkProcessing(_data: {

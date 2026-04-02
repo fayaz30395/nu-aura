@@ -127,7 +127,7 @@ export const FluenceChatWidget: React.FC = () => {
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+            <div className="row-between px-4 py-4 divider-b bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/50">
                   <Sparkles className="h-4 w-4 text-accent-700 dark:text-accent-400" />
@@ -178,7 +178,7 @@ export const FluenceChatWidget: React.FC = () => {
                   <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                     Ask NU-Fluence AI
                   </h4>
-                  <p className="text-xs text-[var(--text-muted)] mb-6 max-w-[240px]">
+                  <p className="text-caption mb-6 max-w-[240px]">
                     Get instant answers from your wiki pages, articles, and templates.
                   </p>
                   <div className="w-full space-y-2">
@@ -220,7 +220,7 @@ export const FluenceChatWidget: React.FC = () => {
                   exit={{ opacity: 0, y: 4 }}
                   onClick={scrollToBottom}
                   aria-label="Scroll to new messages"
-                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-elevated)] text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-elevated)] text-caption hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <ChevronDown className="h-3 w-3" />
                   New messages

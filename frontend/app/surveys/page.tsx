@@ -249,7 +249,7 @@ export default function SurveysPage() {
                   <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Surveys</p>
+                  <p className="text-body-secondary skeuo-deboss">Total Surveys</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
@@ -262,7 +262,7 @@ export default function SurveysPage() {
                   <Play className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Active</p>
+                  <p className="text-body-secondary skeuo-deboss">Active</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
                 </div>
               </div>
@@ -275,7 +275,7 @@ export default function SurveysPage() {
                   <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Drafts</p>
+                  <p className="text-body-secondary skeuo-deboss">Drafts</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.draft}</p>
                 </div>
               </div>
@@ -288,7 +288,7 @@ export default function SurveysPage() {
                   <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
+                  <p className="text-body-secondary skeuo-deboss">Completed</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
@@ -301,7 +301,7 @@ export default function SurveysPage() {
                   <Users className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Responses</p>
+                  <p className="text-body-secondary skeuo-deboss">Total Responses</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalResponses}</p>
                 </div>
               </div>
@@ -413,7 +413,7 @@ export default function SurveysPage() {
                       )}
                     </div>
 
-                    <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                    <p className="text-body-secondary line-clamp-2">
                       {survey.description || 'No description provided'}
                     </p>
 
@@ -725,7 +725,7 @@ export default function SurveysPage() {
                 {selectedSurvey.description && (
                   <div>
                     <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       {selectedSurvey.description}
                     </p>
                   </div>

@@ -81,17 +81,17 @@ function CommentItem({
               {comment.author.fullName}
             </span>
             {comment.author.department && (
-              <span className="text-xs text-[var(--text-muted)]">
+              <span className="text-caption">
                 {comment.author.department}
               </span>
             )}
-            <span className="text-xs text-[var(--text-muted)]">
+            <span className="text-caption">
               {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
             </span>
           </div>
 
           {/* Comment text */}
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{comment.content}</p>
+          <p className="mt-1 text-body-secondary">{comment.content}</p>
         </div>
 
         {/* Actions: Reply and Delete */}
@@ -207,7 +207,7 @@ export function CommentThread({
           animate={{ opacity: 1 }}
           className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 text-center"
         >
-          <p className="text-sm text-[var(--text-muted)]">
+          <p className="text-body-muted">
             No comments yet. Be the first to comment!
           </p>
         </motion.div>
@@ -223,7 +223,7 @@ export function CommentThread({
             exit={{ opacity: 0, height: 0 }}
             className="rounded-lg bg-accent-50 p-2 dark:bg-accent-900"
           >
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <span className="text-xs font-medium text-accent-700 dark:text-accent-300">
                 Replying to {replyingTo.authorName}
               </span>
@@ -267,7 +267,7 @@ export function CommentThread({
         </div>
 
         {/* Helper text */}
-        <p className="text-xs text-[var(--text-muted)]">
+        <p className="text-caption">
           Press Ctrl+Enter to submit
         </p>
       </div>

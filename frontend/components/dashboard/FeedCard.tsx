@@ -399,7 +399,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 {(!item.wallPostType || item.wallPostType === 'POST') && ' created a post'}
               </span>
             </p>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            <p className="text-caption mt-0.5">
               {formatFeedDate(item.timestamp)}
               {item.wallPostAuthorDepartment && (
                 <span> · {item.wallPostAuthorDepartment}</span>
@@ -501,7 +501,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                       style={{ width: `${pct}%` }}
                     />
                   )}
-                  <div className="relative flex items-center justify-between gap-2">
+                  <div className="relative row-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       {isSelected && (
                         <Check size={14} className="text-accent-700 dark:text-accent-400 shrink-0" />
@@ -520,7 +520,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 </button>
               );
             })}
-            <p className="text-xs text-[var(--text-muted)] pt-1 pl-1">
+            <p className="text-caption pt-1 pl-1">
               {localPollOptions.reduce((sum, o) => sum + o.voteCount, 0)} vote{localPollOptions.reduce((sum, o) => sum + o.voteCount, 0) !== 1 ? 's' : ''}
               {localHasVoted && ' · You voted'}
             </p>
@@ -541,7 +541,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{item.praiseRecipientName}</p>
                 {(item.praiseRecipientDesignation || item.praiseRecipientDepartment) && (
-                  <p className="text-xs text-[var(--text-muted)] truncate">
+                  <p className="text-caption truncate">
                     {[item.praiseRecipientDesignation, item.praiseRecipientDepartment].filter(Boolean).join(' · ')}
                   </p>
                 )}
@@ -563,7 +563,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         )}
 
         {/* Action bar: Like + Comment (hidden for polls) */}
-        <div className={`flex items-center justify-between px-4 py-2 border-t border-[var(--border-subtle)] ${item.wallPostType === 'POLL' ? 'hidden' : ''}`}>
+        <div className={`row-between px-4 py-2 border-t border-[var(--border-subtle)] ${item.wallPostType === 'POLL' ? 'hidden' : ''}`}>
           <div className="flex items-center gap-4">
             <button
               onClick={handleLike}
@@ -585,7 +585,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             </button>
           </div>
           {(localLikeCount > 0 || localCommentCount > 0) && (
-            <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+            <div className="flex items-center gap-1 text-caption">
               {localLikeCount > 0 && (
                 <div className="relative">
                   <button
@@ -625,7 +625,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                     <>
                       <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)} />
                       <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] overflow-hidden">
-                        <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
+                        <div className="row-between px-4 py-2 divider-b">
                           <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
                           <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close reactions popup">✕</button>
                         </div>
@@ -653,7 +653,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                             ))
                           )}
                           {!isLoadingAllReactors && allReactors.length === 0 && localReactors.length === 0 && (
-                            <p className="text-xs text-[var(--text-muted)] text-center py-4">No reactions yet</p>
+                            <p className="text-caption text-center py-4">No reactions yet</p>
                           )}
                         </div>
                       </div>
@@ -700,7 +700,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             {isLoadingComments && (
               <div className="flex items-center gap-2 py-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
-                <span className="text-xs text-[var(--text-muted)]">Loading comments...</span>
+                <span className="text-caption">Loading comments...</span>
               </div>
             )}
             {!isLoadingComments && comments.length > 0 && (
@@ -735,7 +735,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               {FEED_LABELS[item.type]}
             </span>
             {item.isPinned && (
-              <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+              <span className="inline-flex items-center gap-0.5 text-caption">
                 <Pin className="h-2.5 w-2.5" /> Pinned
               </span>
             )}
@@ -754,34 +754,34 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
           {/* Type-specific content */}
           {item.type === 'ANNOUNCEMENT' && item.description && (
-            <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">
+            <p className="text-caption mt-0.5 line-clamp-2">
               {stripHtml(item.description)}
             </p>
           )}
 
           {item.type === 'RECOGNITION' && (
             <div className="mt-0.5">
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 {item.giverName} recognized <span className="font-medium text-[var(--text-secondary)]">{item.receiverName}</span>
               </p>
               {item.description && (
-                <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2 italic">
+                <p className="text-caption mt-0.5 line-clamp-2 italic">
                   &ldquo;{item.description}&rdquo;
                 </p>
               )}
               <div className="flex items-center gap-2.5 mt-1">
                 {item.pointsAwarded && item.pointsAwarded > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-caption">
                     <Star className="h-2.5 w-2.5" /> {item.pointsAwarded} pts
                   </span>
                 )}
                 {(item.likesCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-caption">
                     <ThumbsUp className="h-2.5 w-2.5" /> {item.likesCount}
                   </span>
                 )}
                 {(item.commentsCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-caption">
                     <MessageCircle className="h-2.5 w-2.5" /> {item.commentsCount}
                   </span>
                 )}
@@ -790,20 +790,20 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           )}
 
           {item.type === 'BIRTHDAY' && (
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            <p className="text-caption mt-0.5">
               {item.personDepartment}
               {!item.isToday && item.daysUntil !== undefined && ` · in ${item.daysUntil}d`}
             </p>
           )}
 
           {item.type === 'WORK_ANNIVERSARY' && (
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            <p className="text-caption mt-0.5">
               {item.personDesignation}{item.personDepartment && ` · ${item.personDepartment}`}
             </p>
           )}
 
           {item.type === 'NEW_JOINER' && (
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            <p className="text-caption mt-0.5">
               {item.description}
               {item.daysSinceJoining !== undefined && item.daysSinceJoining <= 7 && (
                 <span className="ml-1 text-[var(--text-secondary)] font-medium">
@@ -816,7 +816,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           {item.type === 'LINKEDIN_POST' && (
             <div className="mt-1">
               {item.description && (
-                <p className="text-xs text-[var(--text-muted)] line-clamp-2">{item.description}</p>
+                <p className="text-caption line-clamp-2">{item.description}</p>
               )}
               {item.linkedinImageUrl && (
                 <div className="mt-1.5 rounded-lg overflow-hidden bg-[var(--bg-surface)] relative w-full h-24">
@@ -827,12 +827,12 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 {item.linkedinEngagement && (
                   <>
                     {item.linkedinEngagement.likes > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                      <span className="inline-flex items-center gap-0.5 text-caption">
                         <ThumbsUp className="h-2.5 w-2.5" /> {item.linkedinEngagement.likes}
                       </span>
                     )}
                     {item.linkedinEngagement.comments > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                      <span className="inline-flex items-center gap-0.5 text-caption">
                         <MessageCircle className="h-2.5 w-2.5" /> {item.linkedinEngagement.comments}
                       </span>
                     )}
@@ -907,7 +907,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               {isLoadingComments && (
                 <div className="flex items-center gap-2 py-2">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
-                  <span className="text-xs text-[var(--text-muted)]">Loading comments...</span>
+                  <span className="text-caption">Loading comments...</span>
                 </div>
               )}
 
@@ -929,7 +929,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           )}
 
           {/* Timestamp */}
-          <div className="flex items-center gap-1.5 mt-1 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-1.5 mt-1 text-caption">
             <span>{formatFeedDate(item.timestamp)}</span>
             {item.publishedByName && <span>· {item.publishedByName}</span>}
             {item.readCount !== undefined && item.readCount > 0 && (

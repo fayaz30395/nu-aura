@@ -122,7 +122,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                 <div className="lg:col-span-5 space-y-8">
                     {/* Achievements */}
                     <div>
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="row-between mb-4">
                             <div className="flex items-center gap-2">
                                 <Award className="h-5 w-5 text-accent-500" />
                                 <h3 className="text-xl font-bold">Achievements</h3>
@@ -159,7 +159,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                             {profile.recentFeedback.map((feedback, idx) => (
                                 <div key={idx} className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 border border-transparent hover:border-accent-400 dark:hover:border-accent-900/30 transition-all">
                                     <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
-                                    <div className="flex items-center justify-between mt-4">
+                                    <div className="row-between mt-4">
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded-full bg-accent-300 dark:bg-accent-900/40 text-xs flex items-center justify-center font-semibold text-accent-900">
                                                 {feedback.fromName.charAt(0)}

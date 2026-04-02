@@ -87,7 +87,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
       aria-label="Notifications"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-main)]">
+      <div className="row-between px-4 py-3 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-[var(--text-muted)]" />
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -125,7 +125,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
         ) : displayed.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Bell className="h-8 w-8 text-[var(--text-muted)] mb-2" />
-            <p className="text-sm text-[var(--text-muted)]">No notifications</p>
+            <p className="text-body-muted">No notifications</p>
           </div>
         ) : (
           <ul role="list">
@@ -162,7 +162,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                     >
                       {notification.title}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">
+                    <p className="text-caption mt-0.5 line-clamp-2">
                       {notification.message}
                     </p>
                     <p className="text-2xs text-[var(--text-muted)] mt-1">

@@ -102,10 +102,10 @@ export default function AttritionReportPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="row-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Attrition Analysis</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
+            <p className="text-body-muted mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={loading} leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />}>
@@ -155,7 +155,7 @@ export default function AttritionReportPage() {
         {/* Filters */}
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-2">
-            <label className="text-xs text-[var(--text-muted)]">Min risk score:</label>
+            <label className="text-caption">Min risk score:</label>
             <input
               type="number"
               min={0}
@@ -166,7 +166,7 @@ export default function AttritionReportPage() {
             />
             <Button variant="primary" size="sm" onClick={() => refetch()}>Apply</Button>
           </div>
-          <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
+          <span className="text-caption">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (
             <Button variant="ghost" size="sm" onClick={() => setSelectedRisk('ALL')}>Clear filter</Button>
           )}
@@ -181,7 +181,7 @@ export default function AttritionReportPage() {
           <div className="text-center py-16 skeuo-card">
             <Shield className="h-12 w-12 text-success-400 mx-auto mb-3" />
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
-            <p className="text-sm text-[var(--text-muted)] mt-1">Lower the minimum risk score to see more results</p>
+            <p className="text-body-muted mt-1">Lower the minimum risk score to see more results</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -218,7 +218,7 @@ export default function AttritionReportPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                        <p className="text-caption mt-0.5">
                           {pred.department} {pred.jobTitle ? `· ${pred.jobTitle}` : ''}
                           {pred.tenureMonths ? ` · ${Math.round(pred.tenureMonths / 12 * 10) / 10}y tenure` : ''}
                         </p>
@@ -226,7 +226,7 @@ export default function AttritionReportPage() {
 
                       {pred.predictedLeaveDate && (
                         <div className="shrink-0 text-right hidden md:block">
-                          <p className="text-xs text-[var(--text-muted)]">Predicted leave</p>
+                          <p className="text-caption">Predicted leave</p>
                           <p className="text-sm font-medium text-[var(--text-primary)]">
                             {new Date(pred.predictedLeaveDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                           </p>

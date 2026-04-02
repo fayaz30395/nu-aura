@@ -258,17 +258,17 @@ export default function ProbationPage() {
                       <p className="text-sm font-medium text-[var(--text-primary)]">
                         {probation.employeeName}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         {probation.department} {probation.designation ? `- ${probation.designation}` : ''}
                       </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         {formatDate(probation.startDate)} - {formatDate(probation.endDate)}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         {probation.durationMonths} months
                         {probation.extensionCount > 0 && (
                           <span className="text-warning-600 dark:text-warning-400">
@@ -307,7 +307,7 @@ export default function ProbationPage() {
                           : 'Overdue'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-body-secondary">
                     {probation.managerName || '-'}
                   </td>
                   <td className="px-6 py-4">
@@ -319,7 +319,7 @@ export default function ProbationPage() {
                         </span>
                       </div>
                     ) : (
-                      <span className="text-sm text-[var(--text-muted)]">-</span>
+                      <span className="text-body-muted">-</span>
                     )}
                   </td>
                   {showActions && (
@@ -368,8 +368,8 @@ export default function ProbationPage() {
   ) => {
     if (!data || data.totalPages <= 1) return null;
     return (
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="row-between mt-4">
+        <p className="text-body-muted">
           Page {data.number + 1} of {data.totalPages} ({data.totalElements} total)
         </p>
         <div className="flex gap-2">
@@ -504,7 +504,7 @@ export default function ProbationPage() {
               />
             ) : (
               <div className="space-y-4">
-                <p className="text-sm text-[var(--text-secondary)]">
+                <p className="text-body-secondary">
                   Probation periods ending within the next 14 days:
                 </p>
                 {renderProbationTable(endingSoon, true)}
@@ -553,7 +553,7 @@ export default function ProbationPage() {
                     <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
                       Evaluation for {evaluateTarget.employeeName}
                     </h2>
-                    <p className="text-sm text-[var(--text-secondary)] mt-1">
+                    <p className="text-body-secondary mt-1">
                       {evaluateTarget.department} - Probation ends{' '}
                       {formatDate(evaluateTarget.endDate)}
                     </p>
@@ -690,7 +690,7 @@ export default function ProbationPage() {
                     />
                     <label
                       htmlFor="isFinal"
-                      className="text-sm text-[var(--text-secondary)]"
+                      className="text-body-secondary"
                     >
                       This is the final evaluation
                     </label>

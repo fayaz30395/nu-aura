@@ -158,7 +158,7 @@ export default function PreboardingPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Pre-boarding Portal</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">Manage new hire paperwork before joining</p>
+            <p className="text-body-muted mt-1">Manage new hire paperwork before joining</p>
           </div>
           <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
             <Button
@@ -174,7 +174,7 @@ export default function PreboardingPage() {
         {/* Error State */}
         {isError && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-            <CardContent className="p-4 flex items-center justify-between">
+            <CardContent className="p-4 row-between">
               <div className="flex items-center gap-4">
                 <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
                 <p className="text-sm text-danger-600 dark:text-danger-400">
@@ -284,7 +284,7 @@ export default function PreboardingPage() {
               <div className="divide-y divide-surface-100 dark:divide-surface-700">
                 {filteredCandidates.map((candidate) => (
                   <div key={candidate.id} className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                    <div className="flex items-center justify-between">
+                    <div className="row-between">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                           <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
@@ -293,14 +293,14 @@ export default function PreboardingPage() {
                         </div>
                         <div>
                           <p className="font-medium text-[var(--text-primary)]">{candidate.fullName}</p>
-                          <p className="text-sm text-[var(--text-muted)]">{candidate.email}</p>
+                          <p className="text-body-muted">{candidate.email}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
                           <p className="text-sm text-[var(--text-primary)]">{candidate.designation || '-'}</p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             <Calendar className="h-3 w-3 inline mr-1" />
                             Joining: {new Date(candidate.expectedJoiningDate).toLocaleDateString()}
                           </p>
@@ -313,7 +313,7 @@ export default function PreboardingPage() {
                               style={{ width: `${candidate.completionPercentage}%` }}
                             />
                           </div>
-                          <span className="text-xs text-[var(--text-muted)] w-8">{candidate.completionPercentage}%</span>
+                          <span className="text-caption w-8">{candidate.completionPercentage}%</span>
                         </div>
 
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>

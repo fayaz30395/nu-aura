@@ -221,7 +221,7 @@ export default function ReferralsPage() {
                     <stat.icon className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)]">{stat.label}</p>
+                    <p className="text-body-secondary">{stat.label}</p>
                     <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       {stat.value}
                     </p>
@@ -318,12 +318,12 @@ export default function ReferralsPage() {
                                 <p className="text-sm font-medium text-[var(--text-primary)]">
                                   {referral.candidateName}
                                 </p>
-                                <p className="text-xs text-[var(--text-muted)]">
+                                <p className="text-caption">
                                   {referral.candidateEmail}
                                 </p>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {referral.jobTitle || '-'}
                             </td>
                             <td className="px-6 py-4">
@@ -333,10 +333,10 @@ export default function ReferralsPage() {
                                 {statusConfig.label}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {formatDate(referral.submittedDate)}
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {referral.bonusAmount
                                 ? formatCurrency(referral.bonusAmount)
                                 : '-'}
@@ -535,7 +535,7 @@ export default function ReferralsPage() {
                           {policy.name}
                         </h3>
                         {policy.description && (
-                          <p className="text-sm text-[var(--text-secondary)] mt-1">
+                          <p className="text-body-secondary mt-1">
                             {policy.description}
                           </p>
                         )}
@@ -646,12 +646,12 @@ export default function ReferralsPage() {
                                     <p className="text-sm font-medium text-[var(--text-primary)]">
                                       {referral.candidateName}
                                     </p>
-                                    <p className="text-xs text-[var(--text-muted)]">
+                                    <p className="text-caption">
                                       {referral.candidateEmail}
                                     </p>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                                <td className="px-6 py-4 text-body-secondary">
                                   {referral.jobTitle || '-'}
                                 </td>
                                 <td className="px-6 py-4">
@@ -661,7 +661,7 @@ export default function ReferralsPage() {
                                     {statusConfig.label}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                                <td className="px-6 py-4 text-body-secondary">
                                   {formatDate(referral.submittedDate)}
                                 </td>
                                 <td className="px-6 py-4">
@@ -691,8 +691,8 @@ export default function ReferralsPage() {
 
                   {/* Pagination */}
                   {allReferralsData.totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-4">
-                      <p className="text-sm text-[var(--text-muted)]">
+                    <div className="row-between mt-4">
+                      <p className="text-body-muted">
                         Showing page {allReferralsData.number + 1} of{' '}
                         {allReferralsData.totalPages} ({allReferralsData.totalElements} total)
                       </p>

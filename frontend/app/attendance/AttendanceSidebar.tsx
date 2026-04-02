@@ -35,7 +35,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className={`text-sm font-bold text-[var(--text-primary)] ${action.hoverColor} transition-colors`}>{action.title}</h3>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{action.desc}</p>
+                    <p className="text-caption mt-0.5">{action.desc}</p>
                   </div>
                   <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
                 </div>
@@ -75,10 +75,10 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
             const hDate = new Date(h.holidayDate + 'T00:00:00');
             const daysAway = Math.ceil((hDate.getTime() - new Date(todayStr + 'T00:00:00').getTime()) / 86400000);
             return (
-              <div key={h.id} className="flex items-center justify-between py-1.5 border-b border-[var(--border-subtle)] last:border-0">
+              <div key={h.id} className="row-between py-1.5 divider-b last:border-0">
                 <div>
                   <div className="text-xs font-semibold text-[var(--text-primary)]">{h.holidayName}</div>
-                  <div className="text-xs text-[var(--text-muted)]">
+                  <div className="text-caption">
                     {hDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
         </div>
         <div className="space-y-4">
           <div>
-            <div className="flex items-center justify-between text-xs mb-1">
+            <div className="row-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Present Days</span>
               <span className="font-bold text-success-600 dark:text-success-400">{weekStats.presentDays}/5</span>
             </div>
@@ -135,7 +135,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
             </div>
           </div>
           <div>
-            <div className="flex items-center justify-between text-xs mb-1">
+            <div className="row-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Total Hours</span>
               <span className="font-bold text-accent-700 dark:text-accent-400">
                 {totalWeekHours.toFixed(1)}h / {STANDARD_WORK_HOURS * 5}h

@@ -247,7 +247,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
         {/* Description or Trend Label */}
         {(description || trend?.label) && (
-          <p className="text-xs text-[var(--text-muted)]">
+          <p className="text-caption">
             {description || trend?.label}
           </p>
         )}

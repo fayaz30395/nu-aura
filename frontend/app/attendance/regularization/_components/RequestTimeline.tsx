@@ -98,9 +98,9 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="row-between gap-4">
                     <h4 className="text-card-title">{step.label}</h4>
-                    <span className="text-xs text-[var(--text-muted)] whitespace-nowrap font-medium">
+                    <span className="text-caption whitespace-nowrap font-medium">
                       {new Date(step.date).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -114,17 +114,17 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
                   {index === 2 && request.status !== 'PENDING' && (
                     <div className="mt-2 space-y-1">
                       {request.approvedBy && (
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-body-secondary">
                           Reviewed by: <span className="font-medium">{request.approvedBy}</span>
                         </p>
                       )}
                       {request.remarks && (
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-body-secondary">
                           Remarks: <span className="font-medium">{request.remarks}</span>
                         </p>
                       )}
                       {request.approvedOn && request.requestedOn && (
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-body-secondary">
                           Resolution time:{' '}
                           <span className="font-medium">
                             {calculateResolutionTime(request.requestedOn, request.approvedOn)}
@@ -135,7 +135,7 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
                   )}
 
                   {index === 0 && (
-                    <p className="text-sm text-[var(--text-secondary)] mt-1">
+                    <p className="text-body-secondary mt-1">
                       For{' '}
                       {new Date(request.attendanceDate).toLocaleDateString('en-US', {
                         weekday: 'long',
@@ -154,16 +154,16 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
       {/* Request Details Section */}
       <div className="grid grid-cols-2 gap-4 pt-2">
         <div className="card-aura p-4 bg-[var(--bg-secondary)]/30">
-          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold tracking-wide mb-2">Reason</p>
-          <p className="text-sm text-[var(--text-secondary)] line-clamp-3">{request.reason}</p>
+          <p className="text-caption uppercase font-semibold tracking-wide mb-2">Reason</p>
+          <p className="text-body-secondary line-clamp-3">{request.reason}</p>
         </div>
         <div className="card-aura p-4 bg-[var(--bg-secondary)]/30">
-          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold tracking-wide mb-2">Original Times</p>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-caption uppercase font-semibold tracking-wide mb-2">Original Times</p>
+          <p className="text-body-secondary">
             <span className="font-medium">In:</span>{' '}
             {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'}
           </p>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-body-secondary">
             <span className="font-medium">Out:</span>{' '}
             {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}
           </p>

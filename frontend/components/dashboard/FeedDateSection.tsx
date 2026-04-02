@@ -77,14 +77,14 @@ export function FeedDateSection({
         <span className="text-2xs font-medium text-[var(--text-muted)] bg-[var(--bg-surface)] px-1.5 py-0.5 rounded-full">
           {group.items.length}
         </span>
-        <div className="flex-1 border-b border-[var(--border-subtle)] ml-1" />
+        <div className="flex-1 divider-b ml-1" />
       </button>
       {expanded && (
         <div className="space-y-2 pb-2">
           {isLoading ? (
             <div className="flex items-center justify-center gap-2 py-4">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
-              <span className="text-xs text-[var(--text-muted)]">Loading {group.label.toLowerCase()} items...</span>
+              <span className="text-caption">Loading {group.label.toLowerCase()} items...</span>
             </div>
           ) : (
             children(group.items)

@@ -86,7 +86,7 @@ export function ScopeSelector({
       </div>
 
       {showDescription && (
-        <p className="text-sm text-[var(--text-muted)]">
+        <p className="text-body-muted">
           {SCOPE_DESCRIPTIONS[value]}
         </p>
       )}

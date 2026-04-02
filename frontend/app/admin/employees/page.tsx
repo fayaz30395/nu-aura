@@ -102,7 +102,7 @@ function PermissionPreview({ roleCodes }: { roleCodes: string[] }) {
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center justify-between w-full text-left"
+        className="row-between w-full text-left"
       >
         <div className="flex items-center gap-2">
           <Eye className="h-4 w-4 text-accent-500" />
@@ -190,10 +190,10 @@ function InlineRoleEditor({ employee, onClose }: { employee: Employee; onClose: 
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div>
           <p className="font-medium text-[var(--text-primary)]">{employee.fullName || `${employee.firstName} ${employee.lastName}`}</p>
-          <p className="text-xs text-[var(--text-muted)]">{employee.workEmail}</p>
+          <p className="text-caption">{employee.workEmail}</p>
         </div>
         <button onClick={onClose} className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 p-1 hover:bg-[var(--bg-surface)] rounded">
           <X className="h-4 w-4 text-[var(--text-muted)]" />
@@ -291,7 +291,7 @@ export default function AdminEmployeesPage() {
             <Shield className="h-8 w-8 text-danger-500" />
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h2>
-          <p className="text-sm text-[var(--text-muted)]">You need HR Admin or Employee Management permission to access this page.</p>
+          <p className="text-body-muted">You need HR Admin or Employee Management permission to access this page.</p>
         </div>
       </AdminPageContent>
     );
@@ -427,7 +427,7 @@ export default function AdminEmployeesPage() {
                               </div>
                               <div>
                                 <p className="font-medium text-[var(--text-primary)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
-                                <p className="text-xs text-[var(--text-muted)]">{emp.workEmail}</p>
+                                <p className="text-caption">{emp.workEmail}</p>
                               </div>
                             </div>
                           </td>
@@ -452,14 +452,14 @@ export default function AdminEmployeesPage() {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border-main)]">
+                  <div className="row-between mt-4 pt-4 border-t border-[var(--border-main)]">
                     <p className="text-caption text-[var(--text-muted)]">
                       {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
                     </p>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0}
                         leftIcon={<ChevronLeft className="h-4 w-4" />}>Previous</Button>
-                      <span className="text-sm text-[var(--text-secondary)]">{page + 1} / {totalPages}</span>
+                      <span className="text-body-secondary">{page + 1} / {totalPages}</span>
                       <Button variant="outline" size="sm" onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1}
                         rightIcon={<ChevronRight className="h-4 w-4" />}>Next</Button>
                     </div>
@@ -590,7 +590,7 @@ export default function AdminEmployeesPage() {
             {formStep === 'role' && (
               <div className="space-y-4">
                 <div className="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
-                  <p className="text-sm text-[var(--text-secondary)] mb-1">Assigning roles for:</p>
+                  <p className="text-body-secondary mb-1">Assigning roles for:</p>
                   <p className="font-semibold text-[var(--text-primary)]">
                     {watch('firstName') || 'Employee'} {watch('lastName')} ({watch('workEmail') || 'email'})
                   </p>
@@ -598,7 +598,7 @@ export default function AdminEmployeesPage() {
 
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="h-4 w-4 text-[var(--text-secondary)]" />
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span className="text-xs text-[var(--text-muted)]">(multiple allowed)</span></label>
+                  <label className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span className="text-caption">(multiple allowed)</span></label>
                 </div>
                 {errors.roleCodes && <p className="text-xs text-danger-500 mb-2">{errors.roleCodes.message}</p>}
 
@@ -640,7 +640,7 @@ export default function AdminEmployeesPage() {
                                 <span className="font-medium text-sm text-[var(--text-primary)]">{role.label}</span>
                                 {role.value === Roles.SUPER_ADMIN && <span className="badge-status status-danger text-2xs">System</span>}
                               </div>
-                              <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">{role.description}</p>
+                              <p className="text-caption mt-0.5 line-clamp-2">{role.description}</p>
                             </div>
                           </button>
                         );
@@ -669,7 +669,7 @@ export default function AdminEmployeesPage() {
           </ModalBody>
 
           <ModalFooter>
-            <div className="flex items-center justify-between w-full">
+            <div className="row-between w-full">
               <Button variant="ghost" onClick={handleCloseModal} type="button">Cancel</Button>
               <div className="flex items-center gap-2">
                 {formStep === 'role' && (

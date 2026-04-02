@@ -390,10 +390,10 @@ export default function RolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                   {role.name}
                 </td>
-                <td className="px-6 py-4 text-sm text-[var(--text-muted)]">
+                <td className="px-6 py-4 text-body-muted">
                   {role.description || '-'}
                 </td>
-                <td className="px-6 py-4 text-sm text-[var(--text-muted)]">
+                <td className="px-6 py-4 text-body-muted">
                   {role.permissions.length} permissions
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -458,7 +458,7 @@ export default function RolesPage() {
                   {createForm.formState.errors.code && (
                     <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.code.message}</p>
                   )}
-                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  <p className="mt-1 text-caption">
                     Unique identifier for this role (uppercase)
                   </p>
                 </div>
@@ -477,7 +477,7 @@ export default function RolesPage() {
                   {createForm.formState.errors.name && (
                     <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.name.message}</p>
                   )}
-                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  <p className="mt-1 text-caption">
                     Display name for this role
                   </p>
                 </div>
@@ -535,12 +535,12 @@ export default function RolesPage() {
                                   isSelected ? 'bg-accent-50' : ''
                                 }`}
                               >
-                                <div className="flex items-center justify-between">
+                                <div className="row-between">
                                   <div>
                                     <div className="text-sm font-medium text-[var(--text-primary)]">
                                       {permission.code}
                                     </div>
-                                    <div className="text-xs text-[var(--text-muted)]">
+                                    <div className="text-caption">
                                       {permission.description || 'No description'}
                                     </div>
                                   </div>
@@ -561,7 +561,7 @@ export default function RolesPage() {
                           permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
                           permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
                         ).length === 0 && (
-                          <div className="px-4 py-4 text-sm text-[var(--text-muted)] text-center">
+                          <div className="px-4 py-4 text-body-muted text-center">
                             No permissions found
                           </div>
                         )}
@@ -570,7 +570,7 @@ export default function RolesPage() {
                   )}
                   {showPermissionDropdown && permissions.length === 0 && (
                     <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] p-4">
-                      <p className="text-sm text-[var(--text-muted)] text-center">
+                      <p className="text-body-muted text-center">
                         No permissions available. Please check if you are logged in.
                       </p>
                     </div>
@@ -667,7 +667,7 @@ export default function RolesPage() {
                     </option>
                   ))}
                 </select>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                <p className="mt-1 text-caption">
                   Select a parent role to inherit its permissions
                 </p>
               </div>
@@ -687,7 +687,7 @@ export default function RolesPage() {
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-[var(--text-muted)] mt-2">
+                  <p className="text-caption mt-2">
                     These permissions are inherited from the parent role and cannot be modified here.
                   </p>
                 </div>
@@ -726,7 +726,7 @@ export default function RolesPage() {
             <h2 className="text-xl font-bold mb-2 text-[var(--text-primary)]">
               Manage Permissions - {selectedRole.name}
             </h2>
-            <p className="text-sm text-[var(--text-muted)] mb-4">
+            <p className="text-body-muted mb-4">
               Select permissions and configure their scope. Scope determines what data the permission grants access to.
             </p>
             <div className="space-y-4">
@@ -761,11 +761,11 @@ export default function RolesPage() {
                                 <span className="text-sm font-medium text-[var(--text-primary)]">
                                   {permission.name}
                                 </span>
-                                <span className="text-xs text-[var(--text-muted)] ml-2">
+                                <span className="text-caption ml-2">
                                   ({permission.code})
                                 </span>
                                 {permission.description && (
-                                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                                  <p className="text-caption mt-0.5">
                                     {permission.description}
                                   </p>
                                 )}
@@ -802,7 +802,7 @@ export default function RolesPage() {
 
             {/* Summary */}
             <div className="mt-4 p-4 bg-[var(--bg-surface)] rounded-lg space-y-2">
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-body-secondary">
                 <strong>{selectedPermissions.length}</strong> permission(s) selected
               </p>
               {/* Show warning for CUSTOM scopes without targets */}

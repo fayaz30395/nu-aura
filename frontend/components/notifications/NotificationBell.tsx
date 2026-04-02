@@ -198,7 +198,7 @@ export const NotificationBell: React.FC = () => {
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-2xl border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="row-between p-4 border-b">
             <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
@@ -240,10 +240,10 @@ export const NotificationBell: React.FC = () => {
                             <ExternalLink className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0" />
                           )}
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
+                        <p className="text-body-secondary mt-1 line-clamp-2">
                           {notification.message}
                         </p>
-                        <p className="text-xs text-[var(--text-muted)] mt-1">
+                        <p className="text-caption mt-1">
                           {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                         </p>
                       </div>

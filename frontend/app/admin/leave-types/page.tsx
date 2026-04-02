@@ -258,7 +258,7 @@ export default function LeaveTypesManagementPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Leave Types Management</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
+            <p className="mt-1 text-body-secondary skeuo-deboss">
               Configure and manage leave types for your organization
             </p>
           </div>
@@ -327,7 +327,7 @@ export default function LeaveTypesManagementPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                       <p className="text-[var(--text-secondary)]">No leave types configured</p>
-                      <p className="text-sm text-[var(--text-muted)] mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
+                      <p className="text-body-muted mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
                     </div>
                   </td>
                 </tr>
@@ -342,7 +342,7 @@ export default function LeaveTypesManagementPage() {
                         />
                         <div>
                           <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>
-                          <div className="text-sm text-[var(--text-muted)]">{leaveType.leaveCode}</div>
+                          <div className="text-body-muted">{leaveType.leaveCode}</div>
                         </div>
                       </div>
                     </td>
@@ -503,7 +503,7 @@ export default function LeaveTypesManagementPage() {
                             {...form.register('isPaid')}
                             className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
-                          <span className="ml-2 text-sm text-[var(--text-secondary)]">Paid Leave</span>
+                          <span className="ml-2 text-body-secondary">Paid Leave</span>
                         </label>
                       </div>
                       <div>
@@ -631,7 +631,7 @@ export default function LeaveTypesManagementPage() {
                           {...form.register('isCarryForwardAllowed')}
                           className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Allow Carry Forward</span>
+                        <span className="ml-2 text-body-secondary">Allow Carry Forward</span>
                       </label>
 
                       {form.watch('isCarryForwardAllowed') && (
@@ -655,7 +655,7 @@ export default function LeaveTypesManagementPage() {
                           {...form.register('isEncashable')}
                           className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Encashable</span>
+                        <span className="ml-2 text-body-secondary">Encashable</span>
                       </label>
 
                       <label className="flex items-center cursor-pointer">
@@ -664,7 +664,7 @@ export default function LeaveTypesManagementPage() {
                           {...form.register('requiresDocument')}
                           className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Requires Supporting Document</span>
+                        <span className="ml-2 text-body-secondary">Requires Supporting Document</span>
                       </label>
                     </div>
                   </div>

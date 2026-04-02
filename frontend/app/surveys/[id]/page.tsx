@@ -288,7 +288,7 @@ export default function SurveyDetailPage() {
         {/* Questions section */}
         <Card className="card-aura">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="row-between mb-6">
               <h2 className={typography.sectionTitle}>
                 Questions ({questions?.length ?? 0})
               </h2>

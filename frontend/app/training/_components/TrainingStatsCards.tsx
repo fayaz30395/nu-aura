@@ -28,7 +28,7 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
               <BookOpen className="h-6 w-6 text-accent-600 dark:text-accent-400" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">My Enrollments</p>
+              <p className="text-body-secondary skeuo-deboss">My Enrollments</p>
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myEnrolled}</p>
             </div>
           </div>
@@ -41,7 +41,7 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
               <PlayCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Progress</p>
+              <p className="text-body-secondary skeuo-deboss">In Progress</p>
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myInProgress}</p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
               <Award className="h-6 w-6 text-success-600 dark:text-success-400" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
+              <p className="text-body-secondary skeuo-deboss">Completed</p>
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myCompleted}</p>
             </div>
           </div>
@@ -67,7 +67,7 @@ export function TrainingStatsCards({ stats }: TrainingStatsCardsProps) {
               <GraduationCap className="h-6 w-6 text-white dark:text-accent-200" />
             </div>
             <div>
-              <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available Programs</p>
+              <p className="text-body-secondary skeuo-deboss">Available Programs</p>
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
             </div>
           </div>

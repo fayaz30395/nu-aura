@@ -115,7 +115,7 @@ export function AnalyticsAttendancePieChart({ data }: { data: PieEntry[] }) {
           verticalAlign="bottom"
           height={36}
           formatter={(value) => (
-            <span className="text-sm text-[var(--text-secondary)]">{value}</span>
+            <span className="text-body-secondary">{value}</span>
           )}
         />
       </PieChart>
@@ -187,7 +187,7 @@ export function AnalyticsLeavePieChart({ data, colors }: { data: LeaveEntry[]; c
           verticalAlign="bottom"
           height={36}
           formatter={(value) => (
-            <span className="text-sm text-[var(--text-secondary)]">{value}</span>
+            <span className="text-body-secondary">{value}</span>
           )}
         />
       </PieChart>

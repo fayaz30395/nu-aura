@@ -28,7 +28,7 @@ function SectionErrorFallback({ error, onReset, sectionName }: SectionErrorFallb
         <p className="text-sm font-medium text-[var(--text-primary)]">
           {sectionName ? `Failed to load ${sectionName}` : 'This section encountered an error'}
         </p>
-        <p className="text-xs text-[var(--text-muted)] truncate">
+        <p className="text-caption truncate">
           {error?.message || 'An unexpected error occurred'}
         </p>
       </div>

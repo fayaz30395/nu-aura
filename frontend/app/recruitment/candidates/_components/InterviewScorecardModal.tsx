@@ -52,7 +52,7 @@ function StarRating({ rating }: { rating: number | null | undefined }) {
 }
 
 function ResultBadge({ result }: { result: InterviewResult | null | undefined }) {
-  if (!result) return <span className="text-xs text-[var(--text-muted)]">Pending</span>;
+  if (!result) return <span className="text-caption">Pending</span>;
   const map: Record<InterviewResult, { label: string; variant: string; Icon: React.ElementType }> = {
     SELECTED: { label: 'Selected', variant: 'success', Icon: CheckCircle },
     REJECTED: { label: 'Rejected', variant: 'danger', Icon: XCircle },
@@ -148,7 +148,7 @@ export function InterviewScorecardModal({
               <TrendingUp className="h-5 w-5 text-accent-500" />
               Interview Scorecards
             </h2>
-            <p className="text-sm text-[var(--text-muted)] mt-0.5">{candidateName}</p>
+            <p className="text-body-muted mt-0.5">{candidateName}</p>
           </div>
           <button
             onClick={onClose}
@@ -191,13 +191,13 @@ export function InterviewScorecardModal({
                 <Card>
                   <CardContent className="p-4 text-center">
                     <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Total Rounds</p>
+                    <p className="text-caption mt-1">Total Rounds</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center">
                     <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Completed</p>
+                    <p className="text-caption mt-1">Completed</p>
                   </CardContent>
                 </Card>
                 <Card>
@@ -205,7 +205,7 @@ export function InterviewScorecardModal({
                     <p className="text-2xl font-bold text-[var(--text-primary)]">
                       {stats.avgRating != null ? stats.avgRating.toFixed(1) : '—'}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Avg Rating</p>
+                    <p className="text-caption mt-1">Avg Rating</p>
                   </CardContent>
                 </Card>
                 <Card>
@@ -213,7 +213,7 @@ export function InterviewScorecardModal({
                     <p className="text-2xl font-bold text-success-600">
                       {stats.resultCounts['SELECTED'] ?? 0}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Selected Votes</p>
+                    <p className="text-caption mt-1">Selected Votes</p>
                   </CardContent>
                 </Card>
               </div>
@@ -252,14 +252,14 @@ export function InterviewScorecardModal({
                         <StatusBadge status={interview.status} />
                         <ResultBadge result={interview.result} />
                         {interview.interviewType && (
-                          <span className="text-xs text-[var(--text-muted)]">
+                          <span className="text-caption">
                             ({interview.interviewType.replace('_', ' ')})
                           </span>
                         )}
                       </div>
 
                       {/* Row 2: Interviewer + Date */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
+                      <div className="meta-row">
                         {interview.interviewerName && (
                           <span className="flex items-center gap-1">
                             <Users className="h-3.5 w-3.5" />
@@ -283,7 +283,7 @@ export function InterviewScorecardModal({
                       {/* Row 3: Rating */}
                       {interview.rating != null && (
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-[var(--text-muted)]">Rating:</span>
+                          <span className="text-caption">Rating:</span>
                           <StarRating rating={interview.rating} />
                         </div>
                       )}
@@ -295,7 +295,7 @@ export function InterviewScorecardModal({
                             <MessageSquare className="h-3.5 w-3.5 text-[var(--text-muted)]" />
                             <span className="text-xs font-medium text-[var(--text-muted)]">Feedback</span>
                           </div>
-                          <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                          <p className="text-body-secondary leading-relaxed">
                             {interview.feedback}
                           </p>
                         </div>
@@ -304,13 +304,13 @@ export function InterviewScorecardModal({
                       {/* Row 5: Notes */}
                       {interview.notes && (
                         <div>
-                          <span className="text-xs text-[var(--text-muted)]">Notes: </span>
+                          <span className="text-caption">Notes: </span>
                           <span className="text-xs text-[var(--text-secondary)]">{interview.notes}</span>
                         </div>
                       )}
 
                       {interview.status !== 'COMPLETED' && !interview.feedback && !interview.rating && (
-                        <p className="text-xs text-[var(--text-muted)] italic">
+                        <p className="text-caption italic">
                           Scorecard not yet submitted
                         </p>
                       )}
@@ -323,7 +323,7 @@ export function InterviewScorecardModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-4 p-6 border-t border-[var(--border-main)]">
+        <div className="row-between gap-4 p-6 border-t border-[var(--border-main)]">
           <Button
             type="button"
             onClick={onSynthesizeFeedback}

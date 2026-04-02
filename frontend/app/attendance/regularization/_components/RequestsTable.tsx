@@ -83,7 +83,7 @@ export function RequestsTable({ requests, loading, statusFilter, onNewRequest }:
                           day: 'numeric',
                         })}
                       </td>
-                      <td className="hidden md:table-cell px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
                         <div className="text-xs">
                           In: {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'}
                         </div>
@@ -91,7 +91,7 @@ export function RequestsTable({ requests, loading, statusFilter, onNewRequest }:
                           Out: {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}
                         </div>
                       </td>
-                      <td className="px-4 md:px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="px-4 md:px-6 py-4 text-body-secondary">
                         <div className="max-w-xs truncate" title={request.reason}>
                           {request.reason}
                         </div>
@@ -99,7 +99,7 @@ export function RequestsTable({ requests, loading, statusFilter, onNewRequest }:
                       <td className="px-4 md:px-6 py-4">
                         <span className={getStatusBadgeClass(request.status)}>{request.status}</span>
                       </td>
-                      <td className="hidden md:table-cell px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
                         {formatRelativeTime(request.requestedOn)}
                       </td>
                       <td className="px-4 md:px-6 py-4 text-right">

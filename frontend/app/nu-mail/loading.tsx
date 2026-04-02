@@ -26,7 +26,7 @@ export default function Loading() {
               key={index}
               className="rounded-xl border border-surface-200 dark:border-surface-800 p-4 space-y-2"
             >
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <Skeleton height={16} width="60%" />
                 <Skeleton height={20} width={50} />
               </div>

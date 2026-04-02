@@ -31,7 +31,7 @@ export function DeleteCandidateModal({
           </div>
           <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Candidate</h3>
         </div>
-        <p className="text-sm text-[var(--text-muted)] mb-6">
+        <p className="text-body-muted mb-6">
           Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong>? This action cannot be undone.
         </p>
         <div className="flex gap-4">

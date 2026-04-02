@@ -277,7 +277,7 @@ function OfferPortalPage() {
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Building className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Position</p>
+                  <p className="text-caption">Position</p>
                   <p className="font-semibold text-[var(--text-primary)]">
                     {offer?.offeredDesignation || offer?.jobTitle || '-'}
                   </p>
@@ -286,7 +286,7 @@ function OfferPortalPage() {
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <DollarSign className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Annual CTC</p>
+                  <p className="text-caption">Annual CTC</p>
                   <p className="font-semibold text-[var(--text-primary)]">
                     {formatCurrency(offer?.offeredCtc)}
                   </p>
@@ -295,7 +295,7 @@ function OfferPortalPage() {
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Calendar className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Proposed Joining Date</p>
+                  <p className="text-caption">Proposed Joining Date</p>
                   <p className="font-semibold text-[var(--text-primary)]">
                     {formatDate(offer?.proposedJoiningDate)}
                   </p>
@@ -304,7 +304,7 @@ function OfferPortalPage() {
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Clock className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Offer Extended On</p>
+                  <p className="text-caption">Offer Extended On</p>
                   <p className="font-semibold text-[var(--text-primary)]">
                     {formatDate(offer?.offerExtendedDate)}
                   </p>
@@ -322,13 +322,13 @@ function OfferPortalPage() {
                 <FileText className="h-5 w-5 text-accent-500" />
                 Offer Letter Document
               </h3>
-              <div className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="row-between p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <div>
                   <p className="font-medium text-[var(--text-primary)]">
                     Offer Letter
                   </p>
                   {offer.offerLetterReferenceNumber && (
-                    <p className="text-sm text-[var(--text-muted)]">
+                    <p className="text-body-muted">
                       Reference: {offer.offerLetterReferenceNumber}
                     </p>
                   )}
@@ -426,7 +426,7 @@ function OfferPortalPage() {
                 {acceptErrors.confirmedJoiningDate ? (
                   <p className="text-xs text-danger-500 mt-1">{acceptErrors.confirmedJoiningDate.message}</p>
                 ) : (
-                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                  <p className="text-caption mt-1">
                     Please confirm your expected joining date
                   </p>
                 )}

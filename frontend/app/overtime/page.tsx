@@ -239,13 +239,13 @@ export default function OvertimePage() {
                         <p className="text-sm font-medium text-[var(--text-primary)]">
                           {record.employeeName}
                         </p>
-                        <p className="text-xs text-[var(--text-muted)]">
+                        <p className="text-caption">
                           {record.employeeCode}
                         </p>
                       </div>
                     </td>
                   )}
-                  <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-body-secondary">
                     {formatDate(record.overtimeDate)}
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -253,15 +253,15 @@ export default function OvertimePage() {
                       <p className="text-sm font-medium text-[var(--text-primary)]">
                         {record.overtimeHours}h overtime
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         {record.regularHours}h reg / {record.actualHours}h actual
                       </p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-center text-body-secondary">
                     {OVERTIME_TYPE_LABELS[record.overtimeType] || record.overtimeType}
                   </td>
-                  <td className="px-6 py-4 text-right text-sm text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-right text-body-secondary">
                     {record.multiplier ? `${record.multiplier}x` : '-'}
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -292,7 +292,7 @@ export default function OvertimePage() {
                     </td>
                   )}
                   {showActions && record.status !== 'PENDING' && (
-                    <td className="px-6 py-4 text-xs text-[var(--text-muted)]">-</td>
+                    <td className="px-6 py-4 text-caption">-</td>
                   )}
                 </tr>
               );
@@ -310,8 +310,8 @@ export default function OvertimePage() {
   ) => {
     if (!data || data.totalPages <= 1) return null;
     return (
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="row-between mt-4">
+        <p className="text-body-muted">
           Page {data.number + 1} of {data.totalPages} ({data.totalElements} total)
         </p>
         <div className="flex gap-2">
@@ -383,7 +383,7 @@ export default function OvertimePage() {
                       <stat.icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm text-[var(--text-secondary)]">{stat.label}</p>
+                      <p className="text-body-secondary">{stat.label}</p>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {stat.value}
                       </p>

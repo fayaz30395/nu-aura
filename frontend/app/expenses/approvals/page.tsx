@@ -75,7 +75,7 @@ export default function ExpenseApprovalsPage() {
     <AppLayout>
       <PermissionGate permission={Permissions.EXPENSE_APPROVE} fallback={<div className="p-8 text-center text-surface-500">You do not have permission to view expense approvals.</div>}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Expense Approvals</h1>
               <p className="text-surface-500 mt-1">

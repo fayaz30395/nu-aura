@@ -249,7 +249,7 @@ export default function AnnouncementsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold skeuo-emboss">
                 <Megaphone className="w-8 h-8 text-accent-700" />
@@ -313,10 +313,10 @@ export default function AnnouncementsPage() {
                         <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-warning-600 transition-colors">
                           {announcement.title}
                         </h3>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
+                        <p className="text-body-secondary mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
+                        <div className="flex items-center gap-4 mt-3 text-caption">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}
@@ -440,10 +440,10 @@ export default function AnnouncementsPage() {
                         <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent-700 transition-colors">
                           {announcement.title}
                         </h3>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
+                        <p className="text-body-secondary mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
+                        <div className="flex items-center gap-4 mt-3 text-caption">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}
@@ -508,7 +508,7 @@ export default function AnnouncementsPage() {
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-sm text-[var(--text-secondary)]">
+              <span className="px-4 py-2 text-body-secondary">
                 Page {page + 1} of {totalPages}
               </span>
               <button
@@ -574,7 +574,7 @@ export default function AnnouncementsPage() {
 
                 {/* Modal Content */}
                 <div className="p-6 overflow-y-auto max-h-[60vh]">
-                  <div className="flex items-center gap-4 mb-6 text-sm text-[var(--text-muted)]">
+                  <div className="flex items-center gap-4 mb-6 text-body-muted">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       Published {formatDate(selectedAnnouncement.publishedAt)}
@@ -613,7 +613,7 @@ export default function AnnouncementsPage() {
 
                 {/* Modal Footer */}
                 <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-body-muted">
                     <CheckCircle className="w-4 h-4 text-success-500" />
                     Marked as read
                   </div>
@@ -806,7 +806,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
@@ -911,10 +911,10 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="w-5 h-5 animate-spin text-accent-700" />
-                    <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
+                    <span className="ml-2 text-body-muted">Loading departments...</span>
                   </div>
                 ) : departments.length === 0 ? (
-                  <p className="text-sm text-[var(--text-muted)]">No departments found</p>
+                  <p className="text-body-muted">No departments found</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
                     {departments.map((dept) => (
@@ -932,7 +932,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                           onChange={() => toggleDepartment(dept.id)}
                           className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                         />
-                        <span className="text-sm text-[var(--text-secondary)] truncate">
+                        <span className="text-body-secondary truncate">
                           {dept.name}
                         </span>
                       </label>
@@ -955,7 +955,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                   {...register('isPinned')}
                   className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                 />
-                <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
+                <span className="text-body-secondary">Pin this announcement</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -963,7 +963,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                   {...register('sendEmail')}
                   className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
                 />
-                <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
+                <span className="text-body-secondary">Send email notification</span>
               </label>
             </div>
 

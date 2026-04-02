@@ -77,7 +77,7 @@ export function SalaryStructuresTab({
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{structure.employeeName}</h3>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-body-secondary">
                     Effective: {formatDate(structure.effectiveDate)}
                   </p>
                 </div>

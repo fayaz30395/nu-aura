@@ -34,7 +34,7 @@ export function OAuthPanel({
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Nu-Mail</h1>
-            <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Gmail inbox</p>
+            <p className="text-body-muted">Your organization&apos;s Gmail inbox</p>
           </div>
         </div>
         {!isConnected ? (
@@ -118,7 +118,7 @@ export function OAuthPanel({
               >
                 Connect Gmail
               </Button>
-              <p className="text-xs text-[var(--text-muted)] mt-4">
+              <p className="text-caption mt-4">
                 You&apos;ll be asked to grant access to read and send emails.
               </p>
             </div>

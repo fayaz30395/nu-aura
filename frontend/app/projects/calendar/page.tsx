@@ -485,7 +485,7 @@ export default function ProjectCalendarPage() {
                   <option value="CRITICAL">Critical</option>
                 </select>
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)] cursor-pointer">
+                  <label className="flex items-center gap-2 text-body-secondary cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showProjects}
@@ -494,7 +494,7 @@ export default function ProjectCalendarPage() {
                     />
                     Projects
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)] cursor-pointer">
+                  <label className="flex items-center gap-2 text-body-secondary cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showTasks}
@@ -605,7 +605,7 @@ export default function ProjectCalendarPage() {
                                 </button>
                               )}
                               <div className="flex-1 min-w-0">
-                                <div className={`truncate ${isProject ? 'font-medium text-[var(--text-primary)]' : 'text-sm text-[var(--text-secondary)]'}`}>
+                                <div className={`truncate ${isProject ? 'font-medium text-[var(--text-primary)]' : 'text-body-secondary'}`}>
                                   {item.name}
                                 </div>
                                 <div className="flex items-center gap-2 mt-1">
@@ -617,7 +617,7 @@ export default function ProjectCalendarPage() {
                                       {item.priority}
                                     </span>
                                   )}
-                                  <span className="text-xs text-[var(--text-muted)]">
+                                  <span className="text-caption">
                                     {item.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                     {' → '}
                                     {item.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

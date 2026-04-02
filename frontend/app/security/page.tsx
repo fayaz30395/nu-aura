@@ -161,7 +161,7 @@ export default function SecurityPage() {
       {/* Header */}
       <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
@@ -219,7 +219,7 @@ export default function SecurityPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {cert.name}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{cert.description}</p>
+                  <p className="text-body-secondary">{cert.description}</p>
                 </Card>
               </motion.div>
             ))}
@@ -255,12 +255,12 @@ export default function SecurityPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">
+                  <p className="text-body-secondary mb-4 leading-relaxed">
                     {feature.description}
                   </p>
                   <ul className="space-y-2">
                     {feature.details.map((detail, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <li key={i} className="flex items-center gap-2 text-body-secondary">
                         <Check className="h-4 w-4 text-success-500 flex-shrink-0" />
                         {detail}
                       </li>
@@ -297,7 +297,7 @@ export default function SecurityPage() {
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-[var(--text-secondary)]">{feature.description}</p>
+                    <p className="text-body-secondary">{feature.description}</p>
                   </div>
                 </div>
               </Card>
@@ -344,7 +344,7 @@ export default function SecurityPage() {
                 <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-[var(--text-muted)]">{stat.label}</div>
+                <div className="text-body-muted">{stat.label}</div>
               </Card>
             ))}
           </div>

@@ -229,9 +229,9 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
             >
               {/* Search header */}
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border-subtle)]">
+              <div className="flex items-center gap-2 px-4 py-2 divider-b">
                 <Search className="h-3.5 w-3.5 text-[var(--text-muted)]" />
-                <span className="text-xs text-[var(--text-muted)]">
+                <span className="text-caption">
                   {mentionQuery ? `Searching "${mentionQuery}"` : 'Tag a team member'}
                 </span>
               </div>
@@ -263,7 +263,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {user.fullName}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] truncate">
+                      <p className="text-caption truncate">
                         {user.role} · {user.department}
                       </p>
                     </div>
@@ -289,7 +289,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
               className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4 text-center"
             >
               <AtSign className="h-5 w-5 text-[var(--text-muted)] mx-auto mb-1" />
-              <p className="text-sm text-[var(--text-muted)]">No matching team members</p>
+              <p className="text-body-muted">No matching team members</p>
             </motion.div>
           )}
         </AnimatePresence>

@@ -159,7 +159,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
   return (
     <div className="skeuo-card rounded-xl border border-[var(--border-main)] p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="row-between mb-3">
         <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">
           Company Feed
         </h3>
@@ -220,7 +220,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         </div>
       ) : (
         <div className="text-center py-6">
-          <p className="text-xs text-[var(--text-muted)]">
+          <p className="text-caption">
             {activeFilter === 'ALL' ? 'No feed items yet.' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items.`}
           </p>
         </div>

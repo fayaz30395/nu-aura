@@ -246,7 +246,7 @@ export default function LearningPathsPage() {
                   {/* Progress Bar (if enrolled) */}
                   {path.isEnrolled && typeof path.progressPercentage === 'number' && (
                     <div className="mb-4">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="row-between mb-2">
                         <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
                         <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                       </div>

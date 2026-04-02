@@ -21,7 +21,7 @@ export default function CareersLayout({
     <div className="min-h-screen bg-[var(--bg-card)]">
       {/* Public Navbar */}
       <header className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border-main)] shadow-[var(--shadow-card)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 row-between">
           <Link href="/careers" className="flex items-center gap-4">
             <Image
               src="/images/nulogic-logo.svg"

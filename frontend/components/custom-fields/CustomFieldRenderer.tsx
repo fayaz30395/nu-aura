@@ -174,7 +174,7 @@ export default function CustomFieldRenderer({
                   disabled={disabled}
                   className="rounded text-accent-600 focus:ring-accent-500"
                 />
-                <span className="text-sm text-[var(--text-secondary)]">{option}</span>
+                <span className="text-body-secondary">{option}</span>
               </label>
             ))}
           </div>
@@ -190,7 +190,7 @@ export default function CustomFieldRenderer({
               disabled={disabled}
               className="rounded text-accent-600 focus:ring-accent-500 w-5 h-5"
             />
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-body-secondary">
               {definition.description || 'Yes'}
             </span>
           </label>
@@ -200,7 +200,7 @@ export default function CustomFieldRenderer({
         return (
           <div className="space-y-2">
             {value?.fileName && (
-              <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+              <div className="flex items-center gap-2 text-body-secondary">
                 <span>Current file: {value.fileName}</span>
                 {value.fileSize && (
                   <span className="text-xs">({formatFileSize(value.fileSize)})</span>
@@ -222,10 +222,10 @@ export default function CustomFieldRenderer({
               }}
               disabled={disabled}
               accept={definition.allowedFileTypes?.map((t) => `.${t}`).join(',')}
-              className="w-full text-sm text-[var(--text-muted)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent-50 file:text-accent-700 dark:file:bg-accent-900/30 dark:file:text-accent-300 hover:file:bg-accent-100"
+              className="w-full text-body-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent-50 file:text-accent-700 dark:file:bg-accent-900/30 dark:file:text-accent-300 hover:file:bg-accent-100"
             />
             {definition.allowedFileTypes && definition.allowedFileTypes.length > 0 && (
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 Allowed: {definition.allowedFileTypes.join(', ')}
               </p>
             )}
@@ -254,7 +254,7 @@ export default function CustomFieldRenderer({
       </label>
       {renderField()}
       {definition.description && definition.fieldType !== 'CHECKBOX' && (
-        <p className="mt-1 text-xs text-[var(--text-muted)]">{definition.description}</p>
+        <p className="mt-1 text-caption">{definition.description}</p>
       )}
     </div>
   );

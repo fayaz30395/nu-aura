@@ -102,7 +102,7 @@ export default function ContactPage() {
       {/* Header */}
       <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
@@ -155,7 +155,7 @@ export default function ContactPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] mb-2">{method.description}</p>
+                  <p className="text-body-muted mb-2">{method.description}</p>
                   <p className="text-sm font-medium text-accent-700 dark:text-accent-400">
                     {method.value}
                   </p>
@@ -352,7 +352,7 @@ export default function ContactPage() {
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                           {faq.question}
                         </h3>
-                        <p className="text-sm text-[var(--text-secondary)]">{faq.answer}</p>
+                        <p className="text-body-secondary">{faq.answer}</p>
                       </div>
                     </div>
                   </Card>
@@ -384,8 +384,8 @@ export default function ContactPage() {
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-2">{office.address}</p>
-                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                <p className="text-body-secondary mb-2">{office.address}</p>
+                <div className="flex items-center gap-2 text-body-muted">
                   <Clock className="h-4 w-4" />
                   {office.timezone}
                 </div>

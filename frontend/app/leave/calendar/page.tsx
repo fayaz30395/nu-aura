@@ -198,7 +198,7 @@ export default function LeaveCalendarPage() {
         {/* Legend */}
         <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-4 mb-6">
           <div className="flex flex-wrap gap-4">
-            <div className="text-sm text-[var(--text-secondary)] font-medium">Legend:</div>
+            <div className="text-body-secondary font-medium">Legend:</div>
             {leaveTypes.map(type => (
               <div key={type.id} className="flex items-center gap-2">
                 <div
@@ -297,7 +297,7 @@ export default function LeaveCalendarPage() {
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Total Leaves This Month</div>
+            <div className="text-body-secondary mb-1">Total Leaves This Month</div>
             <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">
               {leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
@@ -307,13 +307,13 @@ export default function LeaveCalendarPage() {
             </div>
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Approvals</div>
+            <div className="text-body-secondary mb-1">Pending Approvals</div>
             <div className="text-3xl font-bold text-warning-600 dark:text-warning-500">
               {leaves.filter(l => l.status === 'PENDING').length}
             </div>
           </div>
           <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6">
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Upcoming Leaves</div>
+            <div className="text-body-secondary mb-1">Upcoming Leaves</div>
             <div className="text-3xl font-bold text-accent-600 dark:text-accent-500">
               {leaves.filter(l => new Date(l.startDate) > new Date()).length}
             </div>

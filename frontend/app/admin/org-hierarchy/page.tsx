@@ -265,7 +265,7 @@ export default function OrgHierarchyPage() {
             </svg>
             <span>Organization Chart</span>
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-body-secondary">
             Employee reporting structure and team hierarchy
           </p>
         </div>
@@ -305,7 +305,7 @@ export default function OrgHierarchyPage() {
             </button>
           </div>
 
-          <div className="text-sm text-[var(--text-secondary)]">
+          <div className="text-body-secondary">
             {hierarchy.length > 0 && (
               <span>
                 <strong>{hierarchy.reduce((sum, emp) => {
@@ -348,7 +348,7 @@ export default function OrgHierarchyPage() {
                   </svg>
                 </div>
                 <p className="text-[var(--text-secondary)] font-medium mb-2">No employees found</p>
-                <p className="text-sm text-[var(--text-secondary)]">Add employees to build your organization chart</p>
+                <p className="text-body-secondary">Add employees to build your organization chart</p>
               </div>
             </div>
           ) : (

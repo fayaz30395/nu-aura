@@ -255,7 +255,7 @@ export default function TemplateEditorPage() {
                     {/* Right Panel: Task Orchestration */}
                     <div className="lg:col-span-2 space-y-6">
                         <Card className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden min-h-[600px]">
-                            <CardHeader className="p-8 flex flex-row items-center justify-between border-b border-[var(--border-subtle)]">
+                            <CardHeader className="p-8 flex flex-row items-center justify-between divider-b">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                     <ListChecks className="h-4 w-4" />
                                     Task Sequence ({tasks.length})
@@ -294,7 +294,7 @@ export default function TemplateEditorPage() {
                                                                     </Badge>
                                                                 )}
                                                             </div>
-                                                            <p className="text-sm text-[var(--text-muted)] font-bold line-clamp-1">{task.description}</p>
+                                                            <p className="text-body-muted font-bold line-clamp-1">{task.description}</p>
                                                             <div className="flex items-center gap-4 pt-1">
                                                                 <Badge variant="outline" className="rounded-xl px-2 py-0.5 border-[var(--border-subtle)] text-[var(--text-muted)] font-black text-2xs uppercase tracking-widest">
                                                                     {task.category?.replace('_', ' ')}
@@ -365,7 +365,7 @@ export default function TemplateEditorPage() {
                         className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-accent-700"
                     >
                         <div className="p-12 space-y-10">
-                            <div className="flex items-center justify-between">
+                            <div className="row-between">
                                 <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
                                     {editingTask === 'new' ? 'New Task' : 'Edit Task'}
                                 </h2>

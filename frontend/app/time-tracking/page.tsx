@@ -251,7 +251,7 @@ export default function TimeTrackingPage() {
         {/* Bulk Submit */}
         {draftEntries.length > 0 && (
           <PermissionGate permission={Permissions.TIME_TRACKING_UPDATE}>
-            <div className="flex items-center justify-between bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
+            <div className="row-between bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
               <div className="flex items-center gap-4">
                 <AlertCircle className="h-5 w-5 text-warning-500" />
                 <span className="text-sm text-warning-700 dark:text-warning-400">
@@ -276,7 +276,7 @@ export default function TimeTrackingPage() {
 
         {/* Entries List */}
         <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+          <div className="row-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Recent Time Entries
             </h2>
@@ -365,7 +365,7 @@ export default function TimeTrackingPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {entry.projectName || entry.clientName || 'General'}
                           </span>
                         </td>
@@ -380,7 +380,7 @@ export default function TimeTrackingPage() {
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {timeTrackingService.getEntryTypeLabel(entry.entryType)}
                           </span>
                         </td>
@@ -432,7 +432,7 @@ export default function TimeTrackingPage() {
               onClick={() => router.push('/time-tracking/new')}
               className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="row-between mb-4">
                 <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                   <Plus className="h-5 w-5 text-white" />
                 </div>
@@ -441,7 +441,7 @@ export default function TimeTrackingPage() {
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                 Log Time
               </h3>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 Create a new time entry
               </p>
             </button>
@@ -451,7 +451,7 @@ export default function TimeTrackingPage() {
             onClick={() => router.push('/time-tracking?view=week')}
             className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
@@ -460,7 +460,7 @@ export default function TimeTrackingPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Weekly View
             </h3>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               See your weekly timesheet
             </p>
           </button>

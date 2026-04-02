@@ -314,37 +314,37 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <User size={14} className="text-accent-500" />
-          <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
+          <span className="text-caption font-medium">Active Pipeline</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
-        <p className="text-xs text-[var(--text-muted)] mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
+        <p className="text-caption mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
       </div>
 
       {/* Conversion Rate */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp size={14} className="text-success-500" />
-          <span className="text-xs text-[var(--text-muted)] font-medium">Conversion Rate</span>
+          <span className="text-caption font-medium">Conversion Rate</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{conversionRate}%</p>
-        <p className="text-xs text-[var(--text-muted)] mt-0.5">Applied → Accepted</p>
+        <p className="text-caption mt-0.5">Applied → Accepted</p>
       </div>
 
       {/* Avg Time in Stage */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <Clock size={14} className="text-warning-500" />
-          <span className="text-xs text-[var(--text-muted)] font-medium">Avg. Time in Stage</span>
+          <span className="text-caption font-medium">Avg. Time in Stage</span>
         </div>
         <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
-        <p className="text-xs text-[var(--text-muted)] mt-0.5">Across all stages</p>
+        <p className="text-caption mt-0.5">Across all stages</p>
       </div>
 
       {/* Top Sources */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 size={14} className="text-accent-500" />
-          <span className="text-xs text-[var(--text-muted)] font-medium">Top Sources</span>
+          <span className="text-caption font-medium">Top Sources</span>
         </div>
         {sourceBreakdown.length > 0 ? (
           <div className="flex flex-wrap gap-1.5 mt-1">
@@ -355,7 +355,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-[var(--text-muted)] mt-1">No data</p>
+          <p className="text-body-muted mt-1">No data</p>
         )}
       </div>
     </div>
@@ -790,7 +790,7 @@ export default function ApplicantPipelinePage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">ATS Pipeline</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-0.5">
+            <p className="text-body-muted mt-0.5">
               Drag candidates between stages or use the quick-move buttons
             </p>
           </div>
@@ -799,7 +799,7 @@ export default function ApplicantPipelinePage() {
             {/* Job Selector */}
             <div className="w-72">
               {jobsLoading ? (
-                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
+                <div className="flex items-center gap-2 text-body-muted h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
                   <Loader2 size={14} className="animate-spin" />
                   Loading job openings...
                 </div>
@@ -877,7 +877,7 @@ export default function ApplicantPipelinePage() {
           <>
             {/* ── Pipeline Stats Bar ──────────────────────────────────── */}
             {selectedJob && (
-              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
+              <div className="meta-row">
                 <span className="font-medium text-[var(--text-secondary)]">{selectedJob.jobTitle}</span>
                 {selectedJob.jobCode && (
                   <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded text-[var(--text-muted)] font-mono text-xs">
@@ -973,7 +973,7 @@ export default function ApplicantPipelinePage() {
                   <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
                     <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15} />
                     {minRating > 0 && (
-                      <button onClick={() => setMinRating(0)} aria-label="Clear rating filter" className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <button onClick={() => setMinRating(0)} aria-label="Clear rating filter" className="text-caption hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         <X size={12} />
                       </button>
                     )}
@@ -1009,7 +1009,7 @@ export default function ApplicantPipelinePage() {
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
                             {/* Column Header */}
-                            <div className={`px-4 py-2.5 ${colors.header} flex items-center justify-between`}>
+                            <div className={`px-4 py-2.5 ${colors.header} row-between`}>
                               <span className="text-sm font-semibold text-[var(--text-secondary)]">
                                 {STAGE_LABELS[stage]}
                               </span>
@@ -1023,7 +1023,7 @@ export default function ApplicantPipelinePage() {
                             {/* Cards scroll area */}
                             <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[60px]">
                               {applicants.length === 0 ? (
-                                <div className="py-6 text-center text-xs text-[var(--text-muted)]">
+                                <div className="py-6 text-center text-caption">
                                   {hasActiveFilters ? 'No matches' : 'No applicants'}
                                 </div>
                               ) : (
@@ -1059,7 +1059,7 @@ export default function ApplicantPipelinePage() {
                                                   {applicant.candidateName || `Candidate ${applicant.candidateId.slice(0, 8)}`}
                                                 </p>
                                                 {applicant.jobTitle && (
-                                                  <p className="text-xs text-[var(--text-muted)] truncate mt-0.5">
+                                                  <p className="text-caption truncate mt-0.5">
                                                     {applicant.jobTitle}
                                                   </p>
                                                 )}
@@ -1080,7 +1080,7 @@ export default function ApplicantPipelinePage() {
                                           </div>
 
                                           {/* Source + Days Applied */}
-                                          <div className="flex items-center justify-between mb-1.5">
+                                          <div className="row-between mb-1.5">
                                             {applicant.source ? (
                                               <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[applicant.source]}`}>
                                                 {formatLabel(applicant.source)}
@@ -1091,7 +1091,7 @@ export default function ApplicantPipelinePage() {
                                               </span>
                                             )}
                                             {days !== null && (
-                                              <span className="text-xs text-[var(--text-muted)]">
+                                              <span className="text-caption">
                                                 {days === 0 ? 'Today' : `${days}d ago`}
                                               </span>
                                             )}
@@ -1101,14 +1101,14 @@ export default function ApplicantPipelinePage() {
                                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                             {/* Time in stage */}
                                             {stageTime !== '—' && (
-                                              <span className="flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                                              <span className="flex items-center gap-0.5 text-caption">
                                                 <Clock size={9} />
                                                 {stageTime}
                                               </span>
                                             )}
                                             {/* Expected salary */}
                                             {applicant.expectedSalary && (
-                                              <span className="flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
+                                              <span className="flex items-center gap-0.5 text-caption">
                                                 <DollarSign size={9} />
                                                 {(applicant.expectedSalary / 100000).toFixed(1)}L
                                               </span>
@@ -1420,7 +1420,7 @@ export default function ApplicantPipelinePage() {
                 Offer Letter Template *
               </label>
               {offerTemplatesLoading ? (
-                <div className="flex items-center gap-2 h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-sm text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 h-10 px-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-body-muted">
                   <Loader2 size={14} className="animate-spin" /> Loading templates...
                 </div>
               ) : (

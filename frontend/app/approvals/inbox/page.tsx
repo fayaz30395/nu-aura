@@ -305,7 +305,7 @@ export default function ApprovalInboxPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Approval Inbox
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="mt-1 text-body-muted">
               View and act on all pending approval requests.
             </p>
           </div>
@@ -517,7 +517,7 @@ export default function ApprovalInboxPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-sm text-[var(--text-muted)] dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
+                <div className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-body-muted dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
                   Select a task from the left to view details.
                 </div>
               )}
@@ -525,8 +525,8 @@ export default function ApprovalInboxPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
-                <p className="text-sm text-[var(--text-muted)]">
+              <div className="row-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
+                <p className="text-body-muted">
                   Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of{' '}
                   {totalElements}
                 </p>
@@ -565,7 +565,7 @@ export default function ApprovalInboxPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-body-secondary">
             Are you sure you want to approve this request from{' '}
             <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>?
           </p>
@@ -609,7 +609,7 @@ export default function ApprovalInboxPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-body-secondary">
             Please provide a reason for rejecting this request from{' '}
             <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>.
           </p>
@@ -654,7 +654,7 @@ export default function ApprovalInboxPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-body-secondary">
             Return this request to{' '}
             <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong> for corrections.
             The requester will be able to revise and resubmit.
@@ -860,7 +860,7 @@ function InboxListItem({
           <h3 className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
             {item.title}
           </h3>
-          <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+          <p className="mt-0.5 text-caption">
             {item.requesterName ?? 'Unknown'}
           </p>
         </div>
@@ -872,7 +872,7 @@ function InboxListItem({
               {format(new Date(item.deadline), 'MMM d')}
             </span>
           )}
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             {item.submittedAt ? format(new Date(item.submittedAt), 'MMM d, HH:mm') : ''}
           </span>
         </div>

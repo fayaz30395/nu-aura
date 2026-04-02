@@ -357,7 +357,7 @@ export default function EmployeeDetailPage() {
         <div className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {/* Back + Actions row */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="row-between mb-6">
               <button
                 onClick={() => router.push('/employees')}
                 aria-label="Back to employees list"
@@ -556,7 +556,7 @@ export default function EmployeeDetailPage() {
                   {/* Left column — About & Professional Summary */}
                   <div className="lg:col-span-2 space-y-6">
                     <SectionCard title="About">
-                      <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                      <p className="text-body-secondary leading-relaxed">
                         {employee.designation
                           ? `${employee.fullName} is a ${formatEnumValue(employee.designation)} at the ${employee.departmentName || 'organization'}.`
                           : `${employee.fullName} is a member of the ${employee.departmentName || 'organization'}.`}
@@ -605,7 +605,7 @@ export default function EmployeeDetailPage() {
                                 <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                                   {sub.fullName}
                                 </p>
-                                <p className="text-xs text-[var(--text-muted)] truncate">
+                                <p className="text-caption truncate">
                                   {sub.designation || '-'}
                                 </p>
                               </div>
@@ -618,7 +618,7 @@ export default function EmployeeDetailPage() {
                           )}
                         </div>
                       ) : (
-                        <p className="text-sm text-[var(--text-muted)]">No direct reports</p>
+                        <p className="text-body-muted">No direct reports</p>
                       )}
                     </SectionCard>
 
@@ -649,7 +649,7 @@ export default function EmployeeDetailPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Wall Activity
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
+                  <p className="text-body-muted max-w-md mx-auto">
                     Social feed posts, recognitions, and announcements involving{' '}
                     {employee.firstName} will appear here.
                   </p>
@@ -843,7 +843,7 @@ export default function EmployeeDetailPage() {
               {dottedReports.length > 0 && (
                 <div className="lg:col-span-2">
                   <SectionCard title="Dotted-Line Reports">
-                    <p className="text-xs text-[var(--text-muted)] mb-4">
+                    <p className="text-caption mb-4">
                       Employees who have {employee.fullName} assigned as a dotted-line manager
                       (matrix reporting).
                     </p>
@@ -883,13 +883,13 @@ export default function EmployeeDetailPage() {
                                   </span>
                                 </div>
                               </td>
-                              <td className="whitespace-nowrap text-sm text-[var(--text-secondary)] py-2">
+                              <td className="whitespace-nowrap text-body-secondary py-2">
                                 {report.employeeCode}
                               </td>
-                              <td className="whitespace-nowrap text-sm text-[var(--text-secondary)] py-2">
+                              <td className="whitespace-nowrap text-body-secondary py-2">
                                 {report.designation || '-'}
                               </td>
-                              <td className="whitespace-nowrap text-sm text-[var(--text-secondary)] py-2">
+                              <td className="whitespace-nowrap text-body-secondary py-2">
                                 {report.departmentName || '-'}
                               </td>
                               <td className="py-2">
@@ -945,7 +945,7 @@ export default function EmployeeDetailPage() {
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                             {cat.name}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {cat.count} {cat.count === 1 ? 'document' : 'documents'}
                           </p>
                         </CardContent>
@@ -958,7 +958,7 @@ export default function EmployeeDetailPage() {
               {filteredDocCategories.length === 0 && (
                 <div className="text-center py-12">
                   <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3" />
-                  <p className="text-sm text-[var(--text-muted)]">No matching categories found.</p>
+                  <p className="text-body-muted">No matching categories found.</p>
                 </div>
               )}
             </div>
@@ -1018,16 +1018,16 @@ export default function EmployeeDetailPage() {
                                     <p className="text-sm font-medium text-[var(--text-primary)]">
                                       {asset.assetName}
                                     </p>
-                                    <p className="text-xs text-[var(--text-muted)]">
+                                    <p className="text-caption">
                                       {asset.assetCode}
                                     </p>
                                   </div>
                                 </div>
                               </td>
-                              <td className="text-sm text-[var(--text-secondary)] py-2">
+                              <td className="text-body-secondary py-2">
                                 {formatEnumValue(asset.category)}
                               </td>
-                              <td className="text-sm text-[var(--text-secondary)] py-2 font-mono">
+                              <td className="text-body-secondary py-2 font-mono">
                                 {asset.serialNumber || '-'}
                               </td>
                               <td className="py-2">
@@ -1041,10 +1041,10 @@ export default function EmployeeDetailPage() {
                                   {formatEnumValue(asset.status)}
                                 </span>
                               </td>
-                              <td className="text-sm text-[var(--text-secondary)] py-2">
+                              <td className="text-body-secondary py-2">
                                 {formatDate(asset.purchaseDate)}
                               </td>
-                              <td className="text-sm text-[var(--text-secondary)] py-2">
+                              <td className="text-body-secondary py-2">
                                 {asset.location || '-'}
                               </td>
                             </tr>
@@ -1058,7 +1058,7 @@ export default function EmployeeDetailPage() {
                       <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Assets Assigned
                       </h3>
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         No assets are currently assigned to this employee.
                       </p>
                     </div>
@@ -1073,7 +1073,7 @@ export default function EmployeeDetailPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Requests
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
+                  <p className="text-body-muted max-w-md mx-auto">
                     Asset requests made by {employee.firstName} will appear here.
                   </p>
                 </div>
@@ -1086,7 +1086,7 @@ export default function EmployeeDetailPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Damage Charges
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)] max-w-md mx-auto">
+                  <p className="text-body-muted max-w-md mx-auto">
                     Any damage charges for assets assigned to {employee.firstName} will appear here.
                   </p>
                 </div>
@@ -1107,7 +1107,7 @@ export default function EmployeeDetailPage() {
                   Delete Employee
                 </h3>
               </div>
-              <p className="text-sm text-[var(--text-muted)] mb-6">
+              <p className="text-body-muted mb-6">
                 Are you sure you want to delete <strong>{employee.fullName}</strong>? This action
                 cannot be undone.
               </p>

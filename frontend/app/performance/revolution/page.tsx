@@ -69,7 +69,7 @@ export default function PerformanceRevolutionPage() {
                     <Card className="lg:col-span-8 overflow-hidden bg-[var(--bg-secondary)] border-none text-white relative h-[600px]">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent)]" />
                         <CardHeader className="relative z-10 border-b border-white/5">
-                            <div className="flex items-center justify-between">
+                            <div className="row-between">
                                 <div>
                                     <CardTitle className="text-white flex items-center gap-2">
                                         <Target className="h-5 w-5 text-accent-400" /> OKR Alignment Galaxy
@@ -164,7 +164,7 @@ export default function PerformanceRevolutionPage() {
                                     </div>
                                     <div>
                                         <h5 className="text-xs font-bold group-hover:text-accent-700 transition-colors">Amazing Sprint Finish!</h5>
-                                        <p className="text-xs text-[var(--text-muted)] line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
+                                        <p className="text-caption line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className="text-[8px] text-[var(--text-muted)] uppercase font-bold">2 hours ago</span>
                                             <div className="flex items-center gap-0.5 text-[8px] text-warning-600 font-bold">
@@ -181,7 +181,7 @@ export default function PerformanceRevolutionPage() {
                     {/* Coaching Corner */}
                     <Card className="md:col-span-2 bg-gradient-to-br from-accent-50 to-white dark:from-accent-950/20 dark:to-surface-900">
                         <CardHeader>
-                            <div className="flex items-center justify-between">
+                            <div className="row-between">
                                 <CardTitle className="text-accent-900 dark:text-accent-400 flex items-center gap-2">
                                     <Users className="h-5 w-5" /> Development Trajectory
                                 </CardTitle>
@@ -193,8 +193,8 @@ export default function PerformanceRevolutionPage() {
                                 <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
                                     <h4 className="text-xs font-bold text-accent-600 uppercase tracking-wider mb-2">Growth Opportunity</h4>
                                     <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
-                                    <p className="text-xs text-[var(--text-muted)]">Based on your &quot;System Design&quot; skill Gap</p>
-                                    <div className="mt-4 flex items-center justify-between">
+                                    <p className="text-caption">Based on your &quot;System Design&quot; skill Gap</p>
+                                    <div className="mt-4 row-between">
                                         <span className="text-xs font-bold text-[var(--text-muted)]">Estimated Effort: 4h</span>
                                         <ChevronRight className="h-4 w-4 text-accent-400" />
                                     </div>
@@ -202,8 +202,8 @@ export default function PerformanceRevolutionPage() {
                                 <div className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
                                     <h4 className="text-xs font-bold text-success-600 uppercase tracking-wider mb-2">Peak Performance</h4>
                                     <p className="text-sm font-semibold mb-1">Consistency King</p>
-                                    <p className="text-xs text-[var(--text-muted)]">9 weeks of meeting all Weekly Commitments</p>
-                                    <div className="mt-4 flex items-center justify-between">
+                                    <p className="text-caption">9 weeks of meeting all Weekly Commitments</p>
+                                    <div className="mt-4 row-between">
                                         <span className="text-xs font-bold text-[var(--text-muted)]">Awarded last Friday</span>
                                         <Award className="h-4 w-4 text-warning-500" />
                                     </div>

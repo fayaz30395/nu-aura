@@ -32,7 +32,7 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
       className="card-interactive p-6 page-reveal"
       style={{ animationDelay: `${Math.round(delay * 1000)}ms` }}
     >
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <span className="text-micro">{title}</span>
         {icon && (
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]">

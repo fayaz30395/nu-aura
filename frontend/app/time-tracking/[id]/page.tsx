@@ -175,7 +175,7 @@ export default function TimeEntryDetailPage() {
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400" />
               </div>
-              <span className="text-sm text-[var(--text-muted)]">Hours Worked</span>
+              <span className="text-body-muted">Hours Worked</span>
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {timeTrackingService.formatHours(entry.hoursWorked)}
@@ -187,7 +187,7 @@ export default function TimeEntryDetailPage() {
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
-              <span className="text-sm text-[var(--text-muted)]">Billable Hours</span>
+              <span className="text-body-muted">Billable Hours</span>
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {entry.isBillable
@@ -202,7 +202,7 @@ export default function TimeEntryDetailPage() {
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                   <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
                 </div>
-                <span className="text-sm text-[var(--text-muted)]">
+                <span className="text-body-muted">
                   Billing Amount
                 </span>
               </div>
@@ -220,7 +220,7 @@ export default function TimeEntryDetailPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Entry Type</p>
+              <p className="text-body-muted mb-1">Entry Type</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
                 {timeTrackingService.getEntryTypeLabel(entry.entryType)}
               </p>
@@ -228,7 +228,7 @@ export default function TimeEntryDetailPage() {
 
             {entry.startTime && entry.endTime && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Time Range</p>
+                <p className="text-body-muted mb-1">Time Range</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {entry.startTime} - {entry.endTime}
                 </p>
@@ -236,7 +236,7 @@ export default function TimeEntryDetailPage() {
             )}
 
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">
+              <p className="text-body-muted mb-1">
                 Client / Project
               </p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
@@ -246,7 +246,7 @@ export default function TimeEntryDetailPage() {
 
             {entry.hourlyRate && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Hourly Rate</p>
+                <p className="text-body-muted mb-1">Hourly Rate</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {timeTrackingService.formatCurrency(entry.hourlyRate)}/hr
                 </p>
@@ -283,7 +283,7 @@ export default function TimeEntryDetailPage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">
+                <p className="text-body-muted mb-1">
                   {entry.status === 'APPROVED' ? 'Approved By' : 'Reviewed By'}
                 </p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
@@ -291,7 +291,7 @@ export default function TimeEntryDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">
+                <p className="text-body-muted mb-1">
                   {entry.status === 'APPROVED' ? 'Approved Date' : 'Review Date'}
                 </p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">

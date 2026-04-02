@@ -123,11 +123,11 @@ export default function TemplatesPage() {
                                                     <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent-700 transition-colors">
                                                         {template.name}
                                                     </h3>
-                                                    <p className="text-sm text-[var(--text-muted)] font-bold mb-6 flex-grow line-clamp-2">
+                                                    <p className="text-body-muted font-bold mb-6 flex-grow line-clamp-2">
                                                         {template.description || 'No description provided for this template.'}
                                                     </p>
 
-                                                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/20">
+                                                    <div className="row-between mt-auto pt-6 border-t border-white/20">
                                                         <div className="flex items-center gap-2">
                                                             <div className="flex -space-x-2">
                                                                 {[1, 2, 3].map(i => (

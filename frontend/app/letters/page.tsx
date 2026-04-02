@@ -495,7 +495,7 @@ export default function LettersPage() {
                   <Files className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Letters</p>
+                  <p className="text-body-secondary">Total Letters</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
@@ -508,7 +508,7 @@ export default function LettersPage() {
                   <FilePlus className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Drafts</p>
+                  <p className="text-body-secondary">Drafts</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
@@ -521,7 +521,7 @@ export default function LettersPage() {
                   <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Pending Approval</p>
+                  <p className="text-body-secondary">Pending Approval</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pendingApproval}</p>
                 </div>
               </div>
@@ -534,7 +534,7 @@ export default function LettersPage() {
                   <FileCheck className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Issued</p>
+                  <p className="text-body-secondary">Issued</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.issued}</p>
                 </div>
               </div>
@@ -642,7 +642,7 @@ export default function LettersPage() {
                                 <p className="font-medium text-[var(--text-primary)]">
                                   {letter.referenceNumber}
                                 </p>
-                                <p className="text-sm text-[var(--text-muted)] line-clamp-1">
+                                <p className="text-body-muted line-clamp-1">
                                   {letter.letterTitle}
                                 </p>
                               </div>
@@ -657,7 +657,7 @@ export default function LettersPage() {
                                   )}
                                 </div>
                                 <div>
-                                  <span className="text-sm text-[var(--text-secondary)]">
+                                  <span className="text-body-secondary">
                                     {letter.candidateName || letter.employeeName || 'N/A'}
                                   </span>
                                   {letter.candidateId && (
@@ -667,7 +667,7 @@ export default function LettersPage() {
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <span className="text-sm text-[var(--text-secondary)]">
+                              <span className="text-body-secondary">
                                 {getCategoryLabel(letter.category)}
                               </span>
                             </td>
@@ -677,7 +677,7 @@ export default function LettersPage() {
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <span className="text-sm text-[var(--text-secondary)]">
+                              <span className="text-body-secondary">
                                 {formatDate(letter.letterDate)}
                               </span>
                             </td>
@@ -689,7 +689,7 @@ export default function LettersPage() {
                                 <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                                   <button
                                     onClick={() => handleViewDetails(letter)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   >
                                     <Eye className="h-4 w-4" />
                                     View Details
@@ -697,7 +697,7 @@ export default function LettersPage() {
                                   {letter.status === LetterStatus.DRAFT && (
                                     <button
                                       onClick={() => handleSubmitForApproval(letter)}
-                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                      className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                     >
                                       <Send className="h-4 w-4" />
                                       Submit for Approval
@@ -743,7 +743,7 @@ export default function LettersPage() {
                                       href={letter.pdfUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                      className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                       onClick={(e) => {
                                         if (!letter.pdfUrl) {
                                           e.preventDefault();
@@ -756,7 +756,7 @@ export default function LettersPage() {
                                   ) : letter.status === LetterStatus.ISSUED ? (
                                     <button
                                       disabled
-                                      className="w-full px-4 py-2 text-left text-sm text-[var(--text-muted)] cursor-not-allowed opacity-50 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                      className="w-full px-4 py-2 text-left text-body-muted cursor-not-allowed opacity-50 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       title="PDF not yet available"
                                     >
                                       <Download className="h-4 w-4" />
@@ -817,7 +817,7 @@ export default function LettersPage() {
                 >
                   Previous
                 </Button>
-                <span className="text-sm text-[var(--text-secondary)]">
+                <span className="text-body-secondary">
                   Page {currentPage + 1} of {totalPages}
                 </span>
                 <Button
@@ -845,22 +845,22 @@ export default function LettersPage() {
                           <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                         </div>
                         <div>
-                          <p className="text-xs text-[var(--text-muted)] font-mono">{template.code}</p>
+                          <p className="text-caption font-mono">{template.code}</p>
                           <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
                             {template.name}
                           </h3>
                         </div>
                       </div>
                     </div>
-                    <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-3 min-h-[40px]">
+                    <p className="text-body-secondary line-clamp-2 mb-3 min-h-[40px]">
                       {template.description || 'No description'}
                     </p>
-                    <div className="flex items-center justify-between">
+                    <div className="row-between">
                       <span className="px-2 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                         {getCategoryLabel(template.category)}
                       </span>
                       {template.requiresApproval && (
-                        <span className="text-xs text-[var(--text-muted)]">Requires Approval</span>
+                        <span className="text-caption">Requires Approval</span>
                       )}
                     </div>
                   </CardContent>
@@ -914,7 +914,7 @@ export default function LettersPage() {
                     <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">{selectedTemplate.description}</p>
+                    <p className="mt-1 text-caption">{selectedTemplate.description}</p>
                   )}
                 </div>
 
@@ -1021,7 +1021,7 @@ export default function LettersPage() {
                 <FileText className="h-6 w-6 text-accent-700 dark:text-accent-400" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)] font-mono">{selectedLetter?.referenceNumber}</p>
+                <p className="text-body-muted font-mono">{selectedLetter?.referenceNumber}</p>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedLetter?.letterTitle || 'Letter Details'}
                 </h2>
@@ -1042,7 +1042,7 @@ export default function LettersPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <User className="h-4 w-4" />
                       Employee
                     </p>
@@ -1051,7 +1051,7 @@ export default function LettersPage() {
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Letter Date
                     </p>
@@ -1065,7 +1065,7 @@ export default function LettersPage() {
                   <div className="grid grid-cols-2 gap-4">
                     {selectedLetter.effectiveDate && (
                       <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                        <p className="text-sm text-[var(--text-muted)]">Effective Date</p>
+                        <p className="text-body-muted">Effective Date</p>
                         <p className="text-lg font-semibold text-[var(--text-primary)]">
                           {formatDate(selectedLetter.effectiveDate)}
                         </p>
@@ -1073,7 +1073,7 @@ export default function LettersPage() {
                     )}
                     {selectedLetter.expiryDate && (
                       <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                        <p className="text-sm text-[var(--text-muted)]">Expiry Date</p>
+                        <p className="text-body-muted">Expiry Date</p>
                         <p className="text-lg font-semibold text-[var(--text-primary)]">
                           {formatDate(selectedLetter.expiryDate)}
                         </p>
@@ -1084,12 +1084,12 @@ export default function LettersPage() {
 
                 {selectedLetter.generatedByName && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Generated By</p>
+                    <p className="text-body-muted">Generated By</p>
                     <p className="font-semibold text-[var(--text-primary)]">
                       {selectedLetter.generatedByName}
                     </p>
                     {selectedLetter.generatedAt && (
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         {formatDate(selectedLetter.generatedAt)}
                       </p>
                     )}
@@ -1106,7 +1106,7 @@ export default function LettersPage() {
                       {selectedLetter.approvedByName}
                     </p>
                     {selectedLetter.approvalComments && (
-                      <p className="text-sm text-[var(--text-secondary)] mt-1">
+                      <p className="text-body-secondary mt-1">
                         &quot;{selectedLetter.approvalComments}&quot;
                       </p>
                     )}
@@ -1185,7 +1185,7 @@ export default function LettersPage() {
                     <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">{selectedTemplate.description}</p>
+                    <p className="mt-1 text-caption">{selectedTemplate.description}</p>
                   )}
                 </div>
 
@@ -1316,7 +1316,7 @@ export default function LettersPage() {
                       {...offerLetterForm.register('submitForApproval')}
                       className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">Submit for approval</span>
+                    <span className="text-body-secondary">Submit for approval</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1324,7 +1324,7 @@ export default function LettersPage() {
                       {...offerLetterForm.register('sendForESign')}
                       className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">Send for e-signature</span>
+                    <span className="text-body-secondary">Send for e-signature</span>
                   </label>
                 </div>
               </div>

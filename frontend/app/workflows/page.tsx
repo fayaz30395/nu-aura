@@ -147,7 +147,7 @@ export default function WorkflowListPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Workflow Builder
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="mt-1 text-body-muted">
               Create and manage approval workflow definitions.
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function WorkflowListPage() {
                           <div>
                             <p className="font-medium text-[var(--text-primary)]">{wf.name}</p>
                             {wf.description && (
-                              <p className="mt-0.5 text-xs text-[var(--text-muted)] truncate max-w-[250px]">
+                              <p className="mt-0.5 text-caption truncate max-w-[250px]">
                                 {wf.description}
                               </p>
                             )}
@@ -295,12 +295,12 @@ export default function WorkflowListPage() {
                           )}
                         </td>
                         <td className="hidden px-4 py-4 text-right lg:table-cell">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {wf.totalSteps} {wf.totalSteps === 1 ? 'step' : 'steps'}
                           </span>
                         </td>
                         <td className="hidden px-4 py-4 lg:table-cell">
-                          <span className="text-xs text-[var(--text-muted)]">
+                          <span className="text-caption">
                             {wf.createdAt ? format(new Date(wf.createdAt), 'MMM d, yyyy') : '--'}
                           </span>
                         </td>
@@ -369,8 +369,8 @@ export default function WorkflowListPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
-                <p className="text-sm text-[var(--text-muted)]">
+              <div className="row-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
+                <p className="text-body-muted">
                   Showing {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
                 </p>
                 <div className="flex gap-2">
@@ -413,7 +413,7 @@ export default function WorkflowListPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-body-secondary">
             Are you sure you want to deactivate the workflow{' '}
             <strong>{deleteTarget?.name}</strong>? Existing approval instances
             using this workflow will continue, but no new instances can be started.

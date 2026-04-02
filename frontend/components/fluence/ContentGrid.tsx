@@ -128,7 +128,7 @@ export function ContentGrid({
 
               <CardContent className="space-y-2 pt-0">
                 {(item.viewCount !== undefined || item.likeCount !== undefined || item.commentCount !== undefined) && (
-                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-caption">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
                         <Eye className={iconSize.meta} />
@@ -150,11 +150,11 @@ export function ContentGrid({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-[var(--border-main)]">
+                <div className="row-between pt-2 border-t border-[var(--border-main)]">
                   {item.authorName && (
-                    <span className="text-xs text-[var(--text-muted)]">{item.authorName}</span>
+                    <span className="text-caption">{item.authorName}</span>
                   )}
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     {new Date(item.updatedAt).toLocaleDateString()}
                   </span>
                 </div>

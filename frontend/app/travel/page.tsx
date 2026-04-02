@@ -244,7 +244,7 @@ export default function TravelPage() {
           </div>
 
           {/* Results count */}
-          <div className="mt-4 text-sm text-[var(--text-secondary)]">
+          <div className="mt-4 text-body-secondary">
             Showing {travelRequests.length} of {totalElements} travel requests
           </div>
         </div>
@@ -304,7 +304,7 @@ export default function TravelPage() {
                                 {request.status.replace(/_/g, ' ')}
                               </span>
                             </div>
-                            <p className="text-sm text-[var(--text-secondary)] mt-1">
+                            <p className="text-body-secondary mt-1">
                               {request.travelType.replace(/_/g, ' ')}
                             </p>
                           </div>
@@ -317,7 +317,7 @@ export default function TravelPage() {
                         <div className="flex items-start gap-4">
                           <MapPin className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-[var(--text-muted)]">Route</p>
+                            <p className="text-caption">Route</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
                               {request.originCity} → {request.destinationCity}
                             </p>
@@ -332,11 +332,11 @@ export default function TravelPage() {
                         <div className="flex items-start gap-4">
                           <Calendar className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-[var(--text-muted)]">Duration</p>
+                            <p className="text-caption">Duration</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
                               {formatDate(request.departureDate)}
                             </p>
-                            <p className="text-xs text-[var(--text-muted)]">
+                            <p className="text-caption">
                               to {formatDate(request.returnDate)}
                             </p>
                           </div>
@@ -345,12 +345,12 @@ export default function TravelPage() {
                         <div className="flex items-start gap-4">
                           <TransportIcon className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-[var(--text-muted)]">Transport</p>
+                            <p className="text-caption">Transport</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
                               {request.transportMode}
                             </p>
                             {request.transportClass && (
-                              <p className="text-xs text-[var(--text-muted)]">
+                              <p className="text-caption">
                                 {request.transportClass}
                               </p>
                             )}
@@ -360,7 +360,7 @@ export default function TravelPage() {
                         <div className="flex items-start gap-4">
                           <DollarSign className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-[var(--text-muted)]">
+                            <p className="text-caption">
                               Estimated Cost
                             </p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -377,8 +377,8 @@ export default function TravelPage() {
 
                       {/* Purpose */}
                       <div className="pt-4 border-t border-[var(--border-main)]">
-                        <p className="text-xs text-[var(--text-muted)] mb-1">Purpose</p>
-                        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                        <p className="text-caption mb-1">Purpose</p>
+                        <p className="text-body-secondary line-clamp-2">
                           {request.purpose}
                         </p>
                       </div>
@@ -400,7 +400,7 @@ export default function TravelPage() {
             >
               Previous
             </button>
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-body-secondary">
               Page {currentPage + 1} of {totalPages}
             </span>
             <button

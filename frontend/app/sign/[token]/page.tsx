@@ -375,13 +375,13 @@ export default function SignPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)]">
       {/* Header */}
-      <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] shadow-[var(--shadow-card)]">
+      <div className="bg-[var(--bg-card)] divider-b shadow-[var(--shadow-card)]">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-accent-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white" />
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">
+            <p className="text-caption uppercase tracking-wider font-medium">
               NU-AURA HRMS
             </p>
             <p className="text-sm font-semibold text-[var(--text-secondary)]">Electronic Signature</p>
@@ -401,9 +401,9 @@ export default function SignPage() {
                 {docInfo?.documentTitle || 'Document for Signature'}
               </h1>
               {docInfo?.documentDescription && (
-                <p className="text-sm text-[var(--text-muted)] mt-1">{docInfo.documentDescription}</p>
+                <p className="text-body-muted mt-1">{docInfo.documentDescription}</p>
               )}
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)]">
+              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-body-secondary">
                 {docInfo?.candidateName && (
                   <span>
                     <span className="text-[var(--text-muted)]">Candidate: </span>
@@ -453,7 +453,7 @@ export default function SignPage() {
             <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Verify Your Identity
             </h2>
-            <p className="text-sm text-[var(--text-muted)] mb-5">
+            <p className="text-body-muted mb-5">
               Enter the email address where this signing request was sent to confirm your
               identity.
             </p>
@@ -506,7 +506,7 @@ export default function SignPage() {
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">
                 Sign Document
               </h2>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 Choose your preferred signature method below.
               </p>
             </div>
@@ -546,11 +546,11 @@ export default function SignPage() {
             {/* Drawn Signature */}
             {signatureMethod === 'DRAWN' && (
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-[var(--text-muted)]">Draw your signature in the box below</p>
+                <div className="row-between mb-2">
+                  <p className="text-caption">Draw your signature in the box below</p>
                   <button
                     onClick={clearCanvas}
-                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="text-caption hover:text-[var(--text-secondary)] underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Clear
                   </button>
@@ -584,7 +584,7 @@ export default function SignPage() {
             {/* Typed Signature */}
             {signatureMethod === 'TYPED' && (
               <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-2">
+                <label className="block text-caption mb-2">
                   Type your full name
                 </label>
                 <input
@@ -599,7 +599,7 @@ export default function SignPage() {
                 />
                 {typedName && (
                   <div className="mt-3 border border-[var(--border-subtle)] rounded-lg p-4 bg-[var(--bg-surface)]">
-                    <p className="text-xs text-[var(--text-muted)] mb-2">Signature preview</p>
+                    <p className="text-caption mb-2">Signature preview</p>
                     <p
                       style={{
                         fontFamily: 'cursive',
@@ -649,7 +649,7 @@ export default function SignPage() {
             </div>
 
             {/* Legal notice */}
-            <p className="text-xs text-[var(--text-muted)] text-center leading-relaxed">
+            <p className="text-caption text-center leading-relaxed">
               By clicking &quot;Sign Document&quot; you agree that your electronic signature is
               legally equivalent to your handwritten signature.
             </p>
@@ -657,7 +657,7 @@ export default function SignPage() {
         )}
 
         {/* Footer */}
-        <p className="text-center text-xs text-[var(--text-muted)] pb-4">
+        <p className="text-center text-caption pb-4">
           Powered by NU-AURA HRMS &mdash; Electronic Signature Service
         </p>
       </div>
@@ -669,7 +669,7 @@ export default function SignPage() {
             <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               Decline to Sign
             </h3>
-            <p className="text-sm text-[var(--text-muted)] mb-4">
+            <p className="text-body-muted mb-4">
               Please provide a reason for declining (optional). The requester will be
               notified.
             </p>

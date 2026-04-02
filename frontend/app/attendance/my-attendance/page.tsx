@@ -141,7 +141,7 @@ function SkeletonStatRow() {
 
 function SkeletonLogRow() {
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-[var(--border-subtle)]">
+    <div className="flex items-center gap-4 py-4 divider-b">
       <Skeleton className="h-4 w-24" />
       <Skeleton className="h-2.5 flex-1 rounded-full" />
       <Skeleton className="h-4 w-16" />
@@ -380,7 +380,7 @@ export default function MyAttendancePage() {
     <AppLayout>
       <div className="p-4 md:p-6 lg:p-8 space-y-6">
         {/* ── PAGE HEADER ─────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
           </div>
@@ -406,7 +406,7 @@ export default function MyAttendancePage() {
               ) : (
                 <>
                   {/* Me row */}
-                  <div className="flex items-center py-4 border-b border-[var(--border-subtle)]">
+                  <div className="flex items-center py-4 divider-b">
                     <div className="flex items-center gap-4">
                       <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                         <Users className="h-4 w-4 text-accent-500" />
@@ -415,13 +415,13 @@ export default function MyAttendancePage() {
                     </div>
                     <div className="ml-auto flex items-center gap-8">
                       <div className="text-right">
-                        <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">Avg Hrs / Day</p>
+                        <p className="text-caption uppercase tracking-wider">Avg Hrs / Day</p>
                         <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">
                           {formatDuration(stats.avgMinutes)}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">On Time Arrival</p>
+                        <p className="text-caption uppercase tracking-wider">On Time Arrival</p>
                         <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">
                           {stats.onTimePct}%
                         </p>
@@ -438,11 +438,11 @@ export default function MyAttendancePage() {
                     </div>
                     <div className="ml-auto flex items-center gap-8">
                       <div className="text-right">
-                        <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">Avg Hrs / Day</p>
+                        <p className="text-caption uppercase tracking-wider">Avg Hrs / Day</p>
                         <p className="text-lg font-bold text-[var(--text-secondary)] tabular-nums">--</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">On Time Arrival</p>
+                        <p className="text-caption uppercase tracking-wider">On Time Arrival</p>
                         <p className="text-lg font-bold text-[var(--text-secondary)] tabular-nums">--</p>
                       </div>
                     </div>
@@ -486,7 +486,7 @@ export default function MyAttendancePage() {
                     <div className="relative h-4 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                       <AttendanceTimelineBar record={todayRecord} />
                     </div>
-                    <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+                    <div className="row-between text-caption">
                       <span>Duration: {formatDuration(todayRecord.workDurationMinutes)}</span>
                       <div className="flex items-center gap-1">
                         <Timer className="h-3 w-3" />
@@ -496,7 +496,7 @@ export default function MyAttendancePage() {
                   </>
                 ) : (
                   <div className="h-4 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center">
-                    <span className="text-xs text-[var(--text-muted)]">Not clocked in yet</span>
+                    <span className="text-caption">Not clocked in yet</span>
                   </div>
                 )}
               </div>
@@ -519,7 +519,7 @@ export default function MyAttendancePage() {
                     hour12: !use24h,
                   })}
                 </p>
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   {liveTime.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
               </div>
@@ -541,13 +541,13 @@ export default function MyAttendancePage() {
         {/* ── LOGS & REQUESTS SECTION ─────────────────────────── */}
         <Card className="card-aura">
           <CardHeader className="pb-0">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="row-between flex-wrap gap-4">
               <CardTitle className="text-section-title text-[var(--text-primary)]">
                 Logs &amp; Requests
               </CardTitle>
               {/* 24h toggle */}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--text-muted)]">24 hour format</span>
+                <span className="text-caption">24 hour format</span>
                 <button
                   onClick={() => setUse24h(!use24h)}
                   className={`
@@ -608,7 +608,7 @@ export default function MyAttendancePage() {
                   transition={{ duration: 0.2 }}
                 >
                   {/* Period filters */}
-                  <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                  <div className="row-between mb-6 flex-wrap gap-4">
                     <h3 className="text-sm font-medium text-[var(--text-primary)]">
                       {periodFilter === '30days' ? 'Last 30 Days' : `${monthFilters.find(m => `${m.month}-${m.year}` === periodFilter)?.label || ''} ${selectedYear}`}
                     </h3>
@@ -685,7 +685,7 @@ export default function MyAttendancePage() {
                               <div className="flex flex-col items-center gap-2">
                                 <Calendar className="h-8 w-8 text-[var(--text-muted)]" />
                                 <p className="text-sm font-medium text-[var(--text-muted)]">No attendance records found</p>
-                                <p className="text-xs text-[var(--text-muted)]">Records will appear here once you start clocking in</p>
+                                <p className="text-caption">Records will appear here once you start clocking in</p>
                               </div>
                             </td>
                           </tr>
@@ -702,7 +702,7 @@ export default function MyAttendancePage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className={`
-                                  border-b border-[var(--border-subtle)] transition-colors
+                                  divider-b transition-colors
                                   ${isNonWork ? 'bg-surface-50 dark:bg-surface-900/30' : 'hover:bg-[var(--bg-card-hover)]'}
                                 `}
                               >
@@ -719,7 +719,7 @@ export default function MyAttendancePage() {
                                 {/* Attendance Visual */}
                                 <td className="py-4 px-2">
                                   {isNonWork || record.status === 'ABSENT' ? (
-                                    <span className="text-sm text-[var(--text-muted)] italic">
+                                    <span className="text-body-muted italic">
                                       {getNonWorkLabel(record)}
                                     </span>
                                   ) : (
@@ -742,13 +742,13 @@ export default function MyAttendancePage() {
                                       </span>
                                     </div>
                                   ) : (
-                                    <span className="text-sm text-[var(--text-muted)]">--</span>
+                                    <span className="text-body-muted">--</span>
                                   )}
                                 </td>
 
                                 {/* Gross Hours */}
                                 <td className="py-4 px-2">
-                                  <span className="text-sm text-[var(--text-secondary)] tabular-nums">
+                                  <span className="text-body-secondary tabular-nums">
                                     {!isNonWork && effectiveMin > 0
                                       ? formatHoursFromMinutes(effectiveMin + (record.breakDurationMinutes || 0))
                                       : '--'
@@ -790,7 +790,7 @@ export default function MyAttendancePage() {
                   transition={{ duration: 0.2 }}
                 >
                   {/* Month navigation */}
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="row-between mb-4">
                     <button
                       onClick={() => {
                         if (selectedMonth === 0) {
@@ -847,7 +847,7 @@ export default function MyAttendancePage() {
                           {day.date}
                         </span>
                         {day.record && day.isCurrentMonth && day.record.totalWorkHours ? (
-                          <span className="text-xs text-[var(--text-muted)]">
+                          <span className="text-caption">
                             {day.record.totalWorkHours.toFixed(1)}h
                           </span>
                         ) : null}
@@ -859,23 +859,23 @@ export default function MyAttendancePage() {
                   <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-md bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800" />
-                      <span className="text-xs text-[var(--text-muted)]">Full day</span>
+                      <span className="text-caption">Full day</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-md bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800" />
-                      <span className="text-xs text-[var(--text-muted)]">Partial</span>
+                      <span className="text-caption">Partial</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-md bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800" />
-                      <span className="text-xs text-[var(--text-muted)]">Absent</span>
+                      <span className="text-caption">Absent</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-md bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800" />
-                      <span className="text-xs text-[var(--text-muted)]">Leave</span>
+                      <span className="text-caption">Leave</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-md bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700" />
-                      <span className="text-xs text-[var(--text-muted)]">Off / Holiday</span>
+                      <span className="text-caption">Off / Holiday</span>
                     </div>
                   </div>
                 </motion.div>
@@ -897,7 +897,7 @@ export default function MyAttendancePage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">No pending requests</p>
-                      <p className="text-xs text-[var(--text-muted)] mt-1">
+                      <p className="text-caption mt-1">
                         Regularization and correction requests will appear here
                       </p>
                     </div>

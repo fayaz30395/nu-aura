@@ -170,7 +170,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between px-6 py-4',
+        'row-between px-6 py-4',
         className
       )}
       style={{ borderBottom: '1px solid var(--border-main)' }}

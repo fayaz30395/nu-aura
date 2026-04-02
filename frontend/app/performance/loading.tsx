@@ -3,7 +3,7 @@ export default function PerformanceLoading() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-44 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-64 bg-[var(--bg-surface)] rounded" />
@@ -41,7 +41,7 @@ export default function PerformanceLoading() {
 
       {/* Review cycles table */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
+        <div className="row-between p-4 divider-b">
           <div className="h-5 w-32 bg-[var(--bg-surface)] rounded" />
           <div className="h-8 w-28 bg-[var(--bg-surface)] rounded-md" />
         </div>

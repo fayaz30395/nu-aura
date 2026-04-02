@@ -129,7 +129,7 @@ export default function CreateBlogPost() {
     <AppLayout>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 row-between">
           <div>
             <div className="flex items-center gap-4 mb-2">
               <button
@@ -232,7 +232,7 @@ export default function CreateBlogPost() {
               {...register('coverImageUrl')}
               disabled={isSubmitting}
             />
-            <p className="text-xs text-[var(--text-muted)] mt-1">
+            <p className="text-caption mt-1">
               Optional. Image URL for the blog post cover
             </p>
           </div>

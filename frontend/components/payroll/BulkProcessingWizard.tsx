@@ -209,7 +209,7 @@ export const BulkProcessingWizard: React.FC = () => {
       {/* Progress Steps */}
       <Card variant="elevated">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             {steps.map((step, index) => {
               const StepIcon = step.icon;
               const isActive = currentStep === step.number;
@@ -664,7 +664,7 @@ export const BulkProcessingWizard: React.FC = () => {
       </Card>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div>
           {currentStep > 1 && currentStep < 4 && (
             <Button

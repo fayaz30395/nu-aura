@@ -221,7 +221,7 @@ export default function OnboardingDetailPage() {
                                 <Card className="border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] overflow-hidden">
                                     <div
                                         onClick={() => toggleCategory(category)}
-                                        className="p-6 flex items-center justify-between cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
+                                        className="p-6 row-between cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div className="h-10 w-10 rounded-lg bg-accent-500/10 text-accent-600 flex items-center justify-center font-bold">
@@ -249,7 +249,7 @@ export default function OnboardingDetailPage() {
                                                     {catTasks.map((task) => (
                                                         <div
                                                             key={task.id}
-                                                            className={`flex items-center justify-between p-4 rounded-lg group transition-all ${task.status === 'COMPLETED' ? 'bg-success-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
+                                                            className={`row-between p-4 rounded-lg group transition-all ${task.status === 'COMPLETED' ? 'bg-success-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
                                                                 }`}
                                                         >
                                                             <div className="flex items-center gap-4 flex-1">
@@ -272,7 +272,7 @@ export default function OnboardingDetailPage() {
                                                                         {task.isMandatory && <span className="ml-2 text-xs text-danger-500 bg-danger-500/10 px-1.5 rounded uppercase font-black">Required</span>}
                                                                     </p>
                                                                     {task.description && (
-                                                                        <p className="text-sm text-[var(--text-muted)] font-medium">{task.description}</p>
+                                                                        <p className="text-body-muted font-medium">{task.description}</p>
                                                                     )}
                                                                 </div>
                                                             </div>
@@ -375,7 +375,7 @@ export default function OnboardingDetailPage() {
                                         </div>
                                         <div className="pb-4">
                                             <p className="text-xs font-black text-[var(--text-primary)]">Process Initiated</p>
-                                            <p className="text-xs text-[var(--text-muted)] font-bold">{new Date(process.createdAt).toLocaleDateString()}</p>
+                                            <p className="text-caption font-bold">{new Date(process.createdAt).toLocaleDateString()}</p>
                                         </div>
                                     </div>
                                     {process.notes && (

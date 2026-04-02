@@ -139,7 +139,7 @@ export default function AdminDashboardPage() {
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">
           Super Admin Dashboard
         </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1">
+        <p className="text-body-secondary mt-1">
           High-level visibility across tenants, employees, and pending approvals.
         </p>
       </div>
@@ -183,7 +183,7 @@ export default function AdminDashboardPage() {
             <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">
               All Employees
             </h2>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)]">
+            <p className="text-xs sm:text-body-muted">
               Cross-tenant view of users with role visibility.
             </p>
           </div>
@@ -246,13 +246,13 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {user.firstName && (user.firstName + (user.lastName ? ' ' + user.lastName : '')) || user.email?.split('@')[0] || '—'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary dark:text-[var(--text-muted)]">
                       {user.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary dark:text-[var(--text-muted)]">
                       {user.tenantName}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary dark:text-[var(--text-muted)]">
                       {user.departmentName?.trim() ? user.departmentName : '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -268,7 +268,7 @@ export default function AdminDashboardPage() {
                         {user.userStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]" suppressHydrationWarning>
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary dark:text-[var(--text-muted)]" suppressHydrationWarning>
                       {Array.isArray(user.roles) && user.roles.length > 0
                         ? user.roles.filter((role) => role && role.name).map((role) => role.name).join(', ')
                         : '—'}
@@ -281,7 +281,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Simple pagination */}
-        <div className="flex items-center justify-between px-4 py-4 border-t border-[var(--border-main)] text-xs sm:text-sm">
+        <div className="row-between px-4 py-4 border-t border-[var(--border-main)] text-xs sm:text-sm">
           <div className="text-[var(--text-muted)]">
             Page {totalPages === 0 ? 0 : page + 1} of {totalPages}
           </div>
@@ -315,7 +315,7 @@ export default function AdminDashboardPage() {
           <h2 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">
             Role Management
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+          <p className="text-xs sm:text-body-muted mt-1">
             Search by user email and assign or revoke a high-level role.
           </p>
         </div>
@@ -392,7 +392,7 @@ function StatCard(props: { title: string; value: number | string; description?: 
         {value}
       </div>
       {description && (
-        <div className="mt-1 text-xs text-[var(--text-muted)] relative z-10">{description}</div>
+        <div className="mt-1 text-caption relative z-10">{description}</div>
       )}
     </div>
   );
@@ -445,7 +445,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           <h2 className="skeuo-emboss text-base sm:text-xl font-semibold text-[var(--text-primary)]">
             System Health
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
+          <p className="text-xs sm:text-body-muted mt-1">
             Real-time system component status
           </p>
         </div>
@@ -538,7 +538,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                         .join(' ')}
                     </div>
-                    <div className="text-xs text-[var(--text-muted)] mt-1">
+                    <div className="text-caption mt-1">
                       {statusLabel}
                     </div>
                   </div>

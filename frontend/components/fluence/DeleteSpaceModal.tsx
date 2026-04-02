@@ -116,7 +116,7 @@ export function DeleteSpaceModal({
                   <p className="text-base font-semibold text-[var(--text-primary)]">
                     {space.name}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">
+                  <p className="text-body-muted">
                     {space.description || 'No description'}
                   </p>
                 </div>
@@ -125,21 +125,21 @@ export function DeleteSpaceModal({
                 <div className="text-center p-2 rounded-lg bg-[var(--bg-card)]">
                   <FileText className="h-4 w-4 text-[var(--text-muted)] mx-auto mb-1" />
                   <p className="text-lg font-bold text-[var(--text-primary)]">{pageCount}</p>
-                  <p className="text-xs text-[var(--text-muted)]">Pages</p>
+                  <p className="text-caption">Pages</p>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-[var(--bg-card)]">
                   <Folder className="h-4 w-4 text-[var(--text-muted)] mx-auto mb-1" />
                   <p className="text-sm font-medium text-[var(--text-primary)] capitalize">
                     {space.visibility.toLowerCase()}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">Visibility</p>
+                  <p className="text-caption">Visibility</p>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-[var(--bg-card)]">
                   <Shield className="h-4 w-4 text-[var(--text-muted)] mx-auto mb-1" />
                   <p className="text-sm font-medium text-[var(--text-primary)]">
                     {space.ownerName || 'Unknown'}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">Owner</p>
+                  <p className="text-caption">Owner</p>
                 </div>
               </div>
             </div>
@@ -200,7 +200,7 @@ export function DeleteSpaceModal({
               {otherSpaces.length === 0 ? (
                 <div className="text-center py-8">
                   <Folder className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2" />
-                  <p className="text-sm text-[var(--text-muted)]">
+                  <p className="text-body-muted">
                     No other spaces available. Create a new space first.
                   </p>
                 </div>
@@ -227,7 +227,7 @@ export function DeleteSpaceModal({
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {s.name}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] truncate">
+                      <p className="text-caption truncate">
                         {s.pageCount || 0} pages · {s.visibility.toLowerCase()}
                       </p>
                     </div>
@@ -252,7 +252,7 @@ export function DeleteSpaceModal({
                 >
                   {space.icon || '📁'}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 text-body-muted">
                   <span className="font-medium text-[var(--text-primary)]">
                     {pageCount} pages
                   </span>

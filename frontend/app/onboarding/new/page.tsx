@@ -188,7 +188,7 @@ export default function NewOnboardingPage() {
                                             onChange={(emp) => setSelectedEmployee(emp)}
                                             value={selectedEmployee}
                                         />
-                                        <p className="text-xs text-[var(--text-muted)] mt-4 font-medium italic">
+                                        <p className="text-caption mt-4 font-medium italic">
                                             Search joiners who have already been added to the system database.
                                         </p>
                                     </div>
@@ -230,7 +230,7 @@ export default function NewOnboardingPage() {
                                             <div
                                                 key={temp.id}
                                                 onClick={() => setSelectedTemplate(temp)}
-                                                className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${selectedTemplate?.id === temp.id
+                                                className={`p-6 rounded-3xl border-2 transition-all cursor-pointer row-between group ${selectedTemplate?.id === temp.id
                                                         ? 'bg-accent-500/10 border-accent-500 shadow-[var(--shadow-dropdown)]'
                                                         : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                                                     }`}
@@ -333,7 +333,7 @@ export default function NewOnboardingPage() {
                 </AnimatePresence>
 
                 {/* Footer Actions */}
-                <div className="flex items-center justify-between pt-8 border-t border-[var(--border-main)]">
+                <div className="row-between pt-8 border-t border-[var(--border-main)]">
                     <Button
                         variant="ghost"
                         onClick={handleBack}

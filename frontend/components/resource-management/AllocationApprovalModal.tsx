@@ -90,7 +90,7 @@ export function AllocationApprovalModal({
             Allocation Summary
           </h3>
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="row-between gap-4">
             {/* Current allocation */}
             <div className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
               <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
@@ -156,7 +156,7 @@ export function AllocationApprovalModal({
               {validationResult.existingAllocations.map((allocation) => (
                 <div
                   key={allocation.projectId}
-                  className="flex items-center justify-between rounded-lg border border-surface-200 p-4 dark:border-surface-700"
+                  className="row-between rounded-lg border border-surface-200 p-4 dark:border-surface-700"
                 >
                   <div className="flex items-center gap-2">
                     <Briefcase className="h-4 w-4 text-surface-400" />

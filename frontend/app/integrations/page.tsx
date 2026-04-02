@@ -200,7 +200,7 @@ export default function IntegrationsPage() {
       {/* Header */}
       <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
@@ -275,14 +275,14 @@ export default function IntegrationsPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {integration.name}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">
+                  <p className="text-body-secondary mb-4 leading-relaxed">
                     {integration.description}
                   </p>
                   <ul className="space-y-2">
                     {integration.features.map((feature, i) => (
                       <li
                         key={i}
-                        className="flex items-center gap-2 text-sm text-[var(--text-secondary)]"
+                        className="flex items-center gap-2 text-body-secondary"
                       >
                         <Check className="h-4 w-4 text-success-500 flex-shrink-0" />
                         {feature}
@@ -334,7 +334,7 @@ export default function IntegrationsPage() {
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)]">{feature.description}</p>
+                <p className="text-body-secondary">{feature.description}</p>
               </Card>
             ))}
           </div>

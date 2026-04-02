@@ -37,7 +37,7 @@ export function RegularizationStatsCards({ stats, loading }: RegularizationStats
               <Clock className="h-6 w-6 text-[var(--status-warning-text)]" />
             </motion.div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Pending</p>
+              <p className="text-caption uppercase font-medium">Pending</p>
               <motion.p
                 className="text-stat-large"
                 initial={{ opacity: 0 }}
@@ -64,7 +64,7 @@ export function RegularizationStatsCards({ stats, loading }: RegularizationStats
               <CheckCircle className="h-6 w-6 text-[var(--status-success-text)]" />
             </motion.div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Approved</p>
+              <p className="text-caption uppercase font-medium">Approved</p>
               <motion.p
                 className="text-stat-large"
                 initial={{ opacity: 0 }}
@@ -91,7 +91,7 @@ export function RegularizationStatsCards({ stats, loading }: RegularizationStats
               <XCircle className="h-6 w-6 text-[var(--status-danger-text)]" />
             </motion.div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Rejected</p>
+              <p className="text-caption uppercase font-medium">Rejected</p>
               <motion.p
                 className="text-stat-large"
                 initial={{ opacity: 0 }}
@@ -118,7 +118,7 @@ export function RegularizationStatsCards({ stats, loading }: RegularizationStats
               <TrendingUp className="h-6 w-6 text-[var(--status-info-text)]" />
             </motion.div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Avg Resolution</p>
+              <p className="text-caption uppercase font-medium">Avg Resolution</p>
               <motion.p
                 className="text-stat-large"
                 initial={{ opacity: 0 }}

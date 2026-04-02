@@ -185,7 +185,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
                     <Calendar size={14} className="text-[var(--text-muted)]" />
-                    <span className="text-xs text-[var(--text-muted)]">
+                    <span className="text-caption">
                       Effective {formatDate(revision.effectiveDate)}
                     </span>
                   </div>
@@ -241,7 +241,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
               {/* Designation change */}
               {revision.newDesignation && revision.previousDesignation &&
                 revision.newDesignation !== revision.previousDesignation && (
-                <div className="flex items-center gap-2 mb-4 text-xs text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 mb-4 text-caption">
                   <Briefcase size={12} />
                   <span>{revision.previousDesignation}</span>
                   <ArrowRight size={12} />
@@ -253,7 +253,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
 
               {/* Justification */}
               {revision.justification && (
-                <p className="text-xs text-[var(--text-muted)] italic">
+                <p className="text-caption italic">
                   {revision.justification}
                 </p>
               )}
@@ -304,7 +304,7 @@ export default function EmployeeCompensationPage() {
         {/* Back navigation */}
         <button
           onClick={() => router.push(`/employees/${employeeId}`)}
-          className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-md"
+          className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-md"
           aria-label="Back to employee profile"
         >
           <ChevronLeft size={16} />
@@ -317,7 +317,7 @@ export default function EmployeeCompensationPage() {
             Compensation History
           </h1>
           {employee && (
-            <p className="text-sm text-[var(--text-muted)] mt-1">
+            <p className="text-body-muted mt-1">
               {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
             </p>
           )}

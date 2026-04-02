@@ -93,12 +93,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
             {job.title}
           </h3>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-body-secondary mt-1">
             {job.department}
           </p>
         </div>
 
-        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+        <p className="text-body-secondary line-clamp-2">
           {job.description}
         </p>
 
@@ -112,8 +112,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-[var(--border-main)]">
-          <span className="text-xs text-[var(--text-muted)]" suppressHydrationWarning>
+        <div className="row-between pt-2 border-t border-[var(--border-main)]">
+          <span className="text-caption" suppressHydrationWarning>
             {formatDate(job.postedDate)}
           </span>
           <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
@@ -138,7 +138,7 @@ const JobDetailModal: React.FC<{
           <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             {job.title}
           </h2>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-body-secondary mt-1">
             {job.department} · {job.location}
           </p>
         </div>
@@ -183,7 +183,7 @@ const JobDetailModal: React.FC<{
             <h4 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wide mb-3">
               About this role
             </h4>
-            <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
+            <p className="text-body-secondary whitespace-pre-wrap">
               {job.fullDescription}
             </p>
           </div>
@@ -195,7 +195,7 @@ const JobDetailModal: React.FC<{
             </h4>
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
-                <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
+                <li key={idx} className="flex gap-4 text-body-secondary">
                   <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
                   {resp}
                 </li>
@@ -210,7 +210,7 @@ const JobDetailModal: React.FC<{
             </h4>
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
-                <li key={idx} className="flex gap-4 text-sm text-[var(--text-secondary)]">
+                <li key={idx} className="flex gap-4 text-body-secondary">
                   <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
                   {req}
                 </li>
@@ -314,7 +314,7 @@ const ApplicationModal: React.FC<{
           <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             Apply for {job.title}
           </h2>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-body-secondary mt-1">
             Fill in your details below
           </p>
         </div>
@@ -395,7 +395,7 @@ const ApplicationModal: React.FC<{
                     {resumeFile ? resumeFile.name : 'Upload your resume'}
                   </p>
                   {!resumeFile && (
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-caption">
                       PDF, DOC, or DOCX (max 5MB)
                     </p>
                   )}
@@ -740,7 +740,7 @@ export default function CareersPage() {
                 )}
 
                 {/* Results Info */}
-                <div className="text-center mt-8 text-sm text-[var(--text-muted)]">
+                <div className="text-center mt-8 text-body-muted">
                   Showing {(currentPage - 1) * jobsPerPage + 1} to{' '}
                   {Math.min(currentPage * jobsPerPage, jobs.length)} of {jobs.length} positions
                 </div>

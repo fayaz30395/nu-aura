@@ -165,7 +165,7 @@ export default function CourseCatalogPage() {
     <AppLayout>
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="row-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Course Catalog</h1>
             <p className="text-[var(--text-muted)] mt-1 text-sm">
@@ -230,7 +230,7 @@ export default function CourseCatalogPage() {
             Mandatory only
           </Button>
           {visibleCourses.length > 0 && (
-            <span className="text-sm text-[var(--text-muted)]">
+            <span className="text-body-muted">
               {visibleCourses.length} course{visibleCourses.length !== 1 ? 's' : ''}
             </span>
           )}
@@ -301,7 +301,7 @@ export default function CourseCatalogPage() {
 
                     {/* Description */}
                     {course.shortDescription && (
-                      <p className="text-xs text-[var(--text-muted)] line-clamp-2 mb-3">
+                      <p className="text-caption line-clamp-2 mb-3">
                         {course.shortDescription}
                       </p>
                     )}
@@ -318,7 +318,7 @@ export default function CourseCatalogPage() {
                           </span>
                         ))}
                         {course.skillsCovered.length > 3 && (
-                          <span className="text-xs text-[var(--text-muted)]">
+                          <span className="text-caption">
                             +{course.skillsCovered.length - 3} more
                           </span>
                         )}
@@ -326,7 +326,7 @@ export default function CourseCatalogPage() {
                     )}
 
                     {/* Meta row */}
-                    <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-4 mt-auto">
+                    <div className="flex items-center gap-4 text-caption mb-4 mt-auto">
                       {course.durationHours && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />

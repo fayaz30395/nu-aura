@@ -135,7 +135,7 @@ export default function SignupPage() {
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Account Created Successfully
               </h2>
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-body-secondary">
                 Your organisation has been set up. Sign in with your admin credentials to get started.
               </p>
               <Button
@@ -167,7 +167,7 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          <p className="mt-2 text-body-secondary">
             Set up your organisation in minutes
           </p>
         </div>
@@ -221,7 +221,7 @@ export default function SignupPage() {
                 <div className="space-y-1">
                   <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Company Code
-                    <span className="ml-1 text-xs text-[var(--text-muted)]">(used in URLs, lowercase)</span>
+                    <span className="ml-1 text-caption">(used in URLs, lowercase)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -321,7 +321,7 @@ export default function SignupPage() {
                 <div className="space-y-1">
                   <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Password
-                    <span className="ml-1 text-xs text-[var(--text-muted)]">(min. 8 characters)</span>
+                    <span className="ml-1 text-caption">(min. 8 characters)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -378,7 +378,7 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+        <p className="mt-6 text-center text-body-secondary">
           Already have an account?{' '}
           <Link
             href="/auth/login"

@@ -117,11 +117,11 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
     <div className="space-y-4">
       {/* Request Summary */}
       <div className="p-4 bg-[var(--bg-secondary)] rounded-xl space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <p className="text-sm font-medium text-[var(--text-primary)]">{req.title}</p>
           <SignatureStatusBadge status={req.status} />
         </div>
-        <div className="grid grid-cols-2 gap-2 text-xs text-[var(--text-muted)]">
+        <div className="grid grid-cols-2 gap-2 text-caption">
           {req.requiredSignatures != null && (
             <span>Required: {req.requiredSignatures} signature(s)</span>
           )}
@@ -158,13 +158,13 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
             {approvals.map((approval) => (
               <div
                 key={approval.id}
-                className="flex items-center justify-between p-3 border border-[var(--border-main)] rounded-lg"
+                className="row-between p-3 border border-[var(--border-main)] rounded-lg"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">
                     {approval.signerName ?? approval.signerEmail}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">
+                  <p className="text-caption">
                     {approval.signerEmail} · {approval.signerRole}
                   </p>
                   {approval.signedAt && (
@@ -332,7 +332,7 @@ export function OfferESignModal({
                 <FileSignature className="h-5 w-5 text-accent-500" />
                 Offer Letter E-Sign
               </h2>
-              <p className="text-sm text-[var(--text-muted)] mt-0.5">{candidate.fullName}</p>
+              <p className="text-body-muted mt-0.5">{candidate.fullName}</p>
             </div>
             <button
               onClick={onClose}
@@ -347,7 +347,7 @@ export function OfferESignModal({
           {!createdRequestId ? (
             /* ========== Create New Request Form ========== */
             <form onSubmit={handleSubmit(handleCreate)} className="space-y-4">
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-body-secondary">
                 Create an e-signature request for the offer letter. The candidate will receive a
                 secure link to review and sign.
               </p>

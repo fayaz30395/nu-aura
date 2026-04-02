@@ -78,7 +78,7 @@ export function OnLeaveTodayCard() {
       ) : onLeaveEmployees.length === 0 ? (
         <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
           <CheckCircle2 className="h-4 w-4 text-success-500" />
-          <p className="text-xs text-[var(--text-muted)]">Everyone is working today!</p>
+          <p className="text-caption">Everyone is working today!</p>
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">

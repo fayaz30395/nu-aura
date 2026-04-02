@@ -243,7 +243,7 @@ export default function JobOpeningsPage() {
         className="p-6 space-y-6"
       >
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment positions</p>
@@ -275,7 +275,7 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-accent-700" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Total Jobs</p>
+                  <p className="text-body-muted">Total Jobs</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
@@ -294,7 +294,7 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-success-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Open</p>
+                  <p className="text-body-muted">Open</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.open}</p>
                 </div>
               </div>
@@ -313,7 +313,7 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Draft</p>
+                  <p className="text-body-muted">Draft</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
@@ -332,7 +332,7 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Closed</p>
+                  <p className="text-body-muted">Closed</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function JobOpeningsPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
-                      <p className="text-sm text-[var(--text-muted)]">{job.jobCode}</p>
+                      <p className="text-body-muted">{job.jobCode}</p>
                     </div>
                     <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
                       {job.status}
@@ -423,19 +423,19 @@ export default function JobOpeningsPage() {
 
                   <div className="space-y-2 mb-4">
                     {job.departmentName && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-2 text-body-secondary">
                         <Users className="h-4 w-4" />
                         <span>{job.departmentName}</span>
                       </div>
                     )}
                     {job.location && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-2 text-body-secondary">
                         <MapPin className="h-4 w-4" />
                         <span>{job.location}</span>
                       </div>
                     )}
                     {(job.minSalary || job.maxSalary) && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-2 text-body-secondary">
                         <DollarSign className="h-4 w-4" />
                         <span>
                           {job.minSalary && job.maxSalary
@@ -445,14 +445,14 @@ export default function JobOpeningsPage() {
                       </div>
                     )}
                     {job.closingDate && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-2 text-body-secondary">
                         <Calendar className="h-4 w-4" />
                         <span>Closes: {new Date(job.closingDate).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-[var(--border-main)]">
+                  <div className="row-between pt-3 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {job.priority && (
                         <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(job.priority)}`}>
@@ -460,7 +460,7 @@ export default function JobOpeningsPage() {
                         </span>
                       )}
                       {job.numberOfOpenings && (
-                        <span className="text-xs text-[var(--text-muted)]">
+                        <span className="text-caption">
                           {job.numberOfOpenings} position{job.numberOfOpenings > 1 ? 's' : ''}
                         </span>
                       )}
@@ -678,7 +678,7 @@ export default function JobOpeningsPage() {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="row-between mb-1">
                       <label className="block text-sm font-medium text-[var(--text-secondary)]">Job Description</label>
                       <button
                         type="button"
@@ -754,7 +754,7 @@ export default function JobOpeningsPage() {
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
               </div>
-              <p className="text-sm text-[var(--text-muted)] mb-6">
+              <p className="text-body-muted mb-6">
                 Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -808,14 +808,14 @@ export default function JobOpeningsPage() {
                     {aiGeneratedJD.summary && (
                       <div>
                         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Summary</h3>
-                        <p className="text-sm text-[var(--text-secondary)]">{aiGeneratedJD.summary}</p>
+                        <p className="text-body-secondary">{aiGeneratedJD.summary}</p>
                       </div>
                     )}
 
                     {aiGeneratedJD.responsibilities && aiGeneratedJD.responsibilities.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Responsibilities</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
+                        <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.responsibilities.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
@@ -826,7 +826,7 @@ export default function JobOpeningsPage() {
                     {aiGeneratedJD.requirements && aiGeneratedJD.requirements.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Requirements</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
+                        <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.requirements.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
@@ -837,7 +837,7 @@ export default function JobOpeningsPage() {
                     {aiGeneratedJD.preferredQualifications && aiGeneratedJD.preferredQualifications.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred Qualifications</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
+                        <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.preferredQualifications.map((q, i) => (
                             <li key={i}>{q}</li>
                           ))}
@@ -848,7 +848,7 @@ export default function JobOpeningsPage() {
                     {aiGeneratedJD.benefits && aiGeneratedJD.benefits.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Benefits</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
+                        <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.benefits.map((b, i) => (
                             <li key={i}>{b}</li>
                           ))}

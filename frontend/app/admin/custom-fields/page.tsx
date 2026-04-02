@@ -338,7 +338,7 @@ export default function CustomFieldsPage() {
                           <span className="ml-1 text-danger-500">*</span>
                         )}
                       </div>
-                      <div className="text-xs text-[var(--text-muted)]">
+                      <div className="text-caption">
                         {definition.fieldCode}
                       </div>
                     </td>
@@ -347,10 +347,10 @@ export default function CustomFieldsPage() {
                         {ENTITY_TYPE_INFO[definition.entityType].label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                       {FIELD_TYPE_INFO[definition.fieldType].label}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                       {definition.fieldGroup || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -626,7 +626,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-accent-700 focus:ring-accent-500"
                         />
-                        <span className="text-sm text-[var(--text-secondary)]">Required</span>
+                        <span className="text-body-secondary">Required</span>
                       </label>
                     )}
                   />
@@ -641,7 +641,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-accent-700 focus:ring-accent-500"
                         />
-                        <span className="text-sm text-[var(--text-secondary)]">Searchable</span>
+                        <span className="text-body-secondary">Searchable</span>
                       </label>
                     )}
                   />
@@ -656,7 +656,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-accent-700 focus:ring-accent-500"
                         />
-                        <span className="text-sm text-[var(--text-secondary)]">Show in List View</span>
+                        <span className="text-body-secondary">Show in List View</span>
                       </label>
                     )}
                   />

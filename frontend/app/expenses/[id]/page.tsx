@@ -236,7 +236,7 @@ export default function ExpenseDetailPage() {
 
         {/* Items Section */}
         <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
+          <div className="row-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
             <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
               <Receipt className="w-5 h-5" />
               Expense Items ({items.length})

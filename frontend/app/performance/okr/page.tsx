@@ -289,7 +289,7 @@ export default function OKRPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">OKR Management</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">
+          <p className="text-body-muted mt-1">
             Objectives and Key Results tracking
           </p>
         </div>
@@ -368,7 +368,7 @@ export default function OKRPage() {
           <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
             <Flag className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
             <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No objectives</h3>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="mt-1 text-body-muted">
               Get started by creating a new objective.
             </p>
           </div>
@@ -403,9 +403,9 @@ export default function OKRPage() {
                         )}
                       </div>
                       {objective.description && (
-                        <p className="text-sm text-[var(--text-muted)] mb-2">{objective.description}</p>
+                        <p className="text-body-muted mb-2">{objective.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
+                      <div className="flex items-center gap-4 text-caption">
                         <span>{objective.objectiveLevel}</span>
                         <span>
                           {new Date(objective.startDate).toLocaleDateString()} -{' '}
@@ -491,11 +491,11 @@ export default function OKRPage() {
                                   {kr.title}
                                 </div>
                                 {kr.description && (
-                                  <p className="text-xs text-[var(--text-muted)] mt-1">{kr.description}</p>
+                                  <p className="text-caption mt-1">{kr.description}</p>
                                 )}
                                 <div className="flex items-center gap-4 mt-2">
                                   <div className="flex-1">
-                                    <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
+                                    <div className="flex justify-between text-caption mb-1">
                                       <span>
                                         {kr.currentValue} / {kr.targetValue}{' '}
                                         {kr.measurementUnit}
@@ -544,7 +544,7 @@ export default function OKRPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-[var(--text-muted)] text-center py-4">
+                    <p className="text-body-muted text-center py-4">
                       No key results yet. Add some to track progress.
                     </p>
                   )}

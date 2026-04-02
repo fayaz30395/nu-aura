@@ -151,7 +151,7 @@ function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps)
             <button
               type="button"
               onClick={() => setExpandedGroup(expandedGroup === group ? null : group)}
-              className="flex items-center justify-between w-full px-2 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="row-between w-full px-2 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <span>{group}</span>
               <ChevronDown
@@ -532,7 +532,7 @@ export default function LetterTemplatesPage() {
                         <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
                           {template.name}
                         </h3>
-                        <p className="text-xs text-[var(--text-muted)] font-mono">
+                        <p className="text-caption font-mono">
                           {template.code}
                         </p>
                       </div>
@@ -556,20 +556,20 @@ export default function LetterTemplatesPage() {
 
                   {/* Description */}
                   {template.description && (
-                    <p className="text-sm text-[var(--text-secondary)] mb-3 line-clamp-2">
+                    <p className="text-body-secondary mb-3 line-clamp-2">
                       {template.description}
                     </p>
                   )}
 
                   {/* Meta */}
-                  <div className="flex items-center justify-between text-xs text-[var(--text-muted)] mb-4">
+                  <div className="row-between text-caption mb-4">
                     <span>v{template.version || 1}</span>
                     <span>{formatDate(template.updatedAt)}</span>
                   </div>
 
                   {/* Quick preview snippet */}
                   <div className="border border-[var(--border-main)] rounded-md p-2 mb-4 bg-[var(--bg-secondary)] max-h-20 overflow-hidden">
-                    <p className="text-xs text-[var(--text-muted)] line-clamp-3 font-mono">
+                    <p className="text-caption line-clamp-3 font-mono">
                       {template.templateContent?.replace(/<[^>]*>/g, '').substring(0, 150)}...
                     </p>
                   </div>
@@ -655,7 +655,7 @@ export default function LetterTemplatesPage() {
             >
               Previous
             </Button>
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-body-secondary">
               Page {currentPage + 1} of {totalPages}
             </span>
             <Button
@@ -768,7 +768,7 @@ export default function LetterTemplatesPage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Template Content (HTML) *
                   </label>
-                  <p className="text-xs text-[var(--text-muted)] mb-2">
+                  <p className="text-caption mb-2">
                     Use HTML markup with {'{{placeholder}}'} syntax. Click placeholders on the left to insert them.
                   </p>
                   <Controller

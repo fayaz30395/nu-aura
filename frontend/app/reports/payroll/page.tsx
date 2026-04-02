@@ -78,7 +78,7 @@ export default function PayrollReportsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between"
+          className="row-between"
         >
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Payroll Reports</h1>
@@ -124,7 +124,7 @@ export default function PayrollReportsPage() {
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
+                    <label className="block text-caption mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -133,7 +133,7 @@ export default function PayrollReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
+                    <label className="block text-caption mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -163,7 +163,7 @@ export default function PayrollReportsPage() {
                       <p className={`font-medium text-sm ${format === fmt ? 'text-accent-900' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

@@ -156,14 +156,14 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
           <div className="flex items-center gap-4">
             <div className={`p-2 rounded-lg ${report.bgColor}`}>
               <report.icon className={`h-5 w-5 ${report.color}`} />
             </div>
             <div>
               <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
-              <p className="text-sm text-[var(--text-muted)]">{report.category}</p>
+              <p className="text-body-muted">{report.category}</p>
             </div>
           </div>
           <button
@@ -197,7 +197,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
                     Excel
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">.xlsx</p>
+                  <p className="text-caption">.xlsx</p>
                 </div>
                 {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2" />}
               </button>
@@ -215,7 +215,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   <p className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
                     PDF
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">.pdf</p>
+                  <p className="text-caption">.pdf</p>
                 </div>
                 {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2" />}
               </button>
@@ -235,7 +235,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   <p className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
                     CSV
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">.csv</p>
+                  <p className="text-caption">.csv</p>
                 </div>
                 {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2" />}
               </button>
@@ -250,7 +250,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
+                  <label className="block text-caption mb-1">From</label>
                   <input
                     type="date"
                     value={startDate}
@@ -259,7 +259,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
+                  <label className="block text-caption mb-1">To</label>
                   <input
                     type="date"
                     value={endDate}
@@ -359,7 +359,7 @@ export default function ReportsPage() {
         <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
+        className="row-between"
       >
         <div>
           <h1 className="text-2xl font-bold skeuo-emboss">Reports</h1>
@@ -411,13 +411,13 @@ export default function ReportsPage() {
                 <CardContent className="mt-auto">
                   <div className="flex flex-col gap-4">
                     {report.requiresDateRange && (
-                      <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                      <div className="flex items-center gap-1 text-caption">
                         <Calendar className="h-3 w-3" />
                         <span>Requires date range</span>
                       </div>
                     )}
                     {report.filters && report.filters.length > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                      <div className="flex items-center gap-1 text-caption">
                         <Filter className="h-3 w-3" />
                         <span>Filters available</span>
                       </div>

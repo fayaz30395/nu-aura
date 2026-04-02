@@ -108,7 +108,7 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
       {helpText && !error && (
         <p
           id={helpId}
-          className="mt-1 text-xs text-[var(--text-muted)]"
+          className="mt-1 text-caption"
         >
           {helpText}
         </p>

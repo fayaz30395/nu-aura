@@ -3,7 +3,7 @@ export default function BulkProcessingLoading() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-52 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-72 bg-[var(--bg-surface)] rounded" />
@@ -16,7 +16,7 @@ export default function BulkProcessingLoading() {
 
       {/* Step progress bar */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="flex items-center gap-2 flex-1">
               <div className={`w-8 h-8 rounded-full ${i === 0 ? 'bg-[var(--bg-surface)]' : 'bg-[var(--bg-surface)]'}`} />
@@ -49,7 +49,7 @@ export default function BulkProcessingLoading() {
 
       {/* Employee table */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
-        <div className="flex items-center gap-4 p-4 border-b border-[var(--border-subtle)]">
+        <div className="flex items-center gap-4 p-4 divider-b">
           <div className="w-4 h-4 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-32 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-20 bg-[var(--bg-surface)] rounded ml-auto" />

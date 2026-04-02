@@ -217,7 +217,7 @@ export default function EventDetailPage() {
                 <MapPin className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Location</p>
+                <p className="text-body-muted">Location</p>
                 <p className="text-[var(--text-primary)] font-medium">
                   {event.location}
                 </p>
@@ -232,7 +232,7 @@ export default function EventDetailPage() {
                 <Video className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Meeting Link</p>
+                <p className="text-body-muted">Meeting Link</p>
                 <a
                   href={event.meetingLink}
                   target="_blank"
@@ -253,7 +253,7 @@ export default function EventDetailPage() {
                 <Users className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Organizer</p>
+                <p className="text-body-muted">Organizer</p>
                 <p className="text-[var(--text-primary)] font-medium">
                   {event.organizerName}
                 </p>
@@ -268,12 +268,12 @@ export default function EventDetailPage() {
                 <Users className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Attendees</p>
+                <p className="text-body-muted">Attendees</p>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {event.attendeeNames.map((name, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-sm text-[var(--text-secondary)]"
+                      className="px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-body-secondary"
                     >
                       {name}
                     </span>
@@ -290,7 +290,7 @@ export default function EventDetailPage() {
                 <Bell className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Reminder</p>
+                <p className="text-body-muted">Reminder</p>
                 <p className="text-[var(--text-primary)] font-medium">
                   {event.reminderMinutes === 0
                     ? 'At time of event'
@@ -311,7 +311,7 @@ export default function EventDetailPage() {
                 <Globe className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Visibility</p>
+                <p className="text-body-muted">Visibility</p>
                 <p className="text-[var(--text-primary)] font-medium">
                   {event.visibility}
                 </p>
@@ -345,12 +345,12 @@ export default function EventDetailPage() {
         {/* Sync Status */}
         {event.syncProvider && event.syncProvider !== 'NONE' && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Calendar Sync
                 </h3>
-                <p className="text-sm text-[var(--text-muted)] mt-1">
+                <p className="text-body-muted mt-1">
                   {event.syncProvider} Calendar •{' '}
                   {event.syncStatus === 'SYNCED'
                     ? `Last synced ${calendarService.formatDateTime(event.lastSyncedAt!)}`

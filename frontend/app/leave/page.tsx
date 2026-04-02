@@ -149,7 +149,7 @@ export default function LeavePage() {
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Unable to load leave data
             </h2>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               {error.includes('500')
                 ? 'The server encountered an error. Please try again in a moment.'
                 : error}
@@ -238,7 +238,7 @@ export default function LeavePage() {
                     <span className="text-2xl font-bold skeuo-emboss">
                       {balance.available.toFixed(1)}
                     </span>
-                    <span className="text-sm text-[var(--text-muted)]">
+                    <span className="text-body-muted">
                       / {total.toFixed(1)} days
                     </span>
                   </div>
@@ -251,7 +251,7 @@ export default function LeavePage() {
                     />
                   </div>
 
-                  <div className="flex justify-between text-xs text-[var(--text-muted)]">
+                  <div className="flex justify-between text-caption">
                     <span>Used: {balance.used.toFixed(1)}</span>
                     <span>Pending: {balance.pending.toFixed(1)}</span>
                   </div>
@@ -269,7 +269,7 @@ export default function LeavePage() {
 
         {/* Recent Leave Requests */}
         <div className="skeuo-card rounded-xl border border-[var(--border-main)] overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+          <div className="row-between p-6 border-b border-[var(--border-main)]">
             <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
               Recent Leave Requests
             </h2>
@@ -330,12 +330,12 @@ export default function LeavePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {leaveType?.leaveName || 'N/A'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {new Date(request.startDate).toLocaleDateString('en-IN', {
                               day: '2-digit',
                               month: 'short',
@@ -349,10 +349,10 @@ export default function LeavePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {request.totalDays}
                             {request.isHalfDay && (
-                              <span className="ml-1 text-xs text-[var(--text-muted)]">(Half Day)</span>
+                              <span className="ml-1 text-caption">(Half Day)</span>
                             )}
                           </span>
                         </td>
@@ -365,7 +365,7 @@ export default function LeavePage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {new Date(request.appliedOn).toLocaleDateString('en-IN', {
                               day: '2-digit',
                               month: 'short',
@@ -388,7 +388,7 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/apply')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <Plus className="h-5 w-5 text-white" />
               </div>
@@ -397,7 +397,7 @@ export default function LeavePage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
             </h3>
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               Submit a new leave request
             </p>
           </button>
@@ -406,7 +406,7 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/my-leaves')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <FileText className="h-5 w-5 text-white" />
               </div>
@@ -415,7 +415,7 @@ export default function LeavePage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
             </h3>
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               View all your leave history
             </p>
           </button>
@@ -424,7 +424,7 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/calendar')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="flex items-center justify-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
@@ -433,7 +433,7 @@ export default function LeavePage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar
             </h3>
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               View team leave calendar
             </p>
           </button>

@@ -247,9 +247,9 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
   return (
     <div className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Custom Scope Targets</p>
-        <span className="text-xs text-[var(--text-muted)]">
+        <span className="text-caption">
           {targets.length} selected
         </span>
       </div>
@@ -324,7 +324,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                         {result.name}
                       </p>
                       {result.subtext && (
-                        <p className="text-xs text-[var(--text-muted)] truncate">
+                        <p className="text-caption truncate">
                           {result.subtext}
                         </p>
                       )}
@@ -333,7 +333,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                 </button>
               ))
             ) : (
-              <div className="px-4 py-4 text-center text-sm text-[var(--text-muted)]">
+              <div className="px-4 py-4 text-center text-body-muted">
                 No {getTargetTypeLabel(targetType).toLowerCase()}s found
               </div>
             )}
@@ -378,13 +378,13 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
           </div>
         </div>
       ) : (
-        <p className="text-sm text-[var(--text-muted)] italic text-center py-2">
+        <p className="text-body-muted italic text-center py-2">
           No custom targets selected. Search to add employees, departments, or locations.
         </p>
       )}
 
       {/* Help Text */}
-      <p className="text-xs text-[var(--text-muted)]">
+      <p className="text-caption">
         Users with this permission will only have access to records belonging to the selected targets.
       </p>
     </div>

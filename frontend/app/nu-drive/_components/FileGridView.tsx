@@ -35,7 +35,7 @@ export function FileGridView({ files, onFileClick, onContextMenu }: FileGridView
               {file.name}
             </p>
             {file.modifiedTime && (
-              <p className="text-xs text-[var(--text-muted)] mt-1">
+              <p className="text-caption mt-1">
                 {new Date(file.modifiedTime).toLocaleDateString()}
               </p>
             )}

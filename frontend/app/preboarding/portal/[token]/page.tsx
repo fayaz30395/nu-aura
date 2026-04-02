@@ -214,7 +214,7 @@ export default function PreboardingPortalPage() {
         {/* Progress */}
         <Card className="mb-6">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="row-between mb-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Overall Progress</span>
               <span className="text-sm font-bold text-accent-700">{data.completionPercentage}%</span>
             </div>
@@ -228,7 +228,7 @@ export default function PreboardingPortalPage() {
         </Card>
 
         {/* Steps */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="row-between mb-6">
           {steps.map((step, idx) => (
             <div
               key={step.label}
@@ -368,7 +368,7 @@ export default function PreboardingPortalPage() {
                       {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Passport Photo</p>
-                        <p className="text-xs text-[var(--text-muted)]">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
+                        <p className="text-caption">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
                       </div>
                     </div>
                   </Card>
@@ -377,7 +377,7 @@ export default function PreboardingPortalPage() {
                       {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">ID Proof</p>
-                        <p className="text-xs text-[var(--text-muted)]">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
+                        <p className="text-caption">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
                       </div>
                     </div>
                   </Card>
@@ -386,7 +386,7 @@ export default function PreboardingPortalPage() {
                       {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Address Proof</p>
-                        <p className="text-xs text-[var(--text-muted)]">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
+                        <p className="text-caption">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
                       </div>
                     </div>
                   </Card>
@@ -395,12 +395,12 @@ export default function PreboardingPortalPage() {
                       {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Education Docs</p>
-                        <p className="text-xs text-[var(--text-muted)]">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
+                        <p className="text-caption">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
                       </div>
                     </div>
                   </Card>
                 </div>
-                <p className="text-sm text-[var(--text-muted)]">Note: Document upload functionality will be integrated with file storage.</p>
+                <p className="text-body-muted">Note: Document upload functionality will be integrated with file storage.</p>
                 <div className="flex justify-between pt-4">
                   <Button type="button" variant="ghost" onClick={() => setActiveStep(1)}>Back</Button>
                   <Button type="button" variant="primary" onClick={() => setActiveStep(3)}>
@@ -427,7 +427,7 @@ export default function PreboardingPortalPage() {
                         <FileText className="h-6 w-6 text-accent-500 mt-1" />
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>
-                          <p className="text-sm text-[var(--text-muted)] mt-1">
+                          <p className="text-body-muted mt-1">
                             Please review your offer letter and sign to confirm your acceptance of the position as {data.designation}.
                           </p>
                         </div>

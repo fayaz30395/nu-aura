@@ -283,7 +283,7 @@ export default function WikiPage() {
             <div className="lg:col-span-1">
               <div className={`${card.base} ${card.paddingLarge}`}>
                 {/* Spaces header with manage button */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="row-between mb-4">
                   <div className="flex items-center gap-2">
                     <Folder className={iconSize.cardInline} />
                     <h2 className={typography.sectionTitle}>Spaces</h2>

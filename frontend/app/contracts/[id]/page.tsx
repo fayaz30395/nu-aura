@@ -57,7 +57,7 @@ export default function ContractDetailPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div className="flex items-center gap-4">
             <button onClick={() => router.back()} aria-label="Go back" className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
               <ArrowLeft className="w-5 h-5" />
@@ -75,18 +75,18 @@ export default function ContractDetailPage() {
         {/* Key Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
-            <div className="text-sm text-[var(--text-secondary)] mb-1">Start Date</div>
+            <div className="text-body-secondary mb-1">Start Date</div>
             <div className="text-lg font-semibold">{contractService.formatDate(contract.startDate)}</div>
           </Card>
           {contract.endDate && (
             <Card>
-              <div className="text-sm text-[var(--text-secondary)] mb-1">End Date</div>
+              <div className="text-body-secondary mb-1">End Date</div>
               <div className="text-lg font-semibold">{contractService.formatDate(contract.endDate)}</div>
             </Card>
           )}
           {contract.value && (
             <Card>
-              <div className="text-sm text-[var(--text-secondary)] mb-1">Value</div>
+              <div className="text-body-secondary mb-1">Value</div>
               <div className="text-lg font-semibold">{contractService.formatCurrency(contract.value, contract.currency)}</div>
             </Card>
           )}
@@ -185,18 +185,18 @@ export default function ContractDetailPage() {
               <div className="space-y-4">
                 {contract.employeeName && (
                   <div>
-                    <div className="text-sm text-[var(--text-secondary)]">Employee</div>
+                    <div className="text-body-secondary">Employee</div>
                     <div className="font-semibold">{contract.employeeName}</div>
                   </div>
                 )}
                 {contract.vendorName && (
                   <div>
-                    <div className="text-sm text-[var(--text-secondary)]">Vendor</div>
+                    <div className="text-body-secondary">Vendor</div>
                     <div className="font-semibold">{contract.vendorName}</div>
                   </div>
                 )}
                 <div>
-                  <div className="text-sm text-[var(--text-secondary)]">Auto Renew</div>
+                  <div className="text-body-secondary">Auto Renew</div>
                   <div className="font-semibold">{contract.autoRenew ? 'Yes' : 'No'}</div>
                 </div>
               </div>

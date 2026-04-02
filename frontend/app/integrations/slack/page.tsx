@@ -186,7 +186,7 @@ export default function SlackIntegrationPage() {
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Slack Integration
               </h1>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 Connect NU-AURA with your Slack workspace
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function SlackIntegrationPage() {
             <Shield className="h-5 w-5 text-accent-700" />
             Setup Guide
           </h2>
-          <ol className="space-y-2 text-sm text-[var(--text-secondary)]">
+          <ol className="space-y-2 text-body-secondary">
             <li className="flex gap-2">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
               <span>
@@ -239,7 +239,7 @@ export default function SlackIntegrationPage() {
             <MessageSquare className="h-5 w-5 text-accent-700" />
             Webhook URLs
           </h2>
-          <p className="text-sm text-[var(--text-muted)] mb-4">
+          <p className="text-body-muted mb-4">
             Use these URLs when configuring your Slack App&apos;s slash commands and event subscriptions.
           </p>
           <div className="space-y-2">
@@ -248,7 +248,7 @@ export default function SlackIntegrationPage() {
               { label: 'Interactive Components', url: `${webhookBaseUrl}/api/v1/integrations/slack/interactions` },
               { label: 'Event Subscriptions', url: `${webhookBaseUrl}/api/v1/integrations/slack/events` },
             ].map(({ label, url }) => (
-              <div key={label} className="flex items-center justify-between p-2 bg-[var(--bg-secondary)] rounded-lg">
+              <div key={label} className="row-between p-2 bg-[var(--bg-secondary)] rounded-lg">
                 <div>
                   <div className="text-xs font-medium text-[var(--text-muted)]">{label}</div>
                   <code className="text-sm text-[var(--text-primary)]">{url}</code>
@@ -282,10 +282,10 @@ export default function SlackIntegrationPage() {
             </h2>
             <div className="space-y-4">
               {/* Enable toggle */}
-              <div className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg">
+              <div className="row-between p-4 bg-[var(--bg-secondary)] rounded-lg">
                 <div>
                   <div className="font-medium text-[var(--text-primary)]">Enable Slack Integration</div>
-                  <div className="text-sm text-[var(--text-muted)]">Send notifications and receive commands from Slack</div>
+                  <div className="text-body-muted">Send notifications and receive commands from Slack</div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" {...register('isEnabled')} className="sr-only peer" />
@@ -308,7 +308,7 @@ export default function SlackIntegrationPage() {
                   {errors.slackWorkspaceId && (
                     <p className="text-danger-500 text-xs mt-1">{errors.slackWorkspaceId.message}</p>
                   )}
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Found in Slack App settings &gt; Basic Information</p>
+                  <p className="text-caption mt-1">Found in Slack App settings &gt; Basic Information</p>
                 </div>
 
                 <div>
@@ -340,7 +340,7 @@ export default function SlackIntegrationPage() {
                   placeholder="xoxb-..."
                   disabled={!isEnabled}
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   OAuth &amp; Permissions &gt; Bot User OAuth Token. Leave blank to keep existing token.
                 </p>
               </div>
@@ -356,7 +356,7 @@ export default function SlackIntegrationPage() {
                   placeholder="Enter signing secret..."
                   disabled={!isEnabled}
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   Basic Information &gt; App Credentials &gt; Signing Secret. Used to verify incoming requests.
                 </p>
               </div>
@@ -391,7 +391,7 @@ export default function SlackIntegrationPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <button type="button"
               onClick={handleTestConnection}
               disabled={!isEnabled || testResult === 'testing'}
@@ -439,7 +439,7 @@ export default function SlackIntegrationPage() {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--text-primary)]">{feature.title}</div>
-                  <div className="text-xs text-[var(--text-muted)]">{feature.desc}</div>
+                  <div className="text-caption">{feature.desc}</div>
                 </div>
               </div>
             ))}

@@ -321,12 +321,12 @@ export default function PerformanceReviewsPage() {
                         {review.status}
                       </span>
                     </div>
-                    <div className="text-sm text-[var(--text-secondary)]">
+                    <div className="text-body-secondary">
                       Period: {review.reviewPeriodStart ? new Date(review.reviewPeriodStart).toLocaleDateString() : 'N/A'} - {review.reviewPeriodEnd ? new Date(review.reviewPeriodEnd).toLocaleDateString() : 'N/A'}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-[var(--text-secondary)] mb-1">Overall Rating</div>
+                    <div className="text-body-secondary mb-1">Overall Rating</div>
                     {renderRatingStars(review.overallRating)}
                     <div className="text-lg font-bold mt-1">{(review.overallRating || 0).toFixed(1)}/5.0</div>
                   </div>
@@ -336,13 +336,13 @@ export default function PerformanceReviewsPage() {
                   {review.strengths && (
                     <div>
                       <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Strengths</div>
-                      <p className="text-sm text-[var(--text-secondary)] line-clamp-2">{review.strengths}</p>
+                      <p className="text-body-secondary line-clamp-2">{review.strengths}</p>
                     </div>
                   )}
                   {review.areasForImprovement && (
                     <div>
                       <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Areas for Improvement</div>
-                      <p className="text-sm text-[var(--text-secondary)] line-clamp-2">{review.areasForImprovement}</p>
+                      <p className="text-body-secondary line-clamp-2">{review.areasForImprovement}</p>
                     </div>
                   )}
                 </div>

@@ -205,7 +205,7 @@ export function ManageProgramsTab({
                     )}
                   </div>
 
-                  <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                  <p className="text-body-secondary line-clamp-2">
                     {program.description || 'No description provided'}
                   </p>
 

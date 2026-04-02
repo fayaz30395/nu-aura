@@ -321,19 +321,19 @@ export default function MyAttendancePage() {
         {/* Check-in/Check-out Card */}
         <Card className="skeuo-card">
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">Today&apos;s Status</h3>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Check-in: <span className="font-medium">{formatTime(todayAttendance.checkInTime)}</span>
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Check-out: <span className="font-medium">{formatTime(todayAttendance.checkOutTime)}</span>
                     </p>
                     {todayAttendance.workDurationMinutes !== undefined && (
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         Work Duration: <span className="font-medium">{formatDuration(todayAttendance.workDurationMinutes)}</span>
                       </p>
                     )}
@@ -345,7 +345,7 @@ export default function MyAttendancePage() {
                   </div>
                 )}
                 {!todayAttendance && (
-                  <p className="text-sm text-[var(--text-muted)] mt-2">No attendance record for today</p>
+                  <p className="text-body-muted mt-2">No attendance record for today</p>
                 )}
               </div>
               <div className="flex gap-4">
@@ -384,9 +384,9 @@ export default function MyAttendancePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="skeuo-card">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Present Days</p>
+                  <p className="text-body-secondary skeuo-deboss">Present Days</p>
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
@@ -398,9 +398,9 @@ export default function MyAttendancePage() {
 
           <Card className="skeuo-card">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Absent Days</p>
+                  <p className="text-body-secondary skeuo-deboss">Absent Days</p>
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
@@ -412,9 +412,9 @@ export default function MyAttendancePage() {
 
           <Card className="skeuo-card">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">On Leave</p>
+                  <p className="text-body-secondary skeuo-deboss">On Leave</p>
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
@@ -426,9 +426,9 @@ export default function MyAttendancePage() {
 
           <Card className="skeuo-card">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Avg. Hours/Day</p>
+                  <p className="text-body-secondary skeuo-deboss">Avg. Hours/Day</p>
                   <p className="text-2xl font-bold skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
@@ -445,7 +445,7 @@ export default function MyAttendancePage() {
           {/* Calendar */}
           <Card className="lg:col-span-2 card-aura">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <CardTitle className="flex items-center gap-2">
                   <CalendarIcon className="h-5 w-5" />
                   Attendance Calendar
@@ -531,7 +531,7 @@ export default function MyAttendancePage() {
               {selectedDate ? (
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)]">Date</p>
+                    <p className="text-body-secondary">Date</p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedDate?.toLocaleDateString('en-US', {
                         weekday: 'long',
@@ -544,7 +544,7 @@ export default function MyAttendancePage() {
                   {selectedAttendance && (
                     <>
                       <div>
-                        <p className="text-sm text-[var(--text-secondary)]">Status</p>
+                        <p className="text-body-secondary">Status</p>
                         <span className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
                           {getStatusIcon(selectedAttendance.status)}
                           {selectedAttendance.status.replace(/_/g, ' ')}
@@ -553,7 +553,7 @@ export default function MyAttendancePage() {
 
                       {selectedAttendance.workDurationMinutes !== undefined && (
                         <div>
-                          <p className="text-sm text-[var(--text-secondary)]">Total Work Duration</p>
+                          <p className="text-body-secondary">Total Work Duration</p>
                           <p className="text-md font-medium text-[var(--text-primary)]">
                             {formatDuration(selectedAttendance.workDurationMinutes)}
                           </p>
@@ -581,7 +581,7 @@ export default function MyAttendancePage() {
 
                   {/* Sessions */}
                   <div className="pt-3 border-t border-[var(--border-main)]">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="row-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
                       {selectedDateTimeEntries.length > 0 && (
                         <span className="text-sm font-bold text-accent-700">
@@ -598,7 +598,7 @@ export default function MyAttendancePage() {
                         <div className="w-6 h-6 border-2 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
                       </div>
                     ) : selectedDateTimeEntries.length === 0 ? (
-                      <p className="text-sm text-[var(--text-muted)] py-2">No sessions recorded</p>
+                      <p className="text-body-muted py-2">No sessions recorded</p>
                     ) : (
                       <div className="space-y-2 max-h-[250px] overflow-y-auto">
                         {selectedDateTimeEntries.map((entry) => (
@@ -610,7 +610,7 @@ export default function MyAttendancePage() {
                                 : 'bg-[var(--bg-surface)] border-[var(--border-main)]'
                             }`}
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="row-between">
                               <div className="flex items-center gap-2">
                                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
                                   entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'

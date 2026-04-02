@@ -272,10 +272,10 @@ export default function SsoSettingsPage() {
     label: string;
     description: string;
   }) => (
-    <div className="flex items-center justify-between py-4">
+    <div className="row-between py-4">
       <div>
         <label className="text-sm font-medium text-[var(--text-primary)]">{label}</label>
-        <p className="text-sm text-[var(--text-secondary)] mt-0.5">{description}</p>
+        <p className="text-body-secondary mt-0.5">{description}</p>
       </div>
       <button
         type="button"
@@ -425,7 +425,7 @@ export default function SsoSettingsPage() {
                     placeholder="https://your-idp.example.com/metadata.xml"
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
-                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                  <p className="text-caption mt-1">
                     If provided, the IdP metadata will be auto-fetched to configure the SSO connection.
                   </p>
                   {errors.metadataUrl && (
@@ -485,7 +485,7 @@ export default function SsoSettingsPage() {
                     placeholder={`-----BEGIN CERTIFICATE-----\nMIID...\n-----END CERTIFICATE-----`}
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 font-mono text-sm"
                   />
-                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                  <p className="text-caption mt-1">
                     {isExistingConfig
                       ? 'Leave blank to keep the existing certificate. Paste a new one to replace it.'
                       : 'Paste the PEM-encoded X.509 certificate from your IdP.'}
@@ -498,7 +498,7 @@ export default function SsoSettingsPage() {
                   </label>
                   <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] cursor-pointer hover:bg-[var(--bg-surface)] transition-colors">
                     <Upload className="h-4 w-4 text-[var(--text-secondary)]" />
-                    <span className="text-sm text-[var(--text-secondary)]">Choose file</span>
+                    <span className="text-body-secondary">Choose file</span>
                     <input
                       type="file"
                       accept=".pem,.cer,.crt,.cert"
@@ -672,7 +672,7 @@ export default function SsoSettingsPage() {
                     </div>
 
                     {testMutation.data.certificateExpiry && (
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         Certificate expires: {new Date(testMutation.data.certificateExpiry).toLocaleDateString()}
                       </p>
                     )}
@@ -753,7 +753,7 @@ export default function SsoSettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="px-4 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="px-4 py-1.5 text-body-secondary hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Cancel
                   </button>

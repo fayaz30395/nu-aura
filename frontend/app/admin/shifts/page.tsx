@@ -235,7 +235,7 @@ export default function ShiftsManagementPage() {
                 <Clock className="h-8 w-8 text-accent-700" />
                 Shift Management
               </h1>
-              <p className="mt-1 text-sm text-[var(--text-secondary)] skeuo-deboss">
+              <p className="mt-1 text-body-secondary skeuo-deboss">
                 Configure and manage work shifts for your organization
               </p>
             </div>
@@ -288,7 +288,7 @@ export default function ShiftsManagementPage() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-bold text-[var(--text-primary)]">{shift.shiftName}</h3>
-                        <p className="text-sm text-[var(--text-muted)]">{shift.shiftCode}</p>
+                        <p className="text-body-muted">{shift.shiftCode}</p>
                       </div>
                       <span
                         className={`px-4 py-1 text-xs font-semibold rounded-full ${
@@ -302,7 +302,7 @@ export default function ShiftsManagementPage() {
                     </div>
 
                     {shift.description && (
-                      <p className="text-sm text-[var(--text-secondary)] mb-4">{shift.description}</p>
+                      <p className="text-body-secondary mb-4">{shift.description}</p>
                     )}
 
                     <div className="space-y-2 mb-4">
@@ -313,11 +313,11 @@ export default function ShiftsManagementPage() {
                         </span>
                       </div>
                       {(shift.breakDurationMinutes ?? 0) > 0 && (
-                        <div className="text-sm text-[var(--text-secondary)]">
+                        <div className="text-body-secondary">
                           Break: {shift.breakDurationMinutes} min
                         </div>
                       )}
-                      <div className="text-sm text-[var(--text-secondary)]">
+                      <div className="text-body-secondary">
                         Working Hours: {shift.netWorkingHours || shift.fullDayHours}h
                       </div>
                     </div>
@@ -594,7 +594,7 @@ export default function ShiftsManagementPage() {
                               {...form.register('isNightShift')}
                               className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Night Shift</span>
+                            <span className="ml-2 text-body-secondary">Night Shift</span>
                           </label>
 
                           <label className="flex items-center cursor-pointer">
@@ -603,7 +603,7 @@ export default function ShiftsManagementPage() {
                               {...form.register('allowsOvertime')}
                               className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Allows Overtime</span>
+                            <span className="ml-2 text-body-secondary">Allows Overtime</span>
                           </label>
 
                           <label className="flex items-center cursor-pointer">
@@ -612,7 +612,7 @@ export default function ShiftsManagementPage() {
                               {...form.register('isActive')}
                               className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Active</span>
+                            <span className="ml-2 text-body-secondary">Active</span>
                           </label>
                         </div>
 

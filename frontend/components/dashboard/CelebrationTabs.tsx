@@ -51,7 +51,7 @@ export function CelebrationTabs() {
   if (totalCount === 0 && !isLoading && !hasError) {
     return (
       <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4">
-        <p className="text-center text-xs text-[var(--text-muted)]">No celebrations this week</p>
+        <p className="text-center text-caption">No celebrations this week</p>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export function CelebrationTabs() {
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)]">
       {/* Tab Navigation */}
-      <div className="flex items-center justify-between border-b border-[var(--border-main)]">
+      <div className="row-between border-b border-[var(--border-main)]">
         <div className="flex">
           {tabItems.map((tab) => (
             <button
@@ -79,7 +79,7 @@ export function CelebrationTabs() {
             >
               {tab.label}
               {tab.count > 0 && (
-                <span className="ml-1.5 text-xs text-[var(--text-muted)]">{tab.count}</span>
+                <span className="ml-1.5 text-caption">{tab.count}</span>
               )}
             </button>
           ))}
@@ -100,7 +100,7 @@ export function CelebrationTabs() {
             <SkeletonLoader />
           ) : hasError ? (
             <div className="py-4 flex flex-col items-center gap-2 text-center">
-              <p className="text-xs text-[var(--text-muted)]">Failed to load celebrations</p>
+              <p className="text-caption">Failed to load celebrations</p>
               <button
                 onClick={() => window.location.reload()}
                 className="text-xs text-accent-500 hover:text-accent-400 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
@@ -117,7 +117,7 @@ export function CelebrationTabs() {
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
-                        <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
+                        <p className="text-caption truncate">{person.department}</p>
                       </div>
                       <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]  dark:text-[var(--text-muted)]">
                         {person.isToday ? 'Today' : `In ${person.daysUntil}d`}
@@ -134,7 +134,7 @@ export function CelebrationTabs() {
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
-                        <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
+                        <p className="text-caption truncate">{person.department}</p>
                       </div>
                       <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]  dark:text-[var(--text-muted)]">
                         {person.isToday ? 'Today' : `In ${person.daysUntil}d`}
@@ -151,7 +151,7 @@ export function CelebrationTabs() {
                       <AvatarInitials name={person.employeeName} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
-                        <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
+                        <p className="text-caption truncate">{person.department}</p>
                       </div>
                       <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]  dark:text-[var(--text-muted)]">
                         {person.daysSinceJoining}d ago
@@ -163,13 +163,13 @@ export function CelebrationTabs() {
 
               {/* Empty states */}
               {activeTab === 'birthdays' && birthdayCount === 0 && (
-                <div className="py-4 text-center text-xs text-[var(--text-muted)]">No upcoming birthdays</div>
+                <div className="py-4 text-center text-caption">No upcoming birthdays</div>
               )}
               {activeTab === 'anniversaries' && anniversaryCount === 0 && (
-                <div className="py-4 text-center text-xs text-[var(--text-muted)]">No upcoming anniversaries</div>
+                <div className="py-4 text-center text-caption">No upcoming anniversaries</div>
               )}
               {activeTab === 'newJoiners' && newJoinerCount === 0 && (
-                <div className="py-4 text-center text-xs text-[var(--text-muted)]">No new joiners</div>
+                <div className="py-4 text-center text-caption">No new joiners</div>
               )}
             </>
           )}

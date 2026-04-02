@@ -64,7 +64,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
                 <h3 className="font-semibold text-[var(--text-primary)] truncate">
                   {employee.firstName} {employee.lastName}
                 </h3>
-                <p className="text-sm text-[var(--text-muted)] truncate">
+                <p className="text-body-muted truncate">
                   {employee.designation || 'Employee'}
                 </p>
               </div>
@@ -113,7 +113,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
             <h3 className="font-semibold text-[var(--text-primary)] truncate">
               {employee.firstName} {employee.lastName}
             </h3>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5 truncate">
+            <p className="text-caption mt-0.5 truncate">
               {employee.designation || 'Employee'}
             </p>
           </div>
@@ -326,8 +326,8 @@ export default function TeamDirectoryPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between gap-4 mt-6 pt-4 border-t border-[var(--border-main)]">
-                <p className="text-sm text-[var(--text-muted)]">
+              <div className="row-between gap-4 mt-6 pt-4 border-t border-[var(--border-main)]">
+                <p className="text-body-muted">
                   Showing {page * PAGE_SIZE + 1} to {Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
                 </p>
                 <div className="flex gap-2">

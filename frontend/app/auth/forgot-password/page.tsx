@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
                     </span>{' '}
                     uses Google Sign-In.
                   </p>
-                  <p className="text-sm text-[var(--text-muted)] mb-6">
+                  <p className="text-body-muted mb-6">
                     Please manage your password through your Google account settings.
                   </p>
                   <a
@@ -151,7 +151,7 @@ export default function ForgotPasswordPage() {
                       {getValues('email')}
                     </span>
                   </p>
-                  <p className="text-sm text-[var(--text-muted)] mb-6">
+                  <p className="text-body-muted mb-6">
                     Didn&apos;t receive the email? Check your spam folder or{' '}
                     <button
                       onClick={() => {
@@ -189,7 +189,7 @@ export default function ForgotPasswordPage() {
           <h1 className="text-2xl font-bold skeuo-emboss">
             NU-AURA
           </h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          <p className="mt-2 text-body-secondary">
             Reset your password
           </p>
         </div>
@@ -271,7 +271,7 @@ export default function ForgotPasswordPage() {
         </Card>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
+        <p className="mt-6 text-center text-caption">
           NU-AURA v1.0 &copy; {new Date().getFullYear()}
         </p>
       </div>

@@ -65,7 +65,7 @@ function DepartmentGroupCard({ departmentName, employees, highlightedId }: Depar
       <button
         onClick={() => setExpanded(p => !p)}
         aria-label={`Toggle ${departmentName} department expansion`}
-        className="w-full flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className="w-full row-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
@@ -243,7 +243,7 @@ export default function OrgChartPage() {
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Organization Chart
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-body-secondary">
             Visualize your company structure and reporting relationships
           </p>
         </div>

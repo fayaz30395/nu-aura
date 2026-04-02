@@ -3,7 +3,7 @@ export default function AnalyticsLoading() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
       {/* Header skeleton */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-48 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-72 bg-[var(--bg-surface)] rounded" />
@@ -37,11 +37,11 @@ export default function AnalyticsLoading() {
 
       {/* Table skeleton */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
-        <div className="p-4 border-b border-[var(--border-subtle)]">
+        <div className="p-4 divider-b">
           <div className="h-5 w-32 bg-[var(--bg-surface)] rounded" />
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 px-4 py-4 border-b border-[var(--border-subtle)]">
+          <div key={i} className="flex items-center gap-4 px-4 py-4 divider-b">
             <div className="h-4 w-32 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-24 bg-[var(--bg-surface)] rounded" />
             <div className="h-4 w-16 bg-[var(--bg-surface)] rounded ml-auto" />

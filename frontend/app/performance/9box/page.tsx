@@ -91,7 +91,7 @@ function NineBoxGrid({
             <div key={potBand} className="flex gap-4 mb-3">
               {/* Potential label */}
               <div className="w-28 flex-shrink-0 flex items-center justify-end pr-3">
-                <span className="text-xs text-[var(--text-muted)] text-right font-medium">{potLabel}</span>
+                <span className="text-caption text-right font-medium">{potLabel}</span>
               </div>
 
               {/* 3 cells */}
@@ -155,7 +155,7 @@ function NineBoxGrid({
           <div className="flex gap-4 mt-4">
             <div className="w-28 flex-shrink-0" />
             {gridCols.map(({ perfBand, label }) => (
-              <div key={perfBand} className="flex-1 text-center text-xs text-[var(--text-muted)] font-medium">
+              <div key={perfBand} className="flex-1 text-center text-caption font-medium">
                 {label}
               </div>
             ))}
@@ -370,7 +370,7 @@ export default function NineBoxPage() {
                 </select>
               )}
             </div>
-            <div className="text-xs text-[var(--text-muted)] md:mt-6">
+            <div className="text-caption md:mt-6">
               {points.length} employees plotted
             </div>
           </div>
@@ -394,7 +394,7 @@ export default function NineBoxPage() {
                 <Users className="text-accent-800 dark:text-accent-600" size={20} />
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)]">Total Plotted</p>
+                <p className="text-caption">Total Plotted</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{points.length}</p>
               </div>
             </div>
@@ -406,7 +406,7 @@ export default function NineBoxPage() {
                 <TrendingUp className="text-success-600 dark:text-success-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)]">Stars</p>
+                <p className="text-caption">Stars</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.stars}</p>
               </div>
             </div>
@@ -418,7 +418,7 @@ export default function NineBoxPage() {
                 <Target className="text-accent-600 dark:text-accent-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)]">High Performers</p>
+                <p className="text-caption">High Performers</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPerformers}</p>
               </div>
             </div>
@@ -430,7 +430,7 @@ export default function NineBoxPage() {
                 <Grid3x3 className="text-success-600 dark:text-success-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)]">High Potential</p>
+                <p className="text-caption">High Potential</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPotential}</p>
               </div>
             </div>
@@ -475,7 +475,7 @@ export default function NineBoxPage() {
                       {BOX_CONFIG[selectedBox].label}
                     </span>
                   </div>
-                  <span className="text-sm text-[var(--text-muted)]">
+                  <span className="text-body-muted">
                     {BOX_CONFIG[selectedBox].sublabel}
                   </span>
                   <span className="ml-auto text-sm font-semibold text-[var(--text-secondary)]">
@@ -532,7 +532,7 @@ export default function NineBoxPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-[var(--text-muted)]">
+                <p className="text-caption">
                   Edit potential scores to re-plot employees in the grid dynamically
                 </p>
               </div>

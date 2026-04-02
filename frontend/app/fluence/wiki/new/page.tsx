@@ -356,7 +356,7 @@ export default function CreateWikiPage() {
                               <div className={`text-sm font-medium ${isSelected ? 'text-accent-500' : 'text-[var(--text-primary)]'}`}>
                                 {opt.label}
                               </div>
-                              <div className="text-xs text-[var(--text-muted)]">{opt.desc}</div>
+                              <div className="text-caption">{opt.desc}</div>
                             </div>
                             {isSelected && (
                               <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-accent-500" />
@@ -400,7 +400,7 @@ export default function CreateWikiPage() {
                   disabled={isSubmitting}
                   className="input-aura text-sm"
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for a top-level page</p>
+                <p className="text-caption mt-1">Leave empty for a top-level page</p>
               </div>
             </div>
 
@@ -417,7 +417,7 @@ export default function CreateWikiPage() {
               <button
                 type="button"
                 onClick={() => setPublishDrawerOpen(false)}
-                className="w-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                className="w-full text-body-secondary hover:text-[var(--text-primary)] py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
                 Continue Editing
               </button>

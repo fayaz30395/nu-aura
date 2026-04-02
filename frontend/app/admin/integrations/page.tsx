@@ -246,7 +246,7 @@ export default function AdminIntegrationsPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="flex items-center gap-4">
           <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Settings className="h-6 w-6 text-white" />
@@ -341,7 +341,7 @@ export default function AdminIntegrationsPage() {
       {/* SMS Integration */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <MessageSquare className="h-5 w-5 text-accent-600 dark:text-accent-400" />
@@ -358,19 +358,19 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="skeuo-deboss text-body-muted">Provider</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.provider || 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Status</p>
+              <p className="skeuo-deboss text-body-muted">Status</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Last Checked</p>
+              <p className="skeuo-deboss text-body-muted">Last Checked</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.lastChecked
                   ? new Date(smsStatus.lastChecked).toLocaleTimeString()
@@ -534,7 +534,7 @@ export default function AdminIntegrationsPage() {
       {/* Payment Gateway Integration */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <CreditCard className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -551,19 +551,19 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="skeuo-deboss text-body-muted">Provider</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.provider || 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Status</p>
+              <p className="skeuo-deboss text-body-muted">Status</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
             <div className="skeuo-card p-4 rounded-lg border border-[var(--border-main)]">
-              <p className="skeuo-deboss text-sm text-[var(--text-muted)]">Supported Methods</p>
+              <p className="skeuo-deboss text-body-muted">Supported Methods</p>
               <p className="skeuo-emboss text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.supportedMethods?.length || 0}
               </p>
@@ -617,7 +617,7 @@ export default function AdminIntegrationsPage() {
                 {paymentStatus.supportedMethods.map((method) => (
                   <span
                     key={method}
-                    className="badge-status px-4 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
+                    className="badge-status px-4 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-body-secondary"
                   >
                     {method}
                   </span>

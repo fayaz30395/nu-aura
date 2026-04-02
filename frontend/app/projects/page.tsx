@@ -245,10 +245,10 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
+            <div className="px-4 py-4 text-body-muted">Searching owners...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">No owners found</div>
+            <div className="px-4 py-4 text-body-muted">No owners found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -257,13 +257,13 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
                   <button
                     type="button"
                     aria-label={`Select ${buildEmployeeName(owner)}`}
-                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
                       {buildEmployeeName(owner)}
                     </span>
-                    <span className="text-xs text-[var(--text-muted)]">
+                    <span className="text-caption">
                       {owner.employeeCode || owner.officialEmail}
                     </span>
                   </button>
@@ -382,10 +382,10 @@ function MultiOwnerTypeahead({
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching owners...</div>
+            <div className="px-4 py-4 text-body-muted">Searching owners...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">
+            <div className="px-4 py-4 text-body-muted">
               {values.length >= maxOwners ? 'Maximum owners reached' : 'No owners found'}
             </div>
           )}
@@ -396,13 +396,13 @@ function MultiOwnerTypeahead({
                   <button
                     type="button"
                     aria-label={`Select ${buildEmployeeName(owner)}`}
-                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
                       {buildEmployeeName(owner)}
                     </span>
-                    <span className="text-xs text-[var(--text-muted)]">
+                    <span className="text-caption">
                       {owner.employeeCode || owner.officialEmail}
                     </span>
                   </button>
@@ -696,7 +696,7 @@ export default function ProjectsPage() {
           >
             {project.name}
           </button>
-          <div className="text-xs text-[var(--text-muted)]">
+          <div className="text-caption">
             {project.projectCode}
             {project.clientName ? ` • ${project.clientName}` : ''}
           </div>
@@ -734,7 +734,7 @@ export default function ProjectsPage() {
       key: 'client',
       header: 'Client',
       accessor: (project: HrmsProject) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {project.clientName || '—'}
         </span>
       ),
@@ -744,7 +744,7 @@ export default function ProjectsPage() {
       key: 'budget',
       header: 'Budget',
       accessor: (project: HrmsProject) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {project.budget != null
             ? `${project.currency || '₹'}${project.budget.toLocaleString('en-IN')}`
             : '—'}
@@ -781,7 +781,7 @@ export default function ProjectsPage() {
       key: 'dates',
       header: 'Dates',
       accessor: (project: HrmsProject) => (
-        <div className="text-sm text-[var(--text-secondary)]">
+        <div className="text-body-secondary">
           {formatDate(project.startDate)}
           {' → '}
           {project.endDate ? formatDate(project.endDate) : project.expectedEndDate ? `${formatDate(project.expectedEndDate)} (Exp)` : '—'}
@@ -826,7 +826,7 @@ export default function ProjectsPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Projects & Allocations
             </h1>
-            <p className="text-sm text-[var(--text-muted)] skeuo-deboss">
+            <p className="text-body-muted skeuo-deboss">
               Track projects and manage team allocations.
             </p>
           </div>
@@ -873,7 +873,7 @@ export default function ProjectsPage() {
 
         {error && (
           <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
-            <CardContent className="flex items-center justify-between gap-4">
+            <CardContent className="row-between gap-4">
               <p className="text-sm text-danger-700 dark:text-danger-400">{error?.message ?? String(error)}</p>
               <Button variant="outline" size="sm" onClick={() => { void refetch(); }}>
                 Retry
@@ -1098,7 +1098,7 @@ export default function ProjectsPage() {
                   {...register('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
-                <span className="text-xs text-[var(--text-muted)]">— enables invoicing for this project</span>
+                <span className="text-caption">— enables invoicing for this project</span>
               </label>
 
               {watch('isBillable') && (
@@ -1164,7 +1164,7 @@ export default function ProjectsPage() {
                 <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                   Project code
                 </label>
-                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-sm text-[var(--text-secondary)]">
+                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
                   {editingProject?.projectCode}
                 </div>
               </div>

@@ -154,7 +154,7 @@ export default function PricingPage() {
       {/* Header */}
       <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
@@ -260,7 +260,7 @@ export default function PricingPage() {
                       <plan.icon className="h-6 w-6 text-white" />
                     </div>
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                    <p className="text-sm text-[var(--text-muted)]">{plan.description}</p>
+                    <p className="text-body-muted">{plan.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
@@ -300,13 +300,13 @@ export default function PricingPage() {
                       {plan.features.map((feature, i) => (
                         <div key={i} className="flex items-start gap-4">
                           <Check className="h-5 w-5 text-success-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-[var(--text-secondary)]">{feature}</span>
+                          <span className="text-body-secondary">{feature}</span>
                         </div>
                       ))}
                       {plan.notIncluded.map((feature, i) => (
                         <div key={i} className="flex items-start gap-4 opacity-40">
                           <X className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-[var(--text-muted)]">{feature}</span>
+                          <span className="text-body-muted">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -343,7 +343,7 @@ export default function PricingPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {addon.name}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mb-4">
+                  <p className="text-body-secondary mb-4">
                     {addon.description}
                   </p>
                   <div className="flex items-baseline gap-1">
@@ -352,7 +352,7 @@ export default function PricingPage() {
                         <span className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           ${addon.price}
                         </span>
-                        <span className="text-sm text-[var(--text-muted)]">/user/month</span>
+                        <span className="text-body-muted">/user/month</span>
                       </>
                     ) : (
                       <span className="text-xl font-semibold text-[var(--text-primary)]">
@@ -384,7 +384,7 @@ export default function PricingPage() {
               <Card key={index} padding="none" className="overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
+                  className="w-full px-6 py-4 row-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0" />
@@ -400,7 +400,7 @@ export default function PricingPage() {
                 </button>
                 {openFaq === index && (
                   <div className="px-6 pb-4 pt-2">
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed pl-8">
+                    <p className="text-body-secondary leading-relaxed pl-8">
                       {faq.answer}
                     </p>
                   </div>

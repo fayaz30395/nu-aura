@@ -118,7 +118,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-xs text-[var(--text-muted)] mt-4">
+          <div className="flex flex-wrap gap-4 text-caption mt-4">
             <span className="flex items-center gap-1">
               <Eye className="h-3 w-3" />
               {article.views} views
@@ -171,12 +171,12 @@ const ArticleDetailModal: React.FC<{
           </h2>
           <div className="flex items-center gap-4 mt-3 flex-wrap">
             <Badge variant="outline">{article.category}</Badge>
-            <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+            <span className="text-caption flex items-center gap-1">
               <Eye className="h-3 w-3" />
               {article.views} views
             </span>
             {article.author && (
-              <span className="text-xs text-[var(--text-muted)]">
+              <span className="text-caption">
                 by {article.author}
               </span>
             )}
@@ -239,7 +239,7 @@ const ArticleDetailModal: React.FC<{
             <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
               Related Articles
             </h4>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               More articles in {article.category} category (feature coming soon)
             </p>
           </div>
@@ -549,7 +549,7 @@ export default function KnowledgeBasePage() {
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                 Create New Article
               </h2>
-              <p className="text-sm text-[var(--text-secondary)] mt-1">
+              <p className="text-body-secondary mt-1">
                 Add a new article to the knowledge base
               </p>
             </div>
@@ -647,7 +647,7 @@ export default function KnowledgeBasePage() {
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               Submit a Support Ticket
             </h2>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <p className="text-body-secondary mt-1">
               Couldn&apos;t find the answer? We&apos;re here to help
             </p>
           </div>

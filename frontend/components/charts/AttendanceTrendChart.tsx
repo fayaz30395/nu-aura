@@ -26,10 +26,10 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data
               <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
               <XAxis
                 dataKey="date"
-                className="text-xs text-[var(--text-muted)]"
+                className="text-caption"
                 tick={{ fill: 'currentColor' }}
               />
-              <YAxis className="text-xs text-[var(--text-muted)]" tick={{ fill: 'currentColor' }} />
+              <YAxis className="text-caption" tick={{ fill: 'currentColor' }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'var(--chart-tooltip-bg)',

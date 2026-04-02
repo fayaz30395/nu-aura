@@ -92,7 +92,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           ) : message.isStreaming ? (
             <div className="flex items-center gap-1.5 py-0.5">
               <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500" />
-              <span className="text-xs text-[var(--text-muted)]">Thinking...</span>
+              <span className="text-caption">Thinking...</span>
             </div>
           ) : null}
 

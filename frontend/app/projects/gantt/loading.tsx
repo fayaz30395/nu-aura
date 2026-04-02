@@ -3,7 +3,7 @@ export default function GanttLoading() {
   return (
     <div className="p-6 space-y-4 animate-pulse">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="space-y-2">
           <div className="h-7 w-44 bg-[var(--bg-surface)] rounded" />
           <div className="h-4 w-60 bg-[var(--bg-surface)] rounded" />
@@ -33,7 +33,7 @@ export default function GanttLoading() {
 
         {/* Gantt rows */}
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="flex border-b border-[var(--border-subtle)] last:border-b-0">
+          <div key={i} className="flex divider-b last:border-b-0">
             {/* Task name column */}
             <div className="w-64 flex-shrink-0 p-4 border-r border-[var(--border-main)] flex items-center gap-2">
               {i % 3 === 0 && <div className="w-3 h-3 bg-[var(--bg-surface)] rounded-md flex-shrink-0" />}

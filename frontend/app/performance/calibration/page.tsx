@@ -86,12 +86,12 @@ function DistributionChart({
           );
         })}
         {total === 0 && (
-          <div className="bg-[var(--bg-secondary)] flex-1 flex items-center justify-center text-xs text-[var(--text-muted)]">
+          <div className="bg-[var(--bg-secondary)] flex-1 flex items-center justify-center text-caption">
             No ratings
           </div>
         )}
       </div>
-      <div className="flex gap-2 text-xs text-[var(--text-muted)] flex-wrap">
+      <div className="flex gap-2 text-caption flex-wrap">
         {ratings.map((r, i) => (
           <span key={r} className="flex items-center gap-1">
             <span className={`inline-block w-2 h-2 rounded-md ${colors[i]}`} />
@@ -426,7 +426,7 @@ export default function CalibrationPage() {
                     counts={ratingCounts}
                     total={totalRated}
                   />
-                  <p className="text-xs text-[var(--text-muted)] mt-2">
+                  <p className="text-caption mt-2">
                     {totalRated} of {filteredAndSorted.length} employees have ratings
                   </p>
                 </div>
@@ -440,7 +440,7 @@ export default function CalibrationPage() {
                       <Users className="text-accent-600 dark:text-accent-400" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-[var(--text-muted)]">Total Employees</p>
+                      <p className="text-caption">Total Employees</p>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {filteredAndSorted.length}
                       </p>
@@ -454,7 +454,7 @@ export default function CalibrationPage() {
                       <Target className="text-success-600 dark:text-success-400" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-[var(--text-muted)]">Rated</p>
+                      <p className="text-caption">Rated</p>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {totalRated} ({Math.round((totalRated / Math.max(1, filteredAndSorted.length)) * 100)}%)
                       </p>
@@ -468,7 +468,7 @@ export default function CalibrationPage() {
                       <BarChart3 className="text-accent-800 dark:text-accent-600" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-[var(--text-muted)]">Avg Rating</p>
+                      <p className="text-caption">Avg Rating</p>
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {totalRated > 0
                           ? (

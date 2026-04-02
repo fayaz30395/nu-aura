@@ -244,7 +244,7 @@ export default function EmployeeDashboardPage() {
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {data.stats.totalLeavesTaken}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)] mt-1">This year</p>
+                  <p className="text-caption mt-1">This year</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400" />
@@ -263,7 +263,7 @@ export default function EmployeeDashboardPage() {
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {data.stats.totalLeavesRemaining}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Remaining</p>
+                  <p className="text-caption mt-1">Remaining</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
                   <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400" />
@@ -282,7 +282,7 @@ export default function EmployeeDashboardPage() {
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {data.attendanceSummary.currentMonth.averageWorkHours.toFixed(1)}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Per day</p>
+                  <p className="text-caption mt-1">Per day</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
                   <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400" />
@@ -299,7 +299,7 @@ export default function EmployeeDashboardPage() {
             {/* Attendance Trend Chart */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div>
                     <CardTitle>Attendance Trend</CardTitle>
                     <CardDescription>Last 7 days attendance pattern</CardDescription>
@@ -340,7 +340,7 @@ export default function EmployeeDashboardPage() {
                     {data.attendanceSummary.recentHistory.slice(0, 5).map((record, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg"
+                        className="row-between p-4 bg-[var(--bg-secondary)] rounded-lg"
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-[var(--shadow-card)]">
@@ -354,12 +354,12 @@ export default function EmployeeDashboardPage() {
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
                               {record.checkInTime && (
-                                <span className="text-xs text-[var(--text-muted)]">
+                                <span className="text-caption">
                                   In: {formatTime(record.checkInTime)}
                                 </span>
                               )}
                               {record.checkOutTime && (
-                                <span className="text-xs text-[var(--text-muted)]">
+                                <span className="text-caption">
                                   • Out: {formatTime(record.checkOutTime)}
                                 </span>
                               )}
@@ -393,7 +393,7 @@ export default function EmployeeDashboardPage() {
             {/* Career Progress */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div>
                     <CardTitle>Career Progress</CardTitle>
                     <CardDescription>Goals, reviews, and training</CardDescription>
@@ -415,7 +415,7 @@ export default function EmployeeDashboardPage() {
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                    <p className="text-caption mt-1">
                       Active Goals
                     </p>
                   </div>
@@ -424,7 +424,7 @@ export default function EmployeeDashboardPage() {
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.recentReviews.length}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                    <p className="text-caption mt-1">
                       Reviews
                     </p>
                   </div>
@@ -433,7 +433,7 @@ export default function EmployeeDashboardPage() {
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.completedTrainings}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                    <p className="text-caption mt-1">
                       Completed
                     </p>
                   </div>
@@ -442,7 +442,7 @@ export default function EmployeeDashboardPage() {
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.upcomingTrainings}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
+                    <p className="text-caption mt-1">
                       Upcoming
                     </p>
                   </div>
@@ -499,7 +499,7 @@ export default function EmployeeDashboardPage() {
             {/* Leave Balances */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <CardTitle>Leave Balance</CardTitle>
                   <Button
                     variant="ghost"
@@ -515,7 +515,7 @@ export default function EmployeeDashboardPage() {
                 <div className="space-y-4">
                   {data.leaveBalances.map((balance) => (
                     <div key={balance.leaveTypeId}>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="row-between mb-2">
                         <div className="flex items-center gap-2">
                           <div
                             className="w-3 h-3 rounded-full"
@@ -527,7 +527,7 @@ export default function EmployeeDashboardPage() {
                             {balance.leaveTypeName}
                           </span>
                         </div>
-                        <span className="text-sm text-[var(--text-muted)]">
+                        <span className="text-body-muted">
                           {balance.available} / {balance.totalQuota}
                         </span>
                       </div>
@@ -576,7 +576,7 @@ export default function EmployeeDashboardPage() {
                         <p className="text-sm font-medium text-[var(--text-primary)]">
                           {event.title}
                         </p>
-                        <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                        <p className="text-caption mt-0.5">
                           {formatDate(event.date)}
                         </p>
                       </div>

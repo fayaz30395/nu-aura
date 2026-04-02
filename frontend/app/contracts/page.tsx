@@ -112,7 +112,7 @@ export default function ContractsPage() {
 
         {/* Error State */}
         {isError && (
-          <div className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center justify-between">
+          <div className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl row-between">
             <div className="flex items-center gap-4">
               <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
               <p className="text-sm text-danger-600 dark:text-danger-400">

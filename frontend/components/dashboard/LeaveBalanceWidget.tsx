@@ -78,14 +78,14 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
 
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="row-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
         <Link
           href="/leave"
-          className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+          className="inline-flex items-center gap-0.5 text-caption hover:text-[var(--text-secondary)] transition-colors"
         >
           View All <ArrowRight className="h-3 w-3" />
         </Link>
@@ -101,7 +101,7 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
         <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
           {current.leaveName}
         </p>
-        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+        <p className="mt-0.5 text-caption">
           {current.used} used · {current.total} total
         </p>
       </div>

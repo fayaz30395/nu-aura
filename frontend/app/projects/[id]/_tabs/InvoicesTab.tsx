@@ -85,7 +85,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
       key: 'dueDate',
       header: 'Due Date',
       accessor: (invoice: PSAInvoice) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatDate(invoice.dueDate)}
         </span>
       ),
@@ -95,7 +95,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
       key: 'amount',
       header: 'Amount',
       accessor: (invoice: PSAInvoice) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatCurrency(invoice.totalAmount)}
         </span>
       ),
@@ -132,7 +132,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
   if (invoicesTotal === 0) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-between py-6">
+        <CardContent className="row-between py-6">
           <EmptyState
             title="No invoices"
             description="Create an invoice for this project."
@@ -175,7 +175,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Invoices</h2>
-              <p className="text-sm text-[var(--text-muted)]">Billing invoices for this project.</p>
+              <p className="text-body-muted">Billing invoices for this project.</p>
             </div>
             <Button
               leftIcon={<Plus className="h-4 w-4" />}

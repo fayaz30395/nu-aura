@@ -204,7 +204,7 @@ export default function ProjectDetailPage() {
       <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: 'Project' }]}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
-          <span className="ml-2 text-sm text-[var(--text-muted)]">Loading project...</span>
+          <span className="ml-2 text-body-muted">Loading project...</span>
         </div>
       </AppLayout>
     );
@@ -249,7 +249,7 @@ export default function ProjectDetailPage() {
                   );
                 })()}
               </div>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 {project?.projectCode || '—'}
               </p>
             </div>
@@ -348,7 +348,7 @@ export default function ProjectDetailPage() {
                 <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                   Project code
                 </label>
-                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-sm text-[var(--text-secondary)]">
+                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
                   {project?.projectCode}
                 </div>
               </div>
@@ -407,7 +407,7 @@ export default function ProjectDetailPage() {
                   {...editRegister('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
-                <span className="text-xs text-[var(--text-muted)]">— enables invoicing</span>
+                <span className="text-caption">— enables invoicing</span>
               </label>
 
               {editWatch('isBillable') && (

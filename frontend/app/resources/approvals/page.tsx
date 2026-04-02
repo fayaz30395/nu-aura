@@ -133,7 +133,7 @@ export default function ApprovalsPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Allocation Approvals
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="mt-1 text-body-muted">
               Review and approve over-allocation requests
             </p>
           </div>
@@ -243,7 +243,7 @@ export default function ApprovalsPage() {
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedRequest.projectName}
                           </p>
-                          <p className="text-sm text-[var(--text-muted)]">
+                          <p className="text-body-muted">
                             {selectedRequest.role} • {selectedRequest.projectCode}
                           </p>
                         </div>
@@ -253,13 +253,13 @@ export default function ApprovalsPage() {
                           <p className="text-lg font-semibold text-accent-700 dark:text-accent-400">
                             +{formatAllocationPercentage(selectedRequest.requestedAllocation)}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">Requested</p>
+                          <p className="text-caption">Requested</p>
                         </div>
                         <div>
                           <p className="text-lg font-semibold text-danger-600 dark:text-danger-400">
                             {formatAllocationPercentage(selectedRequest.resultingAllocation)}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">Resulting Total</p>
+                          <p className="text-caption">Resulting Total</p>
                         </div>
                       </div>
                     </div>
@@ -269,13 +269,13 @@ export default function ApprovalsPage() {
                         <p className="text-sm font-medium text-[var(--text-secondary)]">
                           Reason
                         </p>
-                        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                        <p className="mt-1 text-body-secondary">
                           {selectedRequest.requestReason}
                         </p>
                       </div>
                     )}
 
-                    <div className="text-sm text-[var(--text-muted)]">
+                    <div className="text-body-muted">
                       Requested by {selectedRequest.requestedByName} on{' '}
                       {format(parseISO(selectedRequest.createdAt), 'MMM d, yyyy')}
                     </div>
@@ -322,7 +322,7 @@ export default function ApprovalsPage() {
             Are you sure you want to approve this over-allocation request for{' '}
             <strong>{selectedRequest?.employeeName}</strong>?
           </p>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
+          <p className="mt-2 text-body-muted">
             This will allow them to be allocated at{' '}
             <strong className="text-danger-600">
               {selectedRequest && formatAllocationPercentage(selectedRequest.resultingAllocation)}
@@ -433,7 +433,7 @@ function RequestCard({
               <p className="font-medium text-[var(--text-primary)]">
                 {request.employeeName}
               </p>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 {request.projectName}
               </p>
             </div>
@@ -441,14 +441,14 @@ function RequestCard({
           <StatusBadge status={request.status} />
         </div>
 
-        <div className="mt-3 flex items-center justify-between text-sm">
+        <div className="mt-3 row-between text-sm">
           <span className="text-[var(--text-muted)]">
             +{formatAllocationPercentage(request.requestedAllocation)} → {' '}
             <span className="font-medium text-danger-600 dark:text-danger-400">
               {formatAllocationPercentage(request.resultingAllocation)} total
             </span>
           </span>
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             {format(parseISO(request.createdAt), 'MMM d')}
           </span>
         </div>

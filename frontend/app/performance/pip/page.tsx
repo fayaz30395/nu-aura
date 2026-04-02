@@ -206,7 +206,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 row-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Performance Improvement Plan</h2>
           <button
             onClick={onClose}
@@ -290,7 +290,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-1">Start Date</label>
+                <label className="block text-caption mb-1">Start Date</label>
                 <input
                   type="date"
                   {...register('startDate')}
@@ -301,7 +301,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 )}
               </div>
               <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-1">End Date</label>
+                <label className="block text-caption mb-1">End Date</label>
                 <input
                   type="date"
                   {...register('endDate')}
@@ -439,10 +439,10 @@ function PIPDetailModal({
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 row-between">
           <div>
             <h2 className="text-xl font-bold text-[var(--text-primary)]">PIP Details</h2>
-            <p className="text-sm text-[var(--text-muted)] mt-0.5">{pip.employeeName}</p>
+            <p className="text-body-muted mt-0.5">{pip.employeeName}</p>
           </div>
           <button
             onClick={onClose}
@@ -457,21 +457,21 @@ function PIPDetailModal({
           {/* Info Grid */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-[var(--text-muted)] mb-1">Employee</p>
+              <p className="text-caption mb-1">Employee</p>
               <p className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</p>
             </div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] mb-1">Manager</p>
+              <p className="text-caption mb-1">Manager</p>
               <p className="font-semibold text-[var(--text-primary)]">{pip.managerName}</p>
             </div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] mb-1">Period</p>
+              <p className="text-caption mb-1">Period</p>
               <p className="font-semibold text-[var(--text-primary)]">
                 {formatDate(pip.startDate)} → {formatDate(pip.endDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[var(--text-muted)] mb-1">Status</p>
+              <p className="text-caption mb-1">Status</p>
               <div
                 className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                   STATUS_CONFIG[pip.status].bg
@@ -485,9 +485,9 @@ function PIPDetailModal({
           {/* Progress */}
           {pip.status === 'ACTIVE' && (
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="row-between mb-2">
                 <p className="text-sm font-medium text-[var(--text-secondary)]">Progress</p>
-                <span className="text-sm text-[var(--text-muted)]">{progress}% • {daysRemaining} days remaining</span>
+                <span className="text-body-muted">{progress}% • {daysRemaining} days remaining</span>
               </div>
               <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                 <div
@@ -509,7 +509,7 @@ function PIPDetailModal({
           {pip.goals && (
             <div>
               <p className="text-sm font-medium text-[var(--text-secondary)] mb-1.5">Goals & Objectives</p>
-              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-4 text-sm text-[var(--text-secondary)]">
+              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-4 text-body-secondary">
                 {pip.goals}
               </div>
             </div>
@@ -525,18 +525,18 @@ function PIPDetailModal({
                     key={checkIn.id || idx}
                     className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="row-between mb-2">
                       <p className="text-sm font-medium text-[var(--text-primary)]">
                         {formatDate(checkIn.checkInDate)}
                       </p>
                     </div>
                     {checkIn.progressNotes && (
-                      <p className="text-sm text-[var(--text-secondary)] mb-1">
+                      <p className="text-body-secondary mb-1">
                         <span className="text-[var(--text-muted)]">Progress: </span>{checkIn.progressNotes}
                       </p>
                     )}
                     {checkIn.managerComments && (
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         <span className="text-[var(--text-muted)]">Manager: </span>{checkIn.managerComments}
                       </p>
                     )}
@@ -544,7 +544,7 @@ function PIPDetailModal({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[var(--text-muted)] mb-4">No check-ins yet</p>
+              <p className="text-body-muted mb-4">No check-ins yet</p>
             )}
 
             {pip.status === 'ACTIVE' && (
@@ -630,7 +630,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
-          <p className="text-sm text-[var(--text-muted)]">{pip.reason || 'General'}</p>
+          <p className="text-body-muted">{pip.reason || 'General'}</p>
         </div>
         <div
           className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusConfig.bg} ${statusConfig.color} border ${statusConfig.border}`}
@@ -639,7 +639,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
         </div>
       </div>
 
-      <div className="space-y-2 mb-4 text-sm text-[var(--text-secondary)]">
+      <div className="space-y-2 mb-4 text-body-secondary">
         <div className="flex items-center gap-2">
           <Calendar size={14} />
           <span>
@@ -654,14 +654,14 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
 
       {pip.status === 'ACTIVE' && (
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="row-between mb-1.5">
             <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
-            <span className="text-xs text-[var(--text-muted)]">{progress}%</span>
+            <span className="text-caption">{progress}%</span>
           </div>
           <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
             <div className="bg-accent-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
           </div>
-          <p className="text-xs text-[var(--text-muted)] mt-1.5">{daysRemaining} days remaining</p>
+          <p className="text-caption mt-1.5">{daysRemaining} days remaining</p>
         </div>
       )}
 
@@ -748,7 +748,7 @@ export default function PIPPage() {
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
             <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
@@ -772,7 +772,7 @@ export default function PIPPage() {
                 <TrendingUp className="text-accent-600 dark:text-accent-400" size={20} />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Active PIPs</p>
+                <p className="text-body-muted">Active PIPs</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
               </div>
             </div>
@@ -783,7 +783,7 @@ export default function PIPPage() {
                 <CheckCircle2 className="text-success-600 dark:text-success-400" size={20} />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Completed</p>
+                <p className="text-body-muted">Completed</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
               </div>
             </div>
@@ -794,7 +794,7 @@ export default function PIPPage() {
                 <Calendar className="text-accent-800 dark:text-accent-600" size={20} />
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)]">Avg Duration</p>
+                <p className="text-body-muted">Avg Duration</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
               </div>
             </div>

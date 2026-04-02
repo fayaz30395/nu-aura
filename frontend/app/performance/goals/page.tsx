@@ -304,7 +304,7 @@ export default function GoalsPage() {
                   </div>
 
                   {goal.description && (
-                    <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">{goal.description}</p>
+                    <p className="text-body-secondary mb-4 line-clamp-2">{goal.description}</p>
                   )}
 
                   <div className="mb-4">
@@ -324,7 +324,7 @@ export default function GoalsPage() {
                     </div>
                   </div>
 
-                  <div className="text-sm text-[var(--text-secondary)] mb-4">
+                  <div className="text-body-secondary mb-4">
                     <div>Start: {goal.startDate ? new Date(goal.startDate).toLocaleDateString() : 'N/A'}</div>
                     <div>End: {goal.endDate ? new Date(goal.endDate).toLocaleDateString() : 'N/A'}</div>
                   </div>
