@@ -47,6 +47,8 @@
     --bg-input: #ffffff;
     --bg-sidebar: #0e1528;
     --bg-overlay: rgba(14, 21, 40, 0.40);
+    --surface-2: #f0f2f7;
+    --skeleton-base: #eceef5;
 
     /* ── Background Atmosphere (Single blue wash) ────────────────── */
     --bg-pattern:
@@ -204,6 +206,8 @@
     --bg-input: #0e1322;
     --bg-sidebar: #060a14;
     --bg-overlay: rgba(8, 12, 24, 0.80);
+    --surface-2: #161c30;
+    --skeleton-base: #1e2440;
 
     /* ── Background Atmosphere (Deep blue wash) ──────────────────── */
     --bg-pattern:
