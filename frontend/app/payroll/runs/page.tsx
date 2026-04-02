@@ -44,7 +44,7 @@ export default function PayrollRunsPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.PAYROLL_VIEW)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard');
     }
   }, [permReady, hasPermission, router]);
 

@@ -369,8 +369,9 @@ export default function EmployeeDetailPage() {
               <div className="flex gap-4">
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
+                    type="button"
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit
