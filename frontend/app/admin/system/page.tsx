@@ -164,9 +164,11 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
-              {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalTenants ?? 0}
-            </Text>
+            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+              <Text size="lg" fw={700} className="text-[var(--text-primary)]">
+                {overview?.totalTenants ?? 0}
+              </Text>
+            )}
             <Group gap="xs">
               <Badge size="sm" variant="light" color="blue">
                 {overview?.activeTenants ?? 0} Active
@@ -190,9 +192,11 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
-              {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalActiveUsers ?? 0}
-            </Text>
+            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+              <Text size="lg" fw={700} className="text-[var(--text-primary)]">
+                {overview?.totalActiveUsers ?? 0}
+              </Text>
+            )}
             <Text size="xs" className="text-[var(--text-muted)]">
               Across all tenants
             </Text>
@@ -214,9 +218,11 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
-              {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.totalEmployees ?? 0}
-            </Text>
+            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+              <Text size="lg" fw={700} className="text-[var(--text-primary)]">
+                {overview?.totalEmployees ?? 0}
+              </Text>
+            )}
             <Text size="xs" className="text-[var(--text-muted)]">
               System-wide total
             </Text>
@@ -238,9 +244,11 @@ export default function SystemDashboard() {
             </div>
           </Group>
           <div className="space-y-2">
-            <Text size="lg" fw={700} className="text-[var(--text-primary)]">
-              {overviewQuery.isLoading ? <Skeleton height={20} /> : overview?.pendingApprovals ?? 0}
-            </Text>
+            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+              <Text size="lg" fw={700} className="text-[var(--text-primary)]">
+                {overview?.pendingApprovals ?? 0}
+              </Text>
+            )}
             <Text size="xs" className="text-[var(--text-muted)]">
               Awaiting action
             </Text>
