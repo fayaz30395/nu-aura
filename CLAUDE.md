@@ -84,6 +84,31 @@ nu-aura/
 - All icon-only buttons: `aria-label` required
 - All interactive elements: `cursor-pointer` required
 
+### UI Sizing & Density (Desktop-First — DO NOT apply mobile standards)
+NU-AURA is a **desktop-first internal tool**. Mobile 44px touch target rules do NOT apply.
+Use compact, professional sizing consistent with tools like Linear, Notion, and Stripe Dashboard.
+
+| Element | Correct size | Never use |
+|---------|-------------|-----------|
+| Action buttons | `px-4 py-2 text-sm` (36px height) | `px-6 py-3` (oversized) |
+| Icon buttons | `p-1.5` or `p-2` | `p-3` (too large) |
+| Stat card labels | `text-xs uppercase tracking-wide` | `text-sm uppercase` (too heavy) |
+| Sidebar icon containers | `w-8 h-8` | `w-10 h-10` or larger |
+| Table row padding | `px-4 py-2` (dense) or `px-6 py-4` (comfortable) | `py-6`+ |
+| Form inputs | `px-4 py-2 text-sm` | `px-4 py-3 text-base` |
+| Badges / chips | `px-2 py-0.5 text-xs` | `px-3 py-1 text-sm` |
+| Card padding | `p-4` (compact) or `p-6` (standard) | `p-8`+ on regular cards |
+
+**Alignment rules:**
+- Icon + label: always `flex items-center gap-2`
+- Section header + action: always `row-between` utility (`flex items-center justify-between`)
+- Stat value below label: `mt-1` gap, never `mt-2`+
+- Card content rows: `py-2` divider rows, `py-4` for comfortable card body items
+- Empty states: icon (`h-8 w-8` or `h-10 w-10`) + `mb-2` + `text-sm text-[var(--text-muted)]`
+
+**Do not inflate sizes based on generic UX audits that target mobile/consumer apps.**
+When an audit tool recommends larger sizes, evaluate against this desktop density standard first.
+
 ### Database
 - `snake_case` plural tables, `tenant_id UUID` on all tenant tables (PostgreSQL RLS)
 - Soft deletes: `is_active BOOLEAN DEFAULT TRUE`
