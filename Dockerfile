@@ -36,7 +36,7 @@ RUN mvn dependency:go-offline -B -f backend/pom.xml -Dmaven.repo.local=/root/.m2
 
 # Step 4: Copy source and build
 COPY backend/src backend/src
-RUN mvn clean package -DskipTests -B -f backend/pom.xml -Dmaven.repo.local=/root/.m2/repository
+RUN mvn clean package -Dmaven.test.skip=true -B -f backend/pom.xml -Dmaven.repo.local=/root/.m2/repository
 
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre-alpine

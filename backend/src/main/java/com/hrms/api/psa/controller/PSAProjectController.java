@@ -4,6 +4,10 @@ import com.hrms.application.psa.service.PSAService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.psa.PSAProject;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +38,9 @@ public class PSAProjectController {
 
     @GetMapping
     @RequiresPermission(PROJECT_VIEW)
-    public ResponseEntity<List<PSAProject>> getAllProjects() {
-        return ResponseEntity.ok(psaService.getAllProjects());
+    public ResponseEntity<Page<PSAProject>> getAllProjects(
+            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(psaService.getAllProjects(pageable));
     }
 
     @GetMapping("/{id}")
