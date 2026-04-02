@@ -354,7 +354,7 @@ export default function TravelRequestDetailsPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex-1">
-                      <p className="text-sm text-[var(--text-muted)]">From</p>
+                      <p className="text-body-muted">From</p>
                       <p className="text-base font-medium text-[var(--text-primary)]">
                         {travelRequest.originCity}
                       </p>
@@ -365,7 +365,7 @@ export default function TravelRequestDetailsPage() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-[var(--text-muted)]">To</p>
+                      <p className="text-body-muted">To</p>
                       <p className="text-base font-medium text-[var(--text-primary)]">
                         {travelRequest.destinationCity}
                       </p>
@@ -419,7 +419,7 @@ export default function TravelRequestDetailsPage() {
                       Purpose
                     </h3>
                   </div>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-body-secondary">
                     {travelRequest.purpose}
                   </p>
                 </div>
@@ -433,7 +433,7 @@ export default function TravelRequestDetailsPage() {
                         Client
                       </h3>
                     </div>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       {travelRequest.clientName}
                     </p>
                   </div>
@@ -452,7 +452,7 @@ export default function TravelRequestDetailsPage() {
                       {travelRequest.transportMode}
                     </p>
                     {travelRequest.transportClass && (
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         {travelRequest.transportClass}
                       </p>
                     )}
@@ -483,20 +483,20 @@ export default function TravelRequestDetailsPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-[var(--text-muted)]">Check-in</p>
+                        <p className="text-body-muted">Check-in</p>
                         <p className="text-base font-medium text-[var(--text-primary)]">
                           {travelRequest.checkInDate && formatDate(travelRequest.checkInDate)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-[var(--text-muted)]">Check-out</p>
+                        <p className="text-body-muted">Check-out</p>
                         <p className="text-base font-medium text-[var(--text-primary)]">
                           {travelRequest.checkOutDate && formatDate(travelRequest.checkOutDate)}
                         </p>
                       </div>
                     </div>
                     {travelRequest.hotelPreference && (
-                      <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                      <p className="mt-2 text-body-secondary">
                         Preference: {travelRequest.hotelPreference}
                       </p>
                     )}
@@ -509,7 +509,7 @@ export default function TravelRequestDetailsPage() {
                     <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Special Instructions
                     </h3>
-                    <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-secondary)] p-4 rounded-lg">
+                    <p className="text-body-secondary bg-[var(--bg-secondary)] p-4 rounded-lg">
                       {travelRequest.specialInstructions}
                     </p>
                   </div>
@@ -519,7 +519,7 @@ export default function TravelRequestDetailsPage() {
 
             {/* Travel Expenses */}
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
-              <div className="p-6 border-b border-[var(--border-main)] flex items-center justify-between">
+              <div className="p-6 border-b border-[var(--border-main)] row-between">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                     <Receipt className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -528,7 +528,7 @@ export default function TravelRequestDetailsPage() {
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       Travel Expenses
                     </h2>
-                    <p className="text-sm text-[var(--text-muted)]">
+                    <p className="text-body-muted">
                       {expenses.length} expense(s)
                     </p>
                   </div>
@@ -571,10 +571,10 @@ export default function TravelRequestDetailsPage() {
                               {expense.status}
                             </span>
                           </div>
-                          <p className="text-sm text-[var(--text-secondary)]">
+                          <p className="text-body-secondary">
                             {expense.description}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)] mt-1">
+                          <p className="text-caption mt-1">
                             {formatDate(expense.expenseDate)}
                           </p>
                         </div>
@@ -610,8 +610,8 @@ export default function TravelRequestDetailsPage() {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">
+                <div className="row-between">
+                  <span className="text-body-secondary">
                     Estimated Cost
                   </span>
                   <span className="font-medium text-[var(--text-primary)]">
@@ -621,16 +621,16 @@ export default function TravelRequestDetailsPage() {
 
                 {travelRequest.advanceRequired > 0 && (
                   <>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--text-secondary)]">
+                    <div className="row-between">
+                      <span className="text-body-secondary">
                         Advance Required
                       </span>
                       <span className="font-medium text-warning-600 dark:text-warning-400">
                         {formatCurrency(travelRequest.advanceRequired)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--text-secondary)]">
+                    <div className="row-between">
+                      <span className="text-body-secondary">
                         Advance Approved
                       </span>
                       <span className="font-medium text-success-600 dark:text-success-400">
@@ -643,16 +643,16 @@ export default function TravelRequestDetailsPage() {
                 {expenses.length > 0 && (
                   <>
                     <div className="pt-3 border-t border-[var(--border-main)]" />
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--text-secondary)]">
+                    <div className="row-between">
+                      <span className="text-body-secondary">
                         Total Expenses
                       </span>
                       <span className="font-medium text-[var(--text-primary)]">
                         {formatCurrency(totalExpenses)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--text-secondary)]">
+                    <div className="row-between">
+                      <span className="text-body-secondary">
                         Approved Expenses
                       </span>
                       <span className="font-medium text-success-600 dark:text-success-400">
@@ -678,7 +678,7 @@ export default function TravelRequestDetailsPage() {
               <div className="space-y-4">
                 {travelRequest.submittedDate && (
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)]">Submitted On</p>
+                    <p className="text-body-secondary">Submitted On</p>
                     <p className="font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.submittedDate)}
                     </p>
@@ -687,12 +687,12 @@ export default function TravelRequestDetailsPage() {
 
                 {travelRequest.approvedDate && (
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)]">Approved On</p>
+                    <p className="text-body-secondary">Approved On</p>
                     <p className="font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.approvedDate)}
                     </p>
                     {travelRequest.approverName && (
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         By: {travelRequest.approverName}
                       </p>
                     )}
@@ -724,7 +724,7 @@ export default function TravelRequestDetailsPage() {
               </div>
 
               <div>
-                <p className="text-sm text-[var(--text-secondary)]">Employee Name</p>
+                <p className="text-body-secondary">Employee Name</p>
                 <p className="font-medium text-[var(--text-primary)]">
                   {travelRequest.employeeName || 'N/A'}
                 </p>
@@ -741,7 +741,7 @@ export default function TravelRequestDetailsPage() {
         </ModalHeader>
         <ModalBody>
           <div className="space-y-4">
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               Please provide a reason for rejecting this travel request.
             </p>
             <Textarea
@@ -778,7 +778,7 @@ export default function TravelRequestDetailsPage() {
         </ModalHeader>
         <ModalBody>
           <div className="space-y-4">
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-body-secondary">
               Please provide a reason for cancelling this travel request.
             </p>
             <Textarea

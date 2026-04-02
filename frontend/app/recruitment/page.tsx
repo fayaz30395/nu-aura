@@ -326,7 +326,7 @@ export default function RecruitmentDashboard() {
         variants={containerVariants}
       >
         {/* Page Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <motion.div variants={itemVariants} className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Recruitment Dashboard
@@ -432,10 +432,10 @@ export default function RecruitmentDashboard() {
                           <h4 className="font-semibold text-[var(--text-primary)]">
                             {interview.candidateName || 'Candidate'}
                           </h4>
-                          <p className="text-sm text-[var(--text-muted)]">
+                          <p className="text-body-muted">
                             {interview.jobTitle || 'Position'}
                           </p>
-                          <div className="flex items-center gap-2 mt-2 text-xs text-[var(--text-muted)]">
+                          <div className="flex items-center gap-2 mt-2 text-caption">
                             <Clock className="h-3.5 w-3.5" />
                             {formatTime(interview.scheduledAt)}
                             {interview.interviewRound && (
@@ -491,7 +491,7 @@ export default function RecruitmentDashboard() {
                           <h3 className="font-semibold text-[var(--text-primary)]">
                             {job.jobTitle}
                           </h3>
-                          <div className="flex gap-4 mt-2 text-sm text-[var(--text-muted)]">
+                          <div className="flex gap-4 mt-2 text-body-muted">
                             {job.departmentName && (
                               <span className="flex items-center gap-1">
                                 <Users className="h-3.5 w-3.5" />
@@ -520,13 +520,13 @@ export default function RecruitmentDashboard() {
           {/* Recent Applications Card */}
           <Card className="h-fit">
             <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
                   Recent Applications
                 </CardTitle>
                 {recentApplications.length > 0 && (
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     {visibleApplications.length} of {recentApplications.length}
                   </span>
                 )}
@@ -563,10 +563,10 @@ export default function RecruitmentDashboard() {
                           >
                             {candidate.fullName}
                           </h3>
-                          <p className="text-sm text-[var(--text-muted)] truncate" title={candidate.jobTitle || 'Position not specified'}>
+                          <p className="text-body-muted truncate" title={candidate.jobTitle || 'Position not specified'}>
                             {candidate.jobTitle || 'Position not specified'}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)] mt-1">
+                          <p className="text-caption mt-1">
                             Applied {formatDate(candidate.appliedDate)}
                           </p>
                         </div>
@@ -580,7 +580,7 @@ export default function RecruitmentDashboard() {
                   {hasMore && (
                     <div ref={loadMoreRef} className="flex justify-center items-center py-4">
                       <Loader2 className="h-4 w-4 animate-spin text-accent-700 dark:text-accent-400 mr-2" />
-                      <span className="text-xs text-[var(--text-muted)]">
+                      <span className="text-caption">
                         Loading more candidates...
                       </span>
                     </div>

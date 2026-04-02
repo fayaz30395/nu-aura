@@ -99,7 +99,7 @@ export default function LinkedInPostsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <h1 className="text-2xl font-bold skeuo-emboss">
                   <Linkedin className="w-8 h-8 text-accent-600" />
@@ -184,7 +184,7 @@ export default function LinkedInPostsPage() {
                             </span>
                           </div>
                           {post.authorTitle && (
-                            <p className="text-sm text-[var(--text-muted)] truncate">
+                            <p className="text-body-muted truncate">
                               {post.authorTitle}
                             </p>
                           )}
@@ -199,7 +199,7 @@ export default function LinkedInPostsPage() {
 
                     {/* Content */}
                     <div className="p-6 space-y-4">
-                      <p className="text-sm text-[var(--text-secondary)] line-clamp-3">
+                      <p className="text-body-secondary line-clamp-3">
                         {post.contentSnippet}
                       </p>
 
@@ -248,9 +248,9 @@ export default function LinkedInPostsPage() {
 
                     {/* Footer */}
                     <div className="px-6 py-4 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
-                      <div className="flex items-center justify-between">
+                      <div className="row-between">
                         <div className="flex items-center gap-4">
-                          <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                          <span className="flex items-center gap-1 text-caption">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(post.postedAt)}
                           </span>
@@ -466,7 +466,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit LinkedIn Post' : 'Add LinkedIn Post'}
           </h2>
@@ -593,7 +593,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
               placeholder="tag1, tag2, tag3"
             />
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
+            <p className="mt-1 text-caption">
               Separate tags with commas
             </p>
           </div>
@@ -698,7 +698,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                 />
               )}
             />
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-body-secondary">
               This post is from Nulogic
             </span>
           </div>

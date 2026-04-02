@@ -397,7 +397,7 @@ export default function NewTravelRequestPage() {
                   {...register('isInternational')}
                   className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
                 />
-                <span className="text-sm text-[var(--text-secondary)]">International Travel</span>
+                <span className="text-body-secondary">International Travel</span>
               </label>
 
               {watchedIsInternational && (
@@ -407,7 +407,7 @@ export default function NewTravelRequestPage() {
                     {...register('visaRequired')}
                     className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
                   />
-                  <span className="text-sm text-[var(--text-secondary)]">Visa Required</span>
+                  <span className="text-body-secondary">Visa Required</span>
                 </label>
               )}
             </div>
@@ -461,7 +461,7 @@ export default function NewTravelRequestPage() {
                 {...register('cabRequired')}
                 className="w-4 h-4 text-accent-700 bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-accent-500"
               />
-              <span className="text-sm text-[var(--text-secondary)]">Local cab/taxi required</span>
+              <span className="text-body-secondary">Local cab/taxi required</span>
             </label>
           </div>
 
@@ -480,7 +480,7 @@ export default function NewTravelRequestPage() {
                 {...register('accommodationRequired')}
                 className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
               />
-              <span className="text-sm text-[var(--text-secondary)]">Accommodation required</span>
+              <span className="text-body-secondary">Accommodation required</span>
             </label>
 
             {watchedAccommodation && (

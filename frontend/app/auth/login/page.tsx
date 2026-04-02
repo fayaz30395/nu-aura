@@ -173,7 +173,7 @@ function DemoLoginPanel({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className="w-full row-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4" />
@@ -212,7 +212,7 @@ function DemoLoginPanel({
                     {account.role.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <div className="text-xs text-[var(--text-muted)] truncate">
+                <div className="text-caption truncate">
                   {account.department} &middot; {account.level}
                 </div>
               </div>
@@ -670,7 +670,7 @@ function LoginPage() {
                   Privacy Policy
                 </Link>
               </p>
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 NULogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
               </p>
             </div>

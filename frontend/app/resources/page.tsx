@@ -106,7 +106,7 @@ export default function ResourcesPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Resource Management
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)] skeuo-deboss">
+            <p className="mt-1 text-body-muted skeuo-deboss">
               Manage team capacity, allocations, and availability
             </p>
           </div>
@@ -160,7 +160,7 @@ export default function ResourcesPage() {
                         <h3 className="font-medium text-[var(--text-primary)]">
                           {card.title}
                         </h3>
-                        <p className="mt-1 text-sm text-[var(--text-muted)]">
+                        <p className="mt-1 text-body-muted">
                           {card.description}
                         </p>
                       </div>
@@ -184,7 +184,7 @@ export default function ResourcesPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Resource Management
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)] skeuo-deboss">
+            <p className="mt-1 text-body-muted skeuo-deboss">
               Manage team capacity, allocations, and availability
             </p>
           </div>
@@ -210,7 +210,7 @@ export default function ResourcesPage() {
               <AlertTriangle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
               <div className="flex-1">
                 <p className="font-medium text-danger-600 dark:text-danger-400">Error Loading Data</p>
-                <p className="text-sm text-[var(--text-secondary)]">
+                <p className="text-body-secondary">
                   {error instanceof Error ? error.message : 'Failed to load data'}
                 </p>
               </div>
@@ -282,7 +282,7 @@ export default function ResourcesPage() {
                       <h3 className="font-semibold text-[var(--text-primary)]">
                         {card.title}
                       </h3>
-                      <p className="mt-1 text-sm text-[var(--text-muted)]">
+                      <p className="mt-1 text-body-muted">
                         {card.description}
                       </p>
                     </div>
@@ -317,7 +317,7 @@ export default function ResourcesPage() {
                 {pendingApprovals.slice(0, 3).map((approval) => (
                   <div
                     key={approval.id}
-                    className="flex items-center justify-between rounded-lg border border-[var(--border-main)] p-4 dark:border-[var(--border-main)]"
+                    className="row-between rounded-lg border border-[var(--border-main)] p-4 dark:border-[var(--border-main)]"
                   >
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-900/30">
@@ -327,7 +327,7 @@ export default function ResourcesPage() {
                         <p className="font-medium text-[var(--text-primary)]">
                           {approval.employeeName}
                         </p>
-                        <p className="text-sm text-[var(--text-muted)]">
+                        <p className="text-body-muted">
                           {approval.projectName} • {approval.requestedAllocation}% allocation
                         </p>
                       </div>
@@ -336,7 +336,7 @@ export default function ResourcesPage() {
                       <p className="text-sm font-medium text-danger-600 dark:text-danger-400">
                         {approval.resultingAllocation}% total
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         Requested by {approval.requestedByName}
                       </p>
                     </div>
@@ -397,7 +397,7 @@ function QuickStatCard({
         </div>
         <div>
           <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
-          <p className="text-xs text-[var(--text-muted)]">{label}</p>
+          <p className="text-caption">{label}</p>
         </div>
       </CardContent>
     </Card>

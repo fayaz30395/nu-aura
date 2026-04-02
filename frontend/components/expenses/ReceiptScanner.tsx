@@ -258,7 +258,7 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
       {stage === 'review' && ocrResult && (
         <div className="space-y-4">
           {/* Confidence indicator */}
-          <div className="flex items-center justify-between p-2 bg-surface-50 dark:bg-surface-800 rounded-lg">
+          <div className="row-between p-2 bg-surface-50 dark:bg-surface-800 rounded-lg">
             <div className="flex items-center gap-2">
               <CheckCircle className={`w-4 h-4 ${confidenceColor(ocrResult.confidence)}`} />
               <span className={`text-sm font-medium ${confidenceColor(ocrResult.confidence)}`}>

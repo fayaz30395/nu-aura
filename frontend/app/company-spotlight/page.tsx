@@ -145,7 +145,7 @@ export default function CompanySpotlightPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <h1 className="text-2xl font-bold skeuo-emboss">
                   <Lightbulb className="w-8 h-8 text-warning-500" />
@@ -230,7 +230,7 @@ export default function CompanySpotlightPage() {
                                 {spotlight.title}
                               </h3>
                               {spotlight.description && (
-                                <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
+                                <p className="text-body-secondary mt-1 line-clamp-2">
                                   {spotlight.description}
                                 </p>
                               )}
@@ -250,7 +250,7 @@ export default function CompanySpotlightPage() {
                           </div>
 
                           {/* Metadata */}
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)]">
+                          <div className="flex flex-wrap items-center gap-4 text-body-muted">
                             <span>Order: {spotlight.displayOrder}</span>
                             {spotlight.startDate && (
                               <span className="flex items-center gap-1">
@@ -442,7 +442,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Spotlight Slide' : 'Create Spotlight Slide'}
           </h2>
@@ -556,7 +556,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   {...register('displayOrder', { valueAsNumber: true })}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                 />
-                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                <p className="mt-1 text-caption">
                   Lower numbers appear first
                 </p>
               </div>

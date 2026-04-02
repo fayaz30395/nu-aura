@@ -88,7 +88,7 @@ export function TimeClockWidget({
   return (
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="row-between mb-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-6 h-6 rounded-md" style={{ background: 'var(--accent-primary-subtle)' }}>
             <Clock className="h-3.5 w-3.5" style={{ color: 'var(--accent-primary)' }} />
@@ -135,7 +135,7 @@ export function TimeClockWidget({
               Attendance Completed
             </span>
           </div>
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             {workDurationMinutes != null
               ? `${Math.floor(workDurationMinutes / 60)}h ${workDurationMinutes % 60}m worked today`
               : checkOutTime

@@ -88,7 +88,7 @@ export function EmployeeStep({
     <>
       {/* Project Summary */}
       <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-4 border border-accent-200 dark:border-accent-800">
-        <div className="flex items-center justify-between mb-3">
+        <div className="row-between mb-3">
           <div>
             <h4 className="font-medium text-accent-800 dark:text-accent-200">{createdProject?.name}</h4>
             <p className="text-sm text-accent-700 dark:text-accent-400">
@@ -199,7 +199,7 @@ export function EmployeeStep({
                     type="button"
                     onClick={() => onAddEmployee(emp)}
                     disabled={isLoading || isFullyAllocated}
-                    className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between ${
+                    className={`w-full px-4 py-2.5 text-left text-sm row-between ${
                       isFullyAllocated
                         ? 'bg-surface-50 dark:bg-surface-900 opacity-60 cursor-not-allowed'
                         : 'hover:bg-surface-100 dark:hover:bg-surface-700'

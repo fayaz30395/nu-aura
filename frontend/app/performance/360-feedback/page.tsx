@@ -276,7 +276,7 @@ export default function Feedback360Page() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">360-Degree Feedback</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">
+          <p className="text-body-muted mt-1">
             Multi-rater feedback and performance assessment
           </p>
         </div>
@@ -353,7 +353,7 @@ export default function Feedback360Page() {
             <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <Users className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No feedback cycles</h3>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <p className="mt-1 text-body-muted">
                 Create a new 360-degree feedback cycle to get started.
               </p>
             </div>
@@ -375,11 +375,11 @@ export default function Feedback360Page() {
                     </span>
                   </div>
                   {cycle.description && (
-                    <p className="text-sm text-[var(--text-muted)] mb-3 line-clamp-2">
+                    <p className="text-body-muted mb-3 line-clamp-2">
                       {cycle.description}
                     </p>
                   )}
-                  <div className="space-y-2 text-xs text-[var(--text-muted)] mb-4">
+                  <div className="space-y-2 text-caption mb-4">
                     <div className="flex justify-between">
                       <span>Period:</span>
                       <span>
@@ -462,7 +462,7 @@ export default function Feedback360Page() {
             <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <CheckCircle className="mx-auto h-12 w-12 text-success-400" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">All caught up!</h3>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <p className="mt-1 text-body-muted">
                 You have no pending feedback reviews.
               </p>
             </div>
@@ -505,10 +505,10 @@ export default function Feedback360Page() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             {getRequestStatusIcon(request.status)}
-                            <span className="text-sm text-[var(--text-muted)]">{request.status}</span>
+                            <span className="text-body-muted">{request.status}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                        <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                           {new Date(request.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -539,7 +539,7 @@ export default function Feedback360Page() {
             <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
               <BarChart3 className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
               <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No results yet</h3>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <p className="mt-1 text-body-muted">
                 Your feedback summaries will appear here once reviews are complete.
               </p>
             </div>
@@ -555,7 +555,7 @@ export default function Feedback360Page() {
                       <h3 className="text-lg font-medium text-[var(--text-primary)]">
                         Feedback Summary
                       </h3>
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         Cycle: {summary.cycleId.slice(0, 8)}
                       </p>
                     </div>
@@ -610,7 +610,7 @@ export default function Feedback360Page() {
                       </h4>
                       {summary.avgCommunication && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-[var(--text-secondary)]">Communication</span>
+                          <span className="text-body-secondary">Communication</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
@@ -626,7 +626,7 @@ export default function Feedback360Page() {
                       )}
                       {summary.avgTeamwork && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-[var(--text-secondary)]">Teamwork</span>
+                          <span className="text-body-secondary">Teamwork</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
@@ -642,7 +642,7 @@ export default function Feedback360Page() {
                       )}
                       {summary.avgLeadership && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-[var(--text-secondary)]">Leadership</span>
+                          <span className="text-body-secondary">Leadership</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                               <div
@@ -665,7 +665,7 @@ export default function Feedback360Page() {
                       {summary.consolidatedStrengths && (
                         <div>
                           <h4 className="text-xs font-medium text-success-600 mb-1">Strengths</h4>
-                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                          <p className="text-body-secondary line-clamp-2">
                             {summary.consolidatedStrengths}
                           </p>
                         </div>
@@ -675,7 +675,7 @@ export default function Feedback360Page() {
                           <h4 className="text-xs font-medium text-warning-600 mb-1">
                             Areas for Improvement
                           </h4>
-                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                          <p className="text-body-secondary line-clamp-2">
                             {summary.consolidatedImprovements}
                           </p>
                         </div>
@@ -947,7 +947,7 @@ export default function Feedback360Page() {
           <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-[var(--border-main)]">
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
-              <p className="text-sm text-[var(--text-muted)] mt-1">
+              <p className="text-body-muted mt-1">
                 {selectedRequest.reviewerType} review for Employee #
                 {selectedRequest.subjectEmployeeId.slice(0, 8)}
               </p>
@@ -958,14 +958,14 @@ export default function Feedback360Page() {
                 <h3 className="text-sm font-medium text-[var(--text-primary)]">Competency Ratings</h3>
                 <div className="grid gap-4">
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Overall Performance</label>
+                    <label className="text-body-secondary">Overall Performance</label>
                     <RatingStars
                       rating={responseForm.overallRating || 0}
                       onChange={(r) => setResponseForm({ ...responseForm, overallRating: r })}
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Communication</label>
+                    <label className="text-body-secondary">Communication</label>
                     <RatingStars
                       rating={responseForm.communicationRating || 0}
                       onChange={(r) =>
@@ -974,14 +974,14 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Teamwork</label>
+                    <label className="text-body-secondary">Teamwork</label>
                     <RatingStars
                       rating={responseForm.teamworkRating || 0}
                       onChange={(r) => setResponseForm({ ...responseForm, teamworkRating: r })}
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Leadership</label>
+                    <label className="text-body-secondary">Leadership</label>
                     <RatingStars
                       rating={responseForm.leadershipRating || 0}
                       onChange={(r) =>
@@ -990,7 +990,7 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Problem Solving</label>
+                    <label className="text-body-secondary">Problem Solving</label>
                     <RatingStars
                       rating={responseForm.problemSolvingRating || 0}
                       onChange={(r) =>
@@ -999,7 +999,7 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-[var(--text-secondary)]">Technical Skills</label>
+                    <label className="text-body-secondary">Technical Skills</label>
                     <RatingStars
                       rating={responseForm.technicalSkillsRating || 0}
                       onChange={(r) =>

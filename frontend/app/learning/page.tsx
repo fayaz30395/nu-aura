@@ -190,7 +190,7 @@ export default function LearningPage() {
                             </span>
                           )}
                         </div>
-                        <div className="flex justify-between items-center text-sm text-[var(--text-secondary)] mb-4">
+                        <div className="flex justify-between items-center text-body-secondary mb-4">
                           <span>{course.totalEnrollments} enrolled</span>
                           {course.avgRating && (
                             <span className="flex items-center" aria-label={`Rating: ${course.avgRating.toFixed(1)} out of 5`}>
@@ -239,7 +239,7 @@ export default function LearningPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
-                          <div className="text-sm text-[var(--text-secondary)]">Progress</div>
+                          <div className="text-body-secondary">Progress</div>
                         </div>
                       </div>
 
@@ -251,7 +251,7 @@ export default function LearningPage() {
                         />
                       </div>
 
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-sm text-[var(--text-secondary)]">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-body-secondary">
                         <div>
                           <div>Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}</div>
                           {enrollment.lastAccessedAt && (
@@ -293,7 +293,7 @@ export default function LearningPage() {
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
                           <h3 className="font-semibold text-lg text-[var(--text-primary)]">{cert.courseTitle}</h3>
-                          <div className="text-sm text-[var(--text-secondary)] mt-1">
+                          <div className="text-body-secondary mt-1">
                             Certificate: {cert.certificateNumber}
                           </div>
                         </div>

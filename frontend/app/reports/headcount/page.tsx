@@ -96,10 +96,10 @@ export default function HeadcountReportPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="row-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Headcount Report</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">Organization headcount by department, type, and trend</p>
+            <p className="text-body-muted mt-1">Organization headcount by department, type, and trend</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -162,7 +162,7 @@ export default function HeadcountReportPage() {
                 </div>
                 <p className="text-3xl font-bold text-danger-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
                 {orgHealth?.turnover?.annualTurnoverRate != null && (
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
+                  <p className="text-caption mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
                 )}
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function HeadcountReportPage() {
                       ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-[var(--text-muted)] text-center py-8">No department data available</p>
+                  <p className="text-body-muted text-center py-8">No department data available</p>
                 )}
               </div>
 
@@ -227,7 +227,7 @@ export default function HeadcountReportPage() {
                   <div className="space-y-1.5">
                     {trend.map((t, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="text-xs text-[var(--text-muted)] w-16 shrink-0">{t.month}</span>
+                        <span className="text-caption w-16 shrink-0">{t.month}</span>
                         <div className="flex-1 h-5 bg-[var(--bg-surface)] rounded overflow-hidden relative">
                           <div
                             className="h-full bg-accent-500 rounded"
@@ -239,7 +239,7 @@ export default function HeadcountReportPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-[var(--text-muted)] text-center py-8">No trend data available</p>
+                  <p className="text-body-muted text-center py-8">No trend data available</p>
                 )}
               </div>
             </div>

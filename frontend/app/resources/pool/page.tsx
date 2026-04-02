@@ -151,7 +151,7 @@ export default function ResourcePoolPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Resource Pool</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-0.5">
+            <p className="text-body-muted mt-0.5">
               All employees with current project allocation status
             </p>
           </div>
@@ -205,7 +205,7 @@ export default function ResourcePoolPage() {
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                 <div className="flex items-center gap-1.5 mt-1">
                   <span className={`inline-block w-2 h-2 rounded-full ${stat.color.split(' ')[0]}`} />
-                  <p className="text-xs text-[var(--text-muted)]">{stat.label}</p>
+                  <p className="text-caption">{stat.label}</p>
                 </div>
               </button>
             ))}
@@ -239,7 +239,7 @@ export default function ResourcePoolPage() {
           {(search || statusFilter !== 'ALL' || deptFilter !== 'ALL') && (
             <button
               onClick={() => { setSearch(''); setStatusFilter('ALL'); setDeptFilter('ALL'); }}
-              className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+              className="px-4 py-2 text-body-muted hover:text-[var(--text-secondary)] transition-colors"
             >
               Clear filters
             </button>
@@ -291,7 +291,7 @@ export default function ResourcePoolPage() {
                             <div className="min-w-0">
                               <p className="font-medium text-[var(--text-primary)] truncate">{emp.employeeName}</p>
                               {emp.employeeCode && (
-                                <p className="text-xs text-[var(--text-muted)] font-mono">{emp.employeeCode}</p>
+                                <p className="text-caption font-mono">{emp.employeeCode}</p>
                               )}
                             </div>
                           </div>
@@ -317,7 +317,7 @@ export default function ResourcePoolPage() {
                                 </span>
                               ))}
                               {(emp.allocations || []).length > 3 && (
-                                <span className="text-xs text-[var(--text-muted)]">
+                                <span className="text-caption">
                                   +{(emp.allocations || []).length - 3} more
                                 </span>
                               )}
@@ -339,7 +339,7 @@ export default function ResourcePoolPage() {
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-4 border-t border-[var(--border-main)] text-xs text-[var(--text-muted)] flex items-center justify-between">
+            <div className="px-4 py-4 border-t border-[var(--border-main)] text-caption row-between">
               <span>Showing {filtered.length} of {employees.length} employees</span>
               <div className="flex items-center gap-4">
                 {[

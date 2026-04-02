@@ -21,7 +21,7 @@ export default function EditLockWarning({ lockedByName, onForceEdit }: EditLockW
       variant="light"
       className="mb-4"
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="row-between gap-4">
         <span className="text-sm">
           <strong>{lockedByName}</strong> is currently editing this page. Your changes may conflict.
         </span>

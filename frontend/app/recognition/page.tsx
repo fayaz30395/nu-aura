@@ -286,7 +286,7 @@ export default function RecognitionPage() {
                   <Award className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Received</p>
+                  <p className="text-body-secondary skeuo-deboss">Received</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function RecognitionPage() {
                   <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Given</p>
+                  <p className="text-body-secondary skeuo-deboss">Given</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
                 </div>
               </div>
@@ -312,7 +312,7 @@ export default function RecognitionPage() {
                   <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Activity</p>
+                  <p className="text-body-secondary skeuo-deboss">Total Activity</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
                 </div>
               </div>
@@ -410,7 +410,7 @@ export default function RecognitionPage() {
                               <h3 className="font-semibold text-[var(--text-primary)] break-words">
                                 {recognition.title}
                               </h3>
-                              <p className="text-sm text-[var(--text-secondary)] mt-1">
+                              <p className="text-body-secondary mt-1">
                                 {recognition.isAnonymous ? 'Someone' : recognition.giverName || 'A colleague'} recognized{' '}
                                 <span className="font-medium text-accent-700 dark:text-accent-400">
                                   {recognition.receiverName || 'a team member'}
@@ -444,7 +444,7 @@ export default function RecognitionPage() {
                             </div>
                           )}
 
-                          <div className="mt-3 flex items-center gap-4 text-sm text-[var(--text-muted)] flex-wrap">
+                          <div className="mt-3 flex items-center gap-4 text-body-muted flex-wrap">
                             {/* Reaction button with picker */}
                             <div className="relative">
                               <button
@@ -515,7 +515,7 @@ export default function RecognitionPage() {
                                 </button>
                               </div>
                               {recognition.commentsCount > 0 && (
-                                <p className="text-xs text-[var(--text-muted)] mt-2">
+                                <p className="text-caption mt-2">
                                   {recognition.commentsCount} comment{recognition.commentsCount !== 1 ? 's' : ''} - view all
                                 </p>
                               )}
@@ -547,7 +547,7 @@ export default function RecognitionPage() {
                 ) : leaderboard.length === 0 ? (
                   <div className="text-center py-6">
                     <AlertCircle className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2" />
-                    <p className="text-sm text-[var(--text-muted)]">No data yet</p>
+                    <p className="text-body-muted">No data yet</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -570,7 +570,7 @@ export default function RecognitionPage() {
                           <p className="font-medium text-[var(--text-primary)] text-sm truncate">
                             {employee.employeeName || `Employee ${index + 1}`}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {employee.recognitionsReceived} recognitions
                           </p>
                         </div>
@@ -578,7 +578,7 @@ export default function RecognitionPage() {
                           <p className="font-bold text-warning-600 dark:text-warning-400">
                             {employee.totalPointsEarned}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">pts</p>
+                          <p className="text-caption">pts</p>
                         </div>
                       </div>
                     ))}
@@ -717,7 +717,7 @@ export default function RecognitionPage() {
                       type="checkbox"
                       className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">
+                    <span className="text-body-secondary">
                       Make public
                     </span>
                   </label>
@@ -727,7 +727,7 @@ export default function RecognitionPage() {
                       type="checkbox"
                       className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                     />
-                    <span className="text-sm text-[var(--text-secondary)]">
+                    <span className="text-body-secondary">
                       Send anonymously
                     </span>
                   </label>

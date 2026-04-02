@@ -133,7 +133,7 @@ export default function UtilizationReportsPage() {
             <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
             <p className="text-2xl font-bold skeuo-emboss">{value}</p>
             {subValue && (
-              <p className="text-sm text-[var(--text-muted)]">{subValue}</p>
+              <p className="text-body-muted">{subValue}</p>
             )}
             {trend && (
               <div className="flex items-center gap-1">
@@ -423,7 +423,7 @@ export default function UtilizationReportsPage() {
                           <p className="font-medium text-[var(--text-primary)] truncate">
                             {emp.employeeName}
                           </p>
-                          <p className="text-sm text-[var(--text-muted)] truncate">
+                          <p className="text-body-muted truncate">
                             {emp.designation} - {emp.departmentName}
                           </p>
                         </div>
@@ -431,7 +431,7 @@ export default function UtilizationReportsPage() {
                           <p className={`font-semibold ${getUtilizationColor(emp.utilizationRate)}`}>
                             {formatPercentage(emp.utilizationRate)}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {formatHours(emp.billableHours)} billable
                           </p>
                         </div>
@@ -463,7 +463,7 @@ export default function UtilizationReportsPage() {
                           <p className="font-medium text-[var(--text-primary)] truncate">
                             {emp.employeeName}
                           </p>
-                          <p className="text-sm text-[var(--text-muted)] truncate">
+                          <p className="text-body-muted truncate">
                             {emp.designation} - {emp.departmentName}
                           </p>
                         </div>
@@ -496,14 +496,14 @@ export default function UtilizationReportsPage() {
                         key={dept.departmentId}
                         className="p-4 rounded-lg border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
                       >
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="row-between mb-3">
                           <h4 className="font-medium text-[var(--text-primary)]">
                             {dept.departmentName}
                           </h4>
                           <Badge variant="secondary">{dept.employeeCount} members</Badge>
                         </div>
                         <UtilizationBar rate={dept.averageUtilization} />
-                        <div className="mt-3 flex justify-between text-sm text-[var(--text-muted)]">
+                        <div className="mt-3 flex justify-between text-body-muted">
                           <span>{formatHours(dept.billableHours)} billable</span>
                           <span>of {formatHours(dept.totalHours)} total</span>
                         </div>
@@ -558,7 +558,7 @@ export default function UtilizationReportsPage() {
                               </div>
                               <div>
                                 <p className="font-medium text-[var(--text-primary)]">{emp.employeeName}</p>
-                                <p className="text-xs text-[var(--text-muted)]">{emp.employeeCode}</p>
+                                <p className="text-caption">{emp.employeeCode}</p>
                               </div>
                             </div>
                           </td>
@@ -590,7 +590,7 @@ export default function UtilizationReportsPage() {
                         <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                           {dept.departmentName}
                         </h3>
-                        <p className="text-sm text-[var(--text-muted)]">{dept.employeeCount} employees</p>
+                        <p className="text-body-muted">{dept.employeeCount} employees</p>
                       </div>
                       <div className={`px-4 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
                         {formatPercentage(dept.averageUtilization)}
@@ -630,7 +630,7 @@ export default function UtilizationReportsPage() {
 
                       <div className="pt-3 border-t border-[var(--border-main)]">
                         <div className="flex justify-between">
-                          <span className="text-sm text-[var(--text-muted)]">Total Hours</span>
+                          <span className="text-body-muted">Total Hours</span>
                           <span className="font-semibold text-[var(--text-primary)]">
                             {formatHours(dept.totalHours)}
                           </span>

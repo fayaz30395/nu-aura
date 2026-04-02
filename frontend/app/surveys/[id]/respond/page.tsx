@@ -163,7 +163,7 @@ function LikertQuestion({
           }`}
         >
           <span className="text-lg font-bold">{val}</span>
-          <span className="text-xs text-[var(--text-muted)]">{labels[val - 1]}</span>
+          <span className="text-caption">{labels[val - 1]}</span>
         </button>
       ))}
     </div>
@@ -378,7 +378,7 @@ export default function SurveyRespondPage() {
           {/* Progress bar */}
           {total > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <span className={typography.caption}>
                   Question {currentIndex + 1} of {total}
                 </span>
@@ -432,7 +432,7 @@ export default function SurveyRespondPage() {
 
           {/* Navigation */}
           {total > 0 && (
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <Button
                 variant="outline"
                 onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}

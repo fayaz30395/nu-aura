@@ -21,7 +21,7 @@ function TrendingSidebar() {
       </div>
       <div className="flex flex-col items-center gap-2 py-4">
         <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" />
-        <p className="text-xs text-[var(--text-muted)] text-center">
+        <p className="text-caption text-center">
           No trending content yet. Start creating and sharing to see what is popular.
         </p>
       </div>
@@ -56,7 +56,7 @@ export default function WallPage() {
             <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Activity Wall
             </h2>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               See what is happening across your knowledge base
             </p>
           </div>

@@ -206,9 +206,9 @@ export default function MyPayslipsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="card-aura">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Payslips</p>
+                  <p className="text-body-secondary">Total Payslips</p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                     {filteredPayslips.length}
                   </p>
@@ -223,9 +223,9 @@ export default function MyPayslipsPage() {
           {isAdminView && (
             <Card className="card-aura">
               <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)]">Employees</p>
+                    <p className="text-body-secondary">Employees</p>
                     <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                       {new Set(filteredPayslips.map(p => p.employeeId)).size}
                     </p>
@@ -240,9 +240,9 @@ export default function MyPayslipsPage() {
 
           <Card className="card-aura">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-body-secondary">
                     {isAdminView ? `Total Payout (${selectedYear})` : `Total Earnings (${selectedYear})`}
                   </p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
@@ -258,9 +258,9 @@ export default function MyPayslipsPage() {
 
           <Card className="card-aura">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-body-secondary">
                     {isAdminView ? 'Avg. per Employee' : 'Average Salary'}
                   </p>
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
@@ -351,7 +351,7 @@ export default function MyPayslipsPage() {
                           <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                             {formatMonthYear(payslip.paymentDate)}
                           </h3>
-                          <p className="text-sm text-[var(--text-secondary)] mt-1">
+                          <p className="text-body-secondary mt-1">
                             Payment Date: {formatDate(payslip.paymentDate)}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
@@ -372,12 +372,12 @@ export default function MyPayslipsPage() {
 
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="space-y-1">
-                          <p className="text-sm text-[var(--text-secondary)]">Net Salary</p>
+                          <p className="text-body-secondary">Net Salary</p>
                           <p className="text-2xl font-bold text-success-600 dark:text-success-400">
                             {formatCurrency(payslip.netAmount)}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                        <div className="flex items-center gap-2 text-body-secondary">
                           <span>Gross: {formatCurrency(payslip.grossAmount)}</span>
                           <span>•</span>
                           <span>Deductions: {formatCurrency(payslip.deductions)}</span>

@@ -206,7 +206,7 @@ export default function ShiftPatternsPage() {
       <PermissionGate permission={Permissions.SHIFT_VIEW}>
         <div className="p-6 space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/shifts')}
@@ -322,7 +322,7 @@ export default function ShiftPatternsPage() {
                   exit={{ scale: 0.95, opacity: 0 }}
                   className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
-                  <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-700">
+                  <div className="row-between p-6 border-b border-surface-200 dark:border-surface-700">
                     <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
                       {editingPattern ? 'Edit Pattern' : 'New Pattern'}
                     </h2>

@@ -73,14 +73,14 @@ export function ViewProgramModal({
             {program.description && (
               <div>
                 <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
-                <p className="text-sm text-[var(--text-secondary)]">{program.description}</p>
+                <p className="text-body-secondary">{program.description}</p>
               </div>
             )}
 
             {program.learningObjectives && (
               <div>
                 <h4 className="font-medium text-[var(--text-primary)] mb-2">Learning Objectives</h4>
-                <p className="text-sm text-[var(--text-secondary)]">{program.learningObjectives}</p>
+                <p className="text-body-secondary">{program.learningObjectives}</p>
               </div>
             )}
 
@@ -89,19 +89,19 @@ export function ViewProgramModal({
                 Enrollments ({enrollments.length})
               </h4>
               {enrollments.length === 0 ? (
-                <p className="text-sm text-[var(--text-muted)]">No enrollments yet</p>
+                <p className="text-body-muted">No enrollments yet</p>
               ) : (
                 <div className="space-y-2">
                   {enrollments.map((enrollment) => (
                     <div
                       key={enrollment.id}
-                      className="flex items-center justify-between p-2 card-aura rounded-lg"
+                      className="row-between p-2 card-aura rounded-lg"
                     >
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">
                           {enrollment.employeeName || enrollment.employeeId}
                         </p>
-                        <p className="text-xs text-[var(--text-muted)]">
+                        <p className="text-caption">
                           Enrolled: {new Date(enrollment.enrollmentDate || '').toLocaleDateString()}
                         </p>
                       </div>

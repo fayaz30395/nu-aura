@@ -265,7 +265,7 @@ export default function QuizPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
                   <div className="text-2xl font-bold text-accent-700">{quiz.totalQuestions}</div>
-                  <div className="text-sm text-[var(--text-secondary)]">Total Questions</div>
+                  <div className="text-body-secondary">Total Questions</div>
                 </div>
                 {quiz.timeLimit && (
                   <div className="bg-warning-50 rounded-lg p-4 border border-warning-200">
@@ -280,7 +280,7 @@ export default function QuizPage() {
                 )}
                 <div className="bg-success-50 rounded-lg p-4 border border-success-200">
                   <div className="text-2xl font-bold text-success-700">{quiz.passingScore}%</div>
-                  <div className="text-sm text-[var(--text-secondary)]">Passing Score</div>
+                  <div className="text-body-secondary">Passing Score</div>
                 </div>
               </div>
 
@@ -341,14 +341,14 @@ export default function QuizPage() {
       <div className="min-h-screen bg-[var(--bg-secondary)] flex flex-col">
         {/* Header */}
         <div className="bg-[var(--bg-card)] border-b border-[var(--border-main)] sticky top-0 z-40">
-          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="max-w-4xl mx-auto px-6 py-4 row-between">
             <div>
               <h2 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h2>
-              <p className="text-xs text-[var(--text-muted)]">Question {currentQuestionIdx + 1} of {quiz.questions.length}</p>
+              <p className="text-caption">Question {currentQuestionIdx + 1} of {quiz.questions.length}</p>
             </div>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-[var(--text-secondary)]">Progress:</span>
+                <span className="text-body-secondary">Progress:</span>
                 <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-accent-600 transition-all duration-300"
@@ -497,7 +497,7 @@ export default function QuizPage() {
 
         {/* Navigation footer */}
         <div className="bg-[var(--bg-card)] border-t border-[var(--border-main)] sticky bottom-0 z-40">
-          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="max-w-4xl mx-auto px-6 py-4 row-between">
             <button
               onClick={() => setCurrentQuestionIdx(Math.max(0, currentQuestionIdx - 1))}
               disabled={currentQuestionIdx === 0}
@@ -572,19 +572,19 @@ export default function QuizPage() {
             <div className="p-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
-                  <div className="text-sm text-[var(--text-secondary)]">Total Questions</div>
+                  <div className="text-body-secondary">Total Questions</div>
                   <div className="text-2xl font-bold text-accent-700">{quiz.totalQuestions}</div>
                 </div>
                 <div className="bg-success-50 rounded-lg p-4 border border-success-200">
-                  <div className="text-sm text-[var(--text-secondary)]">Correct</div>
+                  <div className="text-body-secondary">Correct</div>
                   <div className="text-2xl font-bold text-success-700">{result.correctAnswers || 0}</div>
                 </div>
                 <div className="bg-danger-50 rounded-lg p-4 border border-danger-200">
-                  <div className="text-sm text-[var(--text-secondary)]">Incorrect</div>
+                  <div className="text-body-secondary">Incorrect</div>
                   <div className="text-2xl font-bold text-danger-700">{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
                 </div>
                 <div className="bg-warning-50 rounded-lg p-4 border border-warning-200">
-                  <div className="text-sm text-[var(--text-secondary)]">Time Taken</div>
+                  <div className="text-body-secondary">Time Taken</div>
                   <div className="text-2xl font-bold text-warning-700">{result.timeTaken || '-'}</div>
                 </div>
               </div>
@@ -604,9 +604,9 @@ export default function QuizPage() {
                           )}
                           <div className="flex-1">
                             <p className="font-medium text-[var(--text-primary)]">Q{idx + 1}: {detail.questionId}</p>
-                            <p className="text-sm text-[var(--text-secondary)] mt-1">Your answer: <span className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
+                            <p className="text-body-secondary mt-1">Your answer: <span className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
                             {!detail.isCorrect && detail.correctAnswer && (
-                              <p className="text-sm text-[var(--text-secondary)]">Correct answer: <span className="font-medium text-success-700">{detail.correctAnswer}</span></p>
+                              <p className="text-body-secondary">Correct answer: <span className="font-medium text-success-700">{detail.correctAnswer}</span></p>
                             )}
                             {detail.explanation && (
                               <p className="text-sm text-[var(--text-primary)] mt-2 italic">{detail.explanation}</p>

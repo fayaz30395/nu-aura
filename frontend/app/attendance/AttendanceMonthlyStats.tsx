@@ -35,7 +35,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
         >
           <Card className="skeuo-card card-interactive border border-[var(--border-main)] hover:shadow-[var(--shadow-dropdown)] transition-all">
             <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="row-between mb-2">
                 <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-[var(--shadow-elevated)]`}>
                   <stat.icon className="h-5 w-5 text-white" />
                 </div>

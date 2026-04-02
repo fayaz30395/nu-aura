@@ -456,7 +456,7 @@ function CalendarContent() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">NU-Calendar</h1>
-              <p className="text-sm text-[var(--text-muted)]">Your Google Calendar events</p>
+              <p className="text-body-muted">Your Google Calendar events</p>
             </div>
           </div>
           {!accessToken ? (
@@ -543,7 +543,7 @@ function CalendarContent() {
             {/* Calendar Header */}
             <Card>
               <CardContent className="py-4">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" onClick={goToToday}>
                       Today
@@ -647,7 +647,7 @@ function CalendarContent() {
                               </div>
                             ))}
                             {dayEvents.length > 3 && (
-                              <div className="text-xs text-[var(--text-muted)] px-1.5">
+                              <div className="text-caption px-1.5">
                                 +{dayEvents.length - 3} more
                               </div>
                             )}
@@ -684,7 +684,7 @@ function CalendarContent() {
                             <h3 className="font-medium text-[var(--text-primary)]">
                               {event.summary}
                             </h3>
-                            <div className="flex items-center gap-4 mt-1 text-sm text-[var(--text-muted)]">
+                            <div className="flex items-center gap-4 mt-1 text-body-muted">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-4 w-4" />
                                 {formatEventDate(event)}
@@ -697,7 +697,7 @@ function CalendarContent() {
                               )}
                             </div>
                             {event.attendees && event.attendees.length > 0 && (
-                              <div className="flex items-center gap-1 mt-2 text-sm text-[var(--text-muted)]">
+                              <div className="flex items-center gap-1 mt-2 text-body-muted">
                                 <Users className="h-4 w-4" />
                                 {event.attendees.length} attendee(s)
                               </div>
@@ -760,7 +760,7 @@ function CalendarContent() {
                         <p className="font-medium text-[var(--text-primary)] truncate">
                           {event.summary}
                         </p>
-                        <p className="text-sm text-[var(--text-muted)] truncate">
+                        <p className="text-body-muted truncate">
                           {formatEventDate(event)}
                         </p>
                       </div>
@@ -780,7 +780,7 @@ function CalendarContent() {
       {showEventModal && selectedEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+            <div className="row-between p-4 border-b border-[var(--border-main)]">
               <h3 className="font-semibold text-[var(--text-primary)]">Event Details</h3>
               <button
                 onClick={() => {
@@ -897,7 +897,7 @@ function CalendarContent() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+            <div className="row-between p-4 border-b border-[var(--border-main)]">
               <h3 className="font-semibold text-[var(--text-primary)]">Create Event</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -1008,7 +1008,7 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, addMeet: e.target.checked })}
                   className="rounded border-[var(--border-main)]"
                 />
-                <label htmlFor="addMeet" className="text-sm text-[var(--text-secondary)]">
+                <label htmlFor="addMeet" className="text-body-secondary">
                   Add Google Meet video conferencing
                 </label>
               </div>

@@ -146,12 +146,12 @@ export function EmailList({
                   }`}>
                     {email.subject}
                   </span>
-                  <span className="text-sm text-[var(--text-muted)] truncate hidden sm:inline">
+                  <span className="text-body-muted truncate hidden sm:inline">
                     - {email.snippet}
                   </span>
                 </div>
               </div>
-              <div className="flex-shrink-0 text-xs text-[var(--text-muted)]">
+              <div className="flex-shrink-0 text-caption">
                 {formatDate(email.date)}
               </div>
             </div>

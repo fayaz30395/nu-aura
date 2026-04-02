@@ -136,19 +136,19 @@ function JobPostingsPanel() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-success-600">{openJobs.length}</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">Live on Career Page</p>
+            <p className="text-caption mt-1">Live on Career Page</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-[var(--text-primary)]">{otherJobs.length}</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">Draft / Other</p>
+            <p className="text-caption mt-1">Draft / Other</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-[var(--text-primary)]">{jobs.reduce((acc, j) => acc + (j.numberOfOpenings ?? 1), 0)}</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">Total Openings</p>
+            <p className="text-caption mt-1">Total Openings</p>
           </CardContent>
         </Card>
       </div>
@@ -202,17 +202,17 @@ function JobPostingsPanel() {
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{job.jobTitle}</p>
                       {job.location && (
-                        <p className="text-xs text-[var(--text-muted)]">{job.location}</p>
+                        <p className="text-caption">{job.location}</p>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-[var(--text-secondary)] hidden sm:table-cell">
+                  <td className="px-4 py-3 text-body-secondary hidden sm:table-cell">
                     {job.departmentName ?? '—'}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <JobStatusBadge status={job.status} />
                   </td>
-                  <td className="px-4 py-3 text-center text-sm text-[var(--text-secondary)]">
+                  <td className="px-4 py-3 text-center text-body-secondary">
                     {job.numberOfOpenings ?? 1}
                   </td>
                   {canManage && (
@@ -432,7 +432,7 @@ export default function CareerPageCMS() {
               <Globe className="h-6 w-6 text-accent-500" />
               Career Page CMS
             </h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">
+            <p className="text-body-muted mt-1">
               Manage your public career page — job visibility and company content.
             </p>
           </div>

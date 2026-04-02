@@ -193,7 +193,7 @@ export default function WellnessPage() {
         {/* Error State */}
         {hasError && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-            <CardContent className="p-4 flex items-center justify-between">
+            <CardContent className="p-4 row-between">
               <div className="flex items-center gap-4">
                 <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
                 <p className="text-sm text-danger-600 dark:text-danger-400">
@@ -230,7 +230,7 @@ export default function WellnessPage() {
                   <Flame className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Current Streak</p>
+                  <p className="text-body-secondary">Current Streak</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.currentStreak} days</p>
                 </div>
               </div>
@@ -243,7 +243,7 @@ export default function WellnessPage() {
                   <Star className="h-6 w-6 text-accent-800 dark:text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Level</p>
+                  <p className="text-body-secondary">Level</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.level}</p>
                 </div>
               </div>
@@ -256,7 +256,7 @@ export default function WellnessPage() {
                   <Target className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Active Challenges</p>
+                  <p className="text-body-secondary">Active Challenges</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.activeChallenges}</p>
                 </div>
               </div>
@@ -351,10 +351,10 @@ export default function WellnessPage() {
                                 <Badge variant="warning" className="text-xs">Featured</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
+                            <p className="text-body-secondary mt-1 line-clamp-2">
                               {program.description || 'Join this wellness program'}
                             </p>
-                            <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
+                            <div className="flex items-center gap-4 mt-3 text-caption">
                               {program.pointsReward && (
                                 <span className="flex items-center gap-1">
                                   <Trophy className="h-3 w-3" />
@@ -399,7 +399,7 @@ export default function WellnessPage() {
                             <h3 className="font-semibold text-[var(--text-primary)]">
                               {challenge.name}
                             </h3>
-                            <p className="text-sm text-[var(--text-secondary)] mt-1">
+                            <p className="text-body-secondary mt-1">
                               {challenge.description || 'Join this challenge and compete!'}
                             </p>
                           </div>
@@ -407,7 +407,7 @@ export default function WellnessPage() {
                             {challenge.isJoined ? 'Joined' : 'Open'}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 mt-4 text-sm text-[var(--text-muted)]">
+                        <div className="flex items-center gap-4 mt-4 text-body-muted">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {new Date(challenge.startDate).toLocaleDateString()} - {new Date(challenge.endDate).toLocaleDateString()}
@@ -452,7 +452,7 @@ export default function WellnessPage() {
                   Wellness Leaderboard
                 </h3>
                 {leaderboard.length === 0 ? (
-                  <p className="text-sm text-[var(--text-muted)]">No data yet</p>
+                  <p className="text-body-muted">No data yet</p>
                 ) : (
                   <div className="space-y-4">
                     {leaderboard.map((entry, index) => (
@@ -479,7 +479,7 @@ export default function WellnessPage() {
                           <p className="font-bold text-success-600 dark:text-success-400">
                             {entry.points}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">pts</p>
+                          <p className="text-caption">pts</p>
                         </div>
                       </div>
                     ))}

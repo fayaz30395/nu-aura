@@ -362,7 +362,7 @@ export default function CreateTemplatePage() {
                     />
                   )}
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">
+                <p className="text-caption mt-1">
                   Add up to 10 tags to help organize your template
                 </p>
               </div>
@@ -370,7 +370,7 @@ export default function CreateTemplatePage() {
               {/* Info */}
               <div className="flex items-start gap-2 p-4 rounded-lg bg-[var(--bg-secondary)]">
                 <Info className="w-4 h-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-[var(--text-muted)]">
+                <p className="text-caption">
                   Templates are reusable document structures that your team can
                   use to quickly create new wiki pages with consistent
                   formatting.
@@ -394,7 +394,7 @@ export default function CreateTemplatePage() {
               <button
                 type="button"
                 onClick={() => setSettingsDrawerOpen(false)}
-                className="w-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-2 transition-colors"
+                className="w-full text-body-secondary hover:text-[var(--text-primary)] py-2 transition-colors"
               >
                 Continue Editing
               </button>

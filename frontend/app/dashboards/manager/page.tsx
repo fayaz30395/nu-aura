@@ -328,7 +328,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden max-h-[220px]">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="row-between">
                   <div className="flex items-center gap-4">
                     <Activity className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     <span className="text-sm">Attendance Flow</span>
@@ -419,7 +419,7 @@ export default function ManagerDashboardPage() {
           <motion.div variants={itemVariants} className="lg:col-span-2">
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="row-between">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                     <span className="text-sm">Approval Pipeline</span>
@@ -436,7 +436,7 @@ export default function ManagerDashboardPage() {
                       key={leave.requestId}
                       className="px-4 py-2 hover:bg-[var(--bg-card-hover)] transition-all duration-200 group cursor-pointer"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="row-between">
                         <div className="flex items-center gap-2.5">
                           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
                             {leave.employeeName?.charAt(0)}
@@ -491,7 +491,7 @@ export default function ManagerDashboardPage() {
                     { label: 'Performance', count: actionItems.performanceReviewsDue, icon: Target, color: 'text-accent-700', bg: 'bg-accent-700/10' },
                     { label: 'One-on-Ones', count: actionItems.oneOnOnesDue, icon: Users, color: 'text-success-500', bg: 'bg-success-500/10' }
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 rounded-xl bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]/50 border border-[var(--border-main)]/20 hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)] transition-all group">
+                    <div key={idx} className="row-between p-2 rounded-xl bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]/50 border border-[var(--border-main)]/20 hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)] transition-all group">
                       <div className="flex items-center gap-2">
                         <div className={`p-1.5 rounded-lg ${item.bg}`}>
                           <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
@@ -521,7 +521,7 @@ export default function ManagerDashboardPage() {
         <motion.div variants={itemVariants}>
           <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
             <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
-              <CardTitle className="flex items-center justify-between">
+              <CardTitle className="row-between">
                 <div className="flex items-center gap-2">
                   <FolderKanban className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                   <span className="text-sm">Team Projects & Allocations</span>
@@ -584,7 +584,7 @@ export default function ManagerDashboardPage() {
                       className="p-4 rounded-xl border border-[var(--border-main)]/30 bg-[var(--bg-secondary)]/30 dark:bg-[var(--bg-secondary)]/20 hover:border-[var(--border-main)] transition-all duration-200"
                     >
                       {/* Member header */}
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="row-between mb-2">
                         <div className="flex items-center gap-4">
                           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
                             {member.employeeName?.charAt(0)}
@@ -629,7 +629,7 @@ export default function ManagerDashboardPage() {
                           {member.projects.map((project: TeamMemberProjectAllocation) => (
                             <div
                               key={project.projectId}
-                              className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] transition-all duration-200 group"
+                              className="row-between p-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] transition-all duration-200 group"
                             >
                               <div className="flex items-center gap-4">
                                 <span className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-surface-400'}`} />
@@ -678,7 +678,7 @@ export default function ManagerDashboardPage() {
             >
               <Card className="border-0 shadow-2xl bg-danger-50 dark:bg-danger-950 overflow-hidden">
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="row-between mb-2">
                     <div className="flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-danger-500 text-white flex items-center justify-center shadow-[var(--shadow-elevated)]">
                         <AlertTriangle className="h-4 w-4" />
@@ -695,7 +695,7 @@ export default function ManagerDashboardPage() {
                         </div>
                         <h4 className="font-extrabold text-xs text-[var(--text-primary)] mb-0.5">{alert.title}</h4>
                         <p className="text-2xs font-bold text-[var(--text-muted)] leading-relaxed line-clamp-2">{alert.description}</p>
-                        <div className="mt-2 pt-2 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex items-center justify-between">
+                        <div className="mt-2 pt-2 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 row-between">
                           <span className="text-2xs font-black uppercase text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Action: {alert.actionRequired}</span>
                           <Button variant="ghost" size="sm" className="font-black text-2xs h-6 px-2">RESOLVE</Button>
                         </div>
@@ -748,7 +748,7 @@ export default function ManagerDashboardPage() {
                 </div>
 
                 <div className="pt-3 border-t border-[var(--border-main)]">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="row-between mb-1">
                     <span className="text-xs text-[var(--text-secondary)]">
                       Completion Rate
                     </span>
@@ -778,7 +778,7 @@ export default function ManagerDashboardPage() {
             <CardContent className="px-4 pb-3 pt-0">
               <div className="space-y-1.5">
                 <div className="p-2.5 bg-[var(--bg-secondary)] rounded-lg">
-                  <div className="flex items-center justify-between">
+                  <div className="row-between">
                     <span className="text-xs text-[var(--text-secondary)]">
                       One-on-Ones This Month
                     </span>
@@ -801,7 +801,7 @@ export default function ManagerDashboardPage() {
                 </div>
 
                 <div className="p-2.5 bg-[var(--bg-secondary)] rounded-lg">
-                  <div className="flex items-center justify-between">
+                  <div className="row-between">
                     <span className="text-xs text-[var(--text-secondary)]">
                       Average Feedback Score
                     </span>
@@ -820,7 +820,7 @@ export default function ManagerDashboardPage() {
                 </div>
 
                 <div className="p-2.5 bg-[var(--bg-secondary)] rounded-lg">
-                  <div className="flex items-center justify-between">
+                  <div className="row-between">
                     <span className="text-xs text-[var(--text-secondary)]">
                       Training Completion
                     </span>

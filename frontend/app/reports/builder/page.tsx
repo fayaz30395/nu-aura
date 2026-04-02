@@ -217,7 +217,7 @@ export default function ReportBuilderPage() {
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Custom Report Builder</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">
+          <p className="text-body-muted mt-1">
             Select a data source, pick columns, add filters, then preview or export.
           </p>
         </div>
@@ -276,7 +276,7 @@ export default function ReportBuilderPage() {
           {/* ── Middle panel: Filters + Sort + Save ──────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
+              <div className="row-between mb-3">
                 <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
                 {filters.length < 5 && (
                   <button
@@ -289,7 +289,7 @@ export default function ReportBuilderPage() {
               </div>
 
               {filters.length === 0 && (
-                <p className="text-xs text-[var(--text-muted)]">No filters applied. All rows returned.</p>
+                <p className="text-caption">No filters applied. All rows returned.</p>
               )}
 
               <div className="space-y-4">
@@ -411,11 +411,11 @@ export default function ReportBuilderPage() {
         {/* ── Preview Table ───────────────────────────────────────────────── */}
         {previewRows.length > 0 && (
           <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
-            <div className="px-4 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
+            <div className="px-4 py-4 border-b border-[var(--border-main)] row-between">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Preview — {previewRows.length} row{previewRows.length !== 1 ? 's' : ''}
               </h2>
-              <span className="text-xs text-[var(--text-muted)]">Showing up to 100 rows</span>
+              <span className="text-caption">Showing up to 100 rows</span>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm divide-y divide-[var(--border-main)]">

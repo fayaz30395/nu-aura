@@ -166,7 +166,7 @@ export default function MyLeavesPage() {
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>
-              <p className="text-sm text-[var(--text-secondary)] mb-6">Get started by applying for your first leave</p>
+              <p className="text-body-secondary mb-6">Get started by applying for your first leave</p>
               <button
                 onClick={() => router.push('/leave/apply')}
                 className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -199,13 +199,13 @@ export default function MyLeavesPage() {
                         <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                           {getLeaveTypeName(request.leaveTypeId)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                        <td className="px-6 py-4 text-body-secondary">
                           {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                        <td className="px-6 py-4 text-body-secondary">
                           {request.totalDays} {request.isHalfDay && '(Half)'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs truncate" title={request.reason}>
+                        <td className="px-6 py-4 text-body-secondary max-w-xs truncate" title={request.reason}>
                           {request.reason}
                         </td>
                         <td className="px-6 py-4">
@@ -213,7 +213,7 @@ export default function MyLeavesPage() {
                             {request.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                        <td className="px-6 py-4 text-body-secondary">
                           {new Date(request.appliedOn).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -250,7 +250,7 @@ export default function MyLeavesPage() {
                   >
                     Previous
                   </button>
-                  <div className="text-sm text-[var(--text-secondary)]">
+                  <div className="text-body-secondary">
                     <span>Showing {currentPage * 10 + 1}–{Math.min((currentPage + 1) * 10, requests.length + currentPage * 10)} of ~{totalPages * 10} results</span>
                     <br />
                     <span>Page {currentPage + 1} of {totalPages}</span>

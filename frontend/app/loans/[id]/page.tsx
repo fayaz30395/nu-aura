@@ -167,7 +167,7 @@ export default function LoanDetailPage() {
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
                 <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400" />
               </div>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
               </span>
             </div>
@@ -181,7 +181,7 @@ export default function LoanDetailPage() {
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
                 <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400" />
               </div>
-              <span className="text-sm text-[var(--text-muted)]">Amount Repaid</span>
+              <span className="text-body-muted">Amount Repaid</span>
             </div>
             <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {loanService.formatCurrency(loan.paidAmount || 0)}
@@ -193,7 +193,7 @@ export default function LoanDetailPage() {
               <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
                 <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400" />
               </div>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 Outstanding Amount
               </span>
             </div>
@@ -206,7 +206,7 @@ export default function LoanDetailPage() {
         {/* Progress Bar */}
         {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
-            <div className="flex items-center justify-between mb-3">
+            <div className="row-between mb-3">
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Repayment Progress
               </h3>
@@ -220,7 +220,7 @@ export default function LoanDetailPage() {
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-sm text-[var(--text-muted)]">
+            <div className="flex justify-between mt-2 text-body-muted">
               <span>Paid: {loanService.formatCurrency(loan.paidAmount || 0)}</span>
               <span>Outstanding: {loanService.formatCurrency(loan.outstandingAmount || 0)}</span>
             </div>
@@ -234,26 +234,26 @@ export default function LoanDetailPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Interest Rate</p>
+              <p className="text-body-muted mb-1">Interest Rate</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.interestRate}% per annum
               </p>
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">Loan Term</p>
+              <p className="text-body-muted mb-1">Loan Term</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.tenureMonths} months
               </p>
             </div>
             <div>
-              <p className="text-sm text-[var(--text-muted)] mb-1">EMI Amount</p>
+              <p className="text-body-muted mb-1">EMI Amount</p>
               <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.emiAmount ? loanService.formatCurrency(loan.emiAmount) : 'N/A'}
               </p>
             </div>
             {loan.paidEmis != null && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">EMIs Paid / Remaining</p>
+                <p className="text-body-muted mb-1">EMIs Paid / Remaining</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {loan.paidEmis} / {loan.remainingEmis ?? 'N/A'}
                 </p>
@@ -261,7 +261,7 @@ export default function LoanDetailPage() {
             )}
             {loan.firstEmiDate && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">First EMI Date</p>
+                <p className="text-body-muted mb-1">First EMI Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(loan.firstEmiDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
@@ -273,7 +273,7 @@ export default function LoanDetailPage() {
             )}
             {loan.requestedDate && (
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Request Date</p>
+                <p className="text-body-muted mb-1">Request Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(loan.requestedDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
@@ -310,13 +310,13 @@ export default function LoanDetailPage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Approved By</p>
+                <p className="text-body-muted mb-1">Approved By</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {loan.approverName || 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Approved Date</p>
+                <p className="text-body-muted mb-1">Approved Date</p>
                 <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(loan.approvedDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
@@ -327,7 +327,7 @@ export default function LoanDetailPage() {
               </div>
               {loan.disbursementDate && (
                 <div>
-                  <p className="text-sm text-[var(--text-muted)] mb-1">Disbursed Date</p>
+                  <p className="text-body-muted mb-1">Disbursed Date</p>
                   <p className="text-lg font-medium text-[var(--text-primary)]">
                     {new Date(loan.disbursementDate).toLocaleDateString('en-IN', {
                       day: '2-digit',

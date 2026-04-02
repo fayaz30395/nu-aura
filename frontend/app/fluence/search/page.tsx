@@ -271,7 +271,7 @@ export default function SearchPage() {
                   <button
                     key={saved.id}
                     onClick={() => applySavedSearch(saved)}
-                    className="w-full flex items-center justify-between gap-2 px-2 py-2 rounded-md hover:bg-[var(--bg-secondary)] text-left cursor-pointer group"
+                    className="w-full row-between gap-2 px-2 py-2 rounded-md hover:bg-[var(--bg-secondary)] text-left cursor-pointer group"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <Clock className={`${iconSize.meta} text-[var(--text-muted)] flex-shrink-0`} />
@@ -420,7 +420,7 @@ export default function SearchPage() {
                       )}
                       <button
                         onClick={() => { setSelectedType(undefined); setSelectedVisibility(undefined); }}
-                        className="ml-auto text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+                        className="ml-auto text-caption hover:text-[var(--text-primary)] cursor-pointer"
                       >
                         Clear all
                       </button>
@@ -437,7 +437,7 @@ export default function SearchPage() {
           <div>
             <button
               onClick={() => setShowSaved((v) => !v)}
-              className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors cursor-pointer"
             >
               <Clock className={iconSize.button} />
               <span>{savedSearches.length} saved {savedSearches.length === 1 ? 'search' : 'searches'}</span>
@@ -465,7 +465,7 @@ export default function SearchPage() {
                           <BookmarkCheck className={`${iconSize.meta} text-[var(--accent-600)]`} />
                           <span className="text-[var(--text-secondary)]">{saved.query}</span>
                           {saved.contentType && (
-                            <span className="text-xs text-[var(--text-muted)]">· {saved.contentType}</span>
+                            <span className="text-caption">· {saved.contentType}</span>
                           )}
                         </button>
                         <button
@@ -543,7 +543,7 @@ export default function SearchPage() {
               initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex items-center justify-between"
+              className="row-between"
             >
               <p className={typography.caption}>
                 Found{' '}
@@ -621,7 +621,7 @@ export default function SearchPage() {
                           />
                         )}
 
-                        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
+                        <div className="flex items-center gap-4 text-caption">
                           {result.author && <span>By {result.author}</span>}
                           <span className="flex items-center gap-1">
                             <Clock className={iconSize.meta} />

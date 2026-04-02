@@ -583,7 +583,7 @@ function CandidatesPage() {
         className="p-6 space-y-6"
       >
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Candidates</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track and manage candidate applications</p>

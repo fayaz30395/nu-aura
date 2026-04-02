@@ -207,7 +207,7 @@ export default function ShiftSwapPage() {
   return (
     <AppLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Shift Swap</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request shift swaps, give-aways, and pick-ups</p>
@@ -392,7 +392,7 @@ export default function ShiftSwapPage() {
                     ))}
                   </select>
                   {activeAssignments.length === 0 && (
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">No active shift assignments found</p>
+                    <p className="mt-1 text-caption">No active shift assignments found</p>
                   )}
                   {errors.requesterAssignmentId && (
                     <p className="mt-1 text-xs text-danger-500">{errors.requesterAssignmentId.message}</p>

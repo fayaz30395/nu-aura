@@ -116,7 +116,7 @@ export default function OnboardingPage() {
                         >
                             <Card className="skeuo-card border-0 shadow-2xl">
                                 <CardContent className="p-4 relative z-10">
-                                    <div className="flex items-center justify-between mb-3">
+                                    <div className="row-between mb-3">
                                         <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color}`}>
                                             <stat.icon className="h-5 w-5" />
                                         </div>
@@ -133,7 +133,7 @@ export default function OnboardingPage() {
                 {/* Error State */}
                 {isError && (
                     <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
-                        <CardContent className="p-6 flex items-center justify-between">
+                        <CardContent className="p-6 row-between">
                             <div className="flex items-center gap-4">
                                 <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
                                 <p className="text-sm text-danger-600 dark:text-danger-400">
@@ -234,7 +234,7 @@ export default function OnboardingPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center justify-between sm:justify-end gap-10">
+                                                <div className="row-between sm:justify-end gap-10">
                                                     <div className="text-right hidden sm:block">
                                                         <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Momentum</span>
                                                         <div className="flex items-center gap-4">

@@ -15,7 +15,7 @@ export default function ExitInterviewLoading() {
         {/* Card container skeleton */}
         <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
           {/* Progress indicator skeleton */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="row-between mb-8">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="flex flex-col items-center flex-1">
                 <Skeleton height={40} width={40} circle className="mb-2" />

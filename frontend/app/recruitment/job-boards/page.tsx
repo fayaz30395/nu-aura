@@ -130,7 +130,7 @@ export default function JobBoardsPage() {
   return (
     <AppLayout>
       <div className="p-6 max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
@@ -153,7 +153,7 @@ export default function JobBoardsPage() {
           ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
               <CardContent className="pt-4">
-                <p className="text-sm text-[var(--text-muted)]">{stat.label}</p>
+                <p className="text-body-muted">{stat.label}</p>
                 <p className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
               </CardContent>
             </Card>
@@ -212,7 +212,7 @@ export default function JobBoardsPage() {
                               </a>
                             )}
                           </div>
-                          <p className="text-sm text-[var(--text-muted)] mt-0.5">
+                          <p className="text-body-muted mt-0.5">
                             Job ID: <span className="font-mono">{posting.jobOpeningId.slice(0, 8)}…</span>
                             {posting.externalJobId && ` · External: ${posting.externalJobId}`}
                           </p>
@@ -221,14 +221,14 @@ export default function JobBoardsPage() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-6 text-sm text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-6 text-body-secondary">
                         <div className="text-center">
                           <p className="text-lg font-bold text-accent-700">{posting.applicationsCount}</p>
-                          <p className="text-xs text-[var(--text-muted)]">Applications</p>
+                          <p className="text-caption">Applications</p>
                         </div>
                         <div className="text-center">
                           <p className="text-lg font-bold text-accent-600">{posting.viewsCount}</p>
-                          <p className="text-xs text-[var(--text-muted)]">Views</p>
+                          <p className="text-caption">Views</p>
                         </div>
                         {posting.status === 'ACTIVE' && (
                           <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
@@ -241,7 +241,7 @@ export default function JobBoardsPage() {
                       </div>
                     </div>
                     {(posting.postedAt || posting.expiresAt) && (
-                      <p className="text-xs text-[var(--text-muted)] mt-2">
+                      <p className="text-caption mt-2">
                         {posting.postedAt && `Posted: ${new Date(posting.postedAt).toLocaleDateString()}`}
                         {posting.expiresAt && ` · Expires: ${new Date(posting.expiresAt).toLocaleDateString()}`}
                         {posting.lastSyncedAt && ` · Synced: ${new Date(posting.lastSyncedAt).toLocaleDateString()}`}
@@ -318,7 +318,7 @@ export default function JobBoardsPage() {
                   <p className="text-xs text-danger-500 mt-1">{postErrors.boards.message}</p>
                 )}
               </div>
-              <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-4 rounded-md">
+              <p className="text-caption bg-[var(--bg-surface)] p-4 rounded-md">
                 <strong>Note:</strong> Naukri requires API credentials configured in settings.
                 Jobs will be posted immediately and expire after 30 days.
               </p>

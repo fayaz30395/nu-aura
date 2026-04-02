@@ -87,7 +87,7 @@ export default function MySchedulePage() {
     <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/shifts')}
@@ -115,7 +115,7 @@ export default function MySchedulePage() {
           {/* Calendar */}
           <div className="lg:col-span-2 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             {/* Month navigation */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <button
                 onClick={() => setMonthOffset((p) => p - 1)}
                 className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"

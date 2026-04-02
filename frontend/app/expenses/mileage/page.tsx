@@ -191,7 +191,7 @@ export default function MileagePage() {
     <AppLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
               Mileage Tracking
@@ -482,7 +482,7 @@ export default function MileagePage() {
                     key={policy.id}
                     className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="row-between mb-2">
                       <h3 className="font-semibold text-surface-900 dark:text-white">{policy.name}</h3>
                       <span
                         className={`px-2 py-0.5 text-xs rounded-full ${

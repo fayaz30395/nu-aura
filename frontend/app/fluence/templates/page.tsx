@@ -227,7 +227,7 @@ export default function TemplatesPage() {
                           </span>
                         ))}
                         {template.tags.length > 3 && (
-                          <span className={`text-xs text-[var(--text-muted)] px-2 py-1`}>
+                          <span className={`text-caption px-2 py-1`}>
                             +{template.tags.length - 3}
                           </span>
                         )}

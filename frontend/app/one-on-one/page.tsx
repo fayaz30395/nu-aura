@@ -206,7 +206,7 @@ function StatCard({
           <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
             {value}
           </p>
-          {subtitle && <p className="text-xs text-[var(--text-muted)] mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
         </div>
         <div className={`p-2 rounded-lg ${color}`}>
           <Icon className="h-5 w-5 text-white" />
@@ -471,7 +471,7 @@ export default function OneOnOnePage() {
           {/* Back button */}
           <button
             onClick={() => { setView('list'); setSelectedMeetingId(null); }}
-            className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] mb-4 transition-colors"
+            className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] mb-4 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to meetings
           </button>
@@ -498,9 +498,9 @@ export default function OneOnOnePage() {
                       </span>
                     </div>
                     {meeting.description && (
-                      <p className="text-sm text-[var(--text-muted)] mb-3">{meeting.description}</p>
+                      <p className="text-body-muted mb-3">{meeting.description}</p>
                     )}
-                    <div className="flex flex-wrap gap-4 text-sm text-[var(--text-muted)]">
+                    <div className="flex flex-wrap gap-4 text-body-muted">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" /> {formatDate(meeting.meetingDate)}
                       </span>
@@ -534,7 +534,7 @@ export default function OneOnOnePage() {
                         </span>
                       )}
                     </div>
-                    <div className="flex gap-4 mt-2 text-sm text-[var(--text-muted)]">
+                    <div className="flex gap-4 mt-2 text-body-muted">
                       <span><strong>Type:</strong> {getMeetingTypeLabel(meeting.meetingType)}</span>
                       {meeting.employeeName && <span><strong>With:</strong> {meeting.employeeName}</span>}
                       {meeting.managerName && <span><strong>Manager:</strong> {meeting.managerName}</span>}
@@ -602,7 +602,7 @@ export default function OneOnOnePage() {
                   {/* ── Agenda / Talking Points Tab ── */}
                   {detailTab === 'agenda' && (
                     <div>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="row-between mb-4">
                         <h3 className="text-base font-semibold text-[var(--text-primary)]">Talking Points</h3>
                         {isActive && (
                           <button
@@ -729,12 +729,12 @@ export default function OneOnOnePage() {
                                   )}
                                 </div>
                                 {item.description && (
-                                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{item.description}</p>
+                                  <p className="text-caption mt-0.5">{item.description}</p>
                                 )}
                                 {item.discussionNotes && (
                                   <p className="text-xs text-success-700 dark:text-success-400 mt-1 italic">{item.discussionNotes}</p>
                                 )}
-                                <span className="text-xs text-[var(--text-muted)]">Added by {item.addedBy?.toLowerCase()}</span>
+                                <span className="text-caption">Added by {item.addedBy?.toLowerCase()}</span>
                               </div>
                               {isActive && !item.isDiscussed && (
                                 <button
@@ -754,7 +754,7 @@ export default function OneOnOnePage() {
                   {/* ── Action Items Tab ── */}
                   {detailTab === 'actions' && (
                     <div>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="row-between mb-4">
                         <h3 className="text-base font-semibold text-[var(--text-primary)]">Action Items</h3>
                         {isActive && (
                           <PermissionGate permission={Permissions.MEETING_CREATE}>
@@ -864,9 +864,9 @@ export default function OneOnOnePage() {
                                   <span className={`text-xs font-medium ${getPriorityColor(item.priority)}`}>{item.priority}</span>
                                 </div>
                                 {item.description && (
-                                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{item.description}</p>
+                                  <p className="text-caption mt-0.5">{item.description}</p>
                                 )}
-                                <div className="flex gap-4 mt-1 text-xs text-[var(--text-muted)]">
+                                <div className="flex gap-4 mt-1 text-caption">
                                   <span>Assigned to: {item.assigneeName || item.assigneeRole.toLowerCase()}</span>
                                   {item.dueDate && <span>Due: {formatDate(item.dueDate)}</span>}
                                 </div>
@@ -915,7 +915,7 @@ export default function OneOnOnePage() {
                         <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                           Shared Notes
                         </label>
-                        <p className="text-xs text-[var(--text-muted)] mb-2">Visible to both participants</p>
+                        <p className="text-caption mb-2">Visible to both participants</p>
                         <textarea
                           value={sharedNotes}
                           onChange={(e) => setSharedNotes(e.target.value)}
@@ -928,7 +928,7 @@ export default function OneOnOnePage() {
                         <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                           Private Notes
                         </label>
-                        <p className="text-xs text-[var(--text-muted)] mb-2">Only visible to you</p>
+                        <p className="text-caption mb-2">Only visible to you</p>
                         <textarea
                           value={privateNotes}
                           onChange={(e) => setPrivateNotes(e.target.value)}
@@ -948,7 +948,7 @@ export default function OneOnOnePage() {
                       {meeting.meetingSummary && (
                         <div className="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
                           <h4 className="text-sm font-medium text-[var(--text-primary)] mb-1">Meeting Summary</h4>
-                          <p className="text-sm text-[var(--text-muted)]">{meeting.meetingSummary}</p>
+                          <p className="text-body-muted">{meeting.meetingSummary}</p>
                         </div>
                       )}
                     </div>
@@ -969,7 +969,7 @@ export default function OneOnOnePage() {
                             ))}
                           </div>
                           {meeting.employeeFeedback && (
-                            <p className="text-sm text-[var(--text-muted)]">{meeting.employeeFeedback}</p>
+                            <p className="text-body-muted">{meeting.employeeFeedback}</p>
                           )}
                         </div>
                       ) : meeting.status === 'COMPLETED' ? (
@@ -1192,7 +1192,7 @@ export default function OneOnOnePage() {
         <div className="p-6 max-w-3xl mx-auto">
           <button
             onClick={() => setView('list')}
-            className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] mb-4 transition-colors"
+            className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] mb-4 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to meetings
           </button>
@@ -1386,7 +1386,7 @@ export default function OneOnOnePage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
               1-on-1 Meetings
             </h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1 skeuo-deboss">
+            <p className="text-body-muted mt-1 skeuo-deboss">
               Schedule, manage, and track your 1-on-1 conversations
             </p>
           </div>
@@ -1512,7 +1512,7 @@ export default function OneOnOnePage() {
               <div className="p-12 text-center">
                 <Users className="h-10 w-10 mx-auto mb-3 text-[var(--text-muted)] opacity-40" />
                 <p className="text-[var(--text-muted)] mb-1">No meetings found</p>
-                <p className="text-xs text-[var(--text-muted)]">
+                <p className="text-caption">
                   {activeTab === 'upcoming'
                     ? 'Schedule a new 1-on-1 to get started.'
                     : 'Try adjusting your filters.'}
@@ -1545,7 +1545,7 @@ export default function OneOnOnePage() {
                           <Repeat className="h-3.5 w-3.5 text-[var(--text-muted)] flex-shrink-0" />
                         )}
                       </div>
-                      <div className="flex gap-4 text-xs text-[var(--text-muted)]">
+                      <div className="flex gap-4 text-caption">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" /> {formatTime(m.startTime)}
                         </span>
@@ -1564,8 +1564,8 @@ export default function OneOnOnePage() {
 
           {/* Pagination */}
           {activeTab === 'all' && allMeetingsQuery.data && allMeetingsQuery.data.totalPages > 1 && (
-            <div className="flex items-center justify-between p-4 border-t border-[var(--border-main)]">
-              <p className="text-xs text-[var(--text-muted)]">
+            <div className="row-between p-4 border-t border-[var(--border-main)]">
+              <p className="text-caption">
                 Page {page + 1} of {allMeetingsQuery.data.totalPages} ({allMeetingsQuery.data.totalElements} meetings)
               </p>
               <div className="flex gap-2">

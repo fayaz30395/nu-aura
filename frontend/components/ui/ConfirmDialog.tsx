@@ -125,7 +125,7 @@ export function ConfirmDialog({
             </h3>
             <p
               id="confirm-dialog-description"
-              className="text-sm text-[var(--text-secondary)] mb-6"
+              className="text-body-secondary mb-6"
             >
               {message}
             </p>

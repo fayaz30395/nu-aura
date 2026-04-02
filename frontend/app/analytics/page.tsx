@@ -208,7 +208,7 @@ export default function AnalyticsPage() {
                   className="input-aura px-4 py-1.5 text-sm"
                   aria-label="Start date"
                 />
-                <span className="text-sm text-[var(--text-muted)]">to</span>
+                <span className="text-body-muted">to</span>
                 <input
                   type="date"
                   value={customEnd}
@@ -253,7 +253,7 @@ export default function AnalyticsPage() {
                     >
                       {Math.abs(analytics.headcount.growthPercentage)}%
                     </span>
-                    <span className="text-xs text-[var(--text-muted)]">vs last month</span>
+                    <span className="text-caption">vs last month</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
@@ -273,7 +273,7 @@ export default function AnalyticsPage() {
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-sm text-success-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{analytics.attendance.present}</span>
-                    <span className="text-xs text-[var(--text-muted)]">present today</span>
+                    <span className="text-caption">present today</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/30 flex items-center justify-center">
@@ -293,7 +293,7 @@ export default function AnalyticsPage() {
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-sm text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{analytics.leave.pending}</span>
-                    <span className="text-xs text-[var(--text-muted)]">pending approvals</span>
+                    <span className="text-caption">pending approvals</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/30 flex items-center justify-center">
@@ -316,7 +316,7 @@ export default function AnalyticsPage() {
                       <span className="text-sm text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {analytics.payroll.currentMonth.processed}
                       </span>
-                      <span className="text-xs text-[var(--text-muted)]">processed</span>
+                      <span className="text-caption">processed</span>
                     </div>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">

@@ -242,7 +242,7 @@ export default function PaymentConfigPage() {
                       <h3 className="font-semibold text-[var(--text-primary)]">
                         {paymentService.getProviderLabel(provider)}
                       </h3>
-                      <p className="text-sm text-[var(--text-secondary)] mt-1">
+                      <p className="text-body-secondary mt-1">
                         {config ? 'Configured' : 'Not configured'}
                       </p>
                     </div>
@@ -404,13 +404,13 @@ export default function PaymentConfigPage() {
               {configs.map((config) => (
                 <div
                   key={config.id}
-                  className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4 flex items-center justify-between"
+                  className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4 row-between"
                 >
                   <div>
                     <h3 className="font-semibold text-[var(--text-primary)]">
                       {paymentService.getProviderLabel(config.provider)}
                     </h3>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       {config.testMode ? 'Test Mode' : 'Live Mode'} • Updated{' '}
                       {paymentService.formatDate(config.updatedAt)}
                     </p>

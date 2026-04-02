@@ -178,12 +178,12 @@ function FileDropZone({
 
   if (currentFile) {
     return (
-      <div className="flex items-center justify-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
+      <div className="row-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
         <div className="flex items-center gap-4">
           <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">{currentFile.name}</p>
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-caption">
               {(currentFile.size / 1024).toFixed(1)} KB
             </p>
           </div>
@@ -229,7 +229,7 @@ function FileDropZone({
       <p className="text-sm font-medium text-[var(--text-secondary)]">
         {isDragActive ? 'Drop file here' : 'Drag & drop a file here, or click to browse'}
       </p>
-      <p className="text-xs text-[var(--text-muted)] mt-1">
+      <p className="text-caption mt-1">
         Supports .csv, .xlsx, .xls
       </p>
     </div>
@@ -371,7 +371,7 @@ function ImportSection() {
             <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)]'}`} />
             <div>
               <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
-              <p className="text-xs text-[var(--text-muted)]">{description}</p>
+              <p className="text-caption">{description}</p>
             </div>
           </button>
         ))}
@@ -398,7 +398,7 @@ function ImportSection() {
                   </span>
                 ))}
                 {currentTemplate.optionalColumns.length > 5 && (
-                  <span className="px-2 py-0.5 text-xs text-[var(--text-muted)]">
+                  <span className="px-2 py-0.5 text-caption">
                     +{currentTemplate.optionalColumns.length - 5} more
                   </span>
                 )}
@@ -515,14 +515,14 @@ function ImportSection() {
             )}
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">Import Complete</h4>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 Processed in {importResult.durationMs}ms
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
-              <p className="text-xs text-[var(--text-muted)]">Total</p>
+              <p className="text-caption">Total</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{importResult.totalRows}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
@@ -632,7 +632,7 @@ function ExportSection() {
               `}
             >
               <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
-              <p className="text-xs text-[var(--text-muted)]">{description}</p>
+              <p className="text-caption">{description}</p>
             </button>
           ))}
         </div>
@@ -847,7 +847,7 @@ function KekaMigrationSection() {
               <h4 className="text-sm font-medium text-[var(--text-primary)]">
                 Column Mapping - {uploadResult.fileName}
               </h4>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">
+              <p className="text-caption mt-0.5">
                 {uploadResult.detectedColumns.length} columns detected. Map each source column to a target field.
               </p>
             </div>
@@ -904,7 +904,7 @@ function KekaMigrationSection() {
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
-              <p className="text-xs text-[var(--text-muted)]">Total Rows</p>
+              <p className="text-caption">Total Rows</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{previewData.totalRows}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
@@ -991,14 +991,14 @@ function KekaMigrationSection() {
             <CheckCircle2 className="h-8 w-8 text-success-500" />
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">KEKA Migration Complete</h4>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 <StatusBadge status={executeMutation.data.status} />
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
-              <p className="text-xs text-[var(--text-muted)]">Processed</p>
+              <p className="text-caption">Processed</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{executeMutation.data.totalProcessed}</p>
             </div>
             <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
@@ -1083,8 +1083,8 @@ function HistorySection() {
 
       {/* Pagination */}
       {historyPage.totalElements > 20 && (
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-[var(--text-muted)]">
+        <div className="row-between">
+          <p className="text-caption">
             Page {page + 1} ({historyPage.totalElements} total)
           </p>
           <div className="flex gap-2">
@@ -1141,7 +1141,7 @@ export default function ImportExportPage() {
           {/* Page header */}
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Import / Export Hub</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">
+            <p className="text-body-muted mt-1">
               Bulk import data, export reports, and manage KEKA migrations
             </p>
           </div>

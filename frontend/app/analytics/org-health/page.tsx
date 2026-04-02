@@ -135,7 +135,7 @@ export default function OrganizationHealthPage() {
                     <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card className="bg-[var(--bg-card)] border-none shadow-[var(--shadow-card)] shadow-accent-100/20">
                             <CardHeader className="pb-2">
-                                <div className="flex items-center justify-between">
+                                <div className="row-between">
                                     <CardTitle className="text-lg">Staff Retention</CardTitle>
                                     <Users className="h-5 w-5 text-success-500" />
                                 </div>
@@ -144,13 +144,13 @@ export default function OrganizationHealthPage() {
                                 <div className="flex items-end justify-between mb-4">
                                     <div>
                                         <div className="text-3xl font-bold">{100 - turnover.annualTurnoverRate}%</div>
-                                        <div className="text-sm text-[var(--text-muted)]">Annual Stability Rate</div>
+                                        <div className="text-body-muted">Annual Stability Rate</div>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-success-600 dark:text-success-400 font-medium flex items-center justify-end gap-1">
                                             <TrendingUp className="h-3 w-3" /> 1.2%
                                         </div>
-                                        <div className="text-xs text-[var(--text-muted)]">vs prev year</div>
+                                        <div className="text-caption">vs prev year</div>
                                     </div>
                                 </div>
                                 <div className="h-24">
@@ -161,7 +161,7 @@ export default function OrganizationHealthPage() {
 
                         <Card className="bg-[var(--bg-card)] border-none shadow-[var(--shadow-card)] shadow-accent-100/20">
                             <CardHeader className="pb-2">
-                                <div className="flex items-center justify-between">
+                                <div className="row-between">
                                     <CardTitle className="text-lg">Engagement Intensity</CardTitle>
                                     <Activity className="h-5 w-5 text-warning-500" />
                                 </div>
@@ -170,11 +170,11 @@ export default function OrganizationHealthPage() {
                                 <div className="flex items-end justify-between mb-4">
                                     <div>
                                         <div className="text-3xl font-bold">{engagement.overallEngagementScore}/100</div>
-                                        <div className="text-sm text-[var(--text-muted)]">Avg Engagement Score</div>
+                                        <div className="text-body-muted">Avg Engagement Score</div>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-accent-700 font-medium">{engagement.participationRate}%</div>
-                                        <div className="text-xs text-[var(--text-muted)]">Participation</div>
+                                        <div className="text-caption">Participation</div>
                                     </div>
                                 </div>
                                 <div className="h-24">
@@ -254,11 +254,11 @@ export default function OrganizationHealthPage() {
 
                                 <div className="grid grid-cols-2 gap-4 pt-4">
                                     <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                                        <div className="text-xs text-[var(--text-muted)] mb-1">Total Hours</div>
+                                        <div className="text-caption mb-1">Total Hours</div>
                                         <div className="text-2xl font-bold">{training.totalTrainingHours}</div>
                                     </div>
                                     <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                                        <div className="text-xs text-[var(--text-muted)] mb-1">Active Learners</div>
+                                        <div className="text-caption mb-1">Active Learners</div>
                                         <div className="text-2xl font-bold">{training.activeLearners}</div>
                                     </div>
                                 </div>
@@ -281,7 +281,7 @@ export default function OrganizationHealthPage() {
                         <div className="relative overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="text-sm text-[var(--text-muted)] border-b dark:border-[var(--border-main)]800">
+                                    <tr className="text-body-muted border-b dark:border-[var(--border-main)]800">
                                         <th className="pb-4 font-medium">Department</th>
                                         <th className="pb-4 font-medium">Stability</th>
                                         <th className="pb-4 font-medium">Engagement</th>

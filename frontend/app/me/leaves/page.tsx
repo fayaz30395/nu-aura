@@ -316,7 +316,7 @@ export default function MyLeavesPage() {
     <AppLayout activeMenuItem="leaves">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">My Leaves</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -358,7 +358,7 @@ export default function MyLeavesPage() {
             return (
               <Card key={balance.id} className="skeuo-card">
                 <CardContent className="pt-6">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="row-between mb-4">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: `${leaveType?.colorCode || '#6b7280'}20` }}
@@ -481,7 +481,7 @@ export default function MyLeavesPage() {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-4 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="px-4 py-1.5 text-body-secondary hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     Clear
                   </button>
@@ -538,7 +538,7 @@ export default function MyLeavesPage() {
                             {request.status}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
+                        <div className="meta-row">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {formatDate(request.startDate)} - {formatDate(request.endDate)}
@@ -549,7 +549,7 @@ export default function MyLeavesPage() {
                             {request.isHalfDay && ' (Half Day)'}
                           </div>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)] mt-2">
+                        <p className="text-body-secondary mt-2">
                           <span className="font-medium">Reason:</span> {request.reason}
                         </p>
                         {/* Approver Info for PENDING */}
@@ -582,7 +582,7 @@ export default function MyLeavesPage() {
                           </p>
                         )}
                         {request.cancellationReason && (
-                          <p className="text-sm text-[var(--text-secondary)] mt-2">
+                          <p className="text-body-secondary mt-2">
                             <span className="font-medium">Cancellation Reason:</span>{' '}
                             {request.cancellationReason}
                           </p>
@@ -611,11 +611,11 @@ export default function MyLeavesPage() {
                     {/* Applied on date - bottom right */}
                     <div className="flex justify-end mt-4 pt-3 border-t border-[var(--border-subtle)]">
                       <div className="text-right">
-                        <p className="text-xs text-[var(--text-muted)] ">
+                        <p className="text-caption ">
                           Applied on {formatDate(request.appliedOn)}
                         </p>
                         {request.approvedOn && (
-                          <p className="text-xs text-[var(--text-muted)]  mt-1">
+                          <p className="text-caption  mt-1">
                             {request.status === 'APPROVED' ? 'Approved' : 'Rejected'} on{' '}
                             {formatDate(request.approvedOn)}
                           </p>
@@ -633,7 +633,7 @@ export default function MyLeavesPage() {
         {showApplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
             <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-                <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+                <div className="row-between p-6 border-b border-[var(--border-main)]">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
                   </h2>
@@ -710,7 +710,7 @@ export default function MyLeavesPage() {
 
                   {/* Total Days */}
                   <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       Total Days: <span className="font-bold text-accent-700">{calculateDays()}</span>
                     </p>
                   </div>
@@ -766,7 +766,7 @@ export default function MyLeavesPage() {
         {showCancelModal && cancellingRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
             <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-              <div className="flex items-center justify-between p-6 border-b border-[var(--border-main)]">
+              <div className="row-between p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   Cancel Leave Request
                 </h2>
@@ -838,10 +838,10 @@ export default function MyLeavesPage() {
 
         {/* Leave Encashment Modal */}
         {showEncashModal && encashBalance && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="modal-backdrop">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
                       <Banknote className="h-5 w-5 text-success-600 dark:text-success-400" />
@@ -850,7 +850,7 @@ export default function MyLeavesPage() {
                       <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                         Leave Encashment
                       </h2>
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         Convert leave balance to salary payout
                       </p>
                     </div>
@@ -867,7 +867,7 @@ export default function MyLeavesPage() {
               <div className="p-6 space-y-4">
                 {/* Balance Summary */}
                 <div className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="row-between mb-2">
                     <span className="text-sm font-medium text-success-800 dark:text-success-300">
                       {leaveTypes.find((lt) => lt.id === encashBalance.leaveTypeId)?.leaveName || 'Leave Type'}
                     </span>
@@ -894,7 +894,7 @@ export default function MyLeavesPage() {
                     onChange={(e) => setEncashDays(Math.min(Number(e.target.value), encashBalance.available))}
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
-                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                  <p className="text-caption mt-1">
                     Maximum encashable: {encashBalance.available} days
                   </p>
                 </div>

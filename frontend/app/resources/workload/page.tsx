@@ -272,12 +272,12 @@ export default function WorkloadDashboardPage() {
     <AppLayout>
       <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
               Resource Utilization
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               {dateRangeOptions.find(o => o.key === selectedDateRange)?.label}
             </p>
           </div>
@@ -360,7 +360,7 @@ export default function WorkloadDashboardPage() {
                 setSelectedRanges([]);
                 setSearchQuery('');
               }}
-              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
+              className="text-caption hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
             >
               Clear all
             </button>
@@ -435,7 +435,7 @@ export default function WorkloadDashboardPage() {
                 <div className="grid gap-8 lg:grid-cols-2">
                   {/* Over-allocated */}
                   <div>
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 row-between">
                       <h3 className="text-sm font-medium text-danger-600 dark:text-danger-400">
                         Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
@@ -455,7 +455,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No over-allocated employees</p>
+                          <p className="py-8 text-center text-body-muted">No over-allocated employees</p>
                         );
                       })()}
                     </div>
@@ -463,7 +463,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Under-utilized */}
                   <div>
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 row-between">
                       <h3 className="text-sm font-medium text-warning-600 dark:text-warning-400">
                         Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
@@ -483,7 +483,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No under-utilized employees</p>
+                          <p className="py-8 text-center text-body-muted">No under-utilized employees</p>
                         );
                       })()}
                     </div>
@@ -491,7 +491,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Unassigned */}
                   <div>
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 row-between">
                       <h3 className="text-sm font-medium text-[var(--text-muted)]">
                         Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
                       </h3>
@@ -511,7 +511,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No unassigned employees</p>
+                          <p className="py-8 text-center text-body-muted">No unassigned employees</p>
                         );
                       })()}
                     </div>
@@ -519,7 +519,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Optimal */}
                   <div>
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 row-between">
                       <h3 className="text-sm font-medium text-success-600 dark:text-success-400">
                         Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
@@ -539,7 +539,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No optimally allocated employees</p>
+                          <p className="py-8 text-center text-body-muted">No optimally allocated employees</p>
                         );
                       })()}
                     </div>
@@ -638,7 +638,7 @@ function DepartmentCard({
           <h3 className="text-sm font-medium text-[var(--text-primary)]">
             {department.departmentName}
           </h3>
-          <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+          <p className="mt-0.5 text-caption">
             {department.employeeCount} members · {department.activeProjects} projects
           </p>
         </div>
@@ -659,7 +659,7 @@ function DepartmentCard({
       </div>
 
       {expanded && (
-        <div className="mt-3 flex items-center justify-between text-xs">
+        <div className="mt-3 row-between text-xs">
           <div className="flex items-center gap-4">
             <span className="text-danger-600">{department.overAllocatedCount} over</span>
             <span className="text-success-600">{department.optimalCount} optimal</span>

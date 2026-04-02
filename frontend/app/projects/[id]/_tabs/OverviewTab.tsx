@@ -57,19 +57,19 @@ export function OverviewTab({ project }: OverviewTabProps) {
       <Card>
         <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Project Manager</p>
+            <p className="text-caption">Project Manager</p>
             <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
               {project.projectManagerName || '—'}
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Start Date</p>
+            <p className="text-caption">Start Date</p>
             <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
               {formatDate(project.startDate)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Expected End Date</p>
+            <p className="text-caption">Expected End Date</p>
             <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
               {formatDate(project.expectedEndDate)}
             </p>
@@ -81,13 +81,13 @@ export function OverviewTab({ project }: OverviewTabProps) {
       <Card>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Client</p>
+            <p className="text-caption">Client</p>
             <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
               {project.clientName || '—'}
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Budget</p>
+            <p className="text-caption">Budget</p>
             <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
               {formatCurrency(project.budget)}
             </p>
@@ -99,7 +99,7 @@ export function OverviewTab({ project }: OverviewTabProps) {
       <Card>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Status</p>
+            <p className="text-caption">Status</p>
             <div className="mt-2">
               <Badge variant={statusBadge.variant} size="sm">
                 {statusBadge.label}
@@ -107,7 +107,7 @@ export function OverviewTab({ project }: OverviewTabProps) {
             </div>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Type</p>
+            <p className="text-caption">Type</p>
             <div className="mt-2">
               <Badge variant={typeBadge.variant} size="sm">
                 {typeBadge.label}
@@ -121,7 +121,7 @@ export function OverviewTab({ project }: OverviewTabProps) {
       <Card>
         <CardContent className="flex items-center gap-4">
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Billable</p>
+            <p className="text-caption">Billable</p>
             <div className="mt-2">
               {project.isBillable ? (
                 <Badge variant="success" size="sm">
@@ -141,8 +141,8 @@ export function OverviewTab({ project }: OverviewTabProps) {
       {project.description && (
         <Card>
           <CardContent className="space-y-2">
-            <p className="text-xs text-[var(--text-muted)]">Description</p>
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+            <p className="text-caption">Description</p>
+            <p className="text-body-secondary leading-relaxed">
               {project.description}
             </p>
           </CardContent>

@@ -220,7 +220,7 @@ export default function CourseDetailPage() {
                   </div>
                   <span className="text-sm font-bold text-[var(--text-primary)]">{completionPercentage}%</span>
                 </div>
-                <p className="text-xs text-[var(--text-muted)]">
+                <p className="text-caption">
                   Status: <span className="font-medium capitalize text-[var(--text-primary)]">{enrollment?.status?.toLowerCase().replace('_', ' ')}</span>
                   {enrollment?.completedAt && ` · Completed ${new Date(enrollment.completedAt).toLocaleDateString()}`}
                 </p>
@@ -232,7 +232,7 @@ export default function CourseDetailPage() {
                   <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase">Modules Progress</p>
                   <div className="space-y-1">
                     {course.modules.map((mod, idx) => (
-                      <div key={mod.id} className="flex items-center justify-between text-xs">
+                      <div key={mod.id} className="row-between text-xs">
                         <span className="text-[var(--text-secondary)] flex-1 truncate">{idx + 1}. {mod.title}</span>
                         <span className="text-[var(--text-primary)] font-medium ml-2">
                           {Math.round(completionPercentage / course.modules!.length)}%
@@ -253,7 +253,7 @@ export default function CourseDetailPage() {
                   <HelpCircle className="h-5 w-5" />
                   Quizzes & Assessments
                 </h2>
-                <p className="text-sm text-[var(--text-muted)] mt-1">
+                <p className="text-body-muted mt-1">
                   {quizzes.length} quiz{quizzes.length !== 1 ? 'zes' : ''} · Test your knowledge
                 </p>
               </div>
@@ -283,7 +283,7 @@ export default function CourseDetailPage() {
                             )}
                           </div>
                           {quiz.description && (
-                            <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">{quiz.description}</p>
+                            <p className="text-caption mt-1 line-clamp-1">{quiz.description}</p>
                           )}
                           <div className="flex flex-wrap gap-4 mt-2 text-xs text-[var(--text-secondary)]">
                             <span>{quiz.totalQuestions} questions</span>
@@ -316,7 +316,7 @@ export default function CourseDetailPage() {
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">Course Curriculum</h2>
-                <p className="text-sm text-[var(--text-muted)] mt-0.5">
+                <p className="text-body-muted mt-0.5">
                   {course.modules.length} modules · {totalContents} lessons
                 </p>
               </div>
@@ -327,13 +327,13 @@ export default function CourseDetailPage() {
                     <div key={mod.id} className="border-b border-[var(--border-main)] last:border-0">
                       <button
                         onClick={() => toggleModule(mod.id)}
-                        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors"
+                        className="w-full row-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] transition-colors"
                       >
                         <div className="flex items-center gap-4">
                           <span className="text-xs font-bold text-[var(--text-muted)] w-5">{idx + 1}</span>
                           <div>
                             <p className="text-sm font-semibold text-[var(--text-primary)]">{mod.title}</p>
-                            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                            <p className="text-caption mt-0.5">
                               {mod.contents?.length ?? 0} lessons
                               {mod.durationMinutes ? ` · ${mod.durationMinutes}m` : ''}
                             </p>
@@ -345,11 +345,11 @@ export default function CourseDetailPage() {
                         <div className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/30 border-t border-[var(--border-main)]">
                           {mod.contents.map((content, cIdx) => (
                             <div key={content.id} className="flex items-center gap-4 px-6 py-2.5 border-b border-[var(--border-main)] last:border-0">
-                              <span className="text-xs text-[var(--text-muted)] w-4">{cIdx + 1}</span>
+                              <span className="text-caption w-4">{cIdx + 1}</span>
                               <BookOpen className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
                               <p className="text-sm text-[var(--text-primary)] flex-1">{content.title}</p>
                               {content.durationMinutes && (
-                                <span className="text-xs text-[var(--text-muted)]">{content.durationMinutes}m</span>
+                                <span className="text-caption">{content.durationMinutes}m</span>
                               )}
                             </div>
                           ))}
@@ -381,7 +381,7 @@ export default function CourseDetailPage() {
             {isEnrolled ? (
               <>
                 <div className="mb-4">
-                  <div className="flex items-center justify-between text-sm mb-2">
+                  <div className="row-between text-sm mb-2">
                     <span className="text-[var(--text-secondary)]">Progress</span>
                     <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                   </div>
@@ -452,7 +452,7 @@ export default function CourseDetailPage() {
 
             {error && <p className="mt-2 text-xs text-danger-600 dark:text-danger-400">{error}</p>}
 
-            <div className="mt-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="mt-4 space-y-2 text-body-secondary">
               {course.instructorName && (
                 <div className="flex justify-between">
                   <span className="text-[var(--text-muted)]">Instructor</span>

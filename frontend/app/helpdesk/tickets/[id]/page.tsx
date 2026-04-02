@@ -207,7 +207,7 @@ export default function TicketDetailPage() {
         <div className="flex flex-col items-center justify-center py-20">
           <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mb-4" />
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">Ticket not found</h2>
-          <p className="text-sm text-[var(--text-muted)] mt-1 mb-4">The ticket you are looking for does not exist</p>
+          <p className="text-body-muted mt-1 mb-4">The ticket you are looking for does not exist</p>
           <Button variant="outline" onClick={() => router.push('/helpdesk/tickets')} leftIcon={<ArrowLeft className="h-4 w-4" />}>
             Back to Tickets
           </Button>
@@ -327,14 +327,14 @@ export default function TicketDetailPage() {
                 </div>
                 <div className="space-y-2">
                   {escalations.map((esc) => (
-                    <div key={esc.id} className="flex items-center justify-between bg-[var(--bg-surface)] rounded-lg px-4 py-2">
+                    <div key={esc.id} className="row-between bg-[var(--bg-surface)] rounded-lg px-4 py-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="warning" size="sm">{esc.escalationLevel}</Badge>
                         <span className="text-xs text-[var(--text-secondary)]">
                           {esc.escalationReason.replace(/_/g, ' ')}
                         </span>
                       </div>
-                      <span className="text-xs text-[var(--text-muted)]">
+                      <span className="text-caption">
                         {formatDate(esc.escalatedAt)}
                       </span>
                     </div>
@@ -367,7 +367,7 @@ export default function TicketDetailPage() {
               ) : (
                 <div className="space-y-4">
                   {comments.length === 0 && (
-                    <p className="text-sm text-[var(--text-muted)] text-center py-4">
+                    <p className="text-body-muted text-center py-4">
                       No comments yet. Be the first to comment.
                     </p>
                   )}
@@ -394,9 +394,9 @@ export default function TicketDetailPage() {
                       {...register('comment')}
                     />
                     {errors.comment && <p className="text-sm text-danger-500">{errors.comment.message}</p>}
-                    <div className="flex items-center justify-between">
+                    <div className="row-between">
                       <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
-                        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                        <label className="flex items-center gap-2 text-body-secondary">
                           <input type="checkbox" {...register('isInternal')} className="rounded" />
                           <Lock className="h-3.5 w-3.5" />
                           Internal note (not visible to requester)
@@ -468,7 +468,7 @@ export default function TicketDetailPage() {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-[var(--text-muted)]">First Response</span>
+                    <span className="text-caption">First Response</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-[var(--text-primary)]">
                         {formatMinutes(metrics.firstResponseMinutes)}
@@ -479,7 +479,7 @@ export default function TicketDetailPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-[var(--text-muted)]">Resolution Time</span>
+                    <span className="text-caption">Resolution Time</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-[var(--text-primary)]">
                         {formatMinutes(metrics.resolutionMinutes)}
@@ -490,24 +490,24 @@ export default function TicketDetailPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-[var(--text-muted)]">Handle Time</span>
+                    <span className="text-caption">Handle Time</span>
                     <span className="text-sm font-medium text-[var(--text-primary)]">
                       {formatMinutes(metrics.totalHandleTimeMinutes)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-[var(--text-muted)]">Reopened</span>
+                    <span className="text-caption">Reopened</span>
                     <span className="text-sm font-medium text-[var(--text-primary)]">{metrics.reopenCount}x</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-[var(--text-muted)]">SLA Status</span>
+                    <span className="text-caption">SLA Status</span>
                     <Badge variant={metrics.slaMet ? 'success' : 'danger'} size="sm">
                       {metrics.slaMet ? 'Met' : 'Breached'}
                     </Badge>
                   </div>
                   {metrics.csatRating && (
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-[var(--text-muted)]">CSAT Rating</span>
+                      <span className="text-caption">CSAT Rating</span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">{metrics.csatRating}/5</span>
                     </div>
                   )}
@@ -542,7 +542,7 @@ function DetailRow({ label, icon: Icon, children }: DetailRowProps) {
     <div className="flex items-start gap-4">
       <Icon className="h-4 w-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-[var(--text-muted)] mb-0.5">{label}</p>
+        <p className="text-caption mb-0.5">{label}</p>
         {children}
       </div>
     </div>
@@ -567,7 +567,7 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-medium text-[var(--text-primary)]">{comment.commenterName}</span>
-          <span className="text-xs text-[var(--text-muted)]">{formatDate(comment.createdAt)}</span>
+          <span className="text-caption">{formatDate(comment.createdAt)}</span>
           {comment.isInternal && (
             <Badge variant="warning" size="sm">
               <Lock className="h-3 w-3" />
@@ -575,11 +575,11 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
             </Badge>
           )}
         </div>
-        <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">{comment.comment}</p>
+        <p className="text-body-secondary whitespace-pre-wrap">{comment.comment}</p>
         {isOwn && (
           <button
             onClick={() => onDelete(comment.id)}
-            className="text-xs text-[var(--text-muted)] hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="text-caption hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Delete comment"
           >
             <Trash2 className="h-3 w-3" />

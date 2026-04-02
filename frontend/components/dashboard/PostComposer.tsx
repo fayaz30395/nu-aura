@@ -237,7 +237,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             placeholder="Write something..."
             className={cn('input-aura w-full resize-none transition-all', isFocused ? 'h-20' : 'h-10')}
           />
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div className="flex items-center gap-1">
               <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Add image">
                 <ImageIcon size={14} />
@@ -344,7 +344,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--text-primary)] truncate">{selectedRecipient.fullName}</p>
                   {selectedRecipient.designation && (
-                    <p className="text-xs text-[var(--text-muted)] truncate">{selectedRecipient.designation}</p>
+                    <p className="text-caption truncate">{selectedRecipient.designation}</p>
                   )}
                 </div>
                 <button
@@ -399,7 +399,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm text-[var(--text-primary)] truncate">{emp.firstName} {emp.lastName}</p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">{emp.designation || emp.departmentName}</p>
+                            <p className="text-caption truncate">{emp.designation || emp.departmentName}</p>
                           </div>
                         </button>
                       ))}

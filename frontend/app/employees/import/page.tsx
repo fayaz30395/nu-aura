@@ -280,7 +280,7 @@ export default function EmployeeImportPage() {
               <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                 Download Template
               </h3>
-              <p className="text-sm text-[var(--text-secondary)] mb-4">
+              <p className="text-body-secondary mb-4">
                 Download a template file with the required columns and fill it with your employee data.
               </p>
               <div className="flex gap-4">
@@ -339,7 +339,7 @@ export default function EmployeeImportPage() {
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       {selectedFile.name}
                     </p>
-                    <p className="text-sm text-[var(--text-muted)]">
+                    <p className="text-body-muted">
                       {(selectedFile.size / 1024).toFixed(2)} KB
                     </p>
                     <button
@@ -360,7 +360,7 @@ export default function EmployeeImportPage() {
                     <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                       Drag and drop your file here
                     </p>
-                    <p className="text-sm text-[var(--text-muted)] mb-3">
+                    <p className="text-body-muted mb-3">
                       or
                     </p>
                     <button
@@ -369,7 +369,7 @@ export default function EmployeeImportPage() {
                     >
                       Browse Files
                     </button>
-                    <p className="text-xs text-[var(--text-muted)] mt-3">
+                    <p className="text-caption mt-3">
                       Supports CSV, XLS, and XLSX files
                     </p>
                   </div>
@@ -419,7 +419,7 @@ export default function EmployeeImportPage() {
                       <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {preview.totalRows}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         Total Rows
                       </p>
                     </div>
@@ -552,7 +552,7 @@ export default function EmployeeImportPage() {
                         onChange={(e) => setSkipInvalid(e.target.checked)}
                         className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-500 focus:ring-accent-500"
                       />
-                      <span className="ml-2 text-sm text-[var(--text-secondary)]">
+                      <span className="ml-2 text-body-secondary">
                         Skip invalid rows and import only valid employees ({preview.validRows} employees)
                       </span>
                     </label>
@@ -680,7 +680,7 @@ export default function EmployeeImportPage() {
                     </tbody>
                   </table>
                   {result.importedEmployees.length > 10 && (
-                    <p className="text-sm text-[var(--text-muted)] mt-2 text-center">
+                    <p className="text-body-muted mt-2 text-center">
                       ...and {result.importedEmployees.length - 10} more employees
                     </p>
                   )}

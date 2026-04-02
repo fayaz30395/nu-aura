@@ -145,7 +145,7 @@ export default function MyLearningPage() {
     <AppLayout>
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">My Learning</h1>
             <p className="text-[var(--text-muted)] mt-1 text-sm">
@@ -244,7 +244,7 @@ export default function MyLearningPage() {
                           </Badge>
                         </div>
 
-                        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-3">
+                        <div className="flex items-center gap-4 text-caption mb-3">
                           <span>
                             Enrolled{' '}
                             {enrollment.enrolledAt
@@ -267,7 +267,7 @@ export default function MyLearningPage() {
 
                         {/* Progress bar */}
                         <div className="space-y-1">
-                          <div className="flex justify-between text-xs text-[var(--text-muted)]">
+                          <div className="flex justify-between text-caption">
                             <span>Progress</span>
                             <span>{Math.round(progress)}%</span>
                           </div>

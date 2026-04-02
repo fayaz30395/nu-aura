@@ -90,7 +90,7 @@ export function PayslipsTab({
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{payslip.employeeName}</h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{payslip.payrollRunName}</p>
+                  <p className="text-body-secondary">{payslip.payrollRunName}</p>
                 </div>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(payslip.status)}`}>
                   {payslip.status}

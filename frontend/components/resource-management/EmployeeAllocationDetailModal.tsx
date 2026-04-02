@@ -227,7 +227,7 @@ export function EmployeeAllocationDetailModal({
               style={{ left: '66.67%' }}
             />
           </div>
-          <div className="flex items-center justify-between text-xs text-surface-500">
+          <div className="row-between text-xs text-surface-500">
             <span>0%</span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">

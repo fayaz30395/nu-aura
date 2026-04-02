@@ -7,6 +7,8 @@ import {
   PayslipRequest,
   SalaryStructureRequest,
   PayrollRunStatus,
+  PayrollComponentRequest,
+  ComponentType,
 } from '@/lib/types/hrms/payroll';
 
 // Query keys for cache management
@@ -33,6 +35,13 @@ export const payrollKeys = {
   structuresById: (id: string) => [...payrollKeys.structuresDetail(), id] as const,
   structuresByEmployee: (employeeId: string) =>
     [...payrollKeys.structures(), 'employee', employeeId] as const,
+  components: () => [...payrollKeys.all, 'components'] as const,
+  componentsList: (page: number, size: number) =>
+    [...payrollKeys.components(), { page, size }] as const,
+  componentsActive: () => [...payrollKeys.components(), 'active'] as const,
+  componentsByType: (type: ComponentType) =>
+    [...payrollKeys.components(), 'type', type] as const,
+  componentsById: (id: string) => [...payrollKeys.components(), 'detail', id] as const,
 };
 
 // ============ PAYROLL RUNS ============
@@ -490,5 +499,77 @@ export function usePreviewBulkProcessing() {
       payrollPeriodStart: string;
       payrollPeriodEnd: string;
     }) => payrollService.previewBulkProcessing(data),
+  });
+}
+
+// ============ PAYROLL COMPONENTS ============
+
+export function usePayrollComponents(page = 0, size = 50) {
+  return useQuery({
+    queryKey: payrollKeys.componentsList(page, size),
+    queryFn: () => payrollService.getPayrollComponents(page, size),
+  });
+}
+
+export function useActivePayrollComponents() {
+  return useQuery({
+    queryKey: payrollKeys.componentsActive(),
+    queryFn: () => payrollService.getActivePayrollComponents(),
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useActiveComponentsByType(type: ComponentType, enabled = true) {
+  return useQuery({
+    queryKey: payrollKeys.componentsByType(type),
+    queryFn: () => payrollService.getActiveComponentsByType(type),
+    enabled,
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function usePayrollComponent(id: string, enabled = true) {
+  return useQuery({
+    queryKey: payrollKeys.componentsById(id),
+    queryFn: () => payrollService.getPayrollComponentById(id),
+    enabled: enabled && !!id,
+  });
+}
+
+export function useCreatePayrollComponent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: PayrollComponentRequest) =>
+      payrollService.createPayrollComponent(data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+  });
+}
+
+export function useUpdatePayrollComponent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: PayrollComponentRequest }) =>
+      payrollService.updatePayrollComponent(id, data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+  });
+}
+
+export function useDeletePayrollComponent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => payrollService.deletePayrollComponent(id),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+  });
+}
+
+export function useRecomputeEvaluationOrder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => payrollService.recomputeEvaluationOrder(),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
   });
 }

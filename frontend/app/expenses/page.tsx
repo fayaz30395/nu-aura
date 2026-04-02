@@ -419,7 +419,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
-                <p className="text-sm text-[var(--text-muted)]">Pending</p>
+                <p className="text-body-muted">Pending</p>
               </div>
             </div>
           </div>
@@ -430,7 +430,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
-                <p className="text-sm text-[var(--text-muted)]">Approved</p>
+                <p className="text-body-muted">Approved</p>
               </div>
             </div>
           </div>
@@ -441,7 +441,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
-                <p className="text-sm text-[var(--text-muted)]">Pending Amount</p>
+                <p className="text-body-muted">Pending Amount</p>
               </div>
             </div>
           </div>
@@ -452,7 +452,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
-                <p className="text-sm text-[var(--text-muted)]">Total Claims</p>
+                <p className="text-body-muted">Total Claims</p>
               </div>
             </div>
           </div>
@@ -491,7 +491,7 @@ export default function ExpenseClaims() {
             {(filters.category !== 'ALL' || filters.amountMin || filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 Clear filters
               </button>
@@ -792,7 +792,7 @@ export default function ExpenseClaims() {
                 onChange={handleSelectAll}
                 className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
               />
-              <span className="text-sm text-[var(--text-secondary)]">
+              <span className="text-body-secondary">
                 Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
               </span>
             </div>
@@ -857,7 +857,7 @@ export default function ExpenseClaims() {
                         </div>
                         <p className="text-[var(--text-secondary)]">{claim.description}</p>
                         {claim.employeeName && (
-                          <p className="text-sm text-[var(--text-secondary)] mt-1">
+                          <p className="text-body-secondary mt-1">
                             By: {claim.employeeName} ({claim.employeeCode})
                           </p>
                         )}
@@ -867,7 +867,7 @@ export default function ExpenseClaims() {
                       <div className="text-2xl font-bold text-[var(--text-primary)]">
                         {formatCurrency(claim.amount, claim.currency)}
                       </div>
-                      <div className="text-sm text-[var(--text-secondary)]">{claim.category.replace('_', ' ')}</div>
+                      <div className="text-body-secondary">{claim.category.replace('_', ' ')}</div>
                     </div>
                   </div>
 

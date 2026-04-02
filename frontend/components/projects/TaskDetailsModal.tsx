@@ -302,7 +302,7 @@ export function TaskDetailsModal({
           {/* Progress */}
           {normalizedTask.progress !== undefined && (
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="row-between mb-2">
                 <label className="text-sm font-medium text-surface-600 dark:text-surface-400 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
                   Progress
@@ -418,7 +418,7 @@ export function TaskDetailsModal({
                 {normalizedTask.assignees.map((assignee) => (
                   <div
                     key={assignee.id}
-                    className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
+                    className="row-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center text-accent-700 font-medium">

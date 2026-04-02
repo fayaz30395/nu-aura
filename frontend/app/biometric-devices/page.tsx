@@ -88,13 +88,13 @@ export default function BiometricDevicesPage() {
       <AppLayout>
         <div className="space-y-6 p-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                 <Fingerprint className="h-7 w-7 text-accent-700" />
                 Biometric Devices
               </h1>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <p className="mt-1 text-body-muted">
                 Manage biometric devices, monitor punch logs, and configure API keys
               </p>
             </div>
@@ -198,8 +198,8 @@ function DeviceListPanel({
   return (
     <div className="space-y-4">
       {/* Actions Row */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="row-between">
+        <p className="text-body-muted">
           {data ? `${data.totalElements} device(s) registered` : 'Loading...'}
         </p>
         <Button
@@ -251,7 +251,7 @@ function DeviceListPanel({
               >
                 Previous
               </Button>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 Page {page + 1} of {data.totalPages}
               </span>
               <Button
@@ -320,7 +320,7 @@ function DeviceCard({
                 <WifiOff className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
               )}
             </div>
-            <p className="mt-0.5 text-xs text-[var(--text-muted)] truncate">
+            <p className="mt-0.5 text-caption truncate">
               SN: {device.serialNumber}
             </p>
           </div>
@@ -352,7 +352,7 @@ function DeviceCard({
         </div>
 
         {/* Meta */}
-        <div className="mt-3 space-y-1 text-xs text-[var(--text-muted)]">
+        <div className="mt-3 space-y-1 text-caption">
           {device.manufacturer && (
             <p>
               {device.manufacturer} {device.model || ''}
@@ -580,7 +580,7 @@ function DeviceLogsDrawer({
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="w-full max-w-xl bg-[var(--bg-surface)] shadow-[var(--shadow-dropdown)] overflow-y-auto"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-4">
+        <div className="sticky top-0 z-10 row-between divider-b bg-[var(--bg-surface)] px-6 py-4">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <Activity className="h-5 w-5 text-accent-700" />
             Punch Logs
@@ -615,7 +615,7 @@ function DeviceLogsDrawer({
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-[var(--text-muted)]">
+                  <span className="text-body-muted">
                     Page {logPage + 1} of {data.totalPages}
                   </span>
                   <Button
@@ -662,7 +662,7 @@ function PunchLogRow({ log }: { log: BiometricPunchLog }) {
                 {log.punchType}
               </span>
             </p>
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-caption">
               {new Date(log.punchTime).toLocaleString()}
             </p>
           </div>
@@ -694,8 +694,8 @@ function PendingPunchesPanel({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="row-between">
+        <p className="text-body-muted">
           {data ? `${data.totalElements} unprocessed punch(es)` : 'Loading...'}
         </p>
         <Button
@@ -740,7 +740,7 @@ function PendingPunchesPanel({
               >
                 Previous
               </Button>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 Page {page + 1} of {data.totalPages}
               </span>
               <Button
@@ -774,8 +774,8 @@ function ApiKeysPanel({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="row-between">
+        <p className="text-body-muted">
           {keys ? `${keys.length} API key(s)` : 'Loading...'}
         </p>
         <Button
@@ -839,13 +839,13 @@ function ApiKeysPanel({
           {keys?.map((key) => (
             <div
               key={key.id}
-              className="flex items-center justify-between rounded-lg border border-[var(--border-main)] p-4"
+              className="row-between rounded-lg border border-[var(--border-main)] p-4"
             >
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">
                   {key.keyName}
                 </p>
-                <div className="mt-1 flex items-center gap-4 text-xs text-[var(--text-muted)]">
+                <div className="mt-1 flex items-center gap-4 text-caption">
                   <span>...{key.keySuffix}</span>
                   <span>Created: {new Date(key.createdAt).toLocaleDateString()}</span>
                   {key.lastUsedAt && (

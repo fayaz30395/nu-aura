@@ -104,13 +104,13 @@ function CardHeader({
             {pinned && <Pin className="h-4 w-4 text-warning-600 dark:text-warning-400" />}
           </div>
 
-          <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
+          <div className="mt-1 flex items-center gap-2 text-caption">
             {author.designation && <span>{author.designation}</span>}
             {author.designation && author.department && <span>·</span>}
             {author.department && <span>{author.department}</span>}
           </div>
 
-          <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
+          <div className="mt-1 flex items-center gap-2 text-caption">
             <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>
             <VisibilityIcon className="h-3.5 w-3.5" />
           </div>
@@ -142,7 +142,7 @@ function CardHeader({
                     onPin(postId, !pinned);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-body-secondary hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <Pin className="h-4 w-4" />
                   {pinned ? 'Unpin' : 'Pin to top'}
@@ -214,7 +214,7 @@ export function PostCard({
 
           {/* Content */}
           <div className="space-y-4">
-            <p className="whitespace-pre-wrap text-sm text-[var(--text-secondary)]">
+            <p className="whitespace-pre-wrap text-body-secondary">
               {post.content}
             </p>
 
@@ -345,7 +345,7 @@ export function PollCard({
 
           {/* Vote Count */}
           {totalVotes > 0 && (
-            <div className="text-xs text-[var(--text-muted)]">
+            <div className="text-caption">
               {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}
             </div>
           )}
@@ -414,13 +414,13 @@ function PollOption({
     // Show results as progress bars
     return (
       <div key={option.id} className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-[var(--text-secondary)]">{option.text}</span>
+        <div className="row-between">
+          <span className="text-body-secondary">{option.text}</span>
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-medium text-[var(--text-secondary)]">
               {option.votePercentage}%
             </span>
-            <span className="text-xs text-[var(--text-muted)]">
+            <span className="text-caption">
               {option.voteCount}
             </span>
           </div>
@@ -528,7 +528,7 @@ export function PraiseCard({
 
           {/* Praise Message */}
           <div>
-            <p className="whitespace-pre-wrap text-sm text-[var(--text-secondary)]">
+            <p className="whitespace-pre-wrap text-body-secondary">
               {post.content}
             </p>
           </div>
@@ -545,7 +545,7 @@ export function PraiseCard({
                   {recipient.fullName}
                 </h4>
 
-                <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                <div className="mt-1 flex items-center gap-2 text-caption">
                   {recipient.designation && <span>{recipient.designation}</span>}
                   {recipient.designation && recipient.department && <span>·</span>}
                   {recipient.department && <span>{recipient.department}</span>}

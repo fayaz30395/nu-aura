@@ -160,7 +160,7 @@ function SkeletonStatCard({
             }}
             {...props}
         >
-            <div className="flex items-center justify-between">
+            <div className="row-between">
                 <Skeleton height={16} width={96} />
                 <Skeleton height={32} width={32} className="rounded-lg" />
             </div>

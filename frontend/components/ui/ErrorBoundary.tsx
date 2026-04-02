@@ -98,7 +98,7 @@ export class ErrorBoundary extends Component<Props, State> {
             {/* Production: Show only error ID for support reference */}
             {!isDevelopment && this.state.errorId && (
               <div className="bg-[var(--bg-surface)] dark:bg-surface-700 rounded p-4 mb-6 text-center">
-                <p className="text-xs text-[var(--text-muted)] mb-1">
+                <p className="text-caption mb-1">
                   Error Reference
                 </p>
                 <p className="text-sm font-mono text-[var(--text-secondary)] select-all">

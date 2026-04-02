@@ -154,18 +154,18 @@ export default function LeaveApprovalsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Pending Requests</div>
+            <div className="skeuo-deboss text-body-secondary mb-1">Pending Requests</div>
             <div className="skeuo-emboss text-3xl font-bold text-warning-600 dark:text-warning-500">{requests.length}</div>
           </div>
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Approved (This Month)</div>
+            <div className="skeuo-deboss text-body-secondary mb-1">Approved (This Month)</div>
             <div className="skeuo-emboss text-3xl font-bold text-success-600 dark:text-success-500">0</div>
-            <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
+            <p className="text-caption mt-2">Updated when filters applied</p>
           </div>
           <div className="skeuo-card rounded-xl p-6">
-            <div className="skeuo-deboss text-sm text-[var(--text-secondary)] mb-1">Rejected (This Month)</div>
+            <div className="skeuo-deboss text-body-secondary mb-1">Rejected (This Month)</div>
             <div className="skeuo-emboss text-3xl font-bold text-danger-600 dark:text-danger-500">0</div>
-            <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
+            <p className="text-caption mt-2">Updated when filters applied</p>
           </div>
         </div>
 
@@ -186,7 +186,7 @@ export default function LeaveApprovalsPage() {
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
-              <p className="text-sm text-[var(--text-secondary)]">No pending leave requests to review</p>
+              <p className="text-body-secondary">No pending leave requests to review</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -215,18 +215,18 @@ export default function LeaveApprovalsPage() {
                       <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                         {getLeaveTypeName(request.leaveTypeId)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="px-6 py-4 text-body-secondary">
                         {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="px-6 py-4 text-body-secondary">
                         {request.totalDays} {request.isHalfDay && '(Half)'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs">
+                      <td className="px-6 py-4 text-body-secondary max-w-xs">
                         <div className="truncate" title={request.reason}>
                           {request.reason}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                      <td className="px-6 py-4 text-body-secondary">
                         {new Date(request.appliedOn).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-sm">

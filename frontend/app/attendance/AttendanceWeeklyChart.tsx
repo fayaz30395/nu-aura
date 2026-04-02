@@ -36,7 +36,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
       {d.isHoliday ? (
         <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3" /> Holiday</div>
       ) : d.isWeeklyOff ? (
-        <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]"><Moon className="h-3 w-3" /> Weekly Off</div>
+        <div className="flex items-center gap-1.5 text-caption"><Moon className="h-3 w-3" /> Weekly Off</div>
       ) : d.hours > 0 ? (
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs">
@@ -72,7 +72,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
           </div>
         </div>
       ) : (
-        <div className="text-xs text-[var(--text-muted)]">No attendance</div>
+        <div className="text-caption">No attendance</div>
       )}
     </div>
   );
@@ -95,7 +95,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
   return (
     <Card className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
       <CardHeader className="border-b border-[var(--border-main)] pb-4">
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
               <BarChart3 className="h-4 w-4 text-white" />

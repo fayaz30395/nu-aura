@@ -33,7 +33,7 @@ export function DeclineOfferModal({
           </div>
           <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Decline Offer</h3>
         </div>
-        <p className="text-sm text-[var(--text-muted)] mb-4">
+        <p className="text-body-muted mb-4">
           Mark offer as declined for <strong className="text-[var(--text-secondary)]">{candidate.fullName}</strong>?
         </p>
         <div className="mb-6">

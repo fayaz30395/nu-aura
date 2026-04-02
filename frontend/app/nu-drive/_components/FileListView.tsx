@@ -41,23 +41,23 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
               </div>
               <div className="flex items-center gap-4 mt-1">
                 {activeTab === 'shared' && file.sharingUser && (
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     Shared by {file.sharingUser.displayName}
                   </span>
                 )}
                 {file.owners?.[0] && activeTab !== 'shared' && (
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     {file.owners[0].displayName}
                   </span>
                 )}
                 {file.modifiedTime && (
-                  <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+                  <span className="text-caption flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {new Date(file.modifiedTime).toLocaleDateString()}
                   </span>
                 )}
                 {file.size && (
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     {formatBytes(parseInt(file.size))}
                   </span>
                 )}

@@ -24,7 +24,7 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
 
   return (
     <motion.div
-      className={`flex items-center gap-2 text-sm text-[var(--text-muted)] ${className}`}
+      className={`flex items-center gap-2 text-body-muted ${className}`}
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}

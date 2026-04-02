@@ -122,3 +122,40 @@ export interface Page<T> {
   number: number;
   empty: boolean;
 }
+
+// ─── Payroll Components (formula-based salary building blocks) ────────────────
+
+export type ComponentType = 'EARNING' | 'DEDUCTION' | 'EMPLOYER_CONTRIBUTION';
+
+export interface PayrollComponent {
+  id: string;
+  code: string;
+  name: string;
+  componentType: ComponentType;
+  /** SpEL formula referencing other component codes, e.g. "basic * 0.4" */
+  formula?: string;
+  /** Fixed fallback value when no formula */
+  defaultValue?: number;
+  evaluationOrder: number;
+  isActive: boolean;
+  isTaxable: boolean;
+  description?: string;
+  tenantId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PayrollComponentRequest {
+  code: string;
+  name: string;
+  componentType: ComponentType;
+  formula?: string;
+  defaultValue?: number;
+  isActive?: boolean;
+  isTaxable?: boolean;
+  description?: string;
+}
+
+export interface EvaluateComponentsResponse {
+  [code: string]: number;
+}

@@ -74,7 +74,7 @@ export default function CreateSalaryStructurePage() {
                   <button
                     type="button"
                     onClick={() => router.push('/payroll/salary-structures')}
-                    className="inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                    className="inline-flex items-center gap-1.5 text-body-secondary hover:text-[var(--text-primary)] transition-colors"
                     aria-label="Back to salary structures"
                   >
                     <ArrowLeft className="w-4 h-4" />

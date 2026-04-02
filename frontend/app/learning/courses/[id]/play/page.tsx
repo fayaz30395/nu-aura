@@ -245,7 +245,7 @@ export default function CoursePlayerPage() {
           <div className="flex flex-col gap-4">
             {activeContent.documentUrl ? (
               <div className="skeuo-card overflow-hidden">
-                <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
+                <div className="row-between p-4 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
                   <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
                     href={activeContent.documentUrl}
@@ -381,7 +381,7 @@ export default function CoursePlayerPage() {
     <AppLayout>
       <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
+      <div className="row-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
         <div className="flex items-center gap-4">
           <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
             <X className="h-5 w-5" />
@@ -395,14 +395,14 @@ export default function CoursePlayerPage() {
           <div className="hidden md:block">
             <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-xs">{course.title}</p>
             {activeContent && (
-              <p className="text-xs text-[var(--text-muted)]">{activeContent.title}</p>
+              <p className="text-caption">{activeContent.title}</p>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-4">
           {updateProgressMutation.isPending && (
-            <span className="text-xs text-[var(--text-muted)] animate-pulse">Saving...</span>
+            <span className="text-caption animate-pulse">Saving...</span>
           )}
           {/* Progress bar */}
           <div className="hidden sm:flex items-center gap-2">
@@ -412,7 +412,7 @@ export default function CoursePlayerPage() {
                 style={{ width: `${overallProgress}%` }}
               />
             </div>
-            <span className="text-xs text-[var(--text-muted)] font-medium">{overallProgress}%</span>
+            <span className="text-caption font-medium">{overallProgress}%</span>
           </div>
           <div className="flex items-center gap-1">
             <button
@@ -439,16 +439,16 @@ export default function CoursePlayerPage() {
         {/* Sidebar */}
         {sidebarOpen && (
           <aside className="w-72 bg-[var(--bg-card)] border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
-            <div className="p-4 border-b border-[var(--border-subtle)]">
+            <div className="p-4 divider-b">
               <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Course Content</p>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">
+              <p className="text-caption mt-0.5">
                 {completedCount} / {totalContents} completed
               </p>
             </div>
             <div className="flex-1 overflow-y-auto">
               {course.modules?.map((mod, modIdx) => (
                 <div key={mod.id}>
-                  <div className="px-4 py-2 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]">
+                  <div className="px-4 py-2 bg-[var(--bg-surface)] divider-b">
                     <p className="text-xs font-semibold text-[var(--text-secondary)]">
                       {modIdx + 1}. {mod.title}
                     </p>
@@ -482,7 +482,7 @@ export default function CoursePlayerPage() {
                           </p>
                           <div className="flex items-center gap-1 mt-0.5">
                             <Icon className="h-3 w-3 text-[var(--text-muted)]" />
-                            <span className="text-xs text-[var(--text-muted)]">
+                            <span className="text-caption">
                               {CONTENT_TYPE_LABEL[content.contentType]}
                               {content.durationMinutes ? ` · ${content.durationMinutes}m` : ''}
                             </span>
@@ -508,7 +508,7 @@ export default function CoursePlayerPage() {
                     const Icon = CONTENT_TYPE_ICON[activeContent.contentType] ?? FileText;
                     return <Icon className="h-4 w-4 text-[var(--text-muted)]" />;
                   })()}
-                  <span className="text-sm text-[var(--text-muted)]">
+                  <span className="text-body-muted">
                     {CONTENT_TYPE_LABEL[activeContent.contentType]}
                     {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
                   </span>
@@ -527,7 +527,7 @@ export default function CoursePlayerPage() {
                 <button
                   onClick={goPrev}
                   disabled={activeContentIdx <= 0}
-                  className="flex items-center gap-1 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="flex items-center gap-1 px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous
                 </button>

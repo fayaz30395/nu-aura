@@ -143,7 +143,7 @@ function ScormLauncher({
       {!launched ? (
         <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-[var(--border-main)] rounded-lg bg-[var(--bg-muted)] gap-4">
           <BookOpen className="h-10 w-10 text-[var(--text-muted)]" />
-          <p className="text-sm text-[var(--text-muted)]">SCORM package ready to launch</p>
+          <p className="text-body-muted">SCORM package ready to launch</p>
           <Button onClick={handleLaunch} className="flex items-center gap-2">
             <Play className="h-4 w-4" />
             Launch SCORM Content
@@ -151,7 +151,7 @@ function ScormLauncher({
         </div>
       ) : (
         <div className="rounded-lg overflow-hidden border border-[var(--border-main)]">
-          <div className="flex items-center justify-between px-3 py-2 bg-[var(--bg-muted)] border-b border-[var(--border-main)]">
+          <div className="row-between px-3 py-2 bg-[var(--bg-muted)] border-b border-[var(--border-main)]">
             <span className="text-xs font-medium text-[var(--text-secondary)]">{title}</span>
             <a
               href={url}
@@ -226,14 +226,14 @@ function ContentViewer({
       return content.videoUrl ? (
         <VideoPlayer url={content.videoUrl} title={content.title} onComplete={handleComplete} />
       ) : (
-        <p className="text-sm text-[var(--text-muted)]">No video URL available.</p>
+        <p className="text-body-muted">No video URL available.</p>
       );
 
     case 'SCORM':
       return content.documentUrl ? (
         <ScormLauncher url={content.documentUrl} title={content.title} onLaunch={handleComplete} />
       ) : (
-        <p className="text-sm text-[var(--text-muted)]">No SCORM package URL available.</p>
+        <p className="text-body-muted">No SCORM package URL available.</p>
       );
 
     case 'DOCUMENT':
@@ -259,7 +259,7 @@ function ContentViewer({
       return content.textContent ? (
         <TextContent content={content.textContent} onComplete={handleComplete} />
       ) : (
-        <p className="text-sm text-[var(--text-muted)]">No text content available.</p>
+        <p className="text-body-muted">No text content available.</p>
       );
 
     case 'EXTERNAL_LINK':
@@ -322,7 +322,7 @@ function ModuleItem({
       {/* Module header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] transition-colors text-left"
+        className="w-full row-between px-4 py-3 bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] transition-colors text-left"
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {expanded ? (
@@ -333,18 +333,18 @@ function ModuleItem({
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm text-[var(--text-primary)] truncate">{module.title}</p>
             {module.description && (
-              <p className="text-xs text-[var(--text-muted)] mt-0.5 truncate">{module.description}</p>
+              <p className="text-caption mt-0.5 truncate">{module.description}</p>
             )}
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0 ml-3">
           {module.durationMinutes && (
-            <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+            <span className="text-caption flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {module.durationMinutes}m
             </span>
           )}
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             {completedCount}/{totalCount}
           </span>
           {moduleProgress === 100 && (
@@ -357,7 +357,7 @@ function ModuleItem({
       {expanded && (
         <div className="border-t border-[var(--border-main)]">
           {contents.length === 0 ? (
-            <p className="text-sm text-[var(--text-muted)] px-4 py-3">No content in this module yet.</p>
+            <p className="text-body-muted px-4 py-3">No content in this module yet.</p>
           ) : (
             <div className="divide-y divide-[var(--border-main)]">
               {contents.map((content) => {
@@ -383,7 +383,7 @@ function ModuleItem({
                         <span className="text-xs text-danger-600 bg-danger-50 px-1.5 py-0.5 rounded shrink-0">Required</span>
                       )}
                       {content.durationMinutes && (
-                        <span className="text-xs text-[var(--text-muted)] shrink-0">{content.durationMinutes}m</span>
+                        <span className="text-caption shrink-0">{content.durationMinutes}m</span>
                       )}
                       {!enrollmentId && <Lock className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />}
                     </button>
@@ -398,7 +398,7 @@ function ModuleItem({
                             onProgress={onContentComplete}
                           />
                         ) : (
-                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] py-4 justify-center">
+                          <div className="flex items-center gap-2 text-body-muted py-4 justify-center">
                             <Lock className="h-4 w-4" />
                             Enroll in this course to access content.
                           </div>
@@ -511,7 +511,7 @@ export default function CourseDetailPage() {
         {/* Back navigation */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+          className="flex items-center gap-2 text-body-muted hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to catalog
@@ -557,13 +557,13 @@ export default function CourseDetailPage() {
                 </h1>
 
                 {course.description && (
-                  <p className="text-sm text-[var(--text-muted)] leading-relaxed">
+                  <p className="text-body-muted leading-relaxed">
                     {course.description}
                   </p>
                 )}
 
                 {/* Meta */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)]">
+                <div className="flex flex-wrap items-center gap-4 text-body-muted">
                   {course.durationHours && (
                     <span className="flex items-center gap-1.5">
                       <Clock className="h-4 w-4" />
@@ -599,7 +599,7 @@ export default function CourseDetailPage() {
                         Enrolled
                       </div>
                       <div className="flex-1 max-w-xs space-y-1">
-                        <div className="flex justify-between text-xs text-[var(--text-muted)]">
+                        <div className="flex justify-between text-caption">
                           <span>Progress</span>
                           <span>{overallProgress}%</span>
                         </div>
@@ -672,7 +672,7 @@ export default function CourseDetailPage() {
                 <CardContent className="p-4 space-y-3">
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">Your Progress</h3>
                   <div className="space-y-1">
-                    <div className="flex justify-between text-xs text-[var(--text-muted)]">
+                    <div className="flex justify-between text-caption">
                       <span>{completedCount} of {totalContents} completed</span>
                       <span>{overallProgress}%</span>
                     </div>
@@ -685,7 +685,7 @@ export default function CourseDetailPage() {
                     </div>
                   )}
                   {enrollment?.lastAccessedAt && (
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-caption">
                       Last accessed: {new Date(enrollment.lastAccessedAt).toLocaleDateString()}
                     </p>
                   )}

@@ -191,10 +191,10 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
       {open && query.trim().length >= 2 && (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">Searching employees...</div>
+            <div className="px-4 py-4 text-body-muted">Searching employees...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-4 text-sm text-[var(--text-muted)]">No employees found</div>
+            <div className="px-4 py-4 text-body-muted">No employees found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -202,14 +202,14 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
                 <li key={employee.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    className="flex w-full flex-col gap-0.5 px-4 py-4 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(employee)}
                   >
                     <span className="font-medium text-[var(--text-primary)]">
                       {buildEmployeeName(employee)}
                     </span>
                     {employee.employeeCode && (
-                      <span className="text-xs text-[var(--text-muted)]">
+                      <span className="text-caption">
                         {employee.employeeCode}
                       </span>
                     )}
@@ -281,7 +281,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
           <div className="font-medium text-[var(--text-primary)]">
             {allocation.employeeName || allocation.employeeCode || '—'}
           </div>
-          <div className="text-xs text-[var(--text-muted)]">
+          <div className="text-caption">
             {allocation.employeeCode || '—'}
           </div>
         </div>
@@ -292,7 +292,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       key: 'allocation',
       header: 'Allocation',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatPercent(allocation.allocationPercent)}
         </span>
       ),
@@ -302,7 +302,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       key: 'start',
       header: 'Start Date',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatDate(allocation.startDate)}
         </span>
       ),
@@ -312,7 +312,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       key: 'end',
       header: 'End Date',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatDate(allocation.endDate)}
         </span>
       ),
@@ -409,7 +409,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Project Roster</h2>
-              <p className="text-sm text-[var(--text-muted)]">Allocated employees and their allocation percent.</p>
+              <p className="text-body-muted">Allocated employees and their allocation percent.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Button

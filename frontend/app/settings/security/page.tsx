@@ -212,7 +212,7 @@ export default function SecuritySettingsPage() {
                   >
                     Enable Two-Factor Authentication
                   </Button>
-                  <p className="text-xs text-[var(--text-muted)] mt-3">
+                  <p className="text-caption mt-3">
                     You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
                   </p>
                 </div>
@@ -230,7 +230,7 @@ export default function SecuritySettingsPage() {
                     </Button>
                   ) : (
                     <form onSubmit={handleSubmit(handleDisableMfa)} className="space-y-4">
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         Enter your current 6-digit authenticator code to disable two-factor authentication:
                       </p>
                       <input
@@ -322,12 +322,12 @@ export default function SecuritySettingsPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">This Device</p>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">
+                  <p className="text-body-muted mt-1">
                     Current session - active now
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[var(--text-muted)] pt-2">
+              <p className="text-body-muted pt-2">
                 Session management features will be available soon. You can manually log out from other devices using the logout button.
               </p>
             </div>

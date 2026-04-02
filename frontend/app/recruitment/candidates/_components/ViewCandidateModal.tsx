@@ -61,7 +61,7 @@ export function ViewCandidateModal({
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Email</p>
+                  <p className="text-caption">Email</p>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.email}</p>
                 </div>
               </div>
@@ -69,7 +69,7 @@ export function ViewCandidateModal({
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <Phone className="h-5 w-5 text-[var(--text-muted)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                    <p className="text-caption">Phone</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.phone}</p>
                   </div>
                 </div>
@@ -78,7 +78,7 @@ export function ViewCandidateModal({
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <MapPin className="h-5 w-5 text-[var(--text-muted)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-muted)]">Location</p>
+                    <p className="text-caption">Location</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentLocation}</p>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export function ViewCandidateModal({
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <Building className="h-5 w-5 text-[var(--text-muted)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-muted)]">Current Company</p>
+                    <p className="text-caption">Current Company</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentCompany}</p>
                   </div>
                 </div>
@@ -96,25 +96,25 @@ export function ViewCandidateModal({
 
             <div className="grid grid-cols-4 gap-4">
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                <p className="text-xs text-[var(--text-muted)]">Experience</p>
+                <p className="text-caption">Experience</p>
                 <p className="text-lg font-semibold text-[var(--text-primary)]">
                   {candidate.totalExperience ? `${candidate.totalExperience}y` : '-'}
                 </p>
               </div>
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                <p className="text-xs text-[var(--text-muted)]">Current CTC</p>
+                <p className="text-caption">Current CTC</p>
                 <p className="text-lg font-semibold text-[var(--text-primary)]">
                   {candidate.currentCtc?.toLocaleString() || '-'}
                 </p>
               </div>
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                <p className="text-xs text-[var(--text-muted)]">Expected CTC</p>
+                <p className="text-caption">Expected CTC</p>
                 <p className="text-lg font-semibold text-[var(--text-primary)]">
                   {candidate.expectedCtc?.toLocaleString() || '-'}
                 </p>
               </div>
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                <p className="text-xs text-[var(--text-muted)]">Notice Period</p>
+                <p className="text-caption">Notice Period</p>
                 <p className="text-lg font-semibold text-[var(--text-primary)]">
                   {candidate.noticePeriodDays ? `${candidate.noticePeriodDays}d` : '-'}
                 </p>
@@ -123,7 +123,7 @@ export function ViewCandidateModal({
 
             {candidate.notes && (
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <p className="text-xs text-[var(--text-muted)] mb-2">Notes</p>
+                <p className="text-caption mb-2">Notes</p>
                 <p className="text-sm text-[var(--text-primary)]">{candidate.notes}</p>
               </div>
             )}

@@ -53,7 +53,7 @@ export function RejectRequestModal({
             <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <h2 className="text-card-title">Reject Regularization Request</h2>
                   <motion.button
                     onClick={onClose}
@@ -81,7 +81,7 @@ export function RejectRequestModal({
                         className="input-aura w-full px-4 py-4"
                         placeholder="Please explain why you are rejecting this regularization request..."
                       />
-                      <div className="flex items-center justify-between mt-2">
+                      <div className="row-between mt-2">
                         {errors.reason && (
                           <motion.p
                             initial={{ opacity: 0, y: -4 }}

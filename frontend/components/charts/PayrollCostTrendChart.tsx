@@ -28,11 +28,11 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
               <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
               <XAxis
                 dataKey="month"
-                className="text-xs text-[var(--text-muted)]"
+                className="text-caption"
                 tick={{ fill: 'currentColor' }}
               />
               <YAxis
-                className="text-xs text-[var(--text-muted)]"
+                className="text-caption"
                 tick={{ fill: 'currentColor' }}
                 tickFormatter={(value) => `₹${(value / 100000).toFixed(0)}L`}
               />

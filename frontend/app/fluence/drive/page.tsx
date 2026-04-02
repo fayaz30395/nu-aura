@@ -227,7 +227,7 @@ function FluenceDriveContent() {
                 <Upload className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 Getting Started
               </h3>
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-body-secondary">
                 Upload files to your Drive to share them across wiki pages and blog posts.
                 Files can be up to 50MB in size. Supported formats include documents, images,
                 spreadsheets, and more.

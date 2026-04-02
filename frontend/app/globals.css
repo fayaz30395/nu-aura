@@ -1059,6 +1059,90 @@
       animation: none !important;
     }
   }
+
+  /* ── Meta Row — inline metadata strip (email · dept · code etc.) ── */
+  .meta-row {
+    @apply flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)];
+  }
+
+  /* ── Layout Primitives ─────────────────────────────────────── */
+  /* Flex row with space-between — used in card headers, page headers, section titles */
+  .row-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* ── Text Utilities (Body Size) ─────────────────────────────── */
+  /* Small muted text — for helper text, timestamps, secondary metadata */
+  .text-body-muted {
+    @apply text-sm;
+    color: var(--text-muted);
+  }
+
+  /* ── Dividers ───────────────────────────────────────────────── */
+  /* Bottom border separator using design-system token */
+  .divider-b {
+    @apply border-b border-[var(--border-subtle)];
+  }
+
+  /* ── Modal / Overlay Backdrop ───────────────────────────────── */
+  /* Full-screen overlay for modals and drawers */
+  .modal-backdrop {
+    @apply fixed inset-0 flex items-center justify-center p-4 z-50;
+    background-color: rgba(0, 0, 0, 0.50);
+  }
+
+  /* ── Card Sub-elements ──────────────────────────────────────── */
+  /* Standard card header row: label + action, separated by bottom border */
+  .card-header-row {
+    @apply flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)];
+  }
+
+  /* Standard card content area */
+  .card-body {
+    @apply p-4 space-y-4;
+  }
+
+  /* ── Stat Card Elements ─────────────────────────────────────── */
+  /* Label below a KPI number */
+  .stat-label {
+    @apply text-xs mt-1;
+    color: var(--text-muted);
+  }
+
+  /* ── Badge Color Variants (extend .badge-status) ────────────── */
+  .badge-success {
+    @apply bg-success-50 text-success-700 border border-success-200;
+  }
+  .dark .badge-success {
+    @apply bg-success-950/20 text-success-400 border-success-800;
+  }
+  .badge-danger {
+    @apply bg-danger-50 text-danger-700 border border-danger-200;
+  }
+  .dark .badge-danger {
+    @apply bg-danger-950/20 text-danger-400 border-danger-800;
+  }
+  .badge-warning {
+    @apply bg-warning-50 text-warning-700 border border-warning-200;
+  }
+  .dark .badge-warning {
+    @apply bg-warning-950/20 text-warning-400 border-warning-800;
+  }
+  .badge-info {
+    @apply bg-info-50 text-info-700 border border-info-200;
+  }
+  .dark .badge-info {
+    @apply bg-info-950/20 text-info-400 border-info-800;
+  }
+  .badge-neutral {
+    @apply bg-[var(--surface-2)] text-[var(--text-muted)] border border-[var(--border-main)];
+  }
+
+  /* ── Form Group ─────────────────────────────────────────────── */
+  /* Label + input vertical stack */
+  .form-group {
+    @apply flex flex-col gap-2;
+  }
 }
 
 /* ================================================================

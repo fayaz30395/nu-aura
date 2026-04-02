@@ -165,7 +165,7 @@ export default function AdminSettingsPage() {
                 <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {card.title}
                 </h3>
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                <p className="mt-1 text-body-secondary">
                   {card.description}
                 </p>
               </CardContent>
@@ -194,7 +194,7 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
-                <p className="text-sm text-[var(--text-muted)]">View pending approvals</p>
+                <p className="text-body-muted">View pending approvals</p>
               </div>
             </button>
 
@@ -207,7 +207,7 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Employees</p>
-                <p className="text-sm text-[var(--text-muted)]">Manage employee records</p>
+                <p className="text-body-muted">Manage employee records</p>
               </div>
             </button>
 
@@ -220,7 +220,7 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Departments</p>
-                <p className="text-sm text-[var(--text-muted)]">Manage departments</p>
+                <p className="text-body-muted">Manage departments</p>
               </div>
             </button>
           </div>

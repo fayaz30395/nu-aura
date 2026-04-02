@@ -336,7 +336,7 @@ export default function ScheduledReportsPage() {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold">{report.scheduleName}</h3>
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-body-secondary">
                           {REPORT_TYPE_LABELS[report.reportType]}
                         </p>
                       </div>
@@ -383,7 +383,7 @@ export default function ScheduledReportsPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-[var(--border-main)]">
+                  <div className="row-between pt-4 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {report.isActive ? (
                         <span className="flex items-center gap-1 text-xs text-success-600">
@@ -391,13 +391,13 @@ export default function ScheduledReportsPage() {
                           Active
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                        <span className="flex items-center gap-1 text-caption">
                           <XCircle className="h-3 w-3" />
                           Inactive
                         </span>
                       )}
                       {report.nextRunAt && report.isActive && (
-                        <span className="text-xs text-[var(--text-muted)] ml-2">
+                        <span className="text-caption ml-2">
                           Next: {new Date(report.nextRunAt).toLocaleDateString()}
                         </span>
                       )}

@@ -58,7 +58,7 @@ export function MailSidebar({
             <button
               key={label.id}
               onClick={() => onLabelSelect(label.id)}
-              className={`w-full flex items-center justify-between gap-4 px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+              className={`w-full row-between gap-4 px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 selectedLabel === label.id
                   ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'

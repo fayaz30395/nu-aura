@@ -403,19 +403,19 @@ export default function ImplicitRolesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                     {rule.ruleName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                     {CONDITION_LABELS[rule.conditionType]}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                     {rule.targetRoleName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                     {SCOPE_LABELS[rule.scope]}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                     {rule.priority}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                     <button
                       onClick={() => openAffectedUsersModal(rule)}
                       className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -773,9 +773,9 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
                 {usersQuery.data.content.map((userRole) => (
                   <tr key={userRole.id}>
                     <td className="px-6 py-4 text-sm text-[var(--text-primary)]">{userRole.userName}</td>
-                    <td className="px-6 py-4 text-sm text-[var(--text-muted)]">{userRole.roleName}</td>
-                    <td className="px-6 py-4 text-sm text-[var(--text-muted)]">{userRole.scope}</td>
-                    <td className="px-6 py-4 text-sm text-[var(--text-muted)]">
+                    <td className="px-6 py-4 text-body-muted">{userRole.roleName}</td>
+                    <td className="px-6 py-4 text-body-muted">{userRole.scope}</td>
+                    <td className="px-6 py-4 text-body-muted">
                       {new Date(userRole.computedAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-sm">

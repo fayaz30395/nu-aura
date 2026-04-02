@@ -36,7 +36,7 @@ export function DriveOAuthPanel({
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Drive</h1>
-            <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Google Drive</p>
+            <p className="text-body-muted">Your organization&apos;s Google Drive</p>
           </div>
         </div>
         {!isConnected ? (
@@ -127,7 +127,7 @@ export function DriveOAuthPanel({
               >
                 Connect Google Drive
               </Button>
-              <p className="text-xs text-[var(--text-muted)] mt-4">
+              <p className="text-caption mt-4">
                 You&apos;ll be asked to grant access to your Google Drive files.
               </p>
             </div>

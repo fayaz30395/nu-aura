@@ -371,7 +371,7 @@ function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
   return (
     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
       <Card className={card.base}>
-        <CardContent className={`p-6 flex items-center justify-between`}>
+        <CardContent className={`p-6 row-between`}>
           <div>
             <p className={typography.caption}>{label}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">

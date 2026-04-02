@@ -255,7 +255,7 @@ export default function FeedbackPage() {
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-[var(--text-secondary)] mb-2">
+                    <div className="text-body-secondary mb-2">
                       {feedback.createdAt ? new Date(feedback.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -375,7 +375,7 @@ export default function FeedbackPage() {
                           {...register('isAnonymous')}
                           className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">
+                        <span className="ml-2 text-body-secondary">
                           Submit as anonymous
                         </span>
                       </label>
@@ -386,7 +386,7 @@ export default function FeedbackPage() {
                           {...register('isPublic')}
                           className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
                         />
-                        <span className="ml-2 text-sm text-[var(--text-secondary)]">
+                        <span className="ml-2 text-body-secondary">
                           Make this feedback public
                         </span>
                       </label>

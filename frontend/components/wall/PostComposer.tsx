@@ -160,7 +160,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
     <Card className="bg-[var(--bg-card)]" variant="default" padding="md">
       <CardContent className="p-0">
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-[var(--border-subtle)]">
+        <div className="flex gap-1 divider-b">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -213,7 +213,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                 </div>
 
                 {/* Footer: media buttons + visibility + submit */}
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -348,7 +348,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2">
                     <Controller
                       control={pollForm.control}
@@ -466,7 +466,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2">
                     <Controller
                       control={praiseForm.control}

@@ -80,7 +80,7 @@ function RatingStars({ value }: { value: number }) {
           }
         />
       ))}
-      <span className="ml-1 text-xs text-[var(--text-muted)]">{value.toFixed(1)}</span>
+      <span className="ml-1 text-caption">{value.toFixed(1)}</span>
     </span>
   );
 }
@@ -137,7 +137,7 @@ function ReviewCompetencyPanel({
       {/* Header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-[var(--bg-input)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className="w-full row-between px-5 py-4 bg-[var(--bg-input)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-3">
           {expanded ? (
@@ -146,7 +146,7 @@ function ReviewCompetencyPanel({
             <ChevronRight size={16} className="text-[var(--text-muted)]" />
           )}
           <span className="font-medium text-[var(--text-primary)]">{employeeName}</span>
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             {competencies.length} competenc{competencies.length !== 1 ? 'ies' : 'y'}
           </span>
         </div>
@@ -211,7 +211,7 @@ function ReviewCompetencyPanel({
                             <CategoryBadge category={comp.category} />
                           </div>
                           {comp.comments && (
-                            <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-2">
+                            <p className="text-caption mt-1 line-clamp-2">
                               {comp.comments}
                             </p>
                           )}
@@ -296,7 +296,7 @@ function AddCompetencyModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-[var(--bg-surface)] rounded-xl shadow-[var(--shadow-floating)] w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-main)]">
+        <div className="row-between px-6 py-4 border-b border-[var(--border-main)]">
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Add Competency</h2>
           <button
             onClick={onClose}
@@ -595,7 +595,7 @@ export default function CompetencyFrameworkPage() {
                   >
                     {selectedCycle.status}
                   </span>
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     {filteredReviews.length} review{filteredReviews.length !== 1 ? 's' : ''} in this cycle
                   </span>
                 </div>
@@ -626,7 +626,7 @@ export default function CompetencyFrameworkPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wide">
+                <p className="text-caption font-medium uppercase tracking-wide">
                   {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''} — click to expand & manage competencies
                 </p>
                 {filteredReviews.map((review) => (

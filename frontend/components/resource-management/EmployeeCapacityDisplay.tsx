@@ -54,7 +54,7 @@ export function EmployeeCapacityDisplay({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Header with employee info */}
-      <div className="flex items-center justify-between">
+      <div className="row-between">
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
             <User className="h-5 w-5" />
@@ -78,7 +78,7 @@ export function EmployeeCapacityDisplay({
 
       {/* Allocation Gauge */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
+        <div className="row-between text-sm">
           <span className="font-medium text-surface-700 dark:text-surface-300">
             Total Allocation
           </span>
@@ -271,7 +271,7 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
   return (
     <div
       className={cn(
-        'flex items-center justify-between rounded-lg border p-4',
+        'row-between rounded-lg border p-4',
         allocation.isPendingApproval
           ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
           : 'border-surface-200 bg-[var(--bg-card)] dark:border-surface-700'

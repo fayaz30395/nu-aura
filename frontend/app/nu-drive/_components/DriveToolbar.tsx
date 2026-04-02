@@ -52,9 +52,9 @@ export function DriveToolbar({
       {driveStats && driveStats.limit > 0 && (
         <Card>
           <CardContent className="py-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="row-between mb-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Storage Used</span>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 {formatBytes(driveStats.used)} of {formatBytes(driveStats.limit)}
               </span>
             </div>

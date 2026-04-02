@@ -48,11 +48,11 @@ export function ScreeningSummaryModal({
           <div className="mb-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <p className="text-xs text-[var(--text-muted)] mb-1">Candidate</p>
+                <p className="text-caption mb-1">Candidate</p>
                 <p className="text-sm font-medium text-[var(--text-primary)]">{screeningSummary.candidateName}</p>
               </div>
               <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <p className="text-xs text-[var(--text-muted)] mb-1">Job Title</p>
+                <p className="text-caption mb-1">Job Title</p>
                 <p className="text-sm font-medium text-[var(--text-primary)]">{screeningSummary.jobTitle}</p>
               </div>
             </div>
@@ -156,12 +156,12 @@ export function ScreeningSummaryModal({
           {/* Summary Section */}
           <div className="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-main)]">
             <p className="text-sm font-medium text-[var(--text-primary)] mb-3">Summary</p>
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{screeningSummary.summary}</p>
+            <p className="text-body-secondary leading-relaxed">{screeningSummary.summary}</p>
           </div>
 
           {/* Footer */}
           <div className="flex justify-between items-center pt-4 border-t border-[var(--border-main)]">
-            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <div className="flex items-center gap-2 text-caption">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Powered by AI</span>
               <span className="px-2 py-1 rounded bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono">

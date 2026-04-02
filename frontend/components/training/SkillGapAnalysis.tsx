@@ -61,7 +61,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="row-between">
                 <div>
                     <h2 className="text-xl font-bold text-surface-900 dark:text-white flex items-center gap-2">
                         <Target className="h-5 w-5 text-accent-500" />
@@ -112,7 +112,7 @@ export const SkillGapAnalysis: React.FC<SkillGapAnalysisProps> = ({ employeeId }
                                 <div className="flex flex-col gap-2 min-w-[250px]">
                                     <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Recommended Learning</p>
                                     {gap.recommendedCourses.map((course) => (
-                                        <div key={course.courseId} className="group flex items-center justify-between p-2 rounded-lg bg-surface-50 dark:bg-surface-900 border border-transparent hover:border-accent-200 transition-all">
+                                        <div key={course.courseId} className="group row-between p-2 rounded-lg bg-surface-50 dark:bg-surface-900 border border-transparent hover:border-accent-200 transition-all">
                                             <div className="flex items-center gap-2">
                                                 <BookOpen className="h-3.5 w-3.5 text-accent-500" />
                                                 <span className="text-sm font-medium line-clamp-1">{course.title}</span>

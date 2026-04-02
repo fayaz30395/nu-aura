@@ -394,7 +394,7 @@ export default function WorkflowDetailPage() {
                 {isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
               </h1>
               {!isNew && !isEditing && workflow?.description && (
-                <p className="mt-1 text-sm text-[var(--text-muted)]">{workflow.description}</p>
+                <p className="mt-1 text-body-muted">{workflow.description}</p>
               )}
             </div>
           </div>
@@ -446,7 +446,7 @@ export default function WorkflowDetailPage() {
                     }))}
                   />
                 ) : (
-                  <p className="text-sm text-[var(--text-muted)]">No steps defined.</p>
+                  <p className="text-body-muted">No steps defined.</p>
                 )}
               </CardContent>
             </Card>
@@ -469,7 +469,7 @@ export default function WorkflowDetailPage() {
                       <div className="flex-1 space-y-1">
                         <p className="font-medium text-[var(--text-primary)]">{step.stepName}</p>
                         {step.description && (
-                          <p className="text-xs text-[var(--text-muted)]">{step.description}</p>
+                          <p className="text-caption">{step.description}</p>
                         )}
                         <div className="flex flex-wrap gap-2 pt-1">
                           <span className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
@@ -692,7 +692,7 @@ export default function WorkflowDetailPage() {
                   <p className="text-sm text-danger-500">{form.formState.errors.steps.root.message}</p>
                 )}
                 {fields.length === 0 && (
-                  <p className="py-8 text-center text-sm text-[var(--text-muted)]">
+                  <p className="py-8 text-center text-body-muted">
                     No steps added yet. Click &quot;Add Step&quot; to create your first approval step.
                   </p>
                 )}
@@ -899,39 +899,39 @@ export default function WorkflowDetailPage() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-6">
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('escalationEnabled')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Enable Escalation
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnSubmission')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Notify on Submission
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnApproval')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Notify on Approval
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnRejection')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Notify on Rejection
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnEscalation')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Notify on Escalation
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('allowParallelApproval')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Allow Parallel Approval
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('autoApproveEnabled')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Auto-Approve Enabled
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('skipLevelAllowed')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Skip-Level Allowed
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('isDefault')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
                     Set as Default
                   </label>
@@ -990,8 +990,8 @@ function InfoCard({
 
 function SettingItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2">
-      <span className="text-xs text-[var(--text-muted)]">{label}</span>
+    <div className="row-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2">
+      <span className="text-caption">{label}</span>
       <span className="text-sm font-medium text-[var(--text-primary)]">{value}</span>
     </div>
   );

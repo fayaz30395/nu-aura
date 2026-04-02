@@ -228,7 +228,7 @@ export default function LoansPage() {
 
         {/* Loans List */}
         <div className="skeuo-card overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-main)]">
+          <div className="row-between px-4 py-4 border-b border-[var(--border-main)]">
             <h2 className="text-base font-semibold text-[var(--text-primary)]">
               My Loans
             </h2>
@@ -286,7 +286,7 @@ export default function LoansPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {loanService.getLoanTypeLabel(loan.loanType)}
                           </span>
                         </td>
@@ -296,7 +296,7 @@ export default function LoansPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {loan.tenureMonths} months
                           </span>
                         </td>
@@ -309,7 +309,7 @@ export default function LoansPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {loanService.formatCurrency(loan.outstandingAmount || 0)}
                           </span>
                         </td>
@@ -340,7 +340,7 @@ export default function LoansPage() {
               onClick={() => router.push('/loans/new')}
               className="group card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg"
             >
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
@@ -349,7 +349,7 @@ export default function LoansPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Apply for Loan
             </h3>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               Submit a new loan application
             </p>
             </button>
@@ -359,7 +359,7 @@ export default function LoansPage() {
             onClick={() => router.push('/loans?filter=active')}
             className="group card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
@@ -368,7 +368,7 @@ export default function LoansPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans
             </h3>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               Check your active loan details and payments
             </p>
           </button>

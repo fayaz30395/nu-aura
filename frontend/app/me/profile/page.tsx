@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -57,8 +56,7 @@ const bankChangeSchema = z.object({
 type BankChangeFormData = z.infer<typeof bankChangeSchema>;
 
 export default function MyProfilePage() {
-  const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [photoLoadError, setPhotoLoadError] = useState(false);
@@ -96,7 +94,7 @@ export default function MyProfilePage() {
   });
 
   // React Query hooks — use /employees/me (no ID needed)
-  const { data: employee, isLoading } = useMyEmployee(hasHydrated && isAuthenticated);
+  const { data: employee, isLoading } = useMyEmployee(!!user);
 
   const updateMutation = useUpdateMyProfile();
 
@@ -115,19 +113,6 @@ export default function MyProfilePage() {
       });
     }
   }, [employee, profileForm]);
-
-  useEffect(() => {
-    // Wait for hydration before checking authentication
-    if (!hasHydrated) {
-      return;
-    }
-
-    // Auth is managed via httpOnly cookies + Zustand state
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
-  }, [isAuthenticated, hasHydrated, router]);
 
   const handleSave = async (data: ProfileFormData) => {
     if (!employee) return;
@@ -216,6 +201,8 @@ export default function MyProfilePage() {
     );
   }
 
+  const photoUrl = employee.profilePhotoUrl || user?.profilePictureUrl;
+
   const displayName = employee.fullName
     || [employee.firstName, employee.lastName].filter(Boolean).join(' ')
     || employee.workEmail
@@ -243,7 +230,7 @@ export default function MyProfilePage() {
     <AppLayout activeMenuItem="profile">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">My Profile</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -313,9 +300,9 @@ export default function MyProfilePage() {
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
-                {employee.profilePhotoUrl && !photoLoadError ? (
+                {photoUrl && !photoLoadError ? (
                   <Image
-                    src={employee.profilePhotoUrl}
+                    src={photoUrl}
                     alt={displayName}
                     width={128}
                     height={128}
@@ -336,7 +323,7 @@ export default function MyProfilePage() {
                 <p className="text-lg text-[var(--text-secondary)] mt-1">
                   {employee.designation}
                 </p>
-                <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-[var(--text-secondary)]">
+                <div className="meta-row mt-2">
                   <div className="flex items-center gap-1">
                     <Mail className="h-4 w-4" />
                     {employee.workEmail}
@@ -616,7 +603,7 @@ export default function MyProfilePage() {
           {/* Bank Details */}
           <Card className="card-aura lg:col-span-2">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <CardTitle className="skeuo-emboss flex items-center gap-2">
                     <CreditCard className="h-5 w-5" />
@@ -695,10 +682,10 @@ export default function MyProfilePage() {
 
         {/* Bank Change Request Modal */}
         {showBankChangeModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="modal-backdrop">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
                       <SendHorizonal className="h-5 w-5 text-warning-600 dark:text-warning-400" />
@@ -707,7 +694,7 @@ export default function MyProfilePage() {
                       <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                         Request Bank Details Change
                       </h2>
-                      <p className="text-sm text-[var(--text-secondary)]">
+                      <p className="text-body-secondary">
                         Changes to bank details require HR approval
                       </p>
                     </div>

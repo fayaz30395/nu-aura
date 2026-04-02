@@ -150,8 +150,8 @@ export function IntegrationActivityLog({ connectorId, pageSize = 20 }: Integrati
 
       {/* Pagination */}
       {data.totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4">
-          <p className="text-sm text-[var(--text-secondary)]">
+        <div className="row-between pt-4">
+          <p className="text-body-secondary">
             Page {page + 1} of {data.totalPages} ({data.totalElements} total)
           </p>
           <div className="flex gap-2">

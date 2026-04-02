@@ -307,7 +307,7 @@ export function SpaceFormDrawer({
                     <p className="text-sm font-medium text-[var(--text-primary)]">
                       {opt.label}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                    <p className="text-caption mt-0.5">
                       {opt.description}
                     </p>
                   </motion.button>

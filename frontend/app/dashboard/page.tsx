@@ -771,7 +771,7 @@ export default function DashboardPage() {
             {/* Attendance Overview */}
             <Card>
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <CardTitle className="text-section-title">Attendance Overview</CardTitle>
                   <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
                     View All
@@ -819,9 +819,9 @@ export default function DashboardPage() {
                       ];
                       return (
                         <div key={idx}>
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="row-between mb-2">
                             <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
-                            <span className="text-sm text-[var(--text-secondary)]">{dept.count} ({percentage}%)</span>
+                            <span className="text-body-secondary">{dept.count} ({percentage}%)</span>
                           </div>
                           <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
                             <div
@@ -852,15 +852,15 @@ export default function DashboardPage() {
                       <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
                     </div>
                     <p className="text-stat-large mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
-                    <p className="text-sm text-[var(--text-secondary)] mt-1">Current Month</p>
+                    <p className="text-body-secondary mt-1">Current Month</p>
                   </div>
                   <div className="border-t border-[var(--border-main)] pt-4 mt-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm text-[var(--text-secondary)]">Processed</span>
+                    <div className="row-between mb-3">
+                      <span className="text-body-secondary">Processed</span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--text-secondary)]">Pending</span>
+                    <div className="row-between">
+                      <span className="text-body-secondary">Pending</span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
                     </div>
                   </div>
@@ -871,7 +871,7 @@ export default function DashboardPage() {
             {/* Upcoming Events */}
             <Card>
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <CardTitle className="text-section-title">Upcoming</CardTitle>
                   <CalendarDays className="h-5 w-5 text-[var(--text-muted)]" />
                 </div>
@@ -901,7 +901,7 @@ export default function DashboardPage() {
                     </div>
                   ))}
                   {(!analytics.upcomingEvents?.birthdays?.length && !analytics.upcomingEvents?.holidays?.length) && (
-                    <p className="text-sm text-[var(--text-muted)] text-center py-4">No upcoming events</p>
+                    <p className="text-body-muted text-center py-4">No upcoming events</p>
                   )}
                 </div>
               </CardContent>
@@ -910,7 +910,7 @@ export default function DashboardPage() {
             {/* Google Notifications Widget */}
             <Card>
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <CardTitle className="text-section-title">
                     Notifications
                   </CardTitle>
@@ -935,7 +935,7 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-3">
                       <Bell className="h-6 w-6 text-[var(--text-muted)]" />
                     </div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-3">Connect Google to see notifications</p>
+                    <p className="text-body-secondary mb-3">Connect Google to see notifications</p>
                     <Button
                       variant="outline"
                       size="sm"
@@ -951,7 +951,7 @@ export default function DashboardPage() {
                 ) : notifications.length === 0 ? (
                   <div className="text-center py-6">
                     <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2" />
-                    <p className="text-sm text-[var(--text-secondary)]">All caught up!</p>
+                    <p className="text-body-secondary">All caught up!</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -977,7 +977,7 @@ export default function DashboardPage() {
                             )}
                           </div>
                         </div>
-                        <span className="text-xs text-[var(--text-muted)] flex-shrink-0">
+                        <span className="text-caption flex-shrink-0">
                           {notification.type === 'calendar'
                             ? notification.subtitle
                             : formatRelativeTime(notification.timestamp)}
@@ -1032,7 +1032,7 @@ export default function DashboardPage() {
                       <Users className="h-8 w-8 text-[var(--accent-primary)]" />
                     </div>
                     <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
-                    <p className="text-sm text-[var(--text-secondary)] mt-1">This Month</p>
+                    <p className="text-body-secondary mt-1">This Month</p>
                   </div>
                   {analytics.viewType === 'ADMIN' && (
                     <div className="space-y-2 mt-4">
@@ -1062,7 +1062,7 @@ export default function DashboardPage() {
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-lg w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+            <div className="row-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Event Details
               </h3>
@@ -1080,7 +1080,7 @@ export default function DashboardPage() {
                   {selectedEvent.calendarEvent.summary}
                 </h4>
                 {selectedEvent.calendarEvent.organizer && (
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-body-secondary mt-1">
                     Organized by {selectedEvent.calendarEvent.organizer.displayName || selectedEvent.calendarEvent.organizer.email}
                   </p>
                 )}
@@ -1151,7 +1151,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="ml-7 space-y-1">
                     {selectedEvent.calendarEvent.attendees.slice(0, 5).map((attendee, idx) => (
-                      <p key={idx} className="text-sm text-[var(--text-secondary)]">
+                      <p key={idx} className="text-body-secondary">
                         {attendee.displayName || attendee.email}
                         {attendee.responseStatus && (
                           <span className={`ml-2 text-xs ${
@@ -1165,7 +1165,7 @@ export default function DashboardPage() {
                       </p>
                     ))}
                     {selectedEvent.calendarEvent.attendees.length > 5 && (
-                      <p className="text-sm text-[var(--text-muted)]">
+                      <p className="text-body-muted">
                         +{selectedEvent.calendarEvent.attendees.length - 5} more
                       </p>
                     )}
@@ -1175,7 +1175,7 @@ export default function DashboardPage() {
 
               {selectedEvent.calendarEvent.description && (
                 <div className="pt-4 border-t border-[var(--border-main)]">
-                  <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
+                  <p className="text-body-secondary whitespace-pre-wrap">
                     {selectedEvent.calendarEvent.description}
                   </p>
                 </div>
@@ -1209,7 +1209,7 @@ export default function DashboardPage() {
       {selectedEmail && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+            <div className="row-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
               </h3>
@@ -1233,7 +1233,7 @@ export default function DashboardPage() {
                   <p className="font-medium text-[var(--text-primary)]">
                     {selectedEmail.emailData?.from?.split('<')[0]?.trim() || 'Unknown Sender'}
                   </p>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-body-secondary">
                     {formatRelativeTime(selectedEmail.timestamp)}
                   </p>
                 </div>
@@ -1270,7 +1270,7 @@ export default function DashboardPage() {
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+            <div className="row-between p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
                   <HardDrive className="h-5 w-5" />
@@ -1279,7 +1279,7 @@ export default function DashboardPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate">
                     {selectedFile.driveFile.name}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">{selectedFile.subtitle}</p>
+                  <p className="text-body-secondary">{selectedFile.subtitle}</p>
                 </div>
               </div>
               <button

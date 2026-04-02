@@ -61,7 +61,7 @@ export function EmailViewer({
   return (
     <div className="p-6">
       {/* Back button and actions */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="row-between mb-4">
         <Button
           variant="ghost"
           size="sm"
@@ -138,16 +138,16 @@ export function EmailViewer({
               <span className="font-medium text-[var(--text-primary)]">
                 {email.from}
               </span>
-              <span className="text-sm text-[var(--text-muted)]">
+              <span className="text-body-muted">
                 &lt;{email.fromEmail}&gt;
               </span>
             </div>
-            <p className="text-sm text-[var(--text-muted)]">to {email.to}</p>
+            <p className="text-body-muted">to {email.to}</p>
             {email.cc && (
-              <p className="text-sm text-[var(--text-muted)]">cc: {email.cc}</p>
+              <p className="text-body-muted">cc: {email.cc}</p>
             )}
           </div>
-          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-body-muted">
             <Calendar className="h-4 w-4" />
             {new Date(email.date).toLocaleString()}
           </div>
@@ -186,10 +186,10 @@ export function EmailViewer({
                   className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <FileText className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                  <span className="text-sm text-[var(--text-secondary)]">
+                  <span className="text-body-secondary">
                     {attachment.filename}
                   </span>
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="text-caption">
                     ({formatFileSize(attachment.size)})
                   </span>
                   <Download className="h-3 w-3 text-[var(--text-muted)]" />

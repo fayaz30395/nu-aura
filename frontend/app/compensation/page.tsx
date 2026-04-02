@@ -298,11 +298,11 @@ export default function CompensationPage() {
                   <DollarSign className="h-6 w-6 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Budget</p>
+                  <p className="text-body-secondary">Total Budget</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     ${(stats.totalBudget / 1000000).toFixed(1)}M
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">
+                  <p className="text-caption">
                     {stats.budgetUtilization}% utilized
                   </p>
                 </div>
@@ -316,11 +316,11 @@ export default function CompensationPage() {
                   <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Revisions</p>
+                  <p className="text-body-secondary">Total Revisions</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.totalRevisions}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">
+                  <p className="text-caption">
                     {stats.approvedRevisions} approved
                   </p>
                 </div>
@@ -334,11 +334,11 @@ export default function CompensationPage() {
                   <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Pending Approvals</p>
+                  <p className="text-body-secondary">Pending Approvals</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.pendingApprovals}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">
+                  <p className="text-caption">
                     Awaiting review
                   </p>
                 </div>
@@ -352,11 +352,11 @@ export default function CompensationPage() {
                   <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Avg. Increment</p>
+                  <p className="text-body-secondary">Avg. Increment</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.avgIncrement}%
                   </p>
-                  <p className="text-xs text-[var(--text-muted)]">
+                  <p className="text-caption">
                     Target: {activeCycle?.averageIncrementTarget || 8}%
                   </p>
                 </div>
@@ -454,7 +454,7 @@ export default function CompensationPage() {
                         <h3 className="font-semibold text-[var(--text-primary)]">
                           {cycle.name}
                         </h3>
-                        <p className="text-sm text-[var(--text-muted)]">
+                        <p className="text-body-muted">
                           {cycleTypeLabels[cycle.cycleType]} - FY{cycle.fiscalYear}
                         </p>
                       </div>
@@ -464,13 +464,13 @@ export default function CompensationPage() {
                     </div>
 
                     {cycle.description && (
-                      <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">
+                      <p className="text-body-secondary mb-4 line-clamp-2">
                         {cycle.description}
                       </p>
                     )}
 
                     <div className="space-y-2 mb-4">
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="row-between text-sm">
                         <span className="text-[var(--text-muted)]">Budget</span>
                         <span className="font-medium text-[var(--text-primary)]">
                           ${((cycle.budgetAmount || 0) / 1000000).toFixed(1)}M
@@ -484,11 +484,11 @@ export default function CompensationPage() {
                           />
                         </div>
                       )}
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="row-between text-sm">
                         <span className="text-[var(--text-muted)]">Employees</span>
                         <span className="text-[var(--text-primary)]">{cycle.totalEmployees}</span>
                       </div>
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="row-between text-sm">
                         <span className="text-[var(--text-muted)]">Effective Date</span>
                         <span className="text-[var(--text-primary)]">
                           {new Date(cycle.effectiveDate).toLocaleDateString()}
@@ -579,13 +579,13 @@ export default function CompensationPage() {
                             <p className="font-medium text-[var(--text-primary)]">
                               {revision.employeeName}
                             </p>
-                            <p className="text-sm text-[var(--text-muted)]">
+                            <p className="text-body-muted">
                               {revision.employeeCode} - {revision.department}
                             </p>
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {revisionTypeLabels[revision.revisionType]}
                           </span>
                         </td>
@@ -663,30 +663,30 @@ export default function CompensationPage() {
                                 {revisionStatusLabels[revision.status]}
                               </Badge>
                             </div>
-                            <p className="text-sm text-[var(--text-muted)]">
+                            <p className="text-body-muted">
                               {revision.employeeCode} - {revision.department} - {revision.designation}
                             </p>
-                            <p className="text-sm text-[var(--text-secondary)] mt-1">
+                            <p className="text-body-secondary mt-1">
                               {revisionTypeLabels[revision.revisionType]}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-center">
-                            <p className="text-sm text-[var(--text-muted)]">Current</p>
+                            <p className="text-body-muted">Current</p>
                             <p className="text-lg font-medium text-[var(--text-primary)]">
                               ${revision.previousSalary.toLocaleString()}
                             </p>
                           </div>
                           <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
                           <div className="text-center">
-                            <p className="text-sm text-[var(--text-muted)]">Proposed</p>
+                            <p className="text-body-muted">Proposed</p>
                             <p className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               ${revision.newSalary.toLocaleString()}
                             </p>
                           </div>
                           <div className="text-center">
-                            <p className="text-sm text-[var(--text-muted)]">Increment</p>
+                            <p className="text-body-muted">Increment</p>
                             <p className="text-lg font-medium text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               +{revision.incrementPercentage?.toFixed(1)}%
                             </p>
@@ -731,7 +731,7 @@ export default function CompensationPage() {
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedCycle.name}
                     </h2>
-                    <p className="text-sm text-[var(--text-muted)]">
+                    <p className="text-body-muted">
                       {cycleTypeLabels[selectedCycle.cycleType]} - FY{selectedCycle.fiscalYear}
                     </p>
                   </div>
@@ -756,25 +756,25 @@ export default function CompensationPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Start Date</p>
+                    <p className="text-body-muted">Start Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.startDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">End Date</p>
+                    <p className="text-body-muted">End Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.endDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Effective Date</p>
+                    <p className="text-body-muted">Effective Date</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.effectiveDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
-                    <p className="text-sm text-[var(--text-muted)]">Total Budget</p>
+                    <p className="text-body-muted">Total Budget</p>
                     <p className="text-lg font-medium text-[var(--text-primary)]">
                       ${((selectedCycle.budgetAmount || 0) / 1000000).toFixed(2)}M
                     </p>
@@ -790,19 +790,19 @@ export default function CompensationPage() {
                       <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.minIncrementPercentage || 0}%
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Minimum</p>
+                      <p className="text-body-muted">Minimum</p>
                     </div>
                     <div className="text-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
                       <p className="text-2xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Target Avg</p>
+                      <p className="text-body-muted">Target Avg</p>
                     </div>
                     <div className="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
                       <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.maxIncrementPercentage || 0}%
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Maximum</p>
+                      <p className="text-body-muted">Maximum</p>
                     </div>
                   </div>
                 </div>
@@ -816,25 +816,25 @@ export default function CompensationPage() {
                       <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.totalEmployees}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Total</p>
+                      <p className="text-body-muted">Total</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsDrafted}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Drafted</p>
+                      <p className="text-body-muted">Drafted</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApproved}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Approved</p>
+                      <p className="text-body-muted">Approved</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApplied}
                       </p>
-                      <p className="text-sm text-[var(--text-muted)]">Applied</p>
+                      <p className="text-body-muted">Applied</p>
                     </div>
                   </div>
                 </div>
@@ -869,10 +869,10 @@ export default function CompensationPage() {
                     <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedRevision.employeeName}
                     </h3>
-                    <p className="text-sm text-[var(--text-muted)]">
+                    <p className="text-body-muted">
                       {selectedRevision.employeeCode} - {selectedRevision.department}
                     </p>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       {selectedRevision.designation}
                     </p>
                   </div>
@@ -886,13 +886,13 @@ export default function CompensationPage() {
 
                 <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div>
-                    <p className="text-sm text-[var(--text-muted)] mb-1">Current Salary</p>
+                    <p className="text-body-muted mb-1">Current Salary</p>
                     <p className="text-2xl font-bold text-[var(--text-primary)]">
                       ${selectedRevision.previousSalary.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)] mb-1">Proposed Salary</p>
+                    <p className="text-body-muted mb-1">Proposed Salary</p>
                     <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       ${selectedRevision.newSalary.toLocaleString()}
                     </p>
@@ -901,19 +901,19 @@ export default function CompensationPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
-                    <p className="text-sm text-[var(--text-muted)]">Increment Amount</p>
+                    <p className="text-body-muted">Increment Amount</p>
                     <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +${selectedRevision.incrementAmount?.toLocaleString()}
                     </p>
                   </div>
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
-                    <p className="text-sm text-[var(--text-muted)]">Increment %</p>
+                    <p className="text-body-muted">Increment %</p>
                     <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +{selectedRevision.incrementPercentage?.toFixed(2)}%
                     </p>
                   </div>
                   <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-center">
-                    <p className="text-sm text-[var(--text-muted)]">Performance</p>
+                    <p className="text-body-muted">Performance</p>
                     <p className="text-xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {selectedRevision.performanceRating?.toFixed(1) || 'N/A'}
                     </p>
@@ -948,7 +948,7 @@ export default function CompensationPage() {
                     <h4 className="font-medium text-[var(--text-primary)] mb-2">
                       Justification
                     </h4>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-body-secondary">
                       {selectedRevision.justification}
                     </p>
                   </div>

@@ -172,7 +172,7 @@ export default function RestrictedHolidaysPage() {
     <AppLayout>
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* ─── Header ─────────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
               Restricted Holidays
@@ -476,7 +476,7 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
             key={selection.id}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`flex items-center justify-between rounded-lg border p-4 ${config.bgColor}`}
+            className={`row-between rounded-lg border p-4 ${config.bgColor}`}
           >
             <div className="flex items-center gap-4">
               <div className={`p-2 rounded-lg ${config.color} bg-[var(--bg-card)]`}>
@@ -558,7 +558,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
       {selections.map((selection) => (
         <div
           key={selection.id}
-          className="flex items-center justify-between rounded-lg border border-warning-200 bg-warning-50 dark:bg-warning-900/20 dark:border-warning-800 p-4"
+          className="row-between rounded-lg border border-warning-200 bg-warning-50 dark:bg-warning-900/20 dark:border-warning-800 p-4"
         >
           <div>
             <h4 className="font-medium text-surface-900 dark:text-white">

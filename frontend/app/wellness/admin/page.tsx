@@ -132,11 +132,11 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
               </Badge>
             </div>
             {program.description && (
-              <p className="text-xs text-[var(--text-muted)] line-clamp-2 mb-2">
+              <p className="text-caption line-clamp-2 mb-2">
                 {program.description}
               </p>
             )}
-            <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
+            <div className="flex items-center gap-3 text-caption">
               <span className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
                 {CATEGORY_LABELS[program.category] ?? program.category}
               </span>
@@ -188,11 +188,11 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
               )}
             </div>
             {challenge.description && (
-              <p className="text-xs text-[var(--text-muted)] line-clamp-1 mb-2">
+              <p className="text-caption line-clamp-1 mb-2">
                 {challenge.description}
               </p>
             )}
-            <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
+            <div className="flex items-center gap-3 text-caption">
               <span className="flex items-center gap-1">
                 <Calendar size={10} />
                 {start.toLocaleDateString()} – {end.toLocaleDateString()}
@@ -369,7 +369,7 @@ function CreateProgramModal({
                   />
                 )}
               />
-              <label htmlFor="isFeatured" className="text-sm text-[var(--text-secondary)] cursor-pointer">
+              <label htmlFor="isFeatured" className="text-body-secondary cursor-pointer">
                 Feature this program on the wellness page
               </label>
             </div>
@@ -553,7 +553,7 @@ function CreateChallengeModal({
                     />
                   )}
                 />
-                <label htmlFor="isTeamBased" className="text-sm text-[var(--text-secondary)] cursor-pointer">
+                <label htmlFor="isTeamBased" className="text-body-secondary cursor-pointer">
                   Team-based challenge
                 </label>
               </div>
@@ -645,7 +645,7 @@ export default function WellnessAdminPage() {
                   <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Active Programs</p>
+                  <p className="text-caption">Active Programs</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{programs.length}</p>
                 </div>
               </CardContent>
@@ -656,7 +656,7 @@ export default function WellnessAdminPage() {
                   <Target className="h-5 w-5 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Active Challenges</p>
+                  <p className="text-caption">Active Challenges</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{activeChallenges.length}</p>
                 </div>
               </CardContent>
@@ -667,7 +667,7 @@ export default function WellnessAdminPage() {
                   <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--text-muted)]">Upcoming Challenges</p>
+                  <p className="text-caption">Upcoming Challenges</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{upcomingChallenges.length}</p>
                 </div>
               </CardContent>
@@ -704,7 +704,7 @@ export default function WellnessAdminPage() {
                 <CardContent className="flex flex-col items-center justify-center py-16">
                   <Info className="h-10 w-10 text-[var(--text-muted)] mb-3" />
                   <p className="font-medium text-[var(--text-secondary)]">No programs yet</p>
-                  <p className="text-sm text-[var(--text-muted)] mt-1 mb-4">
+                  <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness program to get started
                   </p>
                   <Button onClick={() => setShowProgramModal(true)} className="flex items-center gap-2">
@@ -726,7 +726,7 @@ export default function WellnessAdminPage() {
                 <CardContent className="flex flex-col items-center justify-center py-16">
                   <Info className="h-10 w-10 text-[var(--text-muted)] mb-3" />
                   <p className="font-medium text-[var(--text-secondary)]">No challenges yet</p>
-                  <p className="text-sm text-[var(--text-muted)] mt-1 mb-4">
+                  <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness challenge
                   </p>
                   <Button onClick={() => setShowChallengeModal(true)} className="flex items-center gap-2">

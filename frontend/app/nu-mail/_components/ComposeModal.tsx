@@ -66,7 +66,7 @@ export const ComposeModal = React.memo(function ComposeModal({
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+        <div className="row-between p-4 border-b border-[var(--border-main)]">
           <h3 className="font-semibold text-[var(--text-primary)]">
             {modalTitle}
           </h3>
@@ -130,7 +130,7 @@ export const ComposeModal = React.memo(function ComposeModal({
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {contact.name}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] truncate">
+                      <p className="text-caption truncate">
                         {contact.email}
                         {contact.designation && ` • ${contact.designation}`}
                         {contact.department && ` • ${contact.department}`}
@@ -179,7 +179,7 @@ export const ComposeModal = React.memo(function ComposeModal({
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {contact.name}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] truncate">
+                      <p className="text-caption truncate">
                         {contact.email}
                         {contact.designation && ` • ${contact.designation}`}
                         {contact.department && ` • ${contact.department}`}
@@ -216,22 +216,22 @@ export const ComposeModal = React.memo(function ComposeModal({
             {/* Signature Preview */}
             {emailSignatureHtml && (
               <div className="border border-t-0 border-[var(--border-main)] rounded-b-lg bg-[var(--bg-secondary)] p-4">
-                <p className="text-xs text-[var(--text-muted)] mb-2">-- Signature --</p>
+                <p className="text-caption mb-2">-- Signature --</p>
                 <div
-                  className="signature-preview text-sm text-[var(--text-secondary)]"
+                  className="signature-preview text-body-secondary"
                   dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailSignatureHtml) }}
                 />
               </div>
             )}
             {!emailSignatureHtml && emailSignature && (
-              <p className="text-xs text-[var(--text-muted)] mt-1">
+              <p className="text-caption mt-1">
                 Your Gmail signature will be added when sending.
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-4 border-t border-[var(--border-main)] bg-[var(--bg-secondary)]">
+        <div className="row-between p-4 border-t border-[var(--border-main)] bg-[var(--bg-secondary)]">
           <Button
             variant="ghost"
             onClick={onClose}

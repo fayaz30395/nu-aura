@@ -137,7 +137,7 @@ export default function AvailabilityCalendarPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Team Availability
             </h1>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="mt-1 text-body-muted">
               View team availability, leaves, and project allocations
             </p>
           </div>
@@ -328,7 +328,7 @@ function SummaryCard({
         </div>
         <div>
           <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
-          <p className="text-xs text-[var(--text-muted)]">{label}</p>
+          <p className="text-caption">{label}</p>
         </div>
       </CardContent>
     </Card>

@@ -66,7 +66,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           </div>
           <div className="ml-4">
             <div className="text-sm font-medium text-[var(--text-primary)]">{candidate.fullName}</div>
-            <div className="text-sm text-[var(--text-muted)]">{candidate.email}</div>
+            <div className="text-body-muted">{candidate.email}</div>
           </div>
         </div>
       </td>
@@ -74,11 +74,11 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       {/* Job */}
       <td className="px-6 py-4">
         <div className="text-sm text-[var(--text-primary)]">{candidate.jobTitle || '-'}</div>
-        <div className="text-xs text-[var(--text-muted)]">{candidate.candidateCode}</div>
+        <div className="text-caption">{candidate.candidateCode}</div>
       </td>
 
       {/* Experience */}
-      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+      <td className="px-6 py-4 text-body-secondary">
         {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
       </td>
 
@@ -99,7 +99,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Source */}
-      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+      <td className="px-6 py-4 text-body-secondary">
         {candidate.source?.replace(/_/g, ' ') || '-'}
       </td>
 

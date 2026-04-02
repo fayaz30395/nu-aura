@@ -84,7 +84,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; column
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div
           key={rowIdx}
-          className="flex gap-4 px-6 py-4 border-b border-[var(--border-subtle)]"
+          className="flex gap-4 px-6 py-4 divider-b"
         >
           {Array.from({ length: columns }).map((_, colIdx) => (
             <div
@@ -105,7 +105,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; column
 export function SkeletonChart({ height = 'h-64' }: { height?: string }) {
   return (
     <div className={cn('card-aura p-6', height)} aria-hidden="true">
-      <div className="flex items-center justify-between mb-6">
+      <div className="row-between mb-6">
         <div className="skeleton-aura h-6 w-32 rounded" />
         <div className="skeleton-aura h-8 w-24 rounded-lg" />
       </div>
@@ -227,7 +227,7 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
           <h2 className="text-2xl font-bold tracking-wide nuaura-shimmer-text">
             NU-AURA
           </h2>
-          <p className="text-sm text-[var(--text-secondary)] nuaura-fade-text">
+          <p className="text-body-secondary nuaura-fade-text">
             {message}
           </p>
         </div>

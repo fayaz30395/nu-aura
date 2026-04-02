@@ -66,7 +66,7 @@ export function CalendarGridView({
             } ${isToday(day) ? 'bg-accent-50/30 dark:bg-accent-900/10' : ''}`}
             onClick={() => onDateChange(day)}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="row-between mb-2">
               <span
                 className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${
                   isToday(day)

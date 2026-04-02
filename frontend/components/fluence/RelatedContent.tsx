@@ -102,13 +102,13 @@ export function RelatedContent({
               )}
 
               <CardContent className="space-y-2 pt-0">
-                <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 text-caption">
                   <Clock className={iconSize.meta} />
                   <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
                 </div>
 
                 {(item.viewCount || item.likeCount) && (
-                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                  <div className="flex items-center gap-2 text-caption">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
                         <Eye className={iconSize.meta} />

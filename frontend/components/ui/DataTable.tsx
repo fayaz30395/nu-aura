@@ -653,7 +653,7 @@ function DataTable<T>({
       {(onPageChange || onPageSizeChange) && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
           {/* Info */}
-          <div className="text-sm text-[var(--text-muted)]">
+          <div className="text-body-muted">
             {total > 0 ? (
               <>
                 Showing <span className="font-medium text-[var(--text-primary)]">{startItem}</span>
@@ -672,7 +672,7 @@ function DataTable<T>({
             {/* Page size */}
             {onPageSizeChange && (
               <div className="hidden sm:flex items-center gap-2">
-                <span className="text-sm text-[var(--text-muted)]">Rows:</span>
+                <span className="text-body-muted">Rows:</span>
                 <select
                   value={pageSize}
                   onChange={(e) => onPageSizeChange(Number(e.target.value))}

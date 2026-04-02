@@ -108,7 +108,7 @@ export default function PayslipsPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
+            <div className="row-between">
               <div>
                 <h1 className="text-2xl font-bold skeuo-emboss">
                   Payslips
@@ -223,7 +223,7 @@ export default function PayslipsPage() {
 
             {/* Results count */}
             <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-body-secondary">
                 Showing {filteredPayslips.length} of {totalElements} payslips
               </p>
             </div>
@@ -239,7 +239,7 @@ export default function PayslipsPage() {
               <div className="text-[var(--text-secondary)] mb-4">
                 No payslips found for the selected filters
               </div>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-body-muted">
                 Try adjusting your filters or check back later
               </p>
             </div>

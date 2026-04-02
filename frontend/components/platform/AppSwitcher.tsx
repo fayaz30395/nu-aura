@@ -116,7 +116,7 @@ export default function AppSwitcher() {
           <span className="text-sm font-semibold text-[var(--text-primary)]">
             {app.name}
           </span>
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-caption">
             NU-AURA Platform
           </span>
         </div>
@@ -248,7 +248,7 @@ export default function AppSwitcher() {
                   <p className="text-xs text-accent font-medium">Switching app...</p>
                 </div>
               ) : (
-                <p className="text-xs text-[var(--text-muted)] text-center">
+                <p className="text-caption text-center">
                   {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
                 </p>
               )}

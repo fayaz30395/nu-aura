@@ -484,7 +484,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 shadow-2xl shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-4 border-b border-surface-100 dark:border-surface-800">
+          <div className="row-between px-4 py-4 border-b border-surface-100 dark:border-surface-800">
             <span className="text-xs font-medium text-surface-500 uppercase tracking-wider">
               {query
                 ? `Results for "${query}"`

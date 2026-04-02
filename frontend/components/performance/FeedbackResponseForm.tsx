@@ -192,13 +192,13 @@ export default function FeedbackResponseForm({
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide 360 Feedback</h2>
-            <p className="text-sm text-[var(--text-muted)] mt-1">
+            <p className="text-body-muted mt-1">
               {reviewerType} review for{' '}
               {isAnonymous && reviewerType !== 'SELF' ? 'Team Member' : subjectEmployeeName}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-[var(--text-muted)]">Progress</div>
+            <div className="text-body-muted">Progress</div>
             <div className="text-2xl font-bold text-accent-600">{progressPercentage}%</div>
           </div>
         </div>
@@ -258,7 +258,7 @@ export default function FeedbackResponseForm({
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)]">Overall Performance</h3>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">
+                  <p className="text-body-muted mt-1">
                     How would you rate this person&apos;s overall performance?
                   </p>
                 </div>
@@ -273,7 +273,7 @@ export default function FeedbackResponseForm({
                     {formData.overallRating}/5
                   </span>
                 ) : (
-                  <span className="text-sm text-[var(--text-muted)]">Not rated</span>
+                  <span className="text-body-muted">Not rated</span>
                 )}
               </div>
             </div>
@@ -290,7 +290,7 @@ export default function FeedbackResponseForm({
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-[var(--text-primary)]">{category.label}</h4>
-                        <p className="text-xs text-[var(--text-muted)] mt-1">{category.description}</p>
+                        <p className="text-caption mt-1">{category.description}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -303,7 +303,7 @@ export default function FeedbackResponseForm({
                           {formData[category.key] as number}/5
                         </span>
                       ) : (
-                        <span className="text-sm text-[var(--text-muted)]">Optional</span>
+                        <span className="text-body-muted">Optional</span>
                       )}
                     </div>
                   </div>
@@ -320,7 +320,7 @@ export default function FeedbackResponseForm({
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Key Strengths <span className="text-danger-500">*</span>
               </label>
-              <p className="text-xs text-[var(--text-muted)] mb-2">
+              <p className="text-caption mb-2">
                 What does this person do particularly well? Provide specific examples.
               </p>
               <textarea
@@ -330,7 +330,7 @@ export default function FeedbackResponseForm({
                 className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Excellent at breaking down complex problems into actionable tasks..."
               />
-              <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
+              <div className="text-caption mt-1 text-right">
                 {formData.strengths?.length || 0} characters
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function FeedbackResponseForm({
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Areas for Improvement <span className="text-danger-500">*</span>
               </label>
-              <p className="text-xs text-[var(--text-muted)] mb-2">
+              <p className="text-caption mb-2">
                 What areas could this person develop or improve?
               </p>
               <textarea
@@ -349,7 +349,7 @@ export default function FeedbackResponseForm({
                 className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="E.g., Could benefit from more proactive communication with stakeholders..."
               />
-              <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
+              <div className="text-caption mt-1 text-right">
                 {formData.areasForImprovement?.length || 0} characters
               </div>
             </div>
@@ -358,7 +358,7 @@ export default function FeedbackResponseForm({
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Development Suggestions
               </label>
-              <p className="text-xs text-[var(--text-muted)] mb-2">
+              <p className="text-caption mb-2">
                 What specific actions or training would help this person grow?
               </p>
               <textarea
@@ -374,7 +374,7 @@ export default function FeedbackResponseForm({
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Additional Comments
               </label>
-              <p className="text-xs text-[var(--text-muted)] mb-2">
+              <p className="text-caption mb-2">
                 Any other observations or feedback you&apos;d like to share?
               </p>
               <textarea

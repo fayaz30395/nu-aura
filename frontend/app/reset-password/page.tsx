@@ -168,7 +168,7 @@ function ResetPasswordForm() {
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          <p className="mt-2 text-body-secondary">
             Create your new password
           </p>
         </div>
@@ -278,7 +278,7 @@ function ResetPasswordForm() {
               </div>
 
               {/* Password Requirements */}
-              <div className="text-xs text-[var(--text-muted)] space-y-1 bg-[var(--bg-secondary)] p-4 rounded-lg">
+              <div className="text-caption space-y-1 bg-[var(--bg-secondary)] p-4 rounded-lg">
                 <p className="font-medium text-[var(--text-secondary)]">Password requirements:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>At least 12 characters</li>
@@ -315,7 +315,7 @@ function ResetPasswordForm() {
         </Card>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
+        <p className="mt-6 text-center text-caption">
           NU-AURA v1.0 &copy; {new Date().getFullYear()}
         </p>
       </div>

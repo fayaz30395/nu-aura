@@ -359,7 +359,7 @@ export default function OfficeLocationsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div>{location.address}</div>
-                      <div className="text-sm text-[var(--text-secondary)]">
+                      <div className="text-body-secondary">
                         {location.city}, {location.state}, {location.country}
                       </div>
                     </td>

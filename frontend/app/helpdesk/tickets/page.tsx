@@ -190,7 +190,7 @@ export default function TicketListPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Support Tickets
             </h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1">
+            <p className="text-body-muted mt-1">
               View and manage helpdesk tickets
             </p>
           </div>
@@ -289,7 +289,7 @@ export default function TicketListPage() {
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {hasActiveFilters ? 'No tickets match your filters' : 'No tickets yet'}
             </h3>
-            <p className="text-sm text-[var(--text-muted)] mb-4">
+            <p className="text-body-muted mb-4">
               {hasActiveFilters ? 'Try adjusting your search or filters' : 'Create your first support ticket to get started'}
             </p>
             {hasActiveFilters ? (
@@ -333,8 +333,8 @@ export default function TicketListPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t border-[var(--border-main)]">
-                <p className="text-sm text-[var(--text-muted)]">
+              <div className="row-between px-4 py-4 border-t border-[var(--border-main)]">
+                <p className="text-body-muted">
                   Page {page + 1} of {totalPages} ({ticketsPage?.totalElements ?? 0} tickets)
                 </p>
                 <div className="flex gap-2">
@@ -368,7 +368,7 @@ export default function TicketListPage() {
         <ModalHeader onClose={() => { setShowCreateModal(false); reset(); }}>
           <div>
             <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Support Ticket</h2>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">Describe your issue and we will get back to you</p>
+            <p className="text-body-secondary mt-1">Describe your issue and we will get back to you</p>
           </div>
         </ModalHeader>
         <form onSubmit={handleSubmit(onCreateSubmit)}>
@@ -475,17 +475,17 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center gap-2">
           <User className="h-3.5 w-3.5 text-[var(--text-muted)]" />
-          <span className="text-sm text-[var(--text-secondary)]">{ticket.employeeName || '-'}</span>
+          <span className="text-body-secondary">{ticket.employeeName || '-'}</span>
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         {ticket.categoryName ? (
           <div className="flex items-center gap-1.5">
             <Tag className="h-3 w-3 text-[var(--text-muted)]" />
-            <span className="text-sm text-[var(--text-secondary)]">{ticket.categoryName}</span>
+            <span className="text-body-secondary">{ticket.categoryName}</span>
           </div>
         ) : (
-          <span className="text-sm text-[var(--text-muted)]">-</span>
+          <span className="text-body-muted">-</span>
         )}
       </td>
       <td className="px-4 py-4 whitespace-nowrap text-center">
@@ -498,10 +498,10 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
         </Badge>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <span className="text-sm text-[var(--text-secondary)]">{ticket.assignedToName || 'Unassigned'}</span>
+        <span className="text-body-secondary">{ticket.assignedToName || 'Unassigned'}</span>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <span className="text-sm text-[var(--text-muted)]">{formatDate(ticket.createdAt)}</span>
+        <span className="text-body-muted">{formatDate(ticket.createdAt)}</span>
       </td>
       <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
         <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>

@@ -391,7 +391,7 @@ export default function OffboardingPage() {
                   <UserMinus className="h-6 w-6 text-accent-700" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Exits</p>
+                  <p className="text-body-secondary skeuo-deboss">Total Exits</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Initiated</p>
+                  <p className="text-body-secondary skeuo-deboss">Initiated</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.initiated}</p>
                 </div>
               </div>
@@ -417,7 +417,7 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-warning-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Progress</p>
+                  <p className="text-body-secondary skeuo-deboss">In Progress</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
                 </div>
               </div>
@@ -430,7 +430,7 @@ export default function OffboardingPage() {
                   <FileText className="h-6 w-6 text-accent-800" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Clearance Pending</p>
+                  <p className="text-body-secondary skeuo-deboss">Clearance Pending</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.clearancePending}</p>
                 </div>
               </div>
@@ -443,7 +443,7 @@ export default function OffboardingPage() {
                   <CheckCircle className="h-6 w-6 text-success-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Completed</p>
+                  <p className="text-body-secondary skeuo-deboss">Completed</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
@@ -533,7 +533,7 @@ export default function OffboardingPage() {
                                 {process.employeeName || 'Employee'}
                               </p>
                               {process.newCompany && (
-                                <p className="text-xs text-[var(--text-muted)]">Moving to: {process.newCompany}</p>
+                                <p className="text-caption">Moving to: {process.newCompany}</p>
                               )}
                             </div>
                           </div>
@@ -549,12 +549,12 @@ export default function OffboardingPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {formatDate(process.lastWorkingDate)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {process.noticePeriodServed || 0} / {process.noticePeriodDays || 0} days
                           </span>
                         </td>
@@ -574,7 +574,7 @@ export default function OffboardingPage() {
                               <button
                                 onClick={() => handleViewDetails(process)}
                                 aria-label={`View exit process details for ${process.employeeName}`}
-                                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
@@ -582,7 +582,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleOpenEditModal(process)}
-                                  className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Edit className="h-4 w-4" />
                                   Edit
@@ -592,7 +592,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <Clock className="h-4 w-4" />
                                     Start Process
@@ -603,7 +603,7 @@ export default function OffboardingPage() {
                                 <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
                                   <button
                                     onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <FileText className="h-4 w-4" />
                                     Request Clearance
@@ -804,7 +804,7 @@ export default function OffboardingPage() {
                     className="w-4 h-4 text-accent-700 border-[var(--border-main)] rounded focus:ring-accent-500"
                     {...register('rehireEligible')}
                   />
-                  <label htmlFor="rehireEligible" className="text-sm text-[var(--text-secondary)]">
+                  <label htmlFor="rehireEligible" className="text-body-secondary">
                     Eligible for Rehire
                   </label>
                 </div>
@@ -853,7 +853,7 @@ export default function OffboardingPage() {
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedProcess?.employeeName || 'Employee'}
                 </h2>
-                <p className="text-sm text-[var(--text-muted)]">Exit Process Details</p>
+                <p className="text-body-muted">Exit Process Details</p>
               </div>
             </div>
           </ModalHeader>
@@ -876,7 +876,7 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Resignation Date
                     </p>
@@ -885,7 +885,7 @@ export default function OffboardingPage() {
                     </p>
                   </div>
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Last Working Day
                     </p>
@@ -897,7 +897,7 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       Notice Period
                     </p>
@@ -907,7 +907,7 @@ export default function OffboardingPage() {
                   </div>
                   {selectedProcess.finalSettlementAmount && (
                     <div className="p-4 card-aura">
-                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                      <p className="text-body-muted flex items-center gap-2">
                         <DollarSign className="h-4 w-4" />
                         Settlement Amount
                       </p>
@@ -931,7 +931,7 @@ export default function OffboardingPage() {
                   <div className="grid grid-cols-2 gap-4">
                     {selectedProcess.newCompany && (
                       <div className="p-4 card-aura">
-                        <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                        <p className="text-body-muted flex items-center gap-2">
                           <Building className="h-4 w-4" />
                           New Company
                         </p>
@@ -942,7 +942,7 @@ export default function OffboardingPage() {
                     )}
                     {selectedProcess.newDesignation && (
                       <div className="p-4 card-aura">
-                        <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                        <p className="text-body-muted flex items-center gap-2">
                           <Briefcase className="h-4 w-4" />
                           New Designation
                         </p>

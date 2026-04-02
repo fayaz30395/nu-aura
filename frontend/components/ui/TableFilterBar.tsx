@@ -194,7 +194,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
                   'transition-colors duration-150'
                 )}
               />
-              <span className="text-xs text-[var(--text-muted)] shrink-0">to</span>
+              <span className="text-caption shrink-0">to</span>
               <input
                 id={`${fieldId}-end`}
                 type="date"
@@ -230,7 +230,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
       aria-label="Table filters"
     >
       {/* ── Header row ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="row-between px-4 py-3">
         <button
           type="button"
           onClick={handleToggle}

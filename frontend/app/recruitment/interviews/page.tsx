@@ -95,7 +95,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)]">
           {filtered.length === 0 ? (
-            <div className="px-4 py-2 text-sm text-[var(--text-muted)]">No results found</div>
+            <div className="px-4 py-2 text-body-muted">No results found</div>
           ) : (
             filtered.map(option => (
               <button
@@ -108,7 +108,7 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
               >
                 <div className="font-medium">{option.label}</div>
                 {option.subtitle && (
-                  <div className="text-xs text-[var(--text-muted)]">{option.subtitle}</div>
+                  <div className="text-caption">{option.subtitle}</div>
                 )}
               </button>
             ))
@@ -553,7 +553,7 @@ const formatDateTime = (dateString?: string): string => {
     <AppLayout activeMenuItem="recruitment">
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Schedule and manage candidate interviews</p>
@@ -573,7 +573,7 @@ const formatDateTime = (dateString?: string): string => {
                   <Calendar className="h-6 w-6 text-accent-700" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Total</p>
+                  <p className="text-body-muted">Total</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
@@ -586,7 +586,7 @@ const formatDateTime = (dateString?: string): string => {
                   <Clock className="h-6 w-6 text-accent-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Scheduled</p>
+                  <p className="text-body-muted">Scheduled</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.scheduled}</p>
                 </div>
               </div>
@@ -599,7 +599,7 @@ const formatDateTime = (dateString?: string): string => {
                   <CheckCircle className="h-6 w-6 text-success-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Completed</p>
+                  <p className="text-body-muted">Completed</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
@@ -612,7 +612,7 @@ const formatDateTime = (dateString?: string): string => {
                   <AlertCircle className="h-6 w-6 text-warning-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-muted)]">Pending Decision</p>
+                  <p className="text-body-muted">Pending Decision</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
@@ -689,7 +689,7 @@ const formatDateTime = (dateString?: string): string => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                        <td className="px-6 py-4 text-body-secondary">
                           {interview.jobTitle || '-'}
                         </td>
                         <td className="px-6 py-4">
@@ -702,9 +702,9 @@ const formatDateTime = (dateString?: string): string => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-[var(--text-primary)]">{formatDateTime(interview.scheduledAt)}</div>
-                          <div className="text-xs text-[var(--text-muted)]">{interview.durationMinutes} min</div>
+                          <div className="text-caption">{interview.durationMinutes} min</div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                        <td className="px-6 py-4 text-body-secondary">
                           <div>{interview.interviewerName || '-'}</div>
                           {(interview.googleMeetLink || interview.meetingLink) && (
                             <a
@@ -889,7 +889,7 @@ const formatDateTime = (dateString?: string): string => {
                         <Video className="h-5 w-5 text-accent-500" />
                         <div>
                           <span className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {hasValidGoogleToken()
                               ? 'Creates a Calendar event with Meet link automatically'
                               : 'Sign in with Google to enable Meet link generation'}
@@ -971,7 +971,7 @@ const formatDateTime = (dateString?: string): string => {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="row-between mb-1">
                       <label className="block text-sm font-medium text-[var(--text-secondary)]">Notes</label>
                       <button
                         type="button"
@@ -1018,9 +1018,9 @@ const formatDateTime = (dateString?: string): string => {
                 </div>
 
                 <div className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                  <p className="text-sm text-[var(--text-muted)]">Candidate</p>
+                  <p className="text-body-muted">Candidate</p>
                   <p className="font-medium text-[var(--text-primary)]">{selectedInterview.candidateName}</p>
-                  <p className="text-sm text-[var(--text-muted)] mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
+                  <p className="text-body-muted mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
                 </div>
 
                 <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
@@ -1092,7 +1092,7 @@ const formatDateTime = (dateString?: string): string => {
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
-              <p className="text-sm text-[var(--text-muted)] mb-6">
+              <p className="text-body-muted mb-6">
                 Are you sure you want to delete this interview for <strong className="text-[var(--text-secondary)]">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -1140,7 +1140,7 @@ const formatDateTime = (dateString?: string): string => {
                                 {q.difficulty}
                               </span>
                             </div>
-                            {q.purpose && <p className="text-xs text-[var(--text-muted)] mt-2">Purpose: {q.purpose}</p>}
+                            {q.purpose && <p className="text-caption mt-2">Purpose: {q.purpose}</p>}
                           </div>
                         ))}
                       </div>
@@ -1155,7 +1155,7 @@ const formatDateTime = (dateString?: string): string => {
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
-                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Competency: {q.competency}</span>
+                            <span className="text-caption mt-2 block">Competency: {q.competency}</span>
                           </div>
                         ))}
                       </div>
@@ -1170,7 +1170,7 @@ const formatDateTime = (dateString?: string): string => {
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
-                            <p className="text-xs text-[var(--text-muted)] mt-2">Scenario: {q.scenario}</p>
+                            <p className="text-caption mt-2">Scenario: {q.scenario}</p>
                           </div>
                         ))}
                       </div>
@@ -1185,7 +1185,7 @@ const formatDateTime = (dateString?: string): string => {
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
-                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Value: {q.value}</span>
+                            <span className="text-caption mt-2 block">Value: {q.value}</span>
                           </div>
                         ))}
                       </div>
@@ -1200,7 +1200,7 @@ const formatDateTime = (dateString?: string): string => {
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
                           <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
-                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Focus: {q.focus}</span>
+                            <span className="text-caption mt-2 block">Focus: {q.focus}</span>
                           </div>
                         ))}
                       </div>

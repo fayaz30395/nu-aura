@@ -195,7 +195,7 @@ export default function AllocationSummaryPage() {
           <div className="font-medium text-[var(--text-primary)]">
             {buildEmployeeLabel(row)}
           </div>
-          <div className="text-xs text-[var(--text-muted)]">
+          <div className="text-caption">
             {row.employeeCode || row.employeeEmail || '—'}
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function AllocationSummaryPage() {
       header: 'Avg Allocation % (range)',
       accessor: (row: AllocationSummaryItem) => (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-body-secondary">
             {formatPercent(row.allocationPercent)}
           </span>
           {row.overAllocated && (
@@ -223,7 +223,7 @@ export default function AllocationSummaryPage() {
       key: 'projects',
       header: 'Active Projects',
       accessor: (row: AllocationSummaryItem) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {row.activeProjectCount ?? '—'}
         </span>
       ),
@@ -241,7 +241,7 @@ export default function AllocationSummaryPage() {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Allocation Summary
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-body-muted">
               Average allocation across the selected date range.
             </p>
           </div>
@@ -309,7 +309,7 @@ export default function AllocationSummaryPage() {
                 />
               </div>
             </div>
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-caption">
               Average is computed over the selected period; over-cap is flagged if any day in the range exceeds 100%.
             </p>
           </CardContent>

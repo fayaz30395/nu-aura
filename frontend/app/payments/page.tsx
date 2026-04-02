@@ -184,7 +184,7 @@ export default function PaymentsPage() {
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.totalTransactions}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">Total Transactions</p>
+                  <p className="text-body-muted">Total Transactions</p>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function PaymentsPage() {
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.completedTransactions}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">Completed</p>
+                  <p className="text-body-muted">Completed</p>
                 </div>
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function PaymentsPage() {
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.processingTransactions}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">Processing</p>
+                  <p className="text-body-muted">Processing</p>
                 </div>
               </div>
             </div>
@@ -226,7 +226,7 @@ export default function PaymentsPage() {
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.failedTransactions}
                   </p>
-                  <p className="text-sm text-[var(--text-muted)]">Failed</p>
+                  <p className="text-body-muted">Failed</p>
                 </div>
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function PaymentsPage() {
               filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className="px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
                 Clear filters
               </button>
@@ -469,7 +469,7 @@ export default function PaymentsPage() {
                           <p className="text-[var(--text-secondary)]">{payment.description}</p>
                         )}
                         {payment.payeeName && (
-                          <p className="text-sm text-[var(--text-secondary)] mt-1">
+                          <p className="text-body-secondary mt-1">
                             Payee: {payment.payeeName}
                           </p>
                         )}
@@ -479,7 +479,7 @@ export default function PaymentsPage() {
                       <div className="text-2xl font-bold text-[var(--text-primary)]">
                         {payment.currency} {payment.amount.toFixed(2)}
                       </div>
-                      <div className="text-sm text-[var(--text-secondary)]">
+                      <div className="text-body-secondary">
                         {paymentService.getTypeLabel(payment.paymentType)}
                       </div>
                     </div>

@@ -29,13 +29,13 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.birthdays.slice(0, 5).map((birthday, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">
                       {birthday.employeeName}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)]">{birthday.department}</p>
+                    <p className="text-caption">{birthday.department}</p>
                   </div>
                   <span className="text-xs font-semibold text-accent-600 dark:text-accent-600">{birthday.date}</span>
                 </div>
@@ -55,13 +55,13 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.anniversaries.slice(0, 5).map((anniversary, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">
                       {anniversary.employeeName}
                     </p>
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-caption">
                       {anniversary.department} • {anniversary.years} years
                     </p>
                   </div>
@@ -85,11 +85,11 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
               {data.holidays.slice(0, 5).map((holiday, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{holiday.name}</p>
-                    <p className="text-xs text-[var(--text-muted)]">{holiday.type}</p>
+                    <p className="text-caption">{holiday.type}</p>
                   </div>
                   <span className="text-xs font-semibold text-accent-600 dark:text-accent-400">{holiday.date}</span>
                 </div>

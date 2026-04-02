@@ -69,7 +69,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
         <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-3">
           <File className="h-6 w-6 text-[var(--text-muted)]" />
         </div>
-        <p className="text-sm text-[var(--text-muted)]">No files uploaded yet</p>
+        <p className="text-body-muted">No files uploaded yet</p>
       </div>
     );
   }
@@ -91,7 +91,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                 {attachment.fileName}
               </p>
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 {formatFileSize(attachment.fileSize)}
                 {attachment.createdAt && (
                   <span className="ml-2">{formatDate(attachment.createdAt)}</span>

@@ -83,7 +83,7 @@ export default function CandidateDetailPage() {
     <AppLayout activeMenuItem="recruitment">
       <div className="p-6 space-y-6">
         {/* Back navigation + actions */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <button
             onClick={() => router.push('/recruitment/candidates')}
             className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
@@ -158,7 +158,7 @@ export default function CandidateDetailPage() {
                 <div className="flex items-center gap-4">
                   <Mail className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-xs text-[var(--text-muted)]">Email</p>
+                    <p className="text-caption">Email</p>
                     <p className="text-sm font-medium text-[var(--text-primary)] truncate">{candidate.email}</p>
                   </div>
                 </div>
@@ -166,7 +166,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <Phone className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                      <p className="text-caption">Phone</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.phone}</p>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <MapPin className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Location</p>
+                      <p className="text-caption">Location</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentLocation}</p>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <Building className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Current Company</p>
+                      <p className="text-caption">Current Company</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentCompany}</p>
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Designation</p>
+                      <p className="text-caption">Designation</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentDesignation}</p>
                     </div>
                   </div>
@@ -213,7 +213,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Applied For</p>
+                      <p className="text-caption">Applied For</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.jobTitle}</p>
                     </div>
                   </div>
@@ -222,7 +222,7 @@ export default function CandidateDetailPage() {
                   <div className="flex items-center gap-4">
                     <User className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-[var(--text-muted)]">Assigned Recruiter</p>
+                      <p className="text-caption">Assigned Recruiter</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.assignedRecruiterName}</p>
                     </div>
                   </div>
@@ -239,25 +239,25 @@ export default function CandidateDetailPage() {
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                  <p className="text-xs text-[var(--text-muted)]">Experience</p>
+                  <p className="text-caption">Experience</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.totalExperience ? `${candidate.totalExperience}y` : '-'}
                   </p>
                 </div>
                 <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                  <p className="text-xs text-[var(--text-muted)]">Notice Period</p>
+                  <p className="text-caption">Notice Period</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.noticePeriodDays ? `${candidate.noticePeriodDays}d` : '-'}
                   </p>
                 </div>
                 <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                  <p className="text-xs text-[var(--text-muted)]">Current CTC</p>
+                  <p className="text-caption">Current CTC</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.currentCtc?.toLocaleString() || '-'}
                   </p>
                 </div>
                 <div className="p-4 bg-[var(--bg-secondary)] rounded-xl text-center">
-                  <p className="text-xs text-[var(--text-muted)]">Expected CTC</p>
+                  <p className="text-caption">Expected CTC</p>
                   <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {candidate.expectedCtc?.toLocaleString() || '-'}
                   </p>
@@ -277,7 +277,7 @@ export default function CandidateDetailPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {candidate.offeredCtc && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Offered CTC</p>
+                    <p className="text-caption">Offered CTC</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {candidate.offeredCtc.toLocaleString()}
                     </p>
@@ -285,7 +285,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.offeredDesignation && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Offered Designation</p>
+                    <p className="text-caption">Offered Designation</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {candidate.offeredDesignation}
                     </p>
@@ -293,7 +293,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.proposedJoiningDate && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Proposed Joining</p>
+                    <p className="text-caption">Proposed Joining</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {formatDate(candidate.proposedJoiningDate)}
                     </p>
@@ -301,7 +301,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.offerExtendedDate && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Offer Extended</p>
+                    <p className="text-caption">Offer Extended</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {formatDate(candidate.offerExtendedDate)}
                     </p>
@@ -309,7 +309,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.offerAcceptedDate && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Offer Accepted</p>
+                    <p className="text-caption">Offer Accepted</p>
                     <p className="text-sm font-semibold text-success-700 dark:text-success-400">
                       {formatDate(candidate.offerAcceptedDate)}
                     </p>
@@ -317,7 +317,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.offerDeclinedDate && (
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-                    <p className="text-xs text-[var(--text-muted)]">Offer Declined</p>
+                    <p className="text-caption">Offer Declined</p>
                     <p className="text-sm font-semibold text-danger-700 dark:text-danger-400">
                       {formatDate(candidate.offerDeclinedDate)}
                     </p>
@@ -326,7 +326,7 @@ export default function CandidateDetailPage() {
               </div>
               {candidate.offerDeclineReason && (
                 <div className="mt-4 p-4 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
-                  <p className="text-xs text-[var(--text-muted)]">Decline Reason</p>
+                  <p className="text-caption">Decline Reason</p>
                   <p className="text-sm text-[var(--text-primary)]">{candidate.offerDeclineReason}</p>
                 </div>
               )}
@@ -344,20 +344,20 @@ export default function CandidateDetailPage() {
               </h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--text-muted)]">Applied</span>
+                  <span className="text-body-muted">Applied</span>
                   <span className="text-sm font-medium text-[var(--text-primary)]">
                     {formatDate(candidate.appliedDate)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--text-muted)]">Created</span>
+                  <span className="text-body-muted">Created</span>
                   <span className="text-sm font-medium text-[var(--text-primary)]">
                     {formatDate(candidate.createdAt)}
                   </span>
                 </div>
                 {candidate.updatedAt && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-[var(--text-muted)]">Last Updated</span>
+                    <span className="text-body-muted">Last Updated</span>
                     <span className="text-sm font-medium text-[var(--text-primary)]">
                       {formatDate(candidate.updatedAt)}
                     </span>
@@ -376,7 +376,7 @@ export default function CandidateDetailPage() {
               <div className="space-y-4">
                 {candidate.resumeUrl && (
                   <div>
-                    <p className="text-xs text-[var(--text-muted)] mb-1">Resume</p>
+                    <p className="text-caption mb-1">Resume</p>
                     <a
                       href={candidate.resumeUrl}
                       target="_blank"
@@ -390,11 +390,11 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.notes ? (
                   <div>
-                    <p className="text-xs text-[var(--text-muted)] mb-1">Notes</p>
+                    <p className="text-caption mb-1">Notes</p>
                     <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{candidate.notes}</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-[var(--text-muted)]">No additional notes.</p>
+                  <p className="text-body-muted">No additional notes.</p>
                 )}
               </div>
             </CardContent>

@@ -44,7 +44,7 @@ export const NewFolderModal = React.memo(function NewFolderModal({
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+        <div className="row-between p-4 border-b border-[var(--border-main)]">
           <h3 className="font-semibold text-[var(--text-primary)]">Create New Folder</h3>
           <button
             onClick={onClose}
@@ -123,7 +123,7 @@ export const ShareModal = React.memo(function ShareModal({
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+        <div className="row-between p-4 border-b border-[var(--border-main)]">
           <h3 className="font-semibold text-[var(--text-primary)]">Share &quot;{file.name}&quot;</h3>
           <button
             onClick={onClose}
@@ -197,7 +197,7 @@ export const ShareModal = React.memo(function ShareModal({
                 Generate Link
               </Button>
             )}
-            <p className="text-xs text-[var(--text-muted)] mt-2">
+            <p className="text-caption mt-2">
               Anyone with this link can view the file.
             </p>
           </div>
@@ -232,7 +232,7 @@ export const RenameModal = React.memo(function RenameModal({
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+        <div className="row-between p-4 border-b border-[var(--border-main)]">
           <h3 className="font-semibold text-[var(--text-primary)]">Rename</h3>
           <button
             onClick={onClose}
@@ -301,13 +301,13 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
   return (
     <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
       {/* Preview Header */}
-      <div className="flex items-center justify-between px-4 py-4 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
+      <div className="row-between px-4 py-4 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-4">
           {getFileIcon(file.mimeType)}
           <div>
             <h3 className="font-medium text-white truncate max-w-md">{file.name}</h3>
             {file.modifiedTime && (
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 Modified {new Date(file.modifiedTime).toLocaleDateString()}
               </p>
             )}

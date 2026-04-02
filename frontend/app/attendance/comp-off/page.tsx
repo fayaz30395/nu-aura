@@ -148,7 +148,7 @@ export default function CompOffPage() {
     <AppLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Compensatory Off</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request and manage comp-off credits for overtime work</p>
@@ -303,7 +303,7 @@ export default function CompOffPage() {
             {errors.attendanceDate && (
               <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
             )}
-            <p className="text-xs text-[var(--text-muted)] mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
+            <p className="text-caption mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>

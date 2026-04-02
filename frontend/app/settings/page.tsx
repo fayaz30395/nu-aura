@@ -134,7 +134,7 @@ export default function SettingsPage() {
     description: string;
     icon?: React.ElementType;
   }) => (
-    <div className="flex items-center justify-between py-4 border-b border-[var(--border-main)] last:border-b-0">
+    <div className="row-between py-4 border-b border-[var(--border-main)] last:border-b-0">
       <div className="flex items-center gap-4">
         {Icon && (
           <div className="p-2 bg-[var(--bg-surface)] rounded-lg">
@@ -145,7 +145,7 @@ export default function SettingsPage() {
           <label className="text-sm font-medium text-[var(--text-primary)]">
             {label}
           </label>
-          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+          <p className="text-body-secondary mt-0.5">
             {description}
           </p>
         </div>
@@ -232,12 +232,12 @@ export default function SettingsPage() {
               <CardDescription>Customize how the app looks</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <label className="text-sm font-medium text-[var(--text-primary)]">
                     Dark Mode
                   </label>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-body-secondary mt-1">
                     Switch between light and dark theme
                   </p>
                 </div>
@@ -278,7 +278,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">Google SSO (Single Sign-On)</p>
-                  <p className="text-sm text-[var(--text-muted)]">
+                  <p className="text-body-muted">
                     Your account is authenticated via Google Workspace for your organisation&apos;s domain.
                     Password management is handled through your Google account.
                   </p>
@@ -305,14 +305,14 @@ export default function SettingsPage() {
               <CardDescription>Configure enterprise SAML 2.0 Single Sign-On</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] skeuo-surface">
+              <div className="row-between p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] skeuo-surface">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
                     <Globe className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                   </div>
                   <div>
                     <p className="font-medium text-[var(--text-primary)]">SAML 2.0 Identity Provider</p>
-                    <p className="text-sm text-[var(--text-muted)] mt-0.5">
+                    <p className="text-body-muted mt-0.5">
                       Connect Okta, Azure AD, OneLogin, or any SAML 2.0 compatible IdP for enterprise SSO
                     </p>
                   </div>
@@ -370,7 +370,7 @@ export default function SettingsPage() {
               {/* Channel Settings */}
               {activeNotificationTab === 'channels' && (
                 <div className="space-y-1 pt-2">
-                  <p className="text-sm text-[var(--text-muted)] mb-4">
+                  <p className="text-body-muted mb-4">
                     Choose how you want to receive notifications
                   </p>
                   <ToggleSwitch
@@ -400,7 +400,7 @@ export default function SettingsPage() {
               {/* Category Settings */}
               {activeNotificationTab === 'categories' && (
                 <div className="space-y-1 pt-2">
-                  <p className="text-sm text-[var(--text-muted)] mb-4">
+                  <p className="text-body-muted mb-4">
                     Choose which types of notifications you want to receive
                   </p>
                   <ToggleSwitch
@@ -508,7 +508,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+                <div className="row-between p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-full">
                       <Shield className="h-5 w-5 text-success-600" />
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-sm text-[var(--text-secondary)]">
+                <div className="text-body-secondary">
                   <p>
                     For additional security, we recommend:
                   </p>

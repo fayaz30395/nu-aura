@@ -34,12 +34,12 @@ export function FeedbackSynthesisModal({
 
           <div className="space-y-6">
             <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-              <p className="text-xs text-[var(--text-muted)] mb-1">Candidate</p>
+              <p className="text-caption mb-1">Candidate</p>
               <p className="text-sm font-medium text-[var(--text-primary)]">{feedbackSynthesis.candidateName}</p>
             </div>
 
             <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-              <p className="text-xs text-[var(--text-muted)] mb-2">Candidate Narrative</p>
+              <p className="text-caption mb-2">Candidate Narrative</p>
               <p className="text-sm text-[var(--text-primary)]">{feedbackSynthesis.candidateNarrative}</p>
             </div>
 
@@ -48,7 +48,7 @@ export function FeedbackSynthesisModal({
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Key Themes</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.themes.map((theme, idx) => (
-                    <li key={idx} className="text-sm text-[var(--text-secondary)]">{theme}</li>
+                    <li key={idx} className="text-body-secondary">{theme}</li>
                   ))}
                 </ul>
               </div>
@@ -81,7 +81,7 @@ export function FeedbackSynthesisModal({
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Missing Data</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.missingData.map((missing, idx) => (
-                    <li key={idx} className="text-sm text-[var(--text-secondary)]">{missing}</li>
+                    <li key={idx} className="text-body-secondary">{missing}</li>
                   ))}
                 </ul>
               </div>
@@ -92,14 +92,14 @@ export function FeedbackSynthesisModal({
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Open Questions</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.openQuestions.map((question, idx) => (
-                    <li key={idx} className="text-sm text-[var(--text-secondary)]">{question}</li>
+                    <li key={idx} className="text-body-secondary">{question}</li>
                   ))}
                 </ul>
               </div>
             )}
 
             <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
-              <p className="text-xs text-[var(--text-muted)] mb-2">Recommended Next Step</p>
+              <p className="text-caption mb-2">Recommended Next Step</p>
               <p className="text-sm font-medium text-[var(--text-primary)]">{feedbackSynthesis.recommendedNextStep}</p>
             </div>
 

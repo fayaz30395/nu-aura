@@ -165,7 +165,7 @@ export default function TemplateDetailPage() {
             {template.description && (
               <p className="text-[var(--text-secondary)]">{template.description}</p>
             )}
-            <div className="flex items-center gap-4 text-sm text-[var(--text-muted)] mt-2">
+            <div className="flex items-center gap-4 text-body-muted mt-2">
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
                 {template.authorName || 'Unknown'}
@@ -226,18 +226,18 @@ export default function TemplateDetailPage() {
                 <CardTitle className="text-base">Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Uses</span>
+                <div className="row-between">
+                  <span className="text-body-secondary">Uses</span>
                   <span className="font-semibold">{template.usageCount}</span>
                 </div>
                 {template.categoryName && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[var(--text-secondary)]">Category</span>
+                  <div className="row-between">
+                    <span className="text-body-secondary">Category</span>
                     <span className="text-sm">{template.categoryName}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Created</span>
+                <div className="row-between">
+                  <span className="text-body-secondary">Created</span>
                   <span className="text-sm">{new Date(template.createdAt).toLocaleDateString()}</span>
                 </div>
               </CardContent>

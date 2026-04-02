@@ -309,7 +309,16 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           ],
         },
         { id: 'preboarding-hire', label: 'Preboarding', icon: icon.clipboardSignature, href: '/preboarding', requiredPermission: Permissions.ONBOARDING_VIEW },
-        { id: 'offboarding-hire', label: 'Offboarding', icon: icon.userMinus, href: '/offboarding', requiredPermission: Permissions.EXIT_VIEW },
+        {
+          id: 'offboarding-group-hire',
+          label: 'Offboarding',
+          icon: icon.userMinus,
+          requiredPermission: Permissions.EXIT_VIEW,
+          children: [
+            { id: 'offboarding-overview-hire', label: 'Exit Processes', href: '/offboarding', icon: sm.users, requiredPermission: Permissions.EXIT_VIEW },
+            { id: 'offboarding-fnf-hire', label: 'F&F Settlements', href: '/offboarding/fnf', icon: sm.dollarSign, requiredPermission: Permissions.EXIT_VIEW },
+          ],
+        },
         { id: 'offer-portal-hire', label: 'Offer Portal', icon: icon.fileCheck, href: '/offer-portal', requiredPermission: Permissions.RECRUITMENT_VIEW },
         { id: 'careers-hire', label: 'Careers Page', icon: icon.briefcase, href: '/careers', requiredPermission: Permissions.RECRUITMENT_VIEW },
         { id: 'referrals-hire', label: 'Referrals', icon: icon.share2, href: '/referrals', requiredPermission: Permissions.REFERRAL_VIEW },

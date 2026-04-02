@@ -162,7 +162,7 @@ const StatCard = ({
       <div>
         <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
         <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
-        {subtitle && <p className="text-xs text-[var(--text-muted)] mt-1">{subtitle}</p>}
+        {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
         <Icon className="h-5 w-5 text-white" />
@@ -227,7 +227,7 @@ export default function PerformancePage() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance Management</h1>
-        <p className="text-sm text-[var(--text-muted)] mt-1 skeuo-deboss">
+        <p className="text-body-muted mt-1 skeuo-deboss">
           Track goals, conduct reviews, and manage employee performance
         </p>
       </div>
@@ -278,7 +278,7 @@ export default function PerformancePage() {
       {/* Quick Actions */}
       {stats.pending360Reviews > 0 && (
         <div className="mb-8 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
-          <div className="flex items-center justify-between">
+          <div className="row-between">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
                 <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
@@ -356,7 +356,7 @@ export default function PerformancePage() {
                     <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
                       {module.title}
                     </h3>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{module.description}</p>
+                    <p className="text-caption mt-0.5">{module.description}</p>
                   </div>
                 </div>
               </div>
@@ -383,21 +383,21 @@ export default function PerformancePage() {
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-accent-600 dark:text-accent-400 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <p className="text-body-secondary mt-1">
               Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
             </p>
           </div>
           <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
             <MessageSquare className="h-6 w-6 text-success-600 dark:text-success-400 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <p className="text-body-secondary mt-1">
               Continuous feedback helps improve performance year-round
             </p>
           </div>
           <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <BarChart3 className="h-6 w-6 text-accent-800 dark:text-accent-600 mb-2" />
             <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <p className="text-body-secondary mt-1">
               Update your goals and OKRs regularly to stay on track
             </p>
           </div>

@@ -268,7 +268,7 @@ export default function DepartmentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
                   <p className="text-2xl font-bold skeuo-emboss">{departments.length}</p>
@@ -282,7 +282,7 @@ export default function DepartmentsPage() {
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
                   <p className="text-2xl font-bold skeuo-emboss">{activeDepartments}</p>
@@ -296,7 +296,7 @@ export default function DepartmentsPage() {
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
                   <p className="text-2xl font-bold skeuo-emboss">{totalEmployees}</p>
@@ -311,7 +311,7 @@ export default function DepartmentsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl flex items-center justify-between">
+          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl row-between">
             <span>{error}</span>
             <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
               <X className="h-5 w-5" />
@@ -401,7 +401,7 @@ export default function DepartmentsPage() {
                             </div>
                             <div>
                               <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
-                              <p className="text-sm text-[var(--text-muted)]">{dept.code}</p>
+                              <p className="text-body-muted">{dept.code}</p>
                             </div>
                           </div>
                         </td>

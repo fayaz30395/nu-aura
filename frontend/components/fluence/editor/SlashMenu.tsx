@@ -267,7 +267,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           className="fluence-slash-menu"
           style={{ top: position.top, left: position.left }}
         >
-          <div className="px-4 py-6 text-center text-sm text-[var(--text-muted)]">
+          <div className="px-4 py-6 text-center text-body-muted">
             No results found
           </div>
         </div>
@@ -287,7 +287,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           exit={{ opacity: 0, y: -4, scale: 0.98 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
         >
-          <div className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] border-b border-[var(--border-subtle)]">
+          <div className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] divider-b">
             {query ? `Results for "${query}"` : 'Type to filter...'}
           </div>
           <div className="max-h-[320px] overflow-y-auto py-1">
@@ -313,7 +313,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
                         <span className="block text-sm font-medium text-[var(--text-primary)]">
                           {item.title}
                         </span>
-                        <span className="block text-xs text-[var(--text-muted)]">
+                        <span className="block text-caption">
                           {item.description}
                         </span>
                       </span>

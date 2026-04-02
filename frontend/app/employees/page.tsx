@@ -256,7 +256,7 @@ export default function EmployeesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
+            <p className="text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -375,7 +375,7 @@ export default function EmployeesPage() {
                         </div>
                         <div>
                           <div className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</div>
-                          <div className="text-xs text-[var(--text-muted)]">{employee.workEmail}</div>
+                          <div className="text-caption">{employee.workEmail}</div>
                         </div>
                       </div>
                     </td>
@@ -394,7 +394,7 @@ export default function EmployeesPage() {
                           {employee.level.replace('_', ' ')}
                         </span>
                       ) : (
-                        <span className="text-sm text-[var(--text-muted)]">-</span>
+                        <span className="text-body-muted">-</span>
                       )}
                     </td>
                     <td className="whitespace-nowrap">
@@ -443,8 +443,8 @@ export default function EmployeesPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-[var(--border-subtle)] flex items-center justify-between">
-                <p className="text-sm text-[var(--text-secondary)]">
+              <div className="px-6 py-4 border-t border-[var(--border-subtle)] row-between">
+                <p className="text-body-secondary">
                   Showing{' '}
                   <span className="font-medium text-[var(--text-primary)]">{currentPage * PAGE_SIZE + 1}</span>
                   {' '}–{' '}
@@ -463,7 +463,7 @@ export default function EmployeesPage() {
                   >
                     Previous
                   </Button>
-                  <span className="px-2 text-sm text-[var(--text-muted)] tabular-nums">
+                  <span className="px-2 text-body-muted tabular-nums">
                     {currentPage + 1} / {totalPages}
                   </span>
                   <Button
@@ -948,7 +948,7 @@ export default function EmployeesPage() {
                             </select>
                           )}
                         />
-                        <p className="mt-1 text-xs text-[var(--text-muted)]">
+                        <p className="mt-1 text-caption">
                           Select &ldquo;Self&rdquo; for top-level employees who don&apos;t report to anyone.
                         </p>
                         {errors.managerId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}
@@ -1001,7 +1001,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                       </div>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         Dotted-line managers represent matrix reporting relationships. They are informational only and do not participate in approval workflows.
                       </p>
                     </div>
@@ -1113,7 +1113,7 @@ export default function EmployeesPage() {
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">Delete Employee</h3>
               </div>
-              <p className="text-sm text-[var(--text-secondary)] mb-6">
+              <p className="text-body-secondary mb-6">
                 Are you sure you want to delete <strong className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-4">

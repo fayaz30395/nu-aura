@@ -218,7 +218,7 @@ export default function TeamAttendancePage() {
         <div className="flex flex-col gap-4">
           <motion.button
             onClick={() => router.push('/attendance')}
-            className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors w-fit"
+            className="flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors w-fit"
             whileHover={{ x: -2 }}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -248,7 +248,7 @@ export default function TeamAttendancePage() {
 
         {/* Date Navigation Bar */}
         <motion.div
-          className="card-aura bg-[var(--bg-card)] rounded-lg px-6 py-4 flex items-center justify-between gap-4 flex-wrap"
+          className="card-aura bg-[var(--bg-card)] rounded-lg px-6 py-4 row-between gap-4 flex-wrap"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -265,7 +265,7 @@ export default function TeamAttendancePage() {
               <p className="text-sm font-semibold text-[var(--text-primary)]">
                 {new Date(selectedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-caption">
                 {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'short' })}
               </p>
             </div>
@@ -350,7 +350,7 @@ export default function TeamAttendancePage() {
                     <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Present</p>
+                    <p className="text-caption uppercase font-medium tracking-wide">Present</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.present}</p>
                     <p className="text-xs text-success-600 dark:text-success-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}%` : '0%'}
@@ -371,7 +371,7 @@ export default function TeamAttendancePage() {
                     <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Absent</p>
+                    <p className="text-caption uppercase font-medium tracking-wide">Absent</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.absent}</p>
                     <p className="text-xs text-danger-600 dark:text-danger-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}%` : '0%'}
@@ -392,7 +392,7 @@ export default function TeamAttendancePage() {
                     <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">Late</p>
+                    <p className="text-caption uppercase font-medium tracking-wide">Late</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.late}</p>
                     <p className="text-xs text-warning-600 dark:text-warning-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.late / stats.total) * 100)}%` : '0%'}
@@ -413,7 +413,7 @@ export default function TeamAttendancePage() {
                     <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium tracking-wide">On Leave</p>
+                    <p className="text-caption uppercase font-medium tracking-wide">On Leave</p>
                     <p className="text-stat-large font-bold text-[var(--text-primary)]">{stats.onLeave}</p>
                     <p className="text-xs text-accent-600 dark:text-accent-400 font-medium">
                       {stats.total > 0 ? `${Math.round((stats.onLeave / stats.total) * 100)}%` : '0%'}
@@ -553,10 +553,10 @@ export default function TeamAttendancePage() {
                             <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                               {record.employeeId.substring(0, 12)}
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {formatTime(record.checkInTime)}
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {formatTime(record.checkOutTime)}
                             </td>
                             <td className="px-6 py-4 text-sm text-right">
@@ -589,18 +589,18 @@ export default function TeamAttendancePage() {
                                 {record.status || 'PRESENT'}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               <div className="flex items-center gap-2">
                                 {getSourceIcon(record.checkInSource)}
                                 {record.checkInSource ? record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase() : 'N/A'}
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
+                            <td className="px-6 py-4 text-body-secondary">
                               {record.isRegularization && (
                                 <span className="text-warning-600 dark:text-warning-400 font-medium text-xs">Regularized</span>
                               )}
                               {record.remarks && (
-                                <div className="text-xs text-[var(--text-muted)] truncate max-w-xs" title={record.remarks}>
+                                <div className="text-caption truncate max-w-xs" title={record.remarks}>
                                   {record.remarks}
                                 </div>
                               )}
@@ -680,7 +680,7 @@ export default function TeamAttendancePage() {
                           <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                             {record.employeeId.substring(0, 16)}
                           </p>
-                          <p className="text-xs text-[var(--text-muted)]">
+                          <p className="text-caption">
                             {new Date(record.attendanceDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                           </p>
                         </div>
@@ -699,7 +699,7 @@ export default function TeamAttendancePage() {
                         </div>
 
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between text-xs">
+                          <div className="row-between text-xs">
                             <span className="text-[var(--text-muted)] font-medium">Work Hours</span>
                             <span className="font-semibold text-[var(--text-primary)]">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
                           </div>
@@ -722,7 +722,7 @@ export default function TeamAttendancePage() {
                         )}
 
                         {record.checkInSource && (
-                          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                          <div className="flex items-center gap-2 text-caption">
                             {getSourceIcon(record.checkInSource)}
                             <span>{record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase()}</span>
                           </div>
@@ -757,7 +757,7 @@ export default function TeamAttendancePage() {
                   <Clock className="h-5 w-5 text-accent-700 dark:text-accent-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">My Attendance</h3>
-                <p className="text-xs text-[var(--text-muted)]">View your own records</p>
+                <p className="text-caption">View your own records</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -776,7 +776,7 @@ export default function TeamAttendancePage() {
                   <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Regularizations</h3>
-                <p className="text-xs text-[var(--text-muted)]">Review corrections</p>
+                <p className="text-caption">Review corrections</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -795,7 +795,7 @@ export default function TeamAttendancePage() {
                   <Printer className="h-5 w-5 text-accent-800 dark:text-accent-600" />
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Print Report</h3>
-                <p className="text-xs text-[var(--text-muted)]">Generate PDF</p>
+                <p className="text-caption">Generate PDF</p>
               </CardContent>
             </Card>
           </motion.div>

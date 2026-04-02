@@ -256,7 +256,7 @@ export default function BlogPostDetailPage() {
               </h1>
 
               {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
+              <div className="meta-row">
                 {/* Author */}
                 <div className="flex items-center gap-2">
                   <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(post.authorName))}`}>
@@ -467,21 +467,21 @@ export default function BlogPostDetailPage() {
             >
               <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Stats</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <Eye className="w-4 h-4 flex-shrink-0" />
                     Views
                   </div>
                   <span className="font-semibold text-[var(--text-primary)]">{post.viewCount || 0}</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <Heart className="w-4 h-4 flex-shrink-0" />
                     Likes
                   </div>
                   <span className="font-semibold text-[var(--text-primary)]">{post.likeCount || 0}</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <MessageCircle className="w-4 h-4 flex-shrink-0" />
                     Comments
@@ -513,12 +513,12 @@ export default function BlogPostDetailPage() {
                     </span>
                   </div>
                   {post.departmentName && (
-                    <p className="text-xs text-[var(--text-muted)] ml-6">
+                    <p className="text-caption ml-6">
                       {post.departmentName}
                     </p>
                   )}
                   {post.editorIds && post.editorIds.length > 0 && (
-                    <div className="flex items-center gap-1 text-xs text-[var(--text-muted)] mt-2 ml-6">
+                    <div className="flex items-center gap-1 text-caption mt-2 ml-6">
                       <Users className="w-3 h-3" />
                       {post.editorIds.length} editor{post.editorIds.length !== 1 ? 's' : ''}
                     </div>
@@ -629,7 +629,7 @@ export default function BlogPostDetailPage() {
                       {getInitial(comment.authorName)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="row-between gap-2">
                         <p className="font-semibold text-sm text-[var(--text-primary)]">
                           {comment.authorName || 'Anonymous'}
                         </p>
@@ -646,10 +646,10 @@ export default function BlogPostDetailPage() {
                           </motion.button>
                         )}
                       </div>
-                      <p className="text-sm text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+                      <p className="text-body-secondary mt-1.5 leading-relaxed">
                         {comment.body}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] mt-2">
+                      <p className="text-caption mt-2">
                         {new Date(comment.createdAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -716,7 +716,7 @@ export default function BlogPostDetailPage() {
                 <motion.div
                   key={v.id}
                   variants={dsMotion.staggerItem}
-                  className="flex items-center justify-between py-4 px-4 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="row-between py-4 px-4 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(v.viewerName))}`}>
@@ -726,7 +726,7 @@ export default function BlogPostDetailPage() {
                       {v.viewerName || 'Unknown'}
                     </span>
                   </div>
-                  <span className="text-xs text-[var(--text-muted)] flex-shrink-0 ml-2">
+                  <span className="text-caption flex-shrink-0 ml-2">
                     {new Date(v.viewedAt).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',

@@ -409,7 +409,7 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Total Assets</p>
+                  <p className="text-body-secondary skeuo-deboss">Total Assets</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
@@ -422,7 +422,7 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Available</p>
+                  <p className="text-body-secondary skeuo-deboss">Available</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.available}</p>
                 </div>
               </div>
@@ -435,7 +435,7 @@ export default function AssetManagementPage() {
                   <User className="h-6 w-6 text-accent-600 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">Assigned</p>
+                  <p className="text-body-secondary skeuo-deboss">Assigned</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.assigned}</p>
                 </div>
               </div>
@@ -448,7 +448,7 @@ export default function AssetManagementPage() {
                   <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)] skeuo-deboss">In Maintenance</p>
+                  <p className="text-body-secondary skeuo-deboss">In Maintenance</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.maintenance}</p>
                 </div>
               </div>
@@ -539,12 +539,12 @@ export default function AssetManagementPage() {
                             </div>
                             <div>
                               <p className="font-medium text-[var(--text-primary)]">{asset.assetName}</p>
-                              <p className="text-xs text-[var(--text-muted)]">{asset.assetCode}</p>
+                              <p className="text-caption">{asset.assetCode}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {asset.category.replace('_', ' ')}
                           </span>
                         </td>
@@ -554,17 +554,17 @@ export default function AssetManagementPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {asset.assignedToName || '-'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {formatCurrency(asset.currentValue)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-[var(--text-secondary)]">
+                          <span className="text-body-secondary">
                             {asset.location || '-'}
                           </span>
                         </td>
@@ -579,7 +579,7 @@ export default function AssetManagementPage() {
                             <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(asset)}
-                                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
+                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
@@ -587,7 +587,7 @@ export default function AssetManagementPage() {
                               <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
                                 <button
                                   onClick={() => handleOpenEditModal(asset)}
-                                  className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Edit className="h-4 w-4" />
                                   Edit
@@ -597,7 +597,7 @@ export default function AssetManagementPage() {
                                 <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
                                   <button
                                     onClick={() => handleAssignClick(asset)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <UserPlus className="h-4 w-4" />
                                     Assign
@@ -608,7 +608,7 @@ export default function AssetManagementPage() {
                                 <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
                                   <button
                                     onClick={() => handleReturn(asset)}
-                                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                   >
                                     <RotateCcw className="h-4 w-4" />
                                     Return
@@ -657,7 +657,7 @@ export default function AssetManagementPage() {
             >
               Previous
             </Button>
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-body-secondary">
               Page {currentPage + 1} of {assetsQuery.data?.totalPages || 0}
             </span>
             <Button
@@ -889,7 +889,7 @@ export default function AssetManagementPage() {
                     {getCategoryIcon(selectedAsset.category)}
                   </div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)] font-mono">{selectedAsset.assetCode}</p>
+                    <p className="text-body-muted font-mono">{selectedAsset.assetCode}</p>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedAsset.assetName}
                     </h2>
@@ -913,7 +913,7 @@ export default function AssetManagementPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {selectedAsset.brand && (
                     <div className="p-4 card-aura">
-                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                      <p className="text-body-muted flex items-center gap-2">
                         <Tag className="h-4 w-4" />
                         Brand
                       </p>
@@ -924,7 +924,7 @@ export default function AssetManagementPage() {
                   )}
                   {selectedAsset.model && (
                     <div className="p-4 card-aura">
-                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                      <p className="text-body-muted flex items-center gap-2">
                         <Package className="h-4 w-4" />
                         Model
                       </p>
@@ -937,7 +937,7 @@ export default function AssetManagementPage() {
 
                 {selectedAsset.serialNumber && (
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)]">Serial Number</p>
+                    <p className="text-body-muted">Serial Number</p>
                     <p className="text-lg font-mono font-semibold text-[var(--text-primary)]">
                       {selectedAsset.serialNumber}
                     </p>
@@ -946,7 +946,7 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Purchase Cost
                     </p>
@@ -955,7 +955,7 @@ export default function AssetManagementPage() {
                     </p>
                   </div>
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Current Value
                     </p>
@@ -967,7 +967,7 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Purchase Date
                     </p>
@@ -976,7 +976,7 @@ export default function AssetManagementPage() {
                     </p>
                   </div>
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Warranty Expiry
                     </p>
@@ -988,7 +988,7 @@ export default function AssetManagementPage() {
 
                 {selectedAsset.assignedToName && (
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <User className="h-4 w-4" />
                       Assigned To
                     </p>
@@ -1000,7 +1000,7 @@ export default function AssetManagementPage() {
 
                 {selectedAsset.location && (
                   <div className="p-4 card-aura">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
+                    <p className="text-body-muted flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       Location
                     </p>

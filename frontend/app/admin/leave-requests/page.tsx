@@ -218,16 +218,16 @@ export default function AdminLeaveRequestsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                       {request.requestNumber}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
                       {request.employeeId.substring(0, 8)}...
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {getLeaveTypeName(request.leaveTypeId)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
                       {formatDate(request.startDate)} - {formatDate(request.endDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
                       {request.totalDays} {request.isHalfDay && '(Half Day)'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -235,7 +235,7 @@ export default function AdminLeaveRequestsPage() {
                         {request.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
                       {formatDate(request.appliedOn)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -278,7 +278,7 @@ export default function AdminLeaveRequestsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
-            <p className="text-sm text-[var(--text-secondary)] mb-4">
+            <p className="text-body-secondary mb-4">
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
             </p>
             <div className="mb-4">
@@ -322,7 +322,7 @@ export default function AdminLeaveRequestsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
-            <p className="text-sm text-[var(--text-secondary)] mb-4">
+            <p className="text-body-secondary mb-4">
               Please provide a reason for rejecting this leave request.
             </p>
             <div className="mb-4">

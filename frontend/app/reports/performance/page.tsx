@@ -57,7 +57,7 @@ export default function PerformanceReportsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between"
+          className="row-between"
         >
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Performance Reports</h1>
@@ -103,7 +103,7 @@ export default function PerformanceReportsPage() {
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">From</label>
+                    <label className="block text-caption mb-1">From</label>
                     <input
                       type="date"
                       value={startDate}
@@ -112,7 +112,7 @@ export default function PerformanceReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[var(--text-muted)] mb-1">To</label>
+                    <label className="block text-caption mb-1">To</label>
                     <input
                       type="date"
                       value={endDate}
@@ -121,7 +121,7 @@ export default function PerformanceReportsPage() {
                     />
                   </div>
                 </div>
-                <p className="text-xs text-[var(--text-muted)] mt-2">
+                <p className="text-caption mt-2">
                   Leave empty to include all performance reviews
                 </p>
               </div>
@@ -145,7 +145,7 @@ export default function PerformanceReportsPage() {
                       <p className={`font-medium text-sm ${format === fmt ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
-                      <p className="text-xs text-[var(--text-muted)]">
+                      <p className="text-caption">
                         .{fmt === 'EXCEL' ? 'xlsx' : fmt.toLowerCase()}
                       </p>
                     </button>

@@ -100,7 +100,7 @@ export function EmployeeWorkloadCard({
       {/* Allocation bar */}
       <div className="flex items-center gap-2">
         <div className="w-24">
-          <div className="flex items-center justify-between mb-1">
+          <div className="row-between mb-1">
             <span className="text-xs text-surface-400">
               {activeAllocations.length > 0 ? activeAllocations[0].projectName.substring(0, 12) : ''}
             </span>

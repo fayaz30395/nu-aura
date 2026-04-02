@@ -326,7 +326,7 @@ export default function TimesheetsPage() {
                   <Timer className="h-6 w-6 text-accent-700 dark:text-accent-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Total Hours</p>
+                  <p className="text-body-secondary">Total Hours</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalHours.toFixed(1)}h</p>
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function TimesheetsPage() {
                   <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Pending Approval</p>
+                  <p className="text-body-secondary">Pending Approval</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
@@ -352,7 +352,7 @@ export default function TimesheetsPage() {
                   <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--text-secondary)]">Approved</p>
+                  <p className="text-body-secondary">Approved</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.approved}</p>
                 </div>
               </div>
@@ -363,7 +363,7 @@ export default function TimesheetsPage() {
         {/* Current Week View */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="row-between mb-4">
               <div className="flex items-center gap-4">
                 <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
                   <ChevronLeft className="h-4 w-4" />
@@ -372,7 +372,7 @@ export default function TimesheetsPage() {
                   <h3 className="font-semibold text-[var(--text-primary)]">
                     Week of {formatDate(currentWeekStart.toISOString())}
                   </h3>
-                  <p className="text-sm text-[var(--text-muted)]">
+                  <p className="text-body-muted">
                     {formatDate(weekDates[0].toISOString())} - {formatDate(weekDates[6].toISOString())}
                   </p>
                 </div>
@@ -453,7 +453,7 @@ export default function TimesheetsPage() {
                       }, 0);
 
                       return (
-                        <tr key={projectId} className="h-11 border-b border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-colors">
+                        <tr key={projectId} className="h-11 divider-b hover:bg-[var(--bg-card-hover)] transition-colors">
                           <td className="px-4 py-2">
                             <span className="font-medium text-[var(--text-primary)]">{name}</span>
                           </td>
@@ -503,7 +503,7 @@ export default function TimesheetsPage() {
 
             {/* Footer actions */}
             {currentWeekTimesheet && (
-              <div className="mt-4 pt-4 border-t border-[var(--border-main)] flex items-center justify-between">
+              <div className="mt-4 pt-4 border-t border-[var(--border-main)] row-between">
                 <div className="flex gap-6 text-sm">
                   <span className="text-[var(--text-secondary)]">
                     Total: <strong className="text-[var(--text-primary)]">{currentWeekTimesheet.totalHours}h</strong>
@@ -539,7 +539,7 @@ export default function TimesheetsPage() {
               timesheets.map((timesheet) => (
                 <Card key={timesheet.id} className="hover:shadow-[var(--shadow-elevated)] transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                    <div className="row-between">
                       <div className="flex items-center gap-4">
                         <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
                           <FileSpreadsheet className="h-5 w-5 text-[var(--text-secondary)]" />
@@ -548,7 +548,7 @@ export default function TimesheetsPage() {
                           <p className="font-medium text-[var(--text-primary)]">
                             Week of {formatDate(timesheet.weekStartDate)}
                           </p>
-                          <p className="text-sm text-[var(--text-muted)]">
+                          <p className="text-body-muted">
                             {formatDate(timesheet.weekStartDate)} - {formatDate(timesheet.weekEndDate)}
                           </p>
                         </div>
@@ -630,7 +630,7 @@ export default function TimesheetsPage() {
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Timesheet Details
                 </h2>
-                <p className="text-sm text-[var(--text-muted)]">
+                <p className="text-body-muted">
                   {selectedTimesheet && `${formatDate(selectedTimesheet.weekStartDate)} - ${formatDate(selectedTimesheet.weekEndDate)}`}
                 </p>
               </div>
@@ -639,7 +639,7 @@ export default function TimesheetsPage() {
           <ModalBody>
             {selectedTimesheet && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="row-between">
                   <Badge className={getStatusColor(selectedTimesheet.status)}>
                     {selectedTimesheet.status.replace('_', ' ')}
                   </Badge>
@@ -647,7 +647,7 @@ export default function TimesheetsPage() {
                     <p className="text-2xl font-bold text-[var(--text-primary)]">
                       {selectedTimesheet.totalHours}h
                     </p>
-                    <p className="text-sm text-[var(--text-muted)]">Total Hours</p>
+                    <p className="text-body-muted">Total Hours</p>
                   </div>
                 </div>
 
@@ -658,7 +658,7 @@ export default function TimesheetsPage() {
                 )}
 
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="row-between mb-3">
                     <h3 className="font-medium text-[var(--text-primary)]">Time Entries</h3>
                     {selectedTimesheet.status === 'DRAFT' && (
                       <Button size="sm" onClick={handleAddEntry}>
@@ -675,12 +675,12 @@ export default function TimesheetsPage() {
                           key={entry.id}
                           className="p-4 bg-[var(--bg-secondary)] rounded-lg"
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="row-between">
                             <div>
                               <p className="font-medium text-[var(--text-primary)]">
                                 {projects.find(p => p.id === entry.projectId)?.name || 'Unknown Project'}
                               </p>
-                              <p className="text-sm text-[var(--text-muted)]">
+                              <p className="text-body-muted">
                                 {formatDate(entry.entryDate)} - {entry.activityType?.replace('_', ' ')}
                               </p>
                             </div>
@@ -688,13 +688,13 @@ export default function TimesheetsPage() {
                               <p className="font-semibold text-[var(--text-primary)]">
                                 {entry.hours}h
                               </p>
-                              <p className="text-xs text-[var(--text-muted)]">
+                              <p className="text-caption">
                                 {entry.isBillable ? 'Billable' : 'Non-billable'}
                               </p>
                             </div>
                           </div>
                           {entry.workDescription && (
-                            <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                            <p className="mt-2 text-body-secondary">
                               {entry.workDescription}
                             </p>
                           )}
@@ -833,7 +833,7 @@ export default function TimesheetsPage() {
                     onChange={(e) => setEntryForm({ ...entryForm, isBillable: e.target.checked })}
                     className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
-                  <span className="text-sm text-[var(--text-secondary)]">Billable</span>
+                  <span className="text-body-secondary">Billable</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -842,7 +842,7 @@ export default function TimesheetsPage() {
                     onChange={(e) => setEntryForm({ ...entryForm, isOvertime: e.target.checked })}
                     className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
-                  <span className="text-sm text-[var(--text-secondary)]">Overtime</span>
+                  <span className="text-body-secondary">Overtime</span>
                 </label>
               </div>
             </div>

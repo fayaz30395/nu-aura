@@ -209,11 +209,11 @@ function CommentThread({
             <span className="text-sm font-semibold text-[var(--text-primary)]">
               {comment.authorName || 'Anonymous'}
             </span>
-            <span className="text-xs text-[var(--text-muted)]">{timeAgo(comment.createdAt)}</span>
+            <span className="text-caption">{timeAgo(comment.createdAt)}</span>
           </div>
 
           {/* Body with @mentions */}
-          <div className="text-sm text-[var(--text-secondary)] leading-relaxed mb-2">
+          <div className="text-body-secondary leading-relaxed mb-2">
             {renderBodyWithMentions(comment.body)}
           </div>
 
@@ -365,9 +365,9 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
           <span className="text-sm font-semibold text-[var(--text-primary)]">
             {reply.authorName || 'Anonymous'}
           </span>
-          <span className="text-xs text-[var(--text-muted)]">{timeAgo(reply.createdAt)}</span>
+          <span className="text-caption">{timeAgo(reply.createdAt)}</span>
         </div>
-        <div className="text-sm text-[var(--text-secondary)] leading-relaxed mb-1.5">
+        <div className="text-body-secondary leading-relaxed mb-1.5">
           {renderBodyWithMentions(reply.body)}
         </div>
         <div className="flex items-center gap-4">
@@ -839,13 +839,13 @@ export default function WikiPageDetailPage() {
               <div className={card.paddingLarge}>
                 <h3 className={`${typography.cardTitle} mb-4`}>Page Stats</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
+                  <div className="row-between pb-4 border-b border-[var(--border-main)]">
                     <span className={typography.bodySecondary}>Views</span>
                     <span className="text-lg font-semibold text-[var(--text-primary)]">
                       {page.viewCount || 0}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
+                  <div className="row-between pb-4 border-b border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       <Heart
                         className={`h-4 w-4 ${
@@ -858,7 +858,7 @@ export default function WikiPageDetailPage() {
                       {page.likeCount || 0}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
+                  <div className="row-between pb-4 border-b border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       <MessageCircle className="h-4 w-4 text-[var(--text-muted)]" />
                       <span className={typography.bodySecondary}>Comments</span>
@@ -867,7 +867,7 @@ export default function WikiPageDetailPage() {
                       {totalCommentCount}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="row-between">
                     <span className={typography.bodySecondary}>Version</span>
                     <span className="text-lg font-semibold text-[var(--text-primary)]">
                       v{page.version}
@@ -954,7 +954,7 @@ export default function WikiPageDetailPage() {
                       </p>
                     )}
                     {page.editorIds && page.editorIds.length > 0 && (
-                      <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] pl-7 pt-2 border-t border-[var(--border-main)]">
+                      <div className="flex items-center gap-2 text-caption pl-7 pt-2 border-t border-[var(--border-main)]">
                         <Users className={`${iconSize.meta} flex-shrink-0`} />
                         <span>
                           {page.editorIds.length} editor
@@ -981,7 +981,7 @@ export default function WikiPageDetailPage() {
         >
           <div className={card.paddingLarge}>
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="row-between mb-6">
               <div className="flex items-center gap-2">
                 <MessageCircle className={iconSize.cardInline} />
                 <h2 className={typography.cardTitle}>
@@ -1064,7 +1064,7 @@ export default function WikiPageDetailPage() {
                       onSubmitReply={handleSubmitReply}
                     />
                     {/* Divider between top-level comments */}
-                    <div className="border-b border-[var(--border-subtle)] last:border-b-0" />
+                    <div className="divider-b last:border-b-0" />
                   </Fragment>
                 ))}
               </motion.div>
@@ -1103,7 +1103,7 @@ export default function WikiPageDetailPage() {
                     hidden: { opacity: 0, x: -8 },
                     visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
                   }}
-                  className="flex items-center justify-between py-4 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
+                  className="row-between py-4 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
                   <div className="flex items-center gap-4">
                     <div
@@ -1169,10 +1169,10 @@ export default function WikiPageDetailPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-[var(--text-muted)]">
+                      <span className="text-caption">
                         {rev.authorName || 'Unknown'}
                       </span>
-                      <span className="text-xs text-[var(--text-muted)]">
+                      <span className="text-caption">
                         {new Date(rev.createdAt).toLocaleString()}
                       </span>
                     </div>

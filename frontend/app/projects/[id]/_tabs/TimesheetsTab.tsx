@@ -97,7 +97,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       key: 'weekRange',
       header: 'Week',
       accessor: (timesheet: PSATimesheet) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {getWeekRange(timesheet.weekStartDate)}
         </span>
       ),
@@ -107,7 +107,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       key: 'totalHours',
       header: 'Total Hours',
       accessor: (timesheet: PSATimesheet) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatHours(timesheet.totalHours)}
         </span>
       ),
@@ -117,7 +117,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       key: 'billableHours',
       header: 'Billable',
       accessor: (timesheet: PSATimesheet) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatHours(timesheet.billableHours)}
         </span>
       ),
@@ -127,7 +127,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       key: 'nonBillableHours',
       header: 'Non-Billable',
       accessor: (timesheet: PSATimesheet) => (
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-body-secondary">
           {formatHours(timesheet.nonBillableHours)}
         </span>
       ),
@@ -204,7 +204,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
     return (
       <div className="space-y-4">
         <Card>
-          <CardContent className="flex items-center justify-between py-6">
+          <CardContent className="row-between py-6">
             <EmptyState
               title="No timesheets"
               description="Create a timesheet to track hours for this project."
@@ -254,7 +254,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Timesheets</h2>
-              <p className="text-sm text-[var(--text-muted)]">Track hours worked on this project.</p>
+              <p className="text-body-muted">Track hours worked on this project.</p>
             </div>
             <Button
               leftIcon={<Plus className="h-4 w-4" />}
