@@ -266,7 +266,7 @@ export default function AdminPayrollPage() {
                     <Layers className="h-4 w-4 text-accent-500 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                        {s.employeeName ?? `Employee ${s.employeeId.slice(0, 8)}`}
+                        {s.employeeName ?? `Employee ${s.employeeId.substring(0, 8)}`}
                       </p>
                       <p className="text-caption">
                         Effective {s.effectiveDate} · CTC ₹{s.totalCTC.toLocaleString()}

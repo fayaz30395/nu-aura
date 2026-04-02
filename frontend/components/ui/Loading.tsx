@@ -16,7 +16,7 @@ export function Loading({ size = 'md', text, fullScreen = false, variant = 'orbi
     <div className="flex flex-col items-center justify-center gap-6">
       <PremiumSpinner size={size} variant={variant} />
       {text && (
-        <p className="text-[var(--text-secondary)] text-sm font-medium animate-pulse">
+        <p className="text-[var(--text-secondary)] text-sm font-medium animate-pulse duration-1000">
           {text}
         </p>
       )}
