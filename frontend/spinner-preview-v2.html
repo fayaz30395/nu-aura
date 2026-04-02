@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NU-AURA Loader Options — Round 2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #080c18;
+    color: #e8eaf0;
+    font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center; font-size: 28px; margin-bottom: 12px;
+    background: linear-gradient(90deg, #2952A3, #8939A1, #6884dc);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { text-align: center; color: #7a8199; margin-bottom: 48px; font-size: 14px; }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 32px; max-width: 1400px; margin: 0 auto;
+  }
+  .card {
+    background: #0e1322; border: 1px solid #1e2440; border-radius: 16px;
+    padding: 48px 32px; text-align: center; position: relative;
+    transition: border-color 0.3s;
+  }
+  .card:hover { border-color: #2952A3; }
+  .card h3 { margin-top: 32px; font-size: 16px; color: #b0b8d0; font-weight: 600; }
+  .card p { margin-top: 8px; font-size: 12px; color: #5a6380; line-height: 1.6; }
+  .label {
+    position: absolute; top: 16px; left: 16px; background: #2952A3; color: white;
+    padding: 4px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  }
+  .spinner-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 24px; min-height: 240px; justify-content: center;
+  }
+  .brand-text { font-size: 22px; font-weight: 700; letter-spacing: 3px; }
+  .message { font-size: 13px; color: #7a8199; animation: fade-msg 2.4s ease-in-out infinite; }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dots span { width: 8px; height: 8px; border-radius: 50%; background: #2952A3; }
+  .progress-dots span:nth-child(1) { animation: dot-b 1.4s ease-in-out 0s infinite; }
+  .progress-dots span:nth-child(2) { animation: dot-b 1.4s ease-in-out 0.16s infinite; }
+  .progress-dots span:nth-child(3) { animation: dot-b 1.4s ease-in-out 0.32s infinite; }
+  .progress-dots span:nth-child(4) { animation: dot-b 1.4s ease-in-out 0.48s infinite; }
+  .nu-icon { width: 48px; height: 54px; }
+  .shimmer-text {
+    background: linear-gradient(90deg, #2952A3, #8939A1, #6884dc, #8939A1, #2952A3);
+    background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; animation: shimmer 3s linear infinite;
+  }
+  @keyframes dot-b { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1.3);opacity:1} }
+  @keyframes fade-msg { 0%,100%{opacity:.5} 50%{opacity:1} }
+  @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes breathe { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.06);opacity:.85} }
+
+  /* ── NU Icon Path (reuse everywhere) ─── */
+  .nu-path { fill: url(#nuGrad); }
+
+  /* ═══════════════════════════════════════════════════════
+     G — GLITCH HOLOGRAM
+     ═══════════════════════════════════════════════════════ */
+  .g-wrap { position: relative; width: 160px; height: 160px; }
+  .g-scanline {
+    position: absolute; inset: 0; overflow: hidden; border-radius: 50%;
+    background: linear-gradient(180deg, transparent 0%, rgba(41,82,163,0.03) 50%, transparent 100%);
+  }
+  .g-scanline::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(41,82,163,0.4), transparent);
+    animation: g-scan 2.5s linear infinite;
+  }
+  @keyframes g-scan { 0%{top:-2px} 100%{top:100%} }
+  .g-hex {
+    position: absolute; inset: 10px;
+    border: 1px solid rgba(104,132,220,0.15);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: g-hex-pulse 4s ease-in-out infinite;
+  }
+  .g-hex-2 {
+    position: absolute; inset: 25px;
+    border: 1px solid rgba(137,57,161,0.12);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: g-hex-pulse 4s ease-in-out 1s infinite;
+    transform: rotate(30deg);
+  }
+  @keyframes g-hex-pulse { 0%,100%{opacity:.3;transform:rotate(0deg)scale(1)} 50%{opacity:.8;transform:rotate(15deg)scale(1.05)} }
+  .g-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; }
+  .g-icon-wrap {
+    animation: g-glitch 5s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(41,82,163,0.4));
+  }
+  @keyframes g-glitch {
+    0%,90%,100% { transform: translate(0,0); filter: drop-shadow(0 0 12px rgba(41,82,163,0.4)); }
+    92% { transform: translate(-2px,1px); filter: drop-shadow(2px 0 0 rgba(137,57,161,0.5)) drop-shadow(-2px 0 0 rgba(41,82,163,0.5)); }
+    94% { transform: translate(2px,-1px); filter: drop-shadow(0 0 12px rgba(41,82,163,0.4)); }
+    96% { transform: translate(-1px,2px); filter: drop-shadow(2px 0 0 rgba(137,57,161,0.5)) drop-shadow(-2px 0 0 rgba(41,82,163,0.5)); }
+  }
+  .g-flicker {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle, rgba(41,82,163,0.06) 0%, transparent 70%);
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     H — HEARTBEAT / EKG
+     ═══════════════════════════════════════════════════════ */
+  .h-wrap { position: relative; width: 160px; height: 160px; }
+  .h-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; }
+  .h-icon-wrap { animation: h-beat 1.2s ease-in-out infinite; }
+  @keyframes h-beat {
+    0%,100% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(0.95); }
+    42% { transform: scale(1.08); }
+    70% { transform: scale(1); }
+  }
+  .h-ring {
+    position: absolute; border-radius: 50%; border: 2px solid #2952A3;
+  }
+  .h-ring-1 { inset: 0; animation: h-pulse-ring 1.2s ease-out infinite; }
+  .h-ring-2 { inset: 0; animation: h-pulse-ring 1.2s ease-out 0.3s infinite; }
+  @keyframes h-pulse-ring {
+    0% { transform: scale(0.6); opacity: 0.8; border-color: #2952A3; }
+    50% { border-color: #8939A1; }
+    100% { transform: scale(1.4); opacity: 0; border-color: #6884dc; }
+  }
+  .h-glow {
+    position: absolute; inset: 30px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(41,82,163,0.15) 0%, transparent 70%);
+    animation: breathe 1.2s ease-in-out infinite;
+  }
+  /* EKG line below the logo */
+  .h-ekg { margin-top: 4px; width: 120px; height: 24px; overflow: hidden; }
+  .h-ekg svg { animation: h-ekg-scroll 2s linear infinite; }
+  @keyframes h-ekg-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* ═══════════════════════════════════════════════════════
+     I — GALAXY SPIRAL
+     ═══════════════════════════════════════════════════════ */
+  .i-wrap { position: relative; width: 160px; height: 160px; }
+  .i-arm {
+    position: absolute; inset: 0; animation: spin 8s linear infinite;
+  }
+  .i-arm-2 { animation-duration: 8s; animation-delay: -4s; }
+  .i-star {
+    position: absolute; border-radius: 50%;
+    background: #2952A3; box-shadow: 0 0 6px #2952A3;
+  }
+  .i-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; animation: breathe 3s ease-in-out infinite; }
+  .i-nebula {
+    position: absolute; inset: 20px; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, rgba(41,82,163,0.08), transparent, rgba(137,57,161,0.06), transparent);
+    animation: spin 12s linear infinite;
+    filter: blur(4px);
+  }
+  .i-core-glow {
+    position: absolute; inset: 40px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(41,82,163,0.2) 0%, transparent 70%);
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     J — MATRIX RAIN / DATA STREAM
+     ═══════════════════════════════════════════════════════ */
+  .j-wrap { position: relative; width: 160px; height: 160px; overflow: hidden; border-radius: 16px; }
+  .j-rain-col {
+    position: absolute; top: -20px; width: 12px; display: flex; flex-direction: column; gap: 4px;
+    animation: j-fall linear infinite;
+    opacity: 0.4;
+  }
+  .j-char {
+    font-family: 'Courier New', monospace; font-size: 10px; color: #2952A3;
+    text-align: center; line-height: 1;
+  }
+  .j-char.bright { color: #6884dc; opacity: 1; text-shadow: 0 0 6px #6884dc; }
+  @keyframes j-fall { 0%{transform:translateY(-100%)} 100%{transform:translateY(200px)} }
+  .j-center {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
+  }
+  .j-glass {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(14,19,34,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(104,132,220,0.2);
+    display: flex; align-items: center; justify-content: center;
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     K — ATOMIC ELECTRON SHELLS
+     ═══════════════════════════════════════════════════════ */
+  .k-wrap { position: relative; width: 160px; height: 160px; }
+  .k-shell {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(104,132,220,0.15);
+  }
+  .k-shell-1 { inset: 0; animation: k-wobble-1 6s ease-in-out infinite; }
+  .k-shell-2 { inset: 16px; animation: k-wobble-2 5s ease-in-out infinite; }
+  .k-shell-3 { inset: 32px; animation: k-wobble-3 4s ease-in-out infinite; }
+  .k-electron {
+    position: absolute; border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .k-e1 { width: 10px; height: 10px; background: #2952A3; color: #2952A3; top: -5px; left: 50%; transform: translateX(-50%); }
+  .k-e2 { width: 8px; height: 8px; background: #8939A1; color: #8939A1; bottom: -4px; left: 50%; transform: translateX(-50%); }
+  .k-e3 { width: 6px; height: 6px; background: #6884dc; color: #6884dc; right: -3px; top: 50%; transform: translateY(-50%); }
+  @keyframes k-wobble-1 {
+    0%,100% { transform: rotateX(70deg) rotateZ(0deg); }
+    50% { transform: rotateX(70deg) rotateZ(180deg); }
+  }
+  @keyframes k-wobble-2 {
+    0%,100% { transform: rotateX(70deg) rotateY(60deg) rotateZ(0deg); }
+    50% { transform: rotateX(70deg) rotateY(60deg) rotateZ(-180deg); }
+  }
+  @keyframes k-wobble-3 {
+    0%,100% { transform: rotateX(70deg) rotateY(-60deg) rotateZ(0deg); }
+    50% { transform: rotateX(70deg) rotateY(-60deg) rotateZ(180deg); }
+  }
+  .k-center {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
+    animation: breathe 3s ease-in-out infinite;
+  }
+  .k-nucleus {
+    position: absolute; inset: 50px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(41,82,163,0.2) 0%, transparent 70%);
+    animation: breathe 2s ease-in-out infinite;
+  }
+  .k-wrap { perspective: 400px; }
+
+  /* ═══════════════════════════════════════════════════════
+     L — PORTAL / WARP TUNNEL
+     ═══════════════════════════════════════════════════════ */
+  .l-wrap { position: relative; width: 160px; height: 160px; }
+  .l-ring {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(41,82,163,0.2);
+  }
+  .l-ring-1 { inset: 0; animation: l-warp 3s ease-in-out infinite; }
+  .l-ring-2 { inset: 12px; animation: l-warp 3s ease-in-out 0.3s infinite; }
+  .l-ring-3 { inset: 24px; animation: l-warp 3s ease-in-out 0.6s infinite; }
+  .l-ring-4 { inset: 36px; animation: l-warp 3s ease-in-out 0.9s infinite; }
+  .l-ring-5 { inset: 48px; animation: l-warp 3s ease-in-out 1.2s infinite; }
+  @keyframes l-warp {
+    0% { transform: scale(0.3) rotateX(80deg); opacity: 0; border-color: #2952A3; }
+    30% { opacity: 0.8; }
+    60% { opacity: 0.4; border-color: #8939A1; }
+    100% { transform: scale(1.1) rotateX(0deg); opacity: 0; border-color: #6884dc; }
+  }
+  .l-center {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
+    animation: breathe 3s ease-in-out infinite;
+  }
+  .l-vortex {
+    position: absolute; inset: 20px; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(41,82,163,0.1) 25%, transparent 50%, rgba(137,57,161,0.08) 75%, transparent 100%);
+    animation: spin 6s linear infinite;
+    filter: blur(2px);
+  }
+  .l-wrap { perspective: 600px; }
+</style>
+
+<!-- Shared SVG gradient def -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="nuGrad" x1="13.5" y1="0" x2="13.5" y2="38" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2952A3"/><stop offset="1" stop-color="#8939A1"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+</head>
+<body>
+
+<h1>NU-AURA Loader Options — Round 2</h1>
+<p class="subtitle">6 new styles. Same NULogic atom icon. Tell me the letter.</p>
+
+<div class="grid">
+
+  <!-- G — GLITCH HOLOGRAM -->
+  <div class="card">
+    <span class="label">G</span>
+    <div class="spinner-wrap">
+      <div class="g-wrap">
+        <div class="g-flicker"></div>
+        <div class="g-hex"></div>
+        <div class="g-hex-2"></div>
+        <div class="g-scanline"></div>
+        <div class="g-center">
+          <div class="g-icon-wrap">
+            <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Glitch Hologram</h3>
+    <p>Hexagonal frames + scan line + subtle glitch flicker. Cyberpunk meets enterprise.</p>
+  </div>
+
+  <!-- H — HEARTBEAT -->
+  <div class="card">
+    <span class="label">H</span>
+    <div class="spinner-wrap">
+      <div class="h-wrap">
+        <div class="h-glow"></div>
+        <div class="h-ring h-ring-1"></div>
+        <div class="h-ring h-ring-2"></div>
+        <div class="h-center">
+          <div class="h-icon-wrap">
+            <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+          </div>
+        </div>
+      </div>
+      <!-- EKG line -->
+      <div class="h-ekg">
+        <svg width="240" height="24" viewBox="0 0 240 24" fill="none">
+          <polyline points="0,12 20,12 25,12 30,4 35,20 40,12 50,12 60,12 65,12 70,4 75,20 80,12 90,12 100,12 105,12 110,4 115,20 120,12 130,12 140,12 145,12 150,4 155,20 160,12 170,12 180,12 185,12 190,4 195,20 200,12 210,12 220,12 225,12 230,4 235,20 240,12"
+            stroke="#2952A3" stroke-width="1.5" fill="none" opacity="0.6"/>
+        </svg>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Heartbeat Pulse</h3>
+    <p>The logo beats like a heart with expanding pulse rings + scrolling EKG line. Alive, vital.</p>
+  </div>
+
+  <!-- I — GALAXY SPIRAL -->
+  <div class="card">
+    <span class="label">I</span>
+    <div class="spinner-wrap">
+      <div class="i-wrap">
+        <div class="i-nebula"></div>
+        <div class="i-core-glow"></div>
+        <!-- Spiral arm 1 -->
+        <div class="i-arm">
+          <div class="i-star" style="width:8px;height:8px;top:2%;left:48%;box-shadow:0 0 10px #2952A3"></div>
+          <div class="i-star" style="width:5px;height:5px;top:15%;left:70%;background:#8939A1;box-shadow:0 0 8px #8939A1"></div>
+          <div class="i-star" style="width:4px;height:4px;top:35%;left:85%;background:#6884dc;box-shadow:0 0 6px #6884dc"></div>
+          <div class="i-star" style="width:3px;height:3px;top:60%;left:88%;background:#a0b4f0;box-shadow:0 0 5px #a0b4f0"></div>
+        </div>
+        <!-- Spiral arm 2 -->
+        <div class="i-arm i-arm-2">
+          <div class="i-star" style="width:7px;height:7px;bottom:2%;left:48%;background:#8939A1;box-shadow:0 0 10px #8939A1"></div>
+          <div class="i-star" style="width:4px;height:4px;bottom:18%;left:25%;box-shadow:0 0 6px #2952A3"></div>
+          <div class="i-star" style="width:3px;height:3px;bottom:40%;left:10%;background:#6884dc;box-shadow:0 0 5px #6884dc"></div>
+          <div class="i-star" style="width:5px;height:5px;bottom:65%;left:8%;background:#a0b4f0;box-shadow:0 0 7px #a0b4f0"></div>
+        </div>
+        <div class="i-center">
+          <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+        </div>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Galaxy Spiral</h3>
+    <p>Two spiral arms of stars rotating around the icon with a conic nebula glow. Cosmic, expansive.</p>
+  </div>
+
+  <!-- J — MATRIX RAIN -->
+  <div class="card">
+    <span class="label">J</span>
+    <div class="spinner-wrap">
+      <div class="j-wrap">
+        <div class="j-rain-col" style="left:8px;animation-duration:2.5s;animation-delay:0s">
+          <span class="j-char">N</span><span class="j-char">0</span><span class="j-char bright">U</span><span class="j-char">1</span><span class="j-char">A</span>
+        </div>
+        <div class="j-rain-col" style="left:24px;animation-duration:3s;animation-delay:0.5s">
+          <span class="j-char">1</span><span class="j-char bright">R</span><span class="j-char">0</span><span class="j-char">A</span><span class="j-char">U</span>
+        </div>
+        <div class="j-rain-col" style="left:40px;animation-duration:2.2s;animation-delay:1s">
+          <span class="j-char">A</span><span class="j-char">U</span><span class="j-char">1</span><span class="j-char bright">N</span><span class="j-char">0</span>
+        </div>
+        <div class="j-rain-col" style="left:56px;animation-duration:2.8s;animation-delay:0.3s">
+          <span class="j-char">0</span><span class="j-char">1</span><span class="j-char bright">H</span><span class="j-char">R</span><span class="j-char">0</span>
+        </div>
+        <div class="j-rain-col" style="left:72px;animation-duration:3.2s;animation-delay:0.8s">
+          <span class="j-char bright">1</span><span class="j-char">M</span><span class="j-char">0</span><span class="j-char">S</span><span class="j-char">1</span>
+        </div>
+        <div class="j-rain-col" style="left:88px;animation-duration:2.4s;animation-delay:1.2s">
+          <span class="j-char">U</span><span class="j-char bright">0</span><span class="j-char">R</span><span class="j-char">1</span><span class="j-char">A</span>
+        </div>
+        <div class="j-rain-col" style="left:104px;animation-duration:2.6s;animation-delay:0.1s">
+          <span class="j-char">1</span><span class="j-char">A</span><span class="j-char">0</span><span class="j-char bright">N</span><span class="j-char">U</span>
+        </div>
+        <div class="j-rain-col" style="left:120px;animation-duration:3.1s;animation-delay:0.7s">
+          <span class="j-char">H</span><span class="j-char">1</span><span class="j-char bright">R</span><span class="j-char">0</span><span class="j-char">M</span>
+        </div>
+        <div class="j-rain-col" style="left:136px;animation-duration:2.3s;animation-delay:1.5s">
+          <span class="j-char bright">0</span><span class="j-char">S</span><span class="j-char">1</span><span class="j-char">0</span><span class="j-char">A</span>
+        </div>
+        <div class="j-center">
+          <div class="j-glass">
+            <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Data Stream</h3>
+    <p>Falling columns of characters (N, U, A, R, 0, 1) behind a frosted glass logo. Matrix meets HR-tech.</p>
+  </div>
+
+  <!-- K — ATOMIC ELECTRON SHELLS -->
+  <div class="card">
+    <span class="label">K</span>
+    <div class="spinner-wrap">
+      <div class="k-wrap">
+        <div class="k-nucleus"></div>
+        <div class="k-shell k-shell-1"><div class="k-electron k-e1"></div></div>
+        <div class="k-shell k-shell-2"><div class="k-electron k-e2"></div></div>
+        <div class="k-shell k-shell-3"><div class="k-electron k-e3"></div></div>
+        <div class="k-center">
+          <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+        </div>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Atomic Shells</h3>
+    <p>3D-perspective electron shells wobbling around the nucleus. True to the NULogic atom brand.</p>
+  </div>
+
+  <!-- L — PORTAL WARP -->
+  <div class="card">
+    <span class="label">L</span>
+    <div class="spinner-wrap">
+      <div class="l-wrap">
+        <div class="l-vortex"></div>
+        <div class="l-ring l-ring-1"></div>
+        <div class="l-ring l-ring-2"></div>
+        <div class="l-ring l-ring-3"></div>
+        <div class="l-ring l-ring-4"></div>
+        <div class="l-ring l-ring-5"></div>
+        <div class="l-center">
+          <svg class="nu-icon" viewBox="0 0 27 38" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.2876 3.98866C4.8414 4.78509 0.00104462 10.2817 0.00104462 16.7739C0.00104462 23.2661 4.8414 28.7628 11.2876 29.5592C11.8163 29.6245 12.3484 29.6571 12.8836 29.6571C13.4189 29.6571 13.9509 29.6245 14.4797 29.5592C20.9259 28.7628 25.7662 23.2661 25.7662 16.7739C25.7662 10.2817 20.9259 4.78509 14.4797 3.98866C13.9509 3.92338 13.4189 3.89074 12.8836 3.89074C12.3484 3.89074 11.8163 3.92338 11.2876 3.98866ZM23.8144 0C22.0552 0 20.6289 1.42639 20.6289 3.18571C20.6289 4.94503 22.0552 6.37141 23.8144 6.37141C25.5737 6.37141 27 4.94503 27 3.18571C27 1.42639 25.5737 0 23.8144 0ZM3.94709 30.0096C3.72841 29.8529 3.513 29.6865 3.30411 29.5167C3.19313 29.4286 3.02994 29.4449 2.93855 29.5559L0.0565253 33.1333C-0.0315999 33.2443-0.015282 33.4075 0.0956905 33.4989C3.05278 35.8816 6.59738 37.3798 10.3639 37.8433C11.1995 37.9478 12.0416 38 12.8804 38C13.7192 38 14.5645 37.9478 15.3968 37.8433C19.1634 37.3766 22.708 35.8784 25.6651 33.4989C25.776 33.4108 25.7924 33.2443 25.7042 33.1333L22.8222 29.5559C22.7341 29.4449 22.5676 29.4286 22.4567 29.5167C22.2478 29.6865 22.0323 29.8497 21.8137 30.0096C19.7313 31.5111 17.316 32.4577 14.7702 32.771C14.1435 32.8493 13.5103 32.8885 12.8804 32.8885C12.2504 32.8885 11.6172 32.8493 10.9906 32.771C8.44474 32.4577 6.0262 31.5111 3.94709 30.0096ZM14.2675 9.123C17.9623 9.78234 20.655 13.0203 20.655 16.7707C20.655 20.521 17.91 23.8145 14.1664 24.4346C13.742 24.5064 13.3145 24.5391 12.8836 24.5391C12.4528 24.5391 12.0252 24.5032 11.6009 24.4346L11.4932 24.4183C7.79849 23.7557 5.1123 20.521 5.1123 16.7707C5.1123 13.0203 7.85724 9.72685 11.6009 9.10668C12.0252 9.03487 12.4528 9.00223 12.8836 9.00223C13.3145 9.00223 13.742 9.03814 14.1664 9.10668L14.2675 9.123Z" class="nu-path"/></svg>
+        </div>
+      </div>
+      <span class="brand-text shimmer-text">NU-AURA</span>
+      <span class="message">Preparing your workspace...</span>
+      <div class="progress-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <h3>Warp Portal</h3>
+    <p>Staggered rings scale up from the centre with 3D perspective, like entering a portal. Dramatic, cinematic.</p>
+  </div>
+
+</div>
+
+<p style="text-align:center; margin-top:48px; color:#5a6380; font-size:13px;">
+  Options A-F from Round 1 still available. Tell me the letter (G-L) to implement, or mix elements from multiple.
+</p>
+
+</body>
+</html>
