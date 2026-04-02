@@ -393,3 +393,17 @@ export interface MyContentFilters {
   page?: number;
   size?: number;
 }
+
+// ─── Watch/Subscription Types ────────────────────────────────────────────────
+
+export interface WatchStatus {
+  watching: boolean;
+}
+
+export interface SavedSearch {
+  id: string;
+  query: string;
+  contentType?: 'WIKI' | 'BLOG' | 'TEMPLATE';
+  visibility?: string;
+  createdAt: string;
+}

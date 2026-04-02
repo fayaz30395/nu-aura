@@ -312,7 +312,7 @@ export default function RolesPage() {
   }
 
   return (
-    <AdminPageContent>
+    <AdminPageContent className="p-4 md:p-6 lg:p-8">
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => {

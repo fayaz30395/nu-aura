@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
   if (!authChecked || !isAdmin) return null;
 
   return (
-    <AdminPageContent>
+    <AdminPageContent className="p-4 md:p-6 lg:p-8">
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}

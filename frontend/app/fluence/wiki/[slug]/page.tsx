@@ -54,6 +54,7 @@ import { MentionInput, type MentionInputHandle } from '@/components/fluence/Ment
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
 import { TableOfContents } from '@/components/fluence/TableOfContents';
 import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
+import { WatchButton } from '@/components/fluence/WatchButton';
 import type { FluenceComment } from '@/lib/types/platform/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
@@ -748,6 +749,9 @@ export default function WikiPageDetailPage() {
                     )}
                     <span>{linkCopied ? 'Copied' : 'Share'}</span>
                   </motion.button>
+
+                  {/* Watch / Subscribe */}
+                  <WatchButton pageId={page.id} size="sm" />
                 </div>
               </div>
 

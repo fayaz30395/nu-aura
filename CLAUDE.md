@@ -6,6 +6,20 @@
 
 ---
 
+## Product Vision
+
+**What:** A unified people-operations SaaS platform replacing fragmented HR tools (KEKA/Darwinbox/greytHR). Four sub-apps under one SSO with 500+ granular permissions.
+
+**Who:** Indian mid-market companies (200-5000 employees). Multi-tenant SaaS product. HR Admins are power users; every employee uses self-service. Walled garden — curated integrations only (Google OAuth, Drive, Twilio, SMTP), no plugin/marketplace system.
+
+**Critical path = 4 end-to-end workflows (not Fluence completion):** hire-to-retire, leave lifecycle, payroll run, performance cycle. Hire-to-retire and payroll are the value differentiators.
+
+**NU-AURA is NOT:** a project management tool, a chat platform, a finance/accounting system, a mobile app, an AI product (stubs deferred), or an extensible platform (no webhooks-out, no plugins).
+
+**Target:** Late April 2026 demo/launch readiness.
+
+---
+
 ## Project Structure
 
 ```
@@ -100,12 +114,12 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ```
 
 ### Sub-Apps
-| App | Scope | Status |
-|-----|-------|--------|
-| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets | Production |
-| NU-Hire | Jobs, candidates, pipeline, onboarding, offboarding | Production |
-| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys | Production |
-| NU-Fluence | Wiki, blogs, templates, Drive | Production |
+| App | Scope |
+|-----|-------|
+| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets |
+| NU-Hire | Jobs, candidates, pipeline, onboarding, offboarding |
+| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys |
+| NU-Fluence | Wiki, blogs, templates, Drive (backend done, frontend ~50%) |
 
 ---
 

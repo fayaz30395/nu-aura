@@ -6,7 +6,7 @@ import { Candidate } from '@/lib/types/hire/recruitment';
 import { CandidateMatchResponse } from '@/lib/types/hire/ai-recruitment';
 import {
   Eye, Edit2, Trash2, Calendar, Send, CheckCircle, XCircle,
-  Loader2, Brain, FileText, MessageSquare,
+  Loader2, Brain, FileText, MessageSquare, TrendingUp, FileSignature,
 } from 'lucide-react';
 import { getStatusColor, getStageColor, getMatchScoreColor } from './utils';
 import { PermissionGate } from '@/components/auth/PermissionGate';
@@ -25,6 +25,8 @@ interface CandidateTableRowProps {
   onCalculateMatch: (candidate: Candidate) => void;
   onScreeningSummary: (candidate: Candidate) => void;
   onSynthesizeFeedback: (candidate: Candidate) => void;
+  onViewScorecard: (candidate: Candidate) => void;
+  onESign: (candidate: Candidate) => void;
 }
 
 /**
@@ -44,6 +46,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
   onCalculateMatch,
   onScreeningSummary,
   onSynthesizeFeedback,
+  onViewScorecard,
+  onESign,
 }: CandidateTableRowProps) {
   const router = useRouter();
 
@@ -161,6 +165,16 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             )}
           </button>
 
+          {/* Interview Scorecards */}
+          <button
+            onClick={() => onViewScorecard(candidate)}
+            aria-label={`View scorecards for ${candidate.fullName}`}
+            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            title="Interview Scorecards"
+          >
+            <TrendingUp className="h-4 w-4" />
+          </button>
+
           {/* Schedule Interview */}
           <button
             onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
@@ -183,9 +197,17 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             </button>
           )}
 
-          {/* Accept/Decline (only when OFFER_EXTENDED) */}
+          {/* Accept/Decline + E-Sign (only when OFFER_EXTENDED) */}
           {candidate.status === 'OFFER_EXTENDED' && (
             <>
+              <button
+                onClick={() => onESign(candidate)}
+                aria-label={`Send offer letter for e-signature to ${candidate.fullName}`}
+                className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+                title="Send for E-Sign"
+              >
+                <FileSignature className="h-4 w-4" />
+              </button>
               <button
                 onClick={() => onAccept(candidate)}
                 aria-label={`Accept offer for ${candidate.fullName}`}

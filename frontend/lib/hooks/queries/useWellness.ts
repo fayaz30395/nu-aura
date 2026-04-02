@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { wellnessService } from '@/lib/services/grow/wellness.service';
 import {
   HealthLog,
+  WellnessProgram,
+  WellnessChallenge,
 } from '@/lib/types/grow/wellness';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -146,5 +148,59 @@ export function useLeaveChallenge() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.activeChallenges() });
       queryClient.invalidateQueries({ queryKey: wellnessKeys.myPoints() });
     },
+  });
+}
+
+// ─── Admin Mutations ───────────────────────────────────────────────────────
+
+export function useCreateWellnessProgram() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Partial<WellnessProgram>) => wellnessService.createProgram(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: wellnessKeys.programs() });
+    },
+  });
+}
+
+export function useCreateWellnessChallenge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      programId,
+      data,
+    }: {
+      programId: string | null;
+      data: Partial<WellnessChallenge>;
+    }) => wellnessService.createChallenge(programId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: wellnessKeys.challenges() });
+    },
+  });
+}
+
+// ─── Upcoming Challenges ───────────────────────────────────────────────────
+
+export function useUpcomingChallenges(enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...wellnessKeys.challenges(), 'upcoming'] as const,
+    queryFn: () => wellnessService.getUpcomingChallenges(),
+    enabled,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+}
+
+// ─── Featured Programs ─────────────────────────────────────────────────────
+
+export function useFeaturedPrograms(enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...wellnessKeys.programs(), 'featured'] as const,
+    queryFn: () => wellnessService.getFeaturedPrograms(),
+    enabled,
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 }

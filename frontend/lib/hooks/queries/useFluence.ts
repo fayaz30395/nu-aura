@@ -19,6 +19,7 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   FavoriteContentType,
+  WatchStatus,
 } from '@/lib/types/platform/fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -891,4 +892,29 @@ export function useEditLock(contentType: string, contentId: string, enabled: boo
     lockedByName,
     forceAcquireLock,
   };
+}
+
+// ─── Watch / Subscribe Hooks ────────────────────────────────────────────────
+
+export const watchKeys = {
+  wikiWatch: (pageId: string) => [...fluenceKeys.all, 'watch', 'wiki', pageId] as const,
+};
+
+export function useWatchStatus(pageId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: watchKeys.wikiWatch(pageId),
+    queryFn: () => fluenceService.getWatchStatusWikiPage(pageId),
+    enabled: enabled && !!pageId,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useToggleWatchWikiPage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (pageId: string) => fluenceService.toggleWatchWikiPage(pageId),
+    onSuccess: (_data, pageId) => {
+      queryClient.invalidateQueries({ queryKey: watchKeys.wikiWatch(pageId) });
+    },
+  });
 }

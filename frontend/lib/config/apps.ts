@@ -135,6 +135,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       '/fluence/my-content',
       '/fluence/wall',
       '/fluence/dashboard',
+      '/fluence/analytics',
     ],
     available: true,
     order: 4,

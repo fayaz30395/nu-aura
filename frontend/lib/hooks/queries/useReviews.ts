@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewService } from '@/lib/services/grow/performance.service';
-import { PerformanceReview, ReviewRequest } from '@/lib/types/grow/performance';
+import { PerformanceReview, ReviewRequest, ReviewCompetency } from '@/lib/types/grow/performance';
 import { notifications } from '@mantine/notifications';
 import { performanceKeys } from './performanceKeys';
 
@@ -126,6 +126,26 @@ export function useDeleteReview() {
     },
     onError: (error: Error) => {
       notifications.show({ title: 'Error', message: error.message || 'Failed to delete review', color: 'red' });
+    },
+  });
+}
+
+// ─── Competency Hooks ────────────────────────────────────────────────────────
+
+export function useDeleteCompetency() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, reviewId }: { id: string; reviewId: string }) =>
+      reviewService.deleteCompetency(id).then(() => ({ reviewId })),
+    onSuccess: ({ reviewId }: { reviewId: string }) => {
+      queryClient.invalidateQueries({
+        queryKey: performanceKeys.reviewCompetencies(reviewId),
+      });
+      notifications.show({ title: 'Success', message: 'Competency removed', color: 'green' });
+    },
+    onError: (error: Error) => {
+      notifications.show({ title: 'Error', message: error.message || 'Failed to remove competency', color: 'red' });
     },
   });
 }
