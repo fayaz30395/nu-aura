@@ -1,6 +1,8 @@
 package com.hrms.infrastructure.performance.repository;
 
 import com.hrms.domain.performance.PerformanceImprovementPlan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,13 @@ public interface PIPRepository extends JpaRepository<PerformanceImprovementPlan,
 
     List<PerformanceImprovementPlan> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);
 
+    Page<PerformanceImprovementPlan> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
+
     List<PerformanceImprovementPlan> findByTenantIdAndManagerId(UUID tenantId, UUID managerId);
 
+    Page<PerformanceImprovementPlan> findByTenantIdAndManagerId(UUID tenantId, UUID managerId, Pageable pageable);
+
     List<PerformanceImprovementPlan> findByTenantId(UUID tenantId);
+
+    Page<PerformanceImprovementPlan> findByTenantId(UUID tenantId, Pageable pageable);
 }

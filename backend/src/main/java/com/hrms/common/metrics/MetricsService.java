@@ -30,6 +30,7 @@ public class MetricsService {
         Counter.builder("auth_login")
                 .tag("status", "success")
                 .tag("method", method)
+                .tag("reason", "none")
                 .register(meterRegistry)
                 .increment();
     }

@@ -180,6 +180,12 @@ public class AuthService {
             // Record failed login metric
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
             throw e;
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            // Spring Security authentication failures (BadCredentialsException, LockedException, etc.)
+            // must be caught separately because they extend a different AuthenticationException
+            // than com.hrms.common.exception.AuthenticationException
+            metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
+            throw new AuthenticationException(e.getMessage(), e);
         } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during login
             // Record unexpected error during login
             metricsService.recordLoginFailure("password", "unknown_error");

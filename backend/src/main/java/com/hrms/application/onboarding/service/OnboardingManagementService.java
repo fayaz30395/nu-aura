@@ -10,6 +10,8 @@ import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.onboarding.repository.*;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.logging.Audited;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +53,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     }
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "ONBOARDING_PROCESS", description = "Created onboarding process")
     public OnboardingProcessResponse createProcess(OnboardingProcessRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating onboarding process for employee {} in tenant {}", request.getEmployeeId(), tenantId);
@@ -119,6 +122,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     // --- Template Management ---
 
     @Transactional
+    @Audited(action = AuditAction.CREATE, entityType = "ONBOARDING_TEMPLATE", description = "Created onboarding template")
     public OnboardingChecklistTemplateResponse createTemplate(OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = OnboardingChecklistTemplate.builder()
@@ -152,6 +156,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     }
 
     @Transactional
+    @Audited(action = AuditAction.UPDATE, entityType = "ONBOARDING_TEMPLATE", description = "Updated onboarding template", entityIdParam = 0)
     public OnboardingChecklistTemplateResponse updateTemplate(UUID templateId,
             OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -173,6 +178,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     }
 
     @Transactional
+    @Audited(action = AuditAction.DELETE, entityType = "ONBOARDING_TEMPLATE", description = "Deleted onboarding template", entityIdParam = 0)
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)

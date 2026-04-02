@@ -5,6 +5,8 @@ import com.hrms.api.asset.dto.AssetResponse;
 import com.hrms.api.audit.dto.AuditLogResponse;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.application.notification.service.NotificationService;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.asset.Asset;
@@ -41,6 +43,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     private final WorkflowService workflowService;
     private final EventPublisher eventPublisher;
     private final AuditLogService auditLogService;
+    private final WebSocketNotificationService webSocketNotificationService;
+    private final NotificationService notificationService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AssetManagementService(
@@ -49,13 +53,17 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             EmployeeRepository employeeRepository,
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
             EventPublisher eventPublisher,
-            AuditLogService auditLogService) {
+            AuditLogService auditLogService,
+            WebSocketNotificationService webSocketNotificationService,
+            NotificationService notificationService) {
         this.assetRepository = assetRepository;
         this.maintenanceRequestRepository = maintenanceRequestRepository;
         this.employeeRepository = employeeRepository;
         this.workflowService = workflowService;
         this.eventPublisher = eventPublisher;
         this.auditLogService = auditLogService;
+        this.webSocketNotificationService = webSocketNotificationService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -248,6 +256,9 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             asset.setStatus(Asset.AssetStatus.ASSIGNED);
             assetRepository.save(asset);
             log.info("Asset {} assigned to {} after approval", entityId, asset.getAssignedTo());
+
+            // Send notifications to the requesting employee
+            notifyAssetApproved(asset);
         }
     }
 
@@ -264,9 +275,13 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
         // Clear the pending assignment
         if (asset.getAssignedTo() != null && asset.getStatus() == Asset.AssetStatus.AVAILABLE) {
+            UUID assignedEmployeeId = asset.getAssignedTo();
             asset.setAssignedTo(null);
             assetRepository.save(asset);
             log.info("Asset {} assignment cleared after rejection", entityId);
+
+            // Send notifications to the requesting employee
+            notifyAssetRejected(asset, assignedEmployeeId, reason);
         }
     }
 
@@ -520,5 +535,73 @@ public class AssetManagementService implements ApprovalCallbackHandler {
                 .createdAt(asset.getCreatedAt())
                 .updatedAt(asset.getUpdatedAt())
                 .build();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Notification Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void notifyAssetApproved(Asset asset) {
+        try {
+            // Send persistent notification
+            notificationService.createNotification(
+                    asset.getAssignedTo(),
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_APPROVED,
+                    "Asset Assignment Approved",
+                    String.format("Your asset request for %s (%s) has been approved", asset.getAssetName(), asset.getAssetCode()),
+                    asset.getId(),
+                    "ASSET",
+                    "/assets/my-assets",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                    .title("Asset Assignment Approved")
+                    .message(String.format("Your asset request for %s (%s) has been approved", asset.getAssetName(), asset.getAssetCode()))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/assets/my-assets")
+                    .build();
+
+            webSocketNotificationService.sendToUser(asset.getAssignedTo(), wsNotification);
+            log.info("Notifications sent for approved asset request: {}", asset.getAssetCode());
+        } catch (Exception e) {
+            log.warn("Failed to send asset approval notification for asset {}: {}", asset.getAssetCode(), e.getMessage());
+        }
+    }
+
+    private void notifyAssetRejected(Asset asset, UUID assignedEmployeeId, String reason) {
+        try {
+            String rejectionReason = reason != null ? reason : "No reason provided";
+
+            // Send persistent notification
+            notificationService.createNotification(
+                    assignedEmployeeId,
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_REJECTED,
+                    "Asset Assignment Rejected",
+                    String.format("Your asset request for %s (%s) has been rejected: %s", asset.getAssetName(), asset.getAssetCode(), rejectionReason),
+                    asset.getId(),
+                    "ASSET",
+                    "/assets/requests",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                    .title("Asset Assignment Rejected")
+                    .message(String.format("Your asset request for %s (%s) has been rejected: %s", asset.getAssetName(), asset.getAssetCode(), rejectionReason))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/assets/requests")
+                    .build();
+
+            webSocketNotificationService.sendToUser(assignedEmployeeId, wsNotification);
+            log.info("Notifications sent for rejected asset request: {}", asset.getAssetCode());
+        } catch (Exception e) {
+            log.warn("Failed to send asset rejection notification for asset {}: {}", asset.getAssetCode(), e.getMessage());
+        }
     }
 }

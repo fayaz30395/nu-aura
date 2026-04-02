@@ -157,10 +157,10 @@ public class OvertimePolicy {
      */
     public BigDecimal getMultiplierForType(OvertimeRecord.OvertimeType type) {
         return switch (type) {
-            case REGULAR, EXTENDED -> dailyOtMultiplier;
+            case REGULAR, EMERGENCY -> dailyOtMultiplier;
             case WEEKEND -> weekendOtMultiplier;
             case HOLIDAY -> holidayOtMultiplier;
-            case NIGHT -> nightShiftOtMultiplier;
+            case NIGHT_SHIFT -> nightShiftOtMultiplier;
         };
     }
 

@@ -9,11 +9,14 @@ import com.hrms.application.performance.service.PIPService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -40,12 +43,13 @@ public class PIPController {
 
     @GetMapping
     @RequiresPermission(Permission.PIP_VIEW)
-    public ResponseEntity<List<PIPResponse>> getAll(
+    public ResponseEntity<Page<PIPResponse>> getAll(
             @RequestParam(required = false) UUID employeeId,
-            @RequestParam(required = false) UUID managerId) {
-        if (employeeId != null) return ResponseEntity.ok(pipService.getForEmployee(employeeId));
-        if (managerId != null) return ResponseEntity.ok(pipService.getForManager(managerId));
-        return ResponseEntity.ok(pipService.getAll());
+            @RequestParam(required = false) UUID managerId,
+            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (employeeId != null) return ResponseEntity.ok(pipService.getForEmployee(employeeId, pageable));
+        if (managerId != null) return ResponseEntity.ok(pipService.getForManager(managerId, pageable));
+        return ResponseEntity.ok(pipService.getAll(pageable));
     }
 
     @PostMapping("/{id}/check-in")

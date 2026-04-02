@@ -1,6 +1,8 @@
 package com.hrms.infrastructure.user.repository;
 
 import com.hrms.domain.user.Permission;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,8 @@ public interface PermissionRepository extends JpaRepository<Permission, UUID> {
     List<Permission> findByResource(String resource);
 
     List<Permission> findAllByOrderByResourceAscActionAsc();
+
+    Page<Permission> findAllByOrderByResourceAscActionAsc(Pageable pageable);
 
     boolean existsByCode(String code);
 }

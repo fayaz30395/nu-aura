@@ -1,6 +1,8 @@
 package com.hrms.infrastructure.user.repository;
 
 import com.hrms.domain.user.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +24,9 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
 
     @Query("SELECT r FROM Role r LEFT JOIN FETCH r.permissions WHERE r.tenantId = :tenantId")
     List<Role> findByTenantIdWithPermissions(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT r FROM Role r LEFT JOIN FETCH r.permissions WHERE r.tenantId = :tenantId")
+    Page<Role> findByTenantIdWithPermissions(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     boolean existsByCodeAndTenantId(String code, UUID tenantId);
 

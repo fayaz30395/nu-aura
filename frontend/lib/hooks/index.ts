@@ -23,6 +23,7 @@ export * from './useSamlConfig';
 export * from './useSessionTimeout';
 export * from './useTokenRefresh';
 export * from './useUnsavedChanges';
+export * from './useUnsavedChangesWarning';
 export * from './useAriaAnnounce';
 // useUnifiedNotifications is re-exported from './useNotifications' — the query-level
 // useNotifications comes from './queries/useNotifications' to avoid name collision.

@@ -4,6 +4,8 @@ import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.api.expense.dto.ExpenseClaimResponse;
 import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.application.notification.service.NotificationService;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
@@ -54,6 +56,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final ExpensePolicyService expensePolicyService;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
+    private final WebSocketNotificationService webSocketNotificationService;
+    private final NotificationService notificationService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
@@ -63,7 +67,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             @org.springframework.context.annotation.Lazy WorkflowService workflowService,
             @org.springframework.context.annotation.Lazy ExpensePolicyService expensePolicyService,
             DomainEventPublisher domainEventPublisher,
-            AuditLogService auditLogService) {
+            AuditLogService auditLogService,
+            WebSocketNotificationService webSocketNotificationService,
+            NotificationService notificationService) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
@@ -71,6 +77,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         this.expensePolicyService = expensePolicyService;
         this.domainEventPublisher = domainEventPublisher;
         this.auditLogService = auditLogService;
+        this.webSocketNotificationService = webSocketNotificationService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -508,6 +516,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         claim.approve(approvedBy);
         expenseClaimRepository.save(claim);
+
+        // Send notifications to the requesting employee
+        notifyExpenseApproved(claim);
     }
 
     @Override
@@ -531,6 +542,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         claim.reject(rejectedBy, reason);
         expenseClaimRepository.save(claim);
+
+        // Send notifications to the requesting employee
+        notifyExpenseRejected(claim, reason);
     }
 
     private void startExpenseApprovalWorkflow(ExpenseClaim claim, UUID tenantId) {
@@ -784,5 +798,78 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
 
         return false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Notification Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void notifyExpenseApproved(ExpenseClaim claim) {
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            String amountFormatted = String.format("%s %s", claim.getAmount(), claim.getCurrency());
+
+            // Send persistent notification
+            notificationService.createNotification(
+                    claim.getEmployeeId(),
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_APPROVED,
+                    "Expense Claim Approved",
+                    String.format("Your expense claim #%s for %s has been approved", claim.getClaimNumber(), amountFormatted),
+                    claim.getId(),
+                    "EXPENSE_CLAIM",
+                    "/expenses/my-claims",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                    .title("Expense Claim Approved")
+                    .message(String.format("Your expense claim #%s for %s has been approved", claim.getClaimNumber(), amountFormatted))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/expenses/my-claims")
+                    .build();
+
+            webSocketNotificationService.sendToUser(claim.getEmployeeId(), wsNotification);
+            log.info("Notifications sent for approved expense claim: {}", claim.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Failed to send expense approval notification for claim {}: {}", claim.getClaimNumber(), e.getMessage());
+        }
+    }
+
+    private void notifyExpenseRejected(ExpenseClaim claim, String reason) {
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            String amountFormatted = String.format("%s %s", claim.getAmount(), claim.getCurrency());
+            String rejectionReason = reason != null ? reason : "No reason provided";
+
+            // Send persistent notification
+            notificationService.createNotification(
+                    claim.getEmployeeId(),
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_REJECTED,
+                    "Expense Claim Rejected",
+                    String.format("Your expense claim #%s for %s has been rejected: %s", claim.getClaimNumber(), amountFormatted, rejectionReason),
+                    claim.getId(),
+                    "EXPENSE_CLAIM",
+                    "/expenses/my-claims",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                    .title("Expense Claim Rejected")
+                    .message(String.format("Your expense claim #%s for %s has been rejected: %s", claim.getClaimNumber(), amountFormatted, rejectionReason))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/expenses/my-claims")
+                    .build();
+
+            webSocketNotificationService.sendToUser(claim.getEmployeeId(), wsNotification);
+            log.info("Notifications sent for rejected expense claim: {}", claim.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Failed to send expense rejection notification for claim {}: {}", claim.getClaimNumber(), e.getMessage());
+        }
     }
 }

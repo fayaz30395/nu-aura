@@ -101,6 +101,18 @@ export type { AccessibleFormFieldProps } from './AccessibleFormField';
 export { TableFilterBar } from './TableFilterBar';
 export type { TableFilterBarProps, FilterField } from './TableFilterBar';
 
+// AdvancedFilterPanel Component
+export { AdvancedFilterPanel } from './AdvancedFilterPanel';
+export type { AdvancedFilterPanelProps, FilterCondition, SavedFilterPreset } from './AdvancedFilterPanel';
+
 // SimpleNotificationDropdown Component
 export { SimpleNotificationDropdown } from './NotificationDropdown';
 export type { SimpleNotificationDropdownProps } from './NotificationDropdown';
+
+// EditableCell Component
+export { EditableCell } from './EditableCell';
+export type { EditableCellProps } from './EditableCell';
+
+// DashboardGrid Component
+export { DashboardGrid } from './DashboardGrid';
+export type { DashboardGridProps, DashboardWidget } from './DashboardGrid';

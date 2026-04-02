@@ -13,6 +13,9 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.PIPCheckInRepository;
 import com.hrms.infrastructure.performance.repository.PIPRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,6 +120,13 @@ public class PIPService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PIPResponse> getForEmployee(UUID employeeId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
+        return pipsPage.map(p -> mapToResponse(p, false));
+    }
+
+    @Transactional(readOnly = true)
     public List<PIPResponse> getForManager(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return pipRepository.findByTenantIdAndManagerId(tenantId, managerId).stream()
@@ -125,11 +135,25 @@ public class PIPService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PIPResponse> getForManager(UUID managerId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndManagerId(tenantId, managerId, pageable);
+        return pipsPage.map(p -> mapToResponse(p, false));
+    }
+
+    @Transactional(readOnly = true)
     public List<PIPResponse> getAll() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return pipRepository.findByTenantId(tenantId).stream()
                 .map(p -> mapToResponse(p, false))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PIPResponse> getAll(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantId(tenantId, pageable);
+        return pipsPage.map(p -> mapToResponse(p, false));
     }
 
     private PIPResponse mapToResponse(PerformanceImprovementPlan pip, boolean includeCheckIns) {

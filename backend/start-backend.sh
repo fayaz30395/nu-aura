@@ -76,8 +76,10 @@ fi
 #   -Dspring.jmx.enabled=false → skip JMX bean registration
 #   -Dspring.devtools.restart.enabled=false → disable devtools restart classloader
 java \
+  -Xmx512m \
+  -Xms256m \
   -XX:TieredStopAtLevel=1 \
-  -XX:+UseParallelGC \
+  -XX:+UseSerialGC \
   -Dspring.jmx.enabled=false \
   -Dspring.devtools.restart.enabled=false \
   -jar "$JAR_FILE"

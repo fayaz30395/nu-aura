@@ -22,6 +22,8 @@ import com.hrms.infrastructure.shift.repository.ShiftRepository;
 import com.hrms.domain.overtime.CompTimeBalance;
 import com.hrms.domain.overtime.CompTimeTransaction;
 import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.application.notification.service.NotificationService;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.domain.event.overtime.OvertimeApprovedEvent;
@@ -52,6 +54,8 @@ public class OvertimeManagementService {
     private final ShiftRepository shiftRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
+    private final WebSocketNotificationService webSocketNotificationService;
+    private final NotificationService notificationService;
 
     @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {
@@ -128,12 +132,18 @@ public class OvertimeManagementService {
                     record.getEmployeeId(), approverId,
                     record.getOvertimeDate(), record.getOvertimeHours(),
                     record.getMultiplier()));
+
+            // Send notifications to the requesting employee
+            notifyOvertimeApproved(record);
         } else if ("REJECT".equalsIgnoreCase(request.getAction())) {
             record.setStatus(OvertimeRecord.OvertimeStatus.REJECTED);
             record.setRejectedBy(approverId);
             record.setRejectedAt(LocalDateTime.now());
             record.setRejectionReason(request.getRejectionReason());
             log.info("Rejected overtime record: {}", recordId);
+
+            // Send notifications to the requesting employee
+            notifyOvertimeRejected(record, request.getRejectionReason());
         } else {
             throw new ValidationException("Invalid action. Must be APPROVE or REJECT");
         }
@@ -336,5 +346,76 @@ public class OvertimeManagementService {
                 .createdAt(record.getCreatedAt())
                 .updatedAt(record.getUpdatedAt())
                 .build();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Notification Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void notifyOvertimeApproved(OvertimeRecord record) {
+        try {
+            String hoursFormatted = String.format("%s hours (%s multiplier)", record.getOvertimeHours(), record.getMultiplier());
+
+            // Send persistent notification
+            notificationService.createNotification(
+                    record.getEmployeeId(),
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_APPROVED,
+                    "Overtime Approved",
+                    String.format("Your overtime request for %s on %s has been approved", hoursFormatted, record.getOvertimeDate()),
+                    record.getId(),
+                    "OVERTIME_RECORD",
+                    "/overtime/my-records",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                    .title("Overtime Approved")
+                    .message(String.format("Your overtime request for %s on %s has been approved", hoursFormatted, record.getOvertimeDate()))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/overtime/my-records")
+                    .build();
+
+            webSocketNotificationService.sendToUser(record.getEmployeeId(), wsNotification);
+            log.info("Notifications sent for approved overtime record: {}", record.getId());
+        } catch (Exception e) {
+            log.warn("Failed to send overtime approval notification for record {}: {}", record.getId(), e.getMessage());
+        }
+    }
+
+    private void notifyOvertimeRejected(OvertimeRecord record, String reason) {
+        try {
+            String hoursFormatted = String.format("%s hours (%s multiplier)", record.getOvertimeHours(), record.getMultiplier());
+            String rejectionReason = reason != null ? reason : "No reason provided";
+
+            // Send persistent notification
+            notificationService.createNotification(
+                    record.getEmployeeId(),
+                    com.hrms.domain.notification.Notification.NotificationType.APPROVAL_REJECTED,
+                    "Overtime Rejected",
+                    String.format("Your overtime request for %s on %s has been rejected: %s", hoursFormatted, record.getOvertimeDate(), rejectionReason),
+                    record.getId(),
+                    "OVERTIME_RECORD",
+                    "/overtime/my-records",
+                    com.hrms.domain.notification.Notification.Priority.NORMAL
+            );
+
+            // Send real-time WebSocket notification
+            com.hrms.application.notification.dto.NotificationMessage wsNotification =
+                    com.hrms.application.notification.dto.NotificationMessage.builder()
+                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                    .title("Overtime Rejected")
+                    .message(String.format("Your overtime request for %s on %s has been rejected: %s", hoursFormatted, record.getOvertimeDate(), rejectionReason))
+                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/overtime/my-records")
+                    .build();
+
+            webSocketNotificationService.sendToUser(record.getEmployeeId(), wsNotification);
+            log.info("Notifications sent for rejected overtime record: {}", record.getId());
+        } catch (Exception e) {
+            log.warn("Failed to send overtime rejection notification for record {}: {}", record.getId(), e.getMessage());
+        }
     }
 }
