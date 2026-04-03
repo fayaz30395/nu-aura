@@ -58,6 +58,15 @@ public class SelfServiceService {
 
     @Transactional
     public ProfileUpdateResponse createProfileUpdateRequest(UUID employeeId, ProfileUpdateRequestDto request) {
+        // BUG-QA2-012 FIX (belt-and-suspenders): The controller already guards against a null
+        // employeeId, but defend here too. If employeeId is null the DB INSERT would fail
+        // with a NOT NULL constraint violation (employee_id is non-nullable), surfacing as
+        // HTTP 500. Throw a clear BusinessException instead.
+        if (employeeId == null) {
+            throw new BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
+
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Check if there's already a pending request for the same field
