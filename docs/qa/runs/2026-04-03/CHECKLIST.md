@@ -38,9 +38,9 @@
 | BUG-005 | POST /loans | Loan creation 500 | ✅ FIXED — null guard employeeId |
 | BUG-006 | POST /travel/requests | Travel creation 500 | ✅ FIXED — null guard employeeId |
 | BUG-QA3-002 | POST /auth/login | Account lockout not enforced | ✅ FIXED — AccountLockoutService wired |
-| BUG-QA2-009 | PUT /employees/{id}/deactivate | Deactivation 500 NPE | ⏳ IN PROGRESS |
+| BUG-QA2-009 | PUT /employees/{id}/deactivate | Deactivation 500 NPE | ✅ FIXED — gate userRepository.save() behind firstName/lastName check (LazyInit fix) |
 | BUG-QA2-010 | POST /assets | Asset creation 500 | ✅ FIXED — V112 adds `version` column |
-| BUG-QA2-012 | POST /self-service/profile-updates | Profile update 500 | ⏳ IN PROGRESS |
+| BUG-QA2-012 | POST /self-service/profile-updates | Profile update 500 | ✅ FIXED — null guard on getCurrentEmployeeId() |
 | BUG-QA2-003 | POST /letters/generate | Letter saved then 404 on GET | ⚠️ OPEN |
 
 ### 🟡 P2 — Significant Issues
@@ -63,9 +63,9 @@
 | BUG-QA4-006 | Dashboard 403 for non-admin | ✅ FIXED (via BUG-004 V107) |
 | BUG-QA4-008 | 1-on-1 meeting creation 400 | ✅ FIXED (via BUG-004 V107) |
 | BUG-QA2-002 | Contract creation null `terms` 500 | ✅ FIXED — null guard in createVersion() |
-| BUG-QA3-005 | Document upload 404 (path mismatch) | ⏳ IN PROGRESS |
-| BUG-QA2-001 | Leave field aliases (`name`, `maxDaysPerYear`) | ⏳ IN PROGRESS |
-| BUG-QA2-004 | Probation `durationMonths` required but undocumented | ⏳ IN PROGRESS |
+| BUG-QA3-005 | Document upload 404 (path mismatch) | ✅ FIXED — new EmployeeDocumentController delegates to FileStorageService |
+| BUG-QA2-001 | Leave field aliases (`name`, `maxDaysPerYear`) | ✅ FIXED — @JsonAlias added; totalDays now optional (computed from dates) |
+| BUG-QA2-004 | Probation `durationMonths` required but undocumented | ✅ FIXED — defaults to 3 months when omitted |
 | BUG-003 | Salary structure per-employee vs templates (design gap) | ⚠️ OPEN — architectural |
 | BUG-008 | Report endpoint GET vs POST mismatch | ⚠️ OPEN — spec correction |
 | BUG-009 | Feature flag path /admin prefix mismatch | ⚠️ OPEN — spec correction |
@@ -145,7 +145,7 @@
 | UC-EMP-004 | Employment change | ✅ WRITTEN | — |
 | UC-EMP-005 | Org chart | ✅ WRITTEN | — |
 | UC-EMP-006 to 011 | Extended employee UCs | 📋 PENDING | — |
-| UC-EMP-012 | Deactivate employee | 📋 PENDING | BUG-QA2-009 ⏳ |
+| UC-EMP-012 | Deactivate employee | ✅ WRITTEN | BUG-QA2-009 ✅ |
 | UC-EMP-013 to 018 | Further employee UCs | 📋 PENDING | — |
 
 ### 🕐 Attendance (UC-ATT-001 to 012)
@@ -207,7 +207,7 @@
 | UC-MY-005 | Attendance history | ✅ WRITTEN | — |
 | UC-MY-006 | My assets | ✅ WRITTEN | — |
 | UC-MY-007 | Loan repayment schedule | ✅ WRITTEN | — |
-| UC-MY-008 | Profile self-update | ✅ WRITTEN | BUG-QA2-012 ⏳ |
+| UC-MY-008 | Profile self-update | ✅ WRITTEN | BUG-QA2-012 ✅ |
 
 ### 💸 Expenses (UC-EXP-001)
 | UC | Description | Test |
@@ -388,7 +388,7 @@
 | Redis connectivity | ✅ OK |
 | Kafka (5 topics + DLT) | ✅ Configured |
 | Asset creation (version col) | ✅ Fixed (V112) |
-| Employee deactivation 500 | ⏳ In progress |
+| Employee deactivation 500 | ✅ Fixed |
 | Profile self-update 500 | ⏳ In progress |
 | Document upload path | ⏳ In progress |
 | Letter generation rollback | ⚠️ Open |
@@ -416,8 +416,8 @@
 
 | Agent | Fixing | ETA |
 |-------|--------|-----|
-| fix-emp-profile | BUG-QA2-009 (deactivation 500) + BUG-QA2-012 (profile update 500) | ⏳ |
-| fix-api-contracts | BUG-QA3-005 (doc upload 404) + BUG-QA2-001 (leave aliases) + BUG-QA2-004 (probation default) | ⏳ |
+| fix-emp-profile | BUG-QA2-009 ✅ + BUG-QA2-012 ✅ | ✅ DONE |
+| fix-api-contracts | BUG-QA3-005 ✅ + BUG-QA2-001 ✅ + BUG-QA2-004 ✅ + BUG-QA2-012 ✅ | ✅ DONE |
 
 ---
 
