@@ -7,6 +7,8 @@ import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.application.admin.service.AdminService;
 import com.hrms.application.auth.service.EmployeeLinkerService;
 import com.hrms.common.security.RequiresPermission;
+import org.springframework.boot.actuate.health.HealthComponent;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +40,21 @@ public class AdminController {
 
     private final AdminService adminService;
     private final EmployeeLinkerService employeeLinkerService;
+    private final HealthEndpoint healthEndpoint;
+
+    /**
+     * Bug #1 FIX: Expose system health to the admin dashboard.
+     * Delegates to Spring Actuator's HealthEndpoint for real component status
+     * (DB, Redis, Kafka, liveness, readiness). Returns 200 with the health payload;
+     * the frontend maps component statuses to the System Health panel.
+     */
+    @GetMapping("/health")
+    @Operation(summary = "Get system health", description = "Returns real-time health status of all platform components (DB, Redis, Kafka, liveness, readiness) via Spring Actuator")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<HealthComponent> getSystemHealth() {
+        log.info("SuperAdmin requesting system health");
+        return ResponseEntity.ok(healthEndpoint.health());
+    }
 
     /**
      * Get platform settings

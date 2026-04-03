@@ -7,6 +7,7 @@ import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.leave.LeaveBalance;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class LeaveBalanceController {
 
     private final LeaveBalanceService leaveBalanceService;
+    private final LeaveTypeRepository leaveTypeRepository;
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_TEAM, Permission.LEAVE_VIEW_SELF})
@@ -78,6 +80,11 @@ public class LeaveBalanceController {
     private LeaveBalanceResponse toResponse(LeaveBalance balance) {
         LeaveBalanceResponse response = new LeaveBalanceResponse();
         BeanUtils.copyProperties(balance, response);
+        // Enrich with leave type name so the frontend can display it without a separate request
+        if (balance.getLeaveTypeId() != null) {
+            leaveTypeRepository.findById(balance.getLeaveTypeId())
+                    .ifPresent(lt -> response.setLeaveTypeName(lt.getName()));
+        }
         return response;
     }
 }

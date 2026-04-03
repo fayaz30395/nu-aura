@@ -2,6 +2,7 @@ package com.hrms.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -32,15 +33,24 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer {
 
+    @Value("${app.async.core-pool-size:10}")
+    private int corePoolSize;
+
+    @Value("${app.async.max-pool-size:50}")
+    private int maxPoolSize;
+
+    @Value("${app.async.queue-capacity:500}")
+    private int queueCapacity;
+
     /** Named executor bean — can be referenced explicitly via {@code @Async("taskExecutor")}. */
     @Bean(name = "taskExecutor")
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // Core threads kept alive to serve bursts without thread-creation latency
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(50);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("async-tenant-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(60);

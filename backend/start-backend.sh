@@ -80,13 +80,17 @@ fi
 #   -XX:+UseSerialGC               → lowest GC overhead for single-machine dev
 #   -Dspring.jmx.enabled=false     → skip JMX bean registration
 java \
-  -Xmx768m \
+  -Xmx640m \
   -Xms128m \
-  -XX:MaxMetaspaceSize=192m \
-  -XX:ReservedCodeCacheSize=64m \
-  -Xss512k \
+  -XX:MaxMetaspaceSize=160m \
+  -XX:ReservedCodeCacheSize=48m \
+  -Xss256k \
   -XX:TieredStopAtLevel=1 \
-  -XX:+UseSerialGC \
+  -XX:+UseG1GC \
+  -XX:G1PeriodicGCInterval=30000 \
+  -XX:MinHeapFreeRatio=10 \
+  -XX:MaxHeapFreeRatio=20 \
+  -XX:+UseStringDeduplication \
   -Dspring.jmx.enabled=false \
   -Dspring.devtools.restart.enabled=false \
   -jar "$JAR_FILE"
