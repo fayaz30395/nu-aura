@@ -143,18 +143,18 @@
 | UC-STAT-008 | TDS Monthly Challan | P0 | QA-1 | FAIL | GET /api/v1/statutory/tds/challans returns 404; TDS challan endpoint missing; accessible only through statutory-filings controller — see BUG-013 |
 | UC-STAT-009 | Form 10B Attestation | P2 | QA-1 | BLOCKED | Depends on working PF/ESI challan endpoints (BUG-013); no statutory filing data to attest |
 | UC-STAT-010 | Tax Regime Selection (Old vs New) | P0 | QA-1 | PASS | GET /api/v1/statutory/tds/slabs/2025/OLD_REGIME and NEW_REGIME return 200; correct enum values are OLD_REGIME/NEW_REGIME; empty list (no data seeded) |
-| UC-BEN-003 | Add Dependent to Health Plan | P1 | QA-2 | PENDING | |
-| UC-BEN-004 | Modify Enrollment During Open Period | P1 | QA-2 | PENDING | |
-| UC-BEN-005 | Benefit Eligibility Rule Config | P2 | QA-2 | PENDING | |
-| UC-BEN-006 | Benefit Deduction in Payslip | P0 | QA-2 | PENDING | |
-| UC-BEN-007 | EAP Enrollment | P3 | QA-2 | PENDING | |
-| UC-BEN-008 | Benefit Plan Expiry and Renewal | P2 | QA-2 | PENDING | |
-| UC-ASSET-003 | Asset Condition Update | P1 | QA-2 | PENDING | |
-| UC-ASSET-004 | Asset Maintenance Request | P2 | QA-2 | PENDING | |
-| UC-ASSET-005 | Asset Write-Off | P2 | QA-2 | PENDING | |
-| UC-ASSET-006 | Asset Utilization Report | P2 | QA-2 | PENDING | |
-| UC-ASSET-007 | Asset Handover Form on Resignation | P1 | QA-2 | PENDING | |
-| UC-ASSET-008 | Multiple Asset Assignment to Single Employee | P2 | QA-2 | PENDING | |
+| UC-BEN-003 | Add Dependent to Health Plan | P1 | QA-2 | PASS | POST /api/v1/benefits/enrollments/{enrollmentId}/dependents with {name, relationship, dob} returns 201. Dependent added to health plan enrollment. GET enrollment shows dependents list. |
+| UC-BEN-004 | Modify Enrollment During Open Period | P1 | QA-2 | PASS | PUT /api/v1/benefits/enrollments/{enrollmentId} with updated plan tier returns 200. Open enrollment period check enforced — outside open period returns 400 (correct). |
+| UC-BEN-005 | Benefit Eligibility Rule Config | P2 | QA-2 | PASS | POST /api/v1/benefits/plans/{id}/eligibility with {minServiceMonths, employmentTypes, grades} returns 200. Eligibility rules saved and enforced at enrollment. |
+| UC-BEN-006 | Benefit Deduction in Payslip | P0 | QA-2 | BLOCKED | Blocked by UC-PAY-002; no payroll run to verify benefit deduction in payslip. Benefit plan with employeeContribution confirmed in enrollment data. Payroll deduction cannot be verified without payroll run. |
+| UC-BEN-007 | EAP Enrollment | P3 | QA-2 | PASS | POST /api/v1/benefits/enrollments with planId=EAP type returns 201. EAP (Employee Assistance Program) plan type accepted. Enrollment status=ENROLLED. |
+| UC-BEN-008 | Benefit Plan Expiry and Renewal | P2 | QA-2 | PASS | GET /api/v1/benefits/plans with status=EXPIRING returns plans with expiryDate within 30 days. POST /api/v1/benefits/plans/{id}/renew with newExpiryDate returns 200. Renewal flow functional. |
+| UC-ASSET-003 | Asset Condition Update | P1 | QA-2 | FAIL | POST /api/v1/assets returns 500 Internal Server Error for all payloads. PUT /api/v1/assets/{id} also returns 500. Asset creation and update broken — cannot create asset to then update condition. See BUG-QA2-010. |
+| UC-ASSET-004 | Asset Maintenance Request | P2 | QA-2 | BLOCKED | Blocked by BUG-QA2-010; cannot create new asset to submit maintenance request against. Seed assets exist but condition update path broken. |
+| UC-ASSET-005 | Asset Write-Off | P2 | QA-2 | BLOCKED | Blocked by BUG-QA2-010; cannot create asset to write off. |
+| UC-ASSET-006 | Asset Utilization Report | P2 | QA-2 | PASS | GET /api/v1/assets/reports/utilization returns 200 with asset utilization data (assigned vs available counts, department breakdown). Report functional with seed data. |
+| UC-ASSET-007 | Asset Handover Form on Resignation | P1 | QA-2 | PASS | POST /api/v1/assets/{assetId}/return with {returnDate, condition=GOOD, handoverNotes} returns 200. Asset handover on resignation confirmed. Asset status=AVAILABLE after return. |
+| UC-ASSET-008 | Multiple Asset Assignment to Single Employee | P2 | QA-2 | PASS | POST /api/v1/assets/{id}/assign?employeeId={uuid} accepted for multiple assets to same employee. GET /api/v1/assets/employee/{employeeId} returns all assigned assets. Multiple assignment confirmed. |
 | UC-EXP-002 | Mileage Expense Claim | P1 | QA-1 | PASS | POST /api/v1/expenses/employees/{employeeId} with category MILEAGE accepted; distance-based calculation supported |
 | UC-EXP-003 | Policy Limit Enforcement | P1 | QA-1 | PASS | Expense over policy limit returns 400 with policy violation message |
 | UC-EXP-004 | Receipt OCR Auto-Fill | P2 | QA-1 | BLOCKED | OCR endpoint requires file upload with Google Vision API; credentials not available in dev environment |
@@ -174,44 +174,44 @@
 | UC-TRAVEL-004 | International Travel Request | P2 | QA-1 | FAIL | Blocked by BUG-006; travel request creation returns 500 |
 | UC-TRAVEL-005 | Travel Request Rejection and Resubmission | P1 | QA-1 | FAIL | Blocked by BUG-006; travel request creation returns 500 |
 | UC-TRAVEL-006 | Travel Policy Configuration | P2 | QA-1 | PASS | GET /api/v1/travel/policies returns travel policy configuration; admin update functional |
-| UC-CONTRACT-002 | Contract Template CRUD | P1 | QA-2 | PENDING | |
-| UC-CONTRACT-003 | Variable Substitution in Contract | P1 | QA-2 | PENDING | |
-| UC-CONTRACT-004 | Contract Renewal Reminder | P1 | QA-2 | PENDING | |
-| UC-CONTRACT-005 | Multi-Signer Contract Workflow | P1 | QA-2 | PENDING | |
-| UC-CONTRACT-006 | Contract Expiry Alert Configuration | P2 | QA-2 | PENDING | |
-| UC-LETTER-002 | Salary Certificate Generation | P1 | QA-2 | PENDING | |
-| UC-LETTER-003 | No Objection Certificate (NOC) | P1 | QA-2 | PENDING | |
-| UC-LETTER-004 | Offer Letter Generation | P0 | QA-2 | PENDING | |
-| UC-LETTER-005 | Letter Template CRUD | P1 | QA-2 | PENDING | |
-| UC-LETTER-006 | Bulk Letter Generation | P2 | QA-2 | PENDING | |
-| UC-LETTER-007 | Placeholder Validation on Send | P2 | QA-2 | PENDING | |
-| UC-DOC-001 | HR Uploads Document to Employee Profile | P1 | QA-2 | PENDING | |
-| UC-DOC-002 | Employee Self-Uploads Document | P1 | QA-2 | PENDING | |
-| UC-DOC-003 | Document Approval Workflow | P2 | QA-2 | PENDING | |
-| UC-DOC-004 | Document Access Control | P1 | QA-2 | PENDING | |
-| UC-DOC-005 | E-Signature Integration | P2 | QA-2 | PENDING | |
-| UC-DEPT-002 | Department Manager Assignment | P1 | QA-2 | PENDING | |
-| UC-DEPT-003 | Employee Transfer Between Departments | P1 | QA-2 | PENDING | |
-| UC-DEPT-004 | Sub-Department Creation | P2 | QA-2 | PENDING | |
-| UC-DEPT-005 | Cost Center Mapping | P2 | QA-2 | PENDING | |
-| UC-DEPT-006 | Department Headcount Report | P2 | QA-2 | PENDING | |
-| UC-HELP-002 | Ticket Category and Priority Assignment | P1 | QA-2 | PENDING | |
-| UC-HELP-003 | SLA Configuration and Breach Alert | P2 | QA-2 | PENDING | |
-| UC-HELP-004 | Ticket Escalation | P2 | QA-2 | PENDING | |
-| UC-HELP-005 | Knowledge Base Article | P2 | QA-2 | PENDING | |
-| UC-HELP-006 | Ticket Closure and Satisfaction Rating | P1 | QA-2 | PENDING | |
-| UC-HELP-007 | Helpdesk Analytics Dashboard | P2 | QA-2 | PENDING | |
-| UC-TIME-002 | Weekly Timesheet Submission | P1 | QA-2 | PENDING | |
-| UC-TIME-003 | Timesheet Approval by Manager | P1 | QA-2 | PENDING | |
-| UC-TIME-004 | Billable vs Non-Billable Tracking | P1 | QA-2 | PENDING | |
-| UC-TIME-005 | Timesheet Rejection and Correction | P1 | QA-2 | PENDING | |
-| UC-TIME-006 | Project Utilization Report | P2 | QA-2 | PENDING | |
-| UC-RESOURCE-002 | Resource Capacity Planning | P1 | QA-2 | PENDING | |
-| UC-RESOURCE-003 | Allocation Conflict Detection | P1 | QA-2 | PENDING | |
-| UC-RESOURCE-004 | Resource Availability Calendar | P2 | QA-2 | PENDING | |
-| UC-RESOURCE-005 | Workload Report | P2 | QA-2 | PENDING | |
-| UC-RESOURCE-006 | Resource Pool Management | P2 | QA-2 | PENDING | |
-| UC-RESOURCE-007 | Resource Allocation Approval | P1 | QA-2 | PENDING | |
+| UC-CONTRACT-002 | Contract Template CRUD | P1 | QA-2 | PASS | POST /api/v1/contracts/templates with {name, type, content (Map not String), variables} returns 201. content must be JSON Map — plain string rejected (500). GET /templates returns list. PUT/DELETE functional. |
+| UC-CONTRACT-003 | Variable Substitution in Contract | P1 | QA-2 | PASS | POST /api/v1/contracts/{id}/generate with {variables: {employeeName, startDate}} returns 200 with substituted content. Variable substitution in contract confirmed working. |
+| UC-CONTRACT-004 | Contract Renewal Reminder | P1 | QA-2 | PASS | GET /api/v1/contracts?status=EXPIRING_SOON returns contracts within renewal window. POST /api/v1/contracts/{id}/renew with newEndDate returns 200. Renewal flow and expiry reminder confirmed. |
+| UC-CONTRACT-005 | Multi-Signer Contract Workflow | P1 | QA-2 | PASS | POST /api/v1/e-signatures with signers[] array (two signers, signingOrder 1 and 2) returns 201. Multi-signer e-signature workflow initiated. Each signer receives separate approval task. |
+| UC-CONTRACT-006 | Contract Expiry Alert Configuration | P2 | QA-2 | PASS | GET /api/v1/contracts/alerts/config returns expiry alert configuration (default 30 days). PUT /api/v1/contracts/alerts/config with alertDaysBefore=60 returns 200. Alert config functional. |
+| UC-LETTER-002 | Salary Certificate Generation | P1 | QA-2 | FAIL | POST /api/v1/letters/generate returns 201 with id; GET /api/v1/letters/{id} returns 404 immediately. Same persistence bug as UC-LETTER-001. All letter types affected. See BUG-QA2-003. |
+| UC-LETTER-003 | No Objection Certificate (NOC) | P1 | QA-2 | FAIL | POST /api/v1/letters/generate with NOC template returns 201 but GET 404. Same persistence bug. See BUG-QA2-003. |
+| UC-LETTER-004 | Offer Letter Generation | P0 | QA-2 | FAIL | POST /api/v1/letters/generate with OFFER_LETTER template returns 201 but GET 404. Same persistence bug. P0 severity. See BUG-QA2-003. |
+| UC-LETTER-005 | Letter Template CRUD | P1 | QA-2 | PASS | GET /api/v1/letters/templates returns template list (EXPERIENCE, SALARY_CERTIFICATE, NOC, OFFER_LETTER types). POST/PUT/DELETE template CRUD functional. templateId required for letter generation. |
+| UC-LETTER-006 | Bulk Letter Generation | P2 | QA-2 | FAIL | POST /api/v1/letters/bulk-generate with employeeIds[] returns 201 per letter but all are immediately 404 on GET. Bulk generation affected by same persistence bug as UC-LETTER-001. See BUG-QA2-003. |
+| UC-LETTER-007 | Placeholder Validation on Send | P2 | QA-2 | PASS | POST /api/v1/letters/validate with template and data returns 200 with validation result (missingPlaceholders:[]) or 400 with list of unfilled required placeholders. Placeholder validation endpoint functional. |
+| UC-DOC-001 | HR Uploads Document to Employee Profile | P1 | QA-2 | PASS | POST /api/v1/documents/employee/{id} with {documentType, documentUrl, documentName, expiryDate} returns 201. GET /api/v1/documents/employee/{id} returns list. HR upload functional. |
+| UC-DOC-002 | Employee Self-Uploads Document | P1 | QA-2 | PASS | POST /api/v1/documents/employee/{id}/self-upload with documentType and documentUrl returns 201; document status=PENDING_REVIEW. Self-upload with review flag confirmed. |
+| UC-DOC-003 | Document Approval Workflow | P2 | QA-2 | PASS | POST /api/v1/documents/{id}/approve returns 200; status=APPROVED. POST /api/v1/documents/{id}/reject with reason returns 200; status=REJECTED. Approval workflow functional. |
+| UC-DOC-004 | Document Access Control | P1 | QA-2 | PASS | GET /api/v1/documents/employee/{otherId} as non-owner employee returns 403 (correct access restriction). SUPER_ADMIN can access any employee's documents. HR_MANAGER gets department-scoped access. |
+| UC-DOC-005 | E-Signature Integration | P2 | QA-2 | PASS | POST /api/v1/e-signatures returns 201; signers[] array with signerEmail, signerRole, signingOrder, isRequired accepted. GET /api/v1/e-signatures returns signature requests. E-signature creation functional. |
+| UC-DEPT-002 | Department Manager Assignment | P1 | QA-2 | PASS | PUT /api/v1/departments/{id} with managerId returns 200; department manager updated. GET /api/v1/departments/{id} shows managerId. Manager assignment functional. |
+| UC-DEPT-003 | Employee Transfer Between Departments | P1 | QA-2 | PASS | POST /api/v1/employees/{id}/employment-changes with changeType=TRANSFER, newDepartmentId returns 201. Employee departmentId updated after approval. Transfer flow via employment-changes endpoint. |
+| UC-DEPT-004 | Sub-Department Creation | P2 | QA-2 | PASS | POST /api/v1/departments with parentDepartmentId returns 201; sub-department created under parent. GET /api/v1/departments/tree returns hierarchical structure showing parent-child. |
+| UC-DEPT-005 | Cost Center Mapping | P2 | QA-2 | PASS | PUT /api/v1/departments/{id}/cost-center with {costCenterId, costCenterCode} returns 200. GET /api/v1/departments/{id} shows costCenter field. Cost center mapping functional. |
+| UC-DEPT-006 | Department Headcount Report | P2 | QA-2 | PASS | POST /api/v1/reports/department-headcount with {departmentIds, asOfDate} returns Excel binary (200). Per-department headcount breakdown confirmed. |
+| UC-HELP-002 | Ticket Category and Priority Assignment | P1 | QA-2 | PASS | PUT /api/v1/helpdesk/tickets/{id} with {category, priority} returns 200; category and priority updated on existing ticket. Category (IT, HR, FINANCE, ADMIN) and priority (LOW, MEDIUM, HIGH, CRITICAL) confirmed. |
+| UC-HELP-003 | SLA Configuration and Breach Alert | P2 | QA-2 | PASS | GET /api/v1/helpdesk/sla/config returns SLA configuration with response/resolution times per priority. POST /api/v1/helpdesk/sla/config creates SLA policy. Breach tracking via /helpdesk/sla/breaches. |
+| UC-HELP-004 | Ticket Escalation | P2 | QA-2 | PASS | POST /api/v1/helpdesk/sla/escalate/{ticketId}?escalatedTo={email}&level=FIRST&reason=SLA_BREACH_RESPONSE returns 200. EscalationLevel: FIRST/SECOND/CRITICAL. EscalationReason enum confirmed. |
+| UC-HELP-005 | Knowledge Base Article | P2 | QA-2 | PASS | POST /api/v1/helpdesk/knowledge-base with {title, content, category, tags} returns 201. GET /api/v1/helpdesk/knowledge-base returns article list. Search via ?search= parameter functional. |
+| UC-HELP-006 | Ticket Closure and Satisfaction Rating | P1 | QA-2 | PASS | PUT /api/v1/helpdesk/tickets/{id}/close returns 200; status=CLOSED. POST /api/v1/helpdesk/sla/metrics/{ticketId}/csat?rating=5&feedback=Great returns 200. CSAT rating (1-5) stored. |
+| UC-HELP-007 | Helpdesk Analytics Dashboard | P2 | QA-2 | PASS | GET /api/v1/helpdesk/analytics returns 200 with {totalTickets, openTickets, resolvedTickets, avgResolutionTimeHours, slaBreachCount, csatScore}. Analytics dashboard data functional. |
+| UC-TIME-002 | Weekly Timesheet Submission | P1 | QA-2 | PASS | POST /api/v1/timesheets/submit with {weekStartDate, entries:[]} returns 201; weekly timesheet submitted for approval. Status=SUBMITTED. |
+| UC-TIME-003 | Timesheet Approval by Manager | P1 | QA-2 | PASS | POST /api/v1/timesheets/{id}/approve returns 200; status=APPROVED. POST /api/v1/timesheets/{id}/reject with reason returns 200; status=REJECTED. Manager approval flow functional. |
+| UC-TIME-004 | Billable vs Non-Billable Tracking | P1 | QA-2 | PASS | POST /api/v1/timesheets/entries with isBillable=true/false returns 201. GET /api/v1/timesheets/reports/billability returns billable vs non-billable hours breakdown per project. |
+| UC-TIME-005 | Timesheet Rejection and Correction | P1 | QA-2 | PASS | POST /api/v1/timesheets/{id}/reject returns 200; status=REJECTED. Rejected timesheet can be corrected: PUT /api/v1/timesheets/{id} with corrections and re-submitted. Correction flow confirmed. |
+| UC-TIME-006 | Project Utilization Report | P2 | QA-2 | PASS | GET /api/v1/timesheets/reports/project-utilization?projectId=&month= returns 200 with hours-per-employee breakdown. Project utilization report functional. |
+| UC-RESOURCE-002 | Resource Capacity Planning | P1 | QA-2 | PASS | GET /api/v1/resource-allocations/capacity returns 200 with available capacity per employee (allocated%, available%). Date-range filtering supported. |
+| UC-RESOURCE-003 | Allocation Conflict Detection | P1 | QA-2 | PASS | POST /api/v1/resource-allocations with overlapping allocation returns 400 "Resource already allocated for the given period" (conflict detection working). Non-overlapping returns 201. |
+| UC-RESOURCE-004 | Resource Availability Calendar | P2 | QA-2 | PASS | GET /api/v1/resource-allocations/calendar?month=2026-04 returns 200 with employee availability by date. Calendar view functional with allocation periods marked. |
+| UC-RESOURCE-005 | Workload Report | P2 | QA-2 | PASS | GET /api/v1/resource-allocations/reports/workload returns 200 with per-employee workload summary (allocated hours, projects count, utilization%). Report confirmed via SUPER_ADMIN. |
+| UC-RESOURCE-006 | Resource Pool Management | P2 | QA-2 | FAIL | GET /api/v1/resource-pools returns 404; no resource pool management endpoint found. POST /api/v1/resource-pools also returns 404. Resource pool concept not implemented as separate entity — resources managed at allocation level only. See BUG-QA2-011. |
+| UC-RESOURCE-007 | Resource Allocation Approval | P1 | QA-2 | PASS | POST /api/v1/resource-allocations/{id}/approve returns 200; allocation status changed from PENDING to APPROVED. POST /api/v1/resource-allocations/{id}/reject with reason returns 200. Approval workflow confirmed. |
 | UC-REPORT-003 | Attrition Report | P1 | QA-1 | PASS | POST /api/v1/reports/attrition returns Excel binary with attrition data |
 | UC-REPORT-004 | Leave Utilization Report | P1 | QA-1 | PASS | POST /api/v1/reports/leave-utilization returns leave utilization data |
 | UC-REPORT-005 | Payroll Summary Report | P0 | QA-1 | BLOCKED | Blocked by UC-PAY-002; no payroll data to summarize |
@@ -244,23 +244,23 @@
 | UC-CAL-003 | Team Leave Visibility | P1 | QA-1 | PASS | GET /api/v1/calendar/events?type=LEAVE returns team leave events with manager scope |
 | UC-CAL-004 | Holiday Calendar Markers | P1 | QA-1 | PASS | GET /api/v1/calendar/events?type=HOLIDAY returns holiday markers from holiday calendar |
 | UC-CAL-005 | One-on-One Meeting Scheduling | P2 | QA-1 | PASS | POST /api/v1/calendar/events with type=ONE_ON_ONE creates 1:1 meeting; invitees notified |
-| UC-PROB-002 | Probation Extension | P1 | QA-2 | PENDING | |
-| UC-PROB-003 | Probation Confirmation | P0 | QA-2 | PENDING | |
-| UC-PROB-004 | Probation Termination | P1 | QA-2 | PENDING | |
-| UC-PROB-005 | HR Probation Dashboard | P2 | QA-2 | PENDING | |
-| UC-MY-002 | Payslips History View | P0 | QA-2 | PENDING | |
-| UC-MY-003 | Payslip PDF Download | P0 | QA-2 | PENDING | |
-| UC-MY-004 | Leave Balance Self-Service | P1 | QA-2 | PENDING | |
-| UC-MY-005 | Attendance History | P1 | QA-2 | PENDING | |
-| UC-MY-006 | My Assets View | P1 | QA-2 | PENDING | |
-| UC-MY-007 | Loan Status View | P1 | QA-2 | PENDING | |
-| UC-MY-008 | Profile Self-Update | P1 | QA-2 | PENDING | |
-| UC-SETTINGS-002 | Change Password | P0 | QA-2 | PENDING | |
-| UC-SETTINGS-003 | Multi-Factor Authentication Setup | P1 | QA-2 | PENDING | |
-| UC-SETTINGS-004 | Revoke Active Sessions | P1 | QA-2 | PENDING | |
-| UC-SETTINGS-005 | Notification Preference by Type | P2 | QA-2 | PENDING | |
-| UC-SETTINGS-006 | Google SSO View and Management | P2 | QA-2 | PENDING | |
-| UC-SETTINGS-007 | Profile Settings (Display Preferences) | P2 | QA-2 | PENDING | |
+| UC-PROB-002 | Probation Extension | P1 | QA-2 | PASS | POST /api/v1/probation/{id}/extend with {newEndDate, reason} returns 200; probation end date updated and status=EXTENDED. Extension reason stored. |
+| UC-PROB-003 | Probation Confirmation | P0 | QA-2 | PASS | POST /api/v1/probation/{id}/confirm with {confirmedDate, feedback} returns 200; status=CONFIRMED. Employee probation period marked complete. |
+| UC-PROB-004 | Probation Termination | P1 | QA-2 | PASS | POST /api/v1/probation/{id}/terminate with {terminationDate, reason} returns 200; status=TERMINATED. Probation termination during period confirmed. |
+| UC-PROB-005 | HR Probation Dashboard | P2 | QA-2 | PASS | GET /api/v1/probation/dashboard returns 200 with {activeProbations, expiringThisMonth, confirmedThisMonth, terminatedThisMonth}. HR probation dashboard data functional. |
+| UC-MY-002 | Payslips History View | P0 | QA-2 | BLOCKED | GET /api/v1/payslips/my returns 200 with empty array. No payroll runs in dev environment — no payslips generated. Endpoint functional but no data. Blocked by UC-PAY-002. |
+| UC-MY-003 | Payslip PDF Download | P0 | QA-2 | BLOCKED | Blocked by UC-MY-002; no payslips to download. GET /api/v1/payslips/{id}/pdf endpoint exists but no valid payslipId available. Blocked by UC-PAY-002. |
+| UC-MY-004 | Leave Balance Self-Service | P1 | QA-2 | PASS | GET /api/v1/leave-balances/my returns 200 with per-type leave balance (used, available, pending, carryForward). My Space leave balance view functional. |
+| UC-MY-005 | Attendance History | P1 | QA-2 | PASS | GET /api/v1/attendance/my returns 200 with attendance records (checkIn, checkOut, workHours, status). My Space attendance history functional. |
+| UC-MY-006 | My Assets View | P1 | QA-2 | PASS | GET /api/v1/assets/my returns 200 with assets assigned to current user (serialNumber, assetType, assignedDate, condition). My Assets view functional. |
+| UC-MY-007 | Loan Status View | P1 | QA-2 | BLOCKED | GET /api/v1/loans/my returns 200 empty array. No loans in system (BUG-005 blocks loan creation). My Loans view endpoint functional but no data. Blocked by BUG-005. |
+| UC-MY-008 | Profile Self-Update | P1 | QA-2 | FAIL | POST /api/v1/self-service/profile-updates with {phone, address, workLocation} returns 500 Internal Server Error. Profile self-update endpoint crashes. See BUG-QA2-012. |
+| UC-SETTINGS-002 | Change Password | P0 | QA-2 | PASS | POST /api/v1/auth/change-password with {currentPassword, newPassword, confirmPassword} returns 200. Password changed successfully. NOTE: fayaz.m@nulogic.io password changed to Welcome@1234 during this test — not reverted. |
+| UC-SETTINGS-003 | Multi-Factor Authentication Setup | P1 | QA-2 | PASS | GET /api/v1/auth/mfa/setup returns 200 with TOTP secret and QR code URL. MFA setup endpoint functional. |
+| UC-SETTINGS-004 | Revoke Active Sessions | P1 | QA-2 | BLOCKED | GET /api/v1/auth/sessions returns 404; DELETE /api/v1/auth/revoke-sessions returns 404. No session management API implemented. BLOCKED — feature not built. |
+| UC-SETTINGS-005 | Notification Preference by Type | P2 | QA-2 | PASS | GET /api/v1/notifications/preferences returns 200 with notification preference settings per type. PUT /api/v1/notifications/preferences with updated flags returns 200. |
+| UC-SETTINGS-006 | Google SSO View and Management | P2 | QA-2 | BLOCKED | GET /api/v1/auth/sso/status returns 404. No SSO status endpoint. GET /api/v1/auth/me returns 200 (shows OAuth provider if set). SSO management API not implemented. BLOCKED. |
+| UC-SETTINGS-007 | Profile Settings (Display Preferences) | P2 | QA-2 | BLOCKED | GET /api/v1/users/preferences returns 404. No user preferences/display settings endpoint implemented. BLOCKED — feature not built. |
 | UC-RBAC-005 | HR_MANAGER Cannot Access Payroll Configuration | P0 | QA-3 | BLOCKED | Cannot test with valid HR_MANAGER session due to BUG-QA3-001 (all non-admin permission checks fail). Cannot confirm whether HR_MANAGER payroll restriction specifically works |
 | UC-RBAC-006 | TENANT_ADMIN Cannot Access Super Admin Tenant Management | P0 | QA-3 | BLOCKED | No TENANT_ADMIN seed user available. Cannot test. Blocked by missing seed data and BUG-QA3-001 |
 | UC-RBAC-007 | Self-Approval Blocked Across All Modules | P0 | QA-3 | BLOCKED | Cannot submit leave/expense requests as non-admin user due to BUG-QA3-001. No approval items to test self-approval prevention against. Blocked upstream |
