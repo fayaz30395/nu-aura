@@ -148,7 +148,7 @@ class ContentEngagementControllerTest {
         @Test
         @DisplayName("Should get user favorites paginated")
         void shouldGetFavorites() throws Exception {
-            Page<com.hrms.domain.knowledge.KnowledgeFavorite> emptyPage =
+            Page<com.hrms.domain.knowledge.FluenceFavorite> emptyPage =
                     new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
             when(engagementService.getFavorites(any(Pageable.class))).thenReturn(emptyPage);
 
@@ -161,7 +161,7 @@ class ContentEngagementControllerTest {
         @Test
         @DisplayName("Should get favorites filtered by content type")
         void shouldGetFavoritesByType() throws Exception {
-            Page<com.hrms.domain.knowledge.KnowledgeFavorite> emptyPage =
+            Page<com.hrms.domain.knowledge.FluenceFavorite> emptyPage =
                     new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
             when(engagementService.getFavoritesByType(eq("wiki"), any(Pageable.class))).thenReturn(emptyPage);
 
