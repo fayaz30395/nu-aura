@@ -137,16 +137,16 @@ public class WorkloadAnalyticsService {
 
     @Transactional(readOnly = true)
     public List<WorkloadHeatmapRow> getWorkloadHeatmap(LocalDate startDate, LocalDate endDate,
-            UUID departmentId, Integer limit) {
+                                                       UUID departmentId, Integer limit) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         List<Employee> employees = departmentId != null
                 ? employeeRepository.findByTenantId(tenantId).stream()
-                        .filter(e -> departmentId.equals(e.getDepartmentId()))
-                        .limit(limit != null ? limit : 50)
-                        .collect(Collectors.toList())
+                  .filter(e -> departmentId.equals(e.getDepartmentId()))
+                  .limit(limit != null ? limit : 50)
+                  .collect(Collectors.toList())
                 : employeeRepository.findByTenantId(tenantId).stream()
-                        .limit(limit != null ? limit : 50)
-                        .collect(Collectors.toList());
+                  .limit(limit != null ? limit : 50)
+                  .collect(Collectors.toList());
 
         return employees.stream().map(emp -> {
             List<WorkloadHeatmapCell> cells = new ArrayList<>();
@@ -165,8 +165,8 @@ public class WorkloadAnalyticsService {
 
             String deptName = emp.getDepartmentId() != null
                     ? departmentRepository.findById(emp.getDepartmentId())
-                            .map(d -> d.getName())
-                            .orElse("N/A")
+                      .map(d -> d.getName())
+                      .orElse("N/A")
                     : "N/A";
 
             return WorkloadHeatmapRow.builder()
@@ -233,7 +233,7 @@ public class WorkloadAnalyticsService {
     }
 
     private WorkloadSummary calculateWorkloadSummary(List<EmployeeWorkload> workloads, int projectCount,
-            WorkloadFilterOptions filters) {
+                                                     WorkloadFilterOptions filters) {
         if (workloads.isEmpty()) {
             return WorkloadSummary.builder()
                     .totalEmployees(0).activeProjects(projectCount).averageAllocation(0.0)
@@ -297,7 +297,7 @@ public class WorkloadAnalyticsService {
     }
 
     private List<WorkloadHeatmapRow> calculateHeatmapData(List<Employee> employees,
-            WorkloadFilterOptions filters) {
+                                                          WorkloadFilterOptions filters) {
         LocalDate startDate = filters != null && filters.getStartDate() != null
                 ? filters.getStartDate() : LocalDate.now();
         LocalDate endDate = filters != null && filters.getEndDate() != null
@@ -322,7 +322,7 @@ public class WorkloadAnalyticsService {
 
             String deptName = emp.getDepartmentId() != null
                     ? departmentRepository.findById(emp.getDepartmentId())
-                            .map(d -> d.getName()).orElse("N/A")
+                      .map(d -> d.getName()).orElse("N/A")
                     : "N/A";
 
             return WorkloadHeatmapRow.builder()
@@ -385,7 +385,7 @@ public class WorkloadAnalyticsService {
     }
 
     private DepartmentWorkload calculateDepartmentWorkload(UUID departmentId, String name,
-            List<EmployeeWorkload> allWorkloads) {
+                                                           List<EmployeeWorkload> allWorkloads) {
         List<EmployeeWorkload> deptWorkloads = allWorkloads.stream()
                 .filter(w -> departmentId.equals(w.getDepartmentId()))
                 .collect(Collectors.toList());

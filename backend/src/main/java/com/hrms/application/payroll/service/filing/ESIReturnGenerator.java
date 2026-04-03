@@ -34,12 +34,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ESIReturnGenerator implements FilingFormatGenerator {
 
-    private final PayslipRepository payslipRepository;
-    private final ObjectMapper objectMapper;
-
     private static final BigDecimal ESI_GROSS_CEILING = new BigDecimal("21000");
     private static final BigDecimal ESI_EMPLOYEE_RATE = new BigDecimal("0.0075");
     private static final BigDecimal ESI_EMPLOYER_RATE = new BigDecimal("0.0325");
+    private final PayslipRepository payslipRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public FilingType getFilingType() {
@@ -68,9 +67,9 @@ public class ESIReturnGenerator implements FilingFormatGenerator {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {
-                "IP Number", "IP Name", "No of Days Worked",
-                "Total Wages (INR)", "Employee Contribution (0.75%)",
-                "Employer Contribution (3.25%)", "Total Contribution"
+                    "IP Number", "IP Name", "No of Days Worked",
+                    "Total Wages (INR)", "Employee Contribution (0.75%)",
+                    "Employer Contribution (3.25%)", "Total Contribution"
             };
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);

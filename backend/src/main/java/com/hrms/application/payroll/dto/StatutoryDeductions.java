@@ -18,7 +18,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class StatutoryDeductions {
 
-    /** The employee this calculation is for (informational, not persisted here). */
+    /**
+     * The employee this calculation is for (informational, not persisted here).
+     */
     private UUID employeeId;
 
     // ─── PF (Provident Fund) ─────────────────────────────────────────────────

@@ -50,6 +50,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class KekaImportService {
 
+    private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -57,11 +61,6 @@ public class KekaImportService {
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final EmailNotificationService emailNotificationService;
-
-    private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
 
     /**
      * Upload a KEKA CSV file and extract headers
@@ -291,6 +290,7 @@ public class KekaImportService {
 
     /**
      * Generate a secure random password.
+     *
      * @param length desired password length
      * @return cryptographically secure random password
      */
@@ -307,7 +307,7 @@ public class KekaImportService {
      * Helper: Create employee from mapped data
      */
     private Employee createEmployee(Map<String, String> rowData, User user, UUID tenantId,
-                                   Map<String, String> mappingLookup) {
+                                    Map<String, String> mappingLookup) {
         String employeeCode = rowData.get(mappingLookup.get("employeeNumber"));
         if (employeeCode == null || employeeCode.trim().isEmpty()) {
             throw new IllegalArgumentException("Employee number is required");

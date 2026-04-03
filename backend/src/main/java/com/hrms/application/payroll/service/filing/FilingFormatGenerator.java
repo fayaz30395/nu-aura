@@ -43,5 +43,6 @@ public interface FilingFormatGenerator {
             String fileName,
             String contentType,
             int totalRecords
-    ) {}
+    ) {
+    }
 }

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,54 +31,61 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StatutoryDeductionService {
 
-    private final LWFService lwfService;
+    /**
+     * PF wage ceiling (₹15,000/month) above which employer contribution is capped.
+     */
+    private static final BigDecimal PF_WAGE_CEILING = new BigDecimal("15000");
 
     // ─── PF constants ─────────────────────────────────────────────────────────
-    /** PF wage ceiling (₹15,000/month) above which employer contribution is capped. */
-    private static final BigDecimal PF_WAGE_CEILING = new BigDecimal("15000");
-    /** PF contribution rate: 12% for both employee and employer. */
+    /**
+     * PF contribution rate: 12% for both employee and employer.
+     */
     private static final BigDecimal PF_RATE = new BigDecimal("0.12");
-    /** Maximum employer PF contribution = 12% of ₹15,000 = ₹1,800. */
+    /**
+     * Maximum employer PF contribution = 12% of ₹15,000 = ₹1,800.
+     */
     private static final BigDecimal EMPLOYER_PF_MAX = new BigDecimal("1800");
+    /**
+     * ESI applicability ceiling: gross salary must be ≤ ₹21,000/month.
+     */
+    private static final BigDecimal ESI_GROSS_CEILING = new BigDecimal("21000");
 
     // ─── ESI constants ────────────────────────────────────────────────────────
-    /** ESI applicability ceiling: gross salary must be ≤ ₹21,000/month. */
-    private static final BigDecimal ESI_GROSS_CEILING = new BigDecimal("21000");
-    /** Employee ESI rate: 0.75% of gross salary. */
+    /**
+     * Employee ESI rate: 0.75% of gross salary.
+     */
     private static final BigDecimal ESI_EMPLOYEE_RATE = new BigDecimal("0.0075");
-    /** Employer ESI rate: 3.25% of gross salary. */
+    /**
+     * Employer ESI rate: 3.25% of gross salary.
+     */
     private static final BigDecimal ESI_EMPLOYER_RATE = new BigDecimal("0.0325");
-
     // ─── TDS / New Tax Regime slab boundaries (annual, INR) ──────────────────
     // BIZ-007: These slabs are for FY 2024-25 New Tax Regime. When slabs change,
     // create a DB-driven IncomeTaxSlab entity (similar to ProfessionalTaxSlab)
     // with fiscal_year, min_income, max_income, rate columns and a tenant-aware
     // repository. For now, these are correct for FY 2024-25.
-    private static final BigDecimal SLAB_3L  = new BigDecimal("300000");
-    private static final BigDecimal SLAB_6L  = new BigDecimal("600000");
-    private static final BigDecimal SLAB_9L  = new BigDecimal("900000");
+    private static final BigDecimal SLAB_3L = new BigDecimal("300000");
+    private static final BigDecimal SLAB_6L = new BigDecimal("600000");
+    private static final BigDecimal SLAB_9L = new BigDecimal("900000");
     private static final BigDecimal SLAB_12L = new BigDecimal("1200000");
     private static final BigDecimal SLAB_15L = new BigDecimal("1500000");
-
     private static final BigDecimal MONTHS_IN_YEAR = new BigDecimal("12");
-
     // ─── TDS rate constants ─────────────────────────────────────────────────
-    private static final BigDecimal RATE_5_PCT  = new BigDecimal("0.05");
+    private static final BigDecimal RATE_5_PCT = new BigDecimal("0.05");
     private static final BigDecimal RATE_10_PCT = new BigDecimal("0.10");
     private static final BigDecimal RATE_15_PCT = new BigDecimal("0.15");
     private static final BigDecimal RATE_20_PCT = new BigDecimal("0.20");
     private static final BigDecimal RATE_30_PCT = new BigDecimal("0.30");
-
     // ─── Professional Tax state-specific constants ────────────────────────────
     private static final BigDecimal PT_KA_THRESHOLD = new BigDecimal("15000");
-    private static final BigDecimal PT_KA_AMOUNT    = new BigDecimal("200");
-    private static final BigDecimal PT_TN_AMOUNT    = new BigDecimal("208");
-
+    private static final BigDecimal PT_KA_AMOUNT = new BigDecimal("200");
+    private static final BigDecimal PT_TN_AMOUNT = new BigDecimal("208");
     // Maharashtra MH slabs (monthly salary → PT amount)
     private static final BigDecimal MH_SLAB_1 = new BigDecimal("7500");
     private static final BigDecimal MH_SLAB_2 = new BigDecimal("10000");
-    private static final BigDecimal MH_PT_1   = new BigDecimal("175");
-    private static final BigDecimal MH_PT_2   = new BigDecimal("200");
+    private static final BigDecimal MH_PT_1 = new BigDecimal("175");
+    private static final BigDecimal MH_PT_2 = new BigDecimal("200");
+    private final LWFService lwfService;
 
     /**
      * Calculates all India statutory deductions for the given employee and salary inputs.
@@ -124,12 +132,12 @@ public class StatutoryDeductionService {
         log.debug("Calculating statutory deductions: employeeId={}, basic={}, gross={}, state={}, period={}/{}",
                 employeeId, basicSalary, grossSalary, state, month, year);
 
-        BigDecimal employeePf  = calculateEmployeePf(basicSalary);
-        BigDecimal employerPf  = calculateEmployerPf(basicSalary);
+        BigDecimal employeePf = calculateEmployeePf(basicSalary);
+        BigDecimal employerPf = calculateEmployerPf(basicSalary);
         BigDecimal employeeEsi = calculateEmployeeEsi(grossSalary);
         BigDecimal employerEsi = calculateEmployerEsi(grossSalary);
-        BigDecimal pt          = calculateProfessionalTax(grossSalary, state);
-        BigDecimal tds         = calculateMonthlyTds(grossSalary);
+        BigDecimal pt = calculateProfessionalTax(grossSalary, state);
+        BigDecimal tds = calculateMonthlyTds(grossSalary);
 
         // LWF — fixed amount based on state rules, only in applicable months
         BigDecimal employeeLwf = lwfService.calculateLWFForEmployee(
@@ -267,13 +275,13 @@ public class StatutoryDeductionService {
      *   ₹12,00,001 – ₹15,00,000 — 20%
      *   Above ₹15,00,000         — 30%
      * </pre>
-     *
+     * <p>
      * Note: Rebate u/s 87A (income ≤ ₹7L → tax = 0) and surcharge/cess are intentionally
      * excluded here for simplicity; they can be layered in a future enhancement.
      */
     private BigDecimal calculateMonthlyTds(BigDecimal grossSalary) {
         BigDecimal annualIncome = grossSalary.multiply(MONTHS_IN_YEAR);
-        BigDecimal annualTax    = computeNewRegimeTax(annualIncome);
+        BigDecimal annualTax = computeNewRegimeTax(annualIncome);
         return annualTax.divide(MONTHS_IN_YEAR, 2, RoundingMode.HALF_UP);
     }
 

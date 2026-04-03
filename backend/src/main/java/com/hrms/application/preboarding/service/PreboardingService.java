@@ -72,7 +72,7 @@ public class PreboardingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired access link"));
 
         if (candidate.getTokenExpiresAt() != null &&
-            candidate.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+                candidate.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
             throw new BusinessException("Access link has expired");
         }
 
@@ -88,9 +88,9 @@ public class PreboardingService {
      */
     @Transactional
     public PreboardingCandidate updatePersonalInfo(String accessToken,
-            LocalDate dateOfBirth, String address, String city, String state,
-            String postalCode, String country, String phoneNumber,
-            String emergencyContactNumber, String emergencyContactName) {
+                                                   LocalDate dateOfBirth, String address, String city, String state,
+                                                   String postalCode, String country, String phoneNumber,
+                                                   String emergencyContactNumber, String emergencyContactName) {
 
         PreboardingCandidate candidate = getByAccessToken(accessToken);
 
@@ -117,7 +117,7 @@ public class PreboardingService {
      */
     @Transactional
     public PreboardingCandidate updateBankDetails(String accessToken,
-            String bankAccountNumber, String bankName, String bankIfscCode, String taxId) {
+                                                  String bankAccountNumber, String bankName, String bankIfscCode, String taxId) {
 
         PreboardingCandidate candidate = getByAccessToken(accessToken);
 

@@ -71,10 +71,10 @@ public class Form24QGenerator implements FilingFormatGenerator {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {
-                "S.No", "Employee Code", "Employee Name", "PAN",
-                "Gross Salary (Quarter)", "Total Deductions",
-                "Taxable Income (Quarter)", "TDS Deducted (Quarter)",
-                "TDS Deposited", "Date of Payment"
+                    "S.No", "Employee Code", "Employee Name", "PAN",
+                    "Gross Salary (Quarter)", "Total Deductions",
+                    "Taxable Income (Quarter)", "TDS Deducted (Quarter)",
+                    "TDS Deposited", "Date of Payment"
             };
 
             for (int i = 0; i < headers.length; i++) {

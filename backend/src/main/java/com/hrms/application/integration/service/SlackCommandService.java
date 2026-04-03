@@ -36,22 +36,33 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SlackCommandService {
 
+    private static final String HMAC_SHA256 = "HmacSHA256";
+    private static final long MAX_TIMESTAMP_DIFF_SECONDS = 300; // 5 minutes
     private final EmployeeRepository employeeRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveTypeRepository leaveTypeRepository;
     private final NotificationChannelConfigRepository channelConfigRepository;
     private final ObjectMapper objectMapper;
-
     @Value("${app.slack.signing-secret:}")
     private String signingSecret;
 
-    private static final String HMAC_SHA256 = "HmacSHA256";
-    private static final long MAX_TIMESTAMP_DIFF_SECONDS = 300; // 5 minutes
-
     // ==================== Signature Verification ====================
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String appUrl;
+
+    // ==================== Command Handlers ====================
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
 
     /**
      * Verifies the Slack request signature using the signing secret.
+     *
      * @see <a href="https://api.slack.com/authentication/verifying-requests-from-slack">Slack Docs</a>
      */
     public boolean verifySlackSignature(HttpServletRequest request) {
@@ -91,7 +102,7 @@ public class SlackCommandService {
         }
     }
 
-    // ==================== Command Handlers ====================
+    // ==================== Event Handling ====================
 
     /**
      * Handles /balance command — shows leave balances for the Slack user.
@@ -121,7 +132,7 @@ public class SlackCommandService {
         StringBuilder blocks = new StringBuilder();
         blocks.append("{\"response_type\":\"ephemeral\",\"blocks\":[");
         blocks.append("{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"Leave Balances — ")
-              .append(currentYear).append("\"}},");
+                .append(currentYear).append("\"}},");
         blocks.append("{\"type\":\"divider\"},");
 
         for (int i = 0; i < balances.size(); i++) {
@@ -133,11 +144,11 @@ public class SlackCommandService {
             double available = bal.getAvailable() != null ? bal.getAvailable().doubleValue() : 0.0;
 
             blocks.append("{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"")
-                  .append("*").append(typeName).append("*\\n")
-                  .append("Available: *").append(String.format("%.1f", available)).append("* days\\n")
-                  .append("Used: ").append(bal.getUsed()).append(" | ")
-                  .append("Accrued: ").append(bal.getAccrued())
-                  .append("\"}}");
+                    .append("*").append(typeName).append("*\\n")
+                    .append("Available: *").append(String.format("%.1f", available)).append("* days\\n")
+                    .append("Used: ").append(bal.getUsed()).append(" | ")
+                    .append("Accrued: ").append(bal.getAccrued())
+                    .append("\"}}");
 
             if (i < balances.size() - 1) {
                 blocks.append(",");
@@ -167,9 +178,9 @@ public class SlackCommandService {
         if (text == null || text.trim().isEmpty()) {
             return ephemeral(
                     "*Usage:* `/leave [days] [type] [reason]`\n" +
-                    "*Example:* `/leave 2 casual family event`\n\n" +
-                    "*Available types:* casual, sick, earned, maternity, paternity, comp-off\n\n" +
-                    "Or use `/balance` to check your remaining leave."
+                            "*Example:* `/leave 2 casual family event`\n\n" +
+                            "*Available types:* casual, sick, earned, maternity, paternity, comp-off\n\n" +
+                            "Or use `/balance` to check your remaining leave."
             );
         }
 
@@ -210,8 +221,6 @@ public class SlackCommandService {
                 "<" + getAppUrl() + "/leave/new|Open Leave Request Form>\"}}]}";
     }
 
-    // ==================== Event Handling ====================
-
     /**
      * Handles Slack URL verification challenge (sent during app setup).
      */
@@ -225,6 +234,8 @@ public class SlackCommandService {
             return ResponseEntity.badRequest().body("");
         }
     }
+
+    // ==================== Helper Methods ====================
 
     /**
      * Processes Slack events (app_mention, member_joined_channel, etc.).
@@ -255,8 +266,6 @@ public class SlackCommandService {
         }
     }
 
-    // ==================== Helper Methods ====================
-
     private UUID resolveTenantFromTeam(String teamId) {
         return channelConfigRepository
                 .findAll().stream()
@@ -280,18 +289,7 @@ public class SlackCommandService {
                 text.replace("\"", "\\\"").replace("\n", "\\n") + "\"}";
     }
 
-    @Value("${app.frontend.url:http://localhost:3000}")
-    private String appUrl;
-
     private String getAppUrl() {
         return appUrl;
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 }

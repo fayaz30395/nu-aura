@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,8 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ReportGenerationService {
 
-    private final FileStorageService fileStorageService;
-
     private static final Font TITLE_FONT = new Font(Font.HELVETICA, 18, Font.BOLD, Color.DARK_GRAY);
     private static final Font HEADER_FONT = new Font(Font.HELVETICA, 12, Font.BOLD, Color.WHITE);
     private static final Font SUBHEADER_FONT = new Font(Font.HELVETICA, 12, Font.BOLD, Color.DARK_GRAY);
@@ -41,13 +40,14 @@ public class ReportGenerationService {
     private static final Font SMALL_FONT = new Font(Font.HELVETICA, 8, Font.NORMAL, Color.GRAY);
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color LIGHT_GRAY = new Color(245, 245, 245);
+    private final FileStorageService fileStorageService;
 
     /**
      * Generate a payslip PDF for an employee.
      */
     @Transactional(readOnly = true)
     public ReportResult generatePayslip(UUID employeeId, int year, int month,
-                                         Map<String, Object> payslipData) {
+                                        Map<String, Object> payslipData) {
         String filename = String.format("payslip_%s_%d_%02d.pdf", employeeId, year, month);
         String monthName = LocalDate.of(year, month, 1).getMonth().toString();
 
@@ -122,7 +122,7 @@ public class ReportGenerationService {
      */
     @Transactional(readOnly = true)
     public ReportResult generateAttendanceReport(UUID entityId, LocalDate startDate, LocalDate endDate,
-                                                  Map<String, Object> attendanceData, String reportType) {
+                                                 Map<String, Object> attendanceData, String reportType) {
         String filename = String.format("attendance_report_%s_%s_to_%s.pdf",
                 entityId,
                 startDate.format(DateTimeFormatter.ISO_DATE),
@@ -137,7 +137,7 @@ public class ReportGenerationService {
             // Header
             addHeader(document, "ATTENDANCE REPORT",
                     startDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) + " - " +
-                    endDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+                            endDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
 
             // Summary
             addAttendanceSummary(document, attendanceData);
@@ -718,37 +718,37 @@ public class ReportGenerationService {
         return switch (letterType.toUpperCase()) {
             case "OFFER" -> String.format(
                     "Dear %s,\n\n" +
-                    "We are pleased to offer you the position of %s in our %s department. " +
-                    "Your employment will commence on %s.\n\n" +
-                    "Your starting salary will be %s per annum, subject to statutory deductions.\n\n" +
-                    "Please sign and return a copy of this letter as acceptance of this offer.\n\n" +
-                    "We look forward to welcoming you to our team.",
+                            "We are pleased to offer you the position of %s in our %s department. " +
+                            "Your employment will commence on %s.\n\n" +
+                            "Your starting salary will be %s per annum, subject to statutory deductions.\n\n" +
+                            "Please sign and return a copy of this letter as acceptance of this offer.\n\n" +
+                            "We look forward to welcoming you to our team.",
                     employeeName, designation, department, joiningDate, salary
             );
             case "CONFIRMATION" -> String.format(
                     "Dear %s,\n\n" +
-                    "We are pleased to confirm your employment with our organization as %s " +
-                    "in the %s department, effective from %s.\n\n" +
-                    "You have successfully completed your probation period and demonstrated " +
-                    "excellent performance. We look forward to your continued contribution to the organization.\n\n" +
-                    "Congratulations!",
+                            "We are pleased to confirm your employment with our organization as %s " +
+                            "in the %s department, effective from %s.\n\n" +
+                            "You have successfully completed your probation period and demonstrated " +
+                            "excellent performance. We look forward to your continued contribution to the organization.\n\n" +
+                            "Congratulations!",
                     employeeName, designation, department, joiningDate
             );
             case "EXPERIENCE" -> String.format(
                     "TO WHOM IT MAY CONCERN\n\n" +
-                    "This is to certify that %s was employed with our organization as %s " +
-                    "in the %s department from %s to %s.\n\n" +
-                    "During their tenure, they demonstrated professionalism, dedication, and excellent work ethics. " +
-                    "We wish them the very best in their future endeavors.",
+                            "This is to certify that %s was employed with our organization as %s " +
+                            "in the %s department from %s to %s.\n\n" +
+                            "During their tenure, they demonstrated professionalism, dedication, and excellent work ethics. " +
+                            "We wish them the very best in their future endeavors.",
                     employeeName, designation, department, joiningDate,
                     getStringValue(data, "lastWorkingDate", LocalDate.now().format(DateTimeFormatter.ISO_DATE))
             );
             case "RELIEVING" -> String.format(
                     "Dear %s,\n\n" +
-                    "This is to confirm that you have been relieved from your duties as %s " +
-                    "in the %s department, effective %s.\n\n" +
-                    "All dues have been settled and you have completed the handover process. " +
-                    "We thank you for your contributions and wish you success in your future endeavors.",
+                            "This is to confirm that you have been relieved from your duties as %s " +
+                            "in the %s department, effective %s.\n\n" +
+                            "All dues have been settled and you have completed the handover process. " +
+                            "We thank you for your contributions and wish you success in your future endeavors.",
                     employeeName, designation, department,
                     getStringValue(data, "lastWorkingDate", LocalDate.now().format(DateTimeFormatter.ISO_DATE))
             );
@@ -795,7 +795,7 @@ public class ReportGenerationService {
 
     private String formatMetricName(String name) {
         String formatted = name.replaceAll("([a-z])([A-Z])", "$1 $2")
-                               .replace('_', ' ');
+                .replace('_', ' ');
         return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
     }
 

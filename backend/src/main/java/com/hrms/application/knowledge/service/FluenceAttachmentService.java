@@ -33,8 +33,8 @@ public class FluenceAttachmentService {
      */
     @Transactional
     public KnowledgeAttachment uploadAttachment(UUID tenantId, UUID contentId,
-                                                 KnowledgeAttachment.ContentType contentType,
-                                                 MultipartFile file) {
+                                                KnowledgeAttachment.ContentType contentType,
+                                                MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BusinessException("File is empty");
         }
@@ -69,7 +69,7 @@ public class FluenceAttachmentService {
      */
     @Transactional(readOnly = true)
     public List<KnowledgeAttachment> getAttachments(UUID tenantId, UUID contentId,
-                                                     KnowledgeAttachment.ContentType contentType) {
+                                                    KnowledgeAttachment.ContentType contentType) {
         return attachmentRepository.findByTenantIdAndContentIdAndContentTypeAndIsDeletedFalse(
                 tenantId, contentId, contentType);
     }

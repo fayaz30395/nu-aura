@@ -215,8 +215,8 @@ public class ScheduledReportExecutionJob {
      * Send report email to recipients with attachment.
      */
     private void sendReportEmail(ScheduledReport scheduledReport,
-                                  ReportGenerationService.ReportResult reportResult,
-                                  List<String> recipients) throws MessagingException {
+                                 ReportGenerationService.ReportResult reportResult,
+                                 List<String> recipients) throws MessagingException {
 
         if (recipients.isEmpty()) {
             log.warn("No recipients configured for scheduled report: {}", scheduledReport.getScheduleName());
@@ -256,56 +256,56 @@ public class ScheduledReportExecutionJob {
      * Build HTML email body for the report notification.
      */
     private String buildEmailBody(ScheduledReport scheduledReport,
-                                   ReportGenerationService.ReportResult reportResult) {
+                                  ReportGenerationService.ReportResult reportResult) {
         return String.format("""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: #2980b9; color: white; padding: 20px; text-align: center; }
-                    .content { padding: 20px; background: #f9f9f9; }
-                    .footer { padding: 10px; text-align: center; font-size: 12px; color: #666; }
-                    .btn { display: inline-block; padding: 10px 20px; background: #2980b9; color: white;
-                           text-decoration: none; border-radius: 4px; margin-top: 15px; }
-                    .info { background: #e8f4fd; padding: 15px; border-radius: 4px; margin: 15px 0; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h2>Scheduled Report Ready</h2>
-                    </div>
-                    <div class="content">
-                        <p>Hello,</p>
-                        <p>Your scheduled report <strong>%s</strong> has been generated successfully.</p>
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                                .header { background: #2980b9; color: white; padding: 20px; text-align: center; }
+                                .content { padding: 20px; background: #f9f9f9; }
+                                .footer { padding: 10px; text-align: center; font-size: 12px; color: #666; }
+                                .btn { display: inline-block; padding: 10px 20px; background: #2980b9; color: white;
+                                       text-decoration: none; border-radius: 4px; margin-top: 15px; }
+                                .info { background: #e8f4fd; padding: 15px; border-radius: 4px; margin: 15px 0; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="header">
+                                    <h2>Scheduled Report Ready</h2>
+                                </div>
+                                <div class="content">
+                                    <p>Hello,</p>
+                                    <p>Your scheduled report <strong>%s</strong> has been generated successfully.</p>
 
-                        <div class="info">
-                            <p><strong>Report Details:</strong></p>
-                            <ul>
-                                <li><strong>Report Name:</strong> %s</li>
-                                <li><strong>Report Type:</strong> %s</li>
-                                <li><strong>Generated At:</strong> %s</li>
-                                <li><strong>File Size:</strong> %s KB</li>
-                            </ul>
-                        </div>
+                                    <div class="info">
+                                        <p><strong>Report Details:</strong></p>
+                                        <ul>
+                                            <li><strong>Report Name:</strong> %s</li>
+                                            <li><strong>Report Type:</strong> %s</li>
+                                            <li><strong>Generated At:</strong> %s</li>
+                                            <li><strong>File Size:</strong> %s KB</li>
+                                        </ul>
+                                    </div>
 
-                        <p>You can download the report from the HRMS portal or use the link below:</p>
-                        <a href="%s" class="btn">Download Report</a>
+                                    <p>You can download the report from the HRMS portal or use the link below:</p>
+                                    <a href="%s" class="btn">Download Report</a>
 
-                        <p style="margin-top: 20px;">
-                            This is an automated email. If you no longer wish to receive these reports,
-                            please update your subscription settings in the HRMS portal.
-                        </p>
-                    </div>
-                    <div class="footer">
-                        <p>&copy; %d %s. All rights reserved.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """,
+                                    <p style="margin-top: 20px;">
+                                        This is an automated email. If you no longer wish to receive these reports,
+                                        please update your subscription settings in the HRMS portal.
+                                    </p>
+                                </div>
+                                <div class="footer">
+                                    <p>&copy; %d %s. All rights reserved.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>
+                        """,
                 scheduledReport.getScheduleName(),
                 scheduledReport.getScheduleName(),
                 reportResult.getReportType(),

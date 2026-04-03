@@ -16,13 +16,11 @@ import java.io.InputStream;
 @Slf4j
 public class ResumeTextExtractor {
 
-    private final Tika tika = new Tika();
-
     // Maximum text length to return (10,000 chars aligns with URL parsing limit)
     private static final int MAX_TEXT_LENGTH = 10_000;
-
     // Text extraction timeout in seconds
     private static final int EXTRACTION_TIMEOUT_SECONDS = 30;
+    private final Tika tika = new Tika();
 
     /**
      * Extract plain text from binary document bytes (PDF, DOCX, DOC, RTF, etc.)
@@ -30,7 +28,7 @@ public class ResumeTextExtractor {
      * @param fileBytes the raw file bytes
      * @param fileName  the original filename (used for logging)
      * @return extracted plain text, truncated to 10,000 characters
-     * @throws IOException if file cannot be read
+     * @throws IOException   if file cannot be read
      * @throws TikaException if text extraction fails
      */
     public String extractText(byte[] fileBytes, String fileName) throws IOException, TikaException {
@@ -79,7 +77,7 @@ public class ResumeTextExtractor {
      * @param inputStream the input stream containing the file data
      * @param fileName    the original filename (used for logging)
      * @return extracted plain text, truncated to 10,000 characters
-     * @throws IOException if stream cannot be read
+     * @throws IOException   if stream cannot be read
      * @throws TikaException if text extraction fails
      */
     public String extractText(InputStream inputStream, String fileName) throws IOException, TikaException {

@@ -228,7 +228,7 @@ public class ScheduledReportService {
     }
 
     private LocalDateTime calculateNextRunTime(Frequency frequency, Integer dayOfWeek,
-                                                Integer dayOfMonth, LocalTime timeOfDay) {
+                                               Integer dayOfMonth, LocalTime timeOfDay) {
         LocalDate today = LocalDate.now();
         LocalTime time = timeOfDay != null ? timeOfDay : LocalTime.of(6, 0); // Default 6 AM
 

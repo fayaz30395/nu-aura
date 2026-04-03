@@ -43,14 +43,12 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class TenantAttendanceConfigService {
 
-    private static final String SETTINGS_KEY = "attendance";
-
     // Defaults — match the original hardcoded constants
     public static final int DEFAULT_FULL_DAY_MINUTES = 480;
     public static final int DEFAULT_HALF_DAY_MINUTES = 240;
     public static final int DEFAULT_OVERTIME_THRESHOLD_MINUTES = 540;
     public static final BigDecimal DEFAULT_STANDARD_WORK_HOURS = BigDecimal.valueOf(8.00);
-
+    private static final String SETTINGS_KEY = "attendance";
     private final TenantRepository tenantRepository;
     private final ObjectMapper objectMapper;
 
@@ -63,7 +61,8 @@ public class TenantAttendanceConfigService {
             Tenant tenant = tenantRepository.findById(tenantId).orElse(null);
             if (tenant != null && tenant.getSettings() != null && !tenant.getSettings().isBlank()) {
                 Map<String, Object> settings = objectMapper.readValue(
-                        tenant.getSettings(), new TypeReference<Map<String, Object>>() {});
+                        tenant.getSettings(), new TypeReference<Map<String, Object>>() {
+                        });
                 Object attendanceObj = settings.get(SETTINGS_KEY);
                 if (attendanceObj instanceof Map) {
                     @SuppressWarnings("unchecked")

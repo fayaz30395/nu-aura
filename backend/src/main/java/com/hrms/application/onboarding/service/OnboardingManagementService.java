@@ -158,7 +158,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional
     @Audited(action = AuditAction.UPDATE, entityType = "ONBOARDING_TEMPLATE", description = "Updated onboarding template", entityIdParam = 0)
     public OnboardingChecklistTemplateResponse updateTemplate(UUID templateId,
-            OnboardingChecklistTemplateRequest request) {
+                                                              OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(TEMPLATE_NOT_FOUND));
@@ -219,7 +219,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public OnboardingTemplateTaskResponse updateTemplateTask(UUID templateId, UUID taskId,
-            OnboardingTemplateTaskRequest request) {
+                                                             OnboardingTemplateTaskRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingTemplateTask task = templateTaskRepository.findById(taskId)
                 .filter(t -> t.getTemplateId().equals(templateId) && t.getTenantId().equals(tenantId))

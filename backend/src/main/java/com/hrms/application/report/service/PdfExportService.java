@@ -44,7 +44,7 @@ public class PdfExportService {
 
             // Add headers
             addTableHeader(table, "Code", "Name", "Email", "Phone", "Department",
-                          "Designation", "Job Role", "Level", "Joining Date", "Status");
+                    "Designation", "Job Role", "Level", "Joining Date", "Status");
 
             // Add data
             for (EmployeeDirectoryReportRow row : data) {
@@ -57,7 +57,7 @@ public class PdfExportService {
                 addTableCell(table, row.getJobRole());
                 addTableCell(table, row.getLevel());
                 addTableCell(table, row.getJoiningDate() != null ?
-                    row.getJoiningDate().format(DATE_FORMATTER) : "");
+                        row.getJoiningDate().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getStatus());
             }
 
@@ -87,7 +87,7 @@ public class PdfExportService {
             table.setSpacingBefore(10f);
 
             addTableHeader(table, "Code", "Name", "Department", "Date", "Status",
-                          "Check In", "Check Out", "Hours", "Shift");
+                    "Check In", "Check Out", "Hours", "Shift");
 
             for (AttendanceReportRow row : data) {
                 addTableCell(table, row.getEmployeeCode());
@@ -96,11 +96,11 @@ public class PdfExportService {
                 addTableCell(table, row.getDate() != null ? row.getDate().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getStatus());
                 addTableCell(table, row.getCheckInTime() != null ?
-                    row.getCheckInTime().format(TIME_FORMATTER) : "");
+                        row.getCheckInTime().format(TIME_FORMATTER) : "");
                 addTableCell(table, row.getCheckOutTime() != null ?
-                    row.getCheckOutTime().format(TIME_FORMATTER) : "");
+                        row.getCheckOutTime().format(TIME_FORMATTER) : "");
                 addTableCell(table, row.getHoursWorked() != null ?
-                    String.format("%.2f", row.getHoursWorked()) : "0.00");
+                        String.format("%.2f", row.getHoursWorked()) : "0.00");
                 addTableCell(table, row.getShift());
             }
 
@@ -130,7 +130,7 @@ public class PdfExportService {
             table.setSpacingBefore(10f);
 
             addTableHeader(table, "Code", "Name", "Department", "Leave Type",
-                          "Start Date", "End Date", "Days", "Status", "Approved By");
+                    "Start Date", "End Date", "Days", "Status", "Approved By");
 
             for (LeaveReportRow row : data) {
                 addTableCell(table, row.getEmployeeCode());
@@ -138,11 +138,11 @@ public class PdfExportService {
                 addTableCell(table, row.getDepartment());
                 addTableCell(table, row.getLeaveType());
                 addTableCell(table, row.getStartDate() != null ?
-                    row.getStartDate().format(DATE_FORMATTER) : "");
+                        row.getStartDate().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getEndDate() != null ?
-                    row.getEndDate().format(DATE_FORMATTER) : "");
+                        row.getEndDate().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getDays() != null ?
-                    String.format("%.1f", row.getDays()) : "0.0");
+                        String.format("%.1f", row.getDays()) : "0.0");
                 addTableCell(table, row.getStatus());
                 addTableCell(table, row.getApprovedBy());
             }
@@ -173,22 +173,22 @@ public class PdfExportService {
             table.setSpacingBefore(10f);
 
             addTableHeader(table, "Code", "Name", "Department", "Month",
-                          "Basic Salary", "Allowances", "Deductions", "Net Salary", "Status");
+                    "Basic Salary", "Allowances", "Deductions", "Net Salary", "Status");
 
             for (PayrollReportRow row : data) {
                 addTableCell(table, row.getEmployeeCode());
                 addTableCell(table, row.getEmployeeName());
                 addTableCell(table, row.getDepartment());
                 addTableCell(table, row.getPayrollMonth() != null ?
-                    row.getPayrollMonth().format(DATE_FORMATTER) : "");
+                        row.getPayrollMonth().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getBasicSalary() != null ?
-                    String.format("$%.2f", row.getBasicSalary()) : "$0.00");
+                        String.format("$%.2f", row.getBasicSalary()) : "$0.00");
                 addTableCell(table, row.getAllowances() != null ?
-                    String.format("$%.2f", row.getAllowances()) : "$0.00");
+                        String.format("$%.2f", row.getAllowances()) : "$0.00");
                 addTableCell(table, row.getDeductions() != null ?
-                    String.format("$%.2f", row.getDeductions()) : "$0.00");
+                        String.format("$%.2f", row.getDeductions()) : "$0.00");
                 addTableCell(table, row.getNetSalary() != null ?
-                    String.format("$%.2f", row.getNetSalary()) : "$0.00");
+                        String.format("$%.2f", row.getNetSalary()) : "$0.00");
                 addTableCell(table, row.getPaymentStatus());
             }
 
@@ -218,7 +218,7 @@ public class PdfExportService {
             table.setSpacingBefore(10f);
 
             addTableHeader(table, "Department", "Total", "Active",
-                          "Inactive", "New Hires", "Terminations", "Head");
+                    "Inactive", "New Hires", "Terminations", "Head");
 
             for (DepartmentHeadcountReportRow row : data) {
                 addTableCell(table, row.getDepartmentName());
@@ -256,7 +256,7 @@ public class PdfExportService {
             table.setSpacingBefore(10f);
 
             addTableHeader(table, "Code", "Name", "Department", "Review Cycle",
-                          "Review Date", "Reviewer", "Rating", "Level", "Goals");
+                    "Review Date", "Reviewer", "Rating", "Level", "Goals");
 
             for (PerformanceReportRow row : data) {
                 addTableCell(table, row.getEmployeeCode());
@@ -264,14 +264,14 @@ public class PdfExportService {
                 addTableCell(table, row.getDepartment());
                 addTableCell(table, row.getReviewCycle());
                 addTableCell(table, row.getReviewDate() != null ?
-                    row.getReviewDate().format(DATE_FORMATTER) : "");
+                        row.getReviewDate().format(DATE_FORMATTER) : "");
                 addTableCell(table, row.getReviewer());
                 addTableCell(table, row.getOverallRating() != null ?
-                    String.format("%.2f", row.getOverallRating()) : "0.00");
+                        String.format("%.2f", row.getOverallRating()) : "0.00");
                 addTableCell(table, row.getPerformanceLevel());
                 addTableCell(table, String.format("%d/%d",
-                    row.getGoalsCompleted() != null ? row.getGoalsCompleted() : 0,
-                    row.getTotalGoals() != null ? row.getTotalGoals() : 0));
+                        row.getGoalsCompleted() != null ? row.getGoalsCompleted() : 0,
+                        row.getTotalGoals() != null ? row.getTotalGoals() : 0));
             }
 
             document.add(table);
@@ -293,8 +293,8 @@ public class PdfExportService {
 
     private void addMetadata(Document document) throws DocumentException {
         Paragraph metadata = new Paragraph(
-            "Generated on: " + LocalDate.now().format(DATE_FORMATTER),
-            new Font(Font.HELVETICA, 10, Font.NORMAL, Color.GRAY)
+                "Generated on: " + LocalDate.now().format(DATE_FORMATTER),
+                new Font(Font.HELVETICA, 10, Font.NORMAL, Color.GRAY)
         );
         metadata.setAlignment(Element.ALIGN_CENTER);
         metadata.setSpacingAfter(15f);

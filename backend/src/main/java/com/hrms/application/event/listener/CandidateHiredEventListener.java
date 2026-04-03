@@ -53,7 +53,7 @@ public class CandidateHiredEventListener {
      * Handles the candidate hired event by:
      * 1. Creating an employee from candidate data
      * 2. Initiating the onboarding process
-     *
+     * <p>
      * Runs AFTER the candidate status update transaction commits for better isolation.
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -191,7 +191,7 @@ public class CandidateHiredEventListener {
         if (jobEmploymentType == null) {
             return Employee.EmploymentType.FULL_TIME; // default
         }
-        
+
         return switch (jobEmploymentType) {
             case FULL_TIME -> Employee.EmploymentType.FULL_TIME;
             case PART_TIME -> Employee.EmploymentType.PART_TIME;

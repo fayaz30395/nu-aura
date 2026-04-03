@@ -53,7 +53,7 @@ public class SalaryStructureService {
                         "effectiveDate", saved.getEffectiveDate()
                 ),
                 "Salary structure created for employee " + saved.getEmployeeId() +
-                " - Basic: " + saved.getBasicSalary() + ", Effective: " + saved.getEffectiveDate()
+                        " - Basic: " + saved.getBasicSalary() + ", Effective: " + saved.getEffectiveDate()
         );
 
         return saved;
@@ -100,7 +100,7 @@ public class SalaryStructureService {
                         "hra", saved.getHra() != null ? saved.getHra() : BigDecimal.ZERO
                 ),
                 "Salary structure updated for employee " + saved.getEmployeeId() +
-                " - Basic: " + previousBasicSalary + " → " + saved.getBasicSalary()
+                        " - Basic: " + previousBasicSalary + " → " + saved.getBasicSalary()
         );
 
         return saved;

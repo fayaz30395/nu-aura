@@ -188,9 +188,9 @@ public class CandidateMatchingService {
         String extraContext = (context != null && !context.isBlank())
                 ? """
 
-                        ADDITIONAL CONTEXT FROM RECRUITER:
-                        %s
-                        """.formatted(context)
+                ADDITIONAL CONTEXT FROM RECRUITER:
+                %s
+                """.formatted(context)
                 : "";
 
         return """

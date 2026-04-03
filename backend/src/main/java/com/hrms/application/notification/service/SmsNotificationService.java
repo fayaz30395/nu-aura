@@ -15,18 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * SMS Notification Service using Twilio.
- *
+ * <p>
  * Features:
  * - Send SMS via Twilio API
  * - Mock mode for development/testing (no actual SMS sent)
  * - Message logging and tracking
  * - Phone number validation
  * - Rate limiting support
- *
+ * <p>
  * Configuration:
  * Set twilio.mock-mode=false and provide credentials to send real SMS.
  * In mock mode, messages are logged but not sent to Twilio.
@@ -281,7 +282,8 @@ public class SmsNotificationService {
             String body,
             LocalDateTime sentAt,
             String status
-    ) {}
+    ) {
+    }
 
     /**
      * Service status information.
@@ -291,5 +293,6 @@ public class SmsNotificationService {
             boolean mockMode,
             boolean configured,
             String fromNumber
-    ) {}
+    ) {
+    }
 }

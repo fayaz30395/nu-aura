@@ -169,7 +169,7 @@ public class LWFService {
      */
     @Transactional(readOnly = true)
     public BigDecimal calculateLWFForEmployee(UUID employeeId, String stateCode,
-                                               BigDecimal grossSalary, int month, int year) {
+                                              BigDecimal grossSalary, int month, int year) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         if (stateCode == null || stateCode.isBlank()) {
@@ -312,11 +312,11 @@ public class LWFService {
      */
     @Transactional
     public LWFDeduction recordDeduction(UUID employeeId, UUID payrollRunId,
-                                         String stateCode, BigDecimal employeeAmount,
-                                         BigDecimal employerAmount,
-                                         LWFFrequency frequency,
-                                         int month, int year,
-                                         BigDecimal grossSalary) {
+                                        String stateCode, BigDecimal employeeAmount,
+                                        BigDecimal employerAmount,
+                                        LWFFrequency frequency,
+                                        int month, int year,
+                                        BigDecimal grossSalary) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Check if deduction already exists for this employee/period

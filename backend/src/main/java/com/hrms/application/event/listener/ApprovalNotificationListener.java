@@ -42,7 +42,7 @@ public class ApprovalNotificationListener {
 
     /**
      * Handles approval task assignment events.
-     *
+     * <p>
      * When an approval task is assigned to a user:
      * 1. A persistent notification is created and stored in the database
      * 2. A real-time WebSocket notification is pushed to the assigned user
@@ -119,7 +119,7 @@ public class ApprovalNotificationListener {
 
     /**
      * Handles approval decision events (APPROVED or REJECTED).
-     *
+     * <p>
      * When an approval decision is made:
      * 1. A persistent notification is created and stored in the database
      * 2. A real-time WebSocket notification is pushed to the original requester

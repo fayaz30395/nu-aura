@@ -328,9 +328,9 @@ public class RoleManagementService {
 
             // Validate CUSTOM scope has targets
             if (scope == RoleScope.CUSTOM &&
-                (permReq.getCustomTargets() == null || permReq.getCustomTargets().isEmpty())) {
+                    (permReq.getCustomTargets() == null || permReq.getCustomTargets().isEmpty())) {
                 throw new ValidationException("CUSTOM scope requires at least one target for permission: " +
-                    permReq.getPermissionCode());
+                        permReq.getPermissionCode());
             }
 
             // Find existing or create new RolePermission
@@ -384,7 +384,7 @@ public class RoleManagementService {
     @Transactional
     @CacheEvict(value = CacheConfig.ROLE_PERMISSIONS, allEntries = true)
     public RoleResponse updatePermissionScope(UUID roleId, String permissionCode, RoleScope newScope,
-                                               Set<PermissionScopeRequest.CustomTargetRequest> customTargets) {
+                                              Set<PermissionScopeRequest.CustomTargetRequest> customTargets) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
@@ -498,8 +498,8 @@ public class RoleManagementService {
     public List<UserResponse> getAllUsers() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         List<com.hrms.domain.user.User> users = userRepository.findByTenantId(tenantId); // Assuming this method exists
-                                                                                         // or we use findAll with
-                                                                                         // tenant filter
+        // or we use findAll with
+        // tenant filter
         // Ideally mapped through repository but using fallback logic if custom method
         // needed
         return users.stream()
@@ -606,8 +606,8 @@ public class RoleManagementService {
         // Map custom targets if CUSTOM scope
         Set<PermissionResponse.CustomTargetResponse> customTargetResponses = null;
         if (rolePermission.getScope() == RoleScope.CUSTOM &&
-            rolePermission.getCustomTargets() != null &&
-            !rolePermission.getCustomTargets().isEmpty()) {
+                rolePermission.getCustomTargets() != null &&
+                !rolePermission.getCustomTargets().isEmpty()) {
             customTargetResponses = rolePermission.getCustomTargets().stream()
                     .map(target -> PermissionResponse.CustomTargetResponse.builder()
                             .id(target.getId())
@@ -688,16 +688,16 @@ public class RoleManagementService {
 
     /**
      * Task 9: Validate role parent assignment and detect cycles.
-     *
+     * <p>
      * Checks:
      * 1. If newParentId is null, clearing parent (always safe)
      * 2. If roleId equals newParentId, throw error (self-parent)
      * 3. Walk parent chain from newParentId upward to detect cycles
      * 4. Max depth 10 to prevent infinite loops
      *
-     * @param roleId The role being updated
+     * @param roleId      The role being updated
      * @param newParentId The proposed new parent role ID
-     * @param tenantId The tenant context
+     * @param tenantId    The tenant context
      * @throws IllegalArgumentException if cycle detected or role is self-parent
      */
     @Transactional(readOnly = true)
@@ -757,11 +757,11 @@ public class RoleManagementService {
     /**
      * Task 9: Get effective permissions for a role, including inherited permissions
      * from the parent role chain.
-     *
+     * <p>
      * Returns a set of permission responses, each marked with whether it's inherited
      * and from which parent level.
      *
-     * @param roleId The role to get effective permissions for
+     * @param roleId   The role to get effective permissions for
      * @param tenantId The tenant context
      * @return Set of PermissionResponse objects
      */

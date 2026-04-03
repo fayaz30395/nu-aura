@@ -193,8 +193,8 @@ public class AnnouncementService {
      * Check if an announcement is visible to a specific employee based on targeting rules
      */
     private boolean isAnnouncementVisibleToEmployee(Announcement announcement, UUID employeeId,
-                                                     UUID employeeDepartmentId, boolean isManager,
-                                                     LocalDateTime joinDate) {
+                                                    UUID employeeDepartmentId, boolean isManager,
+                                                    LocalDateTime joinDate) {
         if (announcement.getTargetAudience() == null) {
             return true; // Default to visible
         }
@@ -252,7 +252,7 @@ public class AnnouncementService {
 
         if (employeeId != null) {
             announcementReadRepository.findByAnnouncementIdAndEmployeeIdAndTenantId(
-                    announcementId, employeeId, tenantId)
+                            announcementId, employeeId, tenantId)
                     .ifPresent(readRecord -> {
                         dto.setIsRead(true);
                         dto.setIsAccepted(readRecord.getIsAccepted());

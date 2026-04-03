@@ -554,7 +554,7 @@ public class BudgetPlanningService {
     }
 
     private BigDecimal sumApprovedBudgetField(List<HeadcountBudget> budgets,
-                                               java.util.function.Function<HeadcountBudget, BigDecimal> fieldExtractor) {
+                                              java.util.function.Function<HeadcountBudget, BigDecimal> fieldExtractor) {
         return budgets.stream()
                 .filter(b -> b.getStatus() == HeadcountBudget.BudgetStatus.APPROVED)
                 .map(fieldExtractor)
@@ -592,7 +592,7 @@ public class BudgetPlanningService {
     }
 
     private BudgetDashboard.DepartmentBudgetSummary buildDepartmentSummary(UUID deptId,
-                                                                            List<HeadcountBudget> deptBudgets) {
+                                                                           List<HeadcountBudget> deptBudgets) {
         BigDecimal deptTotal = deptBudgets.stream()
                 .map(HeadcountBudget::getTotalBudget)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

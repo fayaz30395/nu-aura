@@ -271,8 +271,8 @@ public class AnalyticsService {
      * tenant key at eviction time.</p>
      */
     @Caching(evict = {
-        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
     })
     public void evictAnalyticsCache() {
         log.debug("Analytics caches evicted");

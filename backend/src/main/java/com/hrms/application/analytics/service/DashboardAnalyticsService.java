@@ -169,8 +169,8 @@ public class DashboardAnalyticsService {
         Long late = Math.max(0, present - onTime);
 
         Double attendancePercentage = totalEmployees > 0
-            ? (present.doubleValue() / totalEmployees.doubleValue()) * 100
-            : 0.0;
+                ? (present.doubleValue() / totalEmployees.doubleValue()) * 100
+                : 0.0;
 
         // Get last 7 days trend
         List<TrendData> trend = new ArrayList<>();
@@ -184,8 +184,8 @@ public class DashboardAnalyticsService {
                 dayPresent = attendanceRepository.countByTenantIdAndDateAndEmployeeIdIn(tenantId, date, employeeIds);
             } else {
                 dayPresent = context.getEmployeeId() != null
-                    ? attendanceRepository.countByTenantIdAndDateAndEmployeeId(tenantId, date, context.getEmployeeId())
-                    : 0L;
+                        ? attendanceRepository.countByTenantIdAndDateAndEmployeeId(tenantId, date, context.getEmployeeId())
+                        : 0L;
             }
 
             trend.add(TrendData.builder()
@@ -235,8 +235,8 @@ public class DashboardAnalyticsService {
         // Calculate utilization percentage (approved leaves / total available)
         Long totalRequested = approved + pending + rejected;
         Double utilizationPercentage = totalRequested > 0
-            ? (approved.doubleValue() / totalRequested.doubleValue()) * 100
-            : 0.0;
+                ? (approved.doubleValue() / totalRequested.doubleValue()) * 100
+                : 0.0;
 
         // Get last 6 months trend (for admin and manager only)
         List<TrendData> trend = new ArrayList<>();
@@ -286,11 +286,11 @@ public class DashboardAnalyticsService {
         // Get current month payroll stats
         Long totalEmployees = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
         Long processedPayslips = payslipRepository.countByTenantIdAndYearAndMonth(
-            tenantId, currentMonth.getYear(), currentMonth.getMonthValue());
+                tenantId, currentMonth.getYear(), currentMonth.getMonthValue());
         Long pendingPayslips = totalEmployees - processedPayslips;
 
         BigDecimal monthlyTotal = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
-            tenantId, currentMonth.getYear(), currentMonth.getMonthValue());
+                tenantId, currentMonth.getYear(), currentMonth.getMonthValue());
 
         if (monthlyTotal == null) {
             monthlyTotal = BigDecimal.ZERO;
@@ -308,7 +308,7 @@ public class DashboardAnalyticsService {
         for (int i = 5; i >= 0; i--) {
             YearMonth month = YearMonth.now().minusMonths(i);
             BigDecimal monthTotal = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
-                tenantId, month.getYear(), month.getMonthValue());
+                    tenantId, month.getYear(), month.getMonthValue());
 
             if (monthTotal == null) {
                 monthTotal = BigDecimal.ZERO;
@@ -322,8 +322,8 @@ public class DashboardAnalyticsService {
 
         // Calculate average salary
         BigDecimal averageSalary = totalEmployees > 0 && monthlyTotal.compareTo(BigDecimal.ZERO) > 0
-            ? monthlyTotal.divide(BigDecimal.valueOf(totalEmployees), 2, RoundingMode.HALF_UP)
-            : BigDecimal.ZERO;
+                ? monthlyTotal.divide(BigDecimal.valueOf(totalEmployees), 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
 
         return PayrollAnalytics.builder()
                 .currentMonth(currentMonthData)
@@ -349,7 +349,7 @@ public class DashboardAnalyticsService {
             total = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
             newJoinees = employeeRepository.countByTenantIdAndJoiningDateBetween(tenantId, monthStart, today);
             exits = employeeRepository.countByTenantIdAndStatusAndExitDateBetween(
-                tenantId, Employee.EmployeeStatus.TERMINATED, monthStart, today);
+                    tenantId, Employee.EmployeeStatus.TERMINATED, monthStart, today);
 
             // Get last 6 months headcount trend
             for (int i = 5; i >= 0; i--) {
@@ -357,7 +357,7 @@ public class DashboardAnalyticsService {
                 LocalDate endOfMonth = month.atEndOfMonth();
 
                 Long monthCount = employeeRepository.countByTenantIdAndStatusAndJoiningDateBefore(
-                    tenantId, Employee.EmployeeStatus.ACTIVE, endOfMonth);
+                        tenantId, Employee.EmployeeStatus.ACTIVE, endOfMonth);
 
                 trend.add(TrendData.builder()
                         .date(month.format(DateTimeFormatter.ofPattern("MMM yy")))
@@ -378,7 +378,7 @@ public class DashboardAnalyticsService {
             // Manager sees team headcount
             total = employeeRepository.countByTenantIdAndIdIn(tenantId, employeeIds);
             newJoinees = employeeRepository.countByTenantIdAndIdInAndJoiningDateBetween(
-                tenantId, employeeIds, monthStart, today);
+                    tenantId, employeeIds, monthStart, today);
 
             // Get department distribution for team
             List<Object[]> deptCounts = employeeRepository.findDepartmentDistributionForEmployees(tenantId, employeeIds);
@@ -399,8 +399,8 @@ public class DashboardAnalyticsService {
         if (context.isAdmin() && total > 0) {
             Long previousMonthTotal = total - newJoinees + exits;
             growthPercentage = previousMonthTotal > 0
-                ? ((double)(total - previousMonthTotal) / (double)previousMonthTotal) * 100
-                : 0.0;
+                    ? ((double) (total - previousMonthTotal) / (double) previousMonthTotal) * 100
+                    : 0.0;
         }
 
         return HeadcountAnalytics.builder()
@@ -444,8 +444,8 @@ public class DashboardAnalyticsService {
                         String departmentName = (String) row[5];
 
                         String fullName = firstName +
-                            (middleName != null && !middleName.isEmpty() ? " " + middleName : "") +
-                            (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
+                                (middleName != null && !middleName.isEmpty() ? " " + middleName : "") +
+                                (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
 
                         return BirthdayEvent.builder()
                                 .employeeName(fullName)
@@ -475,8 +475,8 @@ public class DashboardAnalyticsService {
                         String departmentName = (String) row[5];
 
                         String fullName = firstName +
-                            (middleName != null && !middleName.isEmpty() ? " " + middleName : "") +
-                            (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
+                                (middleName != null && !middleName.isEmpty() ? " " + middleName : "") +
+                                (lastName != null && !lastName.isEmpty() ? " " + lastName : "");
 
                         int years = today.getYear() - joiningDate.getYear();
                         return AnniversaryEvent.builder()

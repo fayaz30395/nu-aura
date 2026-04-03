@@ -46,7 +46,7 @@ public class LeaveTypeService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(id, tenantId)
-            .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
 
         leaveType.setLeaveName(leaveTypeData.getLeaveName());
         leaveType.setDescription(leaveTypeData.getDescription());
@@ -73,7 +73,7 @@ public class LeaveTypeService {
     public LeaveType getLeaveTypeById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveTypeRepository.findByIdAndTenantId(id, tenantId)
-            .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Leave type not found"));
     }
 
     @Transactional(readOnly = true)

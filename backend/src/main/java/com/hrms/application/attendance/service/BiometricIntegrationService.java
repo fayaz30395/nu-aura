@@ -36,6 +36,10 @@ import java.util.UUID;
 @Slf4j
 public class BiometricIntegrationService {
 
+    /**
+     * Deduplication window in minutes — punches from same employee within this window are ignored
+     */
+    private static final int DEDUP_WINDOW_MINUTES = 5;
     private final BiometricDeviceRepository deviceRepository;
     private final BiometricPunchLogRepository punchLogRepository;
     private final BiometricApiKeyRepository apiKeyRepository;
@@ -44,9 +48,6 @@ public class BiometricIntegrationService {
     private final AttendanceRecordService attendanceRecordService;
     private final EventPublisher eventPublisher;
     private final List<BiometricAdapter> adapters;
-
-    /** Deduplication window in minutes — punches from same employee within this window are ignored */
-    private static final int DEDUP_WINDOW_MINUTES = 5;
 
     // ─── Device Management ──────────────────────────────────────────────────
 
@@ -92,7 +93,7 @@ public class BiometricIntegrationService {
 
         // If serial number changed, check uniqueness
         if (!device.getSerialNumber().equals(request.getSerialNumber()) &&
-            deviceRepository.existsBySerialNumberAndTenantId(request.getSerialNumber(), tenantId)) {
+                deviceRepository.existsBySerialNumberAndTenantId(request.getSerialNumber(), tenantId)) {
             throw new IllegalArgumentException(
                     "Device with serial number '" + request.getSerialNumber() + "' already exists");
         }
@@ -144,7 +145,7 @@ public class BiometricIntegrationService {
      * Called from the webhook endpoint — authenticates via API key, not JWT.
      *
      * @param tenantId resolved from the API key
-     * @param request the punch data
+     * @param request  the punch data
      * @return the created punch log
      */
     @Transactional

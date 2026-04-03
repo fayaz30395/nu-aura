@@ -39,8 +39,8 @@ public class ApprovalEscalationService {
      * Resolve the escalation target user ID based on the escalation type.
      *
      * @param approverUserId The current approver's user ID
-     * @param config The escalation configuration
-     * @param tenantId The tenant ID (for context)
+     * @param config         The escalation configuration
+     * @param tenantId       The tenant ID (for context)
      * @return Optional containing the target user ID, empty if unresolvable
      */
     public Optional<UUID> resolveEscalationTarget(
@@ -60,7 +60,7 @@ public class ApprovalEscalationService {
      * Resolve escalation target to the approver's manager.
      *
      * @param approverUserId The current approver's user ID
-     * @param tenantId The tenant ID
+     * @param tenantId       The tenant ID
      * @return Optional containing the manager's user ID
      */
     private Optional<UUID> resolveSkipLevelManager(UUID approverUserId, UUID tenantId) {
@@ -105,12 +105,12 @@ public class ApprovalEscalationService {
      * Resolve escalation target to the requester's department head.
      * This requires access to the workflow execution to find the requester,
      * then their department, then the department manager.
-     *
+     * <p>
      * Currently treats approverUserId as a placeholder; in practice,
      * this should be called with the requester's user ID from the workflow execution.
      *
      * @param requesterUserId The requester's user ID (approver field is repurposed)
-     * @param tenantId The tenant ID
+     * @param tenantId        The tenant ID
      * @return Optional containing the department head's user ID
      */
     private Optional<UUID> resolveRequesterDepartmentHead(UUID requesterUserId, UUID tenantId) {
@@ -145,7 +145,7 @@ public class ApprovalEscalationService {
      * Resolve escalation target to any user with a specific role.
      *
      * @param fallbackRoleId The role ID to search for
-     * @param tenantId The tenant ID
+     * @param tenantId       The tenant ID
      * @return Optional containing the first user with that role
      */
     private Optional<UUID> resolveSpecificRole(UUID fallbackRoleId, UUID tenantId) {
@@ -214,9 +214,9 @@ public class ApprovalEscalationService {
      *   <li>Sends a Kafka notification event if configured</li>
      * </ol>
      *
-     * @param step The step execution to escalate
+     * @param step         The step execution to escalate
      * @param targetUserId The user ID to escalate to
-     * @param config The escalation configuration
+     * @param config       The escalation configuration
      */
     @Transactional
     public void escalateStep(

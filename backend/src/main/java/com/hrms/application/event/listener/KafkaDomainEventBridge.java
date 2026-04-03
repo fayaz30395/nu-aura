@@ -270,7 +270,7 @@ public class KafkaDomainEventBridge {
             Map<String, Object> metadata = (Map<String, Object>) event.getEventPayload();
 
             UUID departmentId = extractUuid(metadata, "departmentId");
-            UUID managerId    = extractUuid(metadata, "managerId");
+            UUID managerId = extractUuid(metadata, "managerId");
 
             eventPublisher.publishEmployeeLifecycleEvent(
                     employeeId,
@@ -314,7 +314,7 @@ public class KafkaDomainEventBridge {
             case "LEAVE_REQUEST" -> buildLeaveMetadata(entityId, tenantId);
             case "EXPENSE_CLAIM" -> buildExpenseMetadata(entityId, tenantId);
             case "ASSET_REQUEST" -> buildAssetMetadata(entityId);
-            case "WIKI_PAGE"     -> buildWikiMetadata(entityId, tenantId);
+            case "WIKI_PAGE" -> buildWikiMetadata(entityId, tenantId);
             default -> {
                 log.warn("KafkaDomainEventBridge: Unknown approval module '{}', publishing with empty metadata", module);
                 yield new HashMap<>();
@@ -330,12 +330,12 @@ public class KafkaDomainEventBridge {
         }
         Map<String, Object> m = new HashMap<>();
         m.put("leaveRequestId", lr.getId().toString());
-        m.put("employeeId",     lr.getEmployeeId().toString());
-        m.put("leaveTypeId",    lr.getLeaveTypeId().toString());
-        m.put("days",           lr.getTotalDays() != null ? lr.getTotalDays().intValue() : 0);
-        m.put("leaveType",      lr.getLeaveTypeId().toString()); // consumer uses this as a label fallback
-        m.put("startDate",      lr.getStartDate() != null ? lr.getStartDate().toString() : null);
-        m.put("endDate",        lr.getEndDate()   != null ? lr.getEndDate().toString()   : null);
+        m.put("employeeId", lr.getEmployeeId().toString());
+        m.put("leaveTypeId", lr.getLeaveTypeId().toString());
+        m.put("days", lr.getTotalDays() != null ? lr.getTotalDays().intValue() : 0);
+        m.put("leaveType", lr.getLeaveTypeId().toString()); // consumer uses this as a label fallback
+        m.put("startDate", lr.getStartDate() != null ? lr.getStartDate().toString() : null);
+        m.put("endDate", lr.getEndDate() != null ? lr.getEndDate().toString() : null);
         return m;
     }
 
@@ -347,9 +347,9 @@ public class KafkaDomainEventBridge {
         }
         Map<String, Object> m = new HashMap<>();
         m.put("expenseClaimId", claim.getId().toString());
-        m.put("employeeId",     claim.getEmployeeId().toString());
-        m.put("amount",         claim.getAmount() != null ? claim.getAmount().doubleValue() : 0.0);
-        m.put("category",       claim.getCategory() != null ? claim.getCategory().name() : null);
+        m.put("employeeId", claim.getEmployeeId().toString());
+        m.put("amount", claim.getAmount() != null ? claim.getAmount().doubleValue() : 0.0);
+        m.put("category", claim.getCategory() != null ? claim.getCategory().name() : null);
         return m;
     }
 
@@ -374,7 +374,7 @@ public class KafkaDomainEventBridge {
             return null;
         }
         Map<String, Object> m = new HashMap<>();
-        m.put("pageId",    page.getId().toString());
+        m.put("pageId", page.getId().toString());
         m.put("pageTitle", page.getTitle());
         return m;
     }
@@ -385,12 +385,12 @@ public class KafkaDomainEventBridge {
      */
     private String normaliseApprovalType(String module) {
         return switch (module.toUpperCase()) {
-            case "LEAVE_REQUEST"    -> "LEAVE";
-            case "EXPENSE_CLAIM"    -> "EXPENSE";
-            case "ASSET_REQUEST"    -> "ASSET";
-            case "WIKI_PAGE"        -> "WIKI_PAGE";
-            case "TRAVEL_REQUEST"   -> "TRAVEL";
-            case "RECRUITMENT_OFFER"-> "RECRUITMENT";
+            case "LEAVE_REQUEST" -> "LEAVE";
+            case "EXPENSE_CLAIM" -> "EXPENSE";
+            case "ASSET_REQUEST" -> "ASSET";
+            case "WIKI_PAGE" -> "WIKI_PAGE";
+            case "TRAVEL_REQUEST" -> "TRAVEL";
+            case "RECRUITMENT_OFFER" -> "RECRUITMENT";
             default -> module; // pass through unknown types as-is
         };
     }

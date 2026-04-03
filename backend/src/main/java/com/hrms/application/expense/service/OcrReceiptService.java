@@ -36,31 +36,19 @@ import java.util.regex.Pattern;
 @Slf4j
 public class OcrReceiptService {
 
-    private final FileStorageService fileStorageService;
-
-    @Value("${app.ocr.tessdata-path:/usr/share/tesseract-ocr/5/tessdata}")
-    private String tessdataPath;
-
-    @Value("${app.ocr.language:eng}")
-    private String ocrLanguage;
-
     private static final String FILE_CATEGORY = "receipts";
-
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg",
             "image/png",
             "application/pdf"
     );
-
     private static final long MAX_FILE_SIZE = 10L * 1024 * 1024; // 10MB
-
     // INR amount patterns: ₹1,234.56, Rs. 1234.56, Rs 1,234, INR 1234.56, plain 1,234.56
     private static final Pattern AMOUNT_PATTERN = Pattern.compile(
             "(?:₹|Rs\\.?|INR)\\s*([\\d,]+(?:\\.\\d{1,2})?)|" +
-            "(?:(?:Total|Grand\\s*Total|Amount|Net\\s*Amount|Bill\\s*Amount|Amt)\\s*[:=]?\\s*(?:₹|Rs\\.?|INR)?\\s*([\\d,]+(?:\\.\\d{1,2})?))",
+                    "(?:(?:Total|Grand\\s*Total|Amount|Net\\s*Amount|Bill\\s*Amount|Amt)\\s*[:=]?\\s*(?:₹|Rs\\.?|INR)?\\s*([\\d,]+(?:\\.\\d{1,2})?))",
             Pattern.CASE_INSENSITIVE
     );
-
     // Date patterns commonly found on Indian receipts
     private static final List<DateTimeFormatter> DATE_FORMATTERS = List.of(
             DateTimeFormatter.ofPattern("dd/MM/yyyy"),
@@ -71,14 +59,18 @@ public class OcrReceiptService {
             DateTimeFormatter.ofPattern("dd MMMM yyyy"),
             DateTimeFormatter.ofPattern("MM/dd/yyyy")
     );
-
     private static final Pattern DATE_PATTERN = Pattern.compile(
             "(?:Date\\s*[:=]?\\s*)?" +
-            "(\\d{1,2}[/\\-.]\\d{1,2}[/\\-.]\\d{2,4}|" +
-            "\\d{4}-\\d{2}-\\d{2}|" +
-            "\\d{1,2}\\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{4})",
+                    "(\\d{1,2}[/\\-.]\\d{1,2}[/\\-.]\\d{2,4}|" +
+                    "\\d{4}-\\d{2}-\\d{2}|" +
+                    "\\d{1,2}\\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{4})",
             Pattern.CASE_INSENSITIVE
     );
+    private final FileStorageService fileStorageService;
+    @Value("${app.ocr.tessdata-path:/usr/share/tesseract-ocr/5/tessdata}")
+    private String tessdataPath;
+    @Value("${app.ocr.language:eng}")
+    private String ocrLanguage;
 
     /**
      * Process an uploaded receipt image through OCR and return structured data.

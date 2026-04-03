@@ -45,6 +45,10 @@ import java.util.Collections;
 @Service
 public class EmployeeService {
 
+    /**
+     * Maximum depth for recursive org-chart traversal (prevents OOM on circular/deep hierarchies).
+     */
+    private static final int MAX_HIERARCHY_DEPTH = 10;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
@@ -71,9 +75,9 @@ public class EmployeeService {
 
     @Transactional
     @Caching(evict = {
-        @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
-        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+            @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
     })
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -166,9 +170,9 @@ public class EmployeeService {
 
     @Transactional
     @Caching(evict = {
-        @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
-        @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
-        @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+            @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+            @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
     })
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -371,7 +375,7 @@ public class EmployeeService {
 
         // Check for promotion (level or designation change)
         if ((changedFields.contains("level") || changedFields.contains("designation")) &&
-            (previousLevel != employee.getLevel() || !Objects.equals(previousDesignation, employee.getDesignation()))) {
+                (previousLevel != employee.getLevel() || !Objects.equals(previousDesignation, employee.getDesignation()))) {
             eventPublisher.publish(EmployeePromotedEvent.of(this, employee,
                     previousDesignation, employee.getDesignation(),
                     previousLevel, employee.getLevel()));
@@ -541,9 +545,6 @@ public class EmployeeService {
         return response;
     }
 
-    /** Maximum depth for recursive org-chart traversal (prevents OOM on circular/deep hierarchies). */
-    private static final int MAX_HIERARCHY_DEPTH = 10;
-
     private List<EmployeeResponse> getSubordinatesRecursive(UUID managerId, UUID tenantId) {
         return getSubordinatesRecursive(managerId, tenantId, 0);
     }
@@ -608,7 +609,7 @@ public class EmployeeService {
      * Used by controllers that need to verify employee exists and belongs to current tenant.
      *
      * @param employeeId the employee ID
-     * @param tenantId the tenant ID
+     * @param tenantId   the tenant ID
      * @return the employee
      * @throws ResourceNotFoundException if employee not found or doesn't belong to tenant
      */
@@ -623,7 +624,7 @@ public class EmployeeService {
      * Useful when the caller wants to handle "not found" cases gracefully.
      *
      * @param employeeId the employee ID
-     * @param tenantId the tenant ID
+     * @param tenantId   the tenant ID
      * @return Optional containing the employee if found
      */
     @Transactional(readOnly = true)

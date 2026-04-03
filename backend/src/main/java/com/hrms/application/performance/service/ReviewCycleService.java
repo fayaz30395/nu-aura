@@ -196,11 +196,11 @@ public class ReviewCycleService {
             // Get all active employees in tenant
             employees = employeeRepository.findByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
         } else if (request.getScopeType() == ActivateCycleRequest.ScopeType.DEPARTMENT
-                   && request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
+                && request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             // Get employees by department
             employees = employeeRepository.findByTenantIdAndDepartmentIdIn(tenantId, request.getDepartmentIds());
         } else if (request.getScopeType() == ActivateCycleRequest.ScopeType.LOCATION
-                   && request.getLocationIds() != null && !request.getLocationIds().isEmpty()) {
+                && request.getLocationIds() != null && !request.getLocationIds().isEmpty()) {
             // Get employees by location
             employees = employeeRepository.findByTenantIdAndOfficeLocationIdIn(tenantId, request.getLocationIds());
         } else {
@@ -217,8 +217,8 @@ public class ReviewCycleService {
      * Create a performance review for an employee.
      */
     private PerformanceReview createReviewForEmployee(Employee employee, ReviewCycle cycle,
-                                                       PerformanceReview.ReviewType reviewType,
-                                                       UUID reviewerId, UUID tenantId) {
+                                                      PerformanceReview.ReviewType reviewType,
+                                                      UUID reviewerId, UUID tenantId) {
         PerformanceReview review = PerformanceReview.builder()
                 .employeeId(employee.getId())
                 .reviewerId(reviewerId)
@@ -335,7 +335,7 @@ public class ReviewCycleService {
                 .findByTenantIdAndReviewCycleId(tenantId, cycleId)
                 .stream()
                 .filter(r -> r.getReviewType() == PerformanceReview.ReviewType.SELF
-                          || r.getReviewType() == PerformanceReview.ReviewType.MANAGER)
+                        || r.getReviewType() == PerformanceReview.ReviewType.MANAGER)
                 .collect(Collectors.toList());
 
         boolean editable = cycle.getStatus() == ReviewCycle.CycleStatus.CALIBRATION;

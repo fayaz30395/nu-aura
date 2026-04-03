@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 import java.util.Map;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -89,21 +90,21 @@ public class EmailTemplateService {
 
     private String generateLeaveApprovalEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Great News! Your Leave Request has been Approved</h2>
-                <p>Hi %s,</p>
-                <p>Your leave request has been approved by your manager.</p>
-                <div class="info-box">
-                    <strong>Leave Details:</strong><br>
-                    📅 Leave Type: %s<br>
-                    📅 From: %s<br>
-                    📅 To: %s<br>
-                    📅 Duration: %s days<br>
-                    💬 Reason: %s
-                </div>
-                <p>Your leave balance has been updated accordingly.</p>
-                <a href="%s" class="button">View Leave Details</a>
-                <p>Have a great time!</p>
-                """,
+                        <h2>Great News! Your Leave Request has been Approved</h2>
+                        <p>Hi %s,</p>
+                        <p>Your leave request has been approved by your manager.</p>
+                        <div class="info-box">
+                            <strong>Leave Details:</strong><br>
+                            📅 Leave Type: %s<br>
+                            📅 From: %s<br>
+                            📅 To: %s<br>
+                            📅 Duration: %s days<br>
+                            💬 Reason: %s
+                        </div>
+                        <p>Your leave balance has been updated accordingly.</p>
+                        <a href="%s" class="button">View Leave Details</a>
+                        <p>Have a great time!</p>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("leaveType", ""),
                 vars.getOrDefault("startDate", ""),
@@ -115,20 +116,20 @@ public class EmailTemplateService {
 
     private String generateLeaveRejectionEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Leave Request Status Update</h2>
-                <p>Hi %s,</p>
-                <p>We regret to inform you that your leave request has been declined.</p>
-                <div class="info-box">
-                    <strong>Leave Details:</strong><br>
-                    📅 Leave Type: %s<br>
-                    📅 From: %s<br>
-                    📅 To: %s<br>
-                    💬 Your Reason: %s<br>
-                    ❌ Rejection Reason: %s
-                </div>
-                <p>Please contact your manager for more information or to discuss alternative dates.</p>
-                <a href="%s" class="button">View Leave Details</a>
-                """,
+                        <h2>Leave Request Status Update</h2>
+                        <p>Hi %s,</p>
+                        <p>We regret to inform you that your leave request has been declined.</p>
+                        <div class="info-box">
+                            <strong>Leave Details:</strong><br>
+                            📅 Leave Type: %s<br>
+                            📅 From: %s<br>
+                            📅 To: %s<br>
+                            💬 Your Reason: %s<br>
+                            ❌ Rejection Reason: %s
+                        </div>
+                        <p>Please contact your manager for more information or to discuss alternative dates.</p>
+                        <a href="%s" class="button">View Leave Details</a>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("leaveType", ""),
                 vars.getOrDefault("startDate", ""),
@@ -169,18 +170,18 @@ public class EmailTemplateService {
 
     private String generatePayslipReadyEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Your Payslip is Ready for %s</h2>
-                <p>Hi %s,</p>
-                <p>Your payslip for the month of %s has been generated and is now available for download.</p>
-                <div class="info-box">
-                    <strong>Payroll Summary:</strong><br>
-                    💰 Net Salary: %s<br>
-                    📅 Payment Date: %s<br>
-                    📄 Month/Year: %s
-                </div>
-                <a href="%s" class="button">Download Payslip</a>
-                <p>If you have any questions, please contact the HR department.</p>
-                """,
+                        <h2>Your Payslip is Ready for %s</h2>
+                        <p>Hi %s,</p>
+                        <p>Your payslip for the month of %s has been generated and is now available for download.</p>
+                        <div class="info-box">
+                            <strong>Payroll Summary:</strong><br>
+                            💰 Net Salary: %s<br>
+                            📅 Payment Date: %s<br>
+                            📄 Month/Year: %s
+                        </div>
+                        <a href="%s" class="button">Download Payslip</a>
+                        <p>If you have any questions, please contact the HR department.</p>
+                        """,
                 vars.getOrDefault("month", ""),
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("month", ""),
@@ -192,11 +193,11 @@ public class EmailTemplateService {
 
     private String generateAnnouncementEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>%s</h2>
-                <p>Hi %s,</p>
-                %s
-                <p>Best regards,<br>%s</p>
-                """,
+                        <h2>%s</h2>
+                        <p>Hi %s,</p>
+                        %s
+                        <p>Best regards,<br>%s</p>
+                        """,
                 vars.getOrDefault("title", "New Announcement"),
                 vars.getOrDefault("employeeName", "Team"),
                 vars.getOrDefault("message", ""),
@@ -205,34 +206,34 @@ public class EmailTemplateService {
 
     private String generatePasswordResetEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Password Reset Request</h2>
-                <p>Hi %s,</p>
-                <p>We received a request to reset your password. Click the button below to create a new password:</p>
-                <a href="%s" class="button">Reset Password</a>
-                <p><strong>Note:</strong> This link will expire in 24 hours.</p>
-                <p>If you didn't request this, please ignore this email or contact support if you have concerns.</p>
-                """,
+                        <h2>Password Reset Request</h2>
+                        <p>Hi %s,</p>
+                        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+                        <a href="%s" class="button">Reset Password</a>
+                        <p><strong>Note:</strong> This link will expire in 24 hours.</p>
+                        <p>If you didn't request this, please ignore this email or contact support if you have concerns.</p>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("resetUrl", "#"));
     }
 
     private String generateWelcomeEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Welcome to the Team! 👋</h2>
-                <p>Hi %s,</p>
-                <p>We're excited to have you join our organization!</p>
-                <div class="info-box">
-                    <strong>Your Details:</strong><br>
-                    👤 Name: %s<br>
-                    📧 Email: %s<br>
-                    🏢 Department: %s<br>
-                    📅 Joining Date: %s
-                </div>
-                <p>You can access the HRMS portal using the link below:</p>
-                <a href="%s" class="button">Access HRMS Portal</a>
-                <p>If you have any questions, feel free to reach out to the HR team.</p>
-                <p>Welcome aboard!</p>
-                """,
+                        <h2>Welcome to the Team! 👋</h2>
+                        <p>Hi %s,</p>
+                        <p>We're excited to have you join our organization!</p>
+                        <div class="info-box">
+                            <strong>Your Details:</strong><br>
+                            👤 Name: %s<br>
+                            📧 Email: %s<br>
+                            🏢 Department: %s<br>
+                            📅 Joining Date: %s
+                        </div>
+                        <p>You can access the HRMS portal using the link below:</p>
+                        <a href="%s" class="button">Access HRMS Portal</a>
+                        <p>If you have any questions, feel free to reach out to the HR team.</p>
+                        <p>Welcome aboard!</p>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("email", ""),
@@ -243,19 +244,19 @@ public class EmailTemplateService {
 
     private String generateExpenseApprovalEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Expense Claim Approved ✅</h2>
-                <p>Hi %s,</p>
-                <p>Your expense claim has been approved!</p>
-                <div class="info-box">
-                    <strong>Expense Details:</strong><br>
-                    💰 Amount: %s<br>
-                    📅 Date: %s<br>
-                    📝 Category: %s<br>
-                    💬 Description: %s
-                </div>
-                <p>The amount will be credited to your account in the next payroll cycle.</p>
-                <a href="%s" class="button">View Expense Details</a>
-                """,
+                        <h2>Expense Claim Approved ✅</h2>
+                        <p>Hi %s,</p>
+                        <p>Your expense claim has been approved!</p>
+                        <div class="info-box">
+                            <strong>Expense Details:</strong><br>
+                            💰 Amount: %s<br>
+                            📅 Date: %s<br>
+                            📝 Category: %s<br>
+                            💬 Description: %s
+                        </div>
+                        <p>The amount will be credited to your account in the next payroll cycle.</p>
+                        <a href="%s" class="button">View Expense Details</a>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("amount", ""),
                 vars.getOrDefault("date", ""),
@@ -266,19 +267,19 @@ public class EmailTemplateService {
 
     private String generateExpenseRejectionEmail(Map<String, String> vars) {
         return String.format("""
-                <h2>Expense Claim Status Update</h2>
-                <p>Hi %s,</p>
-                <p>Your expense claim has been declined.</p>
-                <div class="info-box">
-                    <strong>Expense Details:</strong><br>
-                    💰 Amount: %s<br>
-                    📅 Date: %s<br>
-                    📝 Category: %s<br>
-                    ❌ Rejection Reason: %s
-                </div>
-                <p>Please contact your manager for more information or to resubmit with corrections.</p>
-                <a href="%s" class="button">View Expense Details</a>
-                """,
+                        <h2>Expense Claim Status Update</h2>
+                        <p>Hi %s,</p>
+                        <p>Your expense claim has been declined.</p>
+                        <div class="info-box">
+                            <strong>Expense Details:</strong><br>
+                            💰 Amount: %s<br>
+                            📅 Date: %s<br>
+                            📝 Category: %s<br>
+                            ❌ Rejection Reason: %s
+                        </div>
+                        <p>Please contact your manager for more information or to resubmit with corrections.</p>
+                        <a href="%s" class="button">View Expense Details</a>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("amount", ""),
                 vars.getOrDefault("date", ""),
@@ -289,10 +290,10 @@ public class EmailTemplateService {
 
     private String generateGenericEmail(Map<String, String> vars) {
         return String.format("""
-                <p>Hi %s,</p>
-                %s
-                <p>Best regards,<br>HRMS Team</p>
-                """,
+                        <p>Hi %s,</p>
+                        %s
+                        <p>Best regards,<br>HRMS Team</p>
+                        """,
                 vars.getOrDefault("employeeName", ""),
                 vars.getOrDefault("message", "You have a new notification."));
     }

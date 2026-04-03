@@ -41,15 +41,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CompensationService {
 
+    private static final List<RevisionStatus> PENDING_STATUSES = Arrays.asList(
+            RevisionStatus.DRAFT, RevisionStatus.PENDING_REVIEW,
+            RevisionStatus.REVIEWED, RevisionStatus.PENDING_APPROVAL);
     private final SalaryRevisionRepository revisionRepository;
     private final CompensationReviewCycleRepository cycleRepository;
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final AuditLogService auditLogService;
-
-    private static final List<RevisionStatus> PENDING_STATUSES = Arrays.asList(
-            RevisionStatus.DRAFT, RevisionStatus.PENDING_REVIEW,
-            RevisionStatus.REVIEWED, RevisionStatus.PENDING_APPROVAL);
 
     // ==================== Review Cycle Management ====================
 
@@ -290,8 +289,8 @@ public class CompensationService {
                 oldStatus.toString(),
                 RevisionStatus.APPROVED.toString(),
                 "Salary revision approved for employee " + revision.getEmployeeId() +
-                " - New Salary: " + revision.getNewSalary() +
-                (revision.getNewDesignation() != null ? ", New Designation: " + revision.getNewDesignation() : "")
+                        " - New Salary: " + revision.getNewSalary() +
+                        (revision.getNewDesignation() != null ? ", New Designation: " + revision.getNewDesignation() : "")
         );
 
         // Update cycle budget utilization if linked to a cycle
@@ -329,7 +328,7 @@ public class CompensationService {
                 oldStatus.toString(),
                 RevisionStatus.REJECTED.toString(),
                 "Salary revision rejected for employee " + revision.getEmployeeId() +
-                " - Reason: " + (reason != null ? reason : "Not specified")
+                        " - Reason: " + (reason != null ? reason : "Not specified")
         );
 
         log.info("Rejected salary revision {} - Reason: {}", revisionId, reason);
@@ -362,43 +361,43 @@ public class CompensationService {
             final UUID revId = revisionId;
 
             employeeRepository.findByIdAndTenantId(employeeId, tenantId)
-                .ifPresent(employee -> {
-                    String oldDesignation = employee.getDesignation();
-                    Employee.EmployeeLevel oldLevel = employee.getLevel();
+                    .ifPresent(employee -> {
+                        String oldDesignation = employee.getDesignation();
+                        Employee.EmployeeLevel oldLevel = employee.getLevel();
 
-                    if (newDesignation != null) {
-                        employee.setDesignation(newDesignation);
-                        // Audit log: designation change
-                        auditLogService.logAction(
-                                "EMPLOYEE",
-                                employeeId,
-                                AuditAction.UPDATE,
-                                oldDesignation != null ? oldDesignation : "N/A",
-                                newDesignation,
-                                "Employee designation changed via salary revision " + revId
-                        );
-                    }
-                    if (newLevel != null) {
-                        try {
-                            Employee.EmployeeLevel parsedLevel = Employee.EmployeeLevel.valueOf(newLevel);
-                            employee.setLevel(parsedLevel);
-                            // Audit log: level change
+                        if (newDesignation != null) {
+                            employee.setDesignation(newDesignation);
+                            // Audit log: designation change
                             auditLogService.logAction(
                                     "EMPLOYEE",
                                     employeeId,
                                     AuditAction.UPDATE,
-                                    oldLevel != null ? oldLevel.toString() : "N/A",
-                                    newLevel,
-                                    "Employee level changed via salary revision " + revId
+                                    oldDesignation != null ? oldDesignation : "N/A",
+                                    newDesignation,
+                                    "Employee designation changed via salary revision " + revId
                             );
-                        } catch (IllegalArgumentException e) {
-                            log.warn("Could not parse employee level: {}", newLevel);
                         }
-                    }
-                    employeeRepository.save(employee);
-                    log.info("Updated employee {} designation/level from revision {}",
-                        employeeId, revId);
-                });
+                        if (newLevel != null) {
+                            try {
+                                Employee.EmployeeLevel parsedLevel = Employee.EmployeeLevel.valueOf(newLevel);
+                                employee.setLevel(parsedLevel);
+                                // Audit log: level change
+                                auditLogService.logAction(
+                                        "EMPLOYEE",
+                                        employeeId,
+                                        AuditAction.UPDATE,
+                                        oldLevel != null ? oldLevel.toString() : "N/A",
+                                        newLevel,
+                                        "Employee level changed via salary revision " + revId
+                                );
+                            } catch (IllegalArgumentException e) {
+                                log.warn("Could not parse employee level: {}", newLevel);
+                            }
+                        }
+                        employeeRepository.save(employee);
+                        log.info("Updated employee {} designation/level from revision {}",
+                                employeeId, revId);
+                    });
         }
 
         // Audit log: salary revision applied
@@ -409,9 +408,9 @@ public class CompensationService {
                 RevisionStatus.APPROVED.toString(),
                 RevisionStatus.APPLIED.toString(),
                 "Salary revision applied for employee " + revision.getEmployeeId() +
-                " - Previous Salary: " + revision.getPreviousSalary() +
-                ", New Salary: " + revision.getNewSalary() +
-                ", Increment: " + revision.getIncrementPercentage() + "%"
+                        " - Previous Salary: " + revision.getPreviousSalary() +
+                        ", New Salary: " + revision.getNewSalary() +
+                        ", Increment: " + revision.getIncrementPercentage() + "%"
         );
 
         // Mark for payroll processing - payroll system should pick this up
@@ -419,7 +418,7 @@ public class CompensationService {
         revision = revisionRepository.save(revision);
 
         log.info("Applied salary revision {} for employee {}. New salary: {} {}",
-            revisionId, revision.getEmployeeId(), revision.getNewSalary(), revision.getCurrency());
+                revisionId, revision.getEmployeeId(), revision.getNewSalary(), revision.getCurrency());
 
         return enrichRevisionResponse(revision);
     }

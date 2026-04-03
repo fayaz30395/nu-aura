@@ -1,6 +1,7 @@
 package com.hrms.application.lms.service;
 
 import java.time.temporal.ChronoUnit;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,7 @@ public class QuizAssessmentService {
 
         // Verify employee is enrolled in the course
         CourseEnrollment enrollment = enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(
-                quiz.getCourseId(), employeeId, tenantId)
+                        quiz.getCourseId(), employeeId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN,
                         "Employee is not enrolled in this course"));
 
@@ -155,8 +156,8 @@ public class QuizAssessmentService {
         updateEnrollmentQuizTracking(attempt.getEnrollmentId(), passed, score, attempt.getMaxScore(), tenantId);
 
         // Build response
-        double percentage = attempt.getMaxScore() > 0 
-                ? (score * 100.0 / attempt.getMaxScore()) 
+        double percentage = attempt.getMaxScore() > 0
+                ? (score * 100.0 / attempt.getMaxScore())
                 : 0;
 
         return QuizResultResponse.builder()
@@ -175,7 +176,7 @@ public class QuizAssessmentService {
      * Grade a single question
      */
     private int gradeQuestion(QuizQuestion question, Map<String, Object> answers,
-                             Map<String, Object> correctAnswers) {
+                              Map<String, Object> correctAnswers) {
         String questionId = question.getId().toString();
         Object studentAnswer = answers != null ? answers.get(questionId) : null;
         int points = question.getPoints() != null ? question.getPoints() : 1;
@@ -207,7 +208,7 @@ public class QuizAssessmentService {
      * Grade single choice question
      */
     private int gradeSingleChoice(QuizQuestion question, Object studentAnswer, int points,
-                                 Map<String, Object> correctAnswers) {
+                                  Map<String, Object> correctAnswers) {
         try {
             List<Map<String, Object>> options = objectMapper.readValue(question.getOptions(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
@@ -237,7 +238,7 @@ public class QuizAssessmentService {
      * Grade true/false question
      */
     private int gradeTrueFalse(QuizQuestion question, Object studentAnswer, int points,
-                              Map<String, Object> correctAnswers) {
+                               Map<String, Object> correctAnswers) {
         try {
             Boolean studentBool = Boolean.parseBoolean(studentAnswer != null ? studentAnswer.toString() : "false");
             Boolean correctBool = question.getCorrectAnswer();
@@ -256,7 +257,7 @@ public class QuizAssessmentService {
      * Grade multiple choice question
      */
     private int gradeMultipleChoice(QuizQuestion question, Object studentAnswer, int points,
-                                   Map<String, Object> correctAnswers) {
+                                    Map<String, Object> correctAnswers) {
         try {
             List<Map<String, Object>> options = objectMapper.readValue(question.getOptions(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
@@ -302,7 +303,7 @@ public class QuizAssessmentService {
      * Grade fill-in-blank question (partial credit support)
      */
     private int gradeFillBlank(QuizQuestion question, Object studentAnswer, int points,
-                              Map<String, Object> correctAnswers) {
+                               Map<String, Object> correctAnswers) {
         try {
             List<String> correctAnswersList = objectMapper.readValue(question.getCorrectAnswers(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
@@ -411,7 +412,7 @@ public class QuizAssessmentService {
      * Update enrollment quiz tracking after quiz submission
      */
     private void updateEnrollmentQuizTracking(UUID enrollmentId, boolean passed, int score,
-                                             int maxScore, UUID tenantId) {
+                                              int maxScore, UUID tenantId) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment not found"));
 
@@ -436,7 +437,8 @@ public class QuizAssessmentService {
         if (answers == null && attempt.getAnswers() != null) {
             try {
                 attemptAnswers = objectMapper.readValue(attempt.getAnswers(),
-                        new TypeReference<Map<String, Object>>() {});
+                        new TypeReference<Map<String, Object>>() {
+                        });
             } catch (JsonProcessingException e) {
                 log.warn("Failed to deserialize attempt answers", e);
                 attemptAnswers = new HashMap<>();

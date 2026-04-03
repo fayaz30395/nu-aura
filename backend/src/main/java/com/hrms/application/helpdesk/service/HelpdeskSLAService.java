@@ -109,8 +109,8 @@ public class HelpdeskSLAService {
 
     @Transactional
     public TicketEscalation escalateTicket(UUID tenantId, UUID ticketId, UUID escalatedFrom,
-                                            UUID escalatedTo, EscalationLevel level,
-                                            EscalationReason reason, boolean isAutoEscalated, String notes) {
+                                           UUID escalatedTo, EscalationLevel level,
+                                           EscalationReason reason, boolean isAutoEscalated, String notes) {
         TicketEscalation escalation = TicketEscalation.builder()
                 .id(UUID.randomUUID())
                 .tenantId(tenantId)

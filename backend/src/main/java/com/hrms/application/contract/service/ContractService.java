@@ -404,10 +404,13 @@ public class ContractService {
     // ===================== Helper Methods =====================
 
     private void createVersion(UUID contractId, Integer versionNumber, Map<String, Object> content, String changeNotes) {
+        // BUG-QA2-002 FIX: Default null content to empty map to prevent JSONB NOT NULL violation.
+        // contract_versions.content is NOT NULL in the DDL; passing null causes PSQLException.
+        Map<String, Object> safeContent = (content != null) ? content : java.util.Collections.emptyMap();
         ContractVersion version = ContractVersion.builder()
                 .contractId(contractId)
                 .versionNumber(versionNumber)
-                .content(content)
+                .content(safeContent)
                 .changeNotes(changeNotes)
                 .createdBy(SecurityContext.getCurrentUserId())
                 .build();

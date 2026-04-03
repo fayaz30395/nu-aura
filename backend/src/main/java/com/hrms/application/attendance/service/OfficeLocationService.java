@@ -145,5 +145,6 @@ public class OfficeLocationService {
             OfficeLocation nearestLocation,
             int distanceMeters,
             String message
-    ) {}
+    ) {
+    }
 }

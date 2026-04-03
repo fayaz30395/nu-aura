@@ -224,8 +224,8 @@ public class JobOpeningService {
     }
 
     private JobOpeningResponse mapToJobOpeningResponseBatch(JobOpening jobOpening,
-                                                             Map<UUID, String> managerNames,
-                                                             Map<UUID, Integer> candidateCounts) {
+                                                            Map<UUID, String> managerNames,
+                                                            Map<UUID, Integer> candidateCounts) {
         String hiringManagerName = jobOpening.getHiringManagerId() != null
                 ? managerNames.get(jobOpening.getHiringManagerId()) : null;
         int candidateCount = candidateCounts.getOrDefault(jobOpening.getId(), 0);

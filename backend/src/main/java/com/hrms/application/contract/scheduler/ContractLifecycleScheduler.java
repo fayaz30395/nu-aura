@@ -53,7 +53,9 @@ import java.util.UUID;
 public class ContractLifecycleScheduler {
 
     /** Default reminder windows in days before expiry */
-    /** Default reminder windows in days before expiry (ascending order) */
+    /**
+     * Default reminder windows in days before expiry (ascending order)
+     */
     private static final int[] DEFAULT_REMINDER_DAYS = {7, 15, 30};
 
     private final ContractRepository contractRepository;
@@ -250,7 +252,7 @@ public class ContractLifecycleScheduler {
 
                 if (!renewalReminderDate.isBefore(LocalDate.now())
                         && !reminderRepository.existsPendingReminder(
-                                contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
+                        contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
 
                     ContractReminder renewalReminder = ContractReminder.builder()
                             .tenantId(tenantId)
@@ -352,19 +354,11 @@ public class ContractLifecycleScheduler {
 
     // ========== Configuration Helpers ==========
 
-    /**
-     * Per-tenant lifecycle config, loaded once per tenant per scheduler run.
-     * Falls back to defaults if no config row exists.
-     */
-    private record TenantLifecycleConfig(boolean autoExpireEnabled, boolean autoRenewEnabled, int[] reminderDays) {
-        static final TenantLifecycleConfig DEFAULTS = new TenantLifecycleConfig(true, true, DEFAULT_REMINDER_DAYS);
-    }
-
     private TenantLifecycleConfig loadTenantConfig(UUID tenantId) {
         try {
             return jdbcTemplate.queryForObject(
                     "SELECT auto_expire_enabled, auto_renew_enabled, reminder_days_before_expiry " +
-                    "FROM contract_lifecycle_config WHERE tenant_id = ?",
+                            "FROM contract_lifecycle_config WHERE tenant_id = ?",
                     (rs, rowNum) -> {
                         boolean autoExpire = rs.getBoolean("auto_expire_enabled");
                         boolean autoRenew = rs.getBoolean("auto_renew_enabled");
@@ -402,8 +396,6 @@ public class ContractLifecycleScheduler {
         return loadTenantConfig(tenantId).reminderDays();
     }
 
-    // ========== Notification Helpers ==========
-
     private String buildNotificationTitle(ContractReminder reminder, Contract contract) {
         return switch (reminder.getReminderType()) {
             case EXPIRY -> "Contract Expiring: " + contract.getTitle();
@@ -411,6 +403,8 @@ public class ContractLifecycleScheduler {
             case REVIEW -> "Contract Review Due: " + contract.getTitle();
         };
     }
+
+    // ========== Notification Helpers ==========
 
     private String buildNotificationMessage(ContractReminder reminder, Contract contract) {
         if (contract.getEndDate() == null) {
@@ -428,7 +422,7 @@ public class ContractLifecycleScheduler {
                     contract.getTitle(), daysText, contract.getEndDate());
             case RENEWAL -> String.format(
                     "The auto-renewable contract '%s' is approaching its renewal date (end date: %s). " +
-                    "It will be automatically renewed unless cancelled.",
+                            "It will be automatically renewed unless cancelled.",
                     contract.getTitle(), contract.getEndDate());
             case REVIEW -> String.format(
                     "A review is due for contract '%s' (end date: %s).",
@@ -446,8 +440,6 @@ public class ContractLifecycleScheduler {
         }
     }
 
-    // ========== Infrastructure ==========
-
     private List<UUID> fetchActiveTenants() {
         try {
             return jdbcTemplate.queryForList(
@@ -456,5 +448,15 @@ public class ContractLifecycleScheduler {
             log.warn("Could not fetch active tenants: {}", e.getMessage());
             return List.of();
         }
+    }
+
+    // ========== Infrastructure ==========
+
+    /**
+     * Per-tenant lifecycle config, loaded once per tenant per scheduler run.
+     * Falls back to defaults if no config row exists.
+     */
+    private record TenantLifecycleConfig(boolean autoExpireEnabled, boolean autoRenewEnabled, int[] reminderDays) {
+        static final TenantLifecycleConfig DEFAULTS = new TenantLifecycleConfig(true, true, DEFAULT_REMINDER_DAYS);
     }
 }

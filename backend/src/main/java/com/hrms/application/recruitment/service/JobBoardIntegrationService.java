@@ -44,6 +44,10 @@ import java.util.UUID;
 @Slf4j
 public class JobBoardIntegrationService {
 
+    private final JobBoardPostingRepository jobBoardPostingRepository;
+    private final JobOpeningRepository jobOpeningRepository;
+    private final RestTemplate restTemplate;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     // ---- Naukri config ----
     @Value("${integration.naukri.api-url:https://www.naukri.com/api/v2}")
     private String naukriApiUrl;
@@ -51,7 +55,6 @@ public class JobBoardIntegrationService {
     private String naukriClientId;
     @Value("${integration.naukri.client-secret:}")
     private String naukriClientSecret;
-
     // ---- Indeed config ----
     @Value("${integration.indeed.api-url:https://apis.indeed.com/graphql}")
     private String indeedApiUrl;
@@ -59,7 +62,6 @@ public class JobBoardIntegrationService {
     private String indeedAccessToken;
     @Value("${integration.indeed.employer-id:}")
     private String indeedEmployerId;
-
     // ---- LinkedIn config ----
     @Value("${integration.linkedin.api-url:https://api.linkedin.com/v2}")
     private String linkedinApiUrl;
@@ -67,11 +69,6 @@ public class JobBoardIntegrationService {
     private String linkedinAccessToken;
     @Value("${integration.linkedin.organization-id:}")
     private String linkedinOrganizationId;
-
-    private final JobBoardPostingRepository jobBoardPostingRepository;
-    private final JobOpeningRepository jobOpeningRepository;
-    private final RestTemplate restTemplate;
-    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     // ========== Post a job to one or more boards ==========
 
@@ -100,10 +97,10 @@ public class JobBoardIntegrationService {
             }
             try {
                 switch (board) {
-                    case NAUKRI   -> postToNaukri(posting, job);
-                    case INDEED   -> postToIndeed(posting, job);
+                    case NAUKRI -> postToNaukri(posting, job);
+                    case INDEED -> postToIndeed(posting, job);
                     case LINKEDIN -> postToLinkedIn(posting, job);
-                    default       -> log.warn("Board {} integration not yet implemented", board);
+                    default -> log.warn("Board {} integration not yet implemented", board);
                 }
                 posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
                 posting.setPostedAt(LocalDateTime.now());
@@ -132,10 +129,10 @@ public class JobBoardIntegrationService {
 
         try {
             switch (posting.getBoardName()) {
-                case NAUKRI   -> pauseOnNaukri(posting);
-                case INDEED   -> pauseOnIndeed(posting);
+                case NAUKRI -> pauseOnNaukri(posting);
+                case INDEED -> pauseOnIndeed(posting);
                 case LINKEDIN -> pauseOnLinkedIn(posting);
-                default       -> log.warn("Pause not implemented for {}", posting.getBoardName());
+                default -> log.warn("Pause not implemented for {}", posting.getBoardName());
             }
             posting.setStatus(JobBoardPosting.PostingStatus.PAUSED);
         } catch (Exception e) { // Intentional broad catch — external job board API integration
@@ -311,13 +308,13 @@ public class JobBoardIntegrationService {
 
         // Indeed uses GraphQL
         String mutation = """
-            mutation PostJob($input: PostJobInput!) {
-              postJob(input: $input) {
-                jobId
-                url
-              }
-            }
-            """;
+                mutation PostJob($input: PostJobInput!) {
+                  postJob(input: $input) {
+                    jobId
+                    url
+                  }
+                }
+                """;
 
         Map<String, Object> variables = Map.of("input", Map.of(
                 "employerId", indeedEmployerId,
@@ -362,10 +359,10 @@ public class JobBoardIntegrationService {
         headers.setBearerAuth(indeedAccessToken);
 
         String mutation = """
-            mutation CloseJob($jobId: ID!) {
-              closeJob(jobId: $jobId) { success }
-            }
-            """;
+                mutation CloseJob($jobId: ID!) {
+                  closeJob(jobId: $jobId) { success }
+                }
+                """;
         Map<String, Object> payload = Map.of("query", mutation,
                 "variables", Map.of("jobId", posting.getExternalJobId()));
         restTemplate.exchange(indeedApiUrl, HttpMethod.POST,
@@ -436,7 +433,8 @@ public class JobBoardIntegrationService {
             case NAUKRI -> syncNaukriStats(posting);
             case INDEED -> syncIndeedStats(posting);
             case LINKEDIN -> syncLinkedInStats(posting);
-            default -> {}
+            default -> {
+            }
         }
         posting.setLastSyncedAt(LocalDateTime.now());
     }
@@ -535,11 +533,11 @@ public class JobBoardIntegrationService {
     private String mapEmploymentType(JobOpening.EmploymentType type) {
         if (type == null) return "FULL_TIME";
         return switch (type) {
-            case FULL_TIME   -> "FULL_TIME";
-            case PART_TIME   -> "PART_TIME";
-            case CONTRACT    -> "CONTRACT";
-            case TEMPORARY   -> "TEMPORARY";
-            case INTERNSHIP  -> "INTERNSHIP";
+            case FULL_TIME -> "FULL_TIME";
+            case PART_TIME -> "PART_TIME";
+            case CONTRACT -> "CONTRACT";
+            case TEMPORARY -> "TEMPORARY";
+            case INTERNSHIP -> "INTERNSHIP";
         };
     }
 }

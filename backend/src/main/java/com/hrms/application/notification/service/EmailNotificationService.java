@@ -14,6 +14,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Map;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -91,7 +92,7 @@ public class EmailNotificationService {
      */
     @Async
     public void notifyLeaveRequestSubmitted(String employeeEmail, String employeeName,
-                                             String leaveType, String dateRange) {
+                                            String leaveType, String dateRange) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
                 "leaveType", leaveType,
@@ -106,8 +107,8 @@ public class EmailNotificationService {
      */
     @Async
     public void notifyManagerLeaveRequest(String managerEmail, String managerName,
-                                           String employeeName, String leaveType,
-                                           String dateRange, UUID requestId) {
+                                          String employeeName, String leaveType,
+                                          String dateRange, UUID requestId) {
         Map<String, Object> variables = Map.of(
                 "managerName", managerName,
                 "employeeName", employeeName,
@@ -123,7 +124,7 @@ public class EmailNotificationService {
      */
     @Async
     public void notifyLeaveApproved(String employeeEmail, String employeeName,
-                                     String leaveType, String dateRange) {
+                                    String leaveType, String dateRange) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
                 "leaveType", leaveType,
@@ -138,7 +139,7 @@ public class EmailNotificationService {
      */
     @Async
     public void notifyLeaveRejected(String employeeEmail, String employeeName,
-                                     String leaveType, String dateRange, String reason) {
+                                    String leaveType, String dateRange, String reason) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
                 "leaveType", leaveType,
@@ -156,7 +157,7 @@ public class EmailNotificationService {
      */
     @Async
     public void notifyPayslipAvailable(String employeeEmail, String employeeName,
-                                        String month, String year) {
+                                       String month, String year) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
                 "month", month,
@@ -231,7 +232,7 @@ public class EmailNotificationService {
     @Async
     @Transactional
     public void sendAnnouncement(String employeeEmail, String employeeName,
-                                  String title, String content) {
+                                 String title, String content) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
                 "title", title,

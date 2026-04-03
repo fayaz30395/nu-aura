@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.criteria.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,9 @@ public class EmployeeDirectoryService {
 
         // Create pageable with sorting
         Pageable pageable = PageRequest.of(
-            request.getPage(),
-            request.getSize(),
-            buildSort(request.getSortBy(), request.getSortDirection())
+                request.getPage(),
+                request.getSize(),
+                buildSort(request.getSortBy(), request.getSortDirection())
         );
 
         // Execute query
@@ -61,21 +62,21 @@ public class EmployeeDirectoryService {
 
         // Fetch departments for mapping
         Set<UUID> departmentIds = employeesPage.getContent().stream()
-            .map(Employee::getDepartmentId)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .map(Employee::getDepartmentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
         Map<UUID, Department> departmentMap = departmentRepository.findAllById(departmentIds).stream()
-            .collect(Collectors.toMap(Department::getId, d -> d));
+                .collect(Collectors.toMap(Department::getId, d -> d));
 
         // Fetch managers for mapping
         Set<UUID> managerIds = employeesPage.getContent().stream()
-            .map(Employee::getManagerId)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .map(Employee::getManagerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
         Map<UUID, Employee> managerMap = employeeRepository.findAllById(managerIds).stream()
-            .collect(Collectors.toMap(Employee::getId, e -> e));
+                .collect(Collectors.toMap(Employee::getId, e -> e));
 
         // Map to response
         return employeesPage.map(employee -> mapToDirectoryResponse(employee, departmentMap, managerMap));
@@ -109,32 +110,32 @@ public class EmployeeDirectoryService {
             // Job role filter
             if (request.getJobRoles() != null && !request.getJobRoles().isEmpty()) {
                 List<Employee.JobRole> jobRoles = request.getJobRoles().stream()
-                    .map(Employee.JobRole::valueOf)
-                    .collect(Collectors.toList());
+                        .map(Employee.JobRole::valueOf)
+                        .collect(Collectors.toList());
                 predicates.add(root.get("jobRole").in(jobRoles));
             }
 
             // Level filter
             if (request.getLevels() != null && !request.getLevels().isEmpty()) {
                 List<Employee.EmployeeLevel> levels = request.getLevels().stream()
-                    .map(Employee.EmployeeLevel::valueOf)
-                    .collect(Collectors.toList());
+                        .map(Employee.EmployeeLevel::valueOf)
+                        .collect(Collectors.toList());
                 predicates.add(root.get("level").in(levels));
             }
 
             // Employment type filter
             if (request.getEmploymentTypes() != null && !request.getEmploymentTypes().isEmpty()) {
                 List<Employee.EmploymentType> types = request.getEmploymentTypes().stream()
-                    .map(Employee.EmploymentType::valueOf)
-                    .collect(Collectors.toList());
+                        .map(Employee.EmploymentType::valueOf)
+                        .collect(Collectors.toList());
                 predicates.add(root.get("employmentType").in(types));
             }
 
             // Status filter
             if (request.getStatuses() != null && !request.getStatuses().isEmpty()) {
                 List<Employee.EmployeeStatus> statuses = request.getStatuses().stream()
-                    .map(Employee.EmployeeStatus::valueOf)
-                    .collect(Collectors.toList());
+                        .map(Employee.EmployeeStatus::valueOf)
+                        .collect(Collectors.toList());
                 predicates.add(root.get("status").in(statuses));
             }
 
@@ -169,8 +170,8 @@ public class EmployeeDirectoryService {
 
     private Sort buildSort(String sortBy, String sortDirection) {
         Sort.Direction direction = "DESC".equalsIgnoreCase(sortDirection)
-            ? Sort.Direction.DESC
-            : Sort.Direction.ASC;
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
 
         // Map sortBy fields that don't exist on Employee entity to valid fields
         String resolvedSortBy = sortBy;
@@ -184,17 +185,17 @@ public class EmployeeDirectoryService {
     }
 
     private EmployeeDirectoryResponse mapToDirectoryResponse(
-        Employee employee,
-        Map<UUID, Department> departmentMap,
-        Map<UUID, Employee> managerMap
+            Employee employee,
+            Map<UUID, Department> departmentMap,
+            Map<UUID, Employee> managerMap
     ) {
         Department department = employee.getDepartmentId() != null
-            ? departmentMap.get(employee.getDepartmentId())
-            : null;
+                ? departmentMap.get(employee.getDepartmentId())
+                : null;
 
         Employee manager = employee.getManagerId() != null
-            ? managerMap.get(employee.getManagerId())
-            : null;
+                ? managerMap.get(employee.getManagerId())
+                : null;
 
         // Build full name from firstName + lastName since Employee entity has no fullName field
         String fullName = employee.getFirstName() != null ? employee.getFirstName() : "";
@@ -203,24 +204,24 @@ public class EmployeeDirectoryService {
         }
 
         return EmployeeDirectoryResponse.builder()
-            .id(employee.getId())
-            .employeeCode(employee.getEmployeeCode())
-            .fullName(fullName)
-            .personalEmail(employee.getPersonalEmail())
-            .workEmail(employee.getPersonalEmail()) // Employee entity has no workEmail; fallback to personalEmail
-            .phoneNumber(employee.getPhoneNumber())
-            .departmentId(employee.getDepartmentId())
-            .departmentName(department != null ? department.getName() : null)
-            .designation(employee.getDesignation())
-            .jobRole(employee.getJobRole() != null ? employee.getJobRole().name() : null)
-            .level(employee.getLevel() != null ? employee.getLevel().name() : null)
-            .employmentType(employee.getEmploymentType() != null ? employee.getEmploymentType().name() : null)
-            .managerId(employee.getManagerId())
-            .managerName(manager != null ? manager.getFullName() : null)
-            .joiningDate(employee.getJoiningDate())
-            .exitDate(employee.getExitDate())
-            .status(employee.getStatus() != null ? employee.getStatus().name() : null)
-            .profileImageUrl(null) // To be implemented with file storage
-            .build();
+                .id(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .fullName(fullName)
+                .personalEmail(employee.getPersonalEmail())
+                .workEmail(employee.getPersonalEmail()) // Employee entity has no workEmail; fallback to personalEmail
+                .phoneNumber(employee.getPhoneNumber())
+                .departmentId(employee.getDepartmentId())
+                .departmentName(department != null ? department.getName() : null)
+                .designation(employee.getDesignation())
+                .jobRole(employee.getJobRole() != null ? employee.getJobRole().name() : null)
+                .level(employee.getLevel() != null ? employee.getLevel().name() : null)
+                .employmentType(employee.getEmploymentType() != null ? employee.getEmploymentType().name() : null)
+                .managerId(employee.getManagerId())
+                .managerName(manager != null ? manager.getFullName() : null)
+                .joiningDate(employee.getJoiningDate())
+                .exitDate(employee.getExitDate())
+                .status(employee.getStatus() != null ? employee.getStatus().name() : null)
+                .profileImageUrl(null) // To be implemented with file storage
+                .build();
     }
 }

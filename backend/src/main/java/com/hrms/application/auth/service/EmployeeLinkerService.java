@@ -34,7 +34,7 @@ public class EmployeeLinkerService {
 
     /**
      * Link an existing employee to a user or create a new employee record if none exists.
-     *
+     * <p>
      * Strategy:
      * 1. Find the user by ID
      * 2. Check if an employee already exists for this user

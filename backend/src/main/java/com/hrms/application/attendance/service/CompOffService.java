@@ -222,7 +222,7 @@ public class CompOffService {
                 .findByLeaveCodeAndTenantId(compOffLeaveCode, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         compOffLeaveCode + " leave type not found for tenant " + tenantId +
-                        ". Please create a leave type with code " + compOffLeaveCode + "."));
+                                ". Please create a leave type with code " + compOffLeaveCode + "."));
 
         int year = Year.now().getValue();
         LeaveBalance balance = leaveBalanceRepository

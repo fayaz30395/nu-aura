@@ -34,19 +34,17 @@ import java.util.UUID;
 @Slf4j
 public class LetterPdfService {
 
-    private final GeneratedLetterRepository letterRepository;
-    private final LetterTemplateRepository templateRepository;
-    private final CandidateRepository candidateRepository;
-    private final EmployeeRepository employeeRepository;
-    private final FileStorageService fileStorageService;
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
-
     // Font definitions
     private static final Font TITLE_FONT = new Font(Font.HELVETICA, 16, Font.BOLD, Color.BLACK);
     private static final Font HEADING_FONT = new Font(Font.HELVETICA, 12, Font.BOLD, Color.BLACK);
     private static final Font BODY_FONT = new Font(Font.HELVETICA, 11, Font.NORMAL, Color.BLACK);
     private static final Font SMALL_FONT = new Font(Font.HELVETICA, 9, Font.NORMAL, Color.GRAY);
+    private final GeneratedLetterRepository letterRepository;
+    private final LetterTemplateRepository templateRepository;
+    private final CandidateRepository candidateRepository;
+    private final EmployeeRepository employeeRepository;
+    private final FileStorageService fileStorageService;
 
     /**
      * Generate PDF for an existing letter and upload to storage.

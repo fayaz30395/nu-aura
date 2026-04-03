@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TimeTrackingReportService {
 
-    private final ProjectTimeEntryRepository timeEntryRepository;
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
+    private final ProjectTimeEntryRepository timeEntryRepository;
 
     /**
      * Generate time summary report for an employee

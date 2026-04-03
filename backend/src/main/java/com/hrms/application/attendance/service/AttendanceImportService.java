@@ -40,14 +40,20 @@ import java.util.UUID;
 @Slf4j
 public class AttendanceImportService {
 
-    private final AttendanceRecordRepository attendanceRecordRepository;
-    private final EmployeeRepository employeeRepository;
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    /** Number of records to accumulate before issuing a batched saveAll() to the DB. */
+    /**
+     * Number of records to accumulate before issuing a batched saveAll() to the DB.
+     */
     private static final int BATCH_FLUSH_SIZE = 50;
+    private static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+    private static final Set<String> VALID_CONTENT_TYPES = Set.of(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+    );
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Generate Excel template for attendance import
@@ -119,12 +125,6 @@ public class AttendanceImportService {
         }
     }
 
-    private static final long MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
-    private static final Set<String> VALID_CONTENT_TYPES = Set.of(
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.ms-excel"
-    );
-
     /**
      * Import attendance records from Excel file.
      * Validates file type and size before processing.
@@ -175,7 +175,8 @@ public class AttendanceImportService {
                     AttendanceRecord record = buildRecord(row, rowIndex + 1, tenantId, response);
                     pendingRecords.add(record);
                     successCount++;
-                } catch (Exception e) { // Intentional broad catch — per-row error boundary: isolates one row failure from the rest of the batch
+                } catch (
+                        Exception e) { // Intentional broad catch — per-row error boundary: isolates one row failure from the rest of the batch
                     failureCount++;
                     log.error("Error processing row {}: {}", rowIndex + 1, e.getMessage());
                     addError(response, rowIndex + 1, null, ImportErrorCode.UNKNOWN_ERROR,

@@ -267,9 +267,9 @@ public class TravelService implements ApprovalCallbackHandler {
         LocalDate today = LocalDate.now();
         LocalDate nextMonth = today.plusMonths(1);
         return travelRequestRepository.findByTenantIdAndDepartureDateBetweenAndStatus(
-                tenantId, today, nextMonth, TravelStatus.APPROVED
-        ).stream().map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)))
-         .collect(Collectors.toList());
+                        tenantId, today, nextMonth, TravelStatus.APPROVED
+                ).stream().map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)))
+                .collect(Collectors.toList());
     }
 
     // ======================== ApprovalCallbackHandler ========================

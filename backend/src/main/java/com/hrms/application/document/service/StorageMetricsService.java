@@ -55,7 +55,7 @@ public class StorageMetricsService {
         long totalBytes = generatedDocBytes + versionedDocBytes;
 
         log.debug("Storage metrics for tenant {}: generated docs={} bytes, " +
-                "versioned docs={} bytes, total={} bytes",
+                        "versioned docs={} bytes, total={} bytes",
                 tenantId, generatedDocBytes, versionedDocBytes, totalBytes);
 
         return totalBytes;
@@ -79,7 +79,7 @@ public class StorageMetricsService {
         long totalBytes = generatedDocBytes + versionedDocBytes;
 
         log.debug("System-wide storage metrics: generated docs={} bytes, " +
-                "versioned docs={} bytes, total={} bytes",
+                        "versioned docs={} bytes, total={} bytes",
                 generatedDocBytes, versionedDocBytes, totalBytes);
 
         return totalBytes;

@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ResourceConflictService {
 
-    /** Alert threshold: if combined allocation exceeds this %, flag as conflict. */
+    /**
+     * Alert threshold: if combined allocation exceeds this %, flag as conflict.
+     */
     private static final int OVER_ALLOCATION_THRESHOLD = 100;
 
     private final ProjectEmployeeRepository projectEmployeeRepository;
@@ -112,7 +114,7 @@ public class ResourceConflictService {
                     }
 
                     int totalPct = (a.getAllocationPercentage() != null ? a.getAllocationPercentage() : 0)
-                                 + (b.getAllocationPercentage() != null ? b.getAllocationPercentage() : 0);
+                            + (b.getAllocationPercentage() != null ? b.getAllocationPercentage() : 0);
 
                     if (totalPct > OVER_ALLOCATION_THRESHOLD) {
                         LocalDate overlapStart = laterDate(a.getStartDate(), b.getStartDate());
@@ -185,12 +187,12 @@ public class ResourceConflictService {
             // Use upsert to avoid duplicates
             jdbcTemplate.update(
                     """
-                    INSERT INTO resource_conflict_log
-                      (id, tenant_id, employee_id, project_id_a, project_id_b,
-                       overlap_start_date, overlap_end_date, total_allocation_pct, status)
-                    VALUES (gen_random_uuid(), ?, ?, ?, ?, ?, ?, ?, 'OPEN')
-                    ON CONFLICT DO NOTHING
-                    """,
+                            INSERT INTO resource_conflict_log
+                              (id, tenant_id, employee_id, project_id_a, project_id_b,
+                               overlap_start_date, overlap_end_date, total_allocation_pct, status)
+                            VALUES (gen_random_uuid(), ?, ?, ?, ?, ?, ?, ?, 'OPEN')
+                            ON CONFLICT DO NOTHING
+                            """,
                     tenantId,
                     conflict.employeeId(),
                     conflict.projectIdA(),
@@ -212,5 +214,6 @@ public class ResourceConflictService {
             LocalDate overlapStart,
             LocalDate overlapEnd,
             int totalAllocationPct,
-            String message) {}
+            String message) {
+    }
 }

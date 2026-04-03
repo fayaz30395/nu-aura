@@ -176,7 +176,11 @@ public class TrainingManagementService {
 
         TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
 
-        try { auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.CREATE, null, null, "Employee " + request.getEmployeeId() + " enrolled in program " + request.getProgramId()); } catch (Exception e) { log.warn("Audit log failed for training enroll: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.CREATE, null, null, "Employee " + request.getEmployeeId() + " enrolled in program " + request.getProgramId());
+        } catch (Exception e) {
+            log.warn("Audit log failed for training enroll: {}", e.getMessage());
+        }
 
         return mapToEnrollmentResponse(savedEnrollment);
     }
@@ -251,7 +255,11 @@ public class TrainingManagementService {
                 savedEnrollment.getCompletedAt()
         ));
 
-        try { auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.STATUS_CHANGE, null, null, "Training completed for program " + programName); } catch (Exception e) { log.warn("Audit log failed for training complete: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.STATUS_CHANGE, null, null, "Training completed for program " + programName);
+        } catch (Exception e) {
+            log.warn("Audit log failed for training complete: {}", e.getMessage());
+        }
 
         log.info("Training enrollment {} marked as COMPLETED, event published", enrollmentId);
         return mapToEnrollmentResponse(savedEnrollment);

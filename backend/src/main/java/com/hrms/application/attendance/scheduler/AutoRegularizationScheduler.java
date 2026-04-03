@@ -30,7 +30,9 @@ import java.util.UUID;
 @Slf4j
 public class AutoRegularizationScheduler {
 
-    /** Default: regularize INCOMPLETE records that are >= 3 days old. */
+    /**
+     * Default: regularize INCOMPLETE records that are >= 3 days old.
+     */
     private static final int DEFAULT_REGULARIZE_AFTER_DAYS = 3;
     /**
      * BUG-004 FIX: Maximum look-back window when scanning for INCOMPLETE records.
@@ -41,7 +43,9 @@ public class AutoRegularizationScheduler {
      * were already regularized in a prior run.
      */
     private static final int MAX_LOOK_BACK_DAYS = 365;
-    /** Default: auto-approve comp-off requests >= 7 days old. */
+    /**
+     * Default: auto-approve comp-off requests >= 7 days old.
+     */
     private static final int DEFAULT_COMP_OFF_AUTO_APPROVE_DAYS = 7;
 
     private final AttendanceRecordRepository attendanceRecordRepository;

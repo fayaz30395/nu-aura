@@ -56,7 +56,7 @@ public class StatutoryService {
      * Retrieves TDS slabs by assessment year and tax regime for the current tenant.
      *
      * @param assessmentYear the assessment year (e.g., "2024-25")
-     * @param regime the tax regime (OLD_REGIME or NEW_REGIME)
+     * @param regime         the tax regime (OLD_REGIME or NEW_REGIME)
      * @return list of active TDS slabs matching the criteria
      */
     @Transactional(readOnly = true)
@@ -88,7 +88,7 @@ public class StatutoryService {
     /**
      * Retrieves a TDS declaration for an employee and financial year.
      *
-     * @param employeeId the employee ID
+     * @param employeeId    the employee ID
      * @param financialYear the financial year (e.g., "2024-25")
      * @return the TDS declaration if found
      */
@@ -105,7 +105,7 @@ public class StatutoryService {
      * Approves a TDS declaration.
      *
      * @param declarationId the declaration ID
-     * @param approverId the approver's user ID
+     * @param approverId    the approver's user ID
      * @return the approved declaration if found
      */
     @Transactional
@@ -283,7 +283,7 @@ public class StatutoryService {
      * Retrieves monthly statutory contributions for a specific month and year.
      *
      * @param month the month (1-12)
-     * @param year the year
+     * @param year  the year
      * @return list of contributions for the specified period
      */
     @Transactional(readOnly = true)

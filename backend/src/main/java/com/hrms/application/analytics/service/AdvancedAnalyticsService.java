@@ -344,7 +344,7 @@ public class AdvancedAnalyticsService {
         double genderPayGap = (maleSalaryOpt.isPresent() && femaleSalaryOpt.isPresent()
                 && maleSalaryOpt.getAsDouble() > 0)
                 ? Math.round(((maleSalaryOpt.getAsDouble() - femaleSalaryOpt.getAsDouble())
-                / maleSalaryOpt.getAsDouble()) * 10000.0) / 100.0
+                              / maleSalaryOpt.getAsDouble()) * 10000.0) / 100.0
                 : 0.0;
 
         // Average salary by department

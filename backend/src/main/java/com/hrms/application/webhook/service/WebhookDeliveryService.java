@@ -52,6 +52,11 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class WebhookDeliveryService {
 
+    private static final String HMAC_ALGORITHM = "HmacSHA256";
+    private static final String SIGNATURE_HEADER = "X-Webhook-Signature";
+    private static final String EVENT_ID_HEADER = "X-Webhook-Event-Id";
+    private static final String EVENT_TYPE_HEADER = "X-Webhook-Event-Type";
+    private static final String TIMESTAMP_HEADER = "X-Webhook-Timestamp";
     private final WebhookRepository webhookRepository;
     private final WebhookDeliveryRepository deliveryRepository;
     private final WebhookService webhookService;
@@ -59,15 +64,8 @@ public class WebhookDeliveryService {
     private final MeterRegistry meterRegistry;
     private final MetricsService metricsService;
     private final RestTemplate restTemplate;
-
     // Circuit breakers per webhook URL to prevent cascading failures
     private final Map<UUID, CircuitBreaker> circuitBreakers = new HashMap<>();
-
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
-    private static final String SIGNATURE_HEADER = "X-Webhook-Signature";
-    private static final String EVENT_ID_HEADER = "X-Webhook-Event-Id";
-    private static final String EVENT_TYPE_HEADER = "X-Webhook-Event-Type";
-    private static final String TIMESTAMP_HEADER = "X-Webhook-Timestamp";
 
     /**
      * Dispatch an event to all subscribed webhooks for the current tenant.

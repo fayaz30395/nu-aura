@@ -24,40 +24,11 @@ import java.util.UUID;
 @Slf4j
 public class EmailService {
 
-    /**
-     * Result object for email operations - provides explicit success/failure status.
-     * Callers can check result.success() and handle failures appropriately.
-     */
-    public record EmailSendResult(
-            boolean success,
-            UUID notificationId,
-            String errorMessage,
-            EmailNotification.EmailStatus status
-    ) {
-        public static EmailSendResult success(UUID notificationId) {
-            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.SENT);
-        }
-
-        public static EmailSendResult queued(UUID notificationId) {
-            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.PENDING);
-        }
-
-        public static EmailSendResult failure(UUID notificationId, String errorMessage) {
-            return new EmailSendResult(false, notificationId, errorMessage, EmailNotification.EmailStatus.FAILED);
-        }
-
-        public static EmailSendResult failure(String errorMessage) {
-            return new EmailSendResult(false, null, errorMessage, EmailNotification.EmailStatus.FAILED);
-        }
-    }
-
     private final JavaMailSender mailSender;
     private final EmailNotificationRepository emailRepository;
     private final EmailTemplateService templateService;
-
     @Value("${spring.mail.from:noreply@hrms.com}")
     private String fromEmail;
-
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
 
@@ -147,7 +118,7 @@ public class EmailService {
      * Retry failed emails (called by scheduled task).
      *
      * @deprecated Use {@link #retryFailedEmailsForTenant(UUID)} instead. This method
-     *             uses a cross-tenant query and should not be called from scheduled jobs.
+     * uses a cross-tenant query and should not be called from scheduled jobs.
      */
     @Deprecated
     @Transactional
@@ -193,9 +164,9 @@ public class EmailService {
     public void sendScheduledEmails() {
         // Get all scheduled emails due for sending
         List<EmailNotification> scheduledEmails = emailRepository.findScheduledEmailsDue(
-            TenantContext.getCurrentTenant(),
-            EmailNotification.EmailStatus.SCHEDULED,
-            LocalDateTime.now()
+                TenantContext.getCurrentTenant(),
+                EmailNotification.EmailStatus.SCHEDULED,
+                LocalDateTime.now()
         );
 
         log.info("Sending {} scheduled emails", scheduledEmails.size());
@@ -225,34 +196,34 @@ public class EmailService {
         };
     }
 
-    // Helper methods for common email types - all return EmailSendResult for explicit error handling
-
     @Transactional
     public EmailSendResult sendLeaveApprovalEmail(String employeeEmail, String employeeName, String leaveType,
-                                       String startDate, String endDate, String duration, String reason) {
+                                                  String startDate, String endDate, String duration, String reason) {
         Map<String, String> vars = Map.of(
-            "employeeName", employeeName,
-            "leaveType", leaveType,
-            "startDate", startDate,
-            "endDate", endDate,
-            "duration", duration,
-            "reason", reason,
-            "dashboardUrl", frontendUrl + "/me/leaves"
+                "employeeName", employeeName,
+                "leaveType", leaveType,
+                "startDate", startDate,
+                "endDate", endDate,
+                "duration", duration,
+                "reason", reason,
+                "dashboardUrl", frontendUrl + "/me/leaves"
         );
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_APPROVAL, vars);
     }
 
+    // Helper methods for common email types - all return EmailSendResult for explicit error handling
+
     @Transactional
     public EmailSendResult sendLeaveRejectionEmail(String employeeEmail, String employeeName, String leaveType,
-                                        String startDate, String endDate, String reason, String rejectionReason) {
+                                                   String startDate, String endDate, String reason, String rejectionReason) {
         Map<String, String> vars = Map.of(
-            "employeeName", employeeName,
-            "leaveType", leaveType,
-            "startDate", startDate,
-            "endDate", endDate,
-            "reason", reason,
-            "rejectionReason", rejectionReason,
-            "dashboardUrl", frontendUrl + "/me/leaves"
+                "employeeName", employeeName,
+                "leaveType", leaveType,
+                "startDate", startDate,
+                "endDate", endDate,
+                "reason", reason,
+                "rejectionReason", rejectionReason,
+                "dashboardUrl", frontendUrl + "/me/leaves"
         );
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_REJECTION, vars);
     }
@@ -266,21 +237,21 @@ public class EmailService {
     @Transactional
     public EmailSendResult sendAnniversaryEmail(String employeeEmail, String employeeName, String years) {
         Map<String, String> vars = Map.of(
-            "employeeName", employeeName,
-            "years", years
+                "employeeName", employeeName,
+                "years", years
         );
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.ANNIVERSARY_REMINDER, vars);
     }
 
     @Transactional
     public EmailSendResult sendPayslipReadyEmail(String employeeEmail, String employeeName, String month,
-                                      String netSalary, String paymentDate) {
+                                                 String netSalary, String paymentDate) {
         Map<String, String> vars = Map.of(
-            "employeeName", employeeName,
-            "month", month,
-            "netSalary", netSalary,
-            "paymentDate", paymentDate,
-            "payslipUrl", frontendUrl + "/me/payslips"
+                "employeeName", employeeName,
+                "month", month,
+                "netSalary", netSalary,
+                "paymentDate", paymentDate,
+                "payslipUrl", frontendUrl + "/me/payslips"
         );
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.PAYSLIP_READY, vars);
     }
@@ -288,12 +259,39 @@ public class EmailService {
     @Transactional
     public EmailSendResult sendWelcomeEmail(String employeeEmail, String employeeName, String department, String joiningDate) {
         Map<String, String> vars = Map.of(
-            "employeeName", employeeName,
-            "email", employeeEmail,
-            "department", department,
-            "joiningDate", joiningDate,
-            "portalUrl", frontendUrl
+                "employeeName", employeeName,
+                "email", employeeEmail,
+                "department", department,
+                "joiningDate", joiningDate,
+                "portalUrl", frontendUrl
         );
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.WELCOME, vars);
+    }
+
+    /**
+     * Result object for email operations - provides explicit success/failure status.
+     * Callers can check result.success() and handle failures appropriately.
+     */
+    public record EmailSendResult(
+            boolean success,
+            UUID notificationId,
+            String errorMessage,
+            EmailNotification.EmailStatus status
+    ) {
+        public static EmailSendResult success(UUID notificationId) {
+            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.SENT);
+        }
+
+        public static EmailSendResult queued(UUID notificationId) {
+            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.PENDING);
+        }
+
+        public static EmailSendResult failure(UUID notificationId, String errorMessage) {
+            return new EmailSendResult(false, notificationId, errorMessage, EmailNotification.EmailStatus.FAILED);
+        }
+
+        public static EmailSendResult failure(String errorMessage) {
+            return new EmailSendResult(false, null, errorMessage, EmailNotification.EmailStatus.FAILED);
+        }
     }
 }

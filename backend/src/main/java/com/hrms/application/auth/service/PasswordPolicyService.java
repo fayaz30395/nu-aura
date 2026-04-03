@@ -31,9 +31,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class PasswordPolicyService {
 
-    private final PasswordPolicyConfig config;
-    private final PasswordEncoder passwordEncoder;
-
     // Common passwords blocklist (top 100 most common)
     private static final Set<String> COMMON_PASSWORDS = Set.of(
             "password", "123456", "12345678", "qwerty", "abc123", "monkey", "1234567",
@@ -53,19 +50,20 @@ public class PasswordPolicyService {
             "hammer", "hannah", "harley", "heather", "hello", "hockey", "hunter",
             "jackson", "jasmine", "jennifer", "jessica", "johnny", "jordan", "joshua"
     );
-
     // Regex patterns for character class validation
     private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
     private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
     private static final Pattern DIGIT_PATTERN = Pattern.compile("[0-9]");
     private static final Pattern SPECIAL_PATTERN = Pattern.compile("[!@#$%^&*(),.?\":{}|<>\\[\\]\\\\;'`~_+=/-]");
+    private final PasswordPolicyConfig config;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Validate a new password against all configured policies.
      *
-     * @param password the password to validate
+     * @param password  the password to validate
      * @param userEmail optional user email to check for inclusion
-     * @param userName optional user name to check for inclusion
+     * @param userName  optional user name to check for inclusion
      * @throws ValidationException if password fails any policy check
      */
     public void validatePassword(String password, String userEmail, String userName) {
@@ -139,7 +137,7 @@ public class PasswordPolicyService {
     /**
      * Check if a password matches any in the user's password history.
      *
-     * @param password the new password
+     * @param password        the new password
      * @param passwordHistory list of previous password hashes
      * @return true if password matches any in history
      */

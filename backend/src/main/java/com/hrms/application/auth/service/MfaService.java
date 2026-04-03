@@ -46,7 +46,9 @@ public class MfaService {
      */
     private static final int BACKUP_CODE_LENGTH = 8;
 
-    /** Pattern that uniquely identifies a backup code: exactly 8 uppercase letters or digits. */
+    /**
+     * Pattern that uniquely identifies a backup code: exactly 8 uppercase letters or digits.
+     */
     private static final java.util.regex.Pattern BACKUP_CODE_PATTERN =
             java.util.regex.Pattern.compile("[A-Z0-9]{" + BACKUP_CODE_LENGTH + "}");
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -64,7 +66,7 @@ public class MfaService {
     @Transactional
     public MfaSetupResponse setupMfa(UUID userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         // Generate TOTP secret
         String secret = generateSecret();
@@ -74,8 +76,8 @@ public class MfaService {
 
         // Hash backup codes before storing
         List<String> hashedBackupCodes = backupCodes.stream()
-            .map(passwordEncoder::encode)
-            .collect(Collectors.toList());
+                .map(passwordEncoder::encode)
+                .collect(Collectors.toList());
 
         // Store hashed backup codes as JSON
         try {
@@ -94,25 +96,25 @@ public class MfaService {
         String qrCodeUrl = generateQrCodeUrl(user.getEmail(), secret);
 
         return MfaSetupResponse.builder()
-            .qrCodeUrl(qrCodeUrl)
-            .secret(secret)
-            .backupCodes(backupCodes)
-            .build();
+                .qrCodeUrl(qrCodeUrl)
+                .secret(secret)
+                .backupCodes(backupCodes)
+                .build();
     }
 
     /**
      * Verifies the TOTP code and enables MFA for the user.
      *
      * @param userId the user ID
-     * @param code the TOTP code to verify
+     * @param code   the TOTP code to verify
      * @return true if verification succeeds and MFA is enabled
      * @throws ResourceNotFoundException if user not found
-     * @throws AuthenticationException if code is invalid
+     * @throws AuthenticationException   if code is invalid
      */
     @Transactional
     public boolean verifyAndEnableMfa(UUID userId, String code) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         if (user.getMfaSecret() == null) {
             throw new AuthenticationException("MFA setup not initiated. Call setupMfa first.");
@@ -136,14 +138,14 @@ public class MfaService {
      * Verifies a TOTP code for login.
      *
      * @param userId the user ID
-     * @param code the TOTP code or backup code to verify
+     * @param code   the TOTP code or backup code to verify
      * @return true if code is valid
      * @throws ResourceNotFoundException if user not found
      */
     @Transactional(readOnly = true)
     public boolean verifyMfaCode(UUID userId, String code) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         if (!user.getMfaEnabled() || user.getMfaSecret() == null) {
             return false;
@@ -166,14 +168,14 @@ public class MfaService {
      * Disables MFA for a user after verifying the code.
      *
      * @param userId the user ID
-     * @param code the TOTP code to verify before disabling
+     * @param code   the TOTP code to verify before disabling
      * @throws ResourceNotFoundException if user not found
-     * @throws AuthenticationException if code is invalid
+     * @throws AuthenticationException   if code is invalid
      */
     @Transactional
     public void disableMfa(UUID userId, String code) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         if (!user.getMfaEnabled()) {
             throw new AuthenticationException("MFA is not enabled for this user");
@@ -205,12 +207,12 @@ public class MfaService {
     @Transactional(readOnly = true)
     public MfaStatusResponse getMfaStatus(UUID userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         return MfaStatusResponse.builder()
-            .enabled(user.getMfaEnabled() != null ? user.getMfaEnabled() : false)
-            .setupAt(user.getMfaSetupAt())
-            .build();
+                .enabled(user.getMfaEnabled() != null ? user.getMfaEnabled() : false)
+                .setupAt(user.getMfaSetupAt())
+                .build();
     }
 
     /**
@@ -218,7 +220,7 @@ public class MfaService {
      * Checks current time window and ±1 windows for tolerance.
      *
      * @param secret the Base32-encoded TOTP secret
-     * @param code the 6-digit code to verify
+     * @param code   the 6-digit code to verify
      * @return true if code is valid
      */
     private boolean validateTotp(String secret, String code) {
@@ -243,7 +245,7 @@ public class MfaService {
     /**
      * Generates a TOTP code for a given time step.
      *
-     * @param key the HMAC key
+     * @param key      the HMAC key
      * @param timeStep the time step (30-second window)
      * @return 6-digit TOTP code
      */
@@ -255,9 +257,9 @@ public class MfaService {
 
         int offset = hash[hash.length - 1] & 0xf;
         int code = ((hash[offset] & 0x7f) << 24)
-                 | ((hash[offset + 1] & 0xff) << 16)
-                 | ((hash[offset + 2] & 0xff) << 8)
-                 | (hash[offset + 3] & 0xff);
+                | ((hash[offset + 1] & 0xff) << 16)
+                | ((hash[offset + 2] & 0xff) << 8)
+                | (hash[offset + 3] & 0xff);
 
         return String.format("%06d", code % 1_000_000);
     }
@@ -362,14 +364,14 @@ public class MfaService {
     /**
      * Generates the otpauth:// URL for QR code generation.
      *
-     * @param email the user email
+     * @param email  the user email
      * @param secret the TOTP secret
      * @return otpauth URL
      */
     private String generateQrCodeUrl(String email, String secret) {
         return String.format(
-            "otpauth://totp/NU-AURA:%%s?secret=%%s&issuer=NU-AURA&algorithm=SHA1&digits=6&period=30",
-            email, secret
+                "otpauth://totp/NU-AURA:%%s?secret=%%s&issuer=NU-AURA&algorithm=SHA1&digits=6&period=30",
+                email, secret
         ).replace("%s", email).replace("%s", secret);
     }
 
@@ -403,8 +405,8 @@ public class MfaService {
             }
 
             List<String> hashedCodes = objectMapper.readValue(
-                backupCodesJson,
-                objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
+                    backupCodesJson,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
             );
 
             // Check if any hashed code matches
@@ -428,13 +430,13 @@ public class MfaService {
      * This is called after successful MFA login with backup code.
      *
      * @param userId the user ID
-     * @param code the backup code to consume
+     * @param code   the backup code to consume
      * @throws ResourceNotFoundException if user not found
      */
     @Transactional
     public void consumeBackupCode(UUID userId, String code) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         try {
             String backupCodesJson = user.getMfaBackupCodes();
@@ -443,8 +445,8 @@ public class MfaService {
             }
 
             List<String> hashedCodes = objectMapper.readValue(
-                backupCodesJson,
-                objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
+                    backupCodesJson,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
             );
 
             // Remove the matched code

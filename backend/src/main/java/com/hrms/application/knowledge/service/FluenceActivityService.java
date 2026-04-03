@@ -23,8 +23,8 @@ public class FluenceActivityService {
      * Record a new activity event in the fluence activity feed.
      */
     public FluenceActivity recordActivity(UUID tenantId, UUID actorId, String action,
-                                           String contentType, UUID contentId,
-                                           String contentTitle, String contentExcerpt) {
+                                          String contentType, UUID contentId,
+                                          String contentTitle, String contentExcerpt) {
         if (contentExcerpt != null && contentExcerpt.length() > 200) {
             contentExcerpt = contentExcerpt.substring(0, 200) + "...";
         }

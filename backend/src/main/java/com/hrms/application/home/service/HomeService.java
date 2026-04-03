@@ -292,8 +292,8 @@ public class HomeService {
         List<AttendanceRecord> remoteRecords = todayRecords.stream()
                 .filter(r -> r.getCheckInSource() != null &&
                         (r.getCheckInSource().equalsIgnoreCase("REMOTE") ||
-                         r.getCheckInSource().equalsIgnoreCase("WFH") ||
-                         r.getCheckInSource().equalsIgnoreCase("HOME")))
+                                r.getCheckInSource().equalsIgnoreCase("WFH") ||
+                                r.getCheckInSource().equalsIgnoreCase("HOME")))
                 .collect(Collectors.toList());
 
         if (remoteRecords.isEmpty()) {

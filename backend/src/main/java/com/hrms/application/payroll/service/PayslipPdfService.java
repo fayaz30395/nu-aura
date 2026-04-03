@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,9 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PayslipPdfService {
 
-    private final PayslipRepository payslipRepository;
-    private final EmployeeRepository employeeRepository;
-
     private static final Font TITLE_FONT = new Font(Font.HELVETICA, 20, Font.BOLD, new Color(33, 37, 41));
     private static final Font HEADER_FONT = new Font(Font.HELVETICA, 12, Font.BOLD, new Color(33, 37, 41));
     private static final Font SUBHEADER_FONT = new Font(Font.HELVETICA, 10, Font.BOLD, new Color(73, 80, 87));
@@ -43,6 +41,8 @@ public class PayslipPdfService {
     private static final Font AMOUNT_FONT = new Font(Font.HELVETICA, 10, Font.BOLD, new Color(33, 37, 41));
     private static final Color PRIMARY_COLOR = new Color(63, 81, 181);
     private static final Color BORDER_COLOR = new Color(222, 226, 230);
+    private final PayslipRepository payslipRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Generate PDF for a specific payslip
@@ -69,7 +69,7 @@ public class PayslipPdfService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Payslip payslip = payslipRepository.findByEmployeeIdAndPayPeriodYearAndPayPeriodMonthAndTenantId(
-                employeeId, year, month, tenantId)
+                        employeeId, year, month, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found for the specified period"));
 
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
@@ -406,9 +406,9 @@ public class PayslipPdfService {
         if (number == 0)
             return "Zero";
 
-        String[] ones = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-                "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-        String[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+        String[] ones = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+                "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+        String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 
         if (number < 20)
             return ones[(int) number];

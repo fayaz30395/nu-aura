@@ -268,7 +268,8 @@ public class MileageService {
         if (policy.getVehicleRates() != null && !policy.getVehicleRates().isBlank()) {
             try {
                 Map<String, BigDecimal> rates = objectMapper.readValue(
-                        policy.getVehicleRates(), new TypeReference<Map<String, BigDecimal>>() {});
+                        policy.getVehicleRates(), new TypeReference<Map<String, BigDecimal>>() {
+                        });
                 BigDecimal vehicleRate = rates.get(vehicleType.name());
                 if (vehicleRate != null) {
                     return vehicleRate;

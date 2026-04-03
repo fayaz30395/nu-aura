@@ -173,7 +173,9 @@ public class NotificationEventListener {
         }
     }
 
-    /** Maps domain NotificationType to WebSocket NotificationMessage.NotificationType. */
+    /**
+     * Maps domain NotificationType to WebSocket NotificationMessage.NotificationType.
+     */
     private NotificationMessage.NotificationType mapToWsType(Notification.NotificationType type) {
         return switch (type) {
             case LEAVE_PENDING -> NotificationMessage.NotificationType.LEAVE_REQUEST;
@@ -187,7 +189,9 @@ public class NotificationEventListener {
         };
     }
 
-    /** Maps domain Priority to WebSocket NotificationMessage.Priority. */
+    /**
+     * Maps domain Priority to WebSocket NotificationMessage.Priority.
+     */
     private NotificationMessage.Priority mapToWsPriority(Notification.Priority priority) {
         return switch (priority) {
             case LOW -> NotificationMessage.Priority.LOW;

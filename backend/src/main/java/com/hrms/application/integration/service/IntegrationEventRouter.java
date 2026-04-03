@@ -79,11 +79,11 @@ public class IntegrationEventRouter {
 
         try {
             log.info("Routing event: type={}, entity={}, entityId={}",
-                event.eventType(), event.entityType(), event.entityId());
+                    event.eventType(), event.entityType(), event.entityId());
 
             // Find all active connectors subscribed to this event type
             List<IntegrationConnectorConfigEntity> activeConfigs =
-                configService.findActiveByEventSubscription(event.tenantId(), event.eventType());
+                    configService.findActiveByEventSubscription(event.tenantId(), event.eventType());
 
             if (activeConfigs.isEmpty()) {
                 log.debug("No active connectors subscribed to event type: {}", event.eventType());
@@ -91,7 +91,7 @@ public class IntegrationEventRouter {
             }
 
             log.debug("Found {} connectors subscribed to event type: {}",
-                activeConfigs.size(), event.eventType());
+                    activeConfigs.size(), event.eventType());
 
             // Route event to each active connector
             for (IntegrationConnectorConfigEntity config : activeConfigs) {
@@ -112,13 +112,13 @@ public class IntegrationEventRouter {
                     eventLogService.logSuccess(event, connectorId, durationMs);
 
                     log.debug("Event processed successfully by connector: {} ({}ms)",
-                        connectorId, durationMs);
+                            connectorId, durationMs);
 
                 } catch (Exception e) { // Intentional broad catch — per-event integration error boundary
                     long durationMs = System.currentTimeMillis() - startTime;
 
                     log.error("Connector {} failed to process event {}: {}",
-                        connectorId, event.eventType(), e.getMessage(), e);
+                            connectorId, event.eventType(), e.getMessage(), e);
 
                     // Log failure
                     eventLogService.logFailure(event, connectorId, e.getMessage(), durationMs);
@@ -130,7 +130,7 @@ public class IntegrationEventRouter {
 
         } catch (Exception e) { // Intentional broad catch — per-event integration error boundary
             log.error("Unexpected error while routing event {}: {}",
-                event.eventType(), e.getMessage(), e);
+                    event.eventType(), e.getMessage(), e);
         } finally {
             // Always clear tenant context
             TenantContext.setCurrentTenant(null);
@@ -153,45 +153,45 @@ public class IntegrationEventRouter {
     @Transactional
     void publishToDlt(IntegrationEvent event, String connectorId, Exception exception) {
         log.warn("SEC: Publishing failed integration event to DLT store: eventType={}, connector={}, error={}",
-            event.eventType(), connectorId, exception.getMessage());
+                event.eventType(), connectorId, exception.getMessage());
 
         try {
             // Serialize the event with connector + error context into a compact JSON payload
             String payload = objectMapper.writeValueAsString(Map.of(
-                "eventType", event.eventType(),
-                "entityType", event.entityType() != null ? event.entityType() : "",
-                "entityId", event.entityId() != null ? event.entityId().toString() : "",
-                "tenantId", event.tenantId() != null ? event.tenantId().toString() : "",
-                "connectorId", connectorId,
-                "errorMessage", exception.getMessage() != null ? exception.getMessage() : ""
+                    "eventType", event.eventType(),
+                    "entityType", event.entityType() != null ? event.entityType() : "",
+                    "entityId", event.entityId() != null ? event.entityId().toString() : "",
+                    "tenantId", event.tenantId() != null ? event.tenantId().toString() : "",
+                    "connectorId", connectorId,
+                    "errorMessage", exception.getMessage() != null ? exception.getMessage() : ""
             ));
 
             boolean truncated = payload.length() > FailedKafkaEvent.MAX_PAYLOAD_LENGTH;
             String storedPayload = truncated
-                ? payload.substring(0, FailedKafkaEvent.MAX_PAYLOAD_LENGTH)
-                : payload;
+                    ? payload.substring(0, FailedKafkaEvent.MAX_PAYLOAD_LENGTH)
+                    : payload;
 
             FailedKafkaEvent failedEvent = FailedKafkaEvent.builder()
-                .topic("integration-events.dlt")
-                .partition(0)
-                .offset(-1L)
-                .payload(storedPayload)
-                .payloadTruncated(truncated)
-                .errorMessage(exception.getMessage())
-                .status(FailedEventStatus.PENDING_REPLAY)
-                .targetTopic("integration-events")
-                .replayCount(0)
-                .build();
+                    .topic("integration-events.dlt")
+                    .partition(0)
+                    .offset(-1L)
+                    .payload(storedPayload)
+                    .payloadTruncated(truncated)
+                    .errorMessage(exception.getMessage())
+                    .status(FailedEventStatus.PENDING_REPLAY)
+                    .targetTopic("integration-events")
+                    .replayCount(0)
+                    .build();
 
             failedKafkaEventRepository.save(failedEvent);
 
             log.info("SEC: Failed integration event persisted to DLT store: eventType={}, connector={}",
-                event.eventType(), connectorId);
+                    event.eventType(), connectorId);
 
         } catch (Exception persistenceException) { // Intentional broad catch — per-event integration error boundary
             // Log but do not rethrow — DLT storage failure must not mask the original error
             log.error("SEC: Failed to persist integration event to DLT store: eventType={}, connector={}, persistenceError={}",
-                event.eventType(), connectorId, persistenceException.getMessage(), persistenceException);
+                    event.eventType(), connectorId, persistenceException.getMessage(), persistenceException);
         }
     }
 }

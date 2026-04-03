@@ -46,9 +46,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Form16Generator implements FilingFormatGenerator {
 
-    private final PayslipRepository payslipRepository;
-    private final ObjectMapper objectMapper;
-
     private static final Font TITLE_FONT = new Font(Font.HELVETICA, 16, Font.BOLD, Color.DARK_GRAY);
     private static final Font HEADER_FONT = new Font(Font.HELVETICA, 11, Font.BOLD, Color.WHITE);
     private static final Font SECTION_FONT = new Font(Font.HELVETICA, 12, Font.BOLD, Color.DARK_GRAY);
@@ -56,6 +53,8 @@ public class Form16Generator implements FilingFormatGenerator {
     private static final Font SMALL_FONT = new Font(Font.HELVETICA, 8, Font.NORMAL, Color.GRAY);
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color LIGHT_BG = new Color(245, 245, 245);
+    private final PayslipRepository payslipRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public FilingType getFilingType() {
@@ -113,7 +112,7 @@ public class Form16Generator implements FilingFormatGenerator {
     }
 
     private void generateForm16ForEmployee(Document document, UUID employeeId,
-                                            List<Payslip> payslips, int year)
+                                           List<Payslip> payslips, int year)
             throws DocumentException {
 
         // Title
@@ -149,10 +148,10 @@ public class Form16Generator implements FilingFormatGenerator {
         BigDecimal totalTds = BigDecimal.ZERO;
         // Summarize by quarter
         String[][] quarters = {
-            {"Q1 (Apr-Jun)", "4", "5", "6"},
-            {"Q2 (Jul-Sep)", "7", "8", "9"},
-            {"Q3 (Oct-Dec)", "10", "11", "12"},
-            {"Q4 (Jan-Mar)", "1", "2", "3"}
+                {"Q1 (Apr-Jun)", "4", "5", "6"},
+                {"Q2 (Jul-Sep)", "7", "8", "9"},
+                {"Q3 (Oct-Dec)", "10", "11", "12"},
+                {"Q4 (Jan-Mar)", "1", "2", "3"}
         };
 
         for (String[] q : quarters) {

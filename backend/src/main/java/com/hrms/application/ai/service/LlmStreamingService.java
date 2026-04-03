@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * Low-level LLM streaming service.
  * Uses raw HttpURLConnection to stream tokens from the OpenAI-compatible API
  * without requiring Spring WebFlux / WebClient dependency.
- *
+ * <p>
  * Supports any OpenAI-compatible endpoint (OpenAI, Azure OpenAI, Ollama, etc.)
  * by configuring ai.openai.base-url in application.yml.
  */
@@ -51,10 +51,10 @@ public class LlmStreamingService {
     /**
      * Stream a chat completion from the LLM.
      *
-     * @param messages  OpenAI-format messages list: [{role, content}, ...]
-     * @param onToken   Called with each streamed content token
-     * @param onError   Called if an error occurs during streaming
-     * @param onDone    Called when the stream is complete
+     * @param messages OpenAI-format messages list: [{role, content}, ...]
+     * @param onToken  Called with each streamed content token
+     * @param onError  Called if an error occurs during streaming
+     * @param onDone   Called when the stream is complete
      */
     public void streamChatCompletion(
             List<Map<String, String>> messages,

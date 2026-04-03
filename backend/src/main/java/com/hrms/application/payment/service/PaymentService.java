@@ -126,7 +126,7 @@ public class PaymentService {
         }
 
         savedBatch.setStatus(savedBatch.getFailedCount() > 0 ?
-            PaymentBatch.BatchStatus.PARTIAL_SUCCESS : PaymentBatch.BatchStatus.PROCESSING);
+                PaymentBatch.BatchStatus.PARTIAL_SUCCESS : PaymentBatch.BatchStatus.PROCESSING);
         paymentBatchRepository.save(savedBatch);
 
         log.info("Batch payment initiated: {} with {} transactions", savedBatch.getId(), transactions.size());
@@ -141,7 +141,7 @@ public class PaymentService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
         if (!transaction.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to payment");
@@ -176,7 +176,7 @@ public class PaymentService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
         if (!transaction.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to payment");
@@ -188,15 +188,15 @@ public class PaymentService {
 
         // Create refund record
         PaymentRefund refund = PaymentRefund.builder()
-            .tenantId(tenantId)
-            .transactionId(paymentId)
-            .refundRef("REF-" + UUID.randomUUID())
-            .amount(transaction.getAmount())
-            .status(PaymentRefund.RefundStatus.INITIATED)
-            .reason(reason)
-            .initiatedBy(userId)
-            .createdBy(userId)
-            .build();
+                .tenantId(tenantId)
+                .transactionId(paymentId)
+                .refundRef("REF-" + UUID.randomUUID())
+                .amount(transaction.getAmount())
+                .status(PaymentRefund.RefundStatus.INITIATED)
+                .reason(reason)
+                .initiatedBy(userId)
+                .createdBy(userId)
+                .build();
 
         // Call provider to process refund
         PaymentGatewayAdapter adapter = getAdapterForProvider(toConfigProvider(transaction.getProvider()));
@@ -228,14 +228,14 @@ public class PaymentService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         PaymentConfig config = getActivePaymentConfig(tenantId,
-            PaymentConfig.PaymentProvider.valueOf(provider.toUpperCase()));
+                PaymentConfig.PaymentProvider.valueOf(provider.toUpperCase()));
 
         if (config == null) {
             throw new BusinessException("Payment provider not configured");
         }
 
         PaymentGatewayAdapter adapter = getAdapterForProvider(
-            PaymentConfig.PaymentProvider.valueOf(provider.toUpperCase()));
+                PaymentConfig.PaymentProvider.valueOf(provider.toUpperCase()));
         adapter.initialize(config);
 
         // Verify signature
@@ -297,7 +297,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public PaymentConfig getActivePaymentConfig(UUID tenantId, PaymentConfig.PaymentProvider provider) {
         return paymentConfigRepository.findByTenantIdAndProviderAndIsActiveTrueAndIsDeletedFalse(tenantId, provider)
-            .orElse(null);
+                .orElse(null);
     }
 
     /**
@@ -317,7 +317,7 @@ public class PaymentService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         PaymentTransaction transaction = paymentTransactionRepository.findById(paymentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
         if (!transaction.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to payment");
@@ -348,7 +348,7 @@ public class PaymentService {
      * Update transaction status from webhook data
      */
     private void updateTransactionFromWebhook(PaymentTransaction transaction,
-                                               PaymentGatewayAdapter.PaymentWebhookData data) {
+                                              PaymentGatewayAdapter.PaymentWebhookData data) {
         if ("completed".equalsIgnoreCase(data.getStatus()) || "succeeded".equalsIgnoreCase(data.getStatus())) {
             transaction.setStatus(PaymentTransaction.PaymentStatus.COMPLETED);
             transaction.setCompletedAt(LocalDateTime.now());

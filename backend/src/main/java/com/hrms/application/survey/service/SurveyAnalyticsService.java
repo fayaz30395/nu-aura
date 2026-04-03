@@ -289,12 +289,12 @@ public class SurveyAnalyticsService {
                 (responses.size() * 100.0) / survey.getTotalResponses() : 0);
         score.setPositiveResponses((int) responses.stream()
                 .filter(r -> r.getOverallSentiment() == SentimentLevel.POSITIVE ||
-                             r.getOverallSentiment() == SentimentLevel.VERY_POSITIVE).count());
+                        r.getOverallSentiment() == SentimentLevel.VERY_POSITIVE).count());
         score.setNeutralResponses((int) responses.stream()
                 .filter(r -> r.getOverallSentiment() == SentimentLevel.NEUTRAL).count());
         score.setNegativeResponses((int) responses.stream()
                 .filter(r -> r.getOverallSentiment() == SentimentLevel.NEGATIVE ||
-                             r.getOverallSentiment() == SentimentLevel.VERY_NEGATIVE).count());
+                        r.getOverallSentiment() == SentimentLevel.VERY_NEGATIVE).count());
 
         // Set category scores
         setCategoryScores(score, categoryScores);
@@ -483,7 +483,7 @@ public class SurveyAnalyticsService {
 
     @Transactional
     public SurveyInsightDto updateInsightAction(UUID insightId, SurveyInsight.ActionStatus status,
-                                                  UUID assignedTo, String notes) {
+                                                UUID assignedTo, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SurveyInsight insight = insightRepository.findByIdAndTenantId(insightId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Insight not found"));
@@ -641,7 +641,8 @@ public class SurveyAnalyticsService {
                 case RECOGNITION -> score.setRecognitionScore(avg);
                 case COMPANY_CULTURE -> score.setCompanyCultureScore(avg);
                 case MANAGER_RELATIONSHIP -> score.setManagerRelationshipScore(avg);
-                default -> {}
+                default -> {
+                }
             }
         }
     }
@@ -668,9 +669,9 @@ public class SurveyAnalyticsService {
     }
 
     private SurveyInsight createInsight(Survey survey, UUID tenantId, SurveyInsight.InsightType type,
-                                         SurveyInsight.InsightPriority priority, String title,
-                                         String description, String recommendation,
-                                         Double impactScore, Integer affectedEmployees) {
+                                        SurveyInsight.InsightPriority priority, String title,
+                                        String description, String recommendation,
+                                        Double impactScore, Integer affectedEmployees) {
         return SurveyInsight.builder()
                 .tenantId(tenantId)
                 .survey(survey)
@@ -729,7 +730,8 @@ public class SurveyAnalyticsService {
         List<String> options = null;
         if (question.getOptions() != null) {
             try {
-                options = objectMapper.readValue(question.getOptions(), new TypeReference<List<String>>() {});
+                options = objectMapper.readValue(question.getOptions(), new TypeReference<List<String>>() {
+                });
             } catch (JsonProcessingException e) {
                 // BP-L01 FIX: Log with question context and return empty list
                 // instead of null so downstream code doesn't NPE on corrupt data.
@@ -876,7 +878,8 @@ public class SurveyAnalyticsService {
         List<String> themes = null;
         if (insight.getKeyThemes() != null) {
             try {
-                themes = objectMapper.readValue(insight.getKeyThemes(), new TypeReference<List<String>>() {});
+                themes = objectMapper.readValue(insight.getKeyThemes(), new TypeReference<List<String>>() {
+                });
             } catch (JsonProcessingException e) {
                 // BP-L01 FIX: Log with insight context and return empty list for corrupt data.
                 log.warn("Failed to parse key themes JSON for insight {}: {}", insight.getId(), e.getMessage());

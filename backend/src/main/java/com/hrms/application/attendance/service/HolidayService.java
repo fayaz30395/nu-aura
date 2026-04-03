@@ -45,9 +45,9 @@ public class HolidayService {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         Holiday holiday = holidayRepository.findById(id)
-            .filter(h -> h.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
-        
+                .filter(h -> h.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
+
         holiday.setHolidayName(holidayData.getHolidayName());
         holiday.setHolidayDate(holidayData.getHolidayDate());
         holiday.setHolidayType(holidayData.getHolidayType());
@@ -56,7 +56,7 @@ public class HolidayService {
         holiday.setIsRestricted(holidayData.getIsRestricted());
         holiday.setApplicableLocations(holidayData.getApplicableLocations());
         holiday.setApplicableDepartments(holidayData.getApplicableDepartments());
-        
+
         return holidayRepository.save(holiday);
     }
 
@@ -64,8 +64,8 @@ public class HolidayService {
     public Holiday getHolidayById(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return holidayRepository.findById(id)
-            .filter(h -> h.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
+                .filter(h -> h.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
     }
 
     @Transactional(readOnly = true)

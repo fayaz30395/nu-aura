@@ -25,4 +25,5 @@ public class PayrollMetrics {
     private List<MonthlyPayroll> monthlyTrend;
 }
 
-record MonthlyPayroll(int year, int month, BigDecimal gross, BigDecimal net) {}
+record MonthlyPayroll(int year, int month, BigDecimal gross, BigDecimal net) {
+}

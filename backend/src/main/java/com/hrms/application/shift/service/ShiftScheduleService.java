@@ -263,7 +263,8 @@ public class ShiftScheduleService {
 
     private List<String> parsePatternJson(String patternJson) {
         try {
-            return objectMapper.readValue(patternJson, new TypeReference<List<String>>() {});
+            return objectMapper.readValue(patternJson, new TypeReference<List<String>>() {
+            });
         } catch (Exception e) { // Intentional broad catch — service error boundary
             log.error("Failed to parse shift pattern JSON: {}", patternJson, e);
             throw new IllegalArgumentException("Invalid shift pattern format");
@@ -294,8 +295,8 @@ public class ShiftScheduleService {
     }
 
     private ScheduleEntryResponse mapToScheduleEntry(ShiftAssignment assignment,
-                                                      Map<UUID, Shift> shiftCache,
-                                                      List<UUID> employeeIds) {
+                                                     Map<UUID, Shift> shiftCache,
+                                                     List<UUID> employeeIds) {
         Shift shift = shiftCache.get(assignment.getShiftId());
         Employee employee = employeeRepository.findById(assignment.getEmployeeId()).orElse(null);
 

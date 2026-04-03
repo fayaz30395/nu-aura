@@ -687,7 +687,7 @@ public class ExitManagementService {
         asset.setRecoveredBy(currentUserId);
 
         if (request.getConditionOnReturn() == AssetRecovery.AssetCondition.DAMAGED ||
-            request.getConditionOnReturn() == AssetRecovery.AssetCondition.NON_FUNCTIONAL) {
+                request.getConditionOnReturn() == AssetRecovery.AssetCondition.NON_FUNCTIONAL) {
             asset.setStatus(AssetRecovery.RecoveryStatus.DAMAGED);
             asset.setDamageDescription(request.getDamageDescription());
             asset.setDeductionAmount(request.getDeductionAmount() != null ? request.getDeductionAmount() : BigDecimal.ZERO);

@@ -68,6 +68,25 @@ public class AuthService {
     private final MetricsService metricsService;
     private final PasswordPolicyService passwordPolicyService;
     private final AccountLockoutService accountLockoutService;
+    @Value("${app.jwt.expiration}")
+    private long jwtExpiration;
+    @Value("${app.google.client-id:}")
+    private String googleClientId;
+    /**
+     * Fallback tenant ID used when no tenant can be determined during password login.
+     * Should be set to the demo/default tenant UUID via the {@code APP_DEFAULT_TENANT_ID}
+     * environment variable. If left empty, login without a tenant context will fail fast.
+     */
+    @Value("${app.auth.default-tenant-id:550e8400-e29b-41d4-a716-446655440000}")
+    private String defaultTenantId;
+    /**
+     * Tenant ID for the NuLogic corporate domain ({@code @nulogic.io}).
+     * Configurable via {@code APP_NULOGIC_TENANT_ID}; defaults to the seeded demo value.
+     */
+    @Value("${app.auth.nulogic-tenant-id:660e8400-e29b-41d4-a716-446655440001}")
+    private String nulogicTenantId;
+    @Value("${app.auth.allowed-domain:nulogic.io}")
+    private String allowedDomain;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -92,30 +111,6 @@ public class AuthService {
         this.passwordPolicyService = passwordPolicyService;
         this.accountLockoutService = accountLockoutService;
     }
-
-    @Value("${app.jwt.expiration}")
-    private long jwtExpiration;
-
-    @Value("${app.google.client-id:}")
-    private String googleClientId;
-
-    /**
-     * Fallback tenant ID used when no tenant can be determined during password login.
-     * Should be set to the demo/default tenant UUID via the {@code APP_DEFAULT_TENANT_ID}
-     * environment variable. If left empty, login without a tenant context will fail fast.
-     */
-    @Value("${app.auth.default-tenant-id:550e8400-e29b-41d4-a716-446655440000}")
-    private String defaultTenantId;
-
-    /**
-     * Tenant ID for the NuLogic corporate domain ({@code @nulogic.io}).
-     * Configurable via {@code APP_NULOGIC_TENANT_ID}; defaults to the seeded demo value.
-     */
-    @Value("${app.auth.nulogic-tenant-id:660e8400-e29b-41d4-a716-446655440001}")
-    private String nulogicTenantId;
-
-    @Value("${app.auth.allowed-domain:nulogic.io}")
-    private String allowedDomain;
 
     @Transactional(readOnly = true)
     public AuthResponse getUserProfile(UUID userId) {
@@ -307,7 +302,8 @@ public class AuthService {
             return buildAuthResponse(user, tenantId, ctx);
         } catch (AuthenticationException e) {
             throw e;
-        } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during Google login
+        } catch (
+                Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during Google login
             metricsService.recordLoginFailure("google", "unknown_error");
             throw e;
         }
@@ -325,15 +321,6 @@ public class AuthService {
         } catch (GeneralSecurityException | IOException e) {
             throw new AuthenticationException("Failed to verify Google token: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Simple class to hold user info from Google userinfo API
-     */
-    private static class GoogleUserInfo {
-        String email;
-        String hd; // hosted domain
-        String picture; // profile picture URL
     }
 
     /**
@@ -448,8 +435,6 @@ public class AuthService {
         log.info("All tokens revoked for user {} after password change", userId);
     }
 
-    // ==================== NU Platform RBAC Helper Methods ====================
-
     /**
      * Load permissions for a user using a pre-fetched UserAppAccess.
      * Accepts the already-loaded employee to avoid redundant DB lookups.
@@ -538,8 +523,10 @@ public class AuthService {
         return permissionScopes;
     }
 
+    // ==================== NU Platform RBAC Helper Methods ====================
+
     private boolean isHigherScope(com.hrms.domain.user.RoleScope newScope,
-            com.hrms.domain.user.RoleScope existingScope) {
+                                  com.hrms.domain.user.RoleScope existingScope) {
         return newScope.isMorePermissiveThan(existingScope);
     }
 
@@ -616,14 +603,12 @@ public class AuthService {
         }
     }
 
-    // ==================== Password Reset ====================
-
     /**
      * Request a password reset for the given email.
      * For security, always returns success even if email doesn't exist.
      *
      * @return "LOCAL" if reset email was sent, "GOOGLE" if user uses SSO,
-     *         or "LOCAL" for non-existent emails (to prevent user enumeration).
+     * or "LOCAL" for non-existent emails (to prevent user enumeration).
      */
     @Transactional
     public String requestPasswordReset(String email) {
@@ -657,6 +642,8 @@ public class AuthService {
             return "LOCAL";
         }
     }
+
+    // ==================== Password Reset ====================
 
     /**
      * Reset password using a valid reset token.
@@ -697,25 +684,6 @@ public class AuthService {
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
 
-    // ==================== SuperAdmin Employee Linking ====================
-
-    // ==================== Auth Context Helper ====================
-
-    /**
-     * Holds all the resolved auth context needed to build tokens and responses.
-     * Eliminates the repeated permission/role/employee loading block that was
-     * duplicated across login(), googleLogin(), refresh(), and loginAfterMfa().
-     */
-    private record AuthContext(
-            Map<String, com.hrms.domain.user.RoleScope> appPermissions,
-            Set<String> appRoles,
-            Set<String> accessibleApps,
-            UUID employeeId,
-            UUID locationId,
-            UUID departmentId,
-            UUID teamId
-    ) {}
-
     /**
      * Load permissions, roles, employee context, and auto-link SuperAdmin employee
      * in a single reusable call. Used by all login flows (password, Google, MFA, refresh).
@@ -748,6 +716,10 @@ public class AuthService {
         return new AuthContext(appPermissions, appRoles, accessibleApps,
                 employeeId, locationId, departmentId, teamId);
     }
+
+    // ==================== SuperAdmin Employee Linking ====================
+
+    // ==================== Auth Context Helper ====================
 
     /**
      * Generate access + refresh tokens and build the common AuthResponse.
@@ -787,10 +759,10 @@ public class AuthService {
      * 1. Find and link an existing employee with matching email
      * 2. If no employee exists, create a minimal employee record
      *
-     * @param user the user entity
+     * @param user     the user entity
      * @param tenantId the tenant ID
      * @return Optional containing the linked/created employee, or empty if creation failed
-     *         (login still succeeds - employeeId will be null, which is acceptable for SuperAdmin)
+     * (login still succeeds - employeeId will be null, which is acceptable for SuperAdmin)
      */
     private Optional<Employee> autoLinkOrCreateEmployeeForSuperAdmin(User user, UUID tenantId) {
         try {
@@ -885,5 +857,30 @@ public class AuthService {
         log.info("User {} logged in successfully after MFA verification", userId);
 
         return buildAuthResponse(user, tenantId, ctx);
+    }
+
+    /**
+     * Simple class to hold user info from Google userinfo API
+     */
+    private static class GoogleUserInfo {
+        String email;
+        String hd; // hosted domain
+        String picture; // profile picture URL
+    }
+
+    /**
+     * Holds all the resolved auth context needed to build tokens and responses.
+     * Eliminates the repeated permission/role/employee loading block that was
+     * duplicated across login(), googleLogin(), refresh(), and loginAfterMfa().
+     */
+    private record AuthContext(
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions,
+            Set<String> appRoles,
+            Set<String> accessibleApps,
+            UUID employeeId,
+            UUID locationId,
+            UUID departmentId,
+            UUID teamId
+    ) {
     }
 }
