@@ -79,7 +79,7 @@ public class BlogPostService {
         return updated;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public BlogPost getPostById(UUID postId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BlogPost post = blogPostRepository.findById(postId)
@@ -95,7 +95,7 @@ public class BlogPostService {
         return post;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public BlogPost getPostBySlug(String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BlogPost post = blogPostRepository.findByTenantIdAndSlug(tenantId, slug)
