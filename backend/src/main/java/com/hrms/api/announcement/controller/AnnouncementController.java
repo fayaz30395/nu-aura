@@ -5,6 +5,7 @@ import com.hrms.api.announcement.dto.CreateAnnouncementRequest;
 import com.hrms.application.announcement.service.AnnouncementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,9 +50,8 @@ public class AnnouncementController {
 
     @GetMapping("/active")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Page<AnnouncementDto>> getActiveAnnouncements(
-            @RequestParam UUID employeeId,
-            Pageable pageable) {
+    public ResponseEntity<Page<AnnouncementDto>> getActiveAnnouncements(Pageable pageable) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         Page<AnnouncementDto> response = announcementService.getActiveAnnouncements(employeeId, pageable);
         return ResponseEntity.ok(response);
     }
@@ -65,27 +65,24 @@ public class AnnouncementController {
 
     @GetMapping("/{announcementId}")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<AnnouncementDto> getAnnouncementById(
-            @PathVariable UUID announcementId,
-            @RequestParam(required = false) UUID employeeId) {
+    public ResponseEntity<AnnouncementDto> getAnnouncementById(@PathVariable UUID announcementId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         AnnouncementDto response = announcementService.getAnnouncementById(announcementId, employeeId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{announcementId}/read")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Void> markAsRead(
-            @PathVariable UUID announcementId,
-            @RequestParam UUID employeeId) {
+    public ResponseEntity<Void> markAsRead(@PathVariable UUID announcementId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         announcementService.markAsRead(announcementId, employeeId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{announcementId}/accept")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Void> acceptAnnouncement(
-            @PathVariable UUID announcementId,
-            @RequestParam UUID employeeId) {
+    public ResponseEntity<Void> acceptAnnouncement(@PathVariable UUID announcementId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         announcementService.acceptAnnouncement(announcementId, employeeId);
         return ResponseEntity.ok().build();
     }

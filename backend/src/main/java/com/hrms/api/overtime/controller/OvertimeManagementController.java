@@ -6,6 +6,7 @@ import com.hrms.api.overtime.dto.OvertimeRecordResponse;
 import com.hrms.application.overtime.service.OvertimeManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +49,9 @@ public class OvertimeManagementController {
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     public ResponseEntity<OvertimeRecordResponse> approveOrRejectOvertime(
             @PathVariable UUID recordId,
-            @RequestParam UUID approverId,
             @Valid @RequestBody OvertimeApprovalRequest request) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
+                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
         log.info("Processing approval for overtime record: {} by approver: {}", recordId, approverId);
         OvertimeRecordResponse response = overtimeManagementService
                 .approveOrRejectOvertime(recordId, approverId, request);

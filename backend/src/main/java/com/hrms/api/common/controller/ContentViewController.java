@@ -4,6 +4,7 @@ import com.hrms.application.common.service.ContentViewService;
 import com.hrms.application.common.service.ContentViewService.ViewerInfo;
 import com.hrms.application.common.service.ContentViewService.ViewStats;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.common.ContentView.ContentType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +39,9 @@ public class ContentViewController {
     public ResponseEntity<Void> recordView(
             @PathVariable String contentType,
             @PathVariable UUID contentId,
-            @RequestParam UUID employeeId,
             @RequestParam(required = false) String source) {
 
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         ContentType type = ContentType.valueOf(contentType.toUpperCase());
         contentViewService.recordView(type, contentId, employeeId, source);
         return ResponseEntity.ok().build();
@@ -53,9 +54,9 @@ public class ContentViewController {
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<Map<String, Boolean>> hasViewed(
             @PathVariable String contentType,
-            @PathVariable UUID contentId,
-            @RequestParam UUID employeeId) {
+            @PathVariable UUID contentId) {
 
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         ContentType type = ContentType.valueOf(contentType.toUpperCase());
         boolean viewed = contentViewService.hasViewed(type, contentId, employeeId);
         return ResponseEntity.ok(Map.of("hasViewed", viewed));
