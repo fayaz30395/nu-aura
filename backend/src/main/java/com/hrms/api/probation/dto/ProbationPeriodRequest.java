@@ -22,7 +22,7 @@ public class ProbationPeriodRequest {
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
 
-    @NotNull(message = "Duration in months is required")
+    // BUG-QA2-004 FIX: durationMonths is now optional; if omitted, the service defaults to 3 months.
     @Min(value = 1, message = "Duration must be at least 1 month")
     private Integer durationMonths;
 

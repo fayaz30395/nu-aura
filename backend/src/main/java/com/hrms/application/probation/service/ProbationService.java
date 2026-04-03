@@ -54,14 +54,17 @@ public class ProbationService {
             throw new BusinessException("Employee already has an active probation period");
         }
 
-        LocalDate endDate = request.getStartDate().plusMonths(request.getDurationMonths());
+        // BUG-QA2-004 FIX: durationMonths is optional in the request DTO; default to 3 months.
+        int durationMonths = (request.getDurationMonths() != null) ? request.getDurationMonths() : 3;
+
+        LocalDate endDate = request.getStartDate().plusMonths(durationMonths);
 
         ProbationPeriod probation = ProbationPeriod.builder()
                 .employeeId(request.getEmployeeId())
                 .startDate(request.getStartDate())
                 .originalEndDate(endDate)
                 .endDate(endDate)
-                .durationMonths(request.getDurationMonths())
+                .durationMonths(durationMonths)
                 .managerId(request.getManagerId())
                 .evaluationFrequencyDays(request.getEvaluationFrequencyDays() != null ?
                         request.getEvaluationFrequencyDays() : 30)
