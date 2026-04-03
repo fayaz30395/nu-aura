@@ -309,7 +309,7 @@ public class TrainingManagementService {
     }
 
     private TrainingEnrollmentResponse mapToEnrollmentResponse(TrainingEnrollment enrollment) {
-        String programName = programRepository.findById(enrollment.getProgramId())
+        String programName = programRepository.findByIdAndTenantId(enrollment.getProgramId(), enrollment.getTenantId())
                 .map(TrainingProgram::getProgramName)
                 .orElse(null);
 
