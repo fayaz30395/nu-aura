@@ -5,6 +5,7 @@ import com.hrms.application.project.service.ProjectTimesheetService;
 import com.hrms.application.project.service.TimeTrackingReportService;
 import com.hrms.application.project.service.TimeTrackingReportService.*;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.project.TimeEntry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -60,9 +61,9 @@ public class ProjectTimesheetController {
 
     @PatchMapping("/entries/{id}/approve")
     @RequiresPermission(TIMESHEET_APPROVE)
-    public ResponseEntity<TimeEntryResponse> approveTimeEntry(
-            @PathVariable UUID id,
-            @RequestParam UUID approverId) {
+    public ResponseEntity<TimeEntryResponse> approveTimeEntry(@PathVariable UUID id) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
+                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
         return ResponseEntity.ok(projectTimesheetService.approveTimeEntry(id, approverId));
     }
 
@@ -70,8 +71,9 @@ public class ProjectTimesheetController {
     @RequiresPermission(TIMESHEET_APPROVE)
     public ResponseEntity<TimeEntryResponse> rejectTimeEntry(
             @PathVariable UUID id,
-            @RequestParam UUID approverId,
             @NotBlank @Size(max = 1000) @RequestParam String reason) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
+                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
         return ResponseEntity.ok(projectTimesheetService.rejectTimeEntry(id, approverId, reason));
     }
 
