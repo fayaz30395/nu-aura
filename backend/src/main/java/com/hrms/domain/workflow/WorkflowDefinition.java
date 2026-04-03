@@ -89,6 +89,34 @@ public class WorkflowDefinition extends TenantAware {
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from
     // BaseEntity
 
+    @PrePersist
+    protected void onCreate() {
+        if (workflowVersion == 0)
+            workflowVersion = 1;
+    }
+
+    public void addStep(ApprovalStep step) {
+        steps.add(step);
+        step.setWorkflowDefinition(this);
+    }
+
+    public void removeStep(ApprovalStep step) {
+        steps.remove(step);
+        step.setWorkflowDefinition(null);
+    }
+
+    @Nullable
+    public ApprovalStep getNextStep(int currentStepOrder) {
+        return steps.stream()
+                .filter(s -> s.getStepOrder() > currentStepOrder)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean isLastStep(int stepOrder) {
+        return steps.stream().noneMatch(s -> s.getStepOrder() > stepOrder);
+    }
+
     public enum EntityType {
         LEAVE_REQUEST,
         EXPENSE_CLAIM,
@@ -120,33 +148,5 @@ public class WorkflowDefinition extends TenantAware {
         CONDITIONAL, // Based on conditions/rules
         HIERARCHICAL, // Based on reporting structure
         HYBRID // Mix of above
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (workflowVersion == 0)
-            workflowVersion = 1;
-    }
-
-    public void addStep(ApprovalStep step) {
-        steps.add(step);
-        step.setWorkflowDefinition(this);
-    }
-
-    public void removeStep(ApprovalStep step) {
-        steps.remove(step);
-        step.setWorkflowDefinition(null);
-    }
-
-    @Nullable
-    public ApprovalStep getNextStep(int currentStepOrder) {
-        return steps.stream()
-                .filter(s -> s.getStepOrder() > currentStepOrder)
-                .findFirst()
-                .orElse(null);
-    }
-
-    public boolean isLastStep(int stepOrder) {
-        return steps.stream().noneMatch(s -> s.getStepOrder() > stepOrder);
     }
 }

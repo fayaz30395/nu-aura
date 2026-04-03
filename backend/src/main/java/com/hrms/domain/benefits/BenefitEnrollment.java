@@ -91,26 +91,6 @@ public class BenefitEnrollment extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
-    public enum EnrollmentStatus {
-        PENDING,
-        APPROVED,
-        ACTIVE,
-        SUSPENDED,
-        TERMINATED,
-        COBRA_CONTINUATION,
-        WAIVED,
-        REJECTED
-    }
-
-    public enum CoverageLevel {
-        EMPLOYEE_ONLY,
-        EMPLOYEE_SPOUSE,
-        EMPLOYEE_CHILDREN,
-        FAMILY,
-        EMPLOYEE_PARENT,
-        EMPLOYEE_PARENT_IN_LAW
-    }
-
     @PrePersist
     protected void onCreate() {
         if (status == null) status = EnrollmentStatus.PENDING;
@@ -135,5 +115,25 @@ public class BenefitEnrollment extends TenantAware {
         this.status = EnrollmentStatus.COBRA_CONTINUATION;
         this.cobraActive = true;
         this.cobraStartDate = LocalDate.now();
+    }
+
+    public enum EnrollmentStatus {
+        PENDING,
+        APPROVED,
+        ACTIVE,
+        SUSPENDED,
+        TERMINATED,
+        COBRA_CONTINUATION,
+        WAIVED,
+        REJECTED
+    }
+
+    public enum CoverageLevel {
+        EMPLOYEE_ONLY,
+        EMPLOYEE_SPOUSE,
+        EMPLOYEE_CHILDREN,
+        FAMILY,
+        EMPLOYEE_PARENT,
+        EMPLOYEE_PARENT_IN_LAW
     }
 }

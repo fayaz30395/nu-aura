@@ -91,26 +91,6 @@ public class WorkflowExecution extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
-    public enum ExecutionStatus {
-        DRAFT,           // Not yet submitted
-        PENDING,         // Waiting for approval
-        IN_PROGRESS,     // Being processed
-        APPROVED,        // Fully approved
-        REJECTED,        // Rejected at any step
-        CANCELLED,       // Cancelled by requester
-        ESCALATED,       // Escalated due to timeout
-        ON_HOLD,         // Temporarily on hold
-        RETURNED,        // Returned for modification
-        EXPIRED          // Expired due to inaction
-    }
-
-    public enum Priority {
-        LOW,
-        NORMAL,
-        HIGH,
-        URGENT
-    }
-
     @PrePersist
     protected void onCreate() {
         submittedAt = LocalDateTime.now();
@@ -140,8 +120,8 @@ public class WorkflowExecution extends TenantAware {
 
     public boolean isCompleted() {
         return status == ExecutionStatus.APPROVED ||
-               status == ExecutionStatus.REJECTED ||
-               status == ExecutionStatus.CANCELLED;
+                status == ExecutionStatus.REJECTED ||
+                status == ExecutionStatus.CANCELLED;
     }
 
     public boolean canBeApproved() {
@@ -163,5 +143,25 @@ public class WorkflowExecution extends TenantAware {
         this.status = ExecutionStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
         this.cancellationReason = reason;
+    }
+
+    public enum ExecutionStatus {
+        DRAFT,           // Not yet submitted
+        PENDING,         // Waiting for approval
+        IN_PROGRESS,     // Being processed
+        APPROVED,        // Fully approved
+        REJECTED,        // Rejected at any step
+        CANCELLED,       // Cancelled by requester
+        ESCALATED,       // Escalated due to timeout
+        ON_HOLD,         // Temporarily on hold
+        RETURNED,        // Returned for modification
+        EXPIRED          // Expired due to inaction
+    }
+
+    public enum Priority {
+        LOW,
+        NORMAL,
+        HIGH,
+        URGENT
     }
 }

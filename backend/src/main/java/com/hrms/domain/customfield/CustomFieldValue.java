@@ -17,10 +17,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "custom_field_values", indexes = {
-    @Index(name = "idx_cfv_tenant", columnList = "tenantId"),
-    @Index(name = "idx_cfv_definition", columnList = "fieldDefinitionId"),
-    @Index(name = "idx_cfv_entity", columnList = "entityType,entityId"),
-    @Index(name = "idx_cfv_definition_entity", columnList = "fieldDefinitionId,entityId", unique = true)
+        @Index(name = "idx_cfv_tenant", columnList = "tenantId"),
+        @Index(name = "idx_cfv_definition", columnList = "fieldDefinitionId"),
+        @Index(name = "idx_cfv_entity", columnList = "entityType,entityId"),
+        @Index(name = "idx_cfv_definition_entity", columnList = "fieldDefinitionId,entityId", unique = true)
 })
 @Getter
 @Setter
@@ -202,8 +202,8 @@ public class CustomFieldValue extends TenantAware {
      */
     public boolean hasValue() {
         return textValue != null || numberValue != null || dateValue != null ||
-               dateTimeValue != null || booleanValue != null || multiSelectValue != null ||
-               fileValue != null;
+                dateTimeValue != null || booleanValue != null || multiSelectValue != null ||
+                fileValue != null;
     }
 
     /**

@@ -61,6 +61,14 @@ public class Position extends TenantAware {
 
     private String location;
 
+    public int getVacancies() {
+        return headcount - filledCount;
+    }
+
+    public boolean hasVacancy() {
+        return getVacancies() > 0;
+    }
+
     public enum JobLevel {
         ENTRY,
         JUNIOR,
@@ -92,13 +100,5 @@ public class Position extends TenantAware {
         ADMIN,
         EXECUTIVE,
         OTHER
-    }
-
-    public int getVacancies() {
-        return headcount - filledCount;
-    }
-
-    public boolean hasVacancy() {
-        return getVacancies() > 0;
     }
 }

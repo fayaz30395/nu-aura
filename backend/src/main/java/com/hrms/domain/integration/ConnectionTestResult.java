@@ -8,26 +8,26 @@ import java.util.Map;
  * <p>Contains diagnostic information to help troubleshoot integration issues.</p>
  */
 public record ConnectionTestResult(
-    /**
-     * Whether the connection test succeeded.
-     */
-    boolean success,
+        /**
+         * Whether the connection test succeeded.
+         */
+        boolean success,
 
-    /**
-     * Human-readable message describing the test result.
-     */
-    String message,
+        /**
+         * Human-readable message describing the test result.
+         */
+        String message,
 
-    /**
-     * Latency in milliseconds for the test operation.
-     */
-    long latencyMs,
+        /**
+         * Latency in milliseconds for the test operation.
+         */
+        long latencyMs,
 
-    /**
-     * Optional diagnostic details (e.g., API response headers, version info).
-     * May contain sensitive data; should not be logged to untrusted outputs.
-     */
-    Map<String, Object> diagnostics
+        /**
+         * Optional diagnostic details (e.g., API response headers, version info).
+         * May contain sensitive data; should not be logged to untrusted outputs.
+         */
+        Map<String, Object> diagnostics
 ) {
 
     /**

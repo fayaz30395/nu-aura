@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "email_notifications", indexes = {
-    @Index(name = "idx_email_tenant", columnList = "tenantId"),
-    @Index(name = "idx_email_status", columnList = "status"),
-    @Index(name = "idx_email_recipient", columnList = "recipientEmail")
+        @Index(name = "idx_email_tenant", columnList = "tenantId"),
+        @Index(name = "idx_email_status", columnList = "status"),
+        @Index(name = "idx_email_recipient", columnList = "recipientEmail")
 })
 @Getter
 @Setter

@@ -37,8 +37,8 @@ import java.util.UUID;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_template_mappings", indexes = {
-    @Index(name = "idx_docusign_mapping_tenant_doctype", columnList = "tenant_id, document_type"),
-    @Index(name = "idx_docusign_mapping_tenant_active", columnList = "tenant_id, is_active")
+        @Index(name = "idx_docusign_mapping_tenant_doctype", columnList = "tenant_id, document_type"),
+        @Index(name = "idx_docusign_mapping_tenant_active", columnList = "tenant_id, is_active")
 })
 @Slf4j
 public class DocuSignTemplateMapping extends TenantAware {

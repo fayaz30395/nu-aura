@@ -59,27 +59,6 @@ public class ProfileUpdateRequest extends TenantAware {
     @Builder.Default
     private Boolean autoApproved = false;
 
-    public enum UpdateCategory {
-        PERSONAL_INFO,
-        CONTACT_INFO,
-        EMERGENCY_CONTACT,
-        BANK_DETAILS,
-        ADDRESS,
-        EDUCATION,
-        CERTIFICATION,
-        SKILL,
-        DOCUMENT
-    }
-
-    public enum RequestStatus {
-        PENDING,
-        UNDER_REVIEW,
-        APPROVED,
-        REJECTED,
-        AUTO_APPROVED,
-        CANCELLED
-    }
-
     public void approve(UUID reviewerId, String comments) {
         this.status = RequestStatus.APPROVED;
         this.reviewedBy = reviewerId;
@@ -100,5 +79,26 @@ public class ProfileUpdateRequest extends TenantAware {
 
     public boolean isPending() {
         return this.status == RequestStatus.PENDING || this.status == RequestStatus.UNDER_REVIEW;
+    }
+
+    public enum UpdateCategory {
+        PERSONAL_INFO,
+        CONTACT_INFO,
+        EMERGENCY_CONTACT,
+        BANK_DETAILS,
+        ADDRESS,
+        EDUCATION,
+        CERTIFICATION,
+        SKILL,
+        DOCUMENT
+    }
+
+    public enum RequestStatus {
+        PENDING,
+        UNDER_REVIEW,
+        APPROVED,
+        REJECTED,
+        AUTO_APPROVED,
+        CANCELLED
     }
 }

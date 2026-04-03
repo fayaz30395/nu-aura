@@ -30,6 +30,13 @@ public class ApprovalTaskAssignedEvent extends DomainEvent {
         this.requesterId = requesterId;
     }
 
+    public static ApprovalTaskAssignedEvent of(Object source, UUID tenantId, UUID stepExecutionId,
+                                               UUID assignedToUserId, String entityType,
+                                               String requesterName, UUID requesterId) {
+        return new ApprovalTaskAssignedEvent(source, tenantId, stepExecutionId,
+                assignedToUserId, entityType, requesterName, requesterId);
+    }
+
     @Override
     public String getEventType() {
         return "APPROVAL_TASK_ASSIGNED";
@@ -46,12 +53,5 @@ public class ApprovalTaskAssignedEvent extends DomainEvent {
             payload.put("requesterId", requesterId.toString());
         }
         return payload;
-    }
-
-    public static ApprovalTaskAssignedEvent of(Object source, UUID tenantId, UUID stepExecutionId,
-                                               UUID assignedToUserId, String entityType,
-                                               String requesterName, UUID requesterId) {
-        return new ApprovalTaskAssignedEvent(source, tenantId, stepExecutionId,
-                assignedToUserId, entityType, requesterName, requesterId);
     }
 }

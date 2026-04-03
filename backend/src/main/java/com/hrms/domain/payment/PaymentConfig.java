@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_configs", indexes = {
-    @Index(name = "idx_payment_config_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payment_config_provider", columnList = "tenantId,provider")
+        @Index(name = "idx_payment_config_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payment_config_provider", columnList = "tenantId,provider")
 })
 @Getter
 @Setter

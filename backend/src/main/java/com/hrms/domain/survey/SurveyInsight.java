@@ -80,6 +80,12 @@ public class SurveyInsight {
 
     private LocalDateTime generatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        generatedAt = LocalDateTime.now();
+        if (actionStatus == null) actionStatus = ActionStatus.NEW;
+    }
+
     public enum InsightType {
         STRENGTH,
         WEAKNESS,
@@ -116,11 +122,5 @@ public class SurveyInsight {
         IN_PROGRESS,
         COMPLETED,
         DISMISSED
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        generatedAt = LocalDateTime.now();
-        if (actionStatus == null) actionStatus = ActionStatus.NEW;
     }
 }

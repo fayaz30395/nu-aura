@@ -11,9 +11,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "file_metadata", indexes = {
-    @Index(name = "idx_file_tenant", columnList = "tenantId"),
-    @Index(name = "idx_file_entity", columnList = "entityType,entityId"),
-    @Index(name = "idx_file_category", columnList = "category")
+        @Index(name = "idx_file_tenant", columnList = "tenantId"),
+        @Index(name = "idx_file_entity", columnList = "entityType,entityId"),
+        @Index(name = "idx_file_category", columnList = "category")
 })
 @Getter
 @Setter

@@ -16,16 +16,16 @@ import java.util.UUID;
 @Entity
 @org.hibernate.annotations.SQLRestriction("is_deleted = false")
 @Table(name = "candidates", indexes = {
-    @Index(name = "idx_candidate_tenant", columnList = "tenant_id"),
-    @Index(name = "idx_candidate_tenant_job", columnList = "tenant_id,job_opening_id"),
-    @Index(name = "idx_candidate_tenant_status", columnList = "tenant_id,status"),
-    @Index(name = "idx_candidate_tenant_stage", columnList = "tenant_id,current_stage"),
-    @Index(name = "idx_candidate_email", columnList = "email"),
-    @Index(name = "idx_candidate_recruiter", columnList = "assigned_recruiter_id"),
-    @Index(name = "idx_candidate_applied_date", columnList = "applied_date"),
-    @Index(name = "idx_candidate_source", columnList = "source")
+        @Index(name = "idx_candidate_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_candidate_tenant_job", columnList = "tenant_id,job_opening_id"),
+        @Index(name = "idx_candidate_tenant_status", columnList = "tenant_id,status"),
+        @Index(name = "idx_candidate_tenant_stage", columnList = "tenant_id,current_stage"),
+        @Index(name = "idx_candidate_email", columnList = "email"),
+        @Index(name = "idx_candidate_recruiter", columnList = "assigned_recruiter_id"),
+        @Index(name = "idx_candidate_applied_date", columnList = "applied_date"),
+        @Index(name = "idx_candidate_source", columnList = "source")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_candidate_tenant_code", columnNames = {"tenant_id", "candidate_code"})
+        @UniqueConstraint(name = "uk_candidate_tenant_code", columnNames = {"tenant_id", "candidate_code"})
 })
 @Data
 @EntityListeners(AuditingEntityListener.class)
@@ -150,6 +150,10 @@ public class Candidate {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public enum CandidateSource {
         JOB_PORTAL, REFERRAL, LINKEDIN, COMPANY_WEBSITE, WALK_IN, CAMPUS, CONSULTANT, OTHER
     }
@@ -177,9 +181,5 @@ public class Candidate {
         HR_FINAL_INTERVIEW_COMPLETED,
         CANDIDATE_REJECTED,
         OFFER_NDA_TO_BE_RELEASED
-    }
-
-    public String getFullName() {
-        return firstName + " " + lastName;
     }
 }

@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "ticket_categories", indexes = {
-    @Index(name = "idx_category_tenant", columnList = "tenantId"),
-    @Index(name = "idx_category_parent", columnList = "parentCategoryId"),
-    @Index(name = "idx_category_dept", columnList = "departmentType")
+        @Index(name = "idx_category_tenant", columnList = "tenantId"),
+        @Index(name = "idx_category_parent", columnList = "parentCategoryId"),
+        @Index(name = "idx_category_dept", columnList = "departmentType")
 })
 @Data
 @NoArgsConstructor

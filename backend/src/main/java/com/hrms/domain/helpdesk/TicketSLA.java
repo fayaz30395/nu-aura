@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "ticket_slas", indexes = {
-    @Index(name = "idx_sla_tenant", columnList = "tenantId"),
-    @Index(name = "idx_sla_category", columnList = "categoryId"),
-    @Index(name = "idx_sla_priority", columnList = "priority")
+        @Index(name = "idx_sla_tenant", columnList = "tenantId"),
+        @Index(name = "idx_sla_category", columnList = "categoryId"),
+        @Index(name = "idx_sla_priority", columnList = "priority")
 })
 @Getter
 @Setter

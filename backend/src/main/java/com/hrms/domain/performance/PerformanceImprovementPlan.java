@@ -12,10 +12,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "performance_improvement_plans", indexes = {
-    @Index(name = "idx_pip_tenant", columnList = "tenantId"),
-    @Index(name = "idx_pip_employee", columnList = "tenantId,employee_id"),
-    @Index(name = "idx_pip_manager", columnList = "tenantId,manager_id"),
-    @Index(name = "idx_pip_status", columnList = "status")
+        @Index(name = "idx_pip_tenant", columnList = "tenantId"),
+        @Index(name = "idx_pip_employee", columnList = "tenantId,employee_id"),
+        @Index(name = "idx_pip_manager", columnList = "tenantId,manager_id"),
+        @Index(name = "idx_pip_status", columnList = "status")
 })
 @Getter
 @Setter

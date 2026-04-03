@@ -14,9 +14,9 @@ import java.util.Set;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "users", indexes = {
-    @Index(name = "idx_user_email_tenant", columnList = "email,tenantId", unique = true),
-    @Index(name = "idx_user_tenant", columnList = "tenantId"),
-    @Index(name = "idx_user_status", columnList = "status")
+        @Index(name = "idx_user_email_tenant", columnList = "email,tenantId", unique = true),
+        @Index(name = "idx_user_tenant", columnList = "tenantId"),
+        @Index(name = "idx_user_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -96,24 +96,17 @@ public class User extends TenantAware {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id"),
-        indexes = {
-            @Index(name = "idx_user_roles_user", columnList = "user_id"),
-            @Index(name = "idx_user_roles_role", columnList = "role_id")
-        }
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            indexes = {
+                    @Index(name = "idx_user_roles_user", columnList = "user_id"),
+                    @Index(name = "idx_user_roles_role", columnList = "role_id")
+            }
     )
     @BatchSize(size = 50)
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
-
-    public enum UserStatus {
-        ACTIVE,
-        INACTIVE,
-        LOCKED,
-        PENDING_ACTIVATION
-    }
 
     public String getFullName() {
         return firstName + (lastName != null ? " " + lastName : "");
@@ -151,5 +144,12 @@ public class User extends TenantAware {
         this.lastLoginAt = LocalDateTime.now();
         this.failedLoginAttempts = 0;
         this.lockedUntil = null;
+    }
+
+    public enum UserStatus {
+        ACTIVE,
+        INACTIVE,
+        LOCKED,
+        PENDING_ACTIVATION
     }
 }

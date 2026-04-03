@@ -110,11 +110,15 @@ public class Employee extends TenantAware {
     @Column
     private UUID managerId;
 
-    /** Optional first dotted-line manager (matrix reporting, informational only). */
+    /**
+     * Optional first dotted-line manager (matrix reporting, informational only).
+     */
     @Column
     private UUID dottedLineManager1Id;
 
-    /** Optional second dotted-line manager (matrix reporting, informational only). */
+    /**
+     * Optional second dotted-line manager (matrix reporting, informational only).
+     */
     @Column
     private UUID dottedLineManager2Id;
 
@@ -137,6 +141,32 @@ public class Employee extends TenantAware {
 
     @Column(length = 50)
     private String taxId;
+
+    public String getFullName() {
+        StringBuilder name = new StringBuilder();
+        if (firstName != null) {
+            name.append(firstName);
+        }
+        if (middleName != null && !middleName.isEmpty()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(middleName);
+        }
+        if (lastName != null && !lastName.isEmpty()) {
+            if (name.length() > 0) name.append(" ");
+            name.append(lastName);
+        }
+        return name.length() > 0 ? name.toString() : "";
+    }
+
+    public void terminate() {
+        this.status = EmployeeStatus.TERMINATED;
+        this.exitDate = LocalDate.now();
+    }
+
+    public void resign() {
+        this.status = EmployeeStatus.RESIGNED;
+        this.exitDate = LocalDate.now();
+    }
 
     public enum Gender {
         MALE,
@@ -259,31 +289,5 @@ public class Employee extends TenantAware {
         CONSULTANT,
         INTERN,
         OTHER
-    }
-
-    public String getFullName() {
-        StringBuilder name = new StringBuilder();
-        if (firstName != null) {
-            name.append(firstName);
-        }
-        if (middleName != null && !middleName.isEmpty()) {
-            if (name.length() > 0) name.append(" ");
-            name.append(middleName);
-        }
-        if (lastName != null && !lastName.isEmpty()) {
-            if (name.length() > 0) name.append(" ");
-            name.append(lastName);
-        }
-        return name.length() > 0 ? name.toString() : "";
-    }
-
-    public void terminate() {
-        this.status = EmployeeStatus.TERMINATED;
-        this.exitDate = LocalDate.now();
-    }
-
-    public void resign() {
-        this.status = EmployeeStatus.RESIGNED;
-        this.exitDate = LocalDate.now();
     }
 }

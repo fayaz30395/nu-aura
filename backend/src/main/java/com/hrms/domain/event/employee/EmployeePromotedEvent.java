@@ -30,16 +30,27 @@ public class EmployeePromotedEvent extends EmployeeEvent {
                                  Employee.EmployeeLevel previousLevel,
                                  Employee.EmployeeLevel newLevel) {
         super(source,
-              employee.getTenantId(),
-              employee.getId(),
-              employee.getEmployeeCode(),
-              employee.getFullName(),
-              employee.getUser() != null ? employee.getUser().getEmail() : null);
+                employee.getTenantId(),
+                employee.getId(),
+                employee.getEmployeeCode(),
+                employee.getFullName(),
+                employee.getUser() != null ? employee.getUser().getEmail() : null);
         this.employee = employee;
         this.previousDesignation = previousDesignation;
         this.newDesignation = newDesignation;
         this.previousLevel = previousLevel;
         this.newLevel = newLevel;
+    }
+
+    /**
+     * Factory method for creating the event.
+     */
+    public static EmployeePromotedEvent of(Object source, Employee employee,
+                                           String previousDesignation, String newDesignation,
+                                           Employee.EmployeeLevel previousLevel,
+                                           Employee.EmployeeLevel newLevel) {
+        return new EmployeePromotedEvent(source, employee, previousDesignation, newDesignation,
+                previousLevel, newLevel);
     }
 
     @Override
@@ -59,16 +70,5 @@ public class EmployeePromotedEvent extends EmployeeEvent {
             payload.put("newLevel", newLevel.name());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static EmployeePromotedEvent of(Object source, Employee employee,
-                                           String previousDesignation, String newDesignation,
-                                           Employee.EmployeeLevel previousLevel,
-                                           Employee.EmployeeLevel newLevel) {
-        return new EmployeePromotedEvent(source, employee, previousDesignation, newDesignation,
-                                        previousLevel, newLevel);
     }
 }

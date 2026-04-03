@@ -22,16 +22,26 @@ public class EmployeeDepartmentChangedEvent extends EmployeeEvent {
                                           UUID previousDepartmentId, UUID newDepartmentId,
                                           UUID previousManagerId, UUID newManagerId) {
         super(source,
-              employee.getTenantId(),
-              employee.getId(),
-              employee.getEmployeeCode(),
-              employee.getFullName(),
-              employee.getUser() != null ? employee.getUser().getEmail() : null);
+                employee.getTenantId(),
+                employee.getId(),
+                employee.getEmployeeCode(),
+                employee.getFullName(),
+                employee.getUser() != null ? employee.getUser().getEmail() : null);
         this.employee = employee;
         this.previousDepartmentId = previousDepartmentId;
         this.newDepartmentId = newDepartmentId;
         this.previousManagerId = previousManagerId;
         this.newManagerId = newManagerId;
+    }
+
+    /**
+     * Factory method for creating the event.
+     */
+    public static EmployeeDepartmentChangedEvent of(Object source, Employee employee,
+                                                    UUID previousDepartmentId, UUID newDepartmentId,
+                                                    UUID previousManagerId, UUID newManagerId) {
+        return new EmployeeDepartmentChangedEvent(source, employee,
+                previousDepartmentId, newDepartmentId, previousManagerId, newManagerId);
     }
 
     @Override
@@ -55,15 +65,5 @@ public class EmployeeDepartmentChangedEvent extends EmployeeEvent {
             payload.put("newManagerId", newManagerId.toString());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static EmployeeDepartmentChangedEvent of(Object source, Employee employee,
-                                                    UUID previousDepartmentId, UUID newDepartmentId,
-                                                    UUID previousManagerId, UUID newManagerId) {
-        return new EmployeeDepartmentChangedEvent(source, employee,
-                previousDepartmentId, newDepartmentId, previousManagerId, newManagerId);
     }
 }

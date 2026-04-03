@@ -13,11 +13,11 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_batches", indexes = {
-    @Index(name = "idx_payment_batch_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payment_batch_ref", columnList = "tenantId,batchRef", unique = true),
-    @Index(name = "idx_payment_batch_type", columnList = "tenantId,type"),
-    @Index(name = "idx_payment_batch_status", columnList = "tenantId,status"),
-    @Index(name = "idx_payment_batch_payroll", columnList = "payrollRunId")
+        @Index(name = "idx_payment_batch_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payment_batch_ref", columnList = "tenantId,batchRef", unique = true),
+        @Index(name = "idx_payment_batch_type", columnList = "tenantId,type"),
+        @Index(name = "idx_payment_batch_status", columnList = "tenantId,status"),
+        @Index(name = "idx_payment_batch_payroll", columnList = "payrollRunId")
 })
 @Getter
 @Setter

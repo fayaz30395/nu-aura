@@ -11,35 +11,35 @@ import java.util.UUID;
  * Connectors subscribed to the event type will receive this event for processing.</p>
  */
 public record IntegrationEvent(
-    /**
-     * The type of event (e.g., "employee.created", "leave.approved").
-     */
-    String eventType,
+        /**
+         * The type of event (e.g., "employee.created", "leave.approved").
+         */
+        String eventType,
 
-    /**
-     * The tenant ID associated with this event.
-     */
-    UUID tenantId,
+        /**
+         * The tenant ID associated with this event.
+         */
+        UUID tenantId,
 
-    /**
-     * The UUID of the primary entity affected by this event.
-     */
-    UUID entityId,
+        /**
+         * The UUID of the primary entity affected by this event.
+         */
+        UUID entityId,
 
-    /**
-     * The type of the entity (e.g., "Employee", "LeaveRequest").
-     */
-    String entityType,
+        /**
+         * The type of the entity (e.g., "Employee", "LeaveRequest").
+         */
+        String entityType,
 
-    /**
-     * Optional additional data about the event (e.g., old values, change details).
-     */
-    Map<String, Object> metadata,
+        /**
+         * Optional additional data about the event (e.g., old values, change details).
+         */
+        Map<String, Object> metadata,
 
-    /**
-     * Timestamp when the event occurred.
-     */
-    Instant timestamp
+        /**
+         * Timestamp when the event occurred.
+         */
+        Instant timestamp
 ) {
 
     /**

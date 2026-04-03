@@ -61,6 +61,33 @@ public class DocumentRequest extends TenantAware {
     @Builder.Default
     private Integer priority = 2; // 1=High, 2=Normal, 3=Low
 
+    public void startProcessing(UUID processedById) {
+        this.status = RequestStatus.IN_PROGRESS;
+        this.processedBy = processedById;
+    }
+
+    public void markGenerated(String documentUrl) {
+        this.status = RequestStatus.GENERATED;
+        this.generatedDocumentUrl = documentUrl;
+        this.documentGeneratedAt = LocalDateTime.now();
+        this.processedAt = LocalDateTime.now();
+    }
+
+    public void markDelivered() {
+        this.status = RequestStatus.DELIVERED;
+    }
+
+    public void reject(UUID rejectedBy, String reason) {
+        this.status = RequestStatus.REJECTED;
+        this.processedBy = rejectedBy;
+        this.processedAt = LocalDateTime.now();
+        this.rejectionReason = reason;
+    }
+
+    public void cancel() {
+        this.status = RequestStatus.CANCELLED;
+    }
+
     public enum DocumentType {
         EMPLOYMENT_CERTIFICATE,
         SALARY_CERTIFICATE,
@@ -89,32 +116,5 @@ public class DocumentRequest extends TenantAware {
         DIGITAL,
         PHYSICAL,
         BOTH
-    }
-
-    public void startProcessing(UUID processedById) {
-        this.status = RequestStatus.IN_PROGRESS;
-        this.processedBy = processedById;
-    }
-
-    public void markGenerated(String documentUrl) {
-        this.status = RequestStatus.GENERATED;
-        this.generatedDocumentUrl = documentUrl;
-        this.documentGeneratedAt = LocalDateTime.now();
-        this.processedAt = LocalDateTime.now();
-    }
-
-    public void markDelivered() {
-        this.status = RequestStatus.DELIVERED;
-    }
-
-    public void reject(UUID rejectedBy, String reason) {
-        this.status = RequestStatus.REJECTED;
-        this.processedBy = rejectedBy;
-        this.processedAt = LocalDateTime.now();
-        this.rejectionReason = reason;
-    }
-
-    public void cancel() {
-        this.status = RequestStatus.CANCELLED;
     }
 }

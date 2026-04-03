@@ -81,15 +81,15 @@ public class ChallengeParticipant extends TenantAware {
     @Builder.Default
     private List<HealthLog> healthLogs = new ArrayList<>();
 
+    @PrePersist
+    protected void onCreate() {
+        joinedAt = LocalDateTime.now();
+    }
+
     public enum ParticipationStatus {
         ACTIVE,
         COMPLETED,
         WITHDRAWN,
         DISQUALIFIED
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        joinedAt = LocalDateTime.now();
     }
 }

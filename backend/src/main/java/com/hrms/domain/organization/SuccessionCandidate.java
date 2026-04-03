@@ -12,7 +12,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "succession_candidates",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"succession_plan_id", "candidate_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"succession_plan_id", "candidate_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -60,6 +60,27 @@ public class SuccessionCandidate extends TenantAware {
     @Builder.Default
     private Boolean isConfidential = false;
 
+    // 9-Box Grid position calculation
+    public String getNineBoxPosition() {
+        if (performanceRating == null || potentialRating == null) return "UNKNOWN";
+
+        boolean highPerformance = performanceRating == PerformanceRating.EXCEPTIONAL ||
+                performanceRating == PerformanceRating.EXCEEDS_EXPECTATIONS;
+        boolean medPerformance = performanceRating == PerformanceRating.MEETS_EXPECTATIONS;
+        boolean highPotential = potentialRating == PotentialRating.HIGH;
+        boolean medPotential = potentialRating == PotentialRating.MEDIUM;
+
+        if (highPerformance && highPotential) return "STAR";
+        if (highPerformance && medPotential) return "HIGH_PERFORMER";
+        if (highPerformance) return "SOLID_PERFORMER";
+        if (medPerformance && highPotential) return "HIGH_POTENTIAL";
+        if (medPerformance && medPotential) return "CORE_PLAYER";
+        if (medPerformance) return "EFFECTIVE";
+        if (highPotential) return "INCONSISTENT";
+        if (medPotential) return "UNDERPERFORMER";
+        return "RISK";
+    }
+
     public enum ReadinessLevel {
         READY_NOW,
         READY_1_YEAR,
@@ -81,26 +102,5 @@ public class SuccessionCandidate extends TenantAware {
         MEDIUM,
         LOW,
         UNCLEAR
-    }
-
-    // 9-Box Grid position calculation
-    public String getNineBoxPosition() {
-        if (performanceRating == null || potentialRating == null) return "UNKNOWN";
-
-        boolean highPerformance = performanceRating == PerformanceRating.EXCEPTIONAL ||
-                                  performanceRating == PerformanceRating.EXCEEDS_EXPECTATIONS;
-        boolean medPerformance = performanceRating == PerformanceRating.MEETS_EXPECTATIONS;
-        boolean highPotential = potentialRating == PotentialRating.HIGH;
-        boolean medPotential = potentialRating == PotentialRating.MEDIUM;
-
-        if (highPerformance && highPotential) return "STAR";
-        if (highPerformance && medPotential) return "HIGH_PERFORMER";
-        if (highPerformance) return "SOLID_PERFORMER";
-        if (medPerformance && highPotential) return "HIGH_POTENTIAL";
-        if (medPerformance && medPotential) return "CORE_PLAYER";
-        if (medPerformance) return "EFFECTIVE";
-        if (highPotential) return "INCONSISTENT";
-        if (medPotential) return "UNDERPERFORMER";
-        return "RISK";
     }
 }

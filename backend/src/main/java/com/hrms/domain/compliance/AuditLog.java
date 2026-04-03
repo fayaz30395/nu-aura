@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Entity(name = "ComplianceAuditLog")
 @Table(name = "compliance_audit_logs", indexes = {
-    @Index(name = "idx_compliance_audit_entity", columnList = "entity_type, entity_id"),
-    @Index(name = "idx_compliance_audit_user", columnList = "performed_by"),
-    @Index(name = "idx_compliance_audit_timestamp", columnList = "timestamp")
+        @Index(name = "idx_compliance_audit_entity", columnList = "entity_type, entity_id"),
+        @Index(name = "idx_compliance_audit_user", columnList = "performed_by"),
+        @Index(name = "idx_compliance_audit_timestamp", columnList = "timestamp")
 })
 @Getter
 @Setter
@@ -63,6 +63,13 @@ public class AuditLog extends TenantAware {
     @Enumerated(EnumType.STRING)
     private AuditSeverity severity;
 
+    @PrePersist
+    public void prePersist() {
+        if (timestamp == null) {
+            timestamp = LocalDateTime.now();
+        }
+    }
+
     public enum AuditAction {
         CREATE,
         READ,
@@ -89,12 +96,5 @@ public class AuditLog extends TenantAware {
         MEDIUM,
         HIGH,
         CRITICAL
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (timestamp == null) {
-            timestamp = LocalDateTime.now();
-        }
     }
 }

@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_policies", indexes = {
-    @Index(name = "idx_expense_policy_tenant", columnList = "tenantId"),
-    @Index(name = "idx_expense_policy_tenant_active", columnList = "tenantId,isActive")
+        @Index(name = "idx_expense_policy_tenant", columnList = "tenantId"),
+        @Index(name = "idx_expense_policy_tenant_active", columnList = "tenantId,isActive")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_expense_policy_tenant_name", columnNames = {"tenantId", "name"})
+        @UniqueConstraint(name = "uk_expense_policy_tenant_name", columnNames = {"tenantId", "name"})
 })
 @Getter
 @Setter

@@ -69,6 +69,17 @@ public class SurveyResponse {
 
     private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (status == null) status = ResponseStatus.IN_PROGRESS;
+    }
+
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setResponse(this);
+    }
+
     public enum ResponseStatus {
         IN_PROGRESS,
         COMPLETED,
@@ -82,16 +93,5 @@ public class SurveyResponse {
         NEUTRAL,
         POSITIVE,
         VERY_POSITIVE
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        if (status == null) status = ResponseStatus.IN_PROGRESS;
-    }
-
-    public void addAnswer(SurveyAnswer answer) {
-        answers.add(answer);
-        answer.setResponse(this);
     }
 }

@@ -11,28 +11,28 @@ import java.util.UUID;
  * Configuration values are decrypted before being wrapped in this record.</p>
  */
 public record ConnectorConfig(
-    /**
-     * The tenant ID that owns this configuration.
-     */
-    UUID tenantId,
+        /**
+         * The tenant ID that owns this configuration.
+         */
+        UUID tenantId,
 
-    /**
-     * The connector ID (e.g., "docusign", "slack", "twilio").
-     */
-    String connectorId,
+        /**
+         * The connector ID (e.g., "docusign", "slack", "twilio").
+         */
+        String connectorId,
 
-    /**
-     * Configuration settings as key-value pairs.
-     * Keys and values depend on the connector type.
-     * Values may include API keys, URLs, or feature flags.
-     */
-    Map<String, Object> settings,
+        /**
+         * Configuration settings as key-value pairs.
+         * Keys and values depend on the connector type.
+         * Values may include API keys, URLs, or feature flags.
+         */
+        Map<String, Object> settings,
 
-    /**
-     * Set of event types this connector instance is subscribed to.
-     * Examples: "employee.created", "leave.approved", "payroll.calculated".
-     */
-    Set<String> eventSubscriptions
+        /**
+         * Set of event types this connector instance is subscribed to.
+         * Examples: "employee.created", "leave.approved", "payroll.calculated".
+         */
+        Set<String> eventSubscriptions
 ) {
 
     /**

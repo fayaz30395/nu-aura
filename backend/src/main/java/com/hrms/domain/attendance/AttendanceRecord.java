@@ -13,10 +13,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "attendance_records", indexes = {
-    @Index(name = "idx_attendance_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_attendance_employee_id", columnList = "employeeId"),
-    @Index(name = "idx_attendance_date", columnList = "attendanceDate"),
-    @Index(name = "idx_attendance_status", columnList = "status")
+        @Index(name = "idx_attendance_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_attendance_employee_id", columnList = "employeeId"),
+        @Index(name = "idx_attendance_date", columnList = "attendanceDate"),
+        @Index(name = "idx_attendance_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -25,153 +25,104 @@ import java.util.UUID;
 @SuperBuilder
 public class AttendanceRecord extends TenantAware {
 
-    @Column(name = "employee_id", nullable = false)
-    private UUID employeeId;
-
-    @Column(name = "shift_id")
-    private UUID shiftId;
-
-    @Column(name = "attendance_date", nullable = false)
-    private LocalDate attendanceDate;
-
-    @Column(name = "check_in_time")
-    private LocalDateTime checkInTime;
-
-    @Column(name = "check_out_time")
-    private LocalDateTime checkOutTime;
-
-    @Column(name = "check_in_source", length = 50)
-    private String checkInSource;
-
-    @Column(name = "check_out_source", length = 50)
-    private String checkOutSource;
-
-    @Column(name = "check_in_location", columnDefinition = "TEXT")
-    private String checkInLocation;
-
-    @Column(name = "check_out_location", columnDefinition = "TEXT")
-    private String checkOutLocation;
-
-    @Column(name = "check_in_ip", length = 50)
-    private String checkInIp;
-
-    @Column(name = "check_out_ip", length = 50)
-    private String checkOutIp;
-
-    // GPS Geofencing fields
-    @Column(name = "check_in_latitude", precision = 10, scale = 8)
-    private java.math.BigDecimal checkInLatitude;
-
-    @Column(name = "check_in_longitude", precision = 11, scale = 8)
-    private java.math.BigDecimal checkInLongitude;
-
-    @Column(name = "check_out_latitude", precision = 10, scale = 8)
-    private java.math.BigDecimal checkOutLatitude;
-
-    @Column(name = "check_out_longitude", precision = 11, scale = 8)
-    private java.math.BigDecimal checkOutLongitude;
-
-    @Column(name = "check_in_office_location_id")
-    private UUID checkInOfficeLocationId;
-
-    @Column(name = "check_out_office_location_id")
-    private UUID checkOutOfficeLocationId;
-
-    @Column(name = "check_in_within_geofence")
-    @Builder.Default
-    private Boolean checkInWithinGeofence = false;
-
-    @Column(name = "check_out_within_geofence")
-    @Builder.Default
-    private Boolean checkOutWithinGeofence = false;
-
-    @Column(name = "check_in_distance_meters")
-    private Integer checkInDistanceMeters;
-
-    @Column(name = "check_out_distance_meters")
-    private Integer checkOutDistanceMeters;
-
-    @Column(name = "is_remote_checkin")
-    @Builder.Default
-    private Boolean isRemoteCheckin = false;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private AttendanceStatus status;
-
-    @Column(name = "work_duration_minutes")
-    @Builder.Default
-    private Integer workDurationMinutes = 0;
-
-    @Column(name = "break_duration_minutes")
-    @Builder.Default
-    private Integer breakDurationMinutes = 0;
-
-    @Column(name = "overtime_minutes")
-    @Builder.Default
-    private Integer overtimeMinutes = 0;
-
-    @Column(name = "is_late")
-    @Builder.Default
-    private Boolean isLate = false;
-
-    @Column(name = "late_by_minutes")
-    @Builder.Default
-    private Integer lateByMinutes = 0;
-
-    @Column(name = "is_early_departure")
-    @Builder.Default
-    private Boolean isEarlyDeparture = false;
-
-    @Column(name = "early_departure_minutes")
-    @Builder.Default
-    private Integer earlyDepartureMinutes = 0;
-
-    @Column(name = "is_half_day")
-    @Builder.Default
-    private Boolean isHalfDay = false;
-
-    @Column(name = "is_overtime")
-    @Builder.Default
-    private Boolean isOvertime = false;
-
-    @Column(columnDefinition = "TEXT")
-    private String notes;
-
-    @Column(name = "regularization_requested")
-    @Builder.Default
-    private Boolean regularizationRequested = false;
-
-    @Column(name = "regularization_approved")
-    @Builder.Default
-    private Boolean regularizationApproved = false;
-
-    @Column(name = "regularization_reason", columnDefinition = "TEXT")
-    private String regularizationReason;
-
-    @Column(name = "approved_by")
-    private UUID approvedBy;
-
-    @Column(name = "approved_at")
-    private LocalDateTime approvedAt;
-
     // Default minimum required work hours (8 hours = 480 minutes)
     public static final int FULL_DAY_MINUTES = 480;
     // Default half day threshold (4 hours = 240 minutes)
     public static final int HALF_DAY_MINUTES = 240;
     // Default overtime threshold (9 hours = 540 minutes)
     public static final int DEFAULT_OVERTIME_THRESHOLD_MINUTES = 540;
-
-    public enum AttendanceStatus {
-        PRESENT,           // Worked full day (>= 8 hours)
-        ABSENT,            // No attendance recorded
-        HALF_DAY,          // Worked between 4-8 hours OR explicitly marked half day
-        INCOMPLETE,        // Checked in but worked less than minimum required hours
-        ON_LEAVE,
-        WEEKLY_OFF,
-        HOLIDAY,
-        PENDING_REGULARIZATION
-    }
+    @Column(name = "employee_id", nullable = false)
+    private UUID employeeId;
+    @Column(name = "shift_id")
+    private UUID shiftId;
+    @Column(name = "attendance_date", nullable = false)
+    private LocalDate attendanceDate;
+    @Column(name = "check_in_time")
+    private LocalDateTime checkInTime;
+    @Column(name = "check_out_time")
+    private LocalDateTime checkOutTime;
+    @Column(name = "check_in_source", length = 50)
+    private String checkInSource;
+    @Column(name = "check_out_source", length = 50)
+    private String checkOutSource;
+    @Column(name = "check_in_location", columnDefinition = "TEXT")
+    private String checkInLocation;
+    @Column(name = "check_out_location", columnDefinition = "TEXT")
+    private String checkOutLocation;
+    @Column(name = "check_in_ip", length = 50)
+    private String checkInIp;
+    @Column(name = "check_out_ip", length = 50)
+    private String checkOutIp;
+    // GPS Geofencing fields
+    @Column(name = "check_in_latitude", precision = 10, scale = 8)
+    private java.math.BigDecimal checkInLatitude;
+    @Column(name = "check_in_longitude", precision = 11, scale = 8)
+    private java.math.BigDecimal checkInLongitude;
+    @Column(name = "check_out_latitude", precision = 10, scale = 8)
+    private java.math.BigDecimal checkOutLatitude;
+    @Column(name = "check_out_longitude", precision = 11, scale = 8)
+    private java.math.BigDecimal checkOutLongitude;
+    @Column(name = "check_in_office_location_id")
+    private UUID checkInOfficeLocationId;
+    @Column(name = "check_out_office_location_id")
+    private UUID checkOutOfficeLocationId;
+    @Column(name = "check_in_within_geofence")
+    @Builder.Default
+    private Boolean checkInWithinGeofence = false;
+    @Column(name = "check_out_within_geofence")
+    @Builder.Default
+    private Boolean checkOutWithinGeofence = false;
+    @Column(name = "check_in_distance_meters")
+    private Integer checkInDistanceMeters;
+    @Column(name = "check_out_distance_meters")
+    private Integer checkOutDistanceMeters;
+    @Column(name = "is_remote_checkin")
+    @Builder.Default
+    private Boolean isRemoteCheckin = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private AttendanceStatus status;
+    @Column(name = "work_duration_minutes")
+    @Builder.Default
+    private Integer workDurationMinutes = 0;
+    @Column(name = "break_duration_minutes")
+    @Builder.Default
+    private Integer breakDurationMinutes = 0;
+    @Column(name = "overtime_minutes")
+    @Builder.Default
+    private Integer overtimeMinutes = 0;
+    @Column(name = "is_late")
+    @Builder.Default
+    private Boolean isLate = false;
+    @Column(name = "late_by_minutes")
+    @Builder.Default
+    private Integer lateByMinutes = 0;
+    @Column(name = "is_early_departure")
+    @Builder.Default
+    private Boolean isEarlyDeparture = false;
+    @Column(name = "early_departure_minutes")
+    @Builder.Default
+    private Integer earlyDepartureMinutes = 0;
+    @Column(name = "is_half_day")
+    @Builder.Default
+    private Boolean isHalfDay = false;
+    @Column(name = "is_overtime")
+    @Builder.Default
+    private Boolean isOvertime = false;
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+    @Column(name = "regularization_requested")
+    @Builder.Default
+    private Boolean regularizationRequested = false;
+    @Column(name = "regularization_approved")
+    @Builder.Default
+    private Boolean regularizationApproved = false;
+    @Column(name = "regularization_reason", columnDefinition = "TEXT")
+    private String regularizationReason;
+    @Column(name = "approved_by")
+    private UUID approvedBy;
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
 
     public void checkIn(LocalDateTime time, String source, String location, String ip) {
         this.checkInTime = time;
@@ -205,9 +156,9 @@ public class AttendanceRecord extends TenantAware {
     /**
      * Calculate work duration and update status using tenant-specific thresholds.
      *
-     * @param fullDayMinutes            minutes required for a full day (default 480)
-     * @param halfDayMinutes            minutes threshold for half day (default 240)
-     * @param overtimeThresholdMinutes  minutes after which overtime starts (default 540)
+     * @param fullDayMinutes           minutes required for a full day (default 480)
+     * @param halfDayMinutes           minutes threshold for half day (default 240)
+     * @param overtimeThresholdMinutes minutes after which overtime starts (default 540)
      */
     public void calculateWorkDuration(int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
         if (checkInTime != null && checkOutTime != null) {
@@ -235,9 +186,9 @@ public class AttendanceRecord extends TenantAware {
      * - HALF_DAY: >= halfDayMinutes but < fullDayMinutes
      * - INCOMPLETE: < halfDayMinutes - needs regularization
      *
-     * @param fullDayMinutes            minutes required for a full day
-     * @param halfDayMinutes            minutes threshold for half day
-     * @param overtimeThresholdMinutes  minutes after which overtime starts
+     * @param fullDayMinutes           minutes required for a full day
+     * @param halfDayMinutes           minutes threshold for half day
+     * @param overtimeThresholdMinutes minutes after which overtime starts
      */
     public void updateStatusBasedOnWorkDuration(int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
         // Only update if we have a valid checkout (meaning the day is complete)
@@ -251,9 +202,9 @@ public class AttendanceRecord extends TenantAware {
 
         // Don't override special statuses like ON_LEAVE, HOLIDAY, WEEKLY_OFF, or PENDING_REGULARIZATION
         if (this.status == AttendanceStatus.ON_LEAVE ||
-            this.status == AttendanceStatus.HOLIDAY ||
-            this.status == AttendanceStatus.WEEKLY_OFF ||
-            this.status == AttendanceStatus.PENDING_REGULARIZATION) {
+                this.status == AttendanceStatus.HOLIDAY ||
+                this.status == AttendanceStatus.WEEKLY_OFF ||
+                this.status == AttendanceStatus.PENDING_REGULARIZATION) {
             return;
         }
 
@@ -292,10 +243,10 @@ public class AttendanceRecord extends TenantAware {
      */
     public boolean isIncompleteAttendance() {
         return this.workDurationMinutes != null &&
-               this.workDurationMinutes < FULL_DAY_MINUTES &&
-               this.status != AttendanceStatus.ON_LEAVE &&
-               this.status != AttendanceStatus.HOLIDAY &&
-               this.status != AttendanceStatus.WEEKLY_OFF;
+                this.workDurationMinutes < FULL_DAY_MINUTES &&
+                this.status != AttendanceStatus.ON_LEAVE &&
+                this.status != AttendanceStatus.HOLIDAY &&
+                this.status != AttendanceStatus.WEEKLY_OFF;
     }
 
     public void markAsLate(int minutes) {
@@ -344,6 +295,17 @@ public class AttendanceRecord extends TenantAware {
      */
     public boolean isComplete() {
         return this.checkInTime != null && this.checkOutTime != null;
+    }
+
+    public enum AttendanceStatus {
+        PRESENT,           // Worked full day (>= 8 hours)
+        ABSENT,            // No attendance recorded
+        HALF_DAY,          // Worked between 4-8 hours OR explicitly marked half day
+        INCOMPLETE,        // Checked in but worked less than minimum required hours
+        ON_LEAVE,
+        WEEKLY_OFF,
+        HOLIDAY,
+        PENDING_REGULARIZATION
     }
 }
 

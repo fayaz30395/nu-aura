@@ -35,6 +35,13 @@ public class LeaveRequestedEvent extends DomainEvent {
         this.managerId = managerId;
     }
 
+    public static LeaveRequestedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
+                                         UUID employeeId, String requesterName, String leaveType,
+                                         LocalDate startDate, LocalDate endDate, UUID managerId) {
+        return new LeaveRequestedEvent(source, tenantId, leaveRequestId,
+                employeeId, requesterName, leaveType, startDate, endDate, managerId);
+    }
+
     @Override
     public String getEventType() {
         return "LEAVE_REQUESTED";
@@ -53,12 +60,5 @@ public class LeaveRequestedEvent extends DomainEvent {
             payload.put("managerId", managerId.toString());
         }
         return payload;
-    }
-
-    public static LeaveRequestedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
-                                         UUID employeeId, String requesterName, String leaveType,
-                                         LocalDate startDate, LocalDate endDate, UUID managerId) {
-        return new LeaveRequestedEvent(source, tenantId, leaveRequestId,
-                employeeId, requesterName, leaveType, startDate, endDate, managerId);
     }
 }

@@ -56,6 +56,14 @@ public class CompTimeTransaction {
     private UUID processedBy;
     private LocalDateTime processedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        if (transactionDate == null) {
+            transactionDate = LocalDate.now();
+        }
+        processedAt = LocalDateTime.now();
+    }
+
     public enum TransactionType {
         ACCRUAL,
         USAGE,
@@ -64,13 +72,5 @@ public class CompTimeTransaction {
         ADJUSTMENT,
         CARRYOVER,
         PAYOUT          // Converted to cash
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (transactionDate == null) {
-            transactionDate = LocalDate.now();
-        }
-        processedAt = LocalDateTime.now();
     }
 }

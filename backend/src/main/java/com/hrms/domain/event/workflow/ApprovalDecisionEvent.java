@@ -58,6 +58,19 @@ public class ApprovalDecisionEvent extends DomainEvent {
         this.requesterEmail = requesterEmail;
     }
 
+    public static ApprovalDecisionEvent of(
+            Object source,
+            UUID tenantId,
+            WorkflowExecution execution,
+            StepExecution step,
+            String action,
+            UUID actorUserId,
+            String actorName,
+            String comments,
+            String requesterEmail) {
+        return new ApprovalDecisionEvent(source, tenantId, execution, step, action, actorUserId, actorName, comments, requesterEmail);
+    }
+
     @Override
     public String getEventType() {
         return "APPROVAL_DECISION_" + action;
@@ -89,18 +102,5 @@ public class ApprovalDecisionEvent extends DomainEvent {
             payload.put("requesterEmail", requesterEmail);
         }
         return payload;
-    }
-
-    public static ApprovalDecisionEvent of(
-            Object source,
-            UUID tenantId,
-            WorkflowExecution execution,
-            StepExecution step,
-            String action,
-            UUID actorUserId,
-            String actorName,
-            String comments,
-            String requesterEmail) {
-        return new ApprovalDecisionEvent(source, tenantId, execution, step, action, actorUserId, actorName, comments, requesterEmail);
     }
 }

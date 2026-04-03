@@ -11,31 +11,31 @@ import java.util.Set;
  * instantiating the connector.</p>
  */
 public record ConnectorCapabilities(
-    /**
-     * Set of event types this connector can subscribe to (e.g., "employee.created").
-     */
-    Set<String> supportedEvents,
+        /**
+         * Set of event types this connector can subscribe to (e.g., "employee.created").
+         */
+        Set<String> supportedEvents,
 
-    /**
-     * Whether this connector supports receiving webhook callbacks from external services.
-     */
-    boolean supportsWebhookCallback,
+        /**
+         * Whether this connector supports receiving webhook callbacks from external services.
+         */
+        boolean supportsWebhookCallback,
 
-    /**
-     * Whether this connector exposes action buttons in the UI for manual operations.
-     */
-    boolean supportsActionButtons,
+        /**
+         * Whether this connector exposes action buttons in the UI for manual operations.
+         */
+        boolean supportsActionButtons,
 
-    /**
-     * Whether this connector supports batch operations.
-     */
-    boolean supportsBatchOperations,
+        /**
+         * Whether this connector supports batch operations.
+         */
+        boolean supportsBatchOperations,
 
-    /**
-     * JSON schema defining the expected structure of {@link ConnectorConfig#settings()}.
-     * Used for configuration UI validation and documentation.
-     */
-    String configSchemaJson
+        /**
+         * JSON schema defining the expected structure of {@link ConnectorConfig#settings()}.
+         * Used for configuration UI validation and documentation.
+         */
+        String configSchemaJson
 ) {
 
     /**

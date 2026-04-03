@@ -51,17 +51,6 @@ public class Milestone extends TenantAware {
     @Builder.Default
     private Integer wishesCount = 0;
 
-    public enum MilestoneType {
-        BIRTHDAY,
-        WORK_ANNIVERSARY,
-        JOINING,
-        PROMOTION,
-        PROJECT_COMPLETION,
-        CERTIFICATION,
-        AWARD,
-        CUSTOM
-    }
-
     public void markCelebrated() {
         this.isCelebrated = true;
         this.celebratedAt = LocalDateTime.now();
@@ -74,5 +63,16 @@ public class Milestone extends TenantAware {
 
     public void incrementWishes() {
         this.wishesCount++;
+    }
+
+    public enum MilestoneType {
+        BIRTHDAY,
+        WORK_ANNIVERSARY,
+        JOINING,
+        PROMOTION,
+        PROJECT_COMPLETION,
+        CERTIFICATION,
+        AWARD,
+        CUSTOM
     }
 }

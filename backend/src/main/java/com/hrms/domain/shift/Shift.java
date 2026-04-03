@@ -117,13 +117,6 @@ public class Shift {
     @Column(name = "overtime_multiplier", precision = 3, scale = 2)
     private BigDecimal overtimeMultiplier = new BigDecimal("1.50"); // 1.5x for regular overtime
 
-    public enum ShiftType {
-        FIXED,      // Fixed shift (e.g., 9-5)
-        ROTATING,   // Rotating shift pattern
-        FLEXIBLE,   // Flexible hours
-        SPLIT       // Split shift
-    }
-
     /**
      * Calculate total working hours including break
      */
@@ -139,5 +132,12 @@ public class Shift {
         long totalMinutes = java.time.Duration.between(startTime, endTime).toMinutes();
         long netMinutes = totalMinutes - (breakDurationMinutes != null ? breakDurationMinutes : 0);
         return new BigDecimal(netMinutes).divide(new BigDecimal("60"), 2, java.math.RoundingMode.HALF_UP);
+    }
+
+    public enum ShiftType {
+        FIXED,      // Fixed shift (e.g., 9-5)
+        ROTATING,   // Rotating shift pattern
+        FLEXIBLE,   // Flexible hours
+        SPLIT       // Split shift
     }
 }

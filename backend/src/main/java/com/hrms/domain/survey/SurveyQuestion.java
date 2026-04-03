@@ -64,6 +64,12 @@ public class SurveyQuestion {
 
     private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (weight == null) weight = 1.0;
+    }
+
     public enum QuestionType {
         SINGLE_CHOICE,
         MULTIPLE_CHOICE,
@@ -94,11 +100,5 @@ public class SurveyQuestion {
         RESOURCES,
         OVERALL_ENGAGEMENT,
         OTHER
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        if (weight == null) weight = 1.0;
     }
 }

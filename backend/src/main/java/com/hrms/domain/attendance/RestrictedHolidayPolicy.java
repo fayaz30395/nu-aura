@@ -13,11 +13,11 @@ import lombok.experimental.SuperBuilder;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "restricted_holiday_policies", indexes = {
-    @Index(name = "idx_rhp_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_rhp_year", columnList = "year")
+        @Index(name = "idx_rhp_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_rhp_year", columnList = "year")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_rhp_tenant_year",
-        columnNames = {"tenantId", "year"})
+        @UniqueConstraint(name = "uk_rhp_tenant_year",
+                columnNames = {"tenantId", "year"})
 })
 @Getter
 @Setter
@@ -26,17 +26,23 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class RestrictedHolidayPolicy extends TenantAware {
 
-    /** Maximum number of restricted holidays an employee can select per year */
+    /**
+     * Maximum number of restricted holidays an employee can select per year
+     */
     @Column(name = "max_selections_per_year", nullable = false)
     @Builder.Default
     private Integer maxSelectionsPerYear = 3;
 
-    /** Whether manager approval is required for selections */
+    /**
+     * Whether manager approval is required for selections
+     */
     @Column(name = "requires_approval", nullable = false)
     @Builder.Default
     private Boolean requiresApproval = true;
 
-    /** JSON array of department UUIDs this policy applies to. Null means all. */
+    /**
+     * JSON array of department UUIDs this policy applies to. Null means all.
+     */
     @Column(name = "applicable_departments", columnDefinition = "TEXT")
     private String applicableDepartments;
 
@@ -47,7 +53,9 @@ public class RestrictedHolidayPolicy extends TenantAware {
     @Builder.Default
     private Boolean isActive = true;
 
-    /** Minimum days before the holiday that selection must be made */
+    /**
+     * Minimum days before the holiday that selection must be made
+     */
     @Column(name = "min_days_before_selection")
     @Builder.Default
     private Integer minDaysBeforeSelection = 7;

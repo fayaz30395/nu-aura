@@ -16,14 +16,14 @@ import java.util.UUID;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "social_posts", indexes = {
-    @Index(name = "idx_wall_post_tenant", columnList = "tenant_id"),
-    @Index(name = "idx_wall_post_tenant_author", columnList = "tenant_id,author_id"),
-    @Index(name = "idx_wall_post_tenant_deleted", columnList = "tenant_id,is_deleted"),
-    @Index(name = "idx_wall_post_tenant_type", columnList = "tenant_id,post_type"),
-    @Index(name = "idx_wall_post_created_at", columnList = "created_at"),
-    @Index(name = "idx_wall_post_pinned", columnList = "is_pinned,created_at"),
-    @Index(name = "idx_wall_post_celebrated", columnList = "celebrated_employee_id"),
-    @Index(name = "idx_wall_post_feed", columnList = "tenant_id,is_deleted,is_pinned,created_at")
+        @Index(name = "idx_wall_post_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_wall_post_tenant_author", columnList = "tenant_id,author_id"),
+        @Index(name = "idx_wall_post_tenant_deleted", columnList = "tenant_id,is_deleted"),
+        @Index(name = "idx_wall_post_tenant_type", columnList = "tenant_id,post_type"),
+        @Index(name = "idx_wall_post_created_at", columnList = "created_at"),
+        @Index(name = "idx_wall_post_pinned", columnList = "is_pinned,created_at"),
+        @Index(name = "idx_wall_post_celebrated", columnList = "celebrated_employee_id"),
+        @Index(name = "idx_wall_post_feed", columnList = "tenant_id,is_deleted,is_pinned,created_at")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class WallPost {
@@ -93,24 +93,9 @@ public class WallPost {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public enum PostType {
-        POST,
-        POLL,
-        PRAISE,
-        CELEBRATION,
-        ANNOUNCEMENT
-    }
-
-    public enum PostVisibility {
-        ORGANIZATION,
-        DEPARTMENT,
-        TEAM,
-        PUBLIC,
-        PRIVATE
-    }
-
     // Constructors
-    public WallPost() {}
+    public WallPost() {
+    }
 
     public WallPost(PostType type, String content, Employee author) {
         this.type = type;
@@ -300,5 +285,21 @@ public class WallPost {
 
     public void setImageUrl(String imageUrl) {
         this.mediaUrls = imageUrl;
+    }
+
+    public enum PostType {
+        POST,
+        POLL,
+        PRAISE,
+        CELEBRATION,
+        ANNOUNCEMENT
+    }
+
+    public enum PostVisibility {
+        ORGANIZATION,
+        DEPARTMENT,
+        TEAM,
+        PUBLIC,
+        PRIVATE
     }
 }

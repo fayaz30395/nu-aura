@@ -13,9 +13,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "key_results", indexes = {
-    @Index(name = "idx_kr_tenant", columnList = "tenantId"),
-    @Index(name = "idx_kr_objective", columnList = "objectiveId"),
-    @Index(name = "idx_kr_owner", columnList = "ownerId")
+        @Index(name = "idx_kr_tenant", columnList = "tenantId"),
+        @Index(name = "idx_kr_objective", columnList = "objectiveId"),
+        @Index(name = "idx_kr_owner", columnList = "ownerId")
 })
 @Getter
 @Setter
@@ -85,23 +85,6 @@ public class KeyResult extends TenantAware {
     @Column(name = "last_updated_notes", columnDefinition = "TEXT")
     private String lastUpdatedNotes;
 
-    public enum MeasurementType {
-        PERCENTAGE,      // 0-100%
-        NUMBER,          // Count of something
-        CURRENCY,        // Money value
-        BINARY,          // Yes/No (complete or not)
-        MILESTONE        // Progress through steps
-    }
-
-    public enum KeyResultStatus {
-        NOT_STARTED,
-        IN_PROGRESS,
-        ON_TRACK,
-        AT_RISK,
-        COMPLETED,
-        CANCELLED
-    }
-
     public void updateProgress() {
         if (targetValue == null || targetValue.compareTo(BigDecimal.ZERO) == 0) {
             this.progressPercentage = BigDecimal.ZERO;
@@ -144,5 +127,22 @@ public class KeyResult extends TenantAware {
         this.currentValue = newValue;
         this.lastUpdatedNotes = notes;
         updateProgress();
+    }
+
+    public enum MeasurementType {
+        PERCENTAGE,      // 0-100%
+        NUMBER,          // Count of something
+        CURRENCY,        // Money value
+        BINARY,          // Yes/No (complete or not)
+        MILESTONE        // Progress through steps
+    }
+
+    public enum KeyResultStatus {
+        NOT_STARTED,
+        IN_PROGRESS,
+        ON_TRACK,
+        AT_RISK,
+        COMPLETED,
+        CANCELLED
     }
 }

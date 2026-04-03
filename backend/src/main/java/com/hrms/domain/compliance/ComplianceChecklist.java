@@ -52,6 +52,23 @@ public class ComplianceChecklist extends TenantAware {
     @Builder.Default
     private Boolean isActive = true;
 
+    public double getCompletionPercentage() {
+        if (totalItems == 0) return 0;
+        return (completedItems * 100.0) / totalItems;
+    }
+
+    public void markItemCompleted() {
+        if (completedItems < totalItems) {
+            completedItems++;
+            if (completedItems.equals(totalItems)) {
+                status = ChecklistStatus.COMPLETED;
+                lastCompletedDate = LocalDate.now();
+            } else {
+                status = ChecklistStatus.IN_PROGRESS;
+            }
+        }
+    }
+
     public enum ChecklistCategory {
         ONBOARDING,
         OFFBOARDING,
@@ -80,22 +97,5 @@ public class ComplianceChecklist extends TenantAware {
         COMPLETED,
         OVERDUE,
         CANCELLED
-    }
-
-    public double getCompletionPercentage() {
-        if (totalItems == 0) return 0;
-        return (completedItems * 100.0) / totalItems;
-    }
-
-    public void markItemCompleted() {
-        if (completedItems < totalItems) {
-            completedItems++;
-            if (completedItems.equals(totalItems)) {
-                status = ChecklistStatus.COMPLETED;
-                lastCompletedDate = LocalDate.now();
-            } else {
-                status = ChecklistStatus.IN_PROGRESS;
-            }
-        }
     }
 }

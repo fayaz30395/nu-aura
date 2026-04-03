@@ -58,6 +58,14 @@ public class CompliancePolicy extends TenantAware {
     @Builder.Default
     private Integer policyVersion = 1;
 
+    public boolean isActive() {
+        if (status != PolicyStatus.PUBLISHED) return false;
+        LocalDate today = LocalDate.now();
+        if (effectiveDate != null && today.isBefore(effectiveDate)) return false;
+        if (expiryDate != null && today.isAfter(expiryDate)) return false;
+        return true;
+    }
+
     public enum PolicyCategory {
         EMPLOYMENT,
         SAFETY,
@@ -81,13 +89,5 @@ public class CompliancePolicy extends TenantAware {
         APPROVED,
         PUBLISHED,
         ARCHIVED
-    }
-
-    public boolean isActive() {
-        if (status != PolicyStatus.PUBLISHED) return false;
-        LocalDate today = LocalDate.now();
-        if (effectiveDate != null && today.isBefore(effectiveDate)) return false;
-        if (expiryDate != null && today.isAfter(expiryDate)) return false;
-        return true;
     }
 }

@@ -28,12 +28,12 @@ public interface DocumentExpiryTrackingRepository extends JpaRepository<Document
     Page<DocumentExpiryTracking> findByTenantIdAndIsNotifiedFalse(UUID tenantId, Pageable pageable);
 
     @Query("SELECT det FROM DocumentExpiryTracking det WHERE det.tenantId = :tenantId AND " +
-           "det.expiryDate <= :expiryDate AND det.isNotified = false")
+            "det.expiryDate <= :expiryDate AND det.isNotified = false")
     List<DocumentExpiryTracking> findExpiringDocuments(
             @Param("tenantId") UUID tenantId,
             @Param("expiryDate") LocalDate expiryDate);
 
     @Query("SELECT det FROM DocumentExpiryTracking det WHERE det.tenantId = :tenantId AND " +
-           "det.expiryDate < CURRENT_DATE")
+            "det.expiryDate < CURRENT_DATE")
     List<DocumentExpiryTracking> findExpiredDocuments(@Param("tenantId") UUID tenantId);
 }

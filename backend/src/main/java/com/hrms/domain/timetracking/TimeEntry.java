@@ -93,6 +93,14 @@ public class TimeEntry extends TenantAware {
     @Column(name = "external_ref")
     private String externalRef;
 
+    public void calculateBilling() {
+        if (isBillable && hourlyRate != null && billableHours != null) {
+            this.billingAmount = hourlyRate.multiply(billableHours);
+        } else {
+            this.billingAmount = BigDecimal.ZERO;
+        }
+    }
+
     public enum EntryType {
         REGULAR,
         OVERTIME,
@@ -111,13 +119,5 @@ public class TimeEntry extends TenantAware {
         REJECTED,
         BILLED,
         PAID
-    }
-
-    public void calculateBilling() {
-        if (isBillable && hourlyRate != null && billableHours != null) {
-            this.billingAmount = hourlyRate.multiply(billableHours);
-        } else {
-            this.billingAmount = BigDecimal.ZERO;
-        }
     }
 }

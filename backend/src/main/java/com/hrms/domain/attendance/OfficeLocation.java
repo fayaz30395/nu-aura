@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "office_locations", indexes = {
-    @Index(name = "idx_office_location_tenant", columnList = "tenantId"),
-    @Index(name = "idx_office_location_active", columnList = "isActive")
+        @Index(name = "idx_office_location_tenant", columnList = "tenantId"),
+        @Index(name = "idx_office_location_active", columnList = "isActive")
 })
 @Getter
 @Setter
@@ -78,6 +78,7 @@ public class OfficeLocation extends TenantAware {
 
     /**
      * Calculate distance from a given coordinate using Haversine formula
+     *
      * @param lat Latitude of the point
      * @param lng Longitude of the point
      * @return Distance in meters
@@ -90,8 +91,8 @@ public class OfficeLocation extends TenantAware {
         double deltaLng = Math.toRadians(lng - this.longitude.doubleValue());
 
         double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                   Math.cos(latRad1) * Math.cos(latRad2) *
-                   Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+                Math.cos(latRad1) * Math.cos(latRad2) *
+                        Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return R * c;

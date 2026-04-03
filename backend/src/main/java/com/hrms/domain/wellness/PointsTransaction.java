@@ -43,16 +43,16 @@ public class PointsTransaction extends TenantAware {
     @Column(name = "transaction_at")
     private LocalDateTime transactionAt;
 
+    @PrePersist
+    protected void onCreate() {
+        transactionAt = LocalDateTime.now();
+    }
+
     public enum TransactionType {
         EARNED,
         REDEEMED,
         BONUS,
         EXPIRED,
         ADJUSTMENT
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        transactionAt = LocalDateTime.now();
     }
 }

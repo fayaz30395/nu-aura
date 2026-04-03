@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "mileage_policies", indexes = {
-    @Index(name = "idx_mileage_policy_tenant", columnList = "tenantId"),
-    @Index(name = "idx_mileage_policy_tenant_active", columnList = "tenantId,is_active")
+        @Index(name = "idx_mileage_policy_tenant", columnList = "tenantId"),
+        @Index(name = "idx_mileage_policy_tenant_active", columnList = "tenantId,is_active")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_mileage_policy_tenant_name", columnNames = {"tenantId", "name"})
+        @UniqueConstraint(name = "uk_mileage_policy_tenant_name", columnNames = {"tenantId", "name"})
 })
 @Getter
 @Setter

@@ -112,6 +112,17 @@ public class PulseSurvey extends TenantAware {
     @Column(name = "closed_by")
     private UUID closedBy;
 
+    public boolean isActive() {
+        return status == SurveyStatus.ACTIVE &&
+                LocalDate.now().compareTo(startDate) >= 0 &&
+                LocalDate.now().compareTo(endDate) <= 0;
+    }
+
+    public double getResponseRate() {
+        if (totalInvited == null || totalInvited == 0) return 0.0;
+        return (double) totalResponses / totalInvited * 100;
+    }
+
     public enum SurveyStatus {
         DRAFT, SCHEDULED, ACTIVE, COMPLETED, CANCELLED
     }
@@ -129,16 +140,5 @@ public class PulseSurvey extends TenantAware {
 
     public enum SurveyFrequency {
         ONE_TIME, WEEKLY, BI_WEEKLY, MONTHLY, QUARTERLY, HALF_YEARLY, YEARLY
-    }
-
-    public boolean isActive() {
-        return status == SurveyStatus.ACTIVE &&
-                LocalDate.now().compareTo(startDate) >= 0 &&
-                LocalDate.now().compareTo(endDate) <= 0;
-    }
-
-    public double getResponseRate() {
-        if (totalInvited == null || totalInvited == 0) return 0.0;
-        return (double) totalResponses / totalInvited * 100;
     }
 }

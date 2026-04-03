@@ -17,11 +17,11 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_categories", indexes = {
-    @Index(name = "idx_expense_cat_tenant", columnList = "tenantId"),
-    @Index(name = "idx_expense_cat_tenant_active", columnList = "tenantId,isActive"),
-    @Index(name = "idx_expense_cat_parent", columnList = "parent_category_id")
+        @Index(name = "idx_expense_cat_tenant", columnList = "tenantId"),
+        @Index(name = "idx_expense_cat_tenant_active", columnList = "tenantId,isActive"),
+        @Index(name = "idx_expense_cat_parent", columnList = "parent_category_id")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_expense_cat_tenant_name", columnNames = {"tenantId", "name"})
+        @UniqueConstraint(name = "uk_expense_cat_tenant_name", columnNames = {"tenantId", "name"})
 })
 @Getter
 @Setter

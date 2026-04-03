@@ -105,9 +105,43 @@ public class ExitInterview extends TenantAware {
     @Builder.Default
     private Boolean isConfidential = true;
 
-    /** Token for token-based public survey link (shared with departing employee) */
+    /**
+     * Token for token-based public survey link (shared with departing employee)
+     */
     @Column(name = "public_token", unique = true)
     private String publicToken;
+
+    public Double getAverageRating() {
+        int count = 0;
+        int sum = 0;
+
+        if (overallExperienceRating != null) {
+            sum += overallExperienceRating;
+            count++;
+        }
+        if (managementRating != null) {
+            sum += managementRating;
+            count++;
+        }
+        if (workLifeBalanceRating != null) {
+            sum += workLifeBalanceRating;
+            count++;
+        }
+        if (growthOpportunitiesRating != null) {
+            sum += growthOpportunitiesRating;
+            count++;
+        }
+        if (compensationRating != null) {
+            sum += compensationRating;
+            count++;
+        }
+        if (teamCultureRating != null) {
+            sum += teamCultureRating;
+            count++;
+        }
+
+        return count > 0 ? (double) sum / count : null;
+    }
 
     public enum InterviewMode {
         IN_PERSON,
@@ -139,19 +173,5 @@ public class ExitInterview extends TenantAware {
         COMPANY_CULTURE,
         JOB_SECURITY,
         OTHER
-    }
-
-    public Double getAverageRating() {
-        int count = 0;
-        int sum = 0;
-
-        if (overallExperienceRating != null) { sum += overallExperienceRating; count++; }
-        if (managementRating != null) { sum += managementRating; count++; }
-        if (workLifeBalanceRating != null) { sum += workLifeBalanceRating; count++; }
-        if (growthOpportunitiesRating != null) { sum += growthOpportunitiesRating; count++; }
-        if (compensationRating != null) { sum += compensationRating; count++; }
-        if (teamCultureRating != null) { sum += teamCultureRating; count++; }
-
-        return count > 0 ? (double) sum / count : null;
     }
 }

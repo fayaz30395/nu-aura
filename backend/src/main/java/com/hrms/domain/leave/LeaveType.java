@@ -14,8 +14,8 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "leave_types", indexes = {
-    @Index(name = "idx_leave_types_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_leave_types_active", columnList = "isActive")
+        @Index(name = "idx_leave_types_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_leave_types_active", columnList = "isActive")
 })
 @Getter
 @Setter
@@ -90,19 +90,6 @@ public class LeaveType extends TenantAware implements Serializable {
     @Builder.Default
     private Boolean isActive = true;
 
-    public enum AccrualType {
-        MONTHLY,
-        QUARTERLY,
-        YEARLY,
-        NONE
-    }
-
-    public enum GenderSpecific {
-        MALE,
-        FEMALE,
-        ALL
-    }
-
     public void activate() {
         this.isActive = true;
     }
@@ -121,5 +108,18 @@ public class LeaveType extends TenantAware implements Serializable {
         }
 
         return genderSpecific.name().equalsIgnoreCase(gender);
+    }
+
+    public enum AccrualType {
+        MONTHLY,
+        QUARTERLY,
+        YEARLY,
+        NONE
+    }
+
+    public enum GenderSpecific {
+        MALE,
+        FEMALE,
+        ALL
     }
 }

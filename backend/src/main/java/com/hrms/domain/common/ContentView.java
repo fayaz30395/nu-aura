@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Generic content view tracking entity.
  * Tracks views/reads for any content type (posts, announcements, documents, etc.)
- *
+ * <p>
  * This allows a unified view tracking system across the application.
  */
 @Entity
@@ -85,20 +85,9 @@ public class ContentView {
     @Column(name = "view_count")
     private int viewCount = 1;
 
-    public enum ContentType {
-        WALL_POST,
-        ANNOUNCEMENT,
-        DOCUMENT,
-        COMMENT,
-        LETTER,
-        TRAINING_MATERIAL,
-        POLICY,
-        NEWS,
-        EVENT
-    }
-
     // Constructors
-    public ContentView() {}
+    public ContentView() {
+    }
 
     public ContentView(ContentType contentType, UUID contentId, UUID employeeId) {
         this.contentType = contentType;
@@ -205,5 +194,17 @@ public class ContentView {
 
     public void setViewCount(int viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public enum ContentType {
+        WALL_POST,
+        ANNOUNCEMENT,
+        DOCUMENT,
+        COMMENT,
+        LETTER,
+        TRAINING_MATERIAL,
+        POLICY,
+        NEWS,
+        EVENT
     }
 }

@@ -15,11 +15,15 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "preboarding_candidates", indexes = {
-    @Index(name = "idx_preboard_token", columnList = "accessToken", unique = true),
-    @Index(name = "idx_preboard_email", columnList = "email,tenantId"),
-    @Index(name = "idx_preboard_tenant", columnList = "tenantId")
+        @Index(name = "idx_preboard_token", columnList = "accessToken", unique = true),
+        @Index(name = "idx_preboard_email", columnList = "email,tenantId"),
+        @Index(name = "idx_preboard_tenant", columnList = "tenantId")
 })
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PreboardingCandidate {
 
     @Id
@@ -146,14 +150,6 @@ public class PreboardingCandidate {
     @Version
     private Long version;
 
-    public enum PreboardingStatus {
-        INVITED,          // Invitation sent
-        IN_PROGRESS,      // Candidate started filling
-        COMPLETED,        // All pre-boarding tasks complete
-        CONVERTED,        // Converted to employee
-        CANCELLED         // Offer rescinded
-    }
-
     public String getFullName() {
         if (lastName == null || lastName.isEmpty()) {
             return firstName;
@@ -178,5 +174,13 @@ public class PreboardingCandidate {
         if (this.completionPercentage == 100 && this.status == PreboardingStatus.IN_PROGRESS) {
             this.status = PreboardingStatus.COMPLETED;
         }
+    }
+
+    public enum PreboardingStatus {
+        INVITED,          // Invitation sent
+        IN_PROGRESS,      // Candidate started filling
+        COMPLETED,        // All pre-boarding tasks complete
+        CONVERTED,        // Converted to employee
+        CANCELLED         // Offer rescinded
     }
 }

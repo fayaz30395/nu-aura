@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "permissions", indexes = {
-    @Index(name = "idx_permission_code", columnList = "code", unique = true),
-    @Index(name = "idx_permission_resource", columnList = "resource")
+        @Index(name = "idx_permission_code", columnList = "code", unique = true),
+        @Index(name = "idx_permission_resource", columnList = "resource")
 })
 @Getter
 @Setter

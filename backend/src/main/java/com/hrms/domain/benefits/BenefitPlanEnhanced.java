@@ -107,6 +107,11 @@ public class BenefitPlanEnhanced extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
+    @PrePersist
+    protected void onCreate() {
+        // Default initialization can be added here if needed
+    }
+
     public enum PlanType {
         HEALTH_INSURANCE,
         DENTAL_INSURANCE,
@@ -152,10 +157,5 @@ public class BenefitPlanEnhanced extends TenantAware {
         SEMI_ANNUALLY,
         ANNUALLY,
         ONE_TIME
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        // Default initialization can be added here if needed
     }
 }

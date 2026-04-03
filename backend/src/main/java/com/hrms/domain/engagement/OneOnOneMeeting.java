@@ -126,6 +126,16 @@ public class OneOnOneMeeting extends TenantAware {
     @Column(name = "employee_feedback", columnDefinition = "TEXT")
     private String employeeFeedback;
 
+    public boolean isUpcoming() {
+        LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
+        return meetingDateTime.isAfter(LocalDateTime.now()) && status == MeetingStatus.SCHEDULED;
+    }
+
+    public boolean isPast() {
+        LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
+        return meetingDateTime.isBefore(LocalDateTime.now());
+    }
+
     public enum MeetingStatus {
         SCHEDULED,
         IN_PROGRESS,
@@ -151,15 +161,5 @@ public class OneOnOneMeeting extends TenantAware {
         BI_WEEKLY,
         MONTHLY,
         QUARTERLY
-    }
-
-    public boolean isUpcoming() {
-        LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
-        return meetingDateTime.isAfter(LocalDateTime.now()) && status == MeetingStatus.SCHEDULED;
-    }
-
-    public boolean isPast() {
-        LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
-        return meetingDateTime.isBefore(LocalDateTime.now());
     }
 }

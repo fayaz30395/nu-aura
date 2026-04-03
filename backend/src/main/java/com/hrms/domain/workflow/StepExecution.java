@@ -88,27 +88,6 @@ public class StepExecution extends TenantAware {
     private String actionDeviceInfo;
     private String actionIpAddress;
 
-    public enum StepStatus {
-        PENDING,         // Waiting for action
-        APPROVED,        // Approved at this step
-        REJECTED,        // Rejected at this step
-        SKIPPED,         // Skipped (optional step)
-        ESCALATED,       // Escalated to another user
-        DELEGATED,       // Delegated to another user
-        EXPIRED,         // Timed out
-        RETURNED         // Returned for modification
-    }
-
-    public enum ApprovalAction {
-        APPROVE,
-        REJECT,
-        RETURN_FOR_MODIFICATION,
-        DELEGATE,
-        ESCALATE,
-        SKIP,
-        HOLD
-    }
-
     @PrePersist
     protected void onCreate() {
         assignedAt = LocalDateTime.now();
@@ -179,5 +158,26 @@ public class StepExecution extends TenantAware {
         if (assignedToUserId != null && assignedToUserId.equals(userId)) return true;
         if (alternativeApprovers != null && alternativeApprovers.contains(userId.toString())) return true;
         return false;
+    }
+
+    public enum StepStatus {
+        PENDING,         // Waiting for action
+        APPROVED,        // Approved at this step
+        REJECTED,        // Rejected at this step
+        SKIPPED,         // Skipped (optional step)
+        ESCALATED,       // Escalated to another user
+        DELEGATED,       // Delegated to another user
+        EXPIRED,         // Timed out
+        RETURNED         // Returned for modification
+    }
+
+    public enum ApprovalAction {
+        APPROVE,
+        REJECT,
+        RETURN_FOR_MODIFICATION,
+        DELEGATE,
+        ESCALATE,
+        SKIP,
+        HOLD
     }
 }

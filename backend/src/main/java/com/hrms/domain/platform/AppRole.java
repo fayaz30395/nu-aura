@@ -12,18 +12,18 @@ import java.util.Set;
 /**
  * Application-specific role that can be assigned to users.
  * Roles are scoped to both tenant and application.
- *
+ * <p>
  * A user can have different roles in different applications.
  * Example: Admin in HRMS, Viewer in CRM
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "app_roles", indexes = {
-    @Index(name = "idx_app_role_tenant", columnList = "tenantId"),
-    @Index(name = "idx_app_role_app", columnList = "application_id"),
-    @Index(name = "idx_app_role_code", columnList = "code")
+        @Index(name = "idx_app_role_tenant", columnList = "tenantId"),
+        @Index(name = "idx_app_role_app", columnList = "application_id"),
+        @Index(name = "idx_app_role_code", columnList = "code")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_app_role_code_tenant_app", columnNames = {"code", "tenantId", "application_id"})
+        @UniqueConstraint(name = "uk_app_role_code_tenant_app", columnNames = {"code", "tenantId", "application_id"})
 })
 @Getter
 @Setter
@@ -84,13 +84,13 @@ public class AppRole extends TenantAware {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "app_role_permissions",
-        joinColumns = @JoinColumn(name = "role_id"),
-        inverseJoinColumns = @JoinColumn(name = "permission_id"),
-        indexes = {
-            @Index(name = "idx_app_role_perm_role", columnList = "role_id"),
-            @Index(name = "idx_app_role_perm_perm", columnList = "permission_id")
-        }
+            name = "app_role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"),
+            indexes = {
+                    @Index(name = "idx_app_role_perm_role", columnList = "role_id"),
+                    @Index(name = "idx_app_role_perm_perm", columnList = "permission_id")
+            }
     )
     @Builder.Default
     private Set<AppPermission> permissions = new HashSet<>();
@@ -103,9 +103,9 @@ public class AppRole extends TenantAware {
             this.permissions.add(permission);
         } else {
             throw new IllegalArgumentException(
-                "Cannot add permission from different application. Role app: " +
-                this.application.getCode() + ", Permission app: " +
-                permission.getApplication().getCode()
+                    "Cannot add permission from different application. Role app: " +
+                            this.application.getCode() + ", Permission app: " +
+                            permission.getApplication().getCode()
             );
         }
     }
@@ -122,7 +122,7 @@ public class AppRole extends TenantAware {
      */
     public boolean hasPermission(String permissionCode) {
         return permissions.stream()
-            .anyMatch(p -> p.getCode().equals(permissionCode));
+                .anyMatch(p -> p.getCode().equals(permissionCode));
     }
 
     /**

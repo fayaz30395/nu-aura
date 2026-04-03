@@ -88,6 +88,19 @@ public class EngagementScore {
 
     private LocalDateTime calculatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        calculatedAt = LocalDateTime.now();
+    }
+
+    public String getEngagementLevel() {
+        if (overallScore >= 80) return "Highly Engaged";
+        if (overallScore >= 60) return "Engaged";
+        if (overallScore >= 40) return "Partially Engaged";
+        if (overallScore >= 20) return "Disengaged";
+        return "Highly Disengaged";
+    }
+
     public enum ScoreLevel {
         ORGANIZATION,
         DEPARTMENT,
@@ -103,18 +116,5 @@ public class EngagementScore {
         EXIT,
         SATISFACTION,
         CUSTOM
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        calculatedAt = LocalDateTime.now();
-    }
-
-    public String getEngagementLevel() {
-        if (overallScore >= 80) return "Highly Engaged";
-        if (overallScore >= 60) return "Engaged";
-        if (overallScore >= 40) return "Partially Engaged";
-        if (overallScore >= 20) return "Disengaged";
-        return "Highly Disengaged";
     }
 }

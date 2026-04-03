@@ -13,7 +13,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "talent_pool_members",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"talent_pool_id", "employee_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"talent_pool_id", "employee_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,13 +40,6 @@ public class TalentPoolMember extends TenantAware {
 
     private LocalDate reviewDate;
 
-    public enum MemberStatus {
-        ACTIVE,
-        ON_HOLD,
-        GRADUATED,
-        REMOVED
-    }
-
     @PrePersist
     public void prePersist() {
         if (addedDate == null) {
@@ -55,5 +48,12 @@ public class TalentPoolMember extends TenantAware {
         if (status == null) {
             status = MemberStatus.ACTIVE;
         }
+    }
+
+    public enum MemberStatus {
+        ACTIVE,
+        ON_HOLD,
+        GRADUATED,
+        REMOVED
     }
 }

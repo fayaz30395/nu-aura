@@ -17,13 +17,13 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_transactions", indexes = {
-    @Index(name = "idx_payment_transaction_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payment_transaction_ref", columnList = "tenantId,transactionRef", unique = true),
-    @Index(name = "idx_payment_transaction_external_ref", columnList = "externalRef"),
-    @Index(name = "idx_payment_transaction_type", columnList = "tenantId,type"),
-    @Index(name = "idx_payment_transaction_status", columnList = "tenantId,status"),
-    @Index(name = "idx_payment_transaction_employee", columnList = "tenantId,employeeId"),
-    @Index(name = "idx_payment_transaction_payroll", columnList = "payrollRunId")
+        @Index(name = "idx_payment_transaction_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payment_transaction_ref", columnList = "tenantId,transactionRef", unique = true),
+        @Index(name = "idx_payment_transaction_external_ref", columnList = "externalRef"),
+        @Index(name = "idx_payment_transaction_type", columnList = "tenantId,type"),
+        @Index(name = "idx_payment_transaction_status", columnList = "tenantId,status"),
+        @Index(name = "idx_payment_transaction_employee", columnList = "tenantId,employeeId"),
+        @Index(name = "idx_payment_transaction_payroll", columnList = "payrollRunId")
 })
 @Getter
 @Setter

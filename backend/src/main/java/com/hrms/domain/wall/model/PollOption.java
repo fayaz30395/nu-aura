@@ -33,7 +33,8 @@ public class PollOption {
     private List<PollVote> votes = new ArrayList<>();
 
     // Constructors
-    public PollOption() {}
+    public PollOption() {
+    }
 
     public PollOption(String optionText, int displayOrder) {
         this.optionText = optionText;

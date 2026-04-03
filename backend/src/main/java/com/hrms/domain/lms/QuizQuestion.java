@@ -11,8 +11,8 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "lms_quiz_questions", indexes = {
-    @Index(name = "idx_lms_question_tenant", columnList = "tenantId"),
-    @Index(name = "idx_lms_question_quiz", columnList = "quizId")
+        @Index(name = "idx_lms_question_tenant", columnList = "tenantId"),
+        @Index(name = "idx_lms_question_quiz", columnList = "quizId")
 })
 @Getter
 @Setter

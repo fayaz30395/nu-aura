@@ -5,10 +5,16 @@ package com.hrms.domain.user;
  * Determines how the user authenticates with the system.
  */
 public enum AuthProvider {
-    /** User authenticates with email + password */
+    /**
+     * User authenticates with email + password
+     */
     LOCAL,
-    /** User authenticates via Google SSO */
+    /**
+     * User authenticates via Google SSO
+     */
     GOOGLE,
-    /** User authenticates via SAML 2.0 SSO (Okta, Azure AD, OneLogin, etc.) */
+    /**
+     * User authenticates via SAML 2.0 SSO (Okta, Azure AD, OneLogin, etc.)
+     */
     SAML
 }

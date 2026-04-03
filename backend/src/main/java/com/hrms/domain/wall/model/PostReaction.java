@@ -42,16 +42,9 @@ public class PostReaction {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public enum ReactionType {
-        LIKE,
-        LOVE,
-        CELEBRATE,
-        INSIGHTFUL,
-        CURIOUS
-    }
-
     // Constructors
-    public PostReaction() {}
+    public PostReaction() {
+    }
 
     public PostReaction(WallPost post, Employee employee, ReactionType reactionType) {
         this.post = post;
@@ -114,5 +107,13 @@ public class PostReaction {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public enum ReactionType {
+        LIKE,
+        LOVE,
+        CELEBRATE,
+        INSIGHTFUL,
+        CURIOUS
     }
 }

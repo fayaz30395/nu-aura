@@ -51,13 +51,6 @@ public class CustomScopeTarget extends TenantAware {
     @Column(name = "target_id", nullable = false)
     private UUID targetId;
 
-    @PrePersist
-    private void applyTenantFromRolePermission() {
-        if (getTenantId() == null && rolePermission != null) {
-            setTenantId(rolePermission.getTenantId());
-        }
-    }
-
     /**
      * Creates a custom target for a specific employee.
      */
@@ -88,14 +81,21 @@ public class CustomScopeTarget extends TenantAware {
                 .build();
     }
 
+    @PrePersist
+    private void applyTenantFromRolePermission() {
+        if (getTenantId() == null && rolePermission != null) {
+            setTenantId(rolePermission.getTenantId());
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CustomScopeTarget that)) return false;
         return targetType == that.targetType &&
-               targetId != null && targetId.equals(that.targetId) &&
-               rolePermission != null && rolePermission.getId() != null &&
-               rolePermission.getId().equals(that.rolePermission != null ? that.rolePermission.getId() : null);
+                targetId != null && targetId.equals(that.targetId) &&
+                rolePermission != null && rolePermission.getId() != null &&
+                rolePermission.getId().equals(that.rolePermission != null ? that.rolePermission.getId() : null);
     }
 
     @Override

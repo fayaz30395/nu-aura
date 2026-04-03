@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "shift_patterns", indexes = {
-    @Index(name = "idx_shift_pattern_tenant", columnList = "tenantId"),
-    @Index(name = "idx_shift_pattern_active", columnList = "tenantId,isActive")
+        @Index(name = "idx_shift_pattern_tenant", columnList = "tenantId"),
+        @Index(name = "idx_shift_pattern_active", columnList = "tenantId,isActive")
 })
 @Getter
 @Setter

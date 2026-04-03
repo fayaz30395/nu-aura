@@ -14,12 +14,12 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "biometric_punch_logs", indexes = {
-    @Index(name = "idx_punch_log_tenant", columnList = "tenantId"),
-    @Index(name = "idx_punch_log_device", columnList = "deviceId"),
-    @Index(name = "idx_punch_log_employee", columnList = "employeeId"),
-    @Index(name = "idx_punch_log_status", columnList = "processedStatus"),
-    @Index(name = "idx_punch_log_punch_time", columnList = "punchTime"),
-    @Index(name = "idx_punch_log_dedup", columnList = "tenantId, employeeId, punchTime")
+        @Index(name = "idx_punch_log_tenant", columnList = "tenantId"),
+        @Index(name = "idx_punch_log_device", columnList = "deviceId"),
+        @Index(name = "idx_punch_log_employee", columnList = "employeeId"),
+        @Index(name = "idx_punch_log_status", columnList = "processedStatus"),
+        @Index(name = "idx_punch_log_punch_time", columnList = "punchTime"),
+        @Index(name = "idx_punch_log_dedup", columnList = "tenantId, employeeId, punchTime")
 })
 @Getter
 @Setter
@@ -65,18 +65,6 @@ public class BiometricPunchLog extends TenantAware {
     @Column(name = "processed_at")
     private LocalDateTime processedAt;
 
-    public enum PunchType {
-        IN,
-        OUT
-    }
-
-    public enum ProcessedStatus {
-        PENDING,
-        PROCESSED,
-        FAILED,
-        DUPLICATE
-    }
-
     public void markProcessed(UUID attendanceRecordId) {
         this.processedStatus = ProcessedStatus.PROCESSED;
         this.attendanceRecordId = attendanceRecordId;
@@ -94,5 +82,17 @@ public class BiometricPunchLog extends TenantAware {
         this.processedStatus = ProcessedStatus.DUPLICATE;
         this.processedAt = LocalDateTime.now();
         this.errorMessage = "Duplicate punch within deduplication window";
+    }
+
+    public enum PunchType {
+        IN,
+        OUT
+    }
+
+    public enum ProcessedStatus {
+        PENDING,
+        PROCESSED,
+        FAILED,
+        DUPLICATE
     }
 }

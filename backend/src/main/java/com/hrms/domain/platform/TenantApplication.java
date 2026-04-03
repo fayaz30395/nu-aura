@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "tenant_applications", indexes = {
-    @Index(name = "idx_tenant_app_tenant", columnList = "tenantId"),
-    @Index(name = "idx_tenant_app_app", columnList = "application_id"),
-    @Index(name = "idx_tenant_app_status", columnList = "status")
+        @Index(name = "idx_tenant_app_tenant", columnList = "tenantId"),
+        @Index(name = "idx_tenant_app_app", columnList = "application_id"),
+        @Index(name = "idx_tenant_app_status", columnList = "status")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_tenant_app", columnNames = {"tenantId", "application_id"})
+        @UniqueConstraint(name = "uk_tenant_app", columnNames = {"tenantId", "application_id"})
 })
 @Getter
 @Setter
@@ -74,14 +74,6 @@ public class TenantApplication extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String configuration;
 
-    public enum SubscriptionStatus {
-        ACTIVE,           // Currently active
-        TRIAL,            // Trial period
-        SUSPENDED,        // Temporarily suspended
-        EXPIRED,          // Subscription expired
-        CANCELLED         // Cancelled by tenant
-    }
-
     /**
      * Check if this subscription is currently valid
      */
@@ -93,5 +85,13 @@ public class TenantApplication extends TenantAware {
             return false;
         }
         return true;
+    }
+
+    public enum SubscriptionStatus {
+        ACTIVE,           // Currently active
+        TRIAL,            // Trial period
+        SUSPENDED,        // Temporarily suspended
+        EXPIRED,          // Subscription expired
+        CANCELLED         // Cancelled by tenant
     }
 }

@@ -14,10 +14,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payslips", indexes = {
-    @Index(name = "idx_payslip_employee_period", columnList = "employeeId,payPeriodMonth,payPeriodYear", unique = true),
-    @Index(name = "idx_payslip_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payslip_run", columnList = "payrollRunId"),
-    @Index(name = "idx_payslip_employee", columnList = "employeeId")
+        @Index(name = "idx_payslip_employee_period", columnList = "employeeId,payPeriodMonth,payPeriodYear", unique = true),
+        @Index(name = "idx_payslip_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payslip_run", columnList = "payrollRunId"),
+        @Index(name = "idx_payslip_employee", columnList = "employeeId")
 })
 @Getter
 @Setter

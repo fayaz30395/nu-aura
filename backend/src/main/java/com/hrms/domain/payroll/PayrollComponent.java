@@ -29,10 +29,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payroll_components", indexes = {
-    @Index(name = "idx_payroll_comp_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payroll_comp_code", columnList = "tenantId, code", unique = true),
-    @Index(name = "idx_payroll_comp_type", columnList = "tenantId, componentType"),
-    @Index(name = "idx_payroll_comp_order", columnList = "tenantId, evaluationOrder")
+        @Index(name = "idx_payroll_comp_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payroll_comp_code", columnList = "tenantId, code", unique = true),
+        @Index(name = "idx_payroll_comp_type", columnList = "tenantId, componentType"),
+        @Index(name = "idx_payroll_comp_order", columnList = "tenantId, evaluationOrder")
 })
 @Getter
 @Setter

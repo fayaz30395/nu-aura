@@ -51,6 +51,21 @@ public class LeaveApprovedEvent extends DomainEvent {
         this.daysDeducted = daysDeducted;
     }
 
+    public static LeaveApprovedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
+                                        UUID employeeId, UUID approverId, String leaveType,
+                                        LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
+        return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
+                employeeId, approverId, leaveType, startDate, endDate, daysDeducted);
+    }
+
+    public static LeaveApprovedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
+                                        UUID employeeId, UUID approverId, String leaveType,
+                                        boolean isPaidLeave,
+                                        LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
+        return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
+                employeeId, approverId, leaveType, isPaidLeave, startDate, endDate, daysDeducted);
+    }
+
     @Override
     public String getEventType() {
         return "LEAVE_APPROVED";
@@ -68,20 +83,5 @@ public class LeaveApprovedEvent extends DomainEvent {
         payload.put("daysDeducted", daysDeducted.toString());
         payload.put("isPaidLeave", isPaidLeave);
         return payload;
-    }
-
-    public static LeaveApprovedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
-                                        UUID employeeId, UUID approverId, String leaveType,
-                                        LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
-        return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
-                employeeId, approverId, leaveType, startDate, endDate, daysDeducted);
-    }
-
-    public static LeaveApprovedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
-                                        UUID employeeId, UUID approverId, String leaveType,
-                                        boolean isPaidLeave,
-                                        LocalDate startDate, LocalDate endDate, BigDecimal daysDeducted) {
-        return new LeaveApprovedEvent(source, tenantId, leaveRequestId,
-                employeeId, approverId, leaveType, isPaidLeave, startDate, endDate, daysDeducted);
     }
 }

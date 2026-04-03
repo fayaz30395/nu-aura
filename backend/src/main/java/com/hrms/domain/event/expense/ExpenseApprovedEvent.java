@@ -23,9 +23,9 @@ public class ExpenseApprovedEvent extends DomainEvent {
     private final String category;
 
     public ExpenseApprovedEvent(Object source, UUID tenantId, UUID expenseClaimId,
-                                 UUID employeeId, UUID approverId,
-                                 BigDecimal amount, String currency,
-                                 String claimNumber, String category) {
+                                UUID employeeId, UUID approverId,
+                                BigDecimal amount, String currency,
+                                String claimNumber, String category) {
         super(source, tenantId, expenseClaimId, "ExpenseClaim");
         this.employeeId = employeeId;
         this.approverId = approverId;
@@ -33,6 +33,14 @@ public class ExpenseApprovedEvent extends DomainEvent {
         this.currency = currency;
         this.claimNumber = claimNumber;
         this.category = category;
+    }
+
+    public static ExpenseApprovedEvent of(Object source, UUID tenantId, UUID expenseClaimId,
+                                          UUID employeeId, UUID approverId,
+                                          BigDecimal amount, String currency,
+                                          String claimNumber, String category) {
+        return new ExpenseApprovedEvent(source, tenantId, expenseClaimId,
+                employeeId, approverId, amount, currency, claimNumber, category);
     }
 
     @Override
@@ -51,13 +59,5 @@ public class ExpenseApprovedEvent extends DomainEvent {
         payload.put("claimNumber", claimNumber);
         payload.put("category", category);
         return payload;
-    }
-
-    public static ExpenseApprovedEvent of(Object source, UUID tenantId, UUID expenseClaimId,
-                                           UUID employeeId, UUID approverId,
-                                           BigDecimal amount, String currency,
-                                           String claimNumber, String category) {
-        return new ExpenseApprovedEvent(source, tenantId, expenseClaimId,
-                employeeId, approverId, amount, currency, claimNumber, category);
     }
 }

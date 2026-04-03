@@ -12,9 +12,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "holidays", indexes = {
-    @Index(name = "idx_holidays_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_holidays_date", columnList = "holidayDate"),
-    @Index(name = "idx_holidays_year", columnList = "year")
+        @Index(name = "idx_holidays_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_holidays_date", columnList = "holidayDate"),
+        @Index(name = "idx_holidays_year", columnList = "year")
 })
 @Getter
 @Setter
@@ -53,15 +53,6 @@ public class Holiday extends TenantAware {
     @Column(nullable = false)
     private Integer year;
 
-    public enum HolidayType {
-        NATIONAL,
-        REGIONAL,
-        OPTIONAL,
-        RESTRICTED,
-        FESTIVAL,
-        COMPANY_EVENT
-    }
-
     public boolean isApplicableForLocation(String location) {
         if (applicableLocations == null || applicableLocations.isEmpty()) {
             return true;
@@ -74,5 +65,14 @@ public class Holiday extends TenantAware {
             return true;
         }
         return applicableDepartments.contains(department);
+    }
+
+    public enum HolidayType {
+        NATIONAL,
+        REGIONAL,
+        OPTIONAL,
+        RESTRICTED,
+        FESTIVAL,
+        COMPANY_EVENT
     }
 }

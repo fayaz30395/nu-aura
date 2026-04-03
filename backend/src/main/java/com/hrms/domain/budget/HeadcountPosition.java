@@ -98,6 +98,14 @@ public class HeadcountPosition extends TenantAware {
     @Column(name = "hiring_manager_id")
     private UUID hiringManagerId;
 
+    @PrePersist
+    @PreUpdate
+    protected void calculateTotalCost() {
+        totalCost = BigDecimal.ZERO;
+        if (budgetedSalary != null) totalCost = totalCost.add(budgetedSalary);
+        if (budgetedBenefits != null) totalCost = totalCost.add(budgetedBenefits);
+    }
+
     public enum PositionType {
         NEW_ROLE,
         REPLACEMENT,
@@ -114,13 +122,5 @@ public class HeadcountPosition extends TenantAware {
         FILLED,
         CANCELLED,
         ON_HOLD
-    }
-
-    @PrePersist
-    @PreUpdate
-    protected void calculateTotalCost() {
-        totalCost = BigDecimal.ZERO;
-        if (budgetedSalary != null) totalCost = totalCost.add(budgetedSalary);
-        if (budgetedBenefits != null) totalCost = totalCost.add(budgetedBenefits);
     }
 }
