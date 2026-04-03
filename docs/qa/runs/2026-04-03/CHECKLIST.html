@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="30">
-<title>NU-AURA QA Checklist — 2026-04-03 22:41</title>
+<title>NU-AURA QA Checklist — 2026-04-03 Final (Run #4)</title>
 <style>
   :root {--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--green:#3fb950;--amber:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -27,31 +26,35 @@
 </style>
 </head>
 <body>
-<div class="refresh">Auto-refresh every 30s · Last updated: 2026-04-03 22:41</div>
-<h1>NU-AURA QA Checklist</h1>
-<div class="subtitle">2026-04-03 QA Run | All bugs and use cases tracked below</div>
+<h1>NU-AURA QA Checklist — Final</h1>
+<div class="subtitle">2026-04-03 QA Run #4 (Final Pass) | Run #1–#3 fixes confirmed + second-pass audit complete</div>
+<div style="margin-bottom:12px;padding:8px 14px;background:#1c2128;border-left:3px solid var(--amber);border-radius:4px;font-size:12px;color:var(--amber)">
+  ⚠️ NO-GO for production release — 21 new RECHECK bugs found in second audit pass (2 CRITICAL, 6 P0 IDOR, 8 HIGH, 5 MEDIUM)
+</div>
 
 <div class="stats">
-  <div class="stat"><span class="stat-val green">34</span><span class="stat-label">Bugs Fixed</span></div>
-  <div class="stat"><span class="stat-val amber">14</span><span class="stat-label">Open Bugs</span></div>
+  <div class="stat"><span class="stat-val green">57</span><span class="stat-label">Bugs Fixed</span></div>
+  <div class="stat"><span class="stat-val red">34</span><span class="stat-label">Open Bugs</span></div>
+  <div class="stat"><span class="stat-val" style="color:var(--purple)">21</span><span class="stat-label">New (Run #4)</span></div>
   <div class="stat"><span class="stat-val blue">134</span><span class="stat-label">UCs Written</span></div>
-  <div class="stat"><span class="stat-val" style="color:var(--muted)">7</span><span class="stat-label">Pending</span></div>
-  <div class="stat"><span class="stat-val blue">2</span><span class="stat-label">In Progress</span></div>
+  <div class="stat"><span class="stat-val red">8</span><span class="stat-label">P0/Critical</span></div>
 </div>
-<p style="margin:4px 0;color:var(--muted)"># NU-AURA QA & Deployment Checklist — 2026-04-03</p>
-<p style="margin:4px 0;color:var(--muted)">> **Last updated:** 2026-04-03 | **Source:** QA Run #3 + JUnit Generation Pass</p>
+<p style="margin:4px 0;color:var(--muted)"># NU-AURA QA &amp; Deployment Checklist — 2026-04-03 (FINAL)</p>
+<p style="margin:4px 0;color:var(--muted)">&gt; <strong>Last updated:</strong> 2026-04-03 | <strong>Source:</strong> QA Run #3 fixes (22 new fixes) + Run #4 second-pass audit (21 new bugs)</p>
 <p style="margin:4px 0;color:var(--muted)">> Legend: <span class="fixed">✅</span> Done · <span class="progress">⏳</span> In Progress · <span class="fail">❌</span> Failing · <span class="open">⚠️</span> Needs Fix · 🔵 Skipped · 📋 Pending</p>
 <hr style="border-color:var(--border);margin:16px 0">
-<h2>Overall Status</h2>
-<table><thead><tr><th>Category</th><th>Total</th><th>Done</th><th>Pending</th><th>Failing</th></tr></thead><tbody>
-<tr><td>Use Cases (JUnit)</td><td>318</td><td>**264**</td><td>54</td><td>0</td></tr>
-<tr><td>Bugs Found</td><td>43</td><td>**29 fixed**</td><td>—</td><td>14 open</td></tr>
-<tr><td>P0 Bugs</td><td>2</td><td><span class="fixed">✅</span> 2 fixed</td><td>—</td><td>0</td></tr>
-<tr><td>P1 Bugs</td><td>8</td><td>5 fixed</td><td>—</td><td>3 in-progress</td></tr>
-<tr><td>P2 Bugs</td><td>33</td><td>22 fixed</td><td>—</td><td>11 open</td></tr>
-<tr><td>Backend Compile</td><td>—</td><td><span class="fixed">✅</span> Clean</td><td>—</td><td>—</td></tr>
-<tr><td>Frontend Build</td><td>—</td><td><span class="fixed">✅</span> Clean</td><td>—</td><td>—</td></tr>
-<tr><td>Flyway Migrations</td><td>V0–V112</td><td><span class="fixed">✅</span> Applied</td><td>—</td><td>—</td></tr>
+<h2>Overall Status — Run #4 Final</h2>
+<table><thead><tr><th>Category</th><th>Total</th><th>Fixed</th><th>Open</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Use Cases (JUnit)</td><td>318</td><td>264</td><td>54 pending</td><td>0 failing</td></tr>
+<tr><td>All Bugs (All Runs)</td><td>91</td><td><span class="fixed">57 fixed</span></td><td><span class="fail">34 open</span></td><td>21 new in Run #4</td></tr>
+<tr><td>CRITICAL Bugs</td><td>3</td><td>0</td><td><span class="fail">3 open</span></td><td>SalaryStructureRepo type, Platform tenant leaks</td></tr>
+<tr><td>P0 Bugs (IDOR/Security)</td><td>8</td><td>2 fixed (BUG-NEW-001/002)</td><td><span class="fail">6 open IDOR</span></td><td>RECHECK-HR-001 to 006</td></tr>
+<tr><td>P1 Bugs</td><td>18</td><td>15 fixed</td><td>3 open</td><td>BUG-QA2-003, BUG-003 arch gap, letter rollback</td></tr>
+<tr><td>P2 / HIGH Bugs</td><td>62</td><td>40 fixed</td><td>22 open</td><td>Permission mismatches, spec corrections, FE params</td></tr>
+<tr><td>Backend Compile</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
+<tr><td>Frontend Build</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
+<tr><td>Flyway Migrations</td><td>V0–V112</td><td><span class="fixed">✅ Applied</span></td><td>—</td><td>—</td></tr>
+<tr style="background:#1c1010"><td colspan="5" style="color:var(--red);font-weight:700">🚫 GO/NO-GO: NO-GO — 3 CRITICAL + 6 P0 IDOR bugs must be fixed before release</td></tr>
 </tbody></table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Bug Tracker</h2>
@@ -100,13 +103,80 @@
 <tr><td>BUG-011</td><td>Leave request endpoint path mismatch</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
 <tr><td>BUG-012</td><td>Refresh token cookie path too restrictive</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — verify in browser</td></tr>
 <tr><td>BUG-013</td><td>Statutory endpoint paths wrong in spec</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
-<tr><td>BUG-QA2-005</td><td>Platform /applications endpoint 500</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA2-005</td><td>Platform /applications endpoint 500</td><td><span class="fixed">✅ FIXED</span> — V111 seeds PLATFORM:VIEW + nu_applications rows</td></tr>
 <tr><td>BUG-QA2-006</td><td>Shift roster blocked by SQL injection false-positive</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
 <tr><td>BUG-QA2-007</td><td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
 <tr><td>BUG-QA2-008</td><td>Retroactive leave blocked by @FutureOrPresent</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
 <tr><td>BUG-QA2-011</td><td>Resource pool endpoints missing (404)</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
 <tr><td>BUG-QA4-007</td><td>Certificate generation pipeline incomplete</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — feature gap</td></tr>
 </tbody></table>
+
+<h3>✅ QA Run #3 — New Fixes (BUG-NEW-001 to BUG-NEW-022)</h3>
+<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>BUG-NEW-001</td><td><code>ExitManagementService.java:51</code></td><td>P0 — Tenant isolation: exit request looked up without tenant filter</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId()</td></tr>
+<tr><td>BUG-NEW-002</td><td><code>AnnouncementService.java</code></td><td>P0 — RBAC leak: any employee could view any other employee's announcements</td><td><span class="fixed">✅ FIXED</span> — ownership check added</td></tr>
+<tr><td>BUG-NEW-003</td><td><code>ReviewCycleController.java:72</code></td><td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td></tr>
+<tr><td>BUG-NEW-004</td><td><code>ReviewCycleController.java:82</code></td><td>P1 — DELETE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_DELETE</td></tr>
+<tr><td>BUG-NEW-005</td><td><code>ReviewCycleController.java:89</code></td><td>P1 — APPROVE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_APPROVE</td></tr>
+<tr><td>BUG-NEW-006</td><td><code>PerformanceReviewController.java:99</code></td><td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td></tr>
+<tr><td>BUG-NEW-007</td><td><code>WikiPageService.java:53</code></td><td>P2 — NPE if wiki page created without space set</td><td><span class="fixed">✅ FIXED</span> — null-guarded log</td></tr>
+<tr><td>BUG-NEW-008</td><td><code>ResourcePoolController.java</code></td><td>P2 — Not-found path returned 200 instead of 404</td><td><span class="fixed">✅ FIXED</span> — ResponseEntity.notFound()</td></tr>
+<tr><td>BUG-NEW-009</td><td><code>LeaveRequestService.java</code></td><td>P1 — Employee could cancel another employee's leave request</td><td><span class="fixed">✅ FIXED</span> — ownership check + AccessDeniedException</td></tr>
+<tr><td>BUG-NEW-010</td><td><code>LoanService.java:88</code></td><td>P1 — Loan amount validation comparison inverted (accepted 0 or negative)</td><td><span class="fixed">✅ FIXED</span> — compareTo(ZERO) &gt; 0</td></tr>
+<tr><td>BUG-NEW-011</td><td><code>BenefitManagementService.java</code></td><td>P2 — activatePlan/deactivatePlan missing @Transactional</td><td><span class="fixed">✅ FIXED</span> — @Transactional added to both</td></tr>
+<tr><td>BUG-NEW-012</td><td><code>Feedback360Controller.java</code></td><td>P2 — submitResponse: silent no-op if request not found (Optional.get())</td><td><span class="fixed">✅ FIXED</span> — orElseThrow(EntityNotFoundException)</td></tr>
+<tr><td>BUG-NEW-013</td><td><code>Feedback360Controller.java</code></td><td>P1 — getResponse: anyone could read any 360 response (no visibility guard)</td><td><span class="fixed">✅ FIXED</span> — reviewer/subject guard + AccessDeniedException</td></tr>
+<tr><td>BUG-NEW-014</td><td><code>V110__add_employee_referral_permissions.sql</code></td><td>P0 — V110 migration: wrong column names (full_name, is_active, is_mfa_enabled)</td><td><span class="fixed">✅ FIXED</span> — corrected to first_name/last_name/status/mfa_enabled</td></tr>
+<tr><td>BUG-NEW-015</td><td><code>LoanController.java</code></td><td>P2 — POST /loans returned 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td></tr>
+<tr><td>BUG-NEW-016</td><td><code>TimeTrackingController.java</code></td><td>P2 — POST /entries returned 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td></tr>
+<tr><td>BUG-NEW-017</td><td><code>GoalController.java</code></td><td>P1 — DELETE /goals/{id} endpoint missing entirely</td><td><span class="fixed">✅ FIXED</span> — @DeleteMapping + GOAL_DELETE permission added</td></tr>
+<tr><td>BUG-NEW-018</td><td><code>HelpdeskController.java</code></td><td>P1 — update/assign/resolve/close used SYSTEM_ADMIN instead of role-specific perms</td><td><span class="fixed">✅ FIXED</span> — HELPDESK_TICKET_RESOLVE/ASSIGN</td></tr>
+<tr><td>BUG-NEW-019</td><td><code>BlogPostService.java + BlogPostController.java</code></td><td>P1 — /active returned all posts including ARCHIVED; readOnly tx silently dropped view count saves</td><td><span class="fixed">✅ FIXED</span> — dedicated getActivePosts(PUBLISHED) + removed readOnly</td></tr>
+<tr><td>BUG-NEW-020</td><td><code>CustomFieldController.java</code></td><td>P2 — @RequiresPermission used raw strings instead of Permission.* constants</td><td><span class="fixed">✅ FIXED</span> — all 22 replaced with Permission.CUSTOM_FIELD_*</td></tr>
+<tr><td>BUG-NEW-021</td><td><code>PayrollRunService.java</code></td><td>P1 — payroll run could initiate with employees missing salary structures</td><td><span class="fixed">✅ FIXED</span> — validateSalaryStructuresCoverage() pre-flight added</td></tr>
+<tr><td>BUG-NEW-022</td><td><code>payroll.service.ts:279</code></td><td>P2 — template string query param bypassed URL encoding</td><td><span class="fixed">✅ FIXED</span> — axios params object</td></tr>
+</tbody></table>
+
+<h3>🔴🟣 QA Run #4 — NEW Issues Found (Second-Pass Audit)</h3>
+<p style="margin:4px 0 10px;font-size:12px;color:var(--muted)">All bugs below are confirmed open as of 2026-04-03 second audit. None were fixed in the prior run.</p>
+
+<h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 CRITICAL — Data Integrity / Type Errors</h4>
+<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>RECHECK-PAY-001</td><td><code>SalaryStructureRepository.java</code></td><td>CRITICAL — Wrong generic type: <code>Page&lt;SalaryStructureRepository&gt;</code> instead of <code>Page&lt;SalaryStructure&gt;</code> — causes ClassCastException at runtime</td><td><span class="fail">❌ OPEN — Fix: change generic to &lt;SalaryStructure&gt;</span></td></tr>
+<tr><td>RECHECK-PLAT-001</td><td><code>NuPlatformService.java</code></td><td>CRITICAL — getRoleById() fetches by ID only with no tenant filter — cross-tenant role data leak</td><td><span class="fail">❌ OPEN — Fix: add tenantId filter to query</span></td></tr>
+<tr><td>RECHECK-PLAT-002</td><td><code>NuPlatformService.java</code></td><td>CRITICAL — grantAccess() does not validate that target userId belongs to caller's tenant</td><td><span class="fail">❌ OPEN — Fix: verify userId.tenantId == callerTenantId</span></td></tr>
+</tbody></table>
+
+<h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — IDOR (Insecure Direct Object Reference)</h4>
+<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>RECHECK-HR-001</td><td><code>AnnouncementController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam instead of deriving from SecurityContext — any user can read any employee's announcements</td><td><span class="fail">❌ OPEN — Fix: remove param, use SecurityContext.getCurrentEmployeeId()</span></td></tr>
+<tr><td>RECHECK-HR-002</td><td><code>ContentViewController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>viewerId</code> as @RequestParam — cross-user view tracking manipulation</td><td><span class="fail">❌ OPEN — Fix: derive viewerId from SecurityContext</span></td></tr>
+<tr><td>RECHECK-HR-003</td><td><code>TaxDeclarationController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam — employee can submit tax declaration on behalf of anyone</td><td><span class="fail">❌ OPEN — Fix: derive from SecurityContext, add ownership validation</span></td></tr>
+<tr><td>RECHECK-HR-004</td><td><code>ProjectTimesheetController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>employeeId</code> for timesheet submission — cross-user timesheet injection</td><td><span class="fail">❌ OPEN — Fix: remove param, use SecurityContext</span></td></tr>
+<tr><td>RECHECK-HR-005</td><td><code>OvertimeManagementController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>approverId</code> in approval action — privilege escalation (attacker can impersonate any approver)</td><td><span class="fail">❌ OPEN — Fix: derive approverId from SecurityContext</span></td></tr>
+<tr><td>RECHECK-HR-006</td><td><code>GoalController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>approverId</code> for goal approval — cross-user approval impersonation</td><td><span class="fail">❌ OPEN — Fix: derive from SecurityContext in service layer</span></td></tr>
+</tbody></table>
+
+<h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟠 HIGH — Wrong Permission Codes</h4>
+<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>RECHECK-GROW-001</td><td><code>GoalController.java — updateGoal()</code></td><td>HIGH — PUT /goals/{id} uses <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: change to Permission.GOAL_UPDATE</span></td></tr>
+<tr><td>RECHECK-GROW-002</td><td><code>GoalController.java — updateProgress()</code></td><td>HIGH — PUT /goals/{id}/progress uses <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: change to Permission.GOAL_UPDATE</span></td></tr>
+<tr><td>RECHECK-GROW-003</td><td><code>TrainingManagementController.java — updateTraining()</code></td><td>HIGH — PUT uses <code>TRAINING_CREATE</code> instead of <code>TRAINING_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: change to TRAINING_UPDATE</span></td></tr>
+<tr><td>RECHECK-GROW-004</td><td><code>TrainingManagementController.java — deleteTraining()</code></td><td>HIGH — DELETE uses <code>TRAINING_CREATE</code> instead of <code>TRAINING_DELETE</code></td><td><span class="fail">❌ OPEN — Fix: change to TRAINING_DELETE</span></td></tr>
+<tr><td>RECHECK-PLAT-003</td><td><code>NuPlatformService.java — listRoles()</code></td><td>HIGH — listRoles() returns roles for all tenants (no tenant filter) — data leak</td><td><span class="fail">❌ OPEN — Fix: filter by tenantId</span></td></tr>
+<tr><td>RECHECK-MISC-002</td><td><code>ProjectController.java</code></td><td>HIGH — PUT/DELETE /projects use <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code>/<code>PROJECT_DELETE</code></td><td><span class="fail">❌ OPEN — Fix: correct permission constants</span></td></tr>
+<tr><td>RECHECK-FE-001</td><td><code>employee.service.ts</code></td><td>HIGH — Multiple API calls use template string query params (bypass URL encoding, XSS risk)</td><td><span class="fail">❌ OPEN — Fix: use axios params object for all GET calls</span></td></tr>
+<tr><td>RECHECK-FE-002</td><td><code>Multiple frontend service files</code></td><td>HIGH — 7+ service files have same template-string query param pattern as RECHECK-FE-001</td><td><span class="fail">❌ OPEN — Fix: audit all .service.ts files, convert to params objects</span></td></tr>
+</tbody></table>
+
+<h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟡 MEDIUM — Minor Logic / Contract Issues</h4>
+<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>RECHECK-PAY-002</td><td><code>StatutoryFilingController.java</code></td><td>MEDIUM — POST /statutory/filings returns 200 instead of 201 Created</td><td><span class="fail">❌ OPEN — Fix: HttpStatus.CREATED</span></td></tr>
+<tr><td>RECHECK-PLAT-004</td><td><code>NuPlatformService.java — revokeAccess()</code></td><td>MEDIUM — revokeAccess() missing audit log entry for compliance</td><td><span class="fail">❌ OPEN — Fix: add auditService.log() call</span></td></tr>
+<tr><td>RECHECK-ADM-001</td><td><code>AdminService.java</code></td><td>MEDIUM — department lookup query missing tenantId filter in one code path</td><td><span class="fail">❌ OPEN — Fix: add tenantId to query</span></td></tr>
+<tr><td>RECHECK-MISC-003</td><td><code>HelpdeskController.java — deleteTicket()</code></td><td>MEDIUM — DELETE uses <code>HELPDESK_CATEGORY_MANAGE</code> instead of <code>HELPDESK_TICKET_MANAGE</code></td><td><span class="fail">❌ OPEN — Fix: change to HELPDESK_TICKET_MANAGE</span></td></tr>
+</tbody></table>
+
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Use Case Test Coverage</h2>
 <h3>🔐 Auth (UC-AUTH-001 to 007)</h3>
@@ -389,11 +459,28 @@
 <tr><td>Prometheus + Grafana</td><td><span class="fixed">✅</span></td></tr>
 </tbody></table>
 <hr style="border-color:var(--border);margin:16px 0">
-<h2>Active Fixes (In Progress)</h2>
-<table><thead><tr><th>Agent</th><th>Fixing</th><th>ETA</th></tr></thead><tbody>
-<tr><td>fix-emp-profile</td><td>BUG-QA2-009 <span class="fixed">✅</span> + BUG-QA2-012 <span class="fixed">✅</span></td><td><span class="fixed"><span class="fixed">✅</span> DONE</span></td></tr>
-<tr><td>fix-api-contracts</td><td>BUG-QA3-005 <span class="fixed">✅</span> + BUG-QA2-001 <span class="fixed">✅</span> + BUG-QA2-004 <span class="fixed">✅</span> + BUG-QA2-012 <span class="fixed">✅</span></td><td><span class="fixed"><span class="fixed">✅</span> DONE</span></td></tr>
+<h2>Run #4 — Priority Fix Queue</h2>
+<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Fix in this order before next QA run:</p>
+<table><thead><tr><th>#</th><th>Bug</th><th>Effort</th><th>Impact</th><th>Assignee</th></tr></thead><tbody>
+<tr style="background:#1c1010"><td>1</td><td>RECHECK-PAY-001 — SalaryStructureRepository wrong generic</td><td>5 min</td><td>CRITICAL — runtime ClassCastException</td><td>Backend dev</td></tr>
+<tr style="background:#1c1010"><td>2</td><td>RECHECK-PLAT-001 — getRoleById() cross-tenant leak</td><td>15 min</td><td>CRITICAL — tenant isolation</td><td>Backend dev</td></tr>
+<tr style="background:#1c1010"><td>3</td><td>RECHECK-PLAT-002 — grantAccess() no tenant validation</td><td>15 min</td><td>CRITICAL — privilege escalation</td><td>Backend dev</td></tr>
+<tr style="background:#200c0c"><td>4</td><td>RECHECK-HR-001 to HR-006 — IDOR across 6 controllers</td><td>1–2h</td><td>P0 — IDOR security (6 endpoints)</td><td>Security review</td></tr>
+<tr><td>5</td><td>RECHECK-GROW-001 to GROW-004 — Wrong permission codes</td><td>30 min</td><td>HIGH — legitimate operations blocked</td><td>Backend dev</td></tr>
+<tr><td>6</td><td>RECHECK-PLAT-003 — listRoles() cross-tenant</td><td>15 min</td><td>HIGH — data leak</td><td>Backend dev</td></tr>
+<tr><td>7</td><td>RECHECK-MISC-002 — ProjectController wrong permissions</td><td>15 min</td><td>HIGH — permission mismatch</td><td>Backend dev</td></tr>
+<tr><td>8</td><td>RECHECK-FE-001/002 — Frontend template string query params</td><td>2–3h</td><td>HIGH — all service files audit needed</td><td>Frontend dev</td></tr>
+<tr><td>9</td><td>RECHECK-PAY-002, RECHECK-ADM-001, RECHECK-MISC-003, RECHECK-PLAT-004</td><td>1h</td><td>MEDIUM — contract + minor logic</td><td>Backend dev</td></tr>
 </tbody></table>
+
+<h2>QA Run History</h2>
+<table><thead><tr><th>Run</th><th>Date</th><th>Bugs Found</th><th>Bugs Fixed</th><th>Verdict</th></tr></thead><tbody>
+<tr><td>Run #1</td><td>2026-04-03 (early)</td><td>26</td><td>22</td><td>NO-GO</td></tr>
+<tr><td>Run #2</td><td>2026-04-03 (mid)</td><td>17</td><td>12</td><td>NO-GO</td></tr>
+<tr><td>Run #3</td><td>2026-04-03 (evening)</td><td>22 new</td><td>22 (all BUG-NEW-*)</td><td>NO-GO</td></tr>
+<tr><td><strong>Run #4 (Final)</strong></td><td>2026-04-03 (night)</td><td><span class="fail">21 new (RECHECK-*)</span></td><td>0 new</td><td><span class="fail">NO-GO — 3 CRITICAL + 6 P0</span></td></tr>
+</tbody></table>
+
 <hr style="border-color:var(--border);margin:16px 0">
-<p style="margin:4px 0;color:var(--muted)">*Auto-generated from QA run 2026-04-03. Update this file as bugs are resolved.*</p>
+<p style="margin:4px 0;color:var(--muted)">Final QA report generated 2026-04-03. Fix RECHECK-PAY-001, RECHECK-PLAT-001/002, and RECHECK-HR-001–006 before next release attempt.</p>
 </body></html>
