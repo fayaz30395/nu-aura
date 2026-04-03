@@ -99,6 +99,12 @@ app:
     enabled: true
     requests-per-minute: 300
 
+  # Reduced thread pools for local dev — prevents OOM under macOS memory pressure
+  async:
+    core-pool-size: 2
+    max-pool-size: 8
+    queue-capacity: 200
+
 # Development health probes with relaxed group membership validation
 management:
   endpoint:

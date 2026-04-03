@@ -10,6 +10,7 @@ public class LeaveBalanceResponse {
     private UUID id;
     private UUID employeeId;
     private UUID leaveTypeId;
+    private String leaveTypeName;
     private Integer year;
     private BigDecimal openingBalance;
     private BigDecimal accrued;
