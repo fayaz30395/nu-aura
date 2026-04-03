@@ -35,7 +35,9 @@ public class LeaveRequestRequest {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    @NotNull(message = "Total days is required")
+    // BUG-QA2-001 FIX: totalDays is optional — if not provided by the frontend,
+    // the service layer computes it from startDate/endDate. @NotNull removed for
+    // backward compatibility while still allowing explicit submission.
     @DecimalMin(value = "0.5", message = "Total days must be at least 0.5")
     @DecimalMax(value = "365", message = "Total days cannot exceed 365")
     private BigDecimal totalDays;

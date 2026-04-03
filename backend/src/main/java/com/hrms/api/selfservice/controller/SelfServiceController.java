@@ -37,7 +37,14 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<ProfileUpdateResponse> createProfileUpdateRequest(
             @Valid @RequestBody ProfileUpdateRequestDto request) {
+        // BUG-QA2-012 FIX: Guard against null employeeId to prevent 500 when the
+        // employee record is not yet linked to the authenticated user's JWT context.
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.hrms.common.exception.BusinessException(
+                    "No employee record is associated with the current user. " +
+                    "Contact HR to link your account.");
+        }
         log.info("Creating profile update request for employee: {}", employeeId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(selfServiceService.createProfileUpdateRequest(employeeId, request));

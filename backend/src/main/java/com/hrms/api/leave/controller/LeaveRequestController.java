@@ -59,6 +59,15 @@ public class LeaveRequestController {
     public ResponseEntity<LeaveRequestResponse> createLeaveRequest(@Valid @RequestBody LeaveRequestRequest request) {
         LeaveRequest leaveRequest = new LeaveRequest();
         BeanUtils.copyProperties(request, leaveRequest);
+
+        // BUG-QA2-001 FIX: totalDays is now optional in the request DTO.
+        // If the frontend omits it, compute it from startDate / endDate.
+        if (leaveRequest.getTotalDays() == null && request.getStartDate() != null && request.getEndDate() != null) {
+            long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(
+                    request.getStartDate(), request.getEndDate()) + 1;
+            leaveRequest.setTotalDays(new java.math.BigDecimal(daysBetween));
+        }
+
         if (request.getHalfDayPeriod() != null) {
             // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
             // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().
