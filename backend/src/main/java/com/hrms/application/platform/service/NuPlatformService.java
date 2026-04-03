@@ -1,5 +1,6 @@
 package com.hrms.application.platform.service;
 
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.platform.*;
 import com.hrms.domain.user.User;
@@ -7,6 +8,7 @@ import com.hrms.infrastructure.platform.repository.*;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -196,20 +198,24 @@ public class NuPlatformService {
     }
 
     /**
-     * Get all roles for an application in current tenant
+     * Get all roles for an application in current tenant.
+     * Always scoped to current tenant — never returns cross-tenant roles (RECHECK-PLAT-003).
      */
     @Transactional(readOnly = true)
     public List<AppRole> getApplicationRoles(String appCode) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // Explicitly tenant-scoped: roleRepository.findAll() is never used here
         return roleRepository.findByTenantIdAndApplicationCode(tenantId, appCode.toUpperCase());
     }
 
     /**
-     * Get a role by ID
+     * Get a role by ID — scoped to current tenant (RECHECK-PLAT-001)
      */
     @Transactional(readOnly = true)
     public Optional<AppRole> getRoleById(UUID roleId) {
-        return roleRepository.findById(roleId);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return roleRepository.findById(roleId)
+                .filter(r -> r.getTenantId().equals(tenantId));
     }
 
     /**
@@ -242,13 +248,17 @@ public class NuPlatformService {
     // ==================== User Access Management ====================
 
     /**
-     * Grant user access to an application with roles
+     * Grant user access to an application with roles.
+     * Validates that the target user belongs to the caller's tenant (RECHECK-PLAT-002).
      */
     public UserAppAccess grantAccess(UUID userId, String appCode, Set<String> roleCodes, UUID grantedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if (!user.getTenantId().equals(tenantId)) {
+            throw new AccessDeniedException("Cannot grant access to users from a different tenant");
+        }
 
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
                 .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
@@ -301,10 +311,13 @@ public class NuPlatformService {
     }
 
     /**
-     * Revoke user access to an application
+     * Revoke user access to an application.
+     * Emits an audit log entry after the revoke completes (RECHECK-PLAT-004).
      */
     @Transactional
     public void revokeAccess(UUID userId, String appCode) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
                 .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
@@ -313,7 +326,10 @@ public class NuPlatformService {
 
         access.setStatus(UserAppAccess.AccessStatus.REVOKED);
         userAppAccessRepository.save(access);
-        log.info("Revoked access to app {} for user {}", appCode, userId);
+
+        UUID revokedBy = SecurityContext.getCurrentUserId();
+        log.info("Access revoked: userId={} appCode={} tenantId={} revokedBy={}",
+                userId, appCode, tenantId, revokedBy);
     }
 
     /**

@@ -67,7 +67,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.PROJECT_UPDATE)
     public ResponseEntity<ProjectResponse> updateProject(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateProjectRequest request) {
@@ -76,7 +76,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.PROJECT_DELETE)
     public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
