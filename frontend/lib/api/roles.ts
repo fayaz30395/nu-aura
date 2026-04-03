@@ -11,8 +11,12 @@ import {
 
 export const rolesApi = {
   getAllRoles: async (): Promise<Role[]> => {
-    const response = await apiClient.get<Role[]>('/roles');
-    return response.data;
+    // Bug #4 FIX: backend returns Page<Role>; extract .content with a large page size
+    // so the "Roles Defined" stat in admin reflects actual role count.
+    const response = await apiClient.get<{ content: Role[]; totalElements: number }>('/roles', {
+      params: { size: 100 },
+    });
+    return response.data.content ?? [];
   },
 
   getRoleById: async (id: string): Promise<Role> => {

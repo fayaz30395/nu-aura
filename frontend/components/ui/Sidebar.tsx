@@ -125,7 +125,7 @@ const ChildrenFlyover: React.FC<{
         }}
       >
         {/* Header */}
-        <div className="row-between px-4 py-4 border-b border-main bg-surface/50">
+        <div className="row-between px-4 py-4 border-b border-main bg-surface/50" suppressHydrationWarning>
           <div className="flex items-center gap-2">
             {item.icon && (
               <span className="text-secondary">
@@ -689,6 +689,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       onClick={() => handleToggleSection(section.id)}
                       aria-expanded={isSectionExpanded}
                       className="w-full row-between px-4 py-2.5 group rounded-md transition-all duration-200"
+                      suppressHydrationWarning
                     >
                       <span
                         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
