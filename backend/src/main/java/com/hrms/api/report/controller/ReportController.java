@@ -23,13 +23,13 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class ReportController {
 
-    private final ReportService reportService;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final ReportService reportService;
 
     @PostMapping("/employee-directory")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generateEmployeeDirectoryReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating employee directory report");
         byte[] reportData = reportService.generateEmployeeDirectoryReport(request);
@@ -39,10 +39,10 @@ public class ReportController {
     @PostMapping("/attendance")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generateAttendanceReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating attendance report from {} to {}",
-            request.getStartDate(), request.getEndDate());
+                request.getStartDate(), request.getEndDate());
         byte[] reportData = reportService.generateAttendanceReport(request);
         return buildResponse(reportData, "attendance", request.getFormat());
     }
@@ -50,7 +50,7 @@ public class ReportController {
     @PostMapping("/department-headcount")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generateDepartmentHeadcountReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating department headcount report");
         byte[] reportData = reportService.generateDepartmentHeadcountReport(request);
@@ -60,10 +60,10 @@ public class ReportController {
     @PostMapping("/leave")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generateLeaveReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating leave report from {} to {}",
-            request.getStartDate(), request.getEndDate());
+                request.getStartDate(), request.getEndDate());
         byte[] reportData = reportService.generateLeaveReport(request);
         return buildResponse(reportData, "leave", request.getFormat());
     }
@@ -71,10 +71,10 @@ public class ReportController {
     @PostMapping("/payroll")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generatePayrollReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating payroll report from {} to {}",
-            request.getStartDate(), request.getEndDate());
+                request.getStartDate(), request.getEndDate());
         byte[] reportData = reportService.generatePayrollReport(request);
         return buildResponse(reportData, "payroll", request.getFormat());
     }
@@ -82,18 +82,18 @@ public class ReportController {
     @PostMapping("/performance")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<byte[]> generatePerformanceReport(
-        @Valid @RequestBody ReportRequest request
+            @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
         log.info("Generating performance report from {} to {}",
-            request.getStartDate(), request.getEndDate());
+                request.getStartDate(), request.getEndDate());
         byte[] reportData = reportService.generatePerformanceReport(request);
         return buildResponse(reportData, "performance", request.getFormat());
     }
 
     private ResponseEntity<byte[]> buildResponse(
-        byte[] reportData,
-        String reportName,
-        ReportRequest.ExportFormat format
+            byte[] reportData,
+            String reportName,
+            ReportRequest.ExportFormat format
     ) {
         if (format == null) {
             format = ReportRequest.ExportFormat.EXCEL;
@@ -107,7 +107,7 @@ public class ReportController {
             case EXCEL:
                 filename = reportName + "-" + timestamp + ".xlsx";
                 contentType = MediaType.parseMediaType(
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 break;
             case PDF:
                 filename = reportName + "-" + timestamp + ".pdf";
@@ -120,7 +120,7 @@ public class ReportController {
             default:
                 filename = reportName + "-" + timestamp + ".xlsx";
                 contentType = MediaType.parseMediaType(
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -129,7 +129,7 @@ public class ReportController {
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
         return ResponseEntity.ok()
-            .headers(headers)
-            .body(reportData);
+                .headers(headers)
+                .body(reportData);
     }
 }

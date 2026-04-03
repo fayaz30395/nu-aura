@@ -111,14 +111,14 @@ public class ApprovalEscalationController {
 
         String fallbackRoleName = config.getFallbackRoleId() != null
                 ? roleRepository.findById(config.getFallbackRoleId())
-                        .map(Role::getName)
-                        .orElse(null)
+                  .map(Role::getName)
+                  .orElse(null)
                 : null;
 
         String fallbackUserName = config.getFallbackUserId() != null
                 ? userRepository.findById(config.getFallbackUserId())
-                        .map(u -> u.getFirstName() + " " + u.getLastName())
-                        .orElse(null)
+                  .map(u -> u.getFirstName() + " " + u.getLastName())
+                  .orElse(null)
                 : null;
 
         return EscalationConfigResponse.builder()

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,8 +48,8 @@ public class PSAProjectController {
     @RequiresPermission(PROJECT_VIEW)
     public ResponseEntity<PSAProject> getProject(@PathVariable UUID id) {
         return psaService.getProject(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/status/{status}")
@@ -61,8 +62,8 @@ public class PSAProjectController {
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<PSAProject> updateProject(@PathVariable UUID id, @Valid @RequestBody PSAProject project) {
         return psaService.updateProject(id, project)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -78,7 +79,7 @@ public class PSAProjectController {
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<PSAProject> allocateResources(@PathVariable UUID id, @Valid @RequestBody Map<String, Object> allocation) {
         return psaService.allocateResources(id, allocation)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

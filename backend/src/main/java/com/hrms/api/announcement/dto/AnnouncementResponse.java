@@ -41,11 +41,11 @@ public class AnnouncementResponse {
 
     public boolean isActive() {
         return status == Announcement.AnnouncementStatus.PUBLISHED &&
-               (expiresAt == null || expiresAt.isAfter(LocalDateTime.now()));
+                (expiresAt == null || expiresAt.isAfter(LocalDateTime.now()));
     }
 
     public boolean isScheduled() {
         return status == Announcement.AnnouncementStatus.SCHEDULED &&
-               publishedAt != null && publishedAt.isAfter(LocalDateTime.now());
+                publishedAt != null && publishedAt.isAfter(LocalDateTime.now());
     }
 }

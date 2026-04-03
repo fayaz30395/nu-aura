@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
 import java.util.UUID;
 
 /**
@@ -73,13 +74,13 @@ public class EmployeeDirectoryController {
     )
     @ApiResponses.GetList
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     public ResponseEntity<Page<EmployeeDirectoryResponse>> searchEmployees(
-        @Valid @RequestBody EmployeeSearchRequest request
+            @Valid @RequestBody EmployeeSearchRequest request
     ) {
         log.info("Received employee directory search request: {}", request);
         Page<EmployeeDirectoryResponse> results = employeeDirectoryService.searchEmployees(request);
@@ -96,48 +97,48 @@ public class EmployeeDirectoryController {
     )
     @ApiResponses.GetList
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     public ResponseEntity<Page<EmployeeDirectoryResponse>> searchEmployeesGet(
-        @Parameter(description = "Free text search (name, email, employee code)", example = "john")
-        @RequestParam(required = false) String searchTerm,
-        @Parameter(description = "Comma-separated department UUIDs", example = "550e8400-e29b-41d4-a716-446655440001")
-        @RequestParam(required = false) String departmentIds,
-        @Parameter(description = "Comma-separated job roles", example = "DEVELOPER,MANAGER")
-        @RequestParam(required = false) String jobRoles,
-        @Parameter(description = "Comma-separated levels", example = "SENIOR,MID")
-        @RequestParam(required = false) String levels,
-        @Parameter(description = "Comma-separated employment types", example = "FULL_TIME,CONTRACT")
-        @RequestParam(required = false) String employmentTypes,
-        @Parameter(description = "Comma-separated statuses", example = "ACTIVE")
-        @RequestParam(required = false) String statuses,
-        @Parameter(description = "Filter by manager UUID (direct reports)")
-        @RequestParam(required = false) String managerId,
-        @Parameter(description = "Page number (0-indexed)", example = "0")
-        @RequestParam(defaultValue = "0") Integer page,
-        @Parameter(description = "Page size", example = "20")
-        @RequestParam(defaultValue = "20") Integer size,
-        @Parameter(description = "Sort field", example = "fullName")
-        @RequestParam(defaultValue = "fullName") String sortBy,
-        @Parameter(description = "Sort direction", example = "ASC", schema = @Schema(allowableValues = {"ASC", "DESC"}))
-        @RequestParam(defaultValue = "ASC") String sortDirection
+            @Parameter(description = "Free text search (name, email, employee code)", example = "john")
+            @RequestParam(required = false) String searchTerm,
+            @Parameter(description = "Comma-separated department UUIDs", example = "550e8400-e29b-41d4-a716-446655440001")
+            @RequestParam(required = false) String departmentIds,
+            @Parameter(description = "Comma-separated job roles", example = "DEVELOPER,MANAGER")
+            @RequestParam(required = false) String jobRoles,
+            @Parameter(description = "Comma-separated levels", example = "SENIOR,MID")
+            @RequestParam(required = false) String levels,
+            @Parameter(description = "Comma-separated employment types", example = "FULL_TIME,CONTRACT")
+            @RequestParam(required = false) String employmentTypes,
+            @Parameter(description = "Comma-separated statuses", example = "ACTIVE")
+            @RequestParam(required = false) String statuses,
+            @Parameter(description = "Filter by manager UUID (direct reports)")
+            @RequestParam(required = false) String managerId,
+            @Parameter(description = "Page number (0-indexed)", example = "0")
+            @RequestParam(defaultValue = "0") Integer page,
+            @Parameter(description = "Page size", example = "20")
+            @RequestParam(defaultValue = "20") Integer size,
+            @Parameter(description = "Sort field", example = "fullName")
+            @RequestParam(defaultValue = "fullName") String sortBy,
+            @Parameter(description = "Sort direction", example = "ASC", schema = @Schema(allowableValues = {"ASC", "DESC"}))
+            @RequestParam(defaultValue = "ASC") String sortDirection
     ) {
         EmployeeSearchRequest request = EmployeeSearchRequest.builder()
-            .searchTerm(searchTerm)
-            .page(page)
-            .size(size)
-            .sortBy(sortBy)
-            .sortDirection(sortDirection)
-            .build();
+                .searchTerm(searchTerm)
+                .page(page)
+                .size(size)
+                .sortBy(sortBy)
+                .sortDirection(sortDirection)
+                .build();
 
         // Parse comma-separated IDs and enums if provided
         if (departmentIds != null && !departmentIds.isEmpty()) {
             request.setDepartmentIds(java.util.Arrays.stream(departmentIds.split(","))
-                .map(UUID::fromString)
-                .collect(java.util.stream.Collectors.toList()));
+                    .map(UUID::fromString)
+                    .collect(java.util.stream.Collectors.toList()));
         }
 
         if (jobRoles != null && !jobRoles.isEmpty()) {

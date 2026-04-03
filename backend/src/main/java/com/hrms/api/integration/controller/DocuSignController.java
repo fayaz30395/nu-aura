@@ -142,8 +142,8 @@ public class DocuSignController {
      *
      * <p>Returns a paginated list of envelopes with their current status and metadata.</p>
      *
-     * @param page the page number (0-indexed, default 0)
-     * @param size the page size (default 20, max 100)
+     * @param page   the page number (0-indexed, default 0)
+     * @param size   the page size (default 20, max 100)
      * @param status optional filter by envelope status (SENT, COMPLETED, DECLINED, ERROR, etc.)
      * @return a page of envelope responses
      */
@@ -264,10 +264,10 @@ public class DocuSignController {
             ConnectorConfig config = configService.getConfig(tenantId, "docusign");
             List<DocuSignApiClient.TemplateResponse> templatesList = apiClient.listTemplates(config);
             Map<String, String> templates = templatesList.stream()
-                .collect(Collectors.toMap(
-                    DocuSignApiClient.TemplateResponse::templateId,
-                    DocuSignApiClient.TemplateResponse::name
-                ));
+                    .collect(Collectors.toMap(
+                            DocuSignApiClient.TemplateResponse::templateId,
+                            DocuSignApiClient.TemplateResponse::name
+                    ));
             return ResponseEntity.ok(templates);
         } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to list DocuSign templates", e);
@@ -388,7 +388,7 @@ public class DocuSignController {
      * Processes an envelope status update from a DocuSign webhook event.
      *
      * @param envelope the envelope to update
-     * @param event the webhook event with new status
+     * @param event    the webhook event with new status
      */
     private void processEnvelopeEvent(DocuSignEnvelope envelope, DocuSignWebhookEvent event) {
         log.debug("Processing envelope event: {} -> {}", envelope.getId(), event.getStatus());
@@ -418,8 +418,8 @@ public class DocuSignController {
      * <p><strong>Security (CRIT-002):</strong> This method verifies that the webhook
      * came from DocuSign and has not been tampered with.</p>
      *
-     * @param headers the request headers
-     * @param payload the webhook payload
+     * @param headers    the request headers
+     * @param payload    the webhook payload
      * @param hmacSecret the HMAC secret from the connector configuration
      * @return true if the signature is valid, false otherwise
      */

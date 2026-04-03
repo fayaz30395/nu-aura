@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -44,32 +45,32 @@ public class PSATimesheetController {
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<PSATimesheet> getTimesheet(@PathVariable UUID id) {
         return psaService.getTimesheet(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/submit")
     @RequiresPermission(TIMESHEET_SUBMIT)
     public ResponseEntity<PSATimesheet> submitTimesheet(@PathVariable UUID id) {
         return psaService.submitTimesheet(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/approve")
     @RequiresPermission(TIMESHEET_APPROVE)
     public ResponseEntity<PSATimesheet> approveTimesheet(@PathVariable UUID id, @NotNull @Valid @RequestBody UUID approverId) {
         return psaService.approveTimesheet(id, approverId)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/reject")
     @RequiresPermission(TIMESHEET_APPROVE)
     public ResponseEntity<PSATimesheet> rejectTimesheet(@PathVariable UUID id, @NotBlank @Valid @RequestBody String reason) {
         return psaService.rejectTimesheet(id, reason)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/entries")

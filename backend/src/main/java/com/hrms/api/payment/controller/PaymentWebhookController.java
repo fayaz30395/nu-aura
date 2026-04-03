@@ -55,12 +55,12 @@ public class PaymentWebhookController {
         paymentFeatureGuard.requirePaymentsEnabled();
         try {
             String actualSignature = signature != null ? signature :
-                                    (razorpaySignature != null ? razorpaySignature : stripeSignature);
+                    (razorpaySignature != null ? razorpaySignature : stripeSignature);
 
             if (actualSignature == null) {
                 log.warn("Webhook received without signature from provider: {}", provider);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Signature verification failed");
+                        .body("Signature verification failed");
             }
 
             paymentService.processWebhook(provider, payload, actualSignature);
@@ -70,7 +70,7 @@ public class PaymentWebhookController {
             log.error("Error processing webhook from provider: {}", provider, e);
             // LOW-2 FIX: Do not expose internal exception details to the caller.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error processing webhook");
+                    .body("Error processing webhook");
         }
     }
 

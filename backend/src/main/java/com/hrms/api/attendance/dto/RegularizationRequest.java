@@ -16,16 +16,22 @@ import java.util.UUID;
 @Data
 public class RegularizationRequest {
 
-    /** Employee to regularize attendance for. Defaults to the currently authenticated employee. */
+    /**
+     * Employee to regularize attendance for. Defaults to the currently authenticated employee.
+     */
     private UUID employeeId;
 
     @NotNull(message = "Date is required")
     private LocalDate date;
 
-    /** Desired check-in time for the corrected record (optional). */
+    /**
+     * Desired check-in time for the corrected record (optional).
+     */
     private LocalDateTime checkInTime;
 
-    /** Desired check-out time for the corrected record (optional). */
+    /**
+     * Desired check-out time for the corrected record (optional).
+     */
     private LocalDateTime checkOutTime;
 
     @NotBlank(message = "Reason is required")

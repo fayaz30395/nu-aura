@@ -63,7 +63,7 @@ public class WorkforceTrendDto {
 
     public static WorkforceTrendDto fromEntity(WorkforceTrend trend) {
         String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         String periodLabel = monthNames[trend.getPeriodMonth() - 1] + " " + trend.getPeriodYear();
 
         int netChange = 0;

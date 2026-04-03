@@ -74,8 +74,8 @@ public class ObjectiveResponse {
                 .updatedAt(objective.getUpdatedAt())
                 .keyResults(objective.getKeyResults() != null ?
                         objective.getKeyResults().stream()
-                                .map(KeyResultResponse::fromEntity)
-                                .collect(Collectors.toList()) : null)
+                        .map(KeyResultResponse::fromEntity)
+                        .collect(Collectors.toList()) : null)
                 .build();
     }
 }

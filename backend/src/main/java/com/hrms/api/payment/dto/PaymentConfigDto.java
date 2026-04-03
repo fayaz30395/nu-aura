@@ -25,13 +25,13 @@ public class PaymentConfigDto {
 
     public static PaymentConfigDto fromEntity(PaymentConfig entity) {
         return builder()
-            .id(entity.getId())
-            .provider(entity.getProvider())
-            .apiKeyMasked(maskApiKey(entity.getApiKeyEncrypted()))
-            .merchantId(entity.getMerchantId())
-            .isActive(entity.getIsActive())
-            .configKey(entity.getConfigKey())
-            .build();
+                .id(entity.getId())
+                .provider(entity.getProvider())
+                .apiKeyMasked(maskApiKey(entity.getApiKeyEncrypted()))
+                .merchantId(entity.getMerchantId())
+                .isActive(entity.getIsActive())
+                .configKey(entity.getConfigKey())
+                .build();
     }
 
     private static String maskApiKey(String apiKey) {
@@ -43,12 +43,12 @@ public class PaymentConfigDto {
 
     public PaymentConfig toEntity() {
         return PaymentConfig.builder()
-            .id(id)
-            .provider(provider)
-            .apiKeyEncrypted(apiKey) // Will be encrypted in service
-            .merchantId(merchantId)
-            .isActive(isActive != null && isActive)
-            .configKey(configKey)
-            .build();
+                .id(id)
+                .provider(provider)
+                .apiKeyEncrypted(apiKey) // Will be encrypted in service
+                .merchantId(merchantId)
+                .isActive(isActive != null && isActive)
+                .configKey(configKey)
+                .build();
     }
 }

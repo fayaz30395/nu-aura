@@ -16,10 +16,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * SSE streaming endpoint for the NU-Fluence AI Chat.
- *
+ * <p>
  * The client sends a POST with the user's question and conversation history.
  * The server streams back SSE events: token → sources → done.
- *
+ * <p>
  * Authentication is cookie-based (same as all other endpoints).
  * Tenant context is resolved from the X-Tenant-ID header by the filter chain.
  */

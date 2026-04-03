@@ -138,7 +138,7 @@ public class IntegrationConnectorController {
      * it is updated; otherwise, a new configuration is created.</p>
      *
      * @param connectorId the connector ID
-     * @param request the configuration request with settings and event subscriptions
+     * @param request     the configuration request with settings and event subscriptions
      * @return the saved configuration (without sensitive data)
      * @throws IllegalArgumentException if the connector is not registered
      */
@@ -306,10 +306,10 @@ public class IntegrationConnectorController {
      * including successful, failed, and skipped events. Results can be filtered
      * by status and sorted by creation date.</p>
      *
-     * @param status optional filter by event status (SUCCESS, FAILED, SKIPPED)
-     * @param page the page number (0-indexed, default 0)
-     * @param size the page size (default 20, max 100)
-     * @param sortBy the field to sort by (default "createdAt")
+     * @param status  optional filter by event status (SUCCESS, FAILED, SKIPPED)
+     * @param page    the page number (0-indexed, default 0)
+     * @param size    the page size (default 20, max 100)
+     * @param sortBy  the field to sort by (default "createdAt")
      * @param sortDir the sort direction (ASC or DESC, default DESC)
      * @return a page of event log entries
      */

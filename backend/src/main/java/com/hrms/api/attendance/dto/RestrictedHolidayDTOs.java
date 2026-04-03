@@ -20,7 +20,8 @@ import java.util.UUID;
  */
 public final class RestrictedHolidayDTOs {
 
-    private RestrictedHolidayDTOs() {}
+    private RestrictedHolidayDTOs() {
+    }
 
     // ─── Holiday DTOs ───────────────────────────────────────────────────
 
@@ -72,7 +73,9 @@ public final class RestrictedHolidayDTOs {
         private Boolean isActive;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        /** Number of employees who have selected this holiday */
+        /**
+         * Number of employees who have selected this holiday
+         */
         private Long selectionCount;
     }
 

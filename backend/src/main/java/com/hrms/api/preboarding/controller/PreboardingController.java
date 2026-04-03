@@ -7,6 +7,7 @@ import com.hrms.domain.preboarding.PreboardingCandidate;
 import com.hrms.domain.preboarding.PreboardingCandidate.PreboardingStatus;
 
 import static com.hrms.common.security.Permission.*;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

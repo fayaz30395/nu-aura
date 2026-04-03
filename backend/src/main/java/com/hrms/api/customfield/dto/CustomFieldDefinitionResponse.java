@@ -45,19 +45,6 @@ public class CustomFieldDefinitionResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ValidationRules {
-        private Double minValue;
-        private Double maxValue;
-        private Integer minLength;
-        private Integer maxLength;
-        private String pattern;
-        private String patternMessage;
-    }
-
     /**
      * Convert entity to response DTO
      */
@@ -90,7 +77,7 @@ public class CustomFieldDefinitionResponse {
 
         // Build validation rules
         if (entity.getMinValue() != null || entity.getMaxValue() != null ||
-            entity.getMinLength() != null || entity.getMaxLength() != null) {
+                entity.getMinLength() != null || entity.getMaxLength() != null) {
             builder.validationRules(ValidationRules.builder()
                     .minValue(entity.getMinValue())
                     .maxValue(entity.getMaxValue())
@@ -105,5 +92,18 @@ public class CustomFieldDefinitionResponse {
         }
 
         return builder.build();
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ValidationRules {
+        private Double minValue;
+        private Double maxValue;
+        private Integer minLength;
+        private Integer maxLength;
+        private String pattern;
+        private String patternMessage;
     }
 }

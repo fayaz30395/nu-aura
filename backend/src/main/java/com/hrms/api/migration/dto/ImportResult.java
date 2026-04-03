@@ -31,17 +31,6 @@ public class ImportResult {
     @Builder.Default
     private List<String> warnings = new ArrayList<>();
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class ImportError {
-        private int rowNumber;
-        private String field;
-        private String value;
-        private String errorMessage;
-    }
-
     public void addError(int row, String field, String value, String message) {
         if (errors == null) errors = new ArrayList<>();
         errors.add(ImportError.builder()
@@ -61,5 +50,16 @@ public class ImportResult {
     public double getSuccessRate() {
         if (totalRows == 0) return 0.0;
         return (double) successCount / totalRows * 100;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ImportError {
+        private int rowNumber;
+        private String field;
+        private String value;
+        private String errorMessage;
     }
 }

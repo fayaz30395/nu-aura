@@ -49,17 +49,6 @@ public class AttritionPredictionDto {
 
     private LocalDateTime createdAt;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RiskFactor {
-        private String name;
-        private BigDecimal score;
-        private String description;
-        private String impact; // LOW, MEDIUM, HIGH
-    }
-
     public static AttritionPredictionDto fromEntity(AttritionPrediction prediction) {
         AttritionPredictionDto.AttritionPredictionDtoBuilder builder = AttritionPredictionDto.builder()
                 .id(prediction.getId())
@@ -147,5 +136,16 @@ public class AttritionPredictionDto {
         if (score.compareTo(BigDecimal.valueOf(70)) >= 0) return "HIGH";
         if (score.compareTo(BigDecimal.valueOf(40)) >= 0) return "MEDIUM";
         return "LOW";
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RiskFactor {
+        private String name;
+        private BigDecimal score;
+        private String description;
+        private String impact; // LOW, MEDIUM, HIGH
     }
 }

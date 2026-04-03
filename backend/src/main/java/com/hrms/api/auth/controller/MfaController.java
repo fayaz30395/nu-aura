@@ -73,7 +73,7 @@ public class MfaController {
         } catch (AuthenticationException e) {
             log.warn("MFA verification failed for user: {}", userId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(MfaStatusResponse.builder().verified(false).build());
+                    .body(MfaStatusResponse.builder().verified(false).build());
         }
     }
 
@@ -97,7 +97,7 @@ public class MfaController {
         } catch (AuthenticationException e) {
             log.warn("MFA disable failed for user: {}", userId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", "Invalid MFA code"));
+                    .body(Map.of("error", "Invalid MFA code"));
         }
     }
 

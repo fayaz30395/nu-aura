@@ -64,7 +64,9 @@ public class PerformanceReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    /** Paginated variant — prefer this for large employee review histories. */
+    /**
+     * Paginated variant — prefer this for large employee review histories.
+     */
     @GetMapping("/employee/{employeeId}/paged")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<Page<ReviewResponse>> getEmployeeReviewsPaged(
@@ -81,7 +83,9 @@ public class PerformanceReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    /** Paginated variant — prefer this when a reviewer has a large queue. */
+    /**
+     * Paginated variant — prefer this when a reviewer has a large queue.
+     */
     @GetMapping("/pending/{reviewerId}/paged")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<Page<ReviewResponse>> getPendingReviewsPaged(

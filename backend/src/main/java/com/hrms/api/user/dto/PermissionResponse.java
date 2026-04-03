@@ -35,6 +35,18 @@ public class PermissionResponse {
     private Set<CustomTargetResponse> customTargets;
 
     /**
+     * Constructor for backward compatibility (without scope).
+     */
+    public PermissionResponse(UUID id, String code, String name, String description, String resource, String action) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.resource = resource;
+        this.action = action;
+    }
+
+    /**
      * Response DTO for custom scope target.
      */
     @Data
@@ -46,17 +58,5 @@ public class PermissionResponse {
         private TargetType targetType;
         private UUID targetId;
         private String targetName; // Resolved name (employee name, department name, etc.)
-    }
-
-    /**
-     * Constructor for backward compatibility (without scope).
-     */
-    public PermissionResponse(UUID id, String code, String name, String description, String resource, String action) {
-        this.id = id;
-        this.code = code;
-        this.name = name;
-        this.description = description;
-        this.resource = resource;
-        this.action = action;
     }
 }

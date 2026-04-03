@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MfaVerifyRequest {
-    
+
     /**
      * TOTP code (6 digits) or backup code from the authenticator app.
      * Should not be blank.

@@ -13,10 +13,12 @@ public class TenantRegistrationRequest {
     @Size(min = 2, max = 200, message = "Company name must be 2-200 characters")
     private String companyName;
 
-    /** URL-safe identifier, e.g. "acme-corp" */
+    /**
+     * URL-safe identifier, e.g. "acme-corp"
+     */
     @NotBlank(message = "Company code is required")
     @Pattern(regexp = "^[a-z0-9-]{2,50}$",
-             message = "Company code must be lowercase alphanumeric with hyphens (2-50 chars)")
+            message = "Company code must be lowercase alphanumeric with hyphens (2-50 chars)")
     private String companyCode;
 
     @NotBlank(message = "Admin first name is required")

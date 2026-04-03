@@ -3,6 +3,7 @@ package com.hrms.api.leave.dto;
 import com.hrms.common.validation.DateRangeValid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -26,7 +27,9 @@ public class LeaveRequestRequest {
     private UUID leaveTypeId;
 
     @NotNull(message = "Start date is required")
-    @FutureOrPresent(message = "Start date cannot be in the past")
+    // BUG-QA2-008 FIX: Removed @FutureOrPresent to allow retroactive leave applications.
+    // Business logic for retroactive leave limit (e.g. backdated within N days) should be
+    // enforced in LeaveService based on leave type policy configuration, not at validation layer.
     private LocalDate startDate;
 
     @NotNull(message = "End date is required")
@@ -39,7 +42,10 @@ public class LeaveRequestRequest {
 
     private Boolean isHalfDay = false;
 
-    @Pattern(regexp = "^(FIRST_HALF|SECOND_HALF)?$", message = "Half day period must be FIRST_HALF or SECOND_HALF")
+    // BUG-QA2-007 FIX: Accept both FIRST_HALF/SECOND_HALF (Java enum values) and
+    // MORNING/AFTERNOON (frontend/spec values). Normalization happens in LeaveService.
+    @Pattern(regexp = "^(FIRST_HALF|SECOND_HALF|MORNING|AFTERNOON)?$",
+            message = "Half day period must be FIRST_HALF, SECOND_HALF, MORNING, or AFTERNOON")
     private String halfDayPeriod;
 
     @NotBlank(message = "Reason is required")

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * REST controller for biometric device management and punch processing.
- *
+ * <p>
  * Admin endpoints (device CRUD, logs, reprocessing) require JWT + ATTENDANCE:MANAGE permission.
  * Webhook endpoints (punch, batch-punch) use API key auth via X-Biometric-Api-Key header.
  */
@@ -46,9 +46,9 @@ public class BiometricDeviceController {
     @RequiresPermission(Permission.ATTENDANCE_MANAGE)
     @Operation(summary = "Register a biometric device", description = "Register a new biometric device for the tenant")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Device registered successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request or duplicate serial number"),
-        @ApiResponse(responseCode = "403", description = "Not authorized")
+            @ApiResponse(responseCode = "201", description = "Device registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or duplicate serial number"),
+            @ApiResponse(responseCode = "403", description = "Not authorized")
     })
     public ResponseEntity<BiometricDeviceResponse> registerDevice(
             @Valid @RequestBody BiometricDeviceRequest request) {
@@ -76,8 +76,8 @@ public class BiometricDeviceController {
     @RequiresPermission(Permission.ATTENDANCE_MANAGE)
     @Operation(summary = "Update a biometric device", description = "Update device configuration")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Device updated successfully"),
-        @ApiResponse(responseCode = "404", description = "Device not found")
+            @ApiResponse(responseCode = "200", description = "Device updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Device not found")
     })
     public ResponseEntity<BiometricDeviceResponse> updateDevice(
             @PathVariable UUID id,
@@ -138,11 +138,11 @@ public class BiometricDeviceController {
 
     @PostMapping("/punch")
     @Operation(summary = "Receive punch (webhook)",
-               description = "Webhook endpoint for biometric devices. Authenticates via X-Biometric-Api-Key header.")
+            description = "Webhook endpoint for biometric devices. Authenticates via X-Biometric-Api-Key header.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Punch accepted"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API key"),
-        @ApiResponse(responseCode = "400", description = "Invalid request")
+            @ApiResponse(responseCode = "201", description = "Punch accepted"),
+            @ApiResponse(responseCode = "401", description = "Invalid or missing API key"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     public ResponseEntity<BiometricPunchResponse> receivePunch(
             @RequestHeader("X-Biometric-Api-Key") String apiKey,
@@ -160,11 +160,11 @@ public class BiometricDeviceController {
 
     @PostMapping("/punch/batch")
     @Operation(summary = "Receive batch punches (webhook)",
-               description = "Webhook endpoint for batch punch uploads. Authenticates via X-Biometric-Api-Key header.")
+            description = "Webhook endpoint for batch punch uploads. Authenticates via X-Biometric-Api-Key header.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Batch accepted"),
-        @ApiResponse(responseCode = "401", description = "Invalid or missing API key"),
-        @ApiResponse(responseCode = "400", description = "Invalid request")
+            @ApiResponse(responseCode = "201", description = "Batch accepted"),
+            @ApiResponse(responseCode = "401", description = "Invalid or missing API key"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     public ResponseEntity<BiometricBatchPunchResponse> receiveBatchPunches(
             @RequestHeader("X-Biometric-Api-Key") String apiKey,

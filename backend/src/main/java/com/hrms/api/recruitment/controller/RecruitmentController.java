@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.UUID;
 
 /**
@@ -38,7 +39,7 @@ public class RecruitmentController {
     @PutMapping("/job-openings/{id}")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<JobOpeningResponse> updateJobOpening(@PathVariable UUID id,
-            @Valid @RequestBody JobOpeningRequest request) {
+                                                               @Valid @RequestBody JobOpeningRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.updateJobOpening(id, request));
     }
 
@@ -57,7 +58,7 @@ public class RecruitmentController {
     @GetMapping("/job-openings/status/{status}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
     public ResponseEntity<Page<JobOpeningResponse>> getJobOpeningsByStatus(@PathVariable JobOpening.JobStatus status,
-            Pageable pageable) {
+                                                                           Pageable pageable) {
         return ResponseEntity.ok(recruitmentManagementService.getJobOpeningsByStatus(status, pageable));
     }
 
@@ -79,7 +80,7 @@ public class RecruitmentController {
     @PutMapping("/candidates/{id}")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> updateCandidate(@PathVariable UUID id,
-            @Valid @RequestBody CandidateRequest request) {
+                                                             @Valid @RequestBody CandidateRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.updateCandidate(id, request));
     }
 
@@ -98,14 +99,14 @@ public class RecruitmentController {
     @GetMapping("/candidates/job-opening/{jobOpeningId}")
     @RequiresPermission(Permission.CANDIDATE_VIEW)
     public ResponseEntity<Page<CandidateResponse>> getCandidatesByJobOpening(@PathVariable UUID jobOpeningId,
-            Pageable pageable) {
+                                                                             Pageable pageable) {
         return ResponseEntity.ok(recruitmentManagementService.getCandidatesByJobOpening(jobOpeningId, pageable));
     }
 
     @PutMapping("/candidates/{id}/stage")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> moveCandidateStage(@PathVariable UUID id,
-            @Valid @RequestBody MoveStageRequest request) {
+                                                                @Valid @RequestBody MoveStageRequest request) {
         return ResponseEntity
                 .ok(recruitmentManagementService.moveCandidateStage(id, request.getStage(), request.getNotes()));
     }
@@ -113,14 +114,14 @@ public class RecruitmentController {
     @PostMapping("/candidates/{id}/offer")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> createOffer(@PathVariable UUID id,
-            @Valid @RequestBody CreateOfferRequest request) {
+                                                         @Valid @RequestBody CreateOfferRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentManagementService.createOffer(id, request));
     }
 
     @PostMapping("/candidates/{id}/accept-offer")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> acceptOffer(@PathVariable UUID id,
-            @Valid @RequestBody(required = false) OfferResponseRequest request) {
+                                                         @Valid @RequestBody(required = false) OfferResponseRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.acceptOffer(id,
                 request != null ? request.getConfirmedJoiningDate() : null));
     }
@@ -128,7 +129,7 @@ public class RecruitmentController {
     @PostMapping("/candidates/{id}/decline-offer")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> declineOffer(@PathVariable UUID id,
-            @Valid @RequestBody(required = false) OfferResponseRequest request) {
+                                                          @Valid @RequestBody(required = false) OfferResponseRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.declineOffer(id,
                 request != null ? request.getDeclineReason() : "No reason provided"));
     }
@@ -157,7 +158,7 @@ public class RecruitmentController {
     @PutMapping("/interviews/{id}")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<InterviewResponse> updateInterview(@PathVariable UUID id,
-            @Valid @RequestBody InterviewRequest request) {
+                                                             @Valid @RequestBody InterviewRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.updateInterview(id, request));
     }
 
@@ -170,7 +171,7 @@ public class RecruitmentController {
     @GetMapping("/interviews/candidate/{candidateId}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
     public ResponseEntity<Page<InterviewResponse>> getInterviewsByCandidate(@PathVariable UUID candidateId,
-            Pageable pageable) {
+                                                                            Pageable pageable) {
         return ResponseEntity.ok(recruitmentManagementService.getInterviewsByCandidate(candidateId, pageable));
     }
 

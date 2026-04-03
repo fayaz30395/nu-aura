@@ -10,6 +10,7 @@ import com.hrms.domain.asset.Asset;
 import com.hrms.domain.asset.AssetMaintenanceRequest;
 
 import static com.hrms.common.security.Permission.*;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -165,15 +166,18 @@ public class AssetManagementController {
     // Request DTOs (inner records)
     // ─────────────────────────────────────────────────────────────────────────
 
-    record AssetSelfRequest(@NotNull UUID assetId) {}
+    record AssetSelfRequest(@NotNull UUID assetId) {
+    }
 
     record MaintenanceRequestBody(
             @NotNull UUID assetId,
             @NotBlank String maintenanceType,
             @NotBlank String issueDescription,
-            @NotBlank String priority) {}
+            @NotBlank String priority) {
+    }
 
     record MaintenanceStatusUpdate(
             @NotNull AssetMaintenanceRequest.MaintenanceStatus status,
-            String notes) {}
+            String notes) {
+    }
 }

@@ -44,25 +44,6 @@ public class PulseSurveyResponse {
     private String templateCategory;
     private List<QuestionResponse> questions;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class QuestionResponse {
-        private UUID id;
-        private String questionText;
-        private PulseSurveyQuestion.QuestionType questionType;
-        private Integer questionOrder;
-        private Boolean isRequired;
-        private List<String> options;
-        private Integer minValue;
-        private Integer maxValue;
-        private String minLabel;
-        private String maxLabel;
-        private PulseSurveyQuestion.QuestionCategory category;
-        private String helpText;
-    }
-
     public static PulseSurveyResponse fromEntity(PulseSurvey survey) {
         return PulseSurveyResponse.builder()
                 .id(survey.getId())
@@ -89,5 +70,24 @@ public class PulseSurveyResponse {
                 .templateName(survey.getTemplateName())
                 .templateCategory(survey.getTemplateCategory())
                 .build();
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class QuestionResponse {
+        private UUID id;
+        private String questionText;
+        private PulseSurveyQuestion.QuestionType questionType;
+        private Integer questionOrder;
+        private Boolean isRequired;
+        private List<String> options;
+        private Integer minValue;
+        private Integer maxValue;
+        private String minLabel;
+        private String maxLabel;
+        private PulseSurveyQuestion.QuestionCategory category;
+        private String helpText;
     }
 }

@@ -32,4 +32,5 @@ public record MileageLogRequest(
 
         @Size(max = 1000, message = "Notes cannot exceed 1000 characters")
         String notes
-) {}
+) {
+}

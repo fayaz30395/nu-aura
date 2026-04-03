@@ -64,10 +64,10 @@ public class EmployeeController {
     @RequiresPermission(Permission.EMPLOYEE_CREATE)
     @Operation(summary = "Create a new employee", description = "Creates a new employee record with user account")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Employee created successfully",
-            content = @Content(schema = @Schema(implementation = EmployeeResponse.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "409", description = "Employee code or email already exists")
+            @ApiResponse(responseCode = "201", description = "Employee created successfully",
+                    content = @Content(schema = @Schema(implementation = EmployeeResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "409", description = "Employee code or email already exists")
     })
     public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody CreateEmployeeRequest request) {
         EmployeeResponse response = employeeService.createEmployee(request);
@@ -76,9 +76,9 @@ public class EmployeeController {
 
     @GetMapping
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Get all employees", description = "Returns a paginated list of employees filtered by caller's data scope")
     @ApiResponse(responseCode = "200", description = "Employees retrieved successfully")
@@ -97,9 +97,9 @@ public class EmployeeController {
 
     @GetMapping("/search")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Search employees", description = "Search employees by name, email, or employee code")
     @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
@@ -162,16 +162,16 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_VIEW_SELF
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_VIEW_SELF
     })
     @Operation(summary = "Get employee by ID", description = "Returns a single employee by their UUID, enforcing data-scope rules")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Employee found"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to view this employee"),
-        @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "200", description = "Employee found"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to view this employee"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> getEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
@@ -230,14 +230,14 @@ public class EmployeeController {
 
     @GetMapping("/{id}/hierarchy")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Get employee hierarchy", description = "Returns the employee with their full reporting hierarchy")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Employee hierarchy retrieved successfully"),
-        @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "200", description = "Employee hierarchy retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> getEmployeeHierarchy(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
@@ -247,9 +247,9 @@ public class EmployeeController {
 
     @GetMapping("/{id}/subordinates")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Get subordinates", description = "Returns direct reports of the specified employee")
     @ApiResponse(responseCode = "200", description = "Subordinates retrieved successfully")
@@ -266,26 +266,26 @@ public class EmployeeController {
      */
     @GetMapping("/managers")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM,
-        Permission.EMPLOYEE_CREATE,
-        Permission.EMPLOYEE_UPDATE
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM,
+            Permission.EMPLOYEE_CREATE,
+            Permission.EMPLOYEE_UPDATE
     })
     @Operation(summary = "Get eligible managers",
-               description = "Returns active employees at LEAD level and above, for manager-picker dropdowns")
+            description = "Returns active employees at LEAD level and above, for manager-picker dropdowns")
     public ResponseEntity<List<EmployeeResponse>> getManagers() {
         return ResponseEntity.ok(employeeService.getManagerEmployees());
     }
 
     @GetMapping("/{id}/dotted-reports")
     @RequiresPermission({
-        Permission.EMPLOYEE_VIEW_ALL,
-        Permission.EMPLOYEE_VIEW_DEPARTMENT,
-        Permission.EMPLOYEE_VIEW_TEAM
+            Permission.EMPLOYEE_VIEW_ALL,
+            Permission.EMPLOYEE_VIEW_DEPARTMENT,
+            Permission.EMPLOYEE_VIEW_TEAM
     })
     @Operation(summary = "Get dotted-line reports",
-               description = "Returns active employees who have this manager assigned as a dotted-line manager")
+            description = "Returns active employees who have this manager assigned as a dotted-line manager")
     @ApiResponse(responseCode = "200", description = "Dotted-line reports retrieved successfully")
     public ResponseEntity<List<EmployeeResponse>> getDottedLineReports(
             @Parameter(description = "Manager UUID") @PathVariable UUID id) {
@@ -297,9 +297,9 @@ public class EmployeeController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Update employee", description = "Update an existing employee's information")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id,
@@ -313,8 +313,8 @@ public class EmployeeController {
     @RequiresPermission(Permission.EMPLOYEE_DELETE)
     @Operation(summary = "Delete employee", description = "Soft-delete an employee record")
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Employee deleted successfully"),
-        @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "204", description = "Employee deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<Void> deleteEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
@@ -326,8 +326,8 @@ public class EmployeeController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Deactivate employee", description = "Set employee status to INACTIVE")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Employee deactivated successfully"),
-        @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "200", description = "Employee deactivated successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> deactivateEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {

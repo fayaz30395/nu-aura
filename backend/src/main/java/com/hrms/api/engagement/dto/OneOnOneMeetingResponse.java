@@ -44,6 +44,31 @@ public class OneOnOneMeetingResponse {
     private List<AgendaItemResponse> agendaItems;
     private List<ActionItemResponse> actionItems;
 
+    public static OneOnOneMeetingResponse fromEntity(OneOnOneMeeting meeting) {
+        return OneOnOneMeetingResponse.builder()
+                .id(meeting.getId())
+                .managerId(meeting.getManagerId())
+                .employeeId(meeting.getEmployeeId())
+                .title(meeting.getTitle())
+                .description(meeting.getDescription())
+                .meetingDate(meeting.getMeetingDate())
+                .startTime(meeting.getStartTime())
+                .endTime(meeting.getEndTime())
+                .durationMinutes(meeting.getDurationMinutes())
+                .status(meeting.getStatus())
+                .meetingType(meeting.getMeetingType())
+                .location(meeting.getLocation())
+                .meetingLink(meeting.getMeetingLink())
+                .isRecurring(meeting.getIsRecurring())
+                .recurrencePattern(meeting.getRecurrencePattern())
+                .sharedNotes(meeting.getSharedNotes())
+                .meetingSummary(meeting.getMeetingSummary())
+                .employeeRating(meeting.getEmployeeRating())
+                .employeeFeedback(meeting.getEmployeeFeedback())
+                .createdAt(meeting.getCreatedAt())
+                .build();
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -75,30 +100,5 @@ public class OneOnOneMeetingResponse {
         private MeetingActionItem.ActionStatus status;
         private MeetingActionItem.Priority priority;
         private Boolean isOverdue;
-    }
-
-    public static OneOnOneMeetingResponse fromEntity(OneOnOneMeeting meeting) {
-        return OneOnOneMeetingResponse.builder()
-                .id(meeting.getId())
-                .managerId(meeting.getManagerId())
-                .employeeId(meeting.getEmployeeId())
-                .title(meeting.getTitle())
-                .description(meeting.getDescription())
-                .meetingDate(meeting.getMeetingDate())
-                .startTime(meeting.getStartTime())
-                .endTime(meeting.getEndTime())
-                .durationMinutes(meeting.getDurationMinutes())
-                .status(meeting.getStatus())
-                .meetingType(meeting.getMeetingType())
-                .location(meeting.getLocation())
-                .meetingLink(meeting.getMeetingLink())
-                .isRecurring(meeting.getIsRecurring())
-                .recurrencePattern(meeting.getRecurrencePattern())
-                .sharedNotes(meeting.getSharedNotes())
-                .meetingSummary(meeting.getMeetingSummary())
-                .employeeRating(meeting.getEmployeeRating())
-                .employeeFeedback(meeting.getEmployeeFeedback())
-                .createdAt(meeting.getCreatedAt())
-                .build();
     }
 }

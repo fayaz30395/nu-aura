@@ -45,9 +45,9 @@ public class WorkflowExecutionResponse {
         return WorkflowExecutionResponse.builder()
                 .id(execution.getId())
                 .workflowDefinitionId(execution.getWorkflowDefinition() != null ?
-                                      execution.getWorkflowDefinition().getId() : null)
+                        execution.getWorkflowDefinition().getId() : null)
                 .workflowName(execution.getWorkflowDefinition() != null ?
-                              execution.getWorkflowDefinition().getName() : null)
+                        execution.getWorkflowDefinition().getName() : null)
                 .entityType(execution.getEntityType())
                 .entityId(execution.getEntityId())
                 .referenceNumber(execution.getReferenceNumber())
@@ -65,14 +65,14 @@ public class WorkflowExecutionResponse {
                 .submittedAt(execution.getSubmittedAt())
                 .completedAt(execution.getCompletedAt())
                 .totalSteps(execution.getWorkflowDefinition() != null ?
-                            execution.getWorkflowDefinition().getSteps().size() : 0)
+                        execution.getWorkflowDefinition().getSteps().size() : 0)
                 .completedSteps((int) execution.getStepExecutions().stream()
                         .filter(s -> s.getStatus() == StepExecution.StepStatus.APPROVED)
                         .count())
                 .stepExecutions(execution.getStepExecutions() != null ?
-                                execution.getStepExecutions().stream()
-                                        .map(StepExecutionResponse::from)
-                                        .collect(Collectors.toList()) : null)
+                        execution.getStepExecutions().stream()
+                        .map(StepExecutionResponse::from)
+                        .collect(Collectors.toList()) : null)
                 .build();
     }
 

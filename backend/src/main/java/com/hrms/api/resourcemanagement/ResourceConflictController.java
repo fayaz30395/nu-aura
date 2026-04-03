@@ -57,7 +57,9 @@ public class ResourceConflictController {
         return ResponseEntity.ok(resourceConflictService.scanTenantConflicts(tenantId));
     }
 
-    /** Get all open (unresolved) conflicts for the tenant. */
+    /**
+     * Get all open (unresolved) conflicts for the tenant.
+     */
     @GetMapping("/open")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     public ResponseEntity<List<Map<String, Object>>> getOpenConflicts() {
@@ -65,7 +67,9 @@ public class ResourceConflictController {
         return ResponseEntity.ok(resourceConflictService.getOpenConflicts(tenantId));
     }
 
-    /** Mark a conflict as resolved. */
+    /**
+     * Mark a conflict as resolved.
+     */
     @PostMapping("/{conflictId}/resolve")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     public ResponseEntity<Void> resolveConflict(
@@ -79,15 +83,24 @@ public class ResourceConflictController {
 
     @Data
     public static class ConflictCheckRequest {
-        @NotNull private UUID employeeId;
-        @NotNull private UUID projectId;
-        @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate startDate;
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate endDate;
-        @NotNull @Min(1) @Max(100) private Integer allocationPercentage;
+        @NotNull
+        private UUID employeeId;
+        @NotNull
+        private UUID projectId;
+        @NotNull
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        private LocalDate startDate;
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        private LocalDate endDate;
+        @NotNull
+        @Min(1)
+        @Max(100)
+        private Integer allocationPercentage;
     }
 
     @Data
     public static class ResolveDto {
-        @NotNull private UUID resolvedBy;
+        @NotNull
+        private UUID resolvedBy;
     }
 }

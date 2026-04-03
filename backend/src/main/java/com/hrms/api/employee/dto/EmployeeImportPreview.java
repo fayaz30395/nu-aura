@@ -32,26 +32,6 @@ public class EmployeeImportPreview {
     @Builder.Default
     private List<String> warnings = new ArrayList<>();
 
-    /**
-     * Preview of a single row with validation status.
-     */
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class EmployeeImportRowPreview {
-        private int rowNumber;
-        private String employeeCode;
-        private String fullName;
-        private String workEmail;
-        private String designation;
-        private String departmentName;
-        private String joiningDate;
-        private String employmentType;
-        private boolean isValid;
-        private List<String> rowErrors;
-    }
-
     public static EmployeeImportPreview empty() {
         return EmployeeImportPreview.builder()
                 .totalRows(0)
@@ -74,5 +54,25 @@ public class EmployeeImportPreview {
             this.warnings = new ArrayList<>();
         }
         this.warnings.add(warning);
+    }
+
+    /**
+     * Preview of a single row with validation status.
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmployeeImportRowPreview {
+        private int rowNumber;
+        private String employeeCode;
+        private String fullName;
+        private String workEmail;
+        private String designation;
+        private String departmentName;
+        private String joiningDate;
+        private String employmentType;
+        private boolean isValid;
+        private List<String> rowErrors;
     }
 }
