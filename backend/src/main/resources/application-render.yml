@@ -45,6 +45,16 @@ spring:
       password: ${SPRING_REDIS_PASSWORD:}
       timeout: 2000
 
+  # Elasticsearch — not provisioned on Render free plan; set short timeouts so
+  # FluenceDocumentRepository doesn't block startup for 30+ seconds
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+    connection-timeout: 2s
+    socket-timeout: 2s
+    # Disable auto-index creation to avoid startup connection requirement
+    repositories:
+      enabled: false
+
   # Use simple in-memory cache — no Redis needed on Render free plan
   cache:
     type: simple
@@ -85,7 +95,7 @@ server:
   error:
     include-stacktrace: never
     include-message: never
-    include-binding-errors: false
+    include-binding-errors: never
     include-exception: false
 
 app:
