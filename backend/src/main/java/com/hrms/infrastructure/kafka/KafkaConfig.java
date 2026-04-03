@@ -500,6 +500,9 @@ public class KafkaConfig {
         // Reduce admin request timeout so startup doesn't hang for 60s when Kafka is down
         configs.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
         configs.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 10000);
+        // Back off aggressively when Kafka isn't running locally — avoids spinning threads
+        configs.put(AdminClientConfig.RECONNECT_BACKOFF_MS_CONFIG, 10000);
+        configs.put(AdminClientConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, 60000);
         KafkaAdmin admin = new KafkaAdmin(configs);
         // Don't block application startup if Kafka broker is unavailable
         admin.setFatalIfBrokerNotAvailable(false);
