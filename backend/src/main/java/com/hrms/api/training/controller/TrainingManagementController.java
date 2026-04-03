@@ -32,7 +32,7 @@ public class TrainingManagementController {
     }
 
     @PutMapping("/programs/{programId}")
-    @RequiresPermission(Permission.TRAINING_CREATE)
+    @RequiresPermission(Permission.TRAINING_UPDATE)
     public ResponseEntity<TrainingProgramResponse> updateProgram(
             @PathVariable UUID programId,
             @Valid @RequestBody TrainingProgramRequest request) {
@@ -63,7 +63,7 @@ public class TrainingManagementController {
     }
 
     @DeleteMapping("/programs/{programId}")
-    @RequiresPermission(Permission.TRAINING_CREATE)
+    @RequiresPermission(Permission.TRAINING_DELETE)
     public ResponseEntity<Void> deleteProgram(@PathVariable UUID programId) {
         trainingService.deleteProgram(programId);
         return ResponseEntity.noContent().build();

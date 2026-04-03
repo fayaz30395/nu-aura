@@ -20,7 +20,7 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
 
     List<SalaryStructure> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);
 
-    Page<SalaryStructureRepository> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
+    Page<SalaryStructure> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT s FROM SalaryStructure s WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
             "AND s.effectiveDate <= :date AND s.isActive = true " +

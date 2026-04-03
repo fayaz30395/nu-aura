@@ -112,7 +112,7 @@ public class HelpdeskController {
     }
 
     @DeleteMapping("/tickets/{id}")
-    @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
+    @RequiresPermission(HELPDESK_TICKET_MANAGE)
     public ResponseEntity<Void> deleteTicket(@PathVariable UUID id) {
         helpdeskService.deleteTicket(id);
         return ResponseEntity.noContent().build();

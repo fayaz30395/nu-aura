@@ -87,6 +87,8 @@ public final class Permission {
     // Training
     public static final String TRAINING_VIEW = "TRAINING:VIEW";
     public static final String TRAINING_CREATE = "TRAINING:CREATE";
+    public static final String TRAINING_UPDATE = "TRAINING:UPDATE";
+    public static final String TRAINING_DELETE = "TRAINING:DELETE";
     public static final String TRAINING_EDIT = "TRAINING:EDIT";
     public static final String TRAINING_ENROLL = "TRAINING:ENROLL";
     public static final String TRAINING_APPROVE = "TRAINING:APPROVE";
@@ -123,6 +125,8 @@ public final class Permission {
     public static final String HELPDESK_TICKET_VIEW = "HELPDESK:TICKET_VIEW";
     public static final String HELPDESK_TICKET_ASSIGN = "HELPDESK:TICKET_ASSIGN";
     public static final String HELPDESK_TICKET_RESOLVE = "HELPDESK:TICKET_RESOLVE";
+    public static final String HELPDESK_TICKET_MANAGE = "HELPDESK:TICKET_MANAGE";
+    public static final String HELPDESK_TICKET_DELETE = "HELPDESK:TICKET_DELETE";
     public static final String HELPDESK_CATEGORY_MANAGE = "HELPDESK:CATEGORY_MANAGE";
     public static final String HELPDESK_SLA_MANAGE = "HELPDESK:SLA_MANAGE";
 
@@ -163,6 +167,8 @@ public final class Permission {
     // Projects & Timesheets
     public static final String PROJECT_VIEW = "PROJECT:VIEW";
     public static final String PROJECT_CREATE = "PROJECT:CREATE";
+    public static final String PROJECT_UPDATE = "PROJECT:UPDATE";
+    public static final String PROJECT_DELETE = "PROJECT:DELETE";
     public static final String PROJECT_MANAGE = "PROJECT:MANAGE";
     public static final String TIMESHEET_SUBMIT = "TIMESHEET:SUBMIT";
     public static final String TIMESHEET_APPROVE = "TIMESHEET:APPROVE";

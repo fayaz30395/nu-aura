@@ -5,6 +5,7 @@ import com.hrms.application.performance.dto.GoalResponse;
 import com.hrms.application.performance.service.GoalService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -100,7 +101,7 @@ public class GoalController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.GOAL_CREATE)
+    @RequiresPermission(Permission.GOAL_UPDATE)
     public ResponseEntity<GoalResponse> updateGoal(
             @PathVariable UUID id,
             @Valid @RequestBody GoalRequest request
@@ -110,7 +111,7 @@ public class GoalController {
     }
 
     @PutMapping("/{id}/progress")
-    @RequiresPermission(Permission.GOAL_CREATE)
+    @RequiresPermission(Permission.GOAL_UPDATE)
     public ResponseEntity<GoalResponse> updateProgress(
             @PathVariable UUID id,
             @RequestParam Integer progressPercentage
@@ -128,10 +129,9 @@ public class GoalController {
 
     @PutMapping("/{id}/approve")
     @RequiresPermission(Permission.GOAL_APPROVE)
-    public ResponseEntity<GoalResponse> approveGoal(
-            @PathVariable UUID id,
-            @RequestParam UUID approverId
-    ) {
+    public ResponseEntity<GoalResponse> approveGoal(@PathVariable UUID id) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
+                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
         GoalResponse response = goalService.approveGoal(id, approverId);
         return ResponseEntity.ok(response);
     }

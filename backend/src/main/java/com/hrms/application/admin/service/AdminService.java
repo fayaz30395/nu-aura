@@ -233,7 +233,8 @@ public class AdminService {
                 .findByUserIdAndTenantId(updatedUser.getId(), updatedUser.getTenantId())
                 .orElse(null);
         if (linkedEmployee != null && linkedEmployee.getDepartmentId() != null) {
-            departmentName = departmentRepository.findById(linkedEmployee.getDepartmentId())
+            departmentName = departmentRepository.findByIdAndTenantId(
+                            linkedEmployee.getDepartmentId(), updatedUser.getTenantId())
                     .map(Department::getName)
                     .orElse(null);
         }
