@@ -4,7 +4,7 @@
 # SETUP: Copy .env.example to .env in the project root and fill in all required values.
 # This script reads credentials from environment variables. Never hardcode secrets here.
 
-set -euo pipefail
+set -uo pipefail
 
 # Load .env file if it exists (project root or backend directory)
 if [ -f "../.env" ]; then
@@ -79,18 +79,34 @@ fi
 #   -XX:TieredStopAtLevel=1        → C1 JIT only, skip C2 compilation
 #   -XX:+UseSerialGC               → lowest GC overhead for single-machine dev
 #   -Dspring.jmx.enabled=false     → skip JMX bean registration
-java \
-  -Xmx640m \
-  -Xms128m \
-  -XX:MaxMetaspaceSize=160m \
-  -XX:ReservedCodeCacheSize=48m \
-  -Xss256k \
-  -XX:TieredStopAtLevel=1 \
-  -XX:+UseG1GC \
-  -XX:G1PeriodicGCInterval=30000 \
-  -XX:MinHeapFreeRatio=10 \
-  -XX:MaxHeapFreeRatio=20 \
-  -XX:+UseStringDeduplication \
-  -Dspring.jmx.enabled=false \
-  -Dspring.devtools.restart.enabled=false \
-  -jar "$JAR_FILE"
+JVM_OPTS=(
+  -Xmx400m
+  -Xms64m
+  -XX:ReservedCodeCacheSize=64m
+  -Xss256k
+  -XX:TieredStopAtLevel=1
+  -XX:+UseZGC
+  -XX:+ZUncommit
+  -XX:ZUncommitDelay=5
+  -XX:+UseStringDeduplication
+  -XX:SoftRefLRUPolicyMSPerMB=0
+  -XX:+ExitOnOutOfMemoryError
+  -Dspring.jmx.enabled=false
+  -Dspring.devtools.restart.enabled=false
+)
+
+# Auto-restart loop: if macOS OOM-kills the JVM (exit 137), restart after 5s
+RESTART_COUNT=0
+while true; do
+  if [ $RESTART_COUNT -gt 0 ]; then
+    echo "[watchdog] Backend crashed (attempt $RESTART_COUNT). Restarting in 5s..."
+    sleep 5
+  fi
+  java "${JVM_OPTS[@]}" -jar "$JAR_FILE"
+  EXIT_CODE=$?
+  if [ $EXIT_CODE -eq 0 ]; then
+    echo "[watchdog] Backend exited cleanly."
+    break
+  fi
+  RESTART_COUNT=$((RESTART_COUNT + 1))
+done

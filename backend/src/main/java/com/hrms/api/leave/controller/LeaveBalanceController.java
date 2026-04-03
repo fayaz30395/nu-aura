@@ -83,7 +83,7 @@ public class LeaveBalanceController {
         // Enrich with leave type name so the frontend can display it without a separate request
         if (balance.getLeaveTypeId() != null) {
             leaveTypeRepository.findById(balance.getLeaveTypeId())
-                    .ifPresent(lt -> response.setLeaveTypeName(lt.getName()));
+                    .ifPresent(lt -> response.setLeaveTypeName(lt.getLeaveName()));
         }
         return response;
     }
