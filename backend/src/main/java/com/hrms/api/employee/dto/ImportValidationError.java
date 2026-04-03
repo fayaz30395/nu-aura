@@ -20,16 +20,6 @@ public class ImportValidationError {
     private String message;
     private ErrorType errorType;
 
-    public enum ErrorType {
-        REQUIRED_FIELD_MISSING,
-        INVALID_FORMAT,
-        INVALID_VALUE,
-        DUPLICATE_IN_FILE,
-        DUPLICATE_IN_DATABASE,
-        REFERENCE_NOT_FOUND,
-        BUSINESS_RULE_VIOLATION
-    }
-
     public static ImportValidationError required(int row, String field) {
         return ImportValidationError.builder()
                 .rowNumber(row)
@@ -87,5 +77,15 @@ public class ImportValidationError {
                 .message(referenceType + " not found: " + value)
                 .errorType(ErrorType.REFERENCE_NOT_FOUND)
                 .build();
+    }
+
+    public enum ErrorType {
+        REQUIRED_FIELD_MISSING,
+        INVALID_FORMAT,
+        INVALID_VALUE,
+        DUPLICATE_IN_FILE,
+        DUPLICATE_IN_DATABASE,
+        REFERENCE_NOT_FOUND,
+        BUSINESS_RULE_VIOLATION
     }
 }

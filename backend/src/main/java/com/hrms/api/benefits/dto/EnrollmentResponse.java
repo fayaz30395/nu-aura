@@ -98,8 +98,8 @@ public class EnrollmentResponse {
                 .remainingCoverage(enrollment.getRemainingCoverage())
                 .dependents(enrollment.getDependents() != null ?
                         enrollment.getDependents().stream()
-                                .map(DependentResponse::from)
-                                .collect(Collectors.toList()) : null)
+                        .map(DependentResponse::from)
+                        .collect(Collectors.toList()) : null)
                 .dependentCount(enrollment.getDependents() != null ? enrollment.getDependents().size() : 0)
                 .cobraActive(enrollment.isCobraActive())
                 .cobraStartDate(enrollment.getCobraStartDate())

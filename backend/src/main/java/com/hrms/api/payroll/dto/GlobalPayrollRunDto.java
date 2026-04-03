@@ -52,32 +52,6 @@ public class GlobalPayrollRunDto {
 
     private LocalDateTime createdAt;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CurrencyBreakdown {
-        private String currency;
-        private BigDecimal grossPay;
-        private BigDecimal netPay;
-        private BigDecimal employerCost;
-        private Integer employeeCount;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class LocationBreakdown {
-        private String locationCode;
-        private String locationName;
-        private String currency;
-        private BigDecimal grossPay;
-        private BigDecimal netPay;
-        private BigDecimal employerCost;
-        private Integer employeeCount;
-    }
-
     public static GlobalPayrollRunDto fromEntity(GlobalPayrollRun run) {
         return GlobalPayrollRunDto.builder()
                 .id(run.getId())
@@ -103,5 +77,31 @@ public class GlobalPayrollRunDto {
                 .notes(run.getNotes())
                 .createdAt(run.getCreatedAt())
                 .build();
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CurrencyBreakdown {
+        private String currency;
+        private BigDecimal grossPay;
+        private BigDecimal netPay;
+        private BigDecimal employerCost;
+        private Integer employeeCount;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LocationBreakdown {
+        private String locationCode;
+        private String locationName;
+        private String currency;
+        private BigDecimal grossPay;
+        private BigDecimal netPay;
+        private BigDecimal employerCost;
+        private Integer employeeCount;
     }
 }

@@ -36,7 +36,7 @@ public class PaymentConfigController {
         PaymentConfig saved = paymentService.savePaymentConfig(config);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(PaymentConfigDto.fromEntity(saved));
+                .body(PaymentConfigDto.fromEntity(saved));
     }
 
     /**

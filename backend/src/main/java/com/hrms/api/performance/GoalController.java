@@ -61,7 +61,9 @@ public class GoalController {
         return ResponseEntity.ok(goals);
     }
 
-    /** Paginated variant — prefer this for employees with large goal histories. */
+    /**
+     * Paginated variant — prefer this for employees with large goal histories.
+     */
     @GetMapping("/employee/{employeeId}/paged")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<Page<GoalResponse>> getEmployeeGoalsPaged(
@@ -78,7 +80,9 @@ public class GoalController {
         return ResponseEntity.ok(goals);
     }
 
-    /** Paginated variant — prefer this for managers with large teams. */
+    /**
+     * Paginated variant — prefer this for managers with large teams.
+     */
     @GetMapping("/team/{managerId}/paged")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<Page<GoalResponse>> getTeamGoalsPaged(

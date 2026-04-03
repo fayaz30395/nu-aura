@@ -5,6 +5,7 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.featureflag.FeatureFlag;
 
 import static com.hrms.common.security.Permission.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+
 import java.util.List;
 import java.util.Map;
 
 /**
  * REST API for Feature Flags management.
- *
+ * <p>
  * Playbook Reference: Prompt 34 - Feature flags (tenant-level)
  */
 @RestController
@@ -94,5 +96,6 @@ public class FeatureFlagController {
             String name,
             String description,
             String category
-    ) {}
+    ) {
+    }
 }

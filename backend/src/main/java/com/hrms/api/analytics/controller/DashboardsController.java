@@ -16,7 +16,7 @@ import java.util.UUID;
 
 /**
  * Unified Dashboard Controller providing role-based analytics dashboards
- *
+ * <p>
  * Dashboard Types:
  * 1. Executive Dashboard - C-suite KPIs, financial metrics, strategic insights
  * 2. HR Operations Dashboard - Day-to-day HR metrics
@@ -45,7 +45,7 @@ public class DashboardsController {
     @GetMapping("/executive")
     @RequiresPermission(Permission.DASHBOARD_EXECUTIVE)
     @Operation(summary = "Get executive dashboard",
-               description = "Returns C-suite level analytics with KPIs, financial summary, workforce overview, and strategic alerts")
+            description = "Returns C-suite level analytics with KPIs, financial summary, workforce overview, and strategic alerts")
     public ResponseEntity<ExecutiveDashboardResponse> getExecutiveDashboard() {
         log.info("Fetching executive dashboard");
         ExecutiveDashboardResponse dashboard = executiveDashboardService.getExecutiveDashboard();
@@ -61,7 +61,7 @@ public class DashboardsController {
     @GetMapping("/hr-operations")
     @RequiresPermission(Permission.DASHBOARD_VIEW)
     @Operation(summary = "Get HR operations dashboard",
-               description = "Returns day-to-day HR metrics including attendance, leave, payroll, and headcount")
+            description = "Returns day-to-day HR metrics including attendance, leave, payroll, and headcount")
     public ResponseEntity<DashboardAnalyticsResponse> getHROperationsDashboard() {
         log.info("Fetching HR operations dashboard");
 
@@ -90,7 +90,7 @@ public class DashboardsController {
     @GetMapping("/manager")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_TEAM)
     @Operation(summary = "Get manager dashboard",
-               description = "Returns team-specific insights including attendance, leave, performance, and action items")
+            description = "Returns team-specific insights including attendance, leave, performance, and action items")
     public ResponseEntity<ManagerDashboardResponse> getManagerDashboard() {
         log.info("Fetching manager dashboard for current user");
         ManagerDashboardResponse dashboard = managerDashboardService.getManagerDashboard();
@@ -104,7 +104,7 @@ public class DashboardsController {
     @GetMapping("/manager/{managerId}")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     @Operation(summary = "Get manager dashboard for specific manager",
-               description = "Admin-only: Returns team dashboard for a specific manager")
+            description = "Admin-only: Returns team dashboard for a specific manager")
     public ResponseEntity<ManagerDashboardResponse> getManagerDashboardById(@PathVariable UUID managerId) {
         log.info("Fetching manager dashboard for manager: {}", managerId);
         ManagerDashboardResponse dashboard = managerDashboardService.getManagerDashboard(managerId);
@@ -118,7 +118,7 @@ public class DashboardsController {
     @GetMapping("/manager/team-projects")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_TEAM)
     @Operation(summary = "Get team project allocations",
-               description = "Returns each direct report with their active project assignments, allocation percentages, and summary stats")
+            description = "Returns each direct report with their active project assignments, allocation percentages, and summary stats")
     public ResponseEntity<TeamProjectsResponse> getTeamProjects() {
         log.info("Fetching team project allocations for current manager");
         TeamProjectsResponse response = managerDashboardService.getTeamProjects();
@@ -134,7 +134,7 @@ public class DashboardsController {
     @GetMapping("/employee")
     @RequiresPermission({Permission.EMPLOYEE_VIEW_SELF, Permission.SYSTEM_ADMIN})
     @Operation(summary = "Get employee dashboard",
-               description = "Returns personal analytics including attendance, leave, payroll, performance, and career progress")
+            description = "Returns personal analytics including attendance, leave, payroll, performance, and career progress")
     public ResponseEntity<EmployeeDashboardResponse> getEmployeeDashboard() {
         log.info("Fetching employee dashboard for current user");
         EmployeeDashboardResponse dashboard = employeeDashboardService.getEmployeeDashboard();
@@ -148,7 +148,7 @@ public class DashboardsController {
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_TEAM)
     @Operation(summary = "Get employee dashboard for specific employee",
-               description = "Returns employee dashboard for a specific employee (requires manager or HR access)")
+            description = "Returns employee dashboard for a specific employee (requires manager or HR access)")
     public ResponseEntity<EmployeeDashboardResponse> getEmployeeDashboardById(@PathVariable UUID employeeId) {
         log.info("Fetching employee dashboard for employee: {}", employeeId);
         EmployeeDashboardResponse dashboard = employeeDashboardService.getEmployeeDashboard(employeeId);
@@ -164,7 +164,7 @@ public class DashboardsController {
     @GetMapping("/my")
     @RequiresPermission(Permission.DASHBOARD_VIEW)
     @Operation(summary = "Get my dashboard",
-               description = "Smart routing: Returns appropriate dashboard based on user's role (Executive, Manager, or Employee)")
+            description = "Smart routing: Returns appropriate dashboard based on user's role (Executive, Manager, or Employee)")
     public ResponseEntity<?> getMyDashboard() {
         log.info("Fetching appropriate dashboard for current user");
 

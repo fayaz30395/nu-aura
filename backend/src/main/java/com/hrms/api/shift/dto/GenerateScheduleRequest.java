@@ -16,13 +16,19 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GenerateScheduleRequest {
 
-    /** Department for which to generate the schedule */
+    /**
+     * Department for which to generate the schedule
+     */
     private UUID departmentId;
 
-    /** Specific employee IDs; if null, all active employees in department are used */
+    /**
+     * Specific employee IDs; if null, all active employees in department are used
+     */
     private List<UUID> employeeIds;
 
-    /** Shift pattern to apply */
+    /**
+     * Shift pattern to apply
+     */
     @NotNull(message = "Shift pattern ID is required")
     private UUID shiftPatternId;
 
@@ -32,7 +38,9 @@ public class GenerateScheduleRequest {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    /** If true, overwrite existing assignments in the date range */
+    /**
+     * If true, overwrite existing assignments in the date range
+     */
     @Builder.Default
     private Boolean overwrite = false;
 }

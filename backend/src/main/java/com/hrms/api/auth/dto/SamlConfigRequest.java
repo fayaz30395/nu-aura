@@ -33,22 +33,32 @@ public class SamlConfigRequest {
     @Size(max = 1000, message = "SLO URL must be at most 1000 characters")
     private String sloUrl;
 
-    /** PEM-encoded X.509 certificate for verifying SAML assertion signatures */
+    /**
+     * PEM-encoded X.509 certificate for verifying SAML assertion signatures
+     */
     private String certificate;
 
-    /** IdP metadata URL for auto-configuration (alternative to manual config) */
+    /**
+     * IdP metadata URL for auto-configuration (alternative to manual config)
+     */
     @Size(max = 1000, message = "Metadata URL must be at most 1000 characters")
     private String metadataUrl;
 
-    /** Whether this SAML config is active */
+    /**
+     * Whether this SAML config is active
+     */
     @Builder.Default
     private Boolean isActive = false;
 
-    /** Whether to auto-create users on first SAML login */
+    /**
+     * Whether to auto-create users on first SAML login
+     */
     @Builder.Default
     private Boolean autoProvisionUsers = false;
 
-    /** Default role assigned to auto-provisioned users */
+    /**
+     * Default role assigned to auto-provisioned users
+     */
     private UUID defaultRoleId;
 
     /**
@@ -58,7 +68,9 @@ public class SamlConfigRequest {
      */
     private String attributeMapping;
 
-    /** SP Entity ID override for this tenant */
+    /**
+     * SP Entity ID override for this tenant
+     */
     @Size(max = 500, message = "SP Entity ID must be at most 500 characters")
     private String spEntityId;
 }

@@ -24,10 +24,14 @@ public class FluenceChatRequest {
     @Size(max = 4000, message = "Message must be under 4000 characters")
     private String message;
 
-    /** Optional conversation ID for multi-turn context */
+    /**
+     * Optional conversation ID for multi-turn context
+     */
     private UUID conversationId;
 
-    /** Previous messages in the conversation (for multi-turn) */
+    /**
+     * Previous messages in the conversation (for multi-turn)
+     */
     private List<ChatHistoryEntry> history;
 
     @Data

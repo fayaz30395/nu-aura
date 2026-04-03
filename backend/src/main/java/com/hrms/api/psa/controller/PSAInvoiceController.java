@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -53,23 +54,23 @@ public class PSAInvoiceController {
     @RequiresPermission(PAYROLL_VIEW_ALL)
     public ResponseEntity<PSAInvoice> getInvoice(@PathVariable UUID id) {
         return psaService.getInvoice(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     @RequiresPermission(PAYROLL_PROCESS)
     public ResponseEntity<PSAInvoice> updateInvoice(@PathVariable UUID id, @Valid @RequestBody PSAInvoice invoice) {
         return psaService.updateInvoice(id, invoice)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/approve")
     @RequiresPermission(PAYROLL_APPROVE)
     public ResponseEntity<PSAInvoice> approveInvoice(@PathVariable UUID id) {
         return psaService.approveInvoice(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

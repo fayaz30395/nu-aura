@@ -28,7 +28,7 @@ import java.util.UUID;
 
 /**
  * REST controller for Holiday CRUD operations.
- *
+ * <p>
  * GET    /holidays/year/{year}  — All authenticated users (read-only)
  * GET    /holidays/{id}         — All authenticated users
  * POST   /holidays              — Admin only (LEAVE:MANAGE or SETTINGS:UPDATE)
@@ -126,6 +126,20 @@ public class HolidayController {
 
     // ===================== DTO & Mapping =====================
 
+    private Holiday toEntity(HolidayRequest request) {
+        return Holiday.builder()
+                .holidayName(request.getHolidayName())
+                .holidayDate(request.getHolidayDate())
+                .holidayType(request.getHolidayType())
+                .description(request.getDescription())
+                .isOptional(request.getIsOptional() != null ? request.getIsOptional() : false)
+                .isRestricted(request.getIsRestricted() != null ? request.getIsRestricted() : false)
+                .applicableLocations(request.getApplicableLocations())
+                .applicableDepartments(request.getApplicableDepartments())
+                .year(request.getHolidayDate().getYear())
+                .build();
+    }
+
     @Data
     @Schema(description = "Request payload for creating or updating a holiday")
     public static class HolidayRequest {
@@ -155,19 +169,5 @@ public class HolidayController {
 
         @Schema(description = "Comma-separated list of department IDs where holiday applies")
         private String applicableDepartments;
-    }
-
-    private Holiday toEntity(HolidayRequest request) {
-        return Holiday.builder()
-                .holidayName(request.getHolidayName())
-                .holidayDate(request.getHolidayDate())
-                .holidayType(request.getHolidayType())
-                .description(request.getDescription())
-                .isOptional(request.getIsOptional() != null ? request.getIsOptional() : false)
-                .isRestricted(request.getIsRestricted() != null ? request.getIsRestricted() : false)
-                .applicableLocations(request.getApplicableLocations())
-                .applicableDepartments(request.getApplicableDepartments())
-                .year(request.getHolidayDate().getYear())
-                .build();
     }
 }

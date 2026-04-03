@@ -127,24 +127,32 @@ public class ShiftSwapController {
 
     @Data
     public static class SwapRequestDto {
-        @NotNull private UUID requesterEmployeeId;
-        @NotNull private UUID requesterAssignmentId;
-        @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate requesterShiftDate;
+        @NotNull
+        private UUID requesterEmployeeId;
+        @NotNull
+        private UUID requesterAssignmentId;
+        @NotNull
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        private LocalDate requesterShiftDate;
         private UUID targetEmployeeId;
         private UUID targetAssignmentId;
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate targetShiftDate;
-        @NotNull private String swapType;  // SWAP, GIVE_AWAY, PICK_UP
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        private LocalDate targetShiftDate;
+        @NotNull
+        private String swapType;  // SWAP, GIVE_AWAY, PICK_UP
         private String reason;
     }
 
     @Data
     public static class TargetResponseDto {
-        @NotNull private UUID employeeId;
+        @NotNull
+        private UUID employeeId;
     }
 
     @Data
     public static class ManagerActionDto {
-        @NotNull private UUID managerId;
+        @NotNull
+        private UUID managerId;
         private String reason;
     }
 }

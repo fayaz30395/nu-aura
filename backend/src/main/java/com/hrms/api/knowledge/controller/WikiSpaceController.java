@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -75,9 +76,9 @@ public class WikiSpaceController {
     public ResponseEntity<List<WikiSpaceDto>> getActiveSpaces() {
         List<WikiSpace> spaces = wikiSpaceService.getActiveSpaces();
         return ResponseEntity.ok(
-            spaces.stream()
-                .map(WikiSpaceDto::fromEntity)
-                .collect(Collectors.toList())
+                spaces.stream()
+                        .map(WikiSpaceDto::fromEntity)
+                        .collect(Collectors.toList())
         );
     }
 

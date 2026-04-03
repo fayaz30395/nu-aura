@@ -40,8 +40,8 @@ public class ApprovalDTOs {
         private LocalDateTime resolvedAt;
 
         public static AllocationApprovalResponse fromEntity(AllocationApprovalRequest entity, String employeeName,
-                String employeeCode, String projectName, String projectCode, String requestedByName,
-                String approverName, Integer currentTotalAllocation) {
+                                                            String employeeCode, String projectName, String projectCode, String requestedByName,
+                                                            String approverName, Integer currentTotalAllocation) {
             return AllocationApprovalResponse.builder()
                     .id(entity.getId())
                     .employeeId(entity.getEmployeeId())

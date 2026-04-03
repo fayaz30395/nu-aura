@@ -189,7 +189,9 @@ public class FileUploadController {
         private String downloadUrl;
     }
 
-    public record DownloadUrlResponse(String url) {}
+    public record DownloadUrlResponse(String url) {
+    }
 
-    public record FileExistsResponse(boolean exists) {}
+    public record FileExistsResponse(boolean exists) {
+    }
 }

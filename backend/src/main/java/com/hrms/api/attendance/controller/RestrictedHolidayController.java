@@ -24,7 +24,7 @@ import java.util.UUID;
 
 /**
  * REST controller for Restricted Holidays feature.
- *
+ * <p>
  * Restricted holidays are optional holidays that employees can choose from a predefined list.
  * Each employee gets a configurable quota per year.
  *

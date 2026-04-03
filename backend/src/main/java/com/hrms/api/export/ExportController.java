@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * Generic export controller for data exports.
- *
+ * <p>
  * Playbook Reference: Prompt 33 - CSV/PDF export
  */
 @RestController
@@ -153,5 +153,6 @@ public class ExportController {
             List<String> headers,
             List<Map<String, Object>> data,
             List<String> columnKeys
-    ) {}
+    ) {
+    }
 }

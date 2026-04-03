@@ -16,4 +16,5 @@ public record OcrResult(
         double confidence,
         String receiptStoragePath,
         String receiptFileName
-) {}
+) {
+}

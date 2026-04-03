@@ -35,7 +35,9 @@ import java.util.UUID;
 public class PayrollStatutoryController {
 
     private final StatutoryDeductionService statutoryDeductionService;
-    /** BUG-002 FIX: use service, not raw repository. */
+    /**
+     * BUG-002 FIX: use service, not raw repository.
+     */
     private final PayslipService payslipService;
 
     /**

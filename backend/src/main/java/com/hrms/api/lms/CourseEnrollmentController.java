@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 
 /**
  * REST controller for course enrollment operations.
- *
+ * <p>
  * Endpoints:
- *   POST   /api/v1/lms/courses/{courseId}/enroll                  — Enroll current user (or specified employee) in a course
- *   PUT    /api/v1/lms/enrollments/{enrollmentId}/progress         — Update progress percentage directly
- *   GET    /api/v1/lms/my-courses                                   — Current employee's enrollments
- *   GET    /api/v1/lms/courses/{courseId}/enrollments               — Admin: all enrollments for a course
- *   GET    /api/v1/lms/courses/{courseId}/enrollments/stats         — Admin: completion statistics
+ * POST   /api/v1/lms/courses/{courseId}/enroll                  — Enroll current user (or specified employee) in a course
+ * PUT    /api/v1/lms/enrollments/{enrollmentId}/progress         — Update progress percentage directly
+ * GET    /api/v1/lms/my-courses                                   — Current employee's enrollments
+ * GET    /api/v1/lms/courses/{courseId}/enrollments               — Admin: all enrollments for a course
+ * GET    /api/v1/lms/courses/{courseId}/enrollments/stats         — Admin: completion statistics
  */
 @RestController
 @RequestMapping("/api/v1/lms")

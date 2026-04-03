@@ -14,20 +14,10 @@ import java.util.List;
 @Builder
 public class DashboardContext {
 
-    /**
-     * The dashboard view type based on user's role
-     */
-    public enum ViewType {
-        ADMIN,      // Full organization view (HR Admin, Super Admin)
-        MANAGER,    // Team/reportees view (Department Manager, Team Lead)
-        EMPLOYEE    // Personal view only (Regular employees)
-    }
-
     private UUID tenantId;
     private UUID userId;
     private UUID employeeId;
     private ViewType viewType;
-
     /**
      * For ADMIN: null (all employees)
      * For MANAGER: list of reportee employee IDs
@@ -45,5 +35,14 @@ public class DashboardContext {
 
     public boolean isEmployee() {
         return viewType == ViewType.EMPLOYEE;
+    }
+
+    /**
+     * The dashboard view type based on user's role
+     */
+    public enum ViewType {
+        ADMIN,      // Full organization view (HR Admin, Super Admin)
+        MANAGER,    // Team/reportees view (Department Manager, Team Lead)
+        EMPLOYEE    // Personal view only (Regular employees)
     }
 }

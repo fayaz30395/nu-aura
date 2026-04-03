@@ -52,15 +52,22 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_REQUEST)
     @Operation(summary = "Create leave request", description = "Submit a new leave request for approval")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Leave request created successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data or insufficient leave balance"),
-        @ApiResponse(responseCode = "409", description = "Overlapping leave request exists")
+            @ApiResponse(responseCode = "201", description = "Leave request created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data or insufficient leave balance"),
+            @ApiResponse(responseCode = "409", description = "Overlapping leave request exists")
     })
     public ResponseEntity<LeaveRequestResponse> createLeaveRequest(@Valid @RequestBody LeaveRequestRequest request) {
         LeaveRequest leaveRequest = new LeaveRequest();
         BeanUtils.copyProperties(request, leaveRequest);
         if (request.getHalfDayPeriod() != null) {
-            leaveRequest.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(request.getHalfDayPeriod()));
+            // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
+            // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().
+            String normalizedPeriod = switch (request.getHalfDayPeriod().toUpperCase()) {
+                case "MORNING" -> "FIRST_HALF";
+                case "AFTERNOON" -> "SECOND_HALF";
+                default -> request.getHalfDayPeriod().toUpperCase();
+            };
+            leaveRequest.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(normalizedPeriod));
         }
         LeaveRequest created = leaveRequestService.createLeaveRequest(leaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
@@ -74,9 +81,9 @@ public class LeaveRequestController {
     })
     @Operation(summary = "Get leave request by ID", description = "Retrieve a specific leave request by its UUID")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave request found"),
-        @ApiResponse(responseCode = "403", description = "Access denied - insufficient scope"),
-        @ApiResponse(responseCode = "404", description = "Leave request not found")
+            @ApiResponse(responseCode = "200", description = "Leave request found"),
+            @ApiResponse(responseCode = "403", description = "Access denied - insufficient scope"),
+            @ApiResponse(responseCode = "404", description = "Leave request not found")
     })
     public ResponseEntity<LeaveRequestResponse> getLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id) {
@@ -97,8 +104,8 @@ public class LeaveRequestController {
     })
     @Operation(summary = "Get employee leave requests", description = "Retrieve paginated leave requests for a specific employee")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave requests retrieved successfully"),
-        @ApiResponse(responseCode = "403", description = "Access denied - insufficient scope for this employee")
+            @ApiResponse(responseCode = "200", description = "Leave requests retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied - insufficient scope for this employee")
     })
     public ResponseEntity<Page<LeaveRequestResponse>> getEmployeeLeaveRequests(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId,
@@ -172,10 +179,10 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_APPROVE)
     @Operation(summary = "Approve leave request", description = "Approve a pending leave request (must be the employee's manager)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave request approved successfully"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to approve this request"),
-        @ApiResponse(responseCode = "404", description = "Leave request not found"),
-        @ApiResponse(responseCode = "409", description = "Request is not in PENDING status")
+            @ApiResponse(responseCode = "200", description = "Leave request approved successfully"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to approve this request"),
+            @ApiResponse(responseCode = "404", description = "Leave request not found"),
+            @ApiResponse(responseCode = "409", description = "Request is not in PENDING status")
     })
     public ResponseEntity<LeaveRequestResponse> approveLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id) {
@@ -189,10 +196,10 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_REJECT)
     @Operation(summary = "Reject leave request", description = "Reject a pending leave request with reason (must be the employee's manager)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave request rejected successfully"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to reject this request"),
-        @ApiResponse(responseCode = "404", description = "Leave request not found"),
-        @ApiResponse(responseCode = "409", description = "Request is not in PENDING status")
+            @ApiResponse(responseCode = "200", description = "Leave request rejected successfully"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to reject this request"),
+            @ApiResponse(responseCode = "404", description = "Leave request not found"),
+            @ApiResponse(responseCode = "409", description = "Request is not in PENDING status")
     })
     public ResponseEntity<LeaveRequestResponse> rejectLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
@@ -207,10 +214,10 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_CANCEL)
     @Operation(summary = "Cancel leave request", description = "Cancel a pending or approved leave request")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave request cancelled successfully"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to cancel this request"),
-        @ApiResponse(responseCode = "404", description = "Leave request not found"),
-        @ApiResponse(responseCode = "409", description = "Request cannot be cancelled in current status")
+            @ApiResponse(responseCode = "200", description = "Leave request cancelled successfully"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to cancel this request"),
+            @ApiResponse(responseCode = "404", description = "Leave request not found"),
+            @ApiResponse(responseCode = "409", description = "Request cannot be cancelled in current status")
     })
     public ResponseEntity<LeaveRequestResponse> cancelLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
@@ -223,11 +230,11 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_REQUEST)
     @Operation(summary = "Update leave request", description = "Update a pending leave request (only owner can update)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Leave request updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        @ApiResponse(responseCode = "403", description = "Not authorized to update this request"),
-        @ApiResponse(responseCode = "404", description = "Leave request not found"),
-        @ApiResponse(responseCode = "409", description = "Request cannot be updated in current status")
+            @ApiResponse(responseCode = "200", description = "Leave request updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to update this request"),
+            @ApiResponse(responseCode = "404", description = "Leave request not found"),
+            @ApiResponse(responseCode = "409", description = "Request cannot be updated in current status")
     })
     public ResponseEntity<LeaveRequestResponse> updateLeaveRequest(
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
@@ -288,7 +295,7 @@ public class LeaveRequestController {
      * Determines which view permission the user has (in priority order).
      * Returns the actual permission that has a scope assigned, not just any permission that passes
      * hasPermission() check. This ensures getPermissionScope() can find the scope for validation.
-     *
+     * <p>
      * Note: Checks for explicit LEAVE_VIEW_* permissions first, then falls back to LEAVE:MANAGE.
      * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled by @RequiresPermission
      * for access control, and this method ensures scope enforcement works for users with only MANAGE.

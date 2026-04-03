@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -137,9 +138,9 @@ public class BlogPostController {
     public ResponseEntity<List<BlogPostDto>> getFeaturedPosts() {
         List<BlogPost> posts = blogPostService.getFeaturedPosts();
         return ResponseEntity.ok(
-            posts.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList())
+                posts.stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList())
         );
     }
 

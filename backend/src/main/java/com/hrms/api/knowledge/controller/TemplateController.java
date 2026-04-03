@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -95,9 +96,9 @@ public class TemplateController {
     public ResponseEntity<List<DocumentTemplateDto>> getFeaturedTemplates() {
         List<DocumentTemplate> templates = documentTemplateService.getFeaturedTemplates();
         return ResponseEntity.ok(
-            templates.stream()
-                .map(DocumentTemplateDto::fromEntity)
-                .collect(Collectors.toList())
+                templates.stream()
+                        .map(DocumentTemplateDto::fromEntity)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -108,9 +109,9 @@ public class TemplateController {
     public ResponseEntity<List<DocumentTemplateDto>> getPopularTemplates() {
         List<DocumentTemplate> templates = documentTemplateService.getPopularTemplates();
         return ResponseEntity.ok(
-            templates.stream()
-                .map(DocumentTemplateDto::fromEntity)
-                .collect(Collectors.toList())
+                templates.stream()
+                        .map(DocumentTemplateDto::fromEntity)
+                        .collect(Collectors.toList())
         );
     }
 

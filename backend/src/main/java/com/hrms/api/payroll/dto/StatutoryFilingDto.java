@@ -19,7 +19,8 @@ import java.util.UUID;
  */
 public final class StatutoryFilingDto {
 
-    private StatutoryFilingDto() {}
+    private StatutoryFilingDto() {
+    }
 
     // ─── Request DTOs ────────────────────────────────────────────────────────────
 

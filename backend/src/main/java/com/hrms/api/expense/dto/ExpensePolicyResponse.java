@@ -21,6 +21,7 @@ import java.util.UUID;
 @Builder
 @Slf4j
 public class ExpensePolicyResponse {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private UUID id;
     private String name;
     private String description;
@@ -37,8 +38,6 @@ public class ExpensePolicyResponse {
     private String currency;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static ExpensePolicyResponse fromEntity(ExpensePolicy entity) {
         ExpensePolicyResponse response = ExpensePolicyResponse.builder()
@@ -59,8 +58,10 @@ public class ExpensePolicyResponse {
                 .build();
 
         // Parse JSON arrays
-        response.setApplicableDepartments(parseJsonList(entity.getApplicableDepartments(), new TypeReference<>() {}));
-        response.setApplicableDesignations(parseJsonList(entity.getApplicableDesignations(), new TypeReference<>() {}));
+        response.setApplicableDepartments(parseJsonList(entity.getApplicableDepartments(), new TypeReference<>() {
+        }));
+        response.setApplicableDesignations(parseJsonList(entity.getApplicableDesignations(), new TypeReference<>() {
+        }));
 
         return response;
     }

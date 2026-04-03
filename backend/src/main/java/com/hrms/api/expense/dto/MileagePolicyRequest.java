@@ -27,4 +27,5 @@ public record MileagePolicyRequest(
         LocalDate effectiveFrom,
 
         LocalDate effectiveTo
-) {}
+) {
+}

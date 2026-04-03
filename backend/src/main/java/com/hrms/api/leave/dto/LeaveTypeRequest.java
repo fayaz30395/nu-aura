@@ -2,16 +2,17 @@ package com.hrms.api.leave.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
 import java.math.BigDecimal;
 
 @Data
 public class LeaveTypeRequest {
     @NotBlank
     private String leaveCode;
-    
+
     @NotBlank
     private String leaveName;
-    
+
     private String description;
     private Boolean isPaid = true;
     private String colorCode;

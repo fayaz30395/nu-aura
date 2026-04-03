@@ -16,7 +16,8 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FluenceChatSseEvent {
 
-    private FluenceChatSseEvent() {} // static factory only
+    private FluenceChatSseEvent() {
+    } // static factory only
 
     // ─── Token event ─────────────────────────────────────────────────
 

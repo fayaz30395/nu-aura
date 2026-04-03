@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -72,9 +73,9 @@ public class BlogCategoryController {
     public ResponseEntity<List<BlogCategoryDto>> getAllCategoriesOrdered() {
         List<BlogCategory> categories = blogCategoryService.getAllCategoriesOrdered();
         return ResponseEntity.ok(
-            categories.stream()
-                .map(BlogCategoryDto::fromEntity)
-                .collect(Collectors.toList())
+                categories.stream()
+                        .map(BlogCategoryDto::fromEntity)
+                        .collect(Collectors.toList())
         );
     }
 

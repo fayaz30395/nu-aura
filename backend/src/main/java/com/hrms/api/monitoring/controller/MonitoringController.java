@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller for monitoring and metrics endpoints
- *
+ * <p>
  * Provides aggregated metrics for admin dashboard display
  */
 @RestController
@@ -36,8 +36,8 @@ public class MonitoringController {
     @GetMapping("/health")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(
-        summary = "Get system health",
-        description = "Returns comprehensive system health status including database, cache, JVM, and API metrics"
+            summary = "Get system health",
+            description = "Returns comprehensive system health status including database, cache, JVM, and API metrics"
     )
     public ResponseEntity<SystemHealthResponse> getSystemHealth() {
         SystemHealthResponse health = monitoringService.getSystemHealth();
@@ -52,8 +52,8 @@ public class MonitoringController {
     @GetMapping("/metrics")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(
-        summary = "Get application metrics",
-        description = "Returns comprehensive application metrics including system resources, business KPIs, and API performance"
+            summary = "Get application metrics",
+            description = "Returns comprehensive application metrics including system resources, business KPIs, and API performance"
     )
     public ResponseEntity<MetricsResponse> getMetrics() {
         MetricsResponse metrics = monitoringService.getMetrics();
@@ -67,8 +67,8 @@ public class MonitoringController {
      */
     @GetMapping("/ping")
     @Operation(
-        summary = "Ping endpoint",
-        description = "Simple endpoint to check if the application is responding"
+            summary = "Ping endpoint",
+            description = "Simple endpoint to check if the application is responding"
     )
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");

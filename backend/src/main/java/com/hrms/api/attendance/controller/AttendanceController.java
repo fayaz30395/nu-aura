@@ -199,7 +199,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/time-entries/{attendanceRecordId}")
-    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
+    @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntries(@PathVariable UUID attendanceRecordId) {
         AttendanceRecord record = attendanceService.getAttendanceRecordById(attendanceRecordId);
         String permission = determineViewPermission();
@@ -209,7 +209,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/employee/{employeeId}/time-entries")
-    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
+    @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntriesForDate(
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -299,7 +299,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/date/{date}")
-    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
+    @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
     public ResponseEntity<Page<AttendanceResponse>> getAttendanceByDate(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Pageable pageable) {

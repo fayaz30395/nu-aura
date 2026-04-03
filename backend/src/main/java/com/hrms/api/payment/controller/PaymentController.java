@@ -46,7 +46,7 @@ public class PaymentController {
         PaymentTransaction result = paymentService.initiatePayment(transaction);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(PaymentTransactionDto.fromEntity(result));
+                .body(PaymentTransactionDto.fromEntity(result));
     }
 
     /**
@@ -80,11 +80,11 @@ public class PaymentController {
         paymentFeatureGuard.requirePaymentsEnabled();
         Page<PaymentTransaction> transactions = paymentService.listPaymentTransactions(pageable);
         Page<PaymentTransactionDto> dtos = new PageImpl<>(
-            transactions.getContent().stream()
-                .map(PaymentTransactionDto::fromEntity)
-                .collect(Collectors.toList()),
-            pageable,
-            transactions.getTotalElements()
+                transactions.getContent().stream()
+                        .map(PaymentTransactionDto::fromEntity)
+                        .collect(Collectors.toList()),
+                pageable,
+                transactions.getTotalElements()
         );
         return ResponseEntity.ok(dtos);
     }

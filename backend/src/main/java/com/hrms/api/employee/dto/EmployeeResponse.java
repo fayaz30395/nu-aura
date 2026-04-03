@@ -107,7 +107,9 @@ public class EmployeeResponse {
                 .build();
     }
 
-    /** Returns the last 4 digits of the account number masked with asterisks, or null if blank. */
+    /**
+     * Returns the last 4 digits of the account number masked with asterisks, or null if blank.
+     */
     private static String maskBankAccount(String accountNumber) {
         if (accountNumber == null || accountNumber.isBlank()) return accountNumber;
         if (accountNumber.length() <= 4) return "****";

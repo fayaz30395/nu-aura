@@ -31,128 +31,6 @@ public class WallPostResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static class AuthorInfo {
-        private UUID id;
-        private String employeeId;
-        private String fullName;
-        private String designation;
-        private String department;
-        private String avatarUrl;
-
-        // Getters and Setters
-        public UUID getId() {
-            return id;
-        }
-
-        public void setId(UUID id) {
-            this.id = id;
-        }
-
-        public String getEmployeeId() {
-            return employeeId;
-        }
-
-        public void setEmployeeId(String employeeId) {
-            this.employeeId = employeeId;
-        }
-
-        public String getFullName() {
-            return fullName;
-        }
-
-        public void setFullName(String fullName) {
-            this.fullName = fullName;
-        }
-
-        public String getDesignation() {
-            return designation;
-        }
-
-        public void setDesignation(String designation) {
-            this.designation = designation;
-        }
-
-        public String getDepartment() {
-            return department;
-        }
-
-        public void setDepartment(String department) {
-            this.department = department;
-        }
-
-        public String getAvatarUrl() {
-            return avatarUrl;
-        }
-
-        public void setAvatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl;
-        }
-    }
-
-    public static class PollOptionResponse {
-        private UUID id;
-        private String text;
-        private int voteCount;
-        private double votePercentage;
-
-        // Getters and Setters
-        public UUID getId() {
-            return id;
-        }
-
-        public void setId(UUID id) {
-            this.id = id;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-
-        public int getVoteCount() {
-            return voteCount;
-        }
-
-        public void setVoteCount(int voteCount) {
-            this.voteCount = voteCount;
-        }
-
-        public double getVotePercentage() {
-            return votePercentage;
-        }
-
-        public void setVotePercentage(double votePercentage) {
-            this.votePercentage = votePercentage;
-        }
-    }
-
-    public static class ReactorInfo {
-        private UUID employeeId;
-        private String fullName;
-        private String avatarUrl;
-        private String reactionType;
-        private LocalDateTime reactedAt;
-
-        // Getters and Setters
-        public UUID getEmployeeId() { return employeeId; }
-        public void setEmployeeId(UUID employeeId) { this.employeeId = employeeId; }
-
-        public String getFullName() { return fullName; }
-        public void setFullName(String fullName) { this.fullName = fullName; }
-
-        public String getAvatarUrl() { return avatarUrl; }
-        public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
-
-        public String getReactionType() { return reactionType; }
-        public void setReactionType(String reactionType) { this.reactionType = reactionType; }
-
-        public LocalDateTime getReactedAt() { return reactedAt; }
-        public void setReactedAt(LocalDateTime reactedAt) { this.reactedAt = reactedAt; }
-    }
-
     // Main class Getters and Setters
     public UUID getId() {
         return id;
@@ -320,5 +198,152 @@ public class WallPostResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public static class AuthorInfo {
+        private UUID id;
+        private String employeeId;
+        private String fullName;
+        private String designation;
+        private String department;
+        private String avatarUrl;
+
+        // Getters and Setters
+        public UUID getId() {
+            return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
+
+        public String getEmployeeId() {
+            return employeeId;
+        }
+
+        public void setEmployeeId(String employeeId) {
+            this.employeeId = employeeId;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+
+        public String getDesignation() {
+            return designation;
+        }
+
+        public void setDesignation(String designation) {
+            this.designation = designation;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
+    }
+
+    public static class PollOptionResponse {
+        private UUID id;
+        private String text;
+        private int voteCount;
+        private double votePercentage;
+
+        // Getters and Setters
+        public UUID getId() {
+            return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public int getVoteCount() {
+            return voteCount;
+        }
+
+        public void setVoteCount(int voteCount) {
+            this.voteCount = voteCount;
+        }
+
+        public double getVotePercentage() {
+            return votePercentage;
+        }
+
+        public void setVotePercentage(double votePercentage) {
+            this.votePercentage = votePercentage;
+        }
+    }
+
+    public static class ReactorInfo {
+        private UUID employeeId;
+        private String fullName;
+        private String avatarUrl;
+        private String reactionType;
+        private LocalDateTime reactedAt;
+
+        // Getters and Setters
+        public UUID getEmployeeId() {
+            return employeeId;
+        }
+
+        public void setEmployeeId(UUID employeeId) {
+            this.employeeId = employeeId;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
+
+        public String getReactionType() {
+            return reactionType;
+        }
+
+        public void setReactionType(String reactionType) {
+            this.reactionType = reactionType;
+        }
+
+        public LocalDateTime getReactedAt() {
+            return reactedAt;
+        }
+
+        public void setReactedAt(LocalDateTime reactedAt) {
+            this.reactedAt = reactedAt;
+        }
     }
 }

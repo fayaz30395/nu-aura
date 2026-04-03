@@ -27,7 +27,9 @@ public class JobBoardController {
 
     private final JobBoardIntegrationService jobBoardService;
 
-    /** Post a job opening to one or more boards. */
+    /**
+     * Post a job opening to one or more boards.
+     */
     @PostMapping("/post")
     @RequiresPermission(Permission.RECRUITMENT_MANAGE)
     public ResponseEntity<List<JobBoardPosting>> postJob(@Valid @RequestBody PostJobRequest dto) {
@@ -35,21 +37,27 @@ public class JobBoardController {
         return ResponseEntity.ok(jobBoardService.postJob(dto.getJobOpeningId(), dto.getBoards()));
     }
 
-    /** Pause a posting on its board. */
+    /**
+     * Pause a posting on its board.
+     */
     @PostMapping("/{postingId}/pause")
     @RequiresPermission(Permission.RECRUITMENT_MANAGE)
     public ResponseEntity<JobBoardPosting> pausePosting(@PathVariable UUID postingId) {
         return ResponseEntity.ok(jobBoardService.pausePosting(postingId));
     }
 
-    /** Get all postings for a specific job opening. */
+    /**
+     * Get all postings for a specific job opening.
+     */
     @GetMapping("/job/{jobOpeningId}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
     public ResponseEntity<List<JobBoardPosting>> getPostingsForJob(@PathVariable UUID jobOpeningId) {
         return ResponseEntity.ok(jobBoardService.getPostingsForJob(jobOpeningId));
     }
 
-    /** Get all postings (paginated). */
+    /**
+     * Get all postings (paginated).
+     */
     @GetMapping
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
     public ResponseEntity<Page<JobBoardPosting>> getAllPostings(
@@ -59,7 +67,9 @@ public class JobBoardController {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))));
     }
 
-    /** Get postings filtered by status. */
+    /**
+     * Get postings filtered by status.
+     */
     @GetMapping("/status/{status}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
     public ResponseEntity<Page<JobBoardPosting>> getByStatus(

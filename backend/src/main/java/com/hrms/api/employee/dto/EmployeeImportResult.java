@@ -36,6 +36,55 @@ public class EmployeeImportResult {
     @Builder.Default
     private List<FailedImport> failedImports = new ArrayList<>();
 
+    public static EmployeeImportResult success(int count, List<ImportedEmployee> employees) {
+        return EmployeeImportResult.builder()
+                .importId(UUID.randomUUID())
+                .importedAt(LocalDateTime.now())
+                .totalProcessed(count)
+                .successCount(count)
+                .failedCount(0)
+                .skippedCount(0)
+                .status(ImportStatus.COMPLETED)
+                .importedEmployees(employees)
+                .build();
+    }
+
+    public static EmployeeImportResult partial(int success, int failed,
+                                               List<ImportedEmployee> employees,
+                                               List<FailedImport> failures) {
+        return EmployeeImportResult.builder()
+                .importId(UUID.randomUUID())
+                .importedAt(LocalDateTime.now())
+                .totalProcessed(success + failed)
+                .successCount(success)
+                .failedCount(failed)
+                .skippedCount(0)
+                .status(ImportStatus.PARTIAL_SUCCESS)
+                .importedEmployees(employees)
+                .failedImports(failures)
+                .build();
+    }
+
+    public static EmployeeImportResult failed(String reason) {
+        return EmployeeImportResult.builder()
+                .importId(UUID.randomUUID())
+                .importedAt(LocalDateTime.now())
+                .totalProcessed(0)
+                .successCount(0)
+                .failedCount(0)
+                .skippedCount(0)
+                .status(ImportStatus.FAILED)
+                .build();
+    }
+
+    public boolean isSuccess() {
+        return status == ImportStatus.COMPLETED;
+    }
+
+    public boolean hasFailures() {
+        return failedCount > 0;
+    }
+
     public enum ImportStatus {
         COMPLETED,           // All rows imported successfully
         PARTIAL_SUCCESS,     // Some rows imported, some failed
@@ -70,54 +119,5 @@ public class EmployeeImportResult {
         private String employeeCode;
         private String reason;
         private List<ImportValidationError> errors;
-    }
-
-    public boolean isSuccess() {
-        return status == ImportStatus.COMPLETED;
-    }
-
-    public boolean hasFailures() {
-        return failedCount > 0;
-    }
-
-    public static EmployeeImportResult success(int count, List<ImportedEmployee> employees) {
-        return EmployeeImportResult.builder()
-                .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
-                .totalProcessed(count)
-                .successCount(count)
-                .failedCount(0)
-                .skippedCount(0)
-                .status(ImportStatus.COMPLETED)
-                .importedEmployees(employees)
-                .build();
-    }
-
-    public static EmployeeImportResult partial(int success, int failed,
-                                                List<ImportedEmployee> employees,
-                                                List<FailedImport> failures) {
-        return EmployeeImportResult.builder()
-                .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
-                .totalProcessed(success + failed)
-                .successCount(success)
-                .failedCount(failed)
-                .skippedCount(0)
-                .status(ImportStatus.PARTIAL_SUCCESS)
-                .importedEmployees(employees)
-                .failedImports(failures)
-                .build();
-    }
-
-    public static EmployeeImportResult failed(String reason) {
-        return EmployeeImportResult.builder()
-                .importId(UUID.randomUUID())
-                .importedAt(LocalDateTime.now())
-                .totalProcessed(0)
-                .successCount(0)
-                .failedCount(0)
-                .skippedCount(0)
-                .status(ImportStatus.FAILED)
-                .build();
     }
 }

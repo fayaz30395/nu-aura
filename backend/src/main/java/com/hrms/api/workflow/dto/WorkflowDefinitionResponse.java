@@ -72,9 +72,9 @@ public class WorkflowDefinitionResponse {
                 .skipLevelAllowed(definition.isSkipLevelAllowed())
                 .totalSteps(definition.getSteps() != null ? definition.getSteps().size() : 0)
                 .steps(definition.getSteps() != null ?
-                       definition.getSteps().stream()
-                               .map(ApprovalStepResponse::from)
-                               .collect(Collectors.toList()) : null)
+                        definition.getSteps().stream()
+                        .map(ApprovalStepResponse::from)
+                        .collect(Collectors.toList()) : null)
                 .createdAt(definition.getCreatedAt())
                 .updatedAt(definition.getUpdatedAt())
                 .build();

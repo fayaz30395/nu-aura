@@ -1,8 +1,10 @@
 package com.hrms.api.auth.controller;
 
 import com.hrms.api.auth.dto.*;
+
 import java.util.Map;
 import java.util.UUID;
+
 import com.hrms.application.auth.service.AuthService;
 import com.hrms.application.auth.service.MfaService;
 import com.hrms.common.config.CookieConfig;
@@ -97,9 +99,9 @@ public class AuthController {
             if (!mfaService.verifyMfaCode(request.getUserId(), request.getCode())) {
                 log.warn("Invalid MFA code for user: {}", request.getUserId());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(AuthResponse.builder()
-                        .accessToken(null)
-                        .build());
+                        .body(AuthResponse.builder()
+                                .accessToken(null)
+                                .build());
             }
 
             // Get full authentication tokens for the user
@@ -121,9 +123,9 @@ public class AuthController {
         } catch (Exception e) { // Intentional broad catch — authentication error boundary
             log.error("MFA login failed for user: {}", request.getUserId(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(AuthResponse.builder()
-                    .accessToken(null)
-                    .build());
+                    .body(AuthResponse.builder()
+                            .accessToken(null)
+                            .build());
         }
     }
 

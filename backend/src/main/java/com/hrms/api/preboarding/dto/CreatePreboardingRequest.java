@@ -15,7 +15,8 @@ public class CreatePreboardingRequest {
 
     private String lastName;
 
-    @NotBlank @Email
+    @NotBlank
+    @Email
     private String email;
 
     @NotNull

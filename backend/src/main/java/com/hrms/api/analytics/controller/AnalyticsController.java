@@ -56,7 +56,7 @@ public class AnalyticsController {
 
         // Build context based on user's role
         DashboardContext context = dashboardAnalyticsService.buildContext(
-            tenantId, userId, employeeId, isAdmin, isManager);
+                tenantId, userId, employeeId, isAdmin, isManager);
 
         DashboardAnalyticsResponse analytics = dashboardAnalyticsService.getDashboardAnalytics(context);
         return ResponseEntity.ok(analytics);
