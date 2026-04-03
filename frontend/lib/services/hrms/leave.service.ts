@@ -174,6 +174,16 @@ class LeaveService {
     );
     return response.data;
   }
+
+  // Admin: Carry-Forward
+  async carryForwardBalances(fromYear: number): Promise<CarryForwardResponse> {
+    const response = await apiClient.post<CarryForwardResponse>(
+      '/leave-balances/admin/carry-forward',
+      null,
+      { params: { fromYear } }
+    );
+    return response.data;
+  }
 }
 
 export interface LeaveEncashmentRequest {
@@ -188,6 +198,13 @@ export interface LeaveEncashmentResponse {
   daysEncashed: number;
   status: string;
   message: string;
+}
+
+export interface CarryForwardResponse {
+  message: string;
+  fromYear: number;
+  toYear: number;
+  balancesCarried: number;
 }
 
 export const leaveService = new LeaveService();

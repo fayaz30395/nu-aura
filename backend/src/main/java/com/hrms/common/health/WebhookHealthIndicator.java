@@ -62,15 +62,12 @@ public class WebhookHealthIndicator implements HealthIndicator {
             long totalPending = pendingDeliveries + retryingDeliveries;
 
             if (totalPending >= PENDING_QUEUE_CRITICAL || successRate < SUCCESS_RATE_CRITICAL) {
-                return Health.down()
-                        .withDetail("activeWebhooks", activeWebhooks)
-                        .withDetail("pendingDeliveries", pendingDeliveries)
-                        .withDetail("retryingDeliveries", retryingDeliveries)
-                        .withDetail("successRateLastHour", String.format("%.2f%%", successRate * 100))
-                        .withDetail("reason", totalPending >= PENDING_QUEUE_CRITICAL
-                                ? "Queue depth critical"
-                                : "Success rate critical")
-                        .build();
+                // Return UP with critical warning — webhook backlog must not cascade to HTTP 503.
+                // The webhook subsystem is non-critical; API availability must be preserved.
+                builder.withDetail("criticalWarning", totalPending >= PENDING_QUEUE_CRITICAL
+                        ? "Queue depth critical: " + totalPending + " pending"
+                        : "Success rate critical: " + String.format("%.2f%%", successRate * 100));
+                return builder.build();
             }
 
             if (totalPending >= PENDING_QUEUE_WARNING || successRate < SUCCESS_RATE_WARNING) {

@@ -194,7 +194,10 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             finalSpec = finalSpec.and(spec);
         }
 
-        return assetRepository.findAll(finalSpec, pageable).map(this::mapToAssetResponse);
+        Page<Asset> page = assetRepository.findAll(finalSpec, pageable);
+        // Batch-load employee names to avoid N+1 queries across the result page
+        Map<UUID, String> nameCache = buildEmployeeNameCache(page.getContent());
+        return page.map(asset -> mapToAssetResponse(asset, nameCache));
     }
 
     @Transactional(readOnly = true)

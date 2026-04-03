@@ -1,6 +1,7 @@
 package com.hrms.application.performance.dto;
 
 import com.hrms.domain.performance.PerformanceReview;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequest {
+    @NotNull(message = "Employee ID is required")
     private UUID employeeId;
+    @NotNull(message = "Reviewer ID is required")
     private UUID reviewerId;
     private UUID reviewCycleId;
     private PerformanceReview.ReviewType reviewType;

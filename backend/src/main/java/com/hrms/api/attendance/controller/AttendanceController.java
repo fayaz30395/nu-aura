@@ -311,6 +311,28 @@ public class AttendanceController {
         return ResponseEntity.ok(records.map(this::toResponse));
     }
 
+    @PostMapping("/regularization")
+    @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
+    @Operation(summary = "Submit regularization request", description = "Submit an attendance regularization request by date (creates a stub record if needed)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Regularization request submitted"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data")
+    })
+    public ResponseEntity<AttendanceResponse> submitRegularization(
+            @Valid @RequestBody RegularizationRequest request) {
+        UUID employeeId = request.getEmployeeId() != null
+                ? request.getEmployeeId()
+                : requireCurrentEmployeeId();
+        if (request.getEmployeeId() != null) {
+            validateEmployeeAccess(employeeId, Permission.ATTENDANCE_REGULARIZE);
+        }
+        AttendanceRecord record = attendanceService.submitRegularizationRequest(
+                employeeId, request.getDate(),
+                request.getCheckInTime(), request.getCheckOutTime(),
+                request.getReason());
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(toResponse(record));
+    }
+
     @PostMapping("/{id}/request-regularization")
     @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
     @Operation(summary = "Request regularization", description = "Request approval to regularize an attendance record")

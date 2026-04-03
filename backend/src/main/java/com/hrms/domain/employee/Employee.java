@@ -155,6 +155,7 @@ public class Employee extends TenantAware {
 
     public enum EmployeeStatus {
         ACTIVE,
+        INACTIVE,
         ON_LEAVE,
         ON_NOTICE,
         TERMINATED,

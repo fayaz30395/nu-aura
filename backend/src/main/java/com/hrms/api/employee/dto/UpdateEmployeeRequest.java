@@ -98,6 +98,6 @@ public class UpdateEmployeeRequest {
     private String bankIfscCode;
 
     @Size(max = 20, message = "Tax ID must not exceed 20 characters")
-    @Pattern(regexp = "^[A-Za-z0-9]*$", message = "Tax ID must be alphanumeric")
+    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$", message = "Tax ID (PAN) must be in the format AAAAA9999A")
     private String taxId;
 }

@@ -463,3 +463,192 @@
 *Session 3 addendum generated: 2026-04-03 05:10 UTC*
 *Sessions covered: 1 (smoke/auth), 2 (employee/dept/rbac/attendance/leave/hire), 3 (employee detail/payroll/grow/hire)*
 *Total test execution time: ~3 hours across 3 sessions*
+
+---
+
+## Session 4 Addendum — RBAC, Security, Attendance, Assets, Leave Admin
+
+**Session Date:** 2026-04-03
+**Tester:** QA Automation (Claude Agent)
+**Modules Covered:** RBAC (Manager + SuperAdmin), Security Headers, Attendance Regularization/Shifts, Assets, Leave Admin
+
+### Updated Executive Summary (Cumulative)
+
+| Category | Count |
+|---|---|
+| Total test cases executed | ~105 |
+| PASS | 62 |
+| FAIL / BUG | 26 |
+| FINDING / Warning | 17 |
+| Critical bugs (P0) | 5 |
+| High bugs (P1) | 8 |
+| Medium bugs (P2) | 9 |
+| Low / Info findings | 4 |
+
+---
+
+### UC-RBAC-003 — Manager Access Boundaries
+
+| Step | Result | Notes |
+|---|---|---|
+| Login as Sumit Kumar (MANAGER) | ✅ PASS | Demo login panel works; roles: `MANAGER`, `SKIP_LEVEL_MANAGER`, `REPORTING_MANAGER` |
+| Sidebar scoped to manager items only (no Employees, no Admin, no Payroll, no Reports) | ✅ PASS | MY SPACE + HR OPERATIONS (Attendance, Shift, Leave) + Expenses only — correctly limited |
+| `/admin` route redirected to `/me/dashboard` | ✅ PASS | Hard redirect — correct RBAC enforcement |
+| `GET /api/v1/employees` → 403 | ✅ PASS | Manager cannot list all employees |
+| `GET /api/v1/payroll/runs` → 403 | ✅ PASS | Manager correctly blocked from payroll |
+| `POST /api/v1/payroll/salary-structures` → 403 | ✅ PASS | Manager blocked from creating salary structures |
+| `GET /api/v1/leave-requests` → 403 | ✅ PASS | Manager cannot view all tenant leave requests |
+| `GET /api/v1/admin/tenants` → 404/403 | ✅ PASS | Admin tenant management inaccessible |
+| `/employees` route shows permission error banner (not redirect) | ⚠️ FINDING | Route loads but shows error: "You do not have permission to view employees." Inconsistent with `/admin` hard redirect |
+| Manager employee profile not linked ("No Employee Profile Linked" dashboard) | ❌ FAIL | Sumit Kumar user account has no linked employee record — MY SPACE features non-functional for seed manager |
+| `GET /api/v1/approvals/tasks` / `inbox` / `my-tasks` → 404 | ❌ FAIL | No approval inbox endpoint found for manager — manager cannot access approval queue via API |
+
+---
+
+### UC-RBAC-004 — SuperAdmin Full Access
+
+| Step | Result | Notes |
+|---|---|---|
+| Login as Fayaz M (SUPER_ADMIN) | ✅ PASS | Full sidebar: all HRMS, Hire, Grow, Admin sections visible |
+| `/admin` route accessible | ✅ PASS | Full admin panel loads |
+| `/payroll/runs` accessible | ✅ PASS | Payroll runs page loads |
+| All API endpoints return 200/201 (not 403) | ✅ PASS | Verified across Sessions 1–4; SuperAdmin bypasses all `@RequiresPermission` checks |
+| `GET /api/v1/auth/me` returns `roles: [SUPER_ADMIN, ...]` | ✅ PASS | Confirmed: roles include `SUPER_ADMIN`, `SKIP_LEVEL_MANAGER`, `REPORTING_MANAGER` |
+
+---
+
+### UC-ATT-002 — Attendance Regularization
+
+| Step | Result | Notes |
+|---|---|---|
+| `GET /api/v1/attendance/regularization` | ❌ FAIL | HTTP 404 — endpoint not found |
+| `GET /api/v1/attendance/regularizations` | ❌ FAIL | HTTP 404 — endpoint not found |
+| `GET /api/v1/regularization-requests` | ❌ FAIL | HTTP 404 — endpoint not found |
+| Frontend `/attendance/regularization` route | ⚠️ BLOCKED | Could not test; all regularization API endpoints return 404 |
+
+---
+
+### UC-ATT-003 — Shift Assignment
+
+| Step | Result | Notes |
+|---|---|---|
+| `GET /api/v1/shifts` | ✅ PASS | HTTP 200, 5 shifts returned (e.g. "Afternoon (2-10)", 14:00–22:00) |
+| `POST /api/v1/shifts/assignments` (with `effectiveFrom`, `assignmentDate`, `assignmentType`) | ✅ PASS | HTTP 201, assignment created: Saran V → "Afternoon (2-10)" shift |
+| `GET /api/v1/shifts/assignments?employeeId={id}` | ❌ FAIL | HTTP 400 — GET with employeeId query param fails validation; correct query param unknown |
+| Duplicate shift assignment (negative test — should → 409) | ❌ FAIL | HTTP 201 returned again — duplicate constraint not enforced; multiple overlapping assignments created |
+| `POST /api/v1/shifts/assignments` with missing required fields | ✅ PASS | HTTP 400 with field-level validation errors: `effectiveFrom`, `assignmentDate`, `assignmentType` all required |
+
+---
+
+### UC-SEC-002 — OWASP Security Headers
+
+| Header | Frontend (Next.js middleware) | Backend (Spring Security) | Status |
+|---|---|---|---|
+| `X-Frame-Options: DENY` | ✅ Set | ✅ Set via `frameOptions().deny()` | ✅ PASS |
+| `X-Content-Type-Options: nosniff` | ✅ Set | ✅ Set via `contentTypeOptions()` | ✅ PASS |
+| `Referrer-Policy: strict-origin-when-cross-origin` | ✅ Set | ✅ Set via `referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)` | ✅ PASS |
+| `Content-Security-Policy` | ✅ Comprehensive CSP (12 directives, env-aware) | ✅ Set via `contentSecurityPolicy()` | ✅ PASS |
+| `Permissions-Policy` | ✅ All sensitive features blocked (geo, mic, cam, payment, USB) | ✅ Set via `permissionsPolicy()` | ✅ PASS |
+| `X-XSS-Protection: 1; mode=block` | ✅ Set (legacy compat) | ℹ️ Omitted (Spring 6.2+ deprecates; CSP provides better protection) | ✅ PASS |
+| `X-DNS-Prefetch-Control: off` | ✅ Set | N/A (frontend-only header) | ✅ PASS |
+| `Strict-Transport-Security` | ✅ Production-only (intentional — SEC-004: HSTS loops on localhost) | ✅ Set (31536000s, includeSubDomains) | ✅ PASS |
+| `Cross-Origin-Opener-Policy: same-origin-allow-popups` | ✅ Set (required for Google OAuth) | N/A | ✅ PASS |
+
+**Overall UC-SEC-002: ✅ PASS** — All OWASP headers present and correctly configured on both layers.
+
+---
+
+### UC-ASSET-001 — Asset Assignment to Employee
+
+| Step | Result | Notes |
+|---|---|---|
+| `/assets` page loads | ✅ PASS | Asset Management page renders: Total/Available/Assigned/In Maintenance stats, "+ Add Asset" CTA, filter dropdowns |
+| `GET /api/v1/assets` | ❌ FAIL | HTTP 500 "Internal Server Error" (INTERNAL_ERROR code) — cannot list assets |
+| `POST /api/v1/assets` | ❌ FAIL | HTTP 500 — asset creation fails at backend; field validation works (400 for missing `assetName`) but processing returns 500 |
+| `GET /api/v1/assets/categories` | ❌ FAIL | HTTP 400 — missing required parameters |
+
+---
+
+### UC-LEAVE-002 — Leave Balance Carry-Forward
+
+| Step | Result | Notes |
+|---|---|---|
+| `/leave/admin/carry-forward` frontend route | ❌ FAIL | Next.js 404 page — frontend route not implemented |
+| `POST /api/v1/leave/admin/carry-forward` | ❌ FAIL | HTTP 404 — backend endpoint not found |
+| `POST /api/v1/leave-balances/carry-forward` | ❌ FAIL | HTTP 404 — not found |
+
+---
+
+### UC-LEAVE-003 — Leave Encashment
+
+| Step | Result | Notes |
+|---|---|---|
+| `GET /api/v1/leave/encashment` | ❌ FAIL | HTTP 404 — not found |
+| `GET /api/v1/leave-encashment` | ❌ FAIL | HTTP 404 — not found |
+| Frontend `/leave/encashment` route | ⚠️ NOT TESTED | Backend endpoints do not exist; frontend route existence not verified |
+
+---
+
+### Session 4 New Bugs
+
+| ID | Severity | Module | Bug | Impact |
+|---|---|---|---|---|
+| F-23 | P0 | Platform | Backend enters HTTP 503 state mid-session — all endpoints return 503 for ~5 minutes before recovering | Production outage risk: any health indicator failure causes complete API unavailability |
+| F-24 | P1 | RBAC | Manager approval inbox endpoints missing (`/approvals/tasks`, `/approvals/inbox`, `/approvals/my-tasks` all 404) | Managers cannot access approval queue via API — leave/expense approvals non-functional for managers |
+| F-25 | P1 | Assets | `GET /api/v1/assets` → HTTP 500 — asset list cannot be retrieved | Asset management page renders empty even when assets exist; cannot list company assets |
+| F-26 | P1 | Assets | `POST /api/v1/assets` → HTTP 500 — asset creation fails at persistence layer | Cannot add new assets to the system |
+| F-27 | P1 | Attendance | `GET/POST /api/v1/attendance/regularization` → 404 — regularization endpoint missing | Employees cannot submit attendance regularization requests |
+| F-28 | P2 | Shifts | Duplicate shift assignment returns 201 instead of 409 — no uniqueness enforcement per employee/date | Multiple conflicting shift assignments can be created for the same employee |
+| F-29 | P2 | Shifts | `GET /api/v1/shifts/assignments?employeeId={id}` → 400 — correct query parameter unknown | Cannot retrieve an employee's active shift assignment via GET |
+| F-30 | P2 | RBAC | Manager user (Sumit Kumar seed data) has no linked employee record — "No Employee Profile Linked" | Manager's MY SPACE features (payslips, personal attendance, leaves) non-functional |
+| F-31 | P2 | Leave | `/leave/admin/carry-forward` — frontend route and backend endpoint both missing | HR Admin cannot run year-end leave carry-forward |
+| F-32 | P2 | Leave | `GET/POST /api/v1/leave/encashment` → 404 — encashment endpoint missing | Employees cannot request leave encashment |
+
+---
+
+### Session 4 API Endpoint Corrections
+
+| Spec Path | Actual Path | Status |
+|---|---|---|
+| POST /api/v1/attendance/regularization | ❌ 404 — endpoint not implemented | Missing |
+| GET /api/v1/shifts/assignments?employeeId | ❌ 400 — correct param unknown | Broken |
+| POST /api/v1/shifts/assignments | ✅ 201 — requires `effectiveFrom`, `assignmentDate`, `assignmentType` | Works (with correct fields) |
+| POST /api/v1/leave/admin/carry-forward | ❌ 404 | Missing |
+| POST /api/v1/leave/encashment | ❌ 404 | Missing |
+| GET/POST /api/v1/assets | ❌ 500 — Internal Server Error | Broken |
+| GET /api/v1/approvals/tasks (manager) | ❌ 404 | Missing |
+
+---
+
+### Updated Engineering Priority Actions (All Sessions)
+
+#### Immediate — P0 (Production Blockers)
+
+1. **Fix F-23**: Investigate backend 503 cascade — identify which health indicator (`RedisHealthIndicator`, Kafka, PostgreSQL) is triggering the unavailability. Add circuit-breaker isolation so individual dependency failures don't take down the entire API.
+2. **Fix F-12** (Session 3): Fix `POST /api/v1/payroll/salary-structures` → 500
+3. **Fix F-13** (Session 3): Fix `PUT /api/v1/employees/{id}` with `status: INACTIVE` → 500
+4. **Fix F-25 + F-26**: Debug `GET/POST /api/v1/assets` → 500 — check `AssetService`, entity mapping, FK constraints in `assets` table
+5. **Fix F-06** (Session 1): Add leave balance validation in `LeaveRequestService.create()`
+
+#### Sprint End — P1
+
+6. **Fix F-24**: Implement manager approval inbox endpoint (`GET /api/v1/approvals/tasks?assignedTo=me`)
+7. **Fix F-27**: Implement `POST /api/v1/attendance/regularization` endpoint + approval workflow
+8. **Fix F-14** (Session 3): Mask bank account number in API responses
+9. **Fix F-15 + F-16** (Session 3): Add PAN and IFSC regex validation
+10. **Fix F-17** (Session 3): Fix leave request status filter
+
+#### Tech Debt — P2
+
+11. **Fix F-28**: Add unique constraint on `(employee_id, effective_from)` in `shift_assignments` table; return 409 on conflict
+12. **Fix F-29**: Fix `GET /api/v1/shifts/assignments` query parameter (check `@RequestParam` name)
+13. **Fix F-30**: Link Sumit Kumar seed user to an employee record (seed data fix)
+14. **Fix F-31 + F-32**: Implement carry-forward and encashment endpoints + frontend routes
+15. **RBAC UX**: Redirect `/employees` to `/403` for MANAGER role (consistent with `/admin` → `/me/dashboard`)
+
+---
+
+*Session 4 addendum generated: 2026-04-03 05:35 UTC*
+*Sessions covered: 1 (smoke/auth), 2 (employee/dept/rbac/attendance/leave/hire), 3 (employee detail/payroll/grow/hire), 4 (rbac-manager/superadmin/security/shifts/assets/leave-admin)*
+*Total test execution time: ~4 hours across 4 sessions*
+*Cumulative: ~105 test cases, 62 PASS, 26 FAIL, 10 new bugs (F-23 to F-32)*

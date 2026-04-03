@@ -63,10 +63,11 @@ public class ApplicationHealthIndicator implements HealthIndicator {
                 builder.withDetail("buildTime", props.getTime().toString());
             });
 
-            // Check memory thresholds
+            // Check memory thresholds — report as UP with warning to avoid 503 cascade;
+            // critical memory is a signal to alert on, not to take the whole API down.
             if (memoryUsageRatio >= MEMORY_CRITICAL_THRESHOLD) {
-                return Health.down()
-                        .withDetail("reason", "Critical memory usage")
+                return Health.up()
+                        .withDetail("warning", "Critical memory usage — consider restarting")
                         .withDetail("heapUsagePercent", memoryUsagePercent)
                         .build();
             }

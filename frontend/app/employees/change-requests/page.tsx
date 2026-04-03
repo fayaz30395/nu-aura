@@ -169,9 +169,25 @@ export default function EmploymentChangeRequestsPage() {
     );
   };
 
+  // Show skeleton while permissions load (prevents blank page on direct URL navigation)
+  if (!permissionsReady) {
+    return (
+      <AppLayout activeMenuItem="employees">
+        <div className="p-6 max-w-7xl mx-auto space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="skeuo-card p-4 animate-pulse">
+              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/3 mb-2" />
+              <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      </AppLayout>
+    );
+  }
+
   // DEF-44: Don't render page content until permission is confirmed
-  if (!permissionsReady || !hasPermission(Permissions.EMPLOYMENT_CHANGE_VIEW_ALL)) {
-    return null;
+  if (!hasPermission(Permissions.EMPLOYMENT_CHANGE_VIEW_ALL)) {
+    return null; // useEffect above handles the redirect to /employees
   }
 
   return (

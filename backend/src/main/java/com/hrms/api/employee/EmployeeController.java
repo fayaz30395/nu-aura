@@ -322,4 +322,18 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/deactivate")
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
+    @Operation(summary = "Deactivate employee", description = "Set employee status to INACTIVE")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Employee deactivated successfully"),
+        @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
+    public ResponseEntity<EmployeeResponse> deactivateEmployee(
+            @Parameter(description = "Employee UUID") @PathVariable UUID id) {
+        UpdateEmployeeRequest req = new UpdateEmployeeRequest();
+        req.setStatus(com.hrms.domain.employee.Employee.EmployeeStatus.INACTIVE);
+        return ResponseEntity.ok(employeeService.updateEmployee(id, req));
+    }
 }
