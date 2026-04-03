@@ -5,6 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
 import { MfaVerification } from '@/components/auth/MfaVerification';
@@ -21,8 +24,18 @@ import {
   Target,
   TrendingUp,
   Lightbulb,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { createLogger } from '@/lib/utils/logger';
+
+const emailPasswordSchema = z.object({
+  email: z.string().email('Enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+type EmailPasswordForm = z.infer<typeof emailPasswordSchema>;
 
 const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
@@ -249,8 +262,17 @@ function LoginPage() {
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: emailErrors },
+  } = useForm<EmailPasswordForm>({ resolver: zodResolver(emailPasswordSchema) });
 
   useEffect(() => {
     setMounted(true);
@@ -347,6 +369,23 @@ function LoginPage() {
       setError(message);
     } finally {
       setIsDemoLoading(false);
+    }
+  };
+
+  // Email + password login (Bug #3 FIX)
+  const handleEmailLogin = async (data: EmailPasswordForm) => {
+    setIsEmailLoading(true);
+    setError(null);
+    try {
+      await login({ email: data.email, password: data.password });
+      setDidFreshLogin(true);
+      router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Invalid email or password';
+      setError(message);
+    } finally {
+      setIsEmailLoading(false);
     }
   };
 
@@ -622,6 +661,82 @@ function LoginPage() {
                 <br />
                 <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
+
+              {/* Email / Password login (Bug #3 FIX) */}
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEmailForm(!showEmailForm)}
+                  className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <span>Sign in with Email</span>
+                  </div>
+                  {showEmailForm ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+
+                {showEmailForm && (
+                  <form
+                    onSubmit={handleSubmit(handleEmailLogin)}
+                    className="mt-3 space-y-3"
+                    style={{ animation: 'fadeSlideUp 0.2s ease-out' }}
+                  >
+                    <div>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <input
+                          {...register('email')}
+                          type="email"
+                          placeholder="Email address"
+                          autoComplete="email"
+                          className="input-aura pl-10 w-full"
+                        />
+                      </div>
+                      {emailErrors.email && (
+                        <p className="text-danger-500 text-xs mt-1">{emailErrors.email.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <input
+                          {...register('password')}
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Password"
+                          autoComplete="current-password"
+                          className="input-aura pl-10 pr-10 w-full"
+                        />
+                        <button
+                          type="button"
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      {emailErrors.password && (
+                        <p className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isEmailLoading}
+                      className="skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-accent-600 hover:bg-accent-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    >
+                      {isEmailLoading ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <LogIn className="w-4 h-4" />
+                      )}
+                      {isEmailLoading ? 'Signing in…' : 'Sign In'}
+                    </button>
+                  </form>
+                )}
+              </div>
 
               {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
               {IS_DEMO_MODE && (
