@@ -89,24 +89,6 @@ public class LeaveRequestController {
         return ResponseEntity.ok(toResponse(leaveRequest));
     }
 
-    @GetMapping
-    @RequiresPermission({
-            Permission.LEAVE_VIEW_ALL,
-            Permission.LEAVE_VIEW_TEAM
-    })
-    @Operation(summary = "Get all leave requests", description = "Retrieve paginated list of leave requests within user's scope")
-    @ApiResponse(responseCode = "200", description = "Leave requests retrieved successfully")
-    public ResponseEntity<Page<LeaveRequestResponse>> getAllLeaveRequests(Pageable pageable) {
-        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
-                ? Permission.LEAVE_VIEW_ALL
-                : Permission.LEAVE_VIEW_TEAM;
-
-        org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = dataScopeService
-                .getScopeSpecification(permission);
-        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(scopeSpec, pageable);
-        return ResponseEntity.ok(requests.map(this::toResponse));
-    }
-
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({
             Permission.LEAVE_VIEW_ALL,
