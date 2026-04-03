@@ -65,14 +65,17 @@ public class RedisHealthIndicator implements HealthIndicator {
 
                 return builder.build();
             } else {
-                return Health.down()
-                        .withDetail("error", "Unexpected PING response: " + pong)
+                // Return UP with warning — Redis unavailability must not cascade to HTTP 503
+                return Health.up()
+                        .withDetail("warning", "Unexpected PING response: " + pong)
                         .build();
             }
         } catch (RuntimeException e) {
-            log.error("Redis health check failed", e);
-            return Health.down()
-                    .withDetail("error", e.getMessage())
+            // Return UP with warning — Redis is non-critical; cache misses fall through to DB.
+            // A down() here would aggregate to HTTP 503 and take the entire API offline.
+            log.warn("Redis health check failed: {}", e.getMessage());
+            return Health.up()
+                    .withDetail("warning", "Redis unavailable: " + e.getMessage())
                     .build();
         }
     }

@@ -156,6 +156,36 @@ public class LeaveRequestController {
         return ResponseEntity.ok(requests.map(this::toResponse));
     }
 
+    @GetMapping
+    @RequiresPermission({
+            Permission.LEAVE_VIEW_ALL,
+            Permission.LEAVE_VIEW_TEAM
+    })
+    @Operation(summary = "Get all leave requests", description = "List leave requests with optional status filter via ?status= query param")
+    @ApiResponse(responseCode = "200", description = "Leave requests retrieved successfully")
+    public ResponseEntity<Page<LeaveRequestResponse>> getLeaveRequests(
+            @Parameter(description = "Filter by status (PENDING, APPROVED, REJECTED, CANCELLED)")
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String status,
+            Pageable pageable) {
+        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
+                ? Permission.LEAVE_VIEW_ALL
+                : Permission.LEAVE_VIEW_TEAM;
+
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> spec = dataScopeService
+                .getScopeSpecification(permission);
+
+        if (status != null && !status.isBlank()) {
+            LeaveRequest.LeaveRequestStatus leaveStatus = LeaveRequest.LeaveRequestStatus.valueOf(status.toUpperCase());
+            final org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = spec;
+            spec = (root, query, cb) -> cb.and(
+                    cb.equal(root.get("status"), leaveStatus),
+                    scopeSpec.toPredicate(root, query, cb));
+        }
+
+        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(spec, pageable);
+        return ResponseEntity.ok(requests.map(this::toResponse));
+    }
+
     @PostMapping("/{id}/approve")
     @RequiresPermission(Permission.LEAVE_APPROVE)
     @Operation(summary = "Approve leave request", description = "Approve a pending leave request (must be the employee's manager)")

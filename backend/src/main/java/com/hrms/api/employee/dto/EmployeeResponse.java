@@ -97,7 +97,7 @@ public class EmployeeResponse {
                 .teamId(employee.getTeamId())
                 .employmentType(employee.getEmploymentType())
                 .status(employee.getStatus())
-                .bankAccountNumber(employee.getBankAccountNumber())
+                .bankAccountNumber(maskBankAccount(employee.getBankAccountNumber()))
                 .bankName(employee.getBankName())
                 .bankIfscCode(employee.getBankIfscCode())
                 .taxId(employee.getTaxId())
@@ -105,5 +105,12 @@ public class EmployeeResponse {
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())
                 .build();
+    }
+
+    /** Returns the last 4 digits of the account number masked with asterisks, or null if blank. */
+    private static String maskBankAccount(String accountNumber) {
+        if (accountNumber == null || accountNumber.isBlank()) return accountNumber;
+        if (accountNumber.length() <= 4) return "****";
+        return "*".repeat(accountNumber.length() - 4) + accountNumber.substring(accountNumber.length() - 4);
     }
 }

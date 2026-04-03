@@ -420,6 +420,41 @@ public class AttendanceRecordService {
 
     // ===================== Existing Methods =====================
 
+    /**
+     * Submit a regularization request by date instead of by attendance record ID.
+     * Finds the attendance record for the given employee + date, or creates a stub ABSENT
+     * record if none exists, then flags it for regularization approval.
+     *
+     * @param employeeId    the employee whose attendance needs correction
+     * @param date          the date to regularize
+     * @param checkInTime   optional desired check-in time (pending approval)
+     * @param checkOutTime  optional desired check-out time (pending approval)
+     * @param reason        mandatory reason for the regularization
+     */
+    @Transactional
+    public AttendanceRecord submitRegularizationRequest(UUID employeeId, java.time.LocalDate date,
+            java.time.LocalDateTime checkInTime, java.time.LocalDateTime checkOutTime, String reason) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        AttendanceRecord record = attendanceRecordRepository
+                .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId)
+                .orElseGet(() -> {
+                    AttendanceRecord stub = AttendanceRecord.builder()
+                            .employeeId(employeeId)
+                            .attendanceDate(date)
+                            .build();
+                    stub.setTenantId(tenantId);
+                    return stub;
+                });
+
+        // Set the desired times the employee is requesting (manager will review on approval)
+        if (checkInTime != null) record.setCheckInTime(checkInTime);
+        if (checkOutTime != null) record.setCheckOutTime(checkOutTime);
+
+        record.requestRegularization(reason);
+        return attendanceRecordRepository.save(record);
+    }
+
     public AttendanceRecord requestRegularization(UUID id, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 

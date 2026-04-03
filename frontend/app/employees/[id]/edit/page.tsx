@@ -137,7 +137,10 @@ export default function EditEmployeePage() {
         dottedLineManager1Id: employee.dottedLineManager1Id || '',
         dottedLineManager2Id: employee.dottedLineManager2Id || '',
         status: employee.status,
-        bankAccountNumber: employee.bankAccountNumber || '',
+        // bankAccountNumber intentionally left blank — the API returns a masked value
+        // (e.g. *****1234). Pre-populating would fail pattern validation and confuse users.
+        // The field below shows a hint with the masked value so the user knows one is set.
+        bankAccountNumber: '',
         bankName: employee.bankName || '',
         bankIfscCode: employee.bankIfscCode || '',
         taxId: employee.taxId || '',
@@ -1037,8 +1040,11 @@ export default function EditEmployeePage() {
                       type="text"
                       {...register('bankAccountNumber')}
                       className="input-aura"
-                      placeholder="1234567890"
+                      placeholder={employee?.bankAccountNumber ? `Currently: ${employee.bankAccountNumber}` : 'Enter account number'}
                     />
+                    {employee?.bankAccountNumber && (
+                      <p className="text-xs text-[var(--text-muted)] mt-1">Leave blank to keep current account ({employee.bankAccountNumber})</p>
+                    )}
                     {errors.bankAccountNumber && <p className="text-danger-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                   </div>
                   <div>

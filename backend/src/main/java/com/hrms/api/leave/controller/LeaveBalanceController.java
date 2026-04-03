@@ -62,6 +62,19 @@ public class LeaveBalanceController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/admin/carry-forward")
+    @RequiresPermission(Permission.LEAVE_BALANCE_MANAGE)
+    public ResponseEntity<java.util.Map<String, Object>> carryForwardBalances(
+            @RequestParam int fromYear) {
+        log.info("Admin carry-forward request for year {}", fromYear);
+        int count = leaveBalanceService.carryForwardBalances(fromYear);
+        return ResponseEntity.ok(java.util.Map.of(
+                "message", "Carry-forward complete",
+                "fromYear", fromYear,
+                "toYear", fromYear + 1,
+                "balancesCarried", count));
+    }
+
     private LeaveBalanceResponse toResponse(LeaveBalance balance) {
         LeaveBalanceResponse response = new LeaveBalanceResponse();
         BeanUtils.copyProperties(balance, response);

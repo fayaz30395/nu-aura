@@ -87,12 +87,19 @@ public class CreateEmployeeRequest {
     @NotNull(message = "Employment type is required")
     private Employee.EmploymentType employmentType;
 
+    @Size(max = 30, message = "Bank account number must not exceed 30 characters")
+    @Pattern(regexp = "^[A-Za-z0-9]*$", message = "Bank account number must be alphanumeric")
     private String bankAccountNumber;
 
+    @Size(max = 100, message = "Bank name must not exceed 100 characters")
     private String bankName;
 
+    @Size(max = 11, message = "IFSC code must not exceed 11 characters")
+    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "IFSC code format is invalid (expected: XXXX0XXXXXX)")
     private String bankIfscCode;
 
+    @Size(max = 20, message = "Tax ID must not exceed 20 characters")
+    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$", message = "Tax ID (PAN) must be in the format AAAAA9999A")
     private String taxId;
 
     @NotBlank(message = "Password is required")

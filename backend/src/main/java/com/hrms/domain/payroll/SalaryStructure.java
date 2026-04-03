@@ -68,7 +68,7 @@ public class SalaryStructure extends TenantAware {
     private Boolean isActive = true;
 
     public BigDecimal getGrossSalary() {
-        BigDecimal gross = basicSalary;
+        BigDecimal gross = basicSalary != null ? basicSalary : BigDecimal.ZERO;
         if (hra != null) gross = gross.add(hra);
         if (conveyanceAllowance != null) gross = gross.add(conveyanceAllowance);
         if (medicalAllowance != null) gross = gross.add(medicalAllowance);
