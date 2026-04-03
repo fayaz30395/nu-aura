@@ -10,10 +10,10 @@
 | Category | Total | Done | Pending | Failing |
 |----------|-------|------|---------|---------|
 | Use Cases (JUnit) | 318 | **264** | 54 | 0 |
-| Bugs Found | 43 | **29 fixed** | — | 14 open |
+| Bugs Found | 43 | **38 fixed** | — | 5 open |
 | P0 Bugs | 2 | ✅ 2 fixed | — | 0 |
-| P1 Bugs | 8 | 5 fixed | — | 3 in-progress |
-| P2 Bugs | 33 | 22 fixed | — | 11 open |
+| P1 Bugs | 8 | 8 fixed (all P1s done) | — | 0 |
+| P2 Bugs | 33 | 30 fixed | — | 3 open (QA2-003, QA2-005, QA2-011) |
 | Backend Compile | — | ✅ Clean | — | — |
 | Frontend Build | — | ✅ Clean | — | — |
 | Flyway Migrations | V0–V112 | ✅ Applied | — | — |
@@ -67,16 +67,16 @@
 | BUG-QA2-001 | Leave field aliases (`name`, `maxDaysPerYear`) | ✅ FIXED — @JsonAlias added; totalDays now optional (computed from dates) |
 | BUG-QA2-004 | Probation `durationMonths` required but undocumented | ✅ FIXED — defaults to 3 months when omitted |
 | BUG-003 | Salary structure per-employee vs templates (design gap) | ⚠️ OPEN — architectural |
-| BUG-008 | Report endpoint GET vs POST mismatch | ⚠️ OPEN — spec correction |
-| BUG-009 | Feature flag path /admin prefix mismatch | ⚠️ OPEN — spec correction |
-| BUG-010 | FnF endpoint path/field mismatch | ⚠️ OPEN — spec correction |
-| BUG-011 | Leave request endpoint path mismatch | ⚠️ OPEN — spec correction |
-| BUG-012 | Refresh token cookie path too restrictive | ⚠️ OPEN — verify in browser |
-| BUG-013 | Statutory endpoint paths wrong in spec | ⚠️ OPEN — spec correction |
+| BUG-008 | Report endpoint GET vs POST mismatch | ✅ RESOLVED — frontend report.service.ts uses POST; backend @PostMapping matches |
+| BUG-009 | Feature flag path /admin prefix mismatch | ✅ RESOLVED — frontend calls /feature-flags; backend serves at /api/v1/feature-flags (match) |
+| BUG-010 | FnF endpoint path/field mismatch | ✅ RESOLVED — frontend fnf.service.ts BASE=/exit matches FnFController paths |
+| BUG-011 | Leave request endpoint path mismatch | ✅ RESOLVED — frontend calls /leave-requests; backend at /api/v1/leave-requests (match) |
+| BUG-012 | Refresh token cookie path too restrictive | ✅ RESOLVED — cookie path /api/v1/auth covers all sub-paths including /api/v1/auth/refresh (HTTP cookie path prefix semantics) |
+| BUG-013 | Statutory endpoint paths wrong in spec | ✅ RESOLVED — ProvidentFundController at /statutory/pf, ESIController at /statutory/esi, ProfessionalTaxController at /statutory/pt — all match frontend |
 | BUG-QA2-005 | Platform /applications endpoint 500 | ⚠️ OPEN |
-| BUG-QA2-006 | Shift roster blocked by SQL injection false-positive | ⚠️ OPEN |
-| BUG-QA2-007 | Half-day leave enum mismatch (MORNING vs FIRST_HALF) | ⚠️ OPEN |
-| BUG-QA2-008 | Retroactive leave blocked by @FutureOrPresent | ⚠️ OPEN |
+| BUG-QA2-006 | Shift roster blocked by SQL injection false-positive | ✅ FIXED — SQL injection pattern tightened; JSON arrays with double quotes no longer blocked |
+| BUG-QA2-007 | Half-day leave enum mismatch (MORNING vs FIRST_HALF) | ✅ FIXED — LeaveRequestController normalizes MORNING→FIRST_HALF, AFTERNOON→SECOND_HALF |
+| BUG-QA2-008 | Retroactive leave blocked by @FutureOrPresent | ✅ FIXED — @FutureOrPresent removed; retroactive leave allowed (BUG-QA2-008 comment in LeaveRequestRequest.java) |
 | BUG-QA2-011 | Resource pool endpoints missing (404) | ⚠️ OPEN |
 | BUG-QA4-007 | Certificate generation pipeline incomplete | ⚠️ OPEN — feature gap |
 
@@ -162,7 +162,7 @@
 | UC-LEAVE-001 | Apply leave | ✅ WRITTEN | BUG-QA2-001 ⏳ |
 | UC-LEAVE-002 | Carry-forward balance | ✅ WRITTEN | — |
 | UC-LEAVE-003 | Leave encashment | ✅ WRITTEN | — |
-| UC-LEAVE-004 to 015 | Extended leave UCs | 📋 PENDING | BUG-QA2-007/008 ⚠️ |
+| UC-LEAVE-004 to 015 | Extended leave UCs | 📋 PENDING | BUG-QA2-007/008 ✅ |
 
 ### 🎁 Benefits (UC-BEN-001 to 008)
 | UC | Description | Test |
@@ -227,9 +227,9 @@
 ### 📊 Statutory (UC-STAT-001 to 003)
 | UC | Description | Test | Bug |
 |----|-------------|------|-----|
-| UC-STAT-001 | PF calculation | ✅ WRITTEN | BUG-013 ⚠️ |
-| UC-STAT-002 | TDS + Form 16 | ✅ WRITTEN | BUG-013 ⚠️ |
-| UC-STAT-003 | LWF deduction | ✅ WRITTEN | BUG-013 ⚠️ |
+| UC-STAT-001 | PF calculation | ✅ WRITTEN | BUG-013 ✅ |
+| UC-STAT-002 | TDS + Form 16 | ✅ WRITTEN | BUG-013 ✅ |
+| UC-STAT-003 | LWF deduction | ✅ WRITTEN | BUG-013 ✅ |
 
 ### 🎫 Helpdesk (UC-HELP-001)
 | UC | Description | Test |
@@ -259,13 +259,13 @@
 ### 📈 Reports (UC-REPORT-001 to 002)
 | UC | Description | Test | Bug |
 |----|-------------|------|-----|
-| UC-REPORT-001 | Headcount report | ✅ WRITTEN | BUG-008 ⚠️ |
-| UC-REPORT-002 | Scheduled report | ✅ WRITTEN | BUG-008 ⚠️ |
+| UC-REPORT-001 | Headcount report | ✅ WRITTEN | BUG-008 ✅ |
+| UC-REPORT-002 | Scheduled report | ✅ WRITTEN | BUG-008 ✅ |
 
 ### ⚙️ Admin (UC-ADMIN-001 to 002)
 | UC | Description | Test | Bug |
 |----|-------------|------|-----|
-| UC-ADMIN-001 | Feature flags | ✅ WRITTEN | BUG-009 ⚠️ |
+| UC-ADMIN-001 | Feature flags | ✅ WRITTEN | BUG-009 ✅ |
 | UC-ADMIN-002 | Holiday management | ✅ WRITTEN | — |
 
 ### 🔔 Notifications (UC-NOTIF-001)
