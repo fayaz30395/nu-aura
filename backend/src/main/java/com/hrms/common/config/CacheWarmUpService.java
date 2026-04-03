@@ -104,8 +104,14 @@ public class CacheWarmUpService {
     }
 
     /**
-     * On application startup, log that cache warming is available.
-     * Actual warm-up happens per-tenant on first login or via admin trigger.
+     * On application startup, evict stale security caches and log readiness.
+     *
+     * <p><strong>Why evict rolePermissions on startup?</strong>
+     * Flyway migrations may add/remove permissions in the DB, but Redis
+     * (which runs externally in Docker) retains the old cached permission sets.
+     * The 15-minute TTL on rolePermissions means a user could hit a stale cache
+     * for up to 15 minutes after a deploy. Evicting on startup guarantees the
+     * first permission check after deploy reads fresh data from the DB.</p>
      *
      * <p>We don't auto-warm all tenants on startup because:
      * 1. We don't know which tenants are active
@@ -114,6 +120,35 @@ public class CacheWarmUpService {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
+        // Evict stale security caches so Flyway permission changes take effect immediately
+        evictSecurityCachesOnStartup();
         log.info("CacheWarmUpService ready. Per-tenant warm-up available via warmCachesForTenant(tenantId).");
+    }
+
+    /**
+     * Evict all entries from security-related caches on application startup.
+     * This ensures Flyway migration changes to permissions/roles are reflected
+     * immediately, without waiting for the cache TTL to expire.
+     */
+    private void evictSecurityCachesOnStartup() {
+        try {
+            org.springframework.cache.CacheManager cacheManager = ctx.getBean(org.springframework.cache.CacheManager.class);
+
+            String[] securityCaches = {
+                CacheConfig.ROLE_PERMISSIONS,
+                CacheConfig.PERMISSIONS,
+                CacheConfig.ROLES
+            };
+
+            for (String cacheName : securityCaches) {
+                org.springframework.cache.Cache cache = cacheManager.getCache(cacheName);
+                if (cache != null) {
+                    cache.clear();
+                    log.info("Evicted startup cache: {}", cacheName);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to evict security caches on startup: {}", e.getMessage());
+        }
     }
 }
