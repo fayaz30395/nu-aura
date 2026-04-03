@@ -39,14 +39,18 @@ export function useActiveApp(): ActiveAppState {
   const appCode = useMemo(() => getAppForRoute(pathname), [pathname]);
   const app = useMemo(() => PLATFORM_APPS[appCode], [appCode]);
 
-  // Pre-compute a Set of module-prefix strings extracted from permission strings
-  // (the part before the first dot). This turns the O(n×m) nested .some() loop
-  // into a single O(m) build + O(1) Set.has() lookup per app.
+  // Pre-compute a Set of module-prefix strings extracted from permission strings.
+  // Supports both dot-separated (legacy: recruitment.view) and colon-separated
+  // (canonical: RECRUITMENT:VIEW) formats. Prefixes are lowercased for consistent
+  // matching against app permissionPrefixes (which are lowercase).
   const permissionModules = useMemo(() => {
     const set = new Set<string>();
     for (const p of permissions) {
+      // Try colon first (canonical format), then dot (legacy format)
+      const sep = p.indexOf(':');
       const dot = p.indexOf('.');
-      if (dot !== -1) set.add(p.substring(0, dot));
+      const idx = sep !== -1 ? sep : dot;
+      if (idx !== -1) set.add(p.substring(0, idx).toLowerCase());
     }
     return set;
   }, [permissions]);
