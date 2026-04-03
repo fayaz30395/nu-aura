@@ -84,6 +84,13 @@ public class TrainingManagementController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/enrollments/{enrollmentId}/generate-certificate")
+    @RequiresPermission(Permission.TRAINING_APPROVE)
+    public ResponseEntity<TrainingEnrollmentResponse> generateCertificate(@PathVariable UUID enrollmentId) {
+        TrainingEnrollmentResponse response = trainingService.generateCertificate(enrollmentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PatchMapping("/enrollments/{enrollmentId}/status")
     @RequiresPermission(Permission.TRAINING_APPROVE)
     public ResponseEntity<TrainingEnrollmentResponse> updateEnrollmentStatus(

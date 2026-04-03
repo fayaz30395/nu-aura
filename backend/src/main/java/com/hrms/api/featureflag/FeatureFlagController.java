@@ -24,7 +24,7 @@ import java.util.Map;
  * Playbook Reference: Prompt 34 - Feature flags (tenant-level)
  */
 @RestController
-@RequestMapping("/api/v1/feature-flags")
+@RequestMapping("/api/v1/admin/feature-flags")
 @RequiredArgsConstructor
 @Tag(name = "Feature Flags", description = "Tenant-level feature flag management")
 public class FeatureFlagController {

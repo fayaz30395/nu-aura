@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -188,6 +189,81 @@ public class SalaryStructureService {
         // - Employment type
         // For now, this is a no-op - organizations will define their own defaults
         log.debug("Default salary structure assignment not configured for employee {}", employee.getId());
+    }
+
+    /**
+     * BUG-003 FIX: Bulk salary structure creation from a template employee's active structure.
+     * Addresses the design gap where salary structures are per-employee only with no
+     * template/job-role based application. HR can now copy one employee's active salary
+     * structure to a list of target employees, setting a common effective date.
+     *
+     * @param sourceEmployeeId  employee whose latest active structure acts as the template
+     * @param targetEmployeeIds employees to receive a copy of the template structure
+     * @param effectiveDate     effective date for all newly created structures
+     * @return list of saved salary structures for the target employees
+     * @throws IllegalArgumentException if the source employee has no active salary structure,
+     *                                  or if a target employee already has a structure on that date
+     */
+    @Transactional
+    public List<SalaryStructure> bulkCreateFromTemplate(UUID sourceEmployeeId,
+                                                        List<UUID> targetEmployeeIds,
+                                                        LocalDate effectiveDate) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        SalaryStructure template = salaryStructureRepository
+                .findLatestActiveByTenantIdAndEmployeeId(tenantId, sourceEmployeeId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No active salary structure found for source employee: " + sourceEmployeeId));
+
+        List<SalaryStructure> created = new ArrayList<>();
+        for (UUID targetEmployeeId : targetEmployeeIds) {
+            if (salaryStructureRepository.existsByTenantIdAndEmployeeIdAndEffectiveDate(
+                    tenantId, targetEmployeeId, effectiveDate)) {
+                log.warn("Skipping employee {} — salary structure already exists for date {}",
+                        targetEmployeeId, effectiveDate);
+                continue;
+            }
+
+            SalaryStructure copy = new SalaryStructure();
+            copy.setTenantId(tenantId);
+            copy.setEmployeeId(targetEmployeeId);
+            copy.setEffectiveDate(effectiveDate);
+            copy.setBasicSalary(template.getBasicSalary());
+            copy.setHra(template.getHra());
+            copy.setConveyanceAllowance(template.getConveyanceAllowance());
+            copy.setMedicalAllowance(template.getMedicalAllowance());
+            copy.setSpecialAllowance(template.getSpecialAllowance());
+            copy.setOtherAllowances(template.getOtherAllowances());
+            copy.setProvidentFund(template.getProvidentFund());
+            copy.setProfessionalTax(template.getProfessionalTax());
+            copy.setIncomeTax(template.getIncomeTax());
+            copy.setOtherDeductions(template.getOtherDeductions());
+            copy.setIsActive(true);
+
+            SalaryStructure saved = salaryStructureRepository.save(copy);
+
+            auditLogService.logAction(
+                    "SALARY_STRUCTURE",
+                    saved.getId(),
+                    AuditAction.CREATE,
+                    null,
+                    Map.of(
+                            "employeeId", saved.getEmployeeId(),
+                            "sourceEmployeeId", sourceEmployeeId,
+                            "basicSalary", saved.getBasicSalary(),
+                            "effectiveDate", saved.getEffectiveDate()
+                    ),
+                    "Salary structure bulk-created from template (source: " + sourceEmployeeId +
+                            ") for employee " + targetEmployeeId +
+                            " - Basic: " + saved.getBasicSalary() + ", Effective: " + saved.getEffectiveDate()
+            );
+
+            created.add(saved);
+        }
+
+        log.info("bulkCreateFromTemplate: created {} salary structures from source employee {}",
+                created.size(), sourceEmployeeId);
+        return created;
     }
 
     /**
