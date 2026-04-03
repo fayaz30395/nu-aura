@@ -1,0 +1,403 @@
+-- ============================================================================
+-- V107: Repopulate role_permissions — Fix for BUG-004 / BUG-QA3-001
+-- ============================================================================
+-- ROOT CAUSE: V96 deleted all role_permissions rows but never repopulated
+-- them. HrmsPermissionInitializer only writes to app_role_permissions (NU
+-- Platform), not the legacy role_permissions table that SecurityService
+-- queries via getCachedPermissions().
+--
+-- This migration re-maps every role to its appropriate permission set using
+-- the canonical UPPERCASE:COLON permission codes seeded by V96.
+--
+-- TENANT: NuLogic Internal — 660e8400-e29b-41d4-a716-446655440001
+--
+-- ROLE UUIDs:
+--   SUPER_ADMIN      550e8400-e29b-41d4-a716-446655440020
+--   HR_ADMIN         550e8400-e29b-41d4-a716-446655440021
+--   MANAGER          550e8400-e29b-41d4-a716-446655440022
+--   EMPLOYEE         550e8400-e29b-41d4-a716-446655440023
+--   TEAM_LEAD        48000000-0e01-0000-0000-000000000001
+--   HR_MANAGER       48000000-0e01-0000-0000-000000000002
+--   RECRUITMENT_ADMIN 48000000-0e01-0000-0000-000000000003
+-- ============================================================================
+
+-- ============================================================================
+-- Helper: insert a role→permission mapping by code (safe — ON CONFLICT skip)
+-- Uses a CTE so the INSERT is a single statement per batch.
+-- ============================================================================
+
+-- ============================================================================
+-- EMPLOYEE role — self-service permissions only
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '550e8400-e29b-41d4-a716-446655440023',
+    p.id,
+    'SELF',
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    'EMPLOYEE:VIEW_SELF',
+    'EMPLOYEE:UPDATE',
+    'EMPLOYMENT_CHANGE:VIEW',
+    'LEAVE:REQUEST',
+    'LEAVE:VIEW_SELF',
+    'LEAVE:CANCEL',
+    'ATTENDANCE:MARK',
+    'ATTENDANCE:VIEW_SELF',
+    'ATTENDANCE:REGULARIZE',
+    'PAYROLL:VIEW_SELF',
+    'REVIEW:VIEW',
+    'REVIEW:SUBMIT',
+    'REVIEW:UPDATE',
+    'GOAL:CREATE',
+    'TRAINING:VIEW',
+    'TRAINING:ENROLL',
+    'RECRUITMENT:VIEW',
+    'ANNOUNCEMENT:READ',
+    'DEPARTMENT:VIEW',
+    'OFFICE_LOCATION:VIEW',
+    'HELPDESK:CREATE',
+    'HELPDESK:VIEW',
+    'EXPENSE:CREATE',
+    'EXPENSE:VIEW_SELF',
+    'LOAN:REQUEST',
+    'LOAN:VIEW_SELF',
+    'TRAVEL:REQUEST',
+    'TRAVEL:VIEW_SELF',
+    'ASSET:VIEW_SELF',
+    'TIMESHEET:SUBMIT',
+    'TIMESHEET:VIEW_SELF',
+    'PERFORMANCE:READ',
+    'PERFORMANCE:FEEDBACK',
+    'PERFORMANCE:GOAL_CREATE',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ',
+    'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE',
+    'RECOGNITION:VIEW',
+    'SURVEY:RESPOND',
+    'SURVEY:VIEW',
+    'WELLNESS:VIEW',
+    'WELLNESS:JOIN',
+    'BENEFIT:VIEW',
+    'CALENDAR:VIEW',
+    'OFFBOARDING:VIEW'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- TEAM_LEAD role — EMPLOYEE + team visibility + approval
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '48000000-0e01-0000-0000-000000000001',
+    p.id,
+    CASE
+        WHEN p.code LIKE '%:VIEW_ALL' THEN 'TEAM'
+        WHEN p.code LIKE '%:VIEW_TEAM' THEN 'TEAM'
+        WHEN p.code IN ('LEAVE:APPROVE', 'ATTENDANCE:APPROVE', 'EXPENSE:APPROVE',
+                        'TIMESHEET:APPROVE', 'TRAVEL:APPROVE', 'GOAL:APPROVE',
+                        'REVIEW:APPROVE', 'OVERTIME:APPROVE') THEN 'TEAM'
+        ELSE 'SELF'
+    END,
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    -- All EMPLOYEE permissions
+    'EMPLOYEE:VIEW_SELF', 'EMPLOYEE:UPDATE', 'EMPLOYEE:VIEW_TEAM',
+    'EMPLOYMENT_CHANGE:VIEW',
+    'LEAVE:REQUEST', 'LEAVE:VIEW_SELF', 'LEAVE:CANCEL',
+    'LEAVE:VIEW_TEAM', 'LEAVE:APPROVE',
+    'ATTENDANCE:MARK', 'ATTENDANCE:VIEW_SELF', 'ATTENDANCE:REGULARIZE',
+    'ATTENDANCE:VIEW_TEAM', 'ATTENDANCE:APPROVE',
+    'PAYROLL:VIEW_SELF',
+    'REVIEW:VIEW', 'REVIEW:SUBMIT', 'REVIEW:UPDATE', 'REVIEW:APPROVE',
+    'GOAL:CREATE', 'GOAL:APPROVE',
+    'TRAINING:VIEW', 'TRAINING:ENROLL',
+    'RECRUITMENT:VIEW', 'RECRUITMENT:INTERVIEW',
+    'ANNOUNCEMENT:READ',
+    'DEPARTMENT:VIEW',
+    'OFFICE_LOCATION:VIEW',
+    'HELPDESK:CREATE', 'HELPDESK:VIEW',
+    'EXPENSE:CREATE', 'EXPENSE:VIEW_SELF', 'EXPENSE:APPROVE',
+    'LOAN:REQUEST', 'LOAN:VIEW_SELF',
+    'TRAVEL:REQUEST', 'TRAVEL:VIEW_SELF', 'TRAVEL:APPROVE',
+    'ASSET:VIEW_SELF',
+    'TIMESHEET:SUBMIT', 'TIMESHEET:VIEW_SELF', 'TIMESHEET:APPROVE',
+    'PERFORMANCE:READ', 'PERFORMANCE:FEEDBACK', 'PERFORMANCE:GOAL_CREATE', 'PERFORMANCE:GOAL_REVIEW',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ', 'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE', 'RECOGNITION:VIEW',
+    'SURVEY:RESPOND', 'SURVEY:VIEW',
+    'WELLNESS:VIEW', 'WELLNESS:JOIN',
+    'BENEFIT:VIEW',
+    'CALENDAR:VIEW',
+    'REPORT:VIEW',
+    'OFFBOARDING:VIEW',
+    'OVERTIME:REQUEST', 'OVERTIME:APPROVE'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- MANAGER role — TEAM_LEAD + broader team management
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '550e8400-e29b-41d4-a716-446655440022',
+    p.id,
+    CASE
+        WHEN p.code LIKE '%:VIEW_ALL' THEN 'TEAM'
+        WHEN p.code LIKE '%:VIEW_TEAM' THEN 'TEAM'
+        WHEN p.code IN ('LEAVE:APPROVE', 'ATTENDANCE:APPROVE', 'EXPENSE:APPROVE',
+                        'TIMESHEET:APPROVE', 'TRAVEL:APPROVE', 'GOAL:APPROVE',
+                        'REVIEW:APPROVE', 'OVERTIME:APPROVE') THEN 'TEAM'
+        ELSE 'SELF'
+    END,
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    'EMPLOYEE:VIEW_SELF', 'EMPLOYEE:UPDATE', 'EMPLOYEE:VIEW_TEAM', 'EMPLOYEE:VIEW_ALL',
+    'EMPLOYMENT_CHANGE:VIEW', 'EMPLOYMENT_CHANGE:VIEW_ALL',
+    'LEAVE:REQUEST', 'LEAVE:VIEW_SELF', 'LEAVE:CANCEL',
+    'LEAVE:VIEW_TEAM', 'LEAVE:VIEW_ALL', 'LEAVE:APPROVE',
+    'ATTENDANCE:MARK', 'ATTENDANCE:VIEW_SELF', 'ATTENDANCE:REGULARIZE',
+    'ATTENDANCE:VIEW_TEAM', 'ATTENDANCE:VIEW_ALL', 'ATTENDANCE:APPROVE',
+    'PAYROLL:VIEW_SELF',
+    'REVIEW:VIEW', 'REVIEW:SUBMIT', 'REVIEW:UPDATE', 'REVIEW:APPROVE',
+    'GOAL:CREATE', 'GOAL:APPROVE',
+    'TRAINING:VIEW', 'TRAINING:ENROLL',
+    'RECRUITMENT:VIEW', 'RECRUITMENT:VIEW_TEAM', 'RECRUITMENT:INTERVIEW',
+    'CANDIDATE:VIEW', 'CANDIDATE:EVALUATE',
+    'ANNOUNCEMENT:READ',
+    'DEPARTMENT:VIEW',
+    'OFFICE_LOCATION:VIEW',
+    'HELPDESK:CREATE', 'HELPDESK:VIEW',
+    'EXPENSE:CREATE', 'EXPENSE:VIEW_SELF', 'EXPENSE:APPROVE',
+    'LOAN:REQUEST', 'LOAN:VIEW_SELF',
+    'TRAVEL:REQUEST', 'TRAVEL:VIEW_SELF', 'TRAVEL:APPROVE',
+    'ASSET:VIEW_SELF',
+    'TIMESHEET:SUBMIT', 'TIMESHEET:VIEW_SELF', 'TIMESHEET:APPROVE',
+    'PERFORMANCE:READ', 'PERFORMANCE:MANAGE', 'PERFORMANCE:FEEDBACK',
+    'PERFORMANCE:GOAL_CREATE', 'PERFORMANCE:GOAL_REVIEW',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ', 'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE', 'RECOGNITION:VIEW',
+    'SURVEY:RESPOND', 'SURVEY:VIEW',
+    'WELLNESS:VIEW', 'WELLNESS:JOIN',
+    'BENEFIT:VIEW',
+    'CALENDAR:VIEW',
+    'REPORT:VIEW', 'REPORT:CREATE',
+    'OFFBOARDING:VIEW',
+    'OVERTIME:REQUEST', 'OVERTIME:APPROVE',
+    'PROJECT:VIEW', 'PROJECT:CREATE', 'PROJECT:UPDATE', 'PROJECT:ASSIGN'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- HR_MANAGER role — broad HR access, no payroll admin or system settings
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '48000000-0e01-0000-0000-000000000002',
+    p.id,
+    'ALL',
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    'EMPLOYEE:READ', 'EMPLOYEE:VIEW_ALL', 'EMPLOYEE:VIEW_SELF', 'EMPLOYEE:UPDATE',
+    'EMPLOYEE:VIEW_TEAM', 'EMPLOYEE:VIEW_DEPARTMENT', 'EMPLOYEE:IMPORT', 'EMPLOYEE:EXPORT',
+    'EMPLOYMENT_CHANGE:VIEW', 'EMPLOYMENT_CHANGE:VIEW_ALL', 'EMPLOYMENT_CHANGE:CREATE',
+    'EMPLOYMENT_CHANGE:APPROVE', 'EMPLOYMENT_CHANGE:CANCEL',
+    'DEPARTMENT:VIEW', 'DEPARTMENT:MANAGE',
+    'OFFICE_LOCATION:VIEW', 'OFFICE_LOCATION:CREATE', 'OFFICE_LOCATION:UPDATE',
+    'LEAVE:REQUEST', 'LEAVE:VIEW_SELF', 'LEAVE:CANCEL', 'LEAVE:VIEW_ALL',
+    'LEAVE:VIEW_TEAM', 'LEAVE:APPROVE', 'LEAVE:MANAGE',
+    'ATTENDANCE:MARK', 'ATTENDANCE:VIEW_SELF', 'ATTENDANCE:REGULARIZE',
+    'ATTENDANCE:VIEW_ALL', 'ATTENDANCE:VIEW_TEAM', 'ATTENDANCE:APPROVE', 'ATTENDANCE:MANAGE',
+    'PAYROLL:VIEW_SELF', 'PAYROLL:VIEW',
+    'REVIEW:VIEW', 'REVIEW:SUBMIT', 'REVIEW:UPDATE', 'REVIEW:APPROVE', 'REVIEW:CREATE',
+    'GOAL:CREATE', 'GOAL:APPROVE',
+    'TRAINING:VIEW', 'TRAINING:ENROLL', 'TRAINING:MANAGE',
+    'RECRUITMENT:VIEW', 'RECRUITMENT:VIEW_ALL', 'RECRUITMENT:MANAGE',
+    'RECRUITMENT:CREATE', 'RECRUITMENT:UPDATE', 'RECRUITMENT:DELETE',
+    'CANDIDATE:VIEW', 'CANDIDATE:EVALUATE',
+    'ANNOUNCEMENT:READ', 'ANNOUNCEMENT:CREATE',
+    'HELPDESK:CREATE', 'HELPDESK:VIEW', 'HELPDESK:MANAGE',
+    'EXPENSE:CREATE', 'EXPENSE:VIEW_SELF', 'EXPENSE:VIEW_ALL', 'EXPENSE:APPROVE',
+    'LOAN:REQUEST', 'LOAN:VIEW_SELF', 'LOAN:VIEW_ALL', 'LOAN:APPROVE',
+    'TRAVEL:REQUEST', 'TRAVEL:VIEW_SELF', 'TRAVEL:VIEW_ALL', 'TRAVEL:APPROVE',
+    'ASSET:VIEW_SELF', 'ASSET:VIEW_ALL', 'ASSET:MANAGE',
+    'TIMESHEET:SUBMIT', 'TIMESHEET:VIEW_SELF', 'TIMESHEET:VIEW_ALL', 'TIMESHEET:APPROVE',
+    'PERFORMANCE:READ', 'PERFORMANCE:MANAGE', 'PERFORMANCE:FEEDBACK',
+    'PERFORMANCE:GOAL_CREATE', 'PERFORMANCE:GOAL_REVIEW',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ', 'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE', 'RECOGNITION:VIEW',
+    'SURVEY:RESPOND', 'SURVEY:VIEW', 'SURVEY:CREATE', 'SURVEY:MANAGE',
+    'WELLNESS:VIEW', 'WELLNESS:JOIN', 'WELLNESS:MANAGE',
+    'BENEFIT:VIEW', 'BENEFIT:MANAGE',
+    'CALENDAR:VIEW', 'CALENDAR:MANAGE',
+    'REPORT:VIEW', 'REPORT:CREATE',
+    'ROLE:READ',
+    'USER:READ',
+    'OFFBOARDING:VIEW', 'OFFBOARDING:MANAGE', 'OFFBOARDING:FNF_CALCULATE',
+    'OVERTIME:REQUEST', 'OVERTIME:APPROVE', 'OVERTIME:MANAGE',
+    'CONTRACT:VIEW', 'CONTRACT:CREATE',
+    'LETTER:GENERATE', 'LETTER:VIEW',
+    'STATUTORY:VIEW', 'STATUTORY:MANAGE',
+    'PIP:VIEW', 'PIP:CREATE',
+    'CALIBRATION:VIEW',
+    'PROJECT:VIEW',
+    'CAREER:VIEW',
+    'PROBATION:VIEW', 'PROBATION:MANAGE'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- HR_ADMIN role — same as HR_MANAGER + role/user/settings management
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '550e8400-e29b-41d4-a716-446655440021',
+    p.id,
+    'ALL',
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    -- All HR_MANAGER permissions
+    'EMPLOYEE:READ', 'EMPLOYEE:VIEW_ALL', 'EMPLOYEE:VIEW_SELF', 'EMPLOYEE:UPDATE',
+    'EMPLOYEE:CREATE', 'EMPLOYEE:DELETE', 'EMPLOYEE:VIEW_TEAM', 'EMPLOYEE:VIEW_DEPARTMENT',
+    'EMPLOYEE:IMPORT', 'EMPLOYEE:EXPORT',
+    'EMPLOYMENT_CHANGE:VIEW', 'EMPLOYMENT_CHANGE:VIEW_ALL', 'EMPLOYMENT_CHANGE:CREATE',
+    'EMPLOYMENT_CHANGE:APPROVE', 'EMPLOYMENT_CHANGE:CANCEL',
+    'DEPARTMENT:VIEW', 'DEPARTMENT:MANAGE',
+    'OFFICE_LOCATION:VIEW', 'OFFICE_LOCATION:CREATE', 'OFFICE_LOCATION:UPDATE', 'OFFICE_LOCATION:DELETE',
+    'LEAVE:REQUEST', 'LEAVE:VIEW_SELF', 'LEAVE:CANCEL', 'LEAVE:VIEW_ALL',
+    'LEAVE:VIEW_TEAM', 'LEAVE:APPROVE', 'LEAVE:MANAGE', 'LEAVE:CONFIGURE',
+    'ATTENDANCE:MARK', 'ATTENDANCE:VIEW_SELF', 'ATTENDANCE:REGULARIZE',
+    'ATTENDANCE:VIEW_ALL', 'ATTENDANCE:VIEW_TEAM', 'ATTENDANCE:APPROVE', 'ATTENDANCE:MANAGE',
+    'PAYROLL:VIEW_SELF', 'PAYROLL:VIEW', 'PAYROLL:VIEW_ALL',
+    'REVIEW:VIEW', 'REVIEW:SUBMIT', 'REVIEW:UPDATE', 'REVIEW:APPROVE', 'REVIEW:CREATE', 'REVIEW:DELETE',
+    'GOAL:CREATE', 'GOAL:APPROVE',
+    'TRAINING:VIEW', 'TRAINING:ENROLL', 'TRAINING:MANAGE',
+    'RECRUITMENT:VIEW', 'RECRUITMENT:VIEW_ALL', 'RECRUITMENT:MANAGE',
+    'RECRUITMENT:CREATE', 'RECRUITMENT:UPDATE', 'RECRUITMENT:DELETE',
+    'CANDIDATE:VIEW', 'CANDIDATE:EVALUATE',
+    'ANNOUNCEMENT:READ', 'ANNOUNCEMENT:CREATE', 'ANNOUNCEMENT:MANAGE',
+    'HELPDESK:CREATE', 'HELPDESK:VIEW', 'HELPDESK:MANAGE',
+    'EXPENSE:CREATE', 'EXPENSE:VIEW_SELF', 'EXPENSE:VIEW_ALL', 'EXPENSE:APPROVE',
+    'LOAN:REQUEST', 'LOAN:VIEW_SELF', 'LOAN:VIEW_ALL', 'LOAN:APPROVE',
+    'TRAVEL:REQUEST', 'TRAVEL:VIEW_SELF', 'TRAVEL:VIEW_ALL', 'TRAVEL:APPROVE',
+    'ASSET:VIEW_SELF', 'ASSET:VIEW_ALL', 'ASSET:MANAGE',
+    'TIMESHEET:SUBMIT', 'TIMESHEET:VIEW_SELF', 'TIMESHEET:VIEW_ALL', 'TIMESHEET:APPROVE',
+    'PERFORMANCE:READ', 'PERFORMANCE:MANAGE', 'PERFORMANCE:FEEDBACK',
+    'PERFORMANCE:GOAL_CREATE', 'PERFORMANCE:GOAL_REVIEW',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ', 'KNOWLEDGE:WIKI:MANAGE', 'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE', 'RECOGNITION:VIEW',
+    'SURVEY:RESPOND', 'SURVEY:VIEW', 'SURVEY:CREATE', 'SURVEY:MANAGE',
+    'WELLNESS:VIEW', 'WELLNESS:JOIN', 'WELLNESS:MANAGE',
+    'BENEFIT:VIEW', 'BENEFIT:MANAGE',
+    'CALENDAR:VIEW', 'CALENDAR:MANAGE',
+    'REPORT:VIEW', 'REPORT:CREATE', 'REPORT:MANAGE',
+    'ROLE:READ', 'ROLE:MANAGE',
+    'USER:READ', 'USER:MANAGE',
+    'SETTINGS:READ', 'SETTINGS:MANAGE',
+    'OFFBOARDING:VIEW', 'OFFBOARDING:MANAGE', 'OFFBOARDING:FNF_CALCULATE',
+    'OVERTIME:REQUEST', 'OVERTIME:APPROVE', 'OVERTIME:MANAGE',
+    'CONTRACT:VIEW', 'CONTRACT:CREATE', 'CONTRACT:MANAGE',
+    'LETTER:GENERATE', 'LETTER:VIEW', 'LETTER:MANAGE',
+    'STATUTORY:VIEW', 'STATUTORY:MANAGE',
+    'PIP:VIEW', 'PIP:CREATE', 'PIP:MANAGE', 'PIP:CLOSE',
+    'CALIBRATION:VIEW', 'CALIBRATION:MANAGE',
+    'PROJECT:VIEW', 'PROJECT:CREATE', 'PROJECT:UPDATE',
+    'CAREER:VIEW', 'CAREER:MANAGE',
+    'PROBATION:VIEW', 'PROBATION:MANAGE',
+    'GEOFENCE:MANAGE', 'GEOFENCE:BYPASS'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- RECRUITMENT_ADMIN role — self-service + full NU-Hire access
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '48000000-0e01-0000-0000-000000000003',
+    p.id,
+    CASE WHEN p.code LIKE '%:VIEW_SELF' OR p.code IN ('LEAVE:REQUEST','LEAVE:CANCEL',
+        'ATTENDANCE:MARK','ATTENDANCE:REGULARIZE','PAYROLL:VIEW_SELF',
+        'EXPENSE:CREATE','LOAN:REQUEST','TRAVEL:REQUEST','TIMESHEET:SUBMIT') THEN 'SELF'
+         ELSE 'ALL'
+    END,
+    NOW(), NOW(), 0, false
+FROM permissions p
+WHERE p.code IN (
+    -- Self-service
+    'EMPLOYEE:VIEW_SELF', 'EMPLOYEE:UPDATE',
+    'LEAVE:REQUEST', 'LEAVE:VIEW_SELF', 'LEAVE:CANCEL',
+    'ATTENDANCE:MARK', 'ATTENDANCE:VIEW_SELF', 'ATTENDANCE:REGULARIZE',
+    'PAYROLL:VIEW_SELF',
+    'EXPENSE:CREATE', 'EXPENSE:VIEW_SELF',
+    'LOAN:REQUEST', 'LOAN:VIEW_SELF',
+    'TRAVEL:REQUEST', 'TRAVEL:VIEW_SELF',
+    'ASSET:VIEW_SELF',
+    'TIMESHEET:SUBMIT', 'TIMESHEET:VIEW_SELF',
+    'REVIEW:VIEW', 'REVIEW:SUBMIT',
+    'GOAL:CREATE',
+    -- Recruitment full access
+    'RECRUITMENT:VIEW', 'RECRUITMENT:VIEW_ALL', 'RECRUITMENT:MANAGE',
+    'RECRUITMENT:CREATE', 'RECRUITMENT:UPDATE', 'RECRUITMENT:DELETE',
+    'RECRUITMENT:JOB_CREATE', 'RECRUITMENT:CANDIDATE_MANAGE', 'RECRUITMENT:INTERVIEW',
+    'CANDIDATE:VIEW', 'CANDIDATE:EVALUATE',
+    'EMPLOYEE:READ', 'EMPLOYEE:VIEW_ALL',
+    'DEPARTMENT:VIEW',
+    'OFFICE_LOCATION:VIEW',
+    'ANNOUNCEMENT:READ',
+    'DASHBOARD:VIEW',
+    'KNOWLEDGE:WIKI:READ', 'KNOWLEDGE:BLOG:READ',
+    'NOTIFICATION:READ',
+    'RECOGNITION:CREATE', 'RECOGNITION:VIEW',
+    'SURVEY:RESPOND', 'SURVEY:VIEW',
+    'WELLNESS:VIEW', 'WELLNESS:JOIN',
+    'BENEFIT:VIEW',
+    'CALENDAR:VIEW',
+    'REPORT:VIEW',
+    'OFFBOARDING:VIEW', 'OFFBOARDING:MANAGE',
+    'CAREER:VIEW', 'CAREER:MANAGE',
+    'TRAINING:VIEW', 'TRAINING:ENROLL'
+)
+AND p.is_deleted = false
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- Evict cached permissions so live app picks up the new mappings immediately
+-- (Spring cache is evicted on next request — no action needed here)
+-- ============================================================================
+-- Informational note: SecurityService.getCachedPermissions() uses Spring Cache
+-- with CacheConfig.ROLE_PERMISSIONS. The cache will auto-refresh on next request
+-- after this migration runs. To force immediate eviction in production, call:
+-- POST /api/v1/admin/cache/clear or restart the application.
+-- ============================================================================

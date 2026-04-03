@@ -41,6 +41,9 @@ public class LoanService implements ApprovalCallbackHandler {
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new IllegalStateException("Employee profile not found for current user — cannot submit loan request");
+        }
 
         EmployeeLoan loan = EmployeeLoan.builder()
                 .employeeId(employeeId)

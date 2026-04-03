@@ -68,11 +68,12 @@ public class MfaController {
         try {
             mfaService.verifyAndEnableMfa(userId, request.getCode());
             MfaStatusResponse response = mfaService.getMfaStatus(userId);
+            response.setVerified(true);
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             log.warn("MFA verification failed for user: {}", userId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(MfaStatusResponse.builder().build());
+                .body(MfaStatusResponse.builder().verified(false).build());
         }
     }
 

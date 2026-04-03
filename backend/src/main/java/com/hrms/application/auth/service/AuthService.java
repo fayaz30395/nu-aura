@@ -20,6 +20,7 @@ import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.metrics.MetricsService;
+import com.hrms.common.security.AccountLockoutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +67,7 @@ public class AuthService {
     private final ImplicitRoleService implicitRoleService;
     private final MetricsService metricsService;
     private final PasswordPolicyService passwordPolicyService;
+    private final AccountLockoutService accountLockoutService;
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -76,7 +78,8 @@ public class AuthService {
                        EmailNotificationService emailNotificationService,
                        ImplicitRoleService implicitRoleService,
                        MetricsService metricsService,
-                       PasswordPolicyService passwordPolicyService) {
+                       PasswordPolicyService passwordPolicyService,
+                       AccountLockoutService accountLockoutService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -87,6 +90,7 @@ public class AuthService {
         this.implicitRoleService = implicitRoleService;
         this.metricsService = metricsService;
         this.passwordPolicyService = passwordPolicyService;
+        this.accountLockoutService = accountLockoutService;
     }
 
     @Value("${app.jwt.expiration}")
@@ -157,6 +161,13 @@ public class AuthService {
         // Set tenant context for authentication
         com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
 
+        // Check account lockout before attempting authentication
+        if (accountLockoutService.isAccountLocked(request.getEmail())) {
+            metricsService.recordLoginFailure("password", "account_locked");
+            throw new org.springframework.security.authentication.LockedException(
+                    "Account temporarily locked due to too many failed login attempts");
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -168,6 +179,9 @@ public class AuthService {
 
             user.recordSuccessfulLogin();
             userRepository.save(user);
+
+            // Clear lockout state on successful login
+            accountLockoutService.loginSucceeded(request.getEmail());
 
             // Record successful login metric
             metricsService.recordLoginSuccess("password");
@@ -184,6 +198,7 @@ public class AuthService {
             // Spring Security authentication failures (BadCredentialsException, LockedException, etc.)
             // must be caught separately because they extend a different AuthenticationException
             // than com.hrms.common.exception.AuthenticationException
+            accountLockoutService.loginFailed(request.getEmail());
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
             throw new AuthenticationException(e.getMessage(), e);
         } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during login
@@ -362,7 +377,7 @@ public class AuthService {
     }
 
     public AuthResponse refresh(String refreshToken) {
-        if (tokenProvider.validateToken(refreshToken)) {
+        if (tokenProvider.validateRefreshToken(refreshToken)) {
             String email = tokenProvider.getUsernameFromToken(refreshToken);
             UUID tenantId = tokenProvider.getTenantIdFromToken(refreshToken);
 

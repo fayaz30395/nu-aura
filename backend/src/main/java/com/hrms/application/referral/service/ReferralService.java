@@ -44,6 +44,17 @@ public class ReferralService {
     @Transactional
     public ReferralResponse submitReferral(UUID referrerId, ReferralRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
+
+        if (referrerId == null) {
+            throw new IllegalArgumentException("Referrer identity could not be determined from the current session");
+        }
+        if (request.getCandidateEmail() == null || request.getCandidateEmail().isBlank()) {
+            throw new IllegalArgumentException("candidateEmail is required");
+        }
+        if (request.getCandidateName() == null || request.getCandidateName().isBlank()) {
+            throw new IllegalArgumentException("candidateName is required");
+        }
+
         log.info("Submitting referral for candidate {} by referrer {} tenant {}",
                 request.getCandidateEmail(), referrerId, tenantId);
 

@@ -239,6 +239,41 @@ public class JwtTokenProvider {
     }
 
     /**
+     * Validate a refresh token specifically.
+     * Unlike validateToken(), this method accepts tokens with type="refresh"
+     * and rejects access tokens. Used exclusively by AuthService.refresh().
+     */
+    public boolean validateRefreshToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .requireIssuer("nu-aura")
+                    .requireAudience("nu-aura-api")
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            // Must be a refresh token
+            String tokenType = claims.get("type", String.class);
+            if (!"refresh".equals(tokenType)) {
+                log.warn("SEC: Token presented for refresh but has type={}", tokenType);
+                return false;
+            }
+
+            // Check blacklist
+            String jti = claims.getId();
+            if (jti != null && tokenBlacklistService.isBlacklisted(jti)) {
+                return false;
+            }
+
+            return true;
+        } catch (JwtException | IllegalArgumentException ex) {
+            log.debug("Refresh token validation failed: {}", ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get the JTI (unique token identifier) from a token.
      */
     public String getJtiFromToken(String token) {
