@@ -39,18 +39,14 @@ import static org.mockito.Mockito.*;
 @DisplayName("LoanService Tests")
 class LoanServiceTest {
 
-    @Mock
-    private EmployeeLoanRepository loanRepository;
-
-    @Mock
-    private WorkflowService workflowService;
-
-    @InjectMocks
-    private LoanService loanService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private EmployeeLoanRepository loanRepository;
+    @Mock
+    private WorkflowService workflowService;
+    @InjectMocks
+    private LoanService loanService;
     private UUID tenantId;
     private UUID employeeId;
     private UUID userId;

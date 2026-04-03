@@ -42,13 +42,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("AdminService Tests")
 class AdminServiceTest {
 
-    @Mock private TenantRepository tenantRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private EmployeeRepository employeeRepository;
-    @Mock private DepartmentRepository departmentRepository;
-    @Mock private RoleRepository roleRepository;
-    @Mock private com.hrms.application.audit.service.AuditLogService auditLogService;
-    @Mock private WorkflowExecutionRepository workflowExecutionRepository;
+    @Mock
+    private TenantRepository tenantRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
+    private RoleRepository roleRepository;
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+    @Mock
+    private WorkflowExecutionRepository workflowExecutionRepository;
 
     @InjectMocks
     private AdminService adminService;
@@ -73,6 +80,39 @@ class AdminServiceTest {
     }
 
     // ==================== getGlobalStats ====================
+
+    @Test
+    @DisplayName("getAllUsers should return users with tenant and department info")
+    void shouldGetAllUsers() {
+        UUID tenantIdVal = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        User user = new User();
+        user.setId(userId);
+        user.setEmail("test@example.com");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setStatus(User.UserStatus.ACTIVE);
+        user.setTenantId(tenantIdVal);
+        user.setRoles(new HashSet<>());
+
+        Page<User> userPage = new PageImpl<>(List.of(user));
+        when(userRepository.findAll(any(PageRequest.class))).thenReturn(userPage);
+
+        Tenant tenant = new Tenant();
+        tenant.setId(tenantIdVal);
+        tenant.setName("Acme Corp");
+        when(tenantRepository.findAllById(anySet())).thenReturn(List.of(tenant));
+        when(employeeRepository.findAllByUserIdIn(anySet())).thenReturn(List.of());
+
+        Page<AdminUserResponse> result = adminService.getAllUsers(PageRequest.of(0, 10));
+
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().get(0).getEmail()).isEqualTo("test@example.com");
+        assertThat(result.getContent().get(0).getTenantName()).isEqualTo("Acme Corp");
+    }
+
+    // ==================== getAllUsers ====================
 
     @Nested
     @DisplayName("getGlobalStats")
@@ -107,39 +147,6 @@ class AdminServiceTest {
 
             assertThat(result.getPendingApprovals()).isEqualTo(0L);
         }
-    }
-
-    // ==================== getAllUsers ====================
-
-    @Test
-    @DisplayName("getAllUsers should return users with tenant and department info")
-    void shouldGetAllUsers() {
-        UUID tenantIdVal = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-
-        User user = new User();
-        user.setId(userId);
-        user.setEmail("test@example.com");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setStatus(User.UserStatus.ACTIVE);
-        user.setTenantId(tenantIdVal);
-        user.setRoles(new HashSet<>());
-
-        Page<User> userPage = new PageImpl<>(List.of(user));
-        when(userRepository.findAll(any(PageRequest.class))).thenReturn(userPage);
-
-        Tenant tenant = new Tenant();
-        tenant.setId(tenantIdVal);
-        tenant.setName("Acme Corp");
-        when(tenantRepository.findAllById(anySet())).thenReturn(List.of(tenant));
-        when(employeeRepository.findAllByUserIdIn(anySet())).thenReturn(List.of());
-
-        Page<AdminUserResponse> result = adminService.getAllUsers(PageRequest.of(0, 10));
-
-        assertThat(result.getTotalElements()).isEqualTo(1);
-        assertThat(result.getContent().get(0).getEmail()).isEqualTo("test@example.com");
-        assertThat(result.getContent().get(0).getTenantName()).isEqualTo("Acme Corp");
     }
 
     // ==================== updateUserRole ====================

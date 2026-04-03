@@ -537,7 +537,9 @@ class AttendanceControllerTest {
             request.setSource("BIOMETRIC");
 
             AttendanceRecordService.BulkResult result = new AttendanceRecordService.BulkResult(
-                    new ArrayList<>() {{ add(attendanceRecord); }},
+                    new ArrayList<>() {{
+                        add(attendanceRecord);
+                    }},
                     new ArrayList<>()
             );
 
@@ -573,7 +575,9 @@ class AttendanceControllerTest {
             request.setSource("BIOMETRIC");
 
             AttendanceRecordService.BulkResult result = new AttendanceRecordService.BulkResult(
-                    new ArrayList<>() {{ add(attendanceRecord); }},
+                    new ArrayList<>() {{
+                        add(attendanceRecord);
+                    }},
                     new ArrayList<>()
             );
 

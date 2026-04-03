@@ -30,9 +30,9 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for billing rate calculation in {@link ProjectTimesheetService}.
  * Validates:
- *   1. Billable entry with explicit rate: billed_amount = hours * rate
- *   2. Non-billable entry: billed_amount is null
- *   3. Billable entry with no explicit rate: inherits from project_members.billing_rate
+ * 1. Billable entry with explicit rate: billed_amount = hours * rate
+ * 2. Non-billable entry: billed_amount is null
+ * 3. Billable entry with no explicit rate: inherits from project_members.billing_rate
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProjectTimesheetService — Billing Rate Calculation Tests")

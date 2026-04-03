@@ -41,26 +41,19 @@ import static org.mockito.Mockito.*;
 @DisplayName("ScheduledReportService Tests")
 class ScheduledReportServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private ScheduledReportRepository scheduledReportRepository;
-
     @Mock
     private ReportDefinitionRepository reportDefinitionRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private DepartmentRepository departmentRepository;
-
     @Mock
     private ObjectMapper objectMapper;
-
     @InjectMocks
     private ScheduledReportService scheduledReportService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID createdBy;
 
@@ -100,6 +93,39 @@ class ScheduledReportServiceTest {
     }
 
     // ==================== nextRunAt Calculation Tests ====================
+
+    private ScheduledReportRequest createRequest(Frequency frequency, Integer dayOfWeek,
+                                                 Integer dayOfMonth, LocalTime timeOfDay) {
+        return ScheduledReportRequest.builder()
+                .scheduleName("Test Report")
+                .reportType("ANALYTICS")
+                .frequency(frequency)
+                .dayOfWeek(dayOfWeek)
+                .dayOfMonth(dayOfMonth)
+                .timeOfDay(timeOfDay)
+                .recipients(List.of("test@example.com"))
+                .isActive(true)
+                .build();
+    }
+
+    // ==================== Due Selection Tests ====================
+
+    private ScheduledReport createScheduledReport(LocalDateTime nextRunAt) {
+        return ScheduledReport.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .reportDefinitionId(UUID.randomUUID())
+                .scheduleName("Test Report")
+                .frequency(Frequency.DAILY)
+                .timeOfDay(LocalTime.of(9, 0))
+                .isActive(true)
+                .nextRunAt(nextRunAt)
+                .recipients("[\"test@example.com\"]")
+                .parameters("{\"reportType\":\"ANALYTICS\"}")
+                .build();
+    }
+
+    // ==================== markAsExecuted Tests ====================
 
     @Nested
     @DisplayName("nextRunAt Calculation Tests")
@@ -282,7 +308,7 @@ class ScheduledReportServiceTest {
         }
     }
 
-    // ==================== Due Selection Tests ====================
+    // ==================== ReportDefinitionId Resolution Tests ====================
 
     @Nested
     @DisplayName("Due Selection Tests")
@@ -337,7 +363,7 @@ class ScheduledReportServiceTest {
         }
     }
 
-    // ==================== markAsExecuted Tests ====================
+    // ==================== Toggle Status Tests ====================
 
     @Nested
     @DisplayName("markAsExecuted Tests")
@@ -462,7 +488,7 @@ class ScheduledReportServiceTest {
         }
     }
 
-    // ==================== ReportDefinitionId Resolution Tests ====================
+    // ==================== Helper Methods ====================
 
     @Nested
     @DisplayName("ReportDefinitionId Resolution Tests")
@@ -587,8 +613,6 @@ class ScheduledReportServiceTest {
         }
     }
 
-    // ==================== Toggle Status Tests ====================
-
     @Nested
     @DisplayName("Toggle Status Tests")
     class ToggleStatusTests {
@@ -672,36 +696,5 @@ class ScheduledReportServiceTest {
             // nextRunAt should remain unchanged when deactivating
             assertThat(saved.getNextRunAt()).isEqualTo(originalNextRun);
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private ScheduledReportRequest createRequest(Frequency frequency, Integer dayOfWeek,
-                                                  Integer dayOfMonth, LocalTime timeOfDay) {
-        return ScheduledReportRequest.builder()
-                .scheduleName("Test Report")
-                .reportType("ANALYTICS")
-                .frequency(frequency)
-                .dayOfWeek(dayOfWeek)
-                .dayOfMonth(dayOfMonth)
-                .timeOfDay(timeOfDay)
-                .recipients(List.of("test@example.com"))
-                .isActive(true)
-                .build();
-    }
-
-    private ScheduledReport createScheduledReport(LocalDateTime nextRunAt) {
-        return ScheduledReport.builder()
-                .id(UUID.randomUUID())
-                .tenantId(tenantId)
-                .reportDefinitionId(UUID.randomUUID())
-                .scheduleName("Test Report")
-                .frequency(Frequency.DAILY)
-                .timeOfDay(LocalTime.of(9, 0))
-                .isActive(true)
-                .nextRunAt(nextRunAt)
-                .recipients("[\"test@example.com\"]")
-                .parameters("{\"reportType\":\"ANALYTICS\"}")
-                .build();
     }
 }

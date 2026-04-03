@@ -258,8 +258,8 @@ class EncryptedStringConverterTest {
 
             // Try to decrypt with key 2 (all 1s instead of all 0s)
             String differentKey = Base64.getEncoder().encodeToString(new byte[]{
-                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-                    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             });
             setEnv("ENCRYPTION_KEY", differentKey);
             EncryptedStringConverter converterB = new EncryptedStringConverter();

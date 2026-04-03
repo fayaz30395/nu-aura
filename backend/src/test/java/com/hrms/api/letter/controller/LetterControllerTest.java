@@ -47,61 +47,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("LetterController Unit Tests")
 class LetterControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private LetterService letterService;
-
-    @MockitoBean
-    private LetterPdfService letterPdfService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private TenantFilter tenantFilter;
-
-    @MockitoBean
-    private RateLimitingFilter rateLimitingFilter;
-
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
-    @MockitoBean
-    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-    @MockitoBean
-    private ApiKeyService apiKeyService;
-
-    @MockitoBean
-    private ScopeContextService scopeContextService;
-
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID TEMPLATE_ID = UUID.randomUUID();
     private static final UUID LETTER_ID = UUID.randomUUID();
     private static final UUID GENERATED_BY = UUID.randomUUID();
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private LetterService letterService;
+    @MockitoBean
+    private LetterPdfService letterPdfService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private ScopeContextService scopeContextService;
     private MockedStatic<SecurityContext> securityContextMock;
-
     private LetterTemplateResponse sampleTemplateResponse;
     private GeneratedLetterResponse sampleLetterResponse;
 
@@ -136,6 +112,14 @@ class LetterControllerTest {
     @AfterEach
     void tearDown() {
         securityContextMock.close();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     // ==================== Template Endpoints ====================

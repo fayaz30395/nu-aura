@@ -33,20 +33,17 @@ import static org.mockito.Mockito.*;
 @DisplayName("TimeTrackingService Tests")
 class TimeTrackingServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private TimeEntryRepository timeEntryRepository;
-
     @InjectMocks
     private TimeTrackingService timeTrackingService;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID entryId;
     private UUID projectId;
     private TimeEntry testTimeEntry;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-    private static MockedStatic<SecurityContext> securityContextMock;
 
     @BeforeAll
     static void setUpClass() {

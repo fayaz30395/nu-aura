@@ -34,10 +34,10 @@ class JwtTokenProviderTest {
     // 48-char secret → 48 bytes → well above the 32-byte HMAC-SHA256 minimum
     private static final String VALID_SECRET =
             "nu-aura-test-secret-key-minimum-48-bytes-xxxxxxxxxxx";
-    private static final long   EXPIRATION_MS        = 3_600_000L; // 1 hour
-    private static final long   REFRESH_EXPIRATION_MS = 86_400_000L;
-    private static final String ISSUER    = "nu-aura";
-    private static final String AUDIENCE  = "nu-aura-api";
+    private static final long EXPIRATION_MS = 3_600_000L; // 1 hour
+    private static final long REFRESH_EXPIRATION_MS = 86_400_000L;
+    private static final String ISSUER = "nu-aura";
+    private static final String AUDIENCE = "nu-aura-api";
 
     @Mock
     private TokenBlacklistService tokenBlacklistService;
@@ -65,7 +65,9 @@ class JwtTokenProviderTest {
         return Keys.hmacShaKeyFor(VALID_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    /** Build a minimal valid access token with correct issuer + audience. */
+    /**
+     * Build a minimal valid access token with correct issuer + audience.
+     */
     private String buildValidToken(UUID userId, UUID tenantId) {
         Date now = new Date();
         return Jwts.builder()
@@ -83,7 +85,9 @@ class JwtTokenProviderTest {
                 .compact();
     }
 
-    /** Build a token without any issuer claim. */
+    /**
+     * Build a token without any issuer claim.
+     */
     private String buildTokenWithoutIssuer(UUID userId, UUID tenantId) {
         Date now = new Date();
         return Jwts.builder()
@@ -100,7 +104,9 @@ class JwtTokenProviderTest {
                 .compact();
     }
 
-    /** Build a token with a wrong issuer. */
+    /**
+     * Build a token with a wrong issuer.
+     */
     private String buildTokenWithWrongIssuer(UUID userId, UUID tenantId) {
         Date now = new Date();
         return Jwts.builder()
@@ -117,7 +123,9 @@ class JwtTokenProviderTest {
                 .compact();
     }
 
-    /** Build a token with the correct issuer but wrong audience. */
+    /**
+     * Build a token with the correct issuer but wrong audience.
+     */
     private String buildTokenWithWrongAudience(UUID userId, UUID tenantId) {
         Date now = new Date();
         return Jwts.builder()
@@ -134,7 +142,9 @@ class JwtTokenProviderTest {
                 .compact();
     }
 
-    /** Build an already-expired token. */
+    /**
+     * Build an already-expired token.
+     */
     private String buildExpiredToken(UUID userId, UUID tenantId) {
         Date past = new Date(System.currentTimeMillis() - 10_000);
         return Jwts.builder()
@@ -354,7 +364,7 @@ class JwtTokenProviderTest {
         @Test
         @DisplayName("getUsernameFromToken returns subject")
         void getUsernameFromTokenReturnsSubject() {
-            UUID userId   = UUID.randomUUID();
+            UUID userId = UUID.randomUUID();
             UUID tenantId = UUID.randomUUID();
             Date now = new Date();
             String token = Jwts.builder()
@@ -403,9 +413,9 @@ class JwtTokenProviderTest {
         @Test
         @DisplayName("generateImpersonationToken produces a valid, accepted token")
         void impersonationTokenIsValid() {
-            UUID adminId       = UUID.randomUUID();
-            UUID targetTenant  = UUID.randomUUID();
-            Set<String> roles  = Set.of("SUPER_ADMIN");
+            UUID adminId = UUID.randomUUID();
+            UUID targetTenant = UUID.randomUUID();
+            Set<String> roles = Set.of("SUPER_ADMIN");
 
             String token = tokenProvider.generateImpersonationToken(
                     adminId, "admin@example.com", targetTenant, roles);
@@ -416,7 +426,7 @@ class JwtTokenProviderTest {
         @Test
         @DisplayName("isImpersonationToken correctly identifies impersonation tokens")
         void isImpersonationTokenReturnsTrueForImpersonationTokens() {
-            UUID adminId      = UUID.randomUUID();
+            UUID adminId = UUID.randomUUID();
             UUID targetTenant = UUID.randomUUID();
 
             String token = tokenProvider.generateImpersonationToken(

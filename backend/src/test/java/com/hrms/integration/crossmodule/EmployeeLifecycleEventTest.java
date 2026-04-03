@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Cross-module business flow test: Employee Lifecycle -> Downstream Module Impact.
- *
+ * <p>
  * Verifies that employee lifecycle events (created, terminated, status changed)
  * carry the correct payload for consuming modules:
  * - Permissions/RBAC (user status, roles)
@@ -35,19 +35,36 @@ import static org.mockito.Mockito.*;
 @DisplayName("Cross-Module: Employee Lifecycle Events -> Downstream Modules")
 class EmployeeLifecycleEventTest {
 
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    private DomainEventPublisher domainEventPublisher;
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID USER_ID = UUID.randomUUID();
     private static final UUID MANAGER_ID = UUID.randomUUID();
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+    private DomainEventPublisher domainEventPublisher;
 
     @BeforeEach
     void setUp() {
         domainEventPublisher = new DomainEventPublisher(applicationEventPublisher);
+    }
+
+    private Employee buildEmployee(Employee.EmployeeStatus status) {
+        User user = new User();
+        user.setId(USER_ID);
+        user.setEmail("john.doe@company.com");
+
+        Employee employee = new Employee();
+        employee.setId(EMPLOYEE_ID);
+        employee.setTenantId(TENANT_ID);
+        employee.setEmployeeCode("EMP001");
+        employee.setFirstName("John");
+        employee.setLastName("Doe");
+        employee.setUser(user);
+        employee.setManagerId(MANAGER_ID);
+        employee.setJoiningDate(LocalDate.now());
+        employee.setEmploymentType(Employee.EmploymentType.FULL_TIME);
+        employee.setStatus(status);
+        return employee;
     }
 
     @Nested
@@ -227,6 +244,8 @@ class EmployeeLifecycleEventTest {
         }
     }
 
+    // ===================== Helper Methods =====================
+
     @Nested
     @DisplayName("Event Publishing Integrity")
     class EventPublishingIntegrity {
@@ -261,26 +280,5 @@ class EmployeeLifecycleEventTest {
             // Then
             assertThat(event1.getEventId()).isNotEqualTo(event2.getEventId());
         }
-    }
-
-    // ===================== Helper Methods =====================
-
-    private Employee buildEmployee(Employee.EmployeeStatus status) {
-        User user = new User();
-        user.setId(USER_ID);
-        user.setEmail("john.doe@company.com");
-
-        Employee employee = new Employee();
-        employee.setId(EMPLOYEE_ID);
-        employee.setTenantId(TENANT_ID);
-        employee.setEmployeeCode("EMP001");
-        employee.setFirstName("John");
-        employee.setLastName("Doe");
-        employee.setUser(user);
-        employee.setManagerId(MANAGER_ID);
-        employee.setJoiningDate(LocalDate.now());
-        employee.setEmploymentType(Employee.EmploymentType.FULL_TIME);
-        employee.setStatus(status);
-        return employee;
     }
 }

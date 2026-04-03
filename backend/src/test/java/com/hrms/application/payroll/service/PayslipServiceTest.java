@@ -30,20 +30,15 @@ import static org.mockito.Mockito.*;
 @DisplayName("PayslipService Tests")
 class PayslipServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private PayslipRepository payslipRepository;
-
     @Mock
     private AuditLogService auditLogService;
-
     @Mock
     private StatutoryDeductionService statutoryDeductionService;
-
     @InjectMocks
     private PayslipService payslipService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID payrollRunId;

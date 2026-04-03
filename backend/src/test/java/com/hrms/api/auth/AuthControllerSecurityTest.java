@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * - Cookie configuration constants
  * - Auth endpoint request validation
  * - Cookie-based token refresh endpoint
- *
+ * <p>
  * Converted from @SpringBootTest to @WebMvcTest to avoid requiring DB/Redis/Kafka.
  */
 @WebMvcTest(AuthController.class)

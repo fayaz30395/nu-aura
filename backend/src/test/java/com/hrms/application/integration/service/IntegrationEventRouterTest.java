@@ -150,7 +150,8 @@ class IntegrationEventRouterTest {
             IntegrationEvent event = buildEvent(EVENT_TYPE);
             Exception connectorException = new RuntimeException("Connector error");
             when(objectMapper.writeValueAsString(any()))
-                    .thenThrow(new JsonProcessingException("Serialization failed") {});
+                    .thenThrow(new JsonProcessingException("Serialization failed") {
+                    });
 
             // When — must not throw
             integrationEventRouter.publishToDlt(event, CONNECTOR_ID, connectorException);

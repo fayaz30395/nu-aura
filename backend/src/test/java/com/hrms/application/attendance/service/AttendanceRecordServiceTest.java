@@ -35,29 +35,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("AttendanceRecordService Tests")
 class AttendanceRecordServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private AttendanceRecordRepository attendanceRecordRepository;
-
     @Mock
     private AttendanceTimeEntryRepository timeEntryRepository;
-
     @Mock
     private AttendanceConfigProperties config;
-
     @Mock
     private EventPublisher eventPublisher;
-
     @Mock
     private ShiftAttendanceService shiftAttendanceService;
-
     @Mock
     private TenantAttendanceConfigService tenantAttendanceConfigService;
-
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private AttendanceRecord attendanceRecord;

@@ -45,27 +45,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("AnnouncementController Unit Tests")
 class AnnouncementControllerTest {
 
+    private static final String BASE_URL = "/api/v1/announcements";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private AnnouncementService announcementService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-
-    private static final String BASE_URL = "/api/v1/announcements";
-
     private UUID announcementId;
     private UUID employeeId;
     private AnnouncementDto announcementDto;

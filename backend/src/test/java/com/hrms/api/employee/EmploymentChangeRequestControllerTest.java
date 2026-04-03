@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.employee.dto.ApproveRejectChangeRequest;
 import com.hrms.api.employee.dto.CreateEmploymentChangeRequest;
 import com.hrms.api.employee.dto.EmploymentChangeRequestDto;
+import com.hrms.domain.employee.EmploymentChangeRequest;
 import com.hrms.application.employee.service.EmploymentChangeRequestService;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.TenantFilter;
@@ -70,7 +71,7 @@ class EmploymentChangeRequestControllerTest {
         requestDto = new EmploymentChangeRequestDto();
         requestDto.setId(requestId);
         requestDto.setEmployeeId(employeeId);
-        requestDto.setStatus("PENDING");
+        requestDto.setStatus(EmploymentChangeRequest.ChangeRequestStatus.PENDING);
     }
 
     @Nested
@@ -183,10 +184,10 @@ class EmploymentChangeRequestControllerTest {
         void shouldApproveChangeRequest() throws Exception {
             EmploymentChangeRequestDto approved = new EmploymentChangeRequestDto();
             approved.setId(requestId);
-            approved.setStatus("APPROVED");
+            approved.setStatus(EmploymentChangeRequest.ChangeRequestStatus.APPROVED);
 
             ApproveRejectChangeRequest approveRequest = new ApproveRejectChangeRequest();
-            approveRequest.setComment("Approved by HR");
+            approveRequest.setComments("Approved by HR");
 
             when(changeRequestService.approveChangeRequest(eq(requestId), any(ApproveRejectChangeRequest.class)))
                     .thenReturn(approved);
@@ -205,7 +206,7 @@ class EmploymentChangeRequestControllerTest {
         void shouldApproveChangeRequestWithoutBody() throws Exception {
             EmploymentChangeRequestDto approved = new EmploymentChangeRequestDto();
             approved.setId(requestId);
-            approved.setStatus("APPROVED");
+            approved.setStatus(EmploymentChangeRequest.ChangeRequestStatus.APPROVED);
 
             when(changeRequestService.approveChangeRequest(eq(requestId), any(ApproveRejectChangeRequest.class)))
                     .thenReturn(approved);
@@ -221,10 +222,10 @@ class EmploymentChangeRequestControllerTest {
         void shouldRejectChangeRequest() throws Exception {
             EmploymentChangeRequestDto rejected = new EmploymentChangeRequestDto();
             rejected.setId(requestId);
-            rejected.setStatus("REJECTED");
+            rejected.setStatus(EmploymentChangeRequest.ChangeRequestStatus.REJECTED);
 
             ApproveRejectChangeRequest rejectRequest = new ApproveRejectChangeRequest();
-            rejectRequest.setComment("Does not meet policy requirements");
+            rejectRequest.setComments("Does not meet policy requirements");
 
             when(changeRequestService.rejectChangeRequest(eq(requestId), any(ApproveRejectChangeRequest.class)))
                     .thenReturn(rejected);
@@ -243,7 +244,7 @@ class EmploymentChangeRequestControllerTest {
         void shouldCancelChangeRequest() throws Exception {
             EmploymentChangeRequestDto cancelled = new EmploymentChangeRequestDto();
             cancelled.setId(requestId);
-            cancelled.setStatus("CANCELLED");
+            cancelled.setStatus(EmploymentChangeRequest.ChangeRequestStatus.CANCELLED);
 
             when(changeRequestService.cancelChangeRequest(requestId)).thenReturn(cancelled);
 

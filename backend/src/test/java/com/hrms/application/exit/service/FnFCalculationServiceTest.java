@@ -34,29 +34,23 @@ import static org.mockito.Mockito.*;
 @DisplayName("FnFCalculationService Tests")
 class FnFCalculationServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private FullAndFinalSettlementRepository fnfRepository;
-
     @Mock
     private ExitProcessRepository exitProcessRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private SalaryStructureRepository salaryStructureRepository;
-
     @InjectMocks
     private FnFCalculationService fnfCalculationService;
-
     private UUID tenantId;
     private UUID exitProcessId;
     private UUID employeeId;
     private ExitProcess exitProcess;
     private Employee employee;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-    private static MockedStatic<SecurityContext> securityContextMock;
 
     @BeforeAll
     static void setUpClass() {

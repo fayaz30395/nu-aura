@@ -32,29 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class DashboardControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private DashboardService dashboardService;
-
     @MockitoBean
     private JwtTokenProvider tokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private EmployeeRepository employeeRepository;
-
     private DashboardMetricsResponse mockResponse;
     private UUID tenantId;
 
@@ -90,9 +77,6 @@ class DashboardControllerTest {
             verify(dashboardService, times(1)).getDashboardMetrics();
         }
     }
-
-    // Note: Authorization tests (401/403) are covered by integration tests
-    // and omitted here due to @WebMvcTest slice testing limitations
 
     private DashboardMetricsResponse createMockDashboardMetrics() {
         // Employee Metrics
@@ -175,5 +159,16 @@ class DashboardControllerTest {
                 .departmentMetrics(departmentMetrics)
                 .recentActivities(recentActivities)
                 .build();
+    }
+
+    // Note: Authorization tests (401/403) are covered by integration tests
+    // and omitted here due to @WebMvcTest slice testing limitations
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

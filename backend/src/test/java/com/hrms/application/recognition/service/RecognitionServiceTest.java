@@ -33,35 +33,25 @@ import static org.mockito.Mockito.*;
 @DisplayName("RecognitionService Tests")
 class RecognitionServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private RecognitionRepository recognitionRepository;
-
     @Mock
     private RecognitionBadgeRepository badgeRepository;
-
     @Mock
     private EmployeePointsRepository pointsRepository;
-
     @Mock
     private MilestoneRepository milestoneRepository;
-
     @Mock
     private RecognitionReactionRepository reactionRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private WallService wallService;
-
     @Mock
     private PostReactionRepository postReactionRepository;
-
     @InjectMocks
     private RecognitionService recognitionService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID giverId;
     private UUID receiverId;

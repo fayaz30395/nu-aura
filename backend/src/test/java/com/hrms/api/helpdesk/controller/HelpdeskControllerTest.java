@@ -41,27 +41,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("HelpdeskController Unit Tests")
 class HelpdeskControllerTest {
 
+    private static final String BASE_URL = "/api/v1/helpdesk";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private HelpdeskService helpdeskService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-
-    private static final String BASE_URL = "/api/v1/helpdesk";
-
     private UUID ticketId;
     private UUID employeeId;
     private UUID assigneeId;

@@ -39,18 +39,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("CompOffController Unit Tests")
 class CompOffControllerTest {
 
-    @Mock
-    private CompOffService compOffService;
-
-    @InjectMocks
-    private CompOffController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID REQUEST_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID REVIEWER_ID = UUID.randomUUID();
+    @Mock
+    private CompOffService compOffService;
+    @InjectMocks
+    private CompOffController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

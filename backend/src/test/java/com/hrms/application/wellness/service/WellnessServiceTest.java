@@ -29,18 +29,23 @@ import static org.mockito.Mockito.*;
 @DisplayName("WellnessService Tests")
 class WellnessServiceTest {
 
-    @Mock private WellnessProgramRepository programRepository;
-    @Mock private WellnessChallengeRepository challengeRepository;
-    @Mock private ChallengeParticipantRepository participantRepository;
-    @Mock private HealthLogRepository healthLogRepository;
-    @Mock private WellnessPointsRepository pointsRepository;
-    @Mock private PointsTransactionRepository transactionRepository;
-    @Mock private UserRepository userRepository;
-
+    private static MockedStatic<TenantContext> tenantContextMock;
+    @Mock
+    private WellnessProgramRepository programRepository;
+    @Mock
+    private WellnessChallengeRepository challengeRepository;
+    @Mock
+    private ChallengeParticipantRepository participantRepository;
+    @Mock
+    private HealthLogRepository healthLogRepository;
+    @Mock
+    private WellnessPointsRepository pointsRepository;
+    @Mock
+    private PointsTransactionRepository transactionRepository;
+    @Mock
+    private UserRepository userRepository;
     @InjectMocks
     private WellnessService wellnessService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
     private UUID tenantId;
 
     @BeforeAll
@@ -123,6 +128,21 @@ class WellnessServiceTest {
 
     // ==================== Challenge Management Tests ====================
 
+    @Test
+    @DisplayName("getActiveChallenges should return active challenges")
+    void shouldGetActiveChallenges() {
+        WellnessChallenge challenge = new WellnessChallenge();
+        challenge.setId(UUID.randomUUID());
+        challenge.setName("Active Challenge");
+
+        when(challengeRepository.findActiveChallenges(eq(tenantId), any(LocalDate.class)))
+                .thenReturn(List.of(challenge));
+
+        List<WellnessChallengeDto> result = wellnessService.getActiveChallenges();
+
+        assertThat(result).hasSize(1);
+    }
+
     @Nested
     @DisplayName("createChallenge")
     class CreateChallengeTests {
@@ -170,21 +190,6 @@ class WellnessServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Program not found");
         }
-    }
-
-    @Test
-    @DisplayName("getActiveChallenges should return active challenges")
-    void shouldGetActiveChallenges() {
-        WellnessChallenge challenge = new WellnessChallenge();
-        challenge.setId(UUID.randomUUID());
-        challenge.setName("Active Challenge");
-
-        when(challengeRepository.findActiveChallenges(eq(tenantId), any(LocalDate.class)))
-                .thenReturn(List.of(challenge));
-
-        List<WellnessChallengeDto> result = wellnessService.getActiveChallenges();
-
-        assertThat(result).hasSize(1);
     }
 
     // ==================== Participation Tests ====================

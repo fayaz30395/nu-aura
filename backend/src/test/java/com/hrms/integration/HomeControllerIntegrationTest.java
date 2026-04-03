@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * - Service layer
  * - Repository layer (using test database)
  * - Security configuration
- *
+ * <p>
  * Note: Some tests accept 500 status along with 200 because tenant context
  * may not be properly propagated during integration tests. The key goal is
  * to verify that the endpoints are reachable and properly configured.
@@ -46,13 +46,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(TestSecurityConfig.class)
 class HomeControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     private static final String BASE_URL = "/api/home";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {

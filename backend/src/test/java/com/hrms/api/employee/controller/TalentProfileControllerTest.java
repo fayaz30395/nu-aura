@@ -57,10 +57,11 @@ class TalentProfileControllerTest {
         employeeId = UUID.randomUUID();
         tenantId = UUID.randomUUID();
 
-        talentProfile = new TalentProfileResponse();
-        talentProfile.setEmployeeId(employeeId);
-        talentProfile.setSkills(List.of("Java", "Spring Boot", "PostgreSQL"));
-        talentProfile.setCurrentRole("Senior Developer");
+        talentProfile = TalentProfileResponse.builder()
+                .employeeId(employeeId)
+                .designation("Senior Developer")
+                .skills(List.of())
+                .build();
     }
 
     @Nested

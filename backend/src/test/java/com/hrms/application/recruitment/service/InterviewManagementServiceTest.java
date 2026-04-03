@@ -33,32 +33,23 @@ import static org.mockito.Mockito.*;
 @DisplayName("InterviewManagementService Tests")
 class InterviewManagementServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private InterviewRepository interviewRepository;
-
     @Mock
     private CandidateRepository candidateRepository;
-
     @Mock
     private JobOpeningRepository jobOpeningRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private DataScopeService dataScopeService;
-
     @Mock
     private AuditLogService auditLogService;
-
     @Mock
     private GoogleMeetService googleMeetService;
-
     @InjectMocks
     private InterviewManagementService interviewManagementService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID candidateId;
     private UUID jobOpeningId;

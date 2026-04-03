@@ -33,29 +33,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("LeaveRequestService Tests")
 class LeaveRequestServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
-
     @Mock
     private LeaveBalanceService leaveBalanceService;
-
     @Mock
     private WebSocketNotificationService webSocketNotificationService;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
-
     @Mock
     private DomainEventPublisher domainEventPublisher;
-
     @InjectMocks
     private LeaveRequestService leaveRequestService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID leaveTypeId;

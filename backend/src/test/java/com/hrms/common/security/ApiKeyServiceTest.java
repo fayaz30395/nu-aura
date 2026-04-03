@@ -35,15 +35,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ApiKeyServiceTest {
 
+    private static final String API_KEY_PREFIX = "hrms_";
     @Mock
     private ApiKeyRepository apiKeyRepository;
-
     @Mock
     private PasswordEncoder passwordEncoder;
-
     private ApiKeyService apiKeyService;
-
-    private static final String API_KEY_PREFIX = "hrms_";
 
     @BeforeEach
     void setUp() {
@@ -93,7 +90,7 @@ class ApiKeyServiceTest {
             String keyPrefix = "12345678";
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))
-                .thenReturn(Collections.emptyList());
+                    .thenReturn(Collections.emptyList());
 
             apiKeyService.validateApiKey(rawKey, "127.0.0.1");
 
@@ -112,21 +109,21 @@ class ApiKeyServiceTest {
             UUID tenantId = UUID.randomUUID();
 
             ApiKey mockApiKey = ApiKey.builder()
-                .name("Test Key")
-                .keyHash("$2a$10$hashedvalue")
-                .keyPrefix(keyPrefix)
-                .isActive(true)
-                .scopes(Set.of("read"))
-                .build();
+                    .name("Test Key")
+                    .keyHash("$2a$10$hashedvalue")
+                    .keyPrefix(keyPrefix)
+                    .isActive(true)
+                    .scopes(Set.of("read"))
+                    .build();
             mockApiKey.setId(UUID.randomUUID());
             mockApiKey.setTenantId(tenantId);
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))
-                .thenReturn(List.of(mockApiKey));
+                    .thenReturn(List.of(mockApiKey));
             when(passwordEncoder.matches(keyWithoutPrefix, mockApiKey.getKeyHash()))
-                .thenReturn(true);
+                    .thenReturn(true);
             when(apiKeyRepository.save(any(ApiKey.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             Optional<ApiKey> result = apiKeyService.validateApiKey(rawKey, "127.0.0.1");
 
@@ -147,7 +144,7 @@ class ApiKeyServiceTest {
             String keyPrefix = "12345678";
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))
-                .thenReturn(Collections.emptyList());
+                    .thenReturn(Collections.emptyList());
 
             Optional<ApiKey> result = apiKeyService.validateApiKey(rawKey, "127.0.0.1");
 
@@ -163,18 +160,18 @@ class ApiKeyServiceTest {
             String keyPrefix = "12345678";
 
             ApiKey mockApiKey = ApiKey.builder()
-                .name("Test Key")
-                .keyHash("$2a$10$differenthash")
-                .keyPrefix(keyPrefix)
-                .isActive(true)
-                .build();
+                    .name("Test Key")
+                    .keyHash("$2a$10$differenthash")
+                    .keyPrefix(keyPrefix)
+                    .isActive(true)
+                    .build();
             mockApiKey.setId(UUID.randomUUID());
             mockApiKey.setTenantId(UUID.randomUUID());
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))
-                .thenReturn(List.of(mockApiKey));
+                    .thenReturn(List.of(mockApiKey));
             when(passwordEncoder.matches(keyWithoutPrefix, mockApiKey.getKeyHash()))
-                .thenReturn(false);
+                    .thenReturn(false);
 
             Optional<ApiKey> result = apiKeyService.validateApiKey(rawKey, "127.0.0.1");
 
@@ -193,31 +190,31 @@ class ApiKeyServiceTest {
             UUID tenant2 = UUID.randomUUID();
 
             ApiKey wrongKey = ApiKey.builder()
-                .name("Wrong Key")
-                .keyHash("$2a$10$wronghash")
-                .keyPrefix(keyPrefix)
-                .isActive(true)
-                .build();
+                    .name("Wrong Key")
+                    .keyHash("$2a$10$wronghash")
+                    .keyPrefix(keyPrefix)
+                    .isActive(true)
+                    .build();
             wrongKey.setId(UUID.randomUUID());
             wrongKey.setTenantId(tenant1);
 
             ApiKey correctKey = ApiKey.builder()
-                .name("Correct Key")
-                .keyHash("$2a$10$correcthash")
-                .keyPrefix(keyPrefix)
-                .isActive(true)
-                .build();
+                    .name("Correct Key")
+                    .keyHash("$2a$10$correcthash")
+                    .keyPrefix(keyPrefix)
+                    .isActive(true)
+                    .build();
             correctKey.setId(UUID.randomUUID());
             correctKey.setTenantId(tenant2);
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))
-                .thenReturn(List.of(wrongKey, correctKey));
+                    .thenReturn(List.of(wrongKey, correctKey));
             when(passwordEncoder.matches(keyWithoutPrefix, wrongKey.getKeyHash()))
-                .thenReturn(false);
+                    .thenReturn(false);
             when(passwordEncoder.matches(keyWithoutPrefix, correctKey.getKeyHash()))
-                .thenReturn(true);
+                    .thenReturn(true);
             when(apiKeyRepository.save(any(ApiKey.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             Optional<ApiKey> result = apiKeyService.validateApiKey(rawKey, "127.0.0.1");
 
@@ -239,19 +236,19 @@ class ApiKeyServiceTest {
 
             when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$encoded");
             when(apiKeyRepository.save(any(ApiKey.class)))
-                .thenAnswer(invocation -> {
-                    ApiKey key = invocation.getArgument(0);
-                    key.setId(UUID.randomUUID());
-                    return key;
-                });
+                    .thenAnswer(invocation -> {
+                        ApiKey key = invocation.getArgument(0);
+                        key.setId(UUID.randomUUID());
+                        return key;
+                    });
 
             ApiKeyService.ApiKeyCreationResult result = apiKeyService.createApiKey(
-                "Test Key",
-                "Test Description",
-                Set.of("read", "write"),
-                LocalDateTime.now().plusDays(30),
-                tenantId,
-                createdBy
+                    "Test Key",
+                    "Test Description",
+                    Set.of("read", "write"),
+                    LocalDateTime.now().plusDays(30),
+                    tenantId,
+                    createdBy
             );
 
             assertThat(result.rawKey()).startsWith(API_KEY_PREFIX);
@@ -276,16 +273,16 @@ class ApiKeyServiceTest {
             UUID tenantId = UUID.randomUUID();
 
             ApiKey mockApiKey = ApiKey.builder()
-                .name("Test Key")
-                .isActive(true)
-                .build();
+                    .name("Test Key")
+                    .isActive(true)
+                    .build();
             mockApiKey.setId(keyId);
             mockApiKey.setTenantId(tenantId);
 
             when(apiKeyRepository.findByIdAndTenantId(keyId, tenantId))
-                .thenReturn(Optional.of(mockApiKey));
+                    .thenReturn(Optional.of(mockApiKey));
             when(apiKeyRepository.save(any(ApiKey.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             apiKeyService.revokeApiKey(keyId, tenantId);
 
@@ -304,13 +301,13 @@ class ApiKeyServiceTest {
             UUID tenantId = UUID.randomUUID();
 
             ApiKey mockApiKey = ApiKey.builder()
-                .name("Test Key")
-                .build();
+                    .name("Test Key")
+                    .build();
             mockApiKey.setId(keyId);
             mockApiKey.setTenantId(tenantId);
 
             when(apiKeyRepository.findByIdAndTenantId(keyId, tenantId))
-                .thenReturn(Optional.of(mockApiKey));
+                    .thenReturn(Optional.of(mockApiKey));
 
             apiKeyService.deleteApiKey(keyId, tenantId);
 

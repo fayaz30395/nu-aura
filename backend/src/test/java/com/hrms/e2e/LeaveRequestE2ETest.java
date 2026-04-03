@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+
 import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,39 +50,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LeaveRequestE2ETest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private LeaveRequestService leaveRequestService;
-
-    @Autowired
-    private LeaveBalanceService leaveBalanceService;
-
-    @Autowired
-    private LeaveRequestRepository leaveRequestRepository;
-
-    @Autowired
-    private LeaveTypeRepository leaveTypeRepository;
-
-    @Autowired
-    private LeaveBalanceRepository leaveBalanceRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     private static final String BASE_URL = "/api/v1/leave-requests";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_MANAGER_ID = UUID.fromString("222e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private LeaveRequestService leaveRequestService;
+    @Autowired
+    private LeaveBalanceService leaveBalanceService;
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private LeaveTypeRepository leaveTypeRepository;
+    @Autowired
+    private LeaveBalanceRepository leaveBalanceRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private UserRepository userRepository;
     private UUID testLeaveTypeId;
     private UUID testEmployeeId;
     private UUID testUserId;

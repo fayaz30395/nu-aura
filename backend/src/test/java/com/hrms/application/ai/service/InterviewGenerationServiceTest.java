@@ -32,26 +32,19 @@ import static org.mockito.Mockito.*;
 @DisplayName("InterviewGenerationService Tests")
 class InterviewGenerationServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private CandidateRepository candidateRepository;
-
     @Mock
     private JobOpeningRepository jobOpeningRepository;
-
     @Mock
     private InterviewRepository interviewRepository;
-
     @Mock
     private AIRecruitmentHelper aiHelper;
-
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
-
     @InjectMocks
     private InterviewGenerationService interviewGenerationService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID jobOpeningId;
     private UUID candidateId;

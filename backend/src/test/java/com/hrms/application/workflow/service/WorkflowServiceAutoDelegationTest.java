@@ -42,18 +42,30 @@ class WorkflowServiceAutoDelegationTest {
     private static final UUID DELEGATE_ID = UUID.fromString("aa0e8400-e29b-41d4-a716-446655440005");
     private static final UUID SUPER_ADMIN_ID = UUID.fromString("bb0e8400-e29b-41d4-a716-446655440006");
 
-    @Mock private WorkflowDefinitionRepository workflowDefinitionRepository;
-    @Mock private ApprovalStepRepository approvalStepRepository;
-    @Mock private WorkflowExecutionRepository workflowExecutionRepository;
-    @Mock private StepExecutionRepository stepExecutionRepository;
-    @Mock private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock private WorkflowRuleRepository workflowRuleRepository;
-    @Mock private EmployeeRepository employeeRepository;
-    @Mock private DepartmentRepository departmentRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private DomainEventPublisher domainEventPublisher;
-    @Mock private AuditLogService auditLogService;
-    @Mock private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
+    @Mock
+    private ApprovalStepRepository approvalStepRepository;
+    @Mock
+    private WorkflowExecutionRepository workflowExecutionRepository;
+    @Mock
+    private StepExecutionRepository stepExecutionRepository;
+    @Mock
+    private ApprovalDelegateRepository approvalDelegateRepository;
+    @Mock
+    private WorkflowRuleRepository workflowRuleRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
+    @Mock
+    private AuditLogService auditLogService;
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
 
     private WorkflowService workflowService;
     private MockedStatic<TenantContext> tenantContextMock;

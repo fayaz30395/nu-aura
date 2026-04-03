@@ -43,57 +43,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("SamlConfigController Tests")
 class SamlConfigControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private SamlConfigurationService samlConfigService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private TenantFilter tenantFilter;
-
-    @MockitoBean
-    private RateLimitingFilter rateLimitingFilter;
-
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
-    @MockitoBean
-    private ScopeContextService scopeContextService;
-
-    @MockitoBean
-    private EmployeeRepository employeeRepository;
-
-    @MockitoBean
-    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-    @MockitoBean
-    private ApiKeyService apiKeyService;
-
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
     private static final UUID CONFIG_ID = UUID.randomUUID();
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private SamlConfigurationService samlConfigService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ScopeContextService scopeContextService;
+    @MockitoBean
+    private EmployeeRepository employeeRepository;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
     private MockedStatic<TenantContext> tenantContextMock;
     private MockedStatic<SecurityContext> securityContextMock;
 
@@ -144,8 +122,6 @@ class SamlConfigControllerTest {
                 .build();
     }
 
-    // ==================== GET /config ====================
-
     @Test
     @DisplayName("GET /api/v1/auth/saml/config returns SAML config for tenant")
     void getSamlConfig_ReturnsConfig() throws Exception {
@@ -160,7 +136,7 @@ class SamlConfigControllerTest {
                 .andExpect(jsonPath("$.isActive").value(true));
     }
 
-    // ==================== POST /config ====================
+    // ==================== GET /config ====================
 
     @Test
     @DisplayName("POST /api/v1/auth/saml/config creates new SAML config")
@@ -175,6 +151,8 @@ class SamlConfigControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Okta Production"));
     }
+
+    // ==================== POST /config ====================
 
     @Test
     @DisplayName("POST /api/v1/auth/saml/config validates required fields")
@@ -191,8 +169,6 @@ class SamlConfigControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ==================== PUT /config ====================
-
     @Test
     @DisplayName("PUT /api/v1/auth/saml/config updates SAML config")
     void updateSamlConfig_ReturnsUpdated() throws Exception {
@@ -207,7 +183,7 @@ class SamlConfigControllerTest {
                 .andExpect(jsonPath("$.name").value("Okta Production"));
     }
 
-    // ==================== DELETE /config ====================
+    // ==================== PUT /config ====================
 
     @Test
     @DisplayName("DELETE /api/v1/auth/saml/config soft-deletes config")
@@ -221,7 +197,7 @@ class SamlConfigControllerTest {
         verify(samlConfigService).deleteSamlConfig(TENANT_ID);
     }
 
-    // ==================== POST /test ====================
+    // ==================== DELETE /config ====================
 
     @Test
     @DisplayName("POST /api/v1/auth/saml/test returns connection test results")
@@ -246,7 +222,7 @@ class SamlConfigControllerTest {
                 .andExpect(jsonPath("$.metadataReachable").value(true));
     }
 
-    // ==================== GET /metadata ====================
+    // ==================== POST /test ====================
 
     @Test
     @DisplayName("GET /api/v1/auth/saml/metadata returns SP metadata XML")
@@ -261,7 +237,7 @@ class SamlConfigControllerTest {
                 .andExpect(content().string(metadataXml));
     }
 
-    // ==================== GET /providers ====================
+    // ==================== GET /metadata ====================
 
     @Test
     @DisplayName("GET /api/v1/auth/saml/providers returns all providers")
@@ -273,5 +249,15 @@ class SamlConfigControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Okta Production"));
+    }
+
+    // ==================== GET /providers ====================
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

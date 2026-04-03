@@ -46,47 +46,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ExpenseClaimController Integration Tests")
 class ExpenseClaimControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private ExpenseClaimService expenseClaimService;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     private UUID claimId;
     private UUID employeeId;
     private ExpenseClaimResponse claimResponse;
@@ -109,6 +90,14 @@ class ExpenseClaimControllerTest {
                 .build();
     }
 
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
+
     @Nested
     @DisplayName("Expense Claim Creation Tests")
     class ClaimCreationTests {
@@ -128,8 +117,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(claimResponse);
 
             mockMvc.perform(post("/api/v1/expenses/employees/{employeeId}", employeeId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.description").value("Business Trip Expenses"))
@@ -144,8 +133,8 @@ class ExpenseClaimControllerTest {
             ExpenseClaimRequest request = new ExpenseClaimRequest();
 
             mockMvc.perform(post("/api/v1/expenses/employees/{employeeId}", employeeId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -170,8 +159,8 @@ class ExpenseClaimControllerTest {
                         .thenReturn(response);
 
                 mockMvc.perform(post("/api/v1/expenses/employees/{employeeId}", employeeId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isCreated());
             }
         }
@@ -201,8 +190,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/expenses/{claimId}", claimId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.description").value("Updated Business Trip Expenses"))
                     .andExpect(jsonPath("$.amount").value(2000.0));
@@ -216,8 +205,8 @@ class ExpenseClaimControllerTest {
             ExpenseClaimRequest request = new ExpenseClaimRequest();
 
             mockMvc.perform(put("/api/v1/expenses/{claimId}", claimId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -287,7 +276,7 @@ class ExpenseClaimControllerTest {
                     .thenReturn(rejectedResponse);
 
             mockMvc.perform(post("/api/v1/expenses/{claimId}/reject", claimId)
-                    .param("reason", "Insufficient documentation"))
+                            .param("reason", "Insufficient documentation"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("REJECTED"));
 
@@ -306,7 +295,7 @@ class ExpenseClaimControllerTest {
                     .thenReturn(rejectedResponse);
 
             mockMvc.perform(post("/api/v1/expenses/{claimId}/reject", claimId)
-                    .param("reason", reason))
+                            .param("reason", reason))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("REJECTED"));
 
@@ -330,8 +319,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(paidResponse);
 
             mockMvc.perform(post("/api/v1/expenses/{claimId}/pay", claimId)
-                    .param("paymentDate", paymentDate.toString())
-                    .param("paymentReference", "TRANSFER-12345"))
+                            .param("paymentDate", paymentDate.toString())
+                            .param("paymentReference", "TRANSFER-12345"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("PAID"));
 
@@ -457,8 +446,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/expenses/date-range")
-                    .param("startDate", startDate.toString())
-                    .param("endDate", endDate.toString()))
+                            .param("startDate", startDate.toString())
+                            .param("endDate", endDate.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)));
 
@@ -487,8 +476,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(summary);
 
             mockMvc.perform(get("/api/v1/expenses/summary")
-                    .param("startDate", startDate.toString())
-                    .param("endDate", endDate.toString()))
+                            .param("startDate", startDate.toString())
+                            .param("endDate", endDate.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.totalAmount").value(1500.0))
                     .andExpect(jsonPath("$.claimCount").value(1));
@@ -531,8 +520,8 @@ class ExpenseClaimControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/expenses")
-                    .param("page", "1")
-                    .param("size", "10"))
+                            .param("page", "1")
+                            .param("size", "10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.totalElements").value(50));
 

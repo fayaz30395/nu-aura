@@ -18,16 +18,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("ApprovalService Tests")
 class ApprovalServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private StepExecutionRepository stepExecutionRepository;
-
     @InjectMocks
     private ApprovalService approvalService;
-
     private UUID tenantId;
     private UUID userId;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeAll
     static void setUpClass() {

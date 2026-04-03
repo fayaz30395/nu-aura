@@ -39,18 +39,14 @@ import static org.mockito.Mockito.*;
 @DisplayName("TravelService Tests")
 class TravelServiceTest {
 
-    @Mock
-    private TravelRequestRepository travelRequestRepository;
-
-    @Mock
-    private WorkflowService workflowService;
-
-    @InjectMocks
-    private TravelService travelService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private TravelRequestRepository travelRequestRepository;
+    @Mock
+    private WorkflowService workflowService;
+    @InjectMocks
+    private TravelService travelService;
     private UUID tenantId;
     private UUID employeeId;
     private UUID userId;

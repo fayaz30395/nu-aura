@@ -44,27 +44,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("NotificationController Unit Tests")
 class NotificationControllerTest {
 
+    private static final String BASE_URL = "/api/v1/notifications";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private NotificationService notificationService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-
-    private static final String BASE_URL = "/api/v1/notifications";
-
     private UUID notificationId;
     private UUID userId;
     private NotificationResponse notificationResponse;

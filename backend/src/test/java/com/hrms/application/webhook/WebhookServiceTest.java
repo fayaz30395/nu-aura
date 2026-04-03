@@ -25,14 +25,12 @@ import static org.mockito.Mockito.*;
 @DisplayName("WebhookService Tests")
 class WebhookServiceTest {
 
-    @Mock
-    private WebhookRepository webhookRepository;
-
-    @InjectMocks
-    private WebhookService webhookService;
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID WEBHOOK_ID = UUID.randomUUID();
+    @Mock
+    private WebhookRepository webhookRepository;
+    @InjectMocks
+    private WebhookService webhookService;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +40,19 @@ class WebhookServiceTest {
     @AfterEach
     void tearDown() {
         TenantContext.clear();
+    }
+
+    private Webhook createWebhook(String name, WebhookStatus status) {
+        Webhook webhook = new Webhook();
+        webhook.setId(WEBHOOK_ID);
+        webhook.setTenantId(TENANT_ID);
+        webhook.setName(name);
+        webhook.setUrl("https://example.com/webhook/" + name.toLowerCase().replace(" ", "-"));
+        webhook.setSecret("test-secret-" + UUID.randomUUID());
+        webhook.setStatus(status);
+        webhook.setEvents(Set.of(WebhookEventType.EMPLOYEE_CREATED));
+        webhook.setConsecutiveFailures(0);
+        return webhook;
     }
 
     @Nested
@@ -324,18 +335,5 @@ class WebhookServiceTest {
             assertThat(result).isEmpty();
             verify(webhookRepository, never()).save(any());
         }
-    }
-
-    private Webhook createWebhook(String name, WebhookStatus status) {
-        Webhook webhook = new Webhook();
-        webhook.setId(WEBHOOK_ID);
-        webhook.setTenantId(TENANT_ID);
-        webhook.setName(name);
-        webhook.setUrl("https://example.com/webhook/" + name.toLowerCase().replace(" ", "-"));
-        webhook.setSecret("test-secret-" + UUID.randomUUID());
-        webhook.setStatus(status);
-        webhook.setEvents(Set.of(WebhookEventType.EMPLOYEE_CREATED));
-        webhook.setConsecutiveFailures(0);
-        return webhook;
     }
 }

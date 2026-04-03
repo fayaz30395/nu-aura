@@ -57,27 +57,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("TaxDeclarationController Unit Tests")
 class TaxDeclarationControllerTest {
 
+    private static final String BASE_URL = "/api/v1/tax-declarations";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private TaxDeclarationService taxDeclarationService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static final String BASE_URL = "/api/v1/tax-declarations";
-
     private UUID declarationId;
     private UUID employeeId;
     private UUID approverId;

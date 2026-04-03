@@ -44,21 +44,16 @@ import static org.mockito.Mockito.*;
 @DisplayName("ExpenseClaimService Tests")
 class ExpenseClaimServiceTest {
 
-    @Mock
-    private ExpenseClaimRepository expenseClaimRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private DataScopeService dataScopeService;
-
-    @InjectMocks
-    private ExpenseClaimService expenseClaimService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private ExpenseClaimRepository expenseClaimRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DataScopeService dataScopeService;
+    @InjectMocks
+    private ExpenseClaimService expenseClaimService;
     private UUID tenantId;
     private UUID employeeId;
     private UUID claimId;

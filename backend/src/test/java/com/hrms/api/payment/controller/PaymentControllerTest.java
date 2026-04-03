@@ -48,6 +48,30 @@ class PaymentControllerTest {
     @InjectMocks
     private PaymentController paymentController;
 
+    private PaymentTransactionDto buildPaymentRequestDto() {
+        return PaymentTransactionDto.builder()
+                .transactionRef("TXN-TEST-001")
+                .type(PaymentTransaction.PaymentType.PAYROLL)
+                .amount(new BigDecimal("5000.00"))
+                .currency("INR")
+                .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
+                .recipientName("John Doe")
+                .recipientAccountNumber("1234567890")
+                .recipientIfsc("SBIN0001234")
+                .build();
+    }
+
+    private PaymentTransaction buildPaymentTransaction() {
+        return PaymentTransaction.builder()
+                .transactionRef("TXN-TEST-001")
+                .type(PaymentTransaction.PaymentType.PAYROLL)
+                .amount(new BigDecimal("5000.00"))
+                .currency("INR")
+                .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
+                .recipientName("John Doe")
+                .build();
+    }
+
     @Nested
     @DisplayName("initiatePayment")
     class InitiatePaymentTests {
@@ -119,6 +143,8 @@ class PaymentControllerTest {
         }
     }
 
+    // ===================== Helpers =====================
+
     @Nested
     @DisplayName("listPayments")
     class ListPaymentsTests {
@@ -163,31 +189,5 @@ class PaymentControllerTest {
             assertThat(response.getBody()).isEqualTo("Refund initiated successfully");
             verify(paymentFeatureGuard).requirePaymentsEnabled();
         }
-    }
-
-    // ===================== Helpers =====================
-
-    private PaymentTransactionDto buildPaymentRequestDto() {
-        return PaymentTransactionDto.builder()
-                .transactionRef("TXN-TEST-001")
-                .type(PaymentTransaction.PaymentType.PAYROLL)
-                .amount(new BigDecimal("5000.00"))
-                .currency("INR")
-                .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
-                .recipientName("John Doe")
-                .recipientAccountNumber("1234567890")
-                .recipientIfsc("SBIN0001234")
-                .build();
-    }
-
-    private PaymentTransaction buildPaymentTransaction() {
-        return PaymentTransaction.builder()
-                .transactionRef("TXN-TEST-001")
-                .type(PaymentTransaction.PaymentType.PAYROLL)
-                .amount(new BigDecimal("5000.00"))
-                .currency("INR")
-                .provider(PaymentTransaction.PaymentProvider.RAZORPAY)
-                .recipientName("John Doe")
-                .build();
     }
 }

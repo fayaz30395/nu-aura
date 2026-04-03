@@ -45,6 +45,41 @@ class ConnectorRegistryTest {
 
     // ===================== Auto-Discovery Tests =====================
 
+    private void setupConnectorMocks() {
+        ConnectorCapabilities cap1 = new ConnectorCapabilities(
+                Set.of("OFFER_CREATED"),
+                true,
+                false,
+                true,
+                "{}"
+        );
+        ConnectorCapabilities cap2 = new ConnectorCapabilities(
+                Set.of("MESSAGE_SENT"),
+                false,
+                true,
+                false,
+                "{}"
+        );
+        ConnectorCapabilities cap3 = new ConnectorCapabilities(
+                Set.of("SMS_SENT"),
+                false,
+                false,
+                false,
+                "{}"
+        );
+
+        when(mockConnector1.getConnectorId()).thenReturn("docusign");
+        when(mockConnector1.getCapabilities()).thenReturn(cap1);
+
+        when(mockConnector2.getConnectorId()).thenReturn("slack");
+        when(mockConnector2.getCapabilities()).thenReturn(cap2);
+
+        when(mockConnector3.getConnectorId()).thenReturn("twilio");
+        when(mockConnector3.getCapabilities()).thenReturn(cap3);
+    }
+
+    // ===================== Connector Lookup Tests =====================
+
     @Nested
     @DisplayName("Auto-Discovery")
     class AutoDiscoveryTests {
@@ -102,7 +137,7 @@ class ConnectorRegistryTest {
         }
     }
 
-    // ===================== Connector Lookup Tests =====================
+    // ===================== Capabilities Tests =====================
 
     @Nested
     @DisplayName("Connector Lookup")
@@ -188,7 +223,7 @@ class ConnectorRegistryTest {
         }
     }
 
-    // ===================== Capabilities Tests =====================
+    // ===================== Event Type Filtering Tests =====================
 
     @Nested
     @DisplayName("Capabilities Lookup")
@@ -300,7 +335,7 @@ class ConnectorRegistryTest {
         }
     }
 
-    // ===================== Event Type Filtering Tests =====================
+    // ===================== Webhook Support Filtering Tests =====================
 
     @Nested
     @DisplayName("Event Type Filtering")
@@ -387,7 +422,7 @@ class ConnectorRegistryTest {
         }
     }
 
-    // ===================== Webhook Support Filtering Tests =====================
+    // ===================== String Representation Tests =====================
 
     @Nested
     @DisplayName("Webhook Support Filtering")
@@ -457,7 +492,7 @@ class ConnectorRegistryTest {
         }
     }
 
-    // ===================== String Representation Tests =====================
+    // ===================== Helper Methods =====================
 
     @Nested
     @DisplayName("String Representation")
@@ -493,40 +528,5 @@ class ConnectorRegistryTest {
             assertThat(result).contains("ConnectorRegistry");
             assertThat(result).contains("[]");
         }
-    }
-
-    // ===================== Helper Methods =====================
-
-    private void setupConnectorMocks() {
-        ConnectorCapabilities cap1 = new ConnectorCapabilities(
-                Set.of("OFFER_CREATED"),
-                true,
-                false,
-                true,
-                "{}"
-        );
-        ConnectorCapabilities cap2 = new ConnectorCapabilities(
-                Set.of("MESSAGE_SENT"),
-                false,
-                true,
-                false,
-                "{}"
-        );
-        ConnectorCapabilities cap3 = new ConnectorCapabilities(
-                Set.of("SMS_SENT"),
-                false,
-                false,
-                false,
-                "{}"
-        );
-
-        when(mockConnector1.getConnectorId()).thenReturn("docusign");
-        when(mockConnector1.getCapabilities()).thenReturn(cap1);
-
-        when(mockConnector2.getConnectorId()).thenReturn("slack");
-        when(mockConnector2.getCapabilities()).thenReturn(cap2);
-
-        when(mockConnector3.getConnectorId()).thenReturn("twilio");
-        when(mockConnector3.getCapabilities()).thenReturn(cap3);
     }
 }

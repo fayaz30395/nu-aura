@@ -35,15 +35,17 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class StatutoryFilingServiceTest {
 
-    @Mock private StatutoryFilingTemplateRepository templateRepository;
-    @Mock private StatutoryFilingRunRepository filingRunRepository;
-    @Mock private FileStorageService fileStorageService;
-    @Mock private FilingFormatGenerator pfEcrGenerator;
-
-    private StatutoryFilingService service;
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID USER_ID = UUID.randomUUID();
+    @Mock
+    private StatutoryFilingTemplateRepository templateRepository;
+    @Mock
+    private StatutoryFilingRunRepository filingRunRepository;
+    @Mock
+    private FileStorageService fileStorageService;
+    @Mock
+    private FilingFormatGenerator pfEcrGenerator;
+    private StatutoryFilingService service;
 
     @BeforeEach
     void setUp() {

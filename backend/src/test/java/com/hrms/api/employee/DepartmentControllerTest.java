@@ -42,47 +42,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("DepartmentController Integration Tests")
 class DepartmentControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private DepartmentService departmentService;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     private UUID departmentId;
     private DepartmentResponse departmentResponse;
 
@@ -98,6 +79,14 @@ class DepartmentControllerTest {
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     @Nested
@@ -117,8 +106,8 @@ class DepartmentControllerTest {
                     .thenReturn(departmentResponse);
 
             mockMvc.perform(post("/api/v1/departments")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.name").value("Engineering"))
@@ -134,8 +123,8 @@ class DepartmentControllerTest {
             // Missing required fields
 
             mockMvc.perform(post("/api/v1/departments")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -160,8 +149,8 @@ class DepartmentControllerTest {
                     .thenReturn(responseWithParent);
 
             mockMvc.perform(post("/api/v1/departments")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.parentDepartmentId").value(parentDeptId.toString()));
 
@@ -191,8 +180,8 @@ class DepartmentControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/departments/{id}", departmentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value("Engineering Updated"))
                     .andExpect(jsonPath("$.description").value("Updated description"));
@@ -206,8 +195,8 @@ class DepartmentControllerTest {
             DepartmentRequest request = new DepartmentRequest();
 
             mockMvc.perform(put("/api/v1/departments/{id}", departmentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -243,8 +232,8 @@ class DepartmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/departments")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)))
                     .andExpect(jsonPath("$.content[0].name").value("Engineering"))
@@ -348,9 +337,9 @@ class DepartmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/departments/search")
-                    .param("query", "Engineering")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("query", "Engineering")
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)))
                     .andExpect(jsonPath("$.content[0].name").value("Engineering"));
@@ -371,9 +360,9 @@ class DepartmentControllerTest {
                     .thenReturn(emptyPage);
 
             mockMvc.perform(get("/api/v1/departments/search")
-                    .param("query", "NonExistent")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("query", "NonExistent")
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(0)));
 
@@ -393,9 +382,9 @@ class DepartmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/departments/search")
-                    .param("query", "")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("query", "")
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk());
         }
     }
@@ -515,8 +504,8 @@ class DepartmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/departments")
-                    .param("page", "0")
-                    .param("size", "1000"))
+                            .param("page", "0")
+                            .param("size", "1000"))
                     .andExpect(status().isOk());
 
             verify(departmentService).getAllDepartments(any(Pageable.class));

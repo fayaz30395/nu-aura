@@ -36,14 +36,15 @@ import static org.mockito.Mockito.*;
 @DisplayName("BudgetPlanningService Tests")
 class BudgetPlanningServiceTest {
 
-    @Mock private HeadcountBudgetRepository budgetRepository;
-    @Mock private HeadcountPositionRepository positionRepository;
-    @Mock private BudgetScenarioRepository scenarioRepository;
-
+    private static MockedStatic<TenantContext> tenantContextMock;
+    @Mock
+    private HeadcountBudgetRepository budgetRepository;
+    @Mock
+    private HeadcountPositionRepository positionRepository;
+    @Mock
+    private BudgetScenarioRepository scenarioRepository;
     @InjectMocks
     private BudgetPlanningService budgetPlanningService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
     private UUID tenantId;
 
     @BeforeAll
@@ -102,6 +103,85 @@ class BudgetPlanningServiceTest {
 
     // ==================== Create Budget Tests ====================
 
+    @Test
+    @DisplayName("getBudget should load positions and scenarios")
+    void shouldGetBudgetWithDetails() {
+        UUID budgetId = UUID.randomUUID();
+        HeadcountBudget budget = buildBudgetEntity();
+        budget.setId(budgetId);
+
+        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
+        when(positionRepository.findByBudgetId(budgetId)).thenReturn(List.of());
+        when(scenarioRepository.findByBudget(budgetId)).thenReturn(List.of());
+
+        HeadcountBudgetResponse result = budgetPlanningService.getBudget(budgetId);
+
+        assertThat(result).isNotNull();
+        verify(positionRepository).findByBudgetId(budgetId);
+        verify(scenarioRepository).findByBudget(budgetId);
+    }
+
+    // ==================== Update Budget Tests ====================
+
+    @Test
+    @DisplayName("getAllBudgets should return paged results")
+    void shouldGetAllBudgets() {
+        HeadcountBudget budget = buildBudgetEntity();
+        Page<HeadcountBudget> page = new PageImpl<>(List.of(budget));
+        when(budgetRepository.findByTenantId(eq(tenantId), any())).thenReturn(page);
+
+        Page<HeadcountBudgetResponse> result = budgetPlanningService.getAllBudgets(PageRequest.of(0, 10));
+
+        assertThat(result.getTotalElements()).isEqualTo(1);
+    }
+
+    // ==================== Get Budget Tests ====================
+
+    @Test
+    @DisplayName("getBudgetsByFiscalYear should filter by year")
+    void shouldGetBudgetsByFiscalYear() {
+        when(budgetRepository.findByFiscalYear(tenantId, 2026)).thenReturn(List.of(buildBudgetEntity()));
+
+        List<HeadcountBudgetResponse> result = budgetPlanningService.getBudgetsByFiscalYear(2026);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("submitForApproval should change status to PENDING_APPROVAL")
+    void shouldSubmitForApproval() {
+        UUID budgetId = UUID.randomUUID();
+        HeadcountBudget budget = buildBudgetEntity();
+        budget.setId(budgetId);
+        budget.setStatus(HeadcountBudget.BudgetStatus.DRAFT);
+
+        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
+        when(budgetRepository.save(any(HeadcountBudget.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        HeadcountBudgetResponse result = budgetPlanningService.submitForApproval(budgetId);
+
+        assertThat(result).isNotNull();
+        verify(budgetRepository).save(argThat(b ->
+                b.getStatus() == HeadcountBudget.BudgetStatus.PENDING_APPROVAL));
+    }
+
+    @Test
+    @DisplayName("submitForApproval should reject non-draft budgets")
+    void shouldRejectSubmitForNonDraftBudget() {
+        UUID budgetId = UUID.randomUUID();
+        HeadcountBudget budget = buildBudgetEntity();
+        budget.setId(budgetId);
+        budget.setStatus(HeadcountBudget.BudgetStatus.APPROVED);
+
+        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
+
+        assertThatThrownBy(() -> budgetPlanningService.submitForApproval(budgetId))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("draft");
+    }
+
+    // ==================== Delete Budget Tests ====================
+
     @Nested
     @DisplayName("createBudget")
     class CreateBudgetTests {
@@ -122,12 +202,12 @@ class BudgetPlanningServiceTest {
             assertThat(result).isNotNull();
             verify(budgetRepository).save(argThat(b ->
                     b.getClosingHeadcount() == 23 &&
-                    b.getStatus() == HeadcountBudget.BudgetStatus.DRAFT &&
-                    b.getTenantId().equals(tenantId)));
+                            b.getStatus() == HeadcountBudget.BudgetStatus.DRAFT &&
+                            b.getTenantId().equals(tenantId)));
         }
     }
 
-    // ==================== Update Budget Tests ====================
+    // ==================== Approval Workflow Tests ====================
 
     @Nested
     @DisplayName("updateBudget")
@@ -177,50 +257,6 @@ class BudgetPlanningServiceTest {
         }
     }
 
-    // ==================== Get Budget Tests ====================
-
-    @Test
-    @DisplayName("getBudget should load positions and scenarios")
-    void shouldGetBudgetWithDetails() {
-        UUID budgetId = UUID.randomUUID();
-        HeadcountBudget budget = buildBudgetEntity();
-        budget.setId(budgetId);
-
-        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
-        when(positionRepository.findByBudgetId(budgetId)).thenReturn(List.of());
-        when(scenarioRepository.findByBudget(budgetId)).thenReturn(List.of());
-
-        HeadcountBudgetResponse result = budgetPlanningService.getBudget(budgetId);
-
-        assertThat(result).isNotNull();
-        verify(positionRepository).findByBudgetId(budgetId);
-        verify(scenarioRepository).findByBudget(budgetId);
-    }
-
-    @Test
-    @DisplayName("getAllBudgets should return paged results")
-    void shouldGetAllBudgets() {
-        HeadcountBudget budget = buildBudgetEntity();
-        Page<HeadcountBudget> page = new PageImpl<>(List.of(budget));
-        when(budgetRepository.findByTenantId(eq(tenantId), any())).thenReturn(page);
-
-        Page<HeadcountBudgetResponse> result = budgetPlanningService.getAllBudgets(PageRequest.of(0, 10));
-
-        assertThat(result.getTotalElements()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("getBudgetsByFiscalYear should filter by year")
-    void shouldGetBudgetsByFiscalYear() {
-        when(budgetRepository.findByFiscalYear(tenantId, 2026)).thenReturn(List.of(buildBudgetEntity()));
-
-        List<HeadcountBudgetResponse> result = budgetPlanningService.getBudgetsByFiscalYear(2026);
-
-        assertThat(result).hasSize(1);
-    }
-
-    // ==================== Delete Budget Tests ====================
-
     @Nested
     @DisplayName("deleteBudget")
     class DeleteBudgetTests {
@@ -253,40 +289,5 @@ class BudgetPlanningServiceTest {
             assertThatThrownBy(() -> budgetPlanningService.deleteBudget(budgetId))
                     .isInstanceOf(IllegalStateException.class);
         }
-    }
-
-    // ==================== Approval Workflow Tests ====================
-
-    @Test
-    @DisplayName("submitForApproval should change status to PENDING_APPROVAL")
-    void shouldSubmitForApproval() {
-        UUID budgetId = UUID.randomUUID();
-        HeadcountBudget budget = buildBudgetEntity();
-        budget.setId(budgetId);
-        budget.setStatus(HeadcountBudget.BudgetStatus.DRAFT);
-
-        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
-        when(budgetRepository.save(any(HeadcountBudget.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        HeadcountBudgetResponse result = budgetPlanningService.submitForApproval(budgetId);
-
-        assertThat(result).isNotNull();
-        verify(budgetRepository).save(argThat(b ->
-                b.getStatus() == HeadcountBudget.BudgetStatus.PENDING_APPROVAL));
-    }
-
-    @Test
-    @DisplayName("submitForApproval should reject non-draft budgets")
-    void shouldRejectSubmitForNonDraftBudget() {
-        UUID budgetId = UUID.randomUUID();
-        HeadcountBudget budget = buildBudgetEntity();
-        budget.setId(budgetId);
-        budget.setStatus(HeadcountBudget.BudgetStatus.APPROVED);
-
-        when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
-
-        assertThatThrownBy(() -> budgetPlanningService.submitForApproval(budgetId))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("draft");
     }
 }

@@ -29,14 +29,14 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for GlobalPayrollService.
- *
+ * <p>
  * Tests cover:
  * - Currency management (CRUD, base currency enforcement)
  * - Exchange rate calculations (direct, inverse, same currency)
  * - Payroll location management
  * - Payroll run lifecycle (create, process, approve)
  * - Multi-tenant isolation
- *
+ * <p>
  * P1 Stabilization: Critical test coverage for global payroll operations.
  */
 @ExtendWith(MockitoExtension.class)
@@ -44,27 +44,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("GlobalPayrollService Tests")
 class GlobalPayrollServiceTest {
 
-    @Mock
-    private CurrencyRepository currencyRepository;
-
-    @Mock
-    private ExchangeRateRepository exchangeRateRepository;
-
-    @Mock
-    private PayrollLocationRepository locationRepository;
-
-    @Mock
-    private GlobalPayrollRunRepository payrollRunRepository;
-
-    @Mock
-    private EmployeePayrollRecordRepository recordRepository;
-
-    @InjectMocks
-    private GlobalPayrollService globalPayrollService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private CurrencyRepository currencyRepository;
+    @Mock
+    private ExchangeRateRepository exchangeRateRepository;
+    @Mock
+    private PayrollLocationRepository locationRepository;
+    @Mock
+    private GlobalPayrollRunRepository payrollRunRepository;
+    @Mock
+    private EmployeePayrollRecordRepository recordRepository;
+    @InjectMocks
+    private GlobalPayrollService globalPayrollService;
     private UUID tenantId;
     private UUID userId;
 
@@ -91,6 +84,59 @@ class GlobalPayrollServiceTest {
     }
 
     // ==================== CURRENCY MANAGEMENT TESTS ====================
+
+    private PayrollLocation createTestLocation(String code, String name) {
+        PayrollLocation location = PayrollLocation.builder()
+                .locationCode(code)
+                .locationName(name)
+                .countryCode("US")
+                .localCurrency("USD")
+                .isActive(true)
+                .build();
+        location.setId(UUID.randomUUID());
+        location.setTenantId(tenantId);
+        return location;
+    }
+
+    // ==================== EXCHANGE RATE TESTS ====================
+
+    private GlobalPayrollRun createTestPayrollRun(UUID runId, GlobalPayrollRun.PayrollRunStatus status) {
+        GlobalPayrollRun run = GlobalPayrollRun.builder()
+                .runCode("PR-2025-01-TEST")
+                .payPeriodStart(LocalDate.of(2025, 1, 1))
+                .payPeriodEnd(LocalDate.of(2025, 1, 31))
+                .paymentDate(LocalDate.of(2025, 2, 5))
+                .status(status)
+                .baseCurrency("USD")
+                .totalGrossBase(BigDecimal.ZERO)
+                .totalDeductionsBase(BigDecimal.ZERO)
+                .totalNetBase(BigDecimal.ZERO)
+                .totalEmployerCostBase(BigDecimal.ZERO)
+                .employeeCount(0)
+                .locationCount(0)
+                .errorCount(0)
+                .warningCount(0)
+                .build();
+        run.setId(runId);
+        run.setTenantId(tenantId);
+        return run;
+    }
+
+    // ==================== PAYROLL LOCATION TESTS ====================
+
+    private ExchangeRate createTestExchangeRate(String from, String to, BigDecimal rate) {
+        ExchangeRate exchangeRate = ExchangeRate.builder()
+                .fromCurrency(from)
+                .toCurrency(to)
+                .rate(rate)
+                .effectiveDate(LocalDate.now().minusDays(1))
+                .build();
+        exchangeRate.setId(UUID.randomUUID());
+        exchangeRate.setTenantId(tenantId);
+        return exchangeRate;
+    }
+
+    // ==================== PAYROLL RUN LIFECYCLE TESTS ====================
 
     @Nested
     @DisplayName("Currency Management")
@@ -198,7 +244,7 @@ class GlobalPayrollServiceTest {
         }
     }
 
-    // ==================== EXCHANGE RATE TESTS ====================
+    // ==================== MULTI-TENANT ISOLATION TESTS ====================
 
     @Nested
     @DisplayName("Exchange Rate Calculations")
@@ -327,7 +373,7 @@ class GlobalPayrollServiceTest {
         }
     }
 
-    // ==================== PAYROLL LOCATION TESTS ====================
+    // ==================== HELPER METHODS ====================
 
     @Nested
     @DisplayName("Payroll Location Management")
@@ -397,8 +443,6 @@ class GlobalPayrollServiceTest {
             assertThat(result).hasSize(2);
         }
     }
-
-    // ==================== PAYROLL RUN LIFECYCLE TESTS ====================
 
     @Nested
     @DisplayName("Payroll Run Lifecycle")
@@ -529,8 +573,6 @@ class GlobalPayrollServiceTest {
         }
     }
 
-    // ==================== MULTI-TENANT ISOLATION TESTS ====================
-
     @Nested
     @DisplayName("Multi-Tenant Isolation")
     class MultiTenantIsolationTests {
@@ -585,54 +627,5 @@ class GlobalPayrollServiceTest {
 
             // Then - assertion is in the mock answer
         }
-    }
-
-    // ==================== HELPER METHODS ====================
-
-    private PayrollLocation createTestLocation(String code, String name) {
-        PayrollLocation location = PayrollLocation.builder()
-                .locationCode(code)
-                .locationName(name)
-                .countryCode("US")
-                .localCurrency("USD")
-                .isActive(true)
-                .build();
-        location.setId(UUID.randomUUID());
-        location.setTenantId(tenantId);
-        return location;
-    }
-
-    private GlobalPayrollRun createTestPayrollRun(UUID runId, GlobalPayrollRun.PayrollRunStatus status) {
-        GlobalPayrollRun run = GlobalPayrollRun.builder()
-                .runCode("PR-2025-01-TEST")
-                .payPeriodStart(LocalDate.of(2025, 1, 1))
-                .payPeriodEnd(LocalDate.of(2025, 1, 31))
-                .paymentDate(LocalDate.of(2025, 2, 5))
-                .status(status)
-                .baseCurrency("USD")
-                .totalGrossBase(BigDecimal.ZERO)
-                .totalDeductionsBase(BigDecimal.ZERO)
-                .totalNetBase(BigDecimal.ZERO)
-                .totalEmployerCostBase(BigDecimal.ZERO)
-                .employeeCount(0)
-                .locationCount(0)
-                .errorCount(0)
-                .warningCount(0)
-                .build();
-        run.setId(runId);
-        run.setTenantId(tenantId);
-        return run;
-    }
-
-    private ExchangeRate createTestExchangeRate(String from, String to, BigDecimal rate) {
-        ExchangeRate exchangeRate = ExchangeRate.builder()
-                .fromCurrency(from)
-                .toCurrency(to)
-                .rate(rate)
-                .effectiveDate(LocalDate.now().minusDays(1))
-                .build();
-        exchangeRate.setId(UUID.randomUUID());
-        exchangeRate.setTenantId(tenantId);
-        return exchangeRate;
     }
 }

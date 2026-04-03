@@ -72,11 +72,12 @@ class AssetManagementControllerTest {
         assetId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
 
-        assetResponse = new AssetResponse();
-        assetResponse.setId(assetId);
-        assetResponse.setAssetName("MacBook Pro");
-        assetResponse.setAssetTag("ASSET-001");
-        assetResponse.setStatus(Asset.AssetStatus.AVAILABLE);
+        assetResponse = AssetResponse.builder()
+                .id(assetId)
+                .assetName("MacBook Pro")
+                .assetCode("ASSET-001")
+                .status(Asset.AssetStatus.AVAILABLE)
+                .build();
     }
 
     @Nested
@@ -88,7 +89,7 @@ class AssetManagementControllerTest {
         void shouldCreateAssetSuccessfully() throws Exception {
             AssetRequest request = new AssetRequest();
             request.setAssetName("MacBook Pro");
-            request.setAssetTag("ASSET-001");
+            request.setAssetCode("ASSET-001");
 
             when(assetService.createAsset(any(AssetRequest.class))).thenReturn(assetResponse);
 
@@ -175,11 +176,11 @@ class AssetManagementControllerTest {
         void shouldUpdateAssetSuccessfully() throws Exception {
             AssetRequest request = new AssetRequest();
             request.setAssetName("MacBook Pro 16");
-            request.setAssetTag("ASSET-001");
 
-            AssetResponse updated = new AssetResponse();
-            updated.setId(assetId);
-            updated.setAssetName("MacBook Pro 16");
+            AssetResponse updated = AssetResponse.builder()
+                    .id(assetId)
+                    .assetName("MacBook Pro 16")
+                    .build();
 
             when(assetService.updateAsset(eq(assetId), any(AssetRequest.class))).thenReturn(updated);
 
@@ -200,10 +201,11 @@ class AssetManagementControllerTest {
         @Test
         @DisplayName("Should assign asset to employee")
         void shouldAssignAssetToEmployee() throws Exception {
-            AssetResponse assigned = new AssetResponse();
-            assigned.setId(assetId);
-            assigned.setAssignedToEmployeeId(employeeId);
-            assigned.setStatus(Asset.AssetStatus.ASSIGNED);
+            AssetResponse assigned = AssetResponse.builder()
+                    .id(assetId)
+                    .assignedTo(employeeId)
+                    .status(Asset.AssetStatus.ASSIGNED)
+                    .build();
 
             when(assetService.assignAsset(assetId, employeeId)).thenReturn(assigned);
 
@@ -218,9 +220,10 @@ class AssetManagementControllerTest {
         @Test
         @DisplayName("Should return asset")
         void shouldReturnAsset() throws Exception {
-            AssetResponse returned = new AssetResponse();
-            returned.setId(assetId);
-            returned.setStatus(Asset.AssetStatus.AVAILABLE);
+            AssetResponse returned = AssetResponse.builder()
+                    .id(assetId)
+                    .status(Asset.AssetStatus.AVAILABLE)
+                    .build();
 
             when(assetService.returnAsset(assetId)).thenReturn(returned);
 

@@ -40,47 +40,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("RecruitmentController Integration Tests")
 class RecruitmentControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private RecruitmentManagementService recruitmentManagementService;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     private UUID jobOpeningId;
     private UUID candidateId;
     private JobOpeningResponse jobOpeningResponse;
@@ -108,6 +89,14 @@ class RecruitmentControllerTest {
                 .build();
     }
 
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
+
     @Nested
     @DisplayName("Job Opening Tests")
     class JobOpeningTests {
@@ -124,8 +113,8 @@ class RecruitmentControllerTest {
                     .thenReturn(jobOpeningResponse);
 
             mockMvc.perform(post("/api/v1/recruitment/job-openings")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.jobTitle").value("Software Engineer"))
@@ -141,8 +130,8 @@ class RecruitmentControllerTest {
             // Missing required fields
 
             mockMvc.perform(post("/api/v1/recruitment/job-openings")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -166,8 +155,8 @@ class RecruitmentControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/recruitment/job-openings/{id}", jobOpeningId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.jobTitle").value("Senior Software Engineer"));
 
@@ -201,8 +190,8 @@ class RecruitmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/recruitment/job-openings")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)))
                     .andExpect(jsonPath("$.content[0].jobTitle").value("Software Engineer"));
@@ -224,8 +213,8 @@ class RecruitmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/recruitment/job-openings/status/{status}", "OPEN")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content[0].status").value("OPEN"));
 
@@ -263,8 +252,8 @@ class RecruitmentControllerTest {
                     .thenReturn(candidateResponse);
 
             mockMvc.perform(post("/api/v1/recruitment/candidates")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.fullName").value("John Doe"))
                     .andExpect(jsonPath("$.email").value("john@example.com"));
@@ -294,8 +283,8 @@ class RecruitmentControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/recruitment/candidates/{id}", candidateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.fullName").value("John Doe Updated"));
 
@@ -329,8 +318,8 @@ class RecruitmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/recruitment/candidates")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)))
                     .andExpect(jsonPath("$.content[0].fullName").value("John Doe"));
@@ -351,8 +340,8 @@ class RecruitmentControllerTest {
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/recruitment/candidates/job-opening/{jobOpeningId}", jobOpeningId)
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content[0].jobOpeningId").value(jobOpeningId.toString()));
 
@@ -380,8 +369,8 @@ class RecruitmentControllerTest {
                     .thenReturn(movedResponse);
 
             mockMvc.perform(put("/api/v1/recruitment/candidates/{id}/stage", candidateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             verify(recruitmentManagementService).moveCandidateStage(
@@ -401,8 +390,8 @@ class RecruitmentControllerTest {
                     .thenReturn(candidateResponse);
 
             mockMvc.perform(post("/api/v1/recruitment/candidates/{id}/offer", candidateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated());
 
             verify(recruitmentManagementService).createOffer(eq(candidateId), any(CreateOfferRequest.class));
@@ -431,8 +420,8 @@ class RecruitmentControllerTest {
                     .thenReturn(candidateResponse);
 
             mockMvc.perform(post("/api/v1/recruitment/candidates/{id}/decline-offer", candidateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             verify(recruitmentManagementService).declineOffer(eq(candidateId), anyString());
@@ -474,8 +463,8 @@ class RecruitmentControllerTest {
                     .thenReturn(response);
 
             mockMvc.perform(post("/api/v1/recruitment/interviews")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.candidateId").value(candidateId.toString()));
 

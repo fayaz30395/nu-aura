@@ -43,8 +43,8 @@ class TenantIsolationTest {
 
             // Verify that requireCurrentTenant throws
             assertThatThrownBy(TenantContext::requireCurrentTenant)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Tenant context not set");
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Tenant context not set");
         }
 
         @Test
@@ -71,8 +71,8 @@ class TenantIsolationTest {
             TenantContext.clear();
 
             assertThatThrownBy(TenantContext::requireCurrentTenant)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Tenant context not set");
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Tenant context not set");
         }
     }
 
@@ -173,7 +173,7 @@ class TenantIsolationTest {
             // Verify the good pattern fails appropriately
             TenantContext.clear();
             assertThatThrownBy(TenantContext::requireCurrentTenant)
-                .isInstanceOf(IllegalStateException.class);
+                    .isInstanceOf(IllegalStateException.class);
 
             // And works when set
             UUID tenantId = UUID.randomUUID();
@@ -189,8 +189,8 @@ class TenantIsolationTest {
 
             // requireCurrentTenant should still throw
             assertThatThrownBy(TenantContext::requireCurrentTenant)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Tenant context not set");
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Tenant context not set");
         }
     }
 }

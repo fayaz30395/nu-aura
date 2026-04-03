@@ -85,6 +85,26 @@ class AllocationApprovalServiceTest {
     // getPendingApprovalsCount
     // ============================================
 
+    private AllocationApprovalRequest buildRequest(UUID id, UUID requestedById,
+                                                   AllocationApprovalRequest.ApprovalStatus status) {
+        AllocationApprovalRequest request = AllocationApprovalRequest.builder()
+                .employeeId(employeeId)
+                .projectId(projectId)
+                .requestedAllocation(50)
+                .role("Developer")
+                .startDate(LocalDate.now())
+                .requestedById(requestedById)
+                .status(status)
+                .build();
+        request.setId(id);
+        request.setTenantId(tenantId);
+        return request;
+    }
+
+    // ============================================
+    // getAllocationRequest
+    // ============================================
+
     @Nested
     @DisplayName("getPendingApprovalsCount")
     class PendingCountTests {
@@ -105,7 +125,7 @@ class AllocationApprovalServiceTest {
     }
 
     // ============================================
-    // getAllocationRequest
+    // approveAllocationRequest
     // ============================================
 
     @Nested
@@ -167,7 +187,7 @@ class AllocationApprovalServiceTest {
     }
 
     // ============================================
-    // approveAllocationRequest
+    // rejectAllocationRequest
     // ============================================
 
     @Nested
@@ -260,14 +280,14 @@ class AllocationApprovalServiceTest {
 
                 verify(approvalRepository).save(argThat(r ->
                         r.getStatus() == AllocationApprovalRequest.ApprovalStatus.APPROVED
-                        && r.getApprovalComment().equals("Looks good")));
+                                && r.getApprovalComment().equals("Looks good")));
                 verify(projectEmployeeRepository).save(any(ProjectEmployee.class));
             }
         }
     }
 
     // ============================================
-    // rejectAllocationRequest
+    // getAllPendingRequests
     // ============================================
 
     @Nested
@@ -295,7 +315,7 @@ class AllocationApprovalServiceTest {
 
                 verify(approvalRepository).save(argThat(r ->
                         r.getStatus() == AllocationApprovalRequest.ApprovalStatus.REJECTED
-                        && "Not justified".equals(r.getRejectionReason())));
+                                && "Not justified".equals(r.getRejectionReason())));
                 verify(projectEmployeeRepository, never()).save(any());
             }
         }
@@ -323,7 +343,7 @@ class AllocationApprovalServiceTest {
     }
 
     // ============================================
-    // getAllPendingRequests
+    // Helpers
     // ============================================
 
     @Nested
@@ -355,25 +375,5 @@ class AllocationApprovalServiceTest {
                 assertThat(result.getTotalElements()).isEqualTo(1);
             }
         }
-    }
-
-    // ============================================
-    // Helpers
-    // ============================================
-
-    private AllocationApprovalRequest buildRequest(UUID id, UUID requestedById,
-            AllocationApprovalRequest.ApprovalStatus status) {
-        AllocationApprovalRequest request = AllocationApprovalRequest.builder()
-                .employeeId(employeeId)
-                .projectId(projectId)
-                .requestedAllocation(50)
-                .role("Developer")
-                .startDate(LocalDate.now())
-                .requestedById(requestedById)
-                .status(status)
-                .build();
-        request.setId(id);
-        request.setTenantId(tenantId);
-        return request;
     }
 }

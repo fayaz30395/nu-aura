@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
 import java.util.Set;
+
 import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,24 +39,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthenticationE2ETest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     private static final String BASE_URL = "/api/v1/auth";
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private UUID testUserId;
     private String testUserEmail;
     private String testUserPassword = "TestPassword123!";

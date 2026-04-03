@@ -43,51 +43,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("FileUploadController Unit Tests")
 class FileUploadControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private FileStorageService fileStorageService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private TenantFilter tenantFilter;
-
-    @MockitoBean
-    private RateLimitingFilter rateLimitingFilter;
-
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
-    @MockitoBean
-    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-    @MockitoBean
-    private ApiKeyService apiKeyService;
-
-    @MockitoBean
-    private ScopeContextService scopeContextService;
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID ENTITY_ID = UUID.randomUUID();
-
+    @Autowired
+    private MockMvc mockMvc;
+    @MockitoBean
+    private FileStorageService fileStorageService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private ScopeContextService scopeContextService;
     private MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeEach
@@ -101,7 +80,30 @@ class FileUploadControllerTest {
         tenantContextMock.close();
     }
 
+    private FileUploadResult buildUploadResult(String objectName, String filename,
+                                               String contentType, long size,
+                                               String category, UUID entityId) {
+        FileUploadResult result = mock(FileUploadResult.class);
+        when(result.getObjectName()).thenReturn(objectName);
+        when(result.getOriginalFilename()).thenReturn(filename);
+        when(result.getContentType()).thenReturn(contentType);
+        when(result.getSize()).thenReturn(size);
+        when(result.getCategory()).thenReturn(category);
+        when(result.getEntityId()).thenReturn(entityId);
+        return result;
+    }
+
     // ==================== Upload Tests ====================
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
+
+    // ==================== Download Tests ====================
 
     @Nested
     @DisplayName("File Upload Tests")
@@ -188,7 +190,7 @@ class FileUploadControllerTest {
         }
     }
 
-    // ==================== Download Tests ====================
+    // ==================== Delete Tests ====================
 
     @Nested
     @DisplayName("File Download Tests")
@@ -269,7 +271,7 @@ class FileUploadControllerTest {
         }
     }
 
-    // ==================== Delete Tests ====================
+    // ==================== File Exists Tests ====================
 
     @Nested
     @DisplayName("File Deletion Tests")
@@ -302,7 +304,7 @@ class FileUploadControllerTest {
         }
     }
 
-    // ==================== File Exists Tests ====================
+    // ==================== Permission Annotation Tests ====================
 
     @Nested
     @DisplayName("File Exists Tests")
@@ -348,7 +350,7 @@ class FileUploadControllerTest {
         }
     }
 
-    // ==================== Permission Annotation Tests ====================
+    // ==================== Helper Methods ====================
 
     @Nested
     @DisplayName("Permission Annotation Tests")
@@ -388,20 +390,5 @@ class FileUploadControllerTest {
                     .as("Method '%s' should have @RequiresPermission(\"%s\")", methodName, expectedPermission)
                     .isTrue();
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private FileUploadResult buildUploadResult(String objectName, String filename,
-                                               String contentType, long size,
-                                               String category, UUID entityId) {
-        FileUploadResult result = mock(FileUploadResult.class);
-        when(result.getObjectName()).thenReturn(objectName);
-        when(result.getOriginalFilename()).thenReturn(filename);
-        when(result.getContentType()).thenReturn(contentType);
-        when(result.getSize()).thenReturn(size);
-        when(result.getCategory()).thenReturn(category);
-        when(result.getEntityId()).thenReturn(entityId);
-        return result;
     }
 }

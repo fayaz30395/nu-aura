@@ -45,250 +45,6 @@ class RequiresPermissionAnnotationTest {
         TenantContext.clear();
     }
 
-    @Nested
-    @DisplayName("Basic Permission Enforcement")
-    class BasicPermissionEnforcementTests {
-
-        @Test
-        @DisplayName("Should allow access to endpoint with required permission")
-        void shouldAllowAccessWithPermission() throws Exception {
-            // Given - User has EMPLOYEE_READ permission
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_READ, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then
-            mockMvc.perform(get("/test/permission/employee/read")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string("Success: EMPLOYEE:READ"));
-        }
-
-        @Test
-        @DisplayName("Should deny access to endpoint without required permission")
-        void shouldDenyAccessWithoutPermission() throws Exception {
-            // Given - User has no permissions
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // When/Then
-            mockMvc.perform(get("/test/permission/employee/read")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        @DisplayName("Should allow SuperAdmin to bypass permission checks")
-        void shouldAllowSuperAdminToBypassChecks() throws Exception {
-            // Given - User is SuperAdmin
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.SYSTEM_ADMIN, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of(RoleHierarchy.SUPER_ADMIN), permissions);
-
-            // When/Then - Should access endpoint that requires PAYROLL_PROCESS
-            mockMvc.perform(get("/test/permission/payroll/process")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string("Success: PAYROLL:PROCESS"));
-        }
-    }
-
-    @Nested
-    @DisplayName("anyOf Permission Logic")
-    class AnyOfPermissionTests {
-
-        @Test
-        @DisplayName("Should allow access when user has first of anyOf permissions")
-        void shouldAllowAccessWithFirstPermission() throws Exception {
-            // Given - User has first permission (EMPLOYEE_READ)
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_READ, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then
-            mockMvc.perform(get("/test/permission/employee/anyof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Should allow access when user has second of anyOf permissions")
-        void shouldAllowAccessWithSecondPermission() throws Exception {
-            // Given - User has second permission (EMPLOYEE_CREATE)
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_CREATE, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then
-            mockMvc.perform(get("/test/permission/employee/anyof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Should deny access when user lacks all anyOf permissions")
-        void shouldDenyAccessWithoutAnyOfPermissions() throws Exception {
-            // Given - User has no matching permissions
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // When/Then
-            mockMvc.perform(get("/test/permission/employee/anyof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-    }
-
-    @Nested
-    @DisplayName("allOf Permission Logic")
-    class AllOfPermissionTests {
-
-        @Test
-        @DisplayName("Should allow access when user has all allOf permissions")
-        void shouldAllowAccessWithAllPermissions() throws Exception {
-            // Given - User has both required permissions
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_READ, RoleScope.ALL,
-                    Permission.EMPLOYEE_CREATE, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then
-            mockMvc.perform(post("/test/permission/employee/allof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Should deny access when user lacks any allOf permission")
-        void shouldDenyAccessWithoutAllPermissions() throws Exception {
-            // Given - User has only one of two required permissions
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_READ, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then
-            mockMvc.perform(post("/test/permission/employee/allof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        @DisplayName("Should deny access when user lacks all allOf permissions")
-        void shouldDenyAccessWithoutAllOfPermissions() throws Exception {
-            // Given - User has no permissions
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // When/Then
-            mockMvc.perform(post("/test/permission/employee/allof")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-    }
-
-    @Nested
-    @DisplayName("Permission Hierarchy")
-    class PermissionHierarchyTests {
-
-        @Test
-        @DisplayName("Should allow access via MANAGE permission hierarchy")
-        void shouldAllowAccessViaManagePermission() throws Exception {
-            // Given - User has EMPLOYEE:MANAGE (implies all EMPLOYEE actions)
-            Map<String, RoleScope> permissions = Map.of(
-                    "EMPLOYEE:MANAGE", RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("ADMIN"), permissions);
-
-            // When/Then - Should access endpoint requiring EMPLOYEE:DELETE
-            mockMvc.perform(delete("/test/permission/employee/delete")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Should allow VIEW access via READ permission")
-        void shouldAllowViewAccessViaReadPermission() throws Exception {
-            // Given - User has EMPLOYEE:READ
-            Map<String, RoleScope> permissions = Map.of(
-                    Permission.EMPLOYEE_READ, RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then - Should access endpoint requiring EMPLOYEE:VIEW_ALL
-            mockMvc.perform(get("/test/permission/employee/view-all")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-    }
-
-    @Nested
-    @DisplayName("App-Prefixed Permissions")
-    class AppPrefixedPermissionTests {
-
-        @Test
-        @DisplayName("Should resolve app-prefixed permissions")
-        void shouldResolveAppPrefixedPermissions() throws Exception {
-            // Given
-            SecurityContext.setCurrentApp("HRMS");
-            Map<String, RoleScope> permissions = Map.of(
-                    "HRMS:EMPLOYEE:READ", RoleScope.ALL
-            );
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), permissions);
-
-            // When/Then - Should allow access even though permission is prefixed
-            mockMvc.perform(get("/test/permission/employee/read-appcode")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
-    }
-
-    @Nested
-    @DisplayName("Error Handling")
-    class ErrorHandlingTests {
-
-        @Test
-        @DisplayName("Should return 403 Forbidden for permission denial")
-        void shouldReturnForbiddenForDenial() throws Exception {
-            // Given - User without permissions
-            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
-                    Set.of("USER"), new HashMap<>());
-
-            // When
-            mockMvc.perform(get("/test/permission/employee/read")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        @DisplayName("Should handle null security context gracefully")
-        void shouldHandleNullSecurityContext() throws Exception {
-            // Given - No security context set
-            SecurityContext.clear();
-
-            // When/Then - Should deny access
-            mockMvc.perform(get("/test/permission/employee/read")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isForbidden());
-        }
-    }
-
-    // ==================== Test Controller ====================
-
     @RestController
     @RequestMapping("/test/permission")
     public static class TestPermissionController {
@@ -342,6 +98,250 @@ class RequiresPermissionAnnotationTest {
         @RequiresPermission("EMPLOYEE:READ")
         public String readEmployeeWithAppCode() {
             return "Success: Read with app code";
+        }
+    }
+
+    @Nested
+    @DisplayName("Basic Permission Enforcement")
+    class BasicPermissionEnforcementTests {
+
+        @Test
+        @DisplayName("Should allow access to endpoint with required permission")
+        void shouldAllowAccessWithPermission() throws Exception {
+            // Given - User has EMPLOYEE_READ permission
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_READ, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then
+            mockMvc.perform(get("/test/permission/employee/read")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Success: EMPLOYEE:READ"));
+        }
+
+        @Test
+        @DisplayName("Should deny access to endpoint without required permission")
+        void shouldDenyAccessWithoutPermission() throws Exception {
+            // Given - User has no permissions
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), new HashMap<>());
+
+            // When/Then
+            mockMvc.perform(get("/test/permission/employee/read")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Should allow SuperAdmin to bypass permission checks")
+        void shouldAllowSuperAdminToBypassChecks() throws Exception {
+            // Given - User is SuperAdmin
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.SYSTEM_ADMIN, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of(RoleHierarchy.SUPER_ADMIN), permissions);
+
+            // When/Then - Should access endpoint that requires PAYROLL_PROCESS
+            mockMvc.perform(get("/test/permission/payroll/process")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Success: PAYROLL:PROCESS"));
+        }
+    }
+
+    @Nested
+    @DisplayName("anyOf Permission Logic")
+    class AnyOfPermissionTests {
+
+        @Test
+        @DisplayName("Should allow access when user has first of anyOf permissions")
+        void shouldAllowAccessWithFirstPermission() throws Exception {
+            // Given - User has first permission (EMPLOYEE_READ)
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_READ, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then
+            mockMvc.perform(get("/test/permission/employee/anyof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should allow access when user has second of anyOf permissions")
+        void shouldAllowAccessWithSecondPermission() throws Exception {
+            // Given - User has second permission (EMPLOYEE_CREATE)
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_CREATE, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then
+            mockMvc.perform(get("/test/permission/employee/anyof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should deny access when user lacks all anyOf permissions")
+        void shouldDenyAccessWithoutAnyOfPermissions() throws Exception {
+            // Given - User has no matching permissions
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), new HashMap<>());
+
+            // When/Then
+            mockMvc.perform(get("/test/permission/employee/anyof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
+        }
+    }
+
+    @Nested
+    @DisplayName("allOf Permission Logic")
+    class AllOfPermissionTests {
+
+        @Test
+        @DisplayName("Should allow access when user has all allOf permissions")
+        void shouldAllowAccessWithAllPermissions() throws Exception {
+            // Given - User has both required permissions
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_READ, RoleScope.ALL,
+                    Permission.EMPLOYEE_CREATE, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then
+            mockMvc.perform(post("/test/permission/employee/allof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should deny access when user lacks any allOf permission")
+        void shouldDenyAccessWithoutAllPermissions() throws Exception {
+            // Given - User has only one of two required permissions
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_READ, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then
+            mockMvc.perform(post("/test/permission/employee/allof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Should deny access when user lacks all allOf permissions")
+        void shouldDenyAccessWithoutAllOfPermissions() throws Exception {
+            // Given - User has no permissions
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), new HashMap<>());
+
+            // When/Then
+            mockMvc.perform(post("/test/permission/employee/allof")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
+        }
+    }
+
+    @Nested
+    @DisplayName("Permission Hierarchy")
+    class PermissionHierarchyTests {
+
+        @Test
+        @DisplayName("Should allow access via MANAGE permission hierarchy")
+        void shouldAllowAccessViaManagePermission() throws Exception {
+            // Given - User has EMPLOYEE:MANAGE (implies all EMPLOYEE actions)
+            Map<String, RoleScope> permissions = Map.of(
+                    "EMPLOYEE:MANAGE", RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("ADMIN"), permissions);
+
+            // When/Then - Should access endpoint requiring EMPLOYEE:DELETE
+            mockMvc.perform(delete("/test/permission/employee/delete")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should allow VIEW access via READ permission")
+        void shouldAllowViewAccessViaReadPermission() throws Exception {
+            // Given - User has EMPLOYEE:READ
+            Map<String, RoleScope> permissions = Map.of(
+                    Permission.EMPLOYEE_READ, RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then - Should access endpoint requiring EMPLOYEE:VIEW_ALL
+            mockMvc.perform(get("/test/permission/employee/view-all")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("App-Prefixed Permissions")
+    class AppPrefixedPermissionTests {
+
+        @Test
+        @DisplayName("Should resolve app-prefixed permissions")
+        void shouldResolveAppPrefixedPermissions() throws Exception {
+            // Given
+            SecurityContext.setCurrentApp("HRMS");
+            Map<String, RoleScope> permissions = Map.of(
+                    "HRMS:EMPLOYEE:READ", RoleScope.ALL
+            );
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), permissions);
+
+            // When/Then - Should allow access even though permission is prefixed
+            mockMvc.perform(get("/test/permission/employee/read-appcode")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    // ==================== Test Controller ====================
+
+    @Nested
+    @DisplayName("Error Handling")
+    class ErrorHandlingTests {
+
+        @Test
+        @DisplayName("Should return 403 Forbidden for permission denial")
+        void shouldReturnForbiddenForDenial() throws Exception {
+            // Given - User without permissions
+            SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID,
+                    Set.of("USER"), new HashMap<>());
+
+            // When
+            mockMvc.perform(get("/test/permission/employee/read")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Should handle null security context gracefully")
+        void shouldHandleNullSecurityContext() throws Exception {
+            // Given - No security context set
+            SecurityContext.clear();
+
+            // When/Then - Should deny access
+            mockMvc.perform(get("/test/permission/employee/read")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
         }
     }
 

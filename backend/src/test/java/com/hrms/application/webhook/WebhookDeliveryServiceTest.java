@@ -34,27 +34,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("WebhookDeliveryService Tests")
 class WebhookDeliveryServiceTest {
 
+    private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    private static final UUID WEBHOOK_ID = UUID.randomUUID();
     @Mock
     private WebhookRepository webhookRepository;
-
     @Mock
     private WebhookDeliveryRepository deliveryRepository;
-
     @Mock
     private WebhookService webhookService;
-
     @Mock
     private MetricsService metricsService;
-
     @Mock
     private RestTemplate restTemplate;
-
     private WebhookDeliveryService webhookDeliveryService;
     private ObjectMapper objectMapper;
     private MeterRegistry meterRegistry;
-
-    private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID WEBHOOK_ID = UUID.randomUUID();
 
     @BeforeEach
     void setUp() {
@@ -75,6 +69,19 @@ class WebhookDeliveryServiceTest {
     @AfterEach
     void tearDown() {
         TenantContext.clear();
+    }
+
+    private Webhook createTestWebhook(Set<WebhookEventType> events) {
+        Webhook webhook = new Webhook();
+        webhook.setId(WEBHOOK_ID);
+        webhook.setTenantId(TENANT_ID);
+        webhook.setName("Test Webhook");
+        webhook.setUrl("https://example.com/webhook");
+        webhook.setSecret("test-secret");
+        webhook.setStatus(WebhookStatus.ACTIVE);
+        webhook.setEvents(events);
+        webhook.setConsecutiveFailures(0);
+        return webhook;
     }
 
     @Nested
@@ -272,18 +279,5 @@ class WebhookDeliveryServiceTest {
             verify(deliveryRepository, never()).save(any());
             verify(restTemplate, never()).exchange(anyString(), any(), any(), eq(String.class));
         }
-    }
-
-    private Webhook createTestWebhook(Set<WebhookEventType> events) {
-        Webhook webhook = new Webhook();
-        webhook.setId(WEBHOOK_ID);
-        webhook.setTenantId(TENANT_ID);
-        webhook.setName("Test Webhook");
-        webhook.setUrl("https://example.com/webhook");
-        webhook.setSecret("test-secret");
-        webhook.setStatus(WebhookStatus.ACTIVE);
-        webhook.setEvents(events);
-        webhook.setConsecutiveFailures(0);
-        return webhook;
     }
 }

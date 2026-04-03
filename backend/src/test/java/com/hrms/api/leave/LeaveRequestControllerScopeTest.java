@@ -33,21 +33,16 @@ import static org.mockito.Mockito.*;
 @DisplayName("LeaveRequestController Scope Enforcement Tests")
 class LeaveRequestControllerScopeTest {
 
-    @Mock
-    private LeaveRequestService leaveRequestService;
-
-    @Mock
-    private EmployeeService employeeService;
-
-    @Mock
-    private DataScopeService dataScopeService;
-
-    @InjectMocks
-    private LeaveRequestController leaveRequestController;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private LeaveRequestService leaveRequestService;
+    @Mock
+    private EmployeeService employeeService;
+    @Mock
+    private DataScopeService dataScopeService;
+    @InjectMocks
+    private LeaveRequestController leaveRequestController;
     private UUID tenantId;
     private UUID currentEmployeeId;
     private UUID otherEmployeeId;
@@ -102,6 +97,47 @@ class LeaveRequestControllerScopeTest {
                 .build();
         otherLeaveRequest.setId(UUID.randomUUID());
         otherLeaveRequest.setTenantId(tenantId);
+    }
+
+    private void setupSecurityContext(UUID employeeId, RoleScope scope, boolean isAdmin) {
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+        securityContextMock.when(SecurityContext::isSystemAdmin).thenReturn(isAdmin);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(isAdmin);
+        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL))
+                .thenReturn(scope == RoleScope.ALL);
+        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM))
+                .thenReturn(scope == RoleScope.ALL || scope == RoleScope.TEAM);
+        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_SELF))
+                .thenReturn(true);
+        securityContextMock.when(() -> SecurityContext.getPermissionScope(anyString()))
+                .thenReturn(scope);
+        securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(Collections.emptySet());
+        securityContextMock.when(SecurityContext::getCurrentDepartmentId).thenReturn(null);
+        securityContextMock.when(SecurityContext::getCurrentLocationIds).thenReturn(Collections.emptySet());
+    }
+
+    private void setupSecurityContextWithReportees(UUID employeeId, RoleScope scope,
+                                                   Set<UUID> reporteeIds, boolean isAdmin) {
+        setupSecurityContext(employeeId, scope, isAdmin);
+        securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(reporteeIds);
+    }
+
+    private void setupSecurityContextWithDepartment(UUID employeeId, RoleScope scope,
+                                                    UUID departmentId, boolean isAdmin) {
+        setupSecurityContext(employeeId, scope, isAdmin);
+        securityContextMock.when(SecurityContext::getCurrentDepartmentId).thenReturn(departmentId);
+    }
+
+    // ==================== Helper Methods ====================
+
+    private Employee createEmployee(UUID employeeId, UUID managerId) {
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setTenantId(tenantId);
+        employee.setManagerId(managerId);
+        employee.setFirstName("Test");
+        employee.setLastName("Employee");
+        return employee;
     }
 
     @Nested
@@ -311,46 +347,5 @@ class LeaveRequestControllerScopeTest {
                     .isInstanceOf(AccessDeniedException.class)
                     .hasMessageContaining("do not have permission");
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private void setupSecurityContext(UUID employeeId, RoleScope scope, boolean isAdmin) {
-        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
-        securityContextMock.when(SecurityContext::isSystemAdmin).thenReturn(isAdmin);
-        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(isAdmin);
-        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL))
-                .thenReturn(scope == RoleScope.ALL);
-        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM))
-                .thenReturn(scope == RoleScope.ALL || scope == RoleScope.TEAM);
-        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_SELF))
-                .thenReturn(true);
-        securityContextMock.when(() -> SecurityContext.getPermissionScope(anyString()))
-                .thenReturn(scope);
-        securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(Collections.emptySet());
-        securityContextMock.when(SecurityContext::getCurrentDepartmentId).thenReturn(null);
-        securityContextMock.when(SecurityContext::getCurrentLocationIds).thenReturn(Collections.emptySet());
-    }
-
-    private void setupSecurityContextWithReportees(UUID employeeId, RoleScope scope,
-            Set<UUID> reporteeIds, boolean isAdmin) {
-        setupSecurityContext(employeeId, scope, isAdmin);
-        securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(reporteeIds);
-    }
-
-    private void setupSecurityContextWithDepartment(UUID employeeId, RoleScope scope,
-            UUID departmentId, boolean isAdmin) {
-        setupSecurityContext(employeeId, scope, isAdmin);
-        securityContextMock.when(SecurityContext::getCurrentDepartmentId).thenReturn(departmentId);
-    }
-
-    private Employee createEmployee(UUID employeeId, UUID managerId) {
-        Employee employee = new Employee();
-        employee.setId(employeeId);
-        employee.setTenantId(tenantId);
-        employee.setManagerId(managerId);
-        employee.setFirstName("Test");
-        employee.setLastName("Employee");
-        return employee;
     }
 }

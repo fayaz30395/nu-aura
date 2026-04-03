@@ -39,14 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("KekaImportController Unit Tests")
 class KekaImportControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
+    private static final String IMPORT_ID = "IMPORT-2026-001";
     @Autowired
     private MockMvc mockMvc;
 
@@ -82,9 +75,6 @@ class KekaImportControllerTest {
 
     @MockitoBean
     private ScopeContextService scopeContextService;
-
-    private static final String IMPORT_ID = "IMPORT-2026-001";
-
     private KekaFileUploadResponse sampleUploadResponse;
     private KekaImportResult sampleImportResult;
     private KekaImportHistoryEntry sampleHistoryEntry;
@@ -121,6 +111,14 @@ class KekaImportControllerTest {
                 .status("SUCCESS")
                 .uploadedAt(LocalDateTime.now().minusMinutes(2))
                 .build();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     // ==================== Upload Tests ====================

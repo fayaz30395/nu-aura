@@ -40,6 +40,22 @@ class CustomPermissionEvaluatorTest {
         TenantContext.clear();
     }
 
+    /**
+     * Helper class for testing permission object conversion
+     */
+    private static class PermissionObject {
+        private final String permissionCode;
+
+        PermissionObject(String permissionCode) {
+            this.permissionCode = permissionCode;
+        }
+
+        @Override
+        public String toString() {
+            return permissionCode;
+        }
+    }
+
     @Nested
     @DisplayName("hasPermission(Authentication, Object targetDomainObject, Object permission)")
     class HasPermissionObjectOverloadTests {
@@ -619,22 +635,6 @@ class CustomPermissionEvaluatorTest {
             // Then
             assertThat(result1).isTrue();
             assertThat(result2).isTrue();
-        }
-    }
-
-    /**
-     * Helper class for testing permission object conversion
-     */
-    private static class PermissionObject {
-        private final String permissionCode;
-
-        PermissionObject(String permissionCode) {
-            this.permissionCode = permissionCode;
-        }
-
-        @Override
-        public String toString() {
-            return permissionCode;
         }
     }
 }

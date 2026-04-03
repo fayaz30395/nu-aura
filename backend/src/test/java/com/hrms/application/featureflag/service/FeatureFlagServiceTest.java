@@ -25,14 +25,11 @@ import static org.mockito.Mockito.*;
 @DisplayName("FeatureFlagService Tests")
 class FeatureFlagServiceTest {
 
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private FeatureFlagRepository featureFlagRepository;
-
     @InjectMocks
     private FeatureFlagService featureFlagService;
-
-    private static MockedStatic<SecurityContext> securityContextMock;
-
     private UUID tenantId;
 
     @BeforeAll

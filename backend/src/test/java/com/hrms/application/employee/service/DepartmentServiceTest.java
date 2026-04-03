@@ -34,25 +34,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("DepartmentService Tests")
 class DepartmentServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private DepartmentRepository departmentRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private com.hrms.application.audit.service.AuditLogService auditLogService;
-
     @InjectMocks
     private DepartmentService departmentService;
-
     private UUID tenantId;
     private UUID departmentId;
     private UUID parentDepartmentId;
     private UUID managerId;
     private Department testDepartment;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeAll
     static void setUpClass() {

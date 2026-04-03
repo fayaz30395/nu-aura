@@ -38,47 +38,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("DataMigrationController Unit Tests")
 class DataMigrationControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private KekaMigrationService migrationService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private ScopeContextService scopeContextService;
-
     private ImportResult successResult;
     private ImportResult partialResult;
 
@@ -117,6 +98,14 @@ class DataMigrationControllerTest {
         return new MockMultipartFile(paramName, filename,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "binary xlsx data".getBytes());
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     // ==================== Employee Import Tests ====================

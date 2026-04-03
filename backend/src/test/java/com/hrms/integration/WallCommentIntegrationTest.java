@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for Wall Comment endpoints.
- *
+ * <p>
  * Note: These tests verify endpoint accessibility and structure rather than full functionality
  * because the H2 test database has limitations with tenant context propagation.
  * The key goal is to ensure endpoints are properly configured and reachable.
@@ -42,16 +42,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Wall Comment Integration Tests")
 class WallCommentIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private static final String WALL_BASE_URL = "/api/v1/wall";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

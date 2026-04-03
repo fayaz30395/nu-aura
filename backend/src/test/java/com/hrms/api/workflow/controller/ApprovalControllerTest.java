@@ -48,27 +48,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ApprovalController Unit Tests (via WorkflowController)")
 class ApprovalControllerTest {
 
+    private static final String BASE_URL = "/api/v1/workflow";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private WorkflowService workflowService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-
-    private static final String BASE_URL = "/api/v1/workflow";
-
     private UUID executionId;
     private UUID userId;
     private WorkflowExecutionResponse pendingExecution;

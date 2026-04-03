@@ -31,21 +31,22 @@ import static org.mockito.Mockito.*;
 @DisplayName("RestrictedHolidayService Tests")
 class RestrictedHolidayServiceTest {
 
-    @Mock private RestrictedHolidayRepository holidayRepository;
-    @Mock private RestrictedHolidaySelectionRepository selectionRepository;
-    @Mock private RestrictedHolidayPolicyRepository policyRepository;
-    @Mock private AuditLogService auditLogService;
-
+    private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
+    @Mock
+    private RestrictedHolidayRepository holidayRepository;
+    @Mock
+    private RestrictedHolidaySelectionRepository selectionRepository;
+    @Mock
+    private RestrictedHolidayPolicyRepository policyRepository;
+    @Mock
+    private AuditLogService auditLogService;
     @InjectMocks
     private RestrictedHolidayService service;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID holidayId;
     private UUID selectionId;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-    private static MockedStatic<SecurityContext> securityContextMock;
 
     @BeforeAll
     static void setUpClass() {

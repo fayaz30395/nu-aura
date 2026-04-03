@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * RBAC Annotation Coverage Test
- *
+ * <p>
  * Verifies that ALL non-public REST endpoints have {@link RequiresPermission}
  * annotation at either the method or class level.
  *
@@ -97,7 +97,16 @@ class RbacAnnotationCoverageTest {
             PatchMapping.class,
             RequestMapping.class
     );
-
+    /**
+     * Accepted security annotations. A method/class with any of these is
+     * considered properly gated for RBAC purposes.
+     */
+    private static final List<String> SECURITY_ANNOTATIONS = List.of(
+            "com.hrms.common.security.RequiresPermission",
+            "org.springframework.security.access.prepost.PreAuthorize",
+            "org.springframework.security.access.annotation.Secured",
+            "jakarta.annotation.security.RolesAllowed"
+    );
     private static JavaClasses importedClasses;
 
     @BeforeAll
@@ -175,6 +184,8 @@ class RbacAnnotationCoverageTest {
         }
     }
 
+    // ==================== Helpers ====================
+
     @Test
     @DisplayName("Should detect at least 100 controllers to confirm scanning works")
     void scanShouldFindExpectedControllerCount() {
@@ -186,19 +197,6 @@ class RbacAnnotationCoverageTest {
                 .as("Expected at least 100 @RestController classes; found %d — is classpath scanning broken?", controllerCount)
                 .isGreaterThanOrEqualTo(100);
     }
-
-    // ==================== Helpers ====================
-
-    /**
-     * Accepted security annotations. A method/class with any of these is
-     * considered properly gated for RBAC purposes.
-     */
-    private static final List<String> SECURITY_ANNOTATIONS = List.of(
-            "com.hrms.common.security.RequiresPermission",
-            "org.springframework.security.access.prepost.PreAuthorize",
-            "org.springframework.security.access.annotation.Secured",
-            "jakarta.annotation.security.RolesAllowed"
-    );
 
     private boolean hasSecurityAnnotation(JavaClass javaClass) {
         return SECURITY_ANNOTATIONS.stream().anyMatch(javaClass::isAnnotatedWith);

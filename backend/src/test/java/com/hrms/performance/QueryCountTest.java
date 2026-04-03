@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,17 +26,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 /**
  * N+1 Query Detection Tests
- *
+ * <p>
  * These tests verify that API endpoints don't cause N+1 query problems.
  * Each endpoint should have a maximum expected query count based on its
  * complexity.
- *
+ * <p>
  * How it works:
  * 1. Enable Hibernate statistics before each test
  * 2. Call the endpoint
  * 3. Count the number of SQL queries executed
  * 4. Assert that the query count is within expected limits
- *
+ * <p>
  * NOTE: Run these tests with Hibernate statistics enabled in
  * application-test.yml:
  * spring.jpa.properties.hibernate.generate_statistics: true
@@ -48,16 +49,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DisplayName("N+1 Query Detection Tests")
 class QueryCountTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
+    @Autowired
+    private MockMvc mockMvc;
+    @PersistenceContext
+    private EntityManager entityManager;
     private Statistics statistics;
 
     @BeforeEach
@@ -138,8 +136,8 @@ class QueryCountTest {
 
             // Execute the endpoint
             mockMvc.perform(get("/api/v1/wall/posts")
-                    .param("page", "0")
-                    .param("size", "10"))
+                            .param("page", "0")
+                            .param("size", "10"))
                     .andExpect(statusIsAnyExpected()); // H2 may have issues
 
             // Assert query count
@@ -159,8 +157,8 @@ class QueryCountTest {
             long beforeCount = getQueryCount();
 
             mockMvc.perform(get("/api/v1/employees")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(statusIsAnyExpected());
 
             // Expected: 1 count query + 1 employee query + maybe 1-2 for department/manager
@@ -179,8 +177,8 @@ class QueryCountTest {
             long beforeCount = getQueryCount();
 
             mockMvc.perform(get("/api/v1/leave-requests")
-                    .param("page", "0")
-                    .param("size", "20"))
+                            .param("page", "0")
+                            .param("size", "20"))
                     .andExpect(statusIsAnyExpected());
 
             // Expected: 1 count + 1 main query + 1 employee batch + 1 leave type batch + 1

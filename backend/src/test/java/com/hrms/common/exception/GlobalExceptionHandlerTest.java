@@ -33,12 +33,12 @@ import static org.mockito.Mockito.*;
 class GlobalExceptionHandlerTest {
 
     private GlobalExceptionHandler handler;
-    private WebRequest              webRequest;
+    private WebRequest webRequest;
 
     @BeforeEach
     void setUp() {
         MeterRegistry meterRegistry = new SimpleMeterRegistry();
-        handler    = new GlobalExceptionHandler(meterRegistry);
+        handler = new GlobalExceptionHandler(meterRegistry);
         webRequest = mock(WebRequest.class);
         when(webRequest.getDescription(false)).thenReturn("uri=/api/v1/test");
     }

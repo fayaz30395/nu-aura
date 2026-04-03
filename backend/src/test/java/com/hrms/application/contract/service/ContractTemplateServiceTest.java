@@ -64,6 +64,18 @@ class ContractTemplateServiceTest {
         tenantContextMock.close();
     }
 
+    private ContractTemplate buildTemplate(String name, ContractType type) {
+        ContractTemplate template = ContractTemplate.builder()
+                .name(name)
+                .type(type)
+                .content(Map.of("default", "clause"))
+                .isActive(true)
+                .build();
+        template.setId(TEMPLATE_ID);
+        template.setTenantId(TENANT_ID);
+        return template;
+    }
+
     @Nested
     @DisplayName("createTemplate")
     class CreateTemplate {
@@ -332,6 +344,8 @@ class ContractTemplateServiceTest {
         }
     }
 
+    // ===================== Helper Methods =====================
+
     @Nested
     @DisplayName("searchTemplates")
     class SearchTemplates {
@@ -354,19 +368,5 @@ class ContractTemplateServiceTest {
             assertThat(result.getContent()).hasSize(1);
             assertThat(result.getContent().get(0).getName()).isEqualTo("Employment Standard");
         }
-    }
-
-    // ===================== Helper Methods =====================
-
-    private ContractTemplate buildTemplate(String name, ContractType type) {
-        ContractTemplate template = ContractTemplate.builder()
-                .name(name)
-                .type(type)
-                .content(Map.of("default", "clause"))
-                .isActive(true)
-                .build();
-        template.setId(TEMPLATE_ID);
-        template.setTenantId(TENANT_ID);
-        return template;
     }
 }

@@ -82,6 +82,32 @@ class PaymentServiceTest {
 
     // ===================== Initiate Payment Tests =====================
 
+    private PaymentTransaction buildTransaction(PaymentTransaction.PaymentProvider provider) {
+        return PaymentTransaction.builder()
+                .transactionRef("TXN-" + UUID.randomUUID())
+                .type(PaymentTransaction.PaymentType.PAYROLL)
+                .amount(new BigDecimal("5000.00"))
+                .currency("INR")
+                .provider(provider)
+                .recipientName("John Doe")
+                .recipientAccountNumber("1234567890")
+                .recipientIfsc("SBIN0001234")
+                .build();
+    }
+
+    // ===================== Check Payment Status Tests =====================
+
+    private PaymentConfig buildConfig(PaymentConfig.PaymentProvider provider) {
+        return PaymentConfig.builder()
+                .provider(provider)
+                .apiKeyEncrypted("encrypted-key")
+                .isActive(true)
+                .configKey("config-" + provider.name().toLowerCase())
+                .build();
+    }
+
+    // ===================== Process Refund Tests =====================
+
     @Nested
     @DisplayName("initiatePayment")
     class InitiatePayment {
@@ -163,7 +189,7 @@ class PaymentServiceTest {
         }
     }
 
-    // ===================== Check Payment Status Tests =====================
+    // ===================== Webhook Processing Tests =====================
 
     @Nested
     @DisplayName("checkPaymentStatus")
@@ -234,7 +260,7 @@ class PaymentServiceTest {
         }
     }
 
-    // ===================== Process Refund Tests =====================
+    // ===================== Config Tests =====================
 
     @Nested
     @DisplayName("processRefund")
@@ -334,7 +360,7 @@ class PaymentServiceTest {
         }
     }
 
-    // ===================== Webhook Processing Tests =====================
+    // ===================== List & Get Tests =====================
 
     @Nested
     @DisplayName("processWebhook")
@@ -411,7 +437,7 @@ class PaymentServiceTest {
         }
     }
 
-    // ===================== Config Tests =====================
+    // ===================== Helper Methods =====================
 
     @Nested
     @DisplayName("savePaymentConfig")
@@ -443,8 +469,6 @@ class PaymentServiceTest {
             verify(paymentConfigRepository).save(any(PaymentConfig.class));
         }
     }
-
-    // ===================== List & Get Tests =====================
 
     @Nested
     @DisplayName("listPaymentTransactions & getPaymentTransaction")
@@ -504,29 +528,5 @@ class PaymentServiceTest {
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Unauthorized access");
         }
-    }
-
-    // ===================== Helper Methods =====================
-
-    private PaymentTransaction buildTransaction(PaymentTransaction.PaymentProvider provider) {
-        return PaymentTransaction.builder()
-                .transactionRef("TXN-" + UUID.randomUUID())
-                .type(PaymentTransaction.PaymentType.PAYROLL)
-                .amount(new BigDecimal("5000.00"))
-                .currency("INR")
-                .provider(provider)
-                .recipientName("John Doe")
-                .recipientAccountNumber("1234567890")
-                .recipientIfsc("SBIN0001234")
-                .build();
-    }
-
-    private PaymentConfig buildConfig(PaymentConfig.PaymentProvider provider) {
-        return PaymentConfig.builder()
-                .provider(provider)
-                .apiKeyEncrypted("encrypted-key")
-                .isActive(true)
-                .configKey("config-" + provider.name().toLowerCase())
-                .build();
     }
 }

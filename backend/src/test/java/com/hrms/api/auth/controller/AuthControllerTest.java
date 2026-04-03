@@ -50,59 +50,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("AuthController Integration Tests")
 class AuthControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private AuthService authService;
-
     @MockitoBean
     private CookieConfig cookieConfig;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private EmployeeRepository employeeRepository;
-
     @MockitoBean
     private ScopeContextService scopeContextService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     @MockitoBean
     private com.hrms.application.auth.service.MfaService mfaService;
-
     private AuthResponse authResponse;
 
     @BeforeEach
@@ -129,6 +106,14 @@ class AuthControllerTest {
                 .email("john.doe@example.com")
                 .fullName("John Doe")
                 .build();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     @Nested

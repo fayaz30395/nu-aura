@@ -62,8 +62,8 @@ class LeaveTypeControllerTest {
         leaveTypeId = UUID.randomUUID();
         leaveType = new LeaveType();
         leaveType.setId(leaveTypeId);
-        leaveType.setName("Annual Leave");
-        leaveType.setMaxDaysPerYear(21);
+        leaveType.setLeaveName("Annual Leave");
+        leaveType.setAnnualQuota(new java.math.BigDecimal("21"));
         leaveType.setIsActive(true);
         leaveType.setAccrualType(LeaveType.AccrualType.MONTHLY);
     }
@@ -76,8 +76,8 @@ class LeaveTypeControllerTest {
         @DisplayName("Should create leave type successfully")
         void shouldCreateLeaveTypeSuccessfully() throws Exception {
             LeaveTypeRequest request = new LeaveTypeRequest();
-            request.setName("Annual Leave");
-            request.setMaxDaysPerYear(21);
+            request.setLeaveName("Annual Leave");
+            request.setAnnualQuota(new java.math.BigDecimal("21"));
             request.setAccrualType("MONTHLY");
 
             when(leaveTypeService.createLeaveType(any(LeaveType.class))).thenReturn(leaveType);
@@ -161,13 +161,13 @@ class LeaveTypeControllerTest {
         @DisplayName("Should update leave type successfully")
         void shouldUpdateLeaveTypeSuccessfully() throws Exception {
             LeaveTypeRequest request = new LeaveTypeRequest();
-            request.setName("Updated Annual Leave");
-            request.setMaxDaysPerYear(25);
+            request.setLeaveName("Updated Annual Leave");
+            request.setAnnualQuota(new java.math.BigDecimal("25"));
 
             LeaveType updated = new LeaveType();
             updated.setId(leaveTypeId);
-            updated.setName("Updated Annual Leave");
-            updated.setMaxDaysPerYear(25);
+            updated.setLeaveName("Updated Annual Leave");
+            updated.setAnnualQuota(new java.math.BigDecimal("25"));
 
             when(leaveTypeService.updateLeaveType(eq(leaveTypeId), any(LeaveType.class))).thenReturn(updated);
 
@@ -202,7 +202,7 @@ class LeaveTypeControllerTest {
         void shouldDeactivateLeaveType() throws Exception {
             LeaveType inactive = new LeaveType();
             inactive.setId(leaveTypeId);
-            inactive.setName("Annual Leave");
+            inactive.setLeaveName("Annual Leave");
             inactive.setIsActive(false);
 
             doNothing().when(leaveTypeService).deactivateLeaveType(leaveTypeId);

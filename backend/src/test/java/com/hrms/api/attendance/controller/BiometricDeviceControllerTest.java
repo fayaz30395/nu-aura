@@ -27,17 +27,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BiometricDeviceControllerTest {
 
-    @Mock
-    private BiometricIntegrationService biometricService;
-
-    @InjectMocks
-    private BiometricDeviceController controller;
-
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID DEVICE_ID = UUID.randomUUID();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
+    @Mock
+    private BiometricIntegrationService biometricService;
+    @InjectMocks
+    private BiometricDeviceController controller;
 
     // ─── Webhook Endpoint Tests ─────────────────────────────────────────────
 

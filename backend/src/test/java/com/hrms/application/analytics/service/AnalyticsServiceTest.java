@@ -33,23 +33,17 @@ import static org.mockito.Mockito.*;
 @DisplayName("AnalyticsService Tests")
 class AnalyticsServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private AttendanceRecordRepository attendanceRecordRepository;
-
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
-
     @Mock
     private PayslipRepository payslipRepository;
-
     @InjectMocks
     private AnalyticsService analyticsService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
 
     @BeforeAll

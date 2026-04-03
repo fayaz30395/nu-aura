@@ -31,17 +31,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("PayrollRunService Tests")
 class PayrollRunServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private PayrollRunRepository payrollRunRepository;
-
     @Mock
     private AuditLogService auditLogService;
-
     @InjectMocks
     private PayrollRunService payrollRunService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID userId;
     private PayrollRun payrollRun;

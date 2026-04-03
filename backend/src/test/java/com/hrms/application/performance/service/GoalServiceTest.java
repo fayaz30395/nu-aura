@@ -34,17 +34,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("GoalService Tests")
 class GoalServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private GoalRepository goalRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @InjectMocks
     private GoalService goalService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID goalId;

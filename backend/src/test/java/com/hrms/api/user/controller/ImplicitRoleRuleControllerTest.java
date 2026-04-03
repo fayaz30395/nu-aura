@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Unit tests for ImplicitRoleRuleController.
  * Tests CRUD for implicit role rules, bulk operations, recompute, and @RequiresPermission annotations.
- *
+ * <p>
  * NOTE: This controller directly injects repositories (not a service layer),
  * so we mock the repositories with @MockitoBean.
  */

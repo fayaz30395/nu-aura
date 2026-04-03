@@ -128,6 +128,150 @@ class OfferLetterWorkflowIntegrationTest {
 
     // ==================== Offer Letter Generation Tests ====================
 
+    private void setupAdminScope() {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.RECRUITMENT_MANAGE, RoleScope.ALL);
+        permissions.put(Permission.RECRUITMENT_VIEW, RoleScope.ALL);
+        permissions.put(Permission.CANDIDATE_VIEW, RoleScope.ALL);
+        permissions.put(Permission.LETTER_TEMPLATE_VIEW, RoleScope.ALL);
+        permissions.put(Permission.LETTER_GENERATE, RoleScope.ALL);
+        permissions.put(Permission.LETTER_ISSUE, RoleScope.ALL);
+        permissions.put(Permission.ESIGNATURE_REQUEST, RoleScope.ALL);
+        permissions.put(Permission.ESIGNATURE_VIEW, RoleScope.ALL);
+        permissions.put(Permission.ESIGNATURE_MANAGE, RoleScope.ALL);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), currentEmployeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== E-Signature Tests ====================
+
+    private Employee createEmployee(String code) {
+        User user = User.builder()
+                .email(code.toLowerCase() + "@example.com")
+                .firstName("HR")
+                .lastName("Admin")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode(code)
+                .firstName("HR")
+                .lastName("Admin")
+                .joiningDate(LocalDate.now().minusYears(1))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+        return employeeRepository.save(employee);
+    }
+
+    // ==================== Offer Response Tests ====================
+
+    private JobOpening createJobOpening() {
+        JobOpening jo = new JobOpening();
+        jo.setId(UUID.randomUUID());
+        jo.setTenantId(TENANT_ID);
+        jo.setJobCode("JOB-TEST-" + UUID.randomUUID().toString().substring(0, 6));
+        jo.setJobTitle("Software Engineer");
+        jo.setDepartmentId(UUID.randomUUID());
+        jo.setLocation("Bangalore");
+        jo.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
+        jo.setStatus(JobOpening.JobStatus.OPEN);
+        jo.setHiringManagerId(currentEmployeeId);
+        jo.setPostedDate(LocalDate.now());
+        jo.setIsActive(true);
+        return jobOpeningRepository.save(jo);
+    }
+
+    // ==================== E-Sign Completion Event Tests ====================
+
+    private Candidate createCandidate() {
+        Candidate c = new Candidate();
+        c.setId(UUID.randomUUID());
+        c.setTenantId(TENANT_ID);
+        c.setCandidateCode("CAND-TEST-" + UUID.randomUUID().toString().substring(0, 6));
+        c.setJobOpeningId(jobOpening.getId());
+        c.setFirstName("John");
+        c.setLastName("Doe");
+        c.setEmail("john.doe." + UUID.randomUUID().toString().substring(0, 6) + "@example.com");
+        c.setPhone("+91 9876543210");
+        c.setCurrentCompany("Previous Corp");
+        c.setCurrentDesignation("Engineer");
+        c.setCurrentCtc(new BigDecimal("1000000"));
+        c.setExpectedCtc(new BigDecimal("1500000"));
+        c.setStatus(Candidate.CandidateStatus.NEW);
+        c.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
+        c.setAppliedDate(LocalDate.now());
+        return candidateRepository.save(c);
+    }
+
+    // ==================== Helper Methods ====================
+
+    private LetterTemplate createOfferLetterTemplate() {
+        LetterTemplate template = LetterTemplate.builder()
+                .name("Standard Offer Letter")
+                .code("OFFER-STD-" + UUID.randomUUID().toString().substring(0, 6))
+                .description("Standard offer letter template")
+                .category(LetterTemplate.LetterCategory.OFFER)
+                .templateContent("""
+                        Dear {{candidate.name}},
+
+                        We are pleased to offer you the position of {{offer.designation}} at our company.
+
+                        Your compensation will be {{offer.ctc}} per annum.
+                        Your proposed joining date is {{offer.joiningDate}}.
+
+                        Please sign this letter to confirm your acceptance.
+
+                        Best regards,
+                        HR Team
+                        """)
+                .isActive(true)
+                .isSystemTemplate(false)
+                .templateVersion(1)
+                .requiresApproval(false)
+                .build();
+        template.setTenantId(TENANT_ID);
+        return letterTemplateRepository.save(template);
+    }
+
+    private LetterTemplate createNonOfferTemplate() {
+        LetterTemplate template = LetterTemplate.builder()
+                .name("Appointment Letter")
+                .code("APPT-" + UUID.randomUUID().toString().substring(0, 6))
+                .category(LetterTemplate.LetterCategory.APPOINTMENT)
+                .templateContent("Appointment letter content...")
+                .isActive(true)
+                .isSystemTemplate(false)
+                .templateVersion(1)
+                .requiresApproval(false)
+                .build();
+        template.setTenantId(TENANT_ID);
+        return letterTemplateRepository.save(template);
+    }
+
+    private GeneratedLetter createAndApproveOfferLetter() {
+        GeneratedLetter letter = GeneratedLetter.builder()
+                .referenceNumber("OFF/" + LocalDate.now().getYear() + "/001")
+                .templateId(offerTemplate.getId())
+                .candidateId(candidate.getId())
+                .category(LetterTemplate.LetterCategory.OFFER)
+                .letterTitle("Offer Letter - " + candidate.getFullName())
+                .generatedContent("Generated offer letter content...")
+                .letterDate(LocalDate.now())
+                .effectiveDate(LocalDate.now().plusMonths(1))
+                .status(GeneratedLetter.LetterStatus.APPROVED)
+                .generatedBy(currentEmployeeId)
+                .build();
+        letter.setTenantId(TENANT_ID);
+        return generatedLetterRepository.save(letter);
+    }
+
     @Nested
     @DisplayName("Offer Letter Generation")
     class OfferLetterGenerationTests {
@@ -187,8 +331,6 @@ class OfferLetterWorkflowIntegrationTest {
                     .andExpect(status().isConflict()); // BusinessException returns 409 CONFLICT
         }
     }
-
-    // ==================== E-Signature Tests ====================
 
     @Nested
     @DisplayName("E-Signature for External Candidates")
@@ -252,8 +394,6 @@ class OfferLetterWorkflowIntegrationTest {
                     .andExpect(status().isConflict()); // BusinessException returns 409 CONFLICT
         }
     }
-
-    // ==================== Offer Response Tests ====================
 
     @Nested
     @DisplayName("Offer Acceptance/Decline")
@@ -337,8 +477,6 @@ class OfferLetterWorkflowIntegrationTest {
                     .andExpect(status().isBadRequest());
         }
     }
-
-    // ==================== E-Sign Completion Event Tests ====================
 
     @Nested
     @DisplayName("E-Sign Completion Events")
@@ -447,143 +585,5 @@ class OfferLetterWorkflowIntegrationTest {
             Candidate updatedCandidate = candidateRepository.findById(candidate.getId()).orElseThrow();
             assertThat(updatedCandidate.getStatus()).isEqualTo(Candidate.CandidateStatus.NEW);
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private void setupAdminScope() {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.RECRUITMENT_MANAGE, RoleScope.ALL);
-        permissions.put(Permission.RECRUITMENT_VIEW, RoleScope.ALL);
-        permissions.put(Permission.CANDIDATE_VIEW, RoleScope.ALL);
-        permissions.put(Permission.LETTER_TEMPLATE_VIEW, RoleScope.ALL);
-        permissions.put(Permission.LETTER_GENERATE, RoleScope.ALL);
-        permissions.put(Permission.LETTER_ISSUE, RoleScope.ALL);
-        permissions.put(Permission.ESIGNATURE_REQUEST, RoleScope.ALL);
-        permissions.put(Permission.ESIGNATURE_VIEW, RoleScope.ALL);
-        permissions.put(Permission.ESIGNATURE_MANAGE, RoleScope.ALL);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), currentEmployeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private Employee createEmployee(String code) {
-        User user = User.builder()
-                .email(code.toLowerCase() + "@example.com")
-                .firstName("HR")
-                .lastName("Admin")
-                .passwordHash("test-hash")
-                .status(User.UserStatus.ACTIVE)
-                .build();
-        user.setTenantId(TENANT_ID);
-        User savedUser = userRepository.save(user);
-
-        Employee employee = Employee.builder()
-                .employeeCode(code)
-                .firstName("HR")
-                .lastName("Admin")
-                .joiningDate(LocalDate.now().minusYears(1))
-                .employmentType(Employee.EmploymentType.FULL_TIME)
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .user(savedUser)
-                .build();
-        employee.setTenantId(TENANT_ID);
-        return employeeRepository.save(employee);
-    }
-
-    private JobOpening createJobOpening() {
-        JobOpening jo = new JobOpening();
-        jo.setId(UUID.randomUUID());
-        jo.setTenantId(TENANT_ID);
-        jo.setJobCode("JOB-TEST-" + UUID.randomUUID().toString().substring(0, 6));
-        jo.setJobTitle("Software Engineer");
-        jo.setDepartmentId(UUID.randomUUID());
-        jo.setLocation("Bangalore");
-        jo.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
-        jo.setStatus(JobOpening.JobStatus.OPEN);
-        jo.setHiringManagerId(currentEmployeeId);
-        jo.setPostedDate(LocalDate.now());
-        jo.setIsActive(true);
-        return jobOpeningRepository.save(jo);
-    }
-
-    private Candidate createCandidate() {
-        Candidate c = new Candidate();
-        c.setId(UUID.randomUUID());
-        c.setTenantId(TENANT_ID);
-        c.setCandidateCode("CAND-TEST-" + UUID.randomUUID().toString().substring(0, 6));
-        c.setJobOpeningId(jobOpening.getId());
-        c.setFirstName("John");
-        c.setLastName("Doe");
-        c.setEmail("john.doe." + UUID.randomUUID().toString().substring(0, 6) + "@example.com");
-        c.setPhone("+91 9876543210");
-        c.setCurrentCompany("Previous Corp");
-        c.setCurrentDesignation("Engineer");
-        c.setCurrentCtc(new BigDecimal("1000000"));
-        c.setExpectedCtc(new BigDecimal("1500000"));
-        c.setStatus(Candidate.CandidateStatus.NEW);
-        c.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
-        c.setAppliedDate(LocalDate.now());
-        return candidateRepository.save(c);
-    }
-
-    private LetterTemplate createOfferLetterTemplate() {
-        LetterTemplate template = LetterTemplate.builder()
-                .name("Standard Offer Letter")
-                .code("OFFER-STD-" + UUID.randomUUID().toString().substring(0, 6))
-                .description("Standard offer letter template")
-                .category(LetterTemplate.LetterCategory.OFFER)
-                .templateContent("""
-                        Dear {{candidate.name}},
-
-                        We are pleased to offer you the position of {{offer.designation}} at our company.
-
-                        Your compensation will be {{offer.ctc}} per annum.
-                        Your proposed joining date is {{offer.joiningDate}}.
-
-                        Please sign this letter to confirm your acceptance.
-
-                        Best regards,
-                        HR Team
-                        """)
-                .isActive(true)
-                .isSystemTemplate(false)
-                .templateVersion(1)
-                .requiresApproval(false)
-                .build();
-        template.setTenantId(TENANT_ID);
-        return letterTemplateRepository.save(template);
-    }
-
-    private LetterTemplate createNonOfferTemplate() {
-        LetterTemplate template = LetterTemplate.builder()
-                .name("Appointment Letter")
-                .code("APPT-" + UUID.randomUUID().toString().substring(0, 6))
-                .category(LetterTemplate.LetterCategory.APPOINTMENT)
-                .templateContent("Appointment letter content...")
-                .isActive(true)
-                .isSystemTemplate(false)
-                .templateVersion(1)
-                .requiresApproval(false)
-                .build();
-        template.setTenantId(TENANT_ID);
-        return letterTemplateRepository.save(template);
-    }
-
-    private GeneratedLetter createAndApproveOfferLetter() {
-        GeneratedLetter letter = GeneratedLetter.builder()
-                .referenceNumber("OFF/" + LocalDate.now().getYear() + "/001")
-                .templateId(offerTemplate.getId())
-                .candidateId(candidate.getId())
-                .category(LetterTemplate.LetterCategory.OFFER)
-                .letterTitle("Offer Letter - " + candidate.getFullName())
-                .generatedContent("Generated offer letter content...")
-                .letterDate(LocalDate.now())
-                .effectiveDate(LocalDate.now().plusMonths(1))
-                .status(GeneratedLetter.LetterStatus.APPROVED)
-                .generatedBy(currentEmployeeId)
-                .build();
-        letter.setTenantId(TENANT_ID);
-        return generatedLetterRepository.save(letter);
     }
 }
