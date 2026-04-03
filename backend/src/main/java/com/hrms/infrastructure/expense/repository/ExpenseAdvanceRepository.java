@@ -28,7 +28,7 @@ public interface ExpenseAdvanceRepository extends JpaRepository<ExpenseAdvance, 
             UUID employeeId, UUID tenantId, ExpenseAdvance.AdvanceStatus status);
 
     @Query("SELECT SUM(a.amount) FROM ExpenseAdvance a WHERE a.tenantId = :tenantId " +
-           "AND a.employeeId = :employeeId AND a.status IN ('APPROVED', 'DISBURSED')")
+            "AND a.employeeId = :employeeId AND a.status IN ('APPROVED', 'DISBURSED')")
     BigDecimal sumOutstandingByEmployee(@Param("tenantId") UUID tenantId,
                                         @Param("employeeId") UUID employeeId);
 }

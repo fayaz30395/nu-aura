@@ -35,11 +35,11 @@ public interface DepartmentRepository extends JpaRepository<Department, UUID> {
     List<Department> findRootDepartments(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT d FROM Department d WHERE d.tenantId = :tenantId AND " +
-           "(LOWER(d.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(d.code) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "(LOWER(d.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(d.code) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Department> searchDepartments(@Param("tenantId") UUID tenantId,
-                                      @Param("search") String search,
-                                      Pageable pageable);
+                                       @Param("search") String search,
+                                       Pageable pageable);
 
     long countByTenantIdAndParentDepartmentId(UUID tenantId, UUID parentDepartmentId);
 }

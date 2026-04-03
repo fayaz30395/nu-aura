@@ -25,10 +25,10 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID>, Jpa
      * Count candidates per job opening in a single query — avoids N+1 when listing job openings.
      */
     @Query("SELECT c.jobOpeningId AS jobOpeningId, COUNT(c) AS cnt " +
-           "FROM Candidate c WHERE c.tenantId = :tenantId AND c.jobOpeningId IN :jobOpeningIds " +
-           "GROUP BY c.jobOpeningId")
+            "FROM Candidate c WHERE c.tenantId = :tenantId AND c.jobOpeningId IN :jobOpeningIds " +
+            "GROUP BY c.jobOpeningId")
     List<Object[]> countByTenantIdAndJobOpeningIds(@Param("tenantId") UUID tenantId,
-                                                    @Param("jobOpeningIds") List<UUID> jobOpeningIds);
+                                                   @Param("jobOpeningIds") List<UUID> jobOpeningIds);
 
     List<Candidate> findByTenantIdAndStatus(UUID tenantId, Candidate.CandidateStatus status);
 

@@ -38,8 +38,8 @@ public interface NuApplicationRepository extends JpaRepository<NuApplication, UU
      * Find applications available to a specific tenant
      */
     @Query("SELECT a FROM NuApplication a JOIN TenantApplication ta ON ta.application = a " +
-           "WHERE ta.tenantId = :tenantId AND ta.status IN ('ACTIVE', 'TRIAL') " +
-           "AND a.status = 'ACTIVE' ORDER BY a.displayOrder ASC")
+            "WHERE ta.tenantId = :tenantId AND ta.status IN ('ACTIVE', 'TRIAL') " +
+            "AND a.status = 'ACTIVE' ORDER BY a.displayOrder ASC")
     List<NuApplication> findAvailableForTenant(@Param("tenantId") UUID tenantId);
 
     /**

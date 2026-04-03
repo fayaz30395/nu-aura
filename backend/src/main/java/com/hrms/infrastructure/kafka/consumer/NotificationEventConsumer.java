@@ -26,7 +26,7 @@ import java.util.UUID;
  *
  * <p>Listens to the nu-aura.notifications topic and routes messages to appropriate
  * delivery channels: EMAIL, PUSH, IN_APP, SMS.
- *
+ * <p>
  * Features:
  * - Template-based rendering for emails
  * - Exponential backoff retry for transient failures
@@ -137,12 +137,12 @@ public class NotificationEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "NOTIFICATION_SENT",
-                    event.getTenantId(),
-                    event.getRecipientId() != null ? event.getRecipientId() : UUID.randomUUID(),
-                    "Notification",
-                    integrationMetadata,
-                    Instant.now()
+                        "NOTIFICATION_SENT",
+                        event.getTenantId(),
+                        event.getRecipientId() != null ? event.getRecipientId() : UUID.randomUUID(),
+                        "Notification",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -215,12 +215,12 @@ public class NotificationEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "NOTIFICATION_SENT",
-                    event.getTenantId(),
-                    userId,
-                    "Notification",
-                    integrationMetadata,
-                    Instant.now()
+                        "NOTIFICATION_SENT",
+                        event.getTenantId(),
+                        userId,
+                        "Notification",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary

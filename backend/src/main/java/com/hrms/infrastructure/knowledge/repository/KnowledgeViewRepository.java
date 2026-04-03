@@ -19,10 +19,10 @@ public interface KnowledgeViewRepository extends JpaRepository<KnowledgeView, UU
     Page<KnowledgeView> findByTenantIdAndUserId(UUID tenantId, UUID userId, Pageable pageable);
 
     @Query("SELECT COUNT(kv) FROM KnowledgeView kv WHERE kv.tenantId = :tenantId " +
-           "AND kv.contentType = :contentType AND kv.contentId = :contentId")
+            "AND kv.contentType = :contentType AND kv.contentId = :contentId")
     long countViewsByContent(@Param("tenantId") UUID tenantId,
-                            @Param("contentType") KnowledgeView.ContentType contentType,
-                            @Param("contentId") UUID contentId);
+                             @Param("contentType") KnowledgeView.ContentType contentType,
+                             @Param("contentId") UUID contentId);
 
     long countByTenantId(UUID tenantId);
 }

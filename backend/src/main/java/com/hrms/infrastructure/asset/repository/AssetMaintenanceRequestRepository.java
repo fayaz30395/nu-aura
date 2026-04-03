@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface AssetMaintenanceRequestRepository
         extends JpaRepository<AssetMaintenanceRequest, UUID>,
-                JpaSpecificationExecutor<AssetMaintenanceRequest> {
+        JpaSpecificationExecutor<AssetMaintenanceRequest> {
 
     Page<AssetMaintenanceRequest> findByTenantId(UUID tenantId, Pageable pageable);
 

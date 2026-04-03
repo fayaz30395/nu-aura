@@ -20,29 +20,35 @@ import java.io.Serializable;
 public class RedisWebSocketMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     /**
-     * The type of send operation.
+     * TOPIC or USER — determines how the message is dispatched locally.
      */
-    public enum SendType {
-        /** convertAndSend to a topic destination */
-        TOPIC,
-        /** convertAndSendToUser targeting a specific user */
-        USER
-    }
-
-    /** TOPIC or USER — determines how the message is dispatched locally. */
     private SendType sendType;
-
-    /** STOMP destination (e.g. "/topic/tenant.{id}.notifications"). */
+    /**
+     * STOMP destination (e.g. "/topic/tenant.{id}.notifications").
+     */
     private String destination;
-
     /**
      * For USER sends: the principal name (userId) to target.
      * Null for TOPIC sends.
      */
     private String userId;
-
-    /** The serialized message payload (already JSON-compatible). */
+    /**
+     * The serialized message payload (already JSON-compatible).
+     */
     private Object payload;
+
+    /**
+     * The type of send operation.
+     */
+    public enum SendType {
+        /**
+         * convertAndSend to a topic destination
+         */
+        TOPIC,
+        /**
+         * convertAndSendToUser targeting a specific user
+         */
+        USER
+    }
 }

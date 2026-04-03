@@ -33,11 +33,11 @@ public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUI
 
     @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.projectId = :projectId AND te.status = :status")
     List<TimeEntry> findByProjectAndStatus(@Param("tenantId") UUID tenantId,
-                                          @Param("projectId") UUID projectId,
-                                          @Param("status") TimeEntry.TimeEntryStatus status);
+                                           @Param("projectId") UUID projectId,
+                                           @Param("status") TimeEntry.TimeEntryStatus status);
 
     @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.employeeId = :employeeId AND te.workDate = :date")
     List<TimeEntry> findByEmployeeAndDate(@Param("tenantId") UUID tenantId,
-                                         @Param("employeeId") UUID employeeId,
-                                         @Param("date") LocalDate date);
+                                          @Param("employeeId") UUID employeeId,
+                                          @Param("date") LocalDate date);
 }

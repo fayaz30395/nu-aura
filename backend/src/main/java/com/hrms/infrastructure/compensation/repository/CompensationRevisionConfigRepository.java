@@ -14,12 +14,12 @@ import java.util.UUID;
 public interface CompensationRevisionConfigRepository extends JpaRepository<CompensationRevisionConfig, UUID> {
 
     @Query("SELECT c FROM CompensationRevisionConfig c " +
-           "WHERE c.tenantId = :tenantId AND c.isActive = true " +
-           "ORDER BY c.ratingLabel ASC")
+            "WHERE c.tenantId = :tenantId AND c.isActive = true " +
+            "ORDER BY c.ratingLabel ASC")
     List<CompensationRevisionConfig> findActiveByTenantId(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT c FROM CompensationRevisionConfig c " +
-           "WHERE c.tenantId = :tenantId AND c.ratingLabel = :ratingLabel AND c.isActive = true")
+            "WHERE c.tenantId = :tenantId AND c.ratingLabel = :ratingLabel AND c.isActive = true")
     Optional<CompensationRevisionConfig> findByTenantIdAndRatingLabel(
             @Param("tenantId") UUID tenantId,
             @Param("ratingLabel") String ratingLabel);

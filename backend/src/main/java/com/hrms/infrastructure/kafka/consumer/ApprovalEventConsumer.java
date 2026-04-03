@@ -32,7 +32,7 @@ import java.util.UUID;
  * - EXPENSE: Update expense claim status, process payment
  * - ASSET: Update asset assignment status
  * - WIKI_PAGE: Publish/activate page
- *
+ * <p>
  * Ensures idempotent processing by tracking eventId to prevent duplicate processing.
  * </p>
  */
@@ -168,12 +168,12 @@ public class ApprovalEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "LEAVE_APPROVED",
-                    event.getTenantId(),
-                    leaveRequestId,
-                    "LeaveRequest",
-                    integrationMetadata,
-                    Instant.now()
+                        "LEAVE_APPROVED",
+                        event.getTenantId(),
+                        leaveRequestId,
+                        "LeaveRequest",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -224,12 +224,12 @@ public class ApprovalEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "EXPENSE_APPROVED",
-                    event.getTenantId(),
-                    expenseClaimId,
-                    "ExpenseClaim",
-                    integrationMetadata,
-                    Instant.now()
+                        "EXPENSE_APPROVED",
+                        event.getTenantId(),
+                        expenseClaimId,
+                        "ExpenseClaim",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -280,12 +280,12 @@ public class ApprovalEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "ASSET_APPROVED",
-                    event.getTenantId(),
-                    assetId,
-                    "Asset",
-                    integrationMetadata,
-                    Instant.now()
+                        "ASSET_APPROVED",
+                        event.getTenantId(),
+                        assetId,
+                        "Asset",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -336,12 +336,12 @@ public class ApprovalEventConsumer {
                 }
 
                 IntegrationEvent integrationEvent = new IntegrationEvent(
-                    "DOCUMENT_CREATED",
-                    event.getTenantId(),
-                    pageId,
-                    "WikiPage",
-                    integrationMetadata,
-                    Instant.now()
+                        "DOCUMENT_CREATED",
+                        event.getTenantId(),
+                        pageId,
+                        "WikiPage",
+                        integrationMetadata,
+                        Instant.now()
                 );
                 integrationEventRouter.routeToConnectors(integrationEvent);
             } catch (Exception e) { // Intentional broad catch — per-message error boundary

@@ -24,12 +24,12 @@ public interface FeedbackRepository extends JpaRepository<Feedback, UUID> {
     List<Feedback> findAllByTenantIdAndGiverId(UUID tenantId, UUID giverId);
 
     @Query("SELECT f FROM Feedback f WHERE f.tenantId = :tenantId " +
-           "AND f.recipientId = :employeeId ORDER BY f.createdAt DESC")
+            "AND f.recipientId = :employeeId ORDER BY f.createdAt DESC")
     List<Feedback> findReceivedFeedback(@Param("tenantId") UUID tenantId,
                                         @Param("employeeId") UUID employeeId);
 
     @Query("SELECT f FROM Feedback f WHERE f.tenantId = :tenantId " +
-           "AND f.giverId = :employeeId ORDER BY f.createdAt DESC")
+            "AND f.giverId = :employeeId ORDER BY f.createdAt DESC")
     List<Feedback> findGivenFeedback(@Param("tenantId") UUID tenantId,
                                      @Param("employeeId") UUID employeeId);
 

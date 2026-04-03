@@ -23,7 +23,7 @@ public interface BlogCommentRepository extends JpaRepository<BlogComment, UUID> 
     List<BlogComment> findByTenantIdAndParentCommentId(UUID tenantId, UUID parentCommentId);
 
     @Query("SELECT bc FROM BlogComment bc WHERE bc.tenantId = :tenantId AND bc.post.id = :postId " +
-           "AND bc.isApproved = false ORDER BY bc.createdAt DESC")
+            "AND bc.isApproved = false ORDER BY bc.createdAt DESC")
     Page<BlogComment> findUnapprovedCommentsByPost(@Param("tenantId") UUID tenantId, @Param("postId") UUID postId, Pageable pageable);
 
     long countByTenantIdAndPostId(UUID tenantId, UUID postId);

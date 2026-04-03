@@ -49,7 +49,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
     @Modifying
     @Transactional
     @Query("UPDATE ImplicitUserRole iur SET iur.isActive = false " +
-           "WHERE iur.userId = :userId AND iur.tenantId = :tenantId")
+            "WHERE iur.userId = :userId AND iur.tenantId = :tenantId")
     int deactivateAllForUser(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -59,7 +59,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
     @Modifying
     @Transactional
     @Query("UPDATE ImplicitUserRole iur SET iur.isActive = false " +
-           "WHERE iur.derivedFromRuleId = :ruleId AND iur.tenantId = :tenantId")
+            "WHERE iur.derivedFromRuleId = :ruleId AND iur.tenantId = :tenantId")
     int deactivateAllForRule(@Param("ruleId") UUID ruleId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -67,7 +67,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
      * Used for impact analysis before disabling a rule.
      */
     @Query("SELECT COUNT(DISTINCT iur.userId) FROM ImplicitUserRole iur " +
-           "WHERE iur.derivedFromRuleId = :ruleId AND iur.tenantId = :tenantId AND iur.isActive = true")
+            "WHERE iur.derivedFromRuleId = :ruleId AND iur.tenantId = :tenantId AND iur.isActive = true")
     long countAffectedUsers(@Param("ruleId") UUID ruleId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -75,7 +75,7 @@ public interface ImplicitUserRoleRepository extends JpaRepository<ImplicitUserRo
      * Used for approval routing: "find all Reporting Managers to escalate to".
      */
     @Query("SELECT DISTINCT iur.userId FROM ImplicitUserRole iur " +
-           "WHERE iur.roleId = :roleId AND iur.tenantId = :tenantId AND iur.isActive = true")
+            "WHERE iur.roleId = :roleId AND iur.tenantId = :tenantId AND iur.isActive = true")
     List<UUID> findUserIdsByRoleIdAndTenantId(@Param("roleId") UUID roleId, @Param("tenantId") UUID tenantId);
 
     /**

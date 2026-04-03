@@ -22,9 +22,9 @@ public interface IntegrationEventLogRepository extends JpaRepository<Integration
     /**
      * Finds all event logs for a specific connector in a tenant, ordered by creation date descending.
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID (e.g., "docusign")
-     * @param pageable pagination information
+     * @param pageable    pagination information
      * @return a page of event logs for the specified connector
      */
     Page<IntegrationEventLog> findByTenantIdAndConnectorIdOrderByCreatedAtDesc(
@@ -33,10 +33,10 @@ public interface IntegrationEventLogRepository extends JpaRepository<Integration
     /**
      * Finds all event logs for a specific connector and status in a tenant, ordered by creation date descending.
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID (e.g., "docusign")
-     * @param status the processing status (SUCCESS, FAILED, or SKIPPED)
-     * @param pageable pagination information
+     * @param status      the processing status (SUCCESS, FAILED, or SKIPPED)
+     * @param pageable    pagination information
      * @return a page of event logs for the specified connector and status
      */
     Page<IntegrationEventLog> findByTenantIdAndConnectorIdAndStatusOrderByCreatedAtDesc(
@@ -46,7 +46,7 @@ public interface IntegrationEventLogRepository extends JpaRepository<Integration
      * Finds all event logs with a specific status for a tenant, ordered by creation date descending.
      *
      * @param tenantId the tenant ID (required for isolation)
-     * @param status the processing status (SUCCESS, FAILED, or SKIPPED)
+     * @param status   the processing status (SUCCESS, FAILED, or SKIPPED)
      * @param pageable pagination information
      * @return a page of event logs with the specified status
      */

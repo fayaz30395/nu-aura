@@ -16,116 +16,116 @@ import java.util.UUID;
 
 @Repository
 public interface AttendanceRecordRepository
-                extends JpaRepository<AttendanceRecord, UUID>, JpaSpecificationExecutor<AttendanceRecord> {
+        extends JpaRepository<AttendanceRecord, UUID>, JpaSpecificationExecutor<AttendanceRecord> {
 
-        Optional<AttendanceRecord> findByEmployeeIdAndAttendanceDateAndTenantId(
-                        UUID employeeId, LocalDate attendanceDate, UUID tenantId);
+    Optional<AttendanceRecord> findByEmployeeIdAndAttendanceDateAndTenantId(
+            UUID employeeId, LocalDate attendanceDate, UUID tenantId);
 
-        Page<AttendanceRecord> findAllByTenantId(UUID tenantId, Pageable pageable);
+    Page<AttendanceRecord> findAllByTenantId(UUID tenantId, Pageable pageable);
 
-        Page<AttendanceRecord> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
+    Page<AttendanceRecord> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
-        List<AttendanceRecord> findAllByEmployeeIdAndAttendanceDateBetween(
-                        UUID employeeId, LocalDate startDate, LocalDate endDate);
+    List<AttendanceRecord> findAllByEmployeeIdAndAttendanceDateBetween(
+            UUID employeeId, LocalDate startDate, LocalDate endDate);
 
-        // Tenant-aware version
-        List<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
-                        UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate);
+    // Tenant-aware version
+    List<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+            UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate);
 
-        // Paginated tenant-aware version
-        Page<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
-                        UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+    // Paginated tenant-aware version
+    Page<AttendanceRecord> findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+            UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-        List<AttendanceRecord> findAllByTenantIdAndAttendanceDateBetween(
-                        UUID tenantId, LocalDate startDate, LocalDate endDate);
+    List<AttendanceRecord> findAllByTenantIdAndAttendanceDateBetween(
+            UUID tenantId, LocalDate startDate, LocalDate endDate);
 
-        Page<AttendanceRecord> findAllByTenantIdAndStatus(
-                        UUID tenantId, AttendanceRecord.AttendanceStatus status, Pageable pageable);
+    Page<AttendanceRecord> findAllByTenantIdAndStatus(
+            UUID tenantId, AttendanceRecord.AttendanceStatus status, Pageable pageable);
 
-        @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.regularizationRequested = true AND a.regularizationApproved = false")
-        Page<AttendanceRecord> findPendingRegularizations(@Param("tenantId") UUID tenantId, Pageable pageable);
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.regularizationRequested = true AND a.regularizationApproved = false")
+    Page<AttendanceRecord> findPendingRegularizations(@Param("tenantId") UUID tenantId, Pageable pageable);
 
-        boolean existsByEmployeeIdAndAttendanceDate(UUID employeeId, LocalDate attendanceDate);
+    boolean existsByEmployeeIdAndAttendanceDate(UUID employeeId, LocalDate attendanceDate);
 
-        // Tenant-aware version — use this in tenant-scoped contexts
-        @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AttendanceRecord a " +
-                        "WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate = :attendanceDate")
-        boolean existsByTenantIdAndEmployeeIdAndAttendanceDate(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("employeeId") UUID employeeId,
-                        @Param("attendanceDate") LocalDate attendanceDate);
+    // Tenant-aware version — use this in tenant-scoped contexts
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM AttendanceRecord a " +
+            "WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate = :attendanceDate")
+    boolean existsByTenantIdAndEmployeeIdAndAttendanceDate(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("attendanceDate") LocalDate attendanceDate);
 
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
-        Long countByEmployeeIdAndStatusAndDateRange(
-                        @Param("employeeId") UUID employeeId,
-                        @Param("status") AttendanceRecord.AttendanceStatus status,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
+    Long countByEmployeeIdAndStatusAndDateRange(
+            @Param("employeeId") UUID employeeId,
+            @Param("status") AttendanceRecord.AttendanceStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
-        // Tenant-aware version — use this in tenant-scoped contexts
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
-        Long countByTenantIdAndEmployeeIdAndStatusAndDateRange(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("employeeId") UUID employeeId,
-                        @Param("status") AttendanceRecord.AttendanceStatus status,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
+    // Tenant-aware version — use this in tenant-scoped contexts
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.status = :status AND a.attendanceDate BETWEEN :startDate AND :endDate")
+    Long countByTenantIdAndEmployeeIdAndStatusAndDateRange(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("status") AttendanceRecord.AttendanceStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
-        // Get all attendance for a specific date
-        List<AttendanceRecord> findByTenantIdAndAttendanceDate(UUID tenantId, LocalDate attendanceDate);
+    // Get all attendance for a specific date
+    List<AttendanceRecord> findByTenantIdAndAttendanceDate(UUID tenantId, LocalDate attendanceDate);
 
-        // Analytics methods
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date")
-        Long countByTenantIdAndDate(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
+    // Analytics methods
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date")
+    Long countByTenantIdAndDate(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isLate = false")
-        Long countByTenantIdAndDateAndOnTime(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isLate = false")
+    Long countByTenantIdAndDateAndOnTime(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
-        // Team-based analytics methods
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.employeeId IN :employeeIds")
-        Long countByTenantIdAndDateAndEmployeeIdIn(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date,
-                        @Param("employeeIds") List<UUID> employeeIds);
+    // Team-based analytics methods
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.employeeId IN :employeeIds")
+    Long countByTenantIdAndDateAndEmployeeIdIn(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date,
+                                               @Param("employeeIds") List<UUID> employeeIds);
 
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isLate = false AND a.employeeId IN :employeeIds")
-        Long countByTenantIdAndDateAndOnTimeAndEmployeeIdIn(@Param("tenantId") UUID tenantId,
-                        @Param("date") LocalDate date, @Param("employeeIds") List<UUID> employeeIds);
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isLate = false AND a.employeeId IN :employeeIds")
+    Long countByTenantIdAndDateAndOnTimeAndEmployeeIdIn(@Param("tenantId") UUID tenantId,
+                                                        @Param("date") LocalDate date, @Param("employeeIds") List<UUID> employeeIds);
 
-        // Check if single employee has attendance
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.employeeId = :employeeId")
-        Long countByTenantIdAndDateAndEmployeeId(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date,
-                        @Param("employeeId") UUID employeeId);
+    // Check if single employee has attendance
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.employeeId = :employeeId")
+    Long countByTenantIdAndDateAndEmployeeId(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date,
+                                             @Param("employeeId") UUID employeeId);
 
-        // Find attendance by tenant, employee, and date
-        @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate = :date")
-        Optional<AttendanceRecord> findByTenantIdAndEmployeeIdAndDate(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("employeeId") UUID employeeId,
-                        @Param("date") LocalDate date);
+    // Find attendance by tenant, employee, and date
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate = :date")
+    Optional<AttendanceRecord> findByTenantIdAndEmployeeIdAndDate(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("date") LocalDate date);
 
-        // Count attendance for employee in date range
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate BETWEEN :startDate AND :endDate")
-        Long countByTenantIdAndEmployeeIdAndDateBetween(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("employeeId") UUID employeeId,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
+    // Count attendance for employee in date range
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.attendanceDate BETWEEN :startDate AND :endDate")
+    Long countByTenantIdAndEmployeeIdAndDateBetween(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
-        // Find remote check-ins for a specific date
-        @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
-        List<AttendanceRecord> findRemoteCheckinsByTenantIdAndDate(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("date") LocalDate date);
+    // Find remote check-ins for a specific date
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
+    List<AttendanceRecord> findRemoteCheckinsByTenantIdAndDate(
+            @Param("tenantId") UUID tenantId,
+            @Param("date") LocalDate date);
 
-        // Count remote check-ins for a specific date
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
-        Long countRemoteCheckinsByTenantIdAndDate(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("date") LocalDate date);
+    // Count remote check-ins for a specific date
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
+    Long countRemoteCheckinsByTenantIdAndDate(
+            @Param("tenantId") UUID tenantId,
+            @Param("date") LocalDate date);
 
-        // Count remote check-ins for a specific date within a team
-        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true AND a.employeeId IN :employeeIds")
-        Long countRemoteCheckinsByTenantIdAndDateAndEmployeeIdIn(
-                        @Param("tenantId") UUID tenantId,
-                        @Param("date") LocalDate date,
-                        @Param("employeeIds") List<UUID> employeeIds);
+    // Count remote check-ins for a specific date within a team
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true AND a.employeeId IN :employeeIds")
+    Long countRemoteCheckinsByTenantIdAndDateAndEmployeeIdIn(
+            @Param("tenantId") UUID tenantId,
+            @Param("date") LocalDate date,
+            @Param("employeeIds") List<UUID> employeeIds);
 }

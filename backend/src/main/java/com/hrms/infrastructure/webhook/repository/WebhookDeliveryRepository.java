@@ -52,7 +52,7 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
      * Count failed deliveries for a webhook in a time period.
      */
     @Query("SELECT COUNT(d) FROM WebhookDelivery d WHERE d.webhookId = :webhookId " +
-           "AND d.status = 'FAILED' AND d.createdAt >= :since")
+            "AND d.status = 'FAILED' AND d.createdAt >= :since")
     long countFailedDeliveries(@Param("webhookId") UUID webhookId, @Param("since") LocalDateTime since);
 
     /**

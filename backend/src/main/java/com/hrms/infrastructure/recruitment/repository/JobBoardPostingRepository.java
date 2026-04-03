@@ -29,7 +29,7 @@ public interface JobBoardPostingRepository extends JpaRepository<JobBoardPosting
     List<JobBoardPosting> findAllByTenantIdAndBoardName(UUID tenantId, JobBoardPosting.JobBoard boardName);
 
     @Query("SELECT p FROM JobBoardPosting p WHERE p.tenantId = :tenantId " +
-           "AND p.status = 'ACTIVE' AND p.expiresAt < :now")
+            "AND p.status = 'ACTIVE' AND p.expiresAt < :now")
     List<JobBoardPosting> findExpiredPostings(@Param("tenantId") UUID tenantId,
                                               @Param("now") LocalDateTime now);
 

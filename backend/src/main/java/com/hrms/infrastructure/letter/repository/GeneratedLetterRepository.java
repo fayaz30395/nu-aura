@@ -45,11 +45,11 @@ public interface GeneratedLetterRepository extends JpaRepository<GeneratedLetter
     Page<GeneratedLetter> findPendingApprovals(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     @Query("SELECT l FROM GeneratedLetter l WHERE l.employeeId = :employeeId AND l.tenantId = :tenantId " +
-           "AND l.status = 'ISSUED' ORDER BY l.issuedAt DESC")
+            "AND l.status = 'ISSUED' ORDER BY l.issuedAt DESC")
     List<GeneratedLetter> findIssuedLettersForEmployee(@Param("employeeId") UUID employeeId, @Param("tenantId") UUID tenantId);
 
     @Query("SELECT l FROM GeneratedLetter l WHERE l.tenantId = :tenantId " +
-           "AND l.letterDate >= :startDate AND l.letterDate <= :endDate ORDER BY l.letterDate DESC")
+            "AND l.letterDate >= :startDate AND l.letterDate <= :endDate ORDER BY l.letterDate DESC")
     List<GeneratedLetter> findByDateRange(@Param("tenantId") UUID tenantId,
                                           @Param("startDate") LocalDate startDate,
                                           @Param("endDate") LocalDate endDate);
@@ -58,11 +58,11 @@ public interface GeneratedLetterRepository extends JpaRepository<GeneratedLetter
     long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") LetterStatus status);
 
     @Query("SELECT l.category, COUNT(l) FROM GeneratedLetter l " +
-           "WHERE l.tenantId = :tenantId GROUP BY l.category")
+            "WHERE l.tenantId = :tenantId GROUP BY l.category")
     List<Object[]> countByCategory(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT MAX(CAST(SUBSTRING(l.referenceNumber, -4) AS integer)) FROM GeneratedLetter l " +
-           "WHERE l.tenantId = :tenantId AND l.referenceNumber LIKE :prefix%")
+            "WHERE l.tenantId = :tenantId AND l.referenceNumber LIKE :prefix%")
     Integer findMaxSequenceByPrefix(@Param("tenantId") UUID tenantId, @Param("prefix") String prefix);
 
     @Query("SELECT l FROM GeneratedLetter l WHERE l.generatedBy = :userId AND l.tenantId = :tenantId ORDER BY l.createdAt DESC")

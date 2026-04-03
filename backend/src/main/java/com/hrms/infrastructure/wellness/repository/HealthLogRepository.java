@@ -21,15 +21,15 @@ public interface HealthLogRepository extends JpaRepository<HealthLog, UUID> {
     Page<HealthLog> findByEmployeeId(UUID employeeId, Pageable pageable);
 
     @Query("SELECT h FROM HealthLog h WHERE h.employeeId = :employeeId " +
-           "AND h.logDate BETWEEN :startDate AND :endDate ORDER BY h.logDate DESC")
+            "AND h.logDate BETWEEN :startDate AND :endDate ORDER BY h.logDate DESC")
     List<HealthLog> findByEmployeeAndDateRange(
             @Param("employeeId") UUID employeeId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT h FROM HealthLog h WHERE h.employeeId = :employeeId " +
-           "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate " +
-           "ORDER BY h.logDate")
+            "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY h.logDate")
     List<HealthLog> findByMetricType(
             @Param("employeeId") UUID employeeId,
             @Param("metricType") HealthLog.MetricType metricType,
@@ -37,15 +37,15 @@ public interface HealthLogRepository extends JpaRepository<HealthLog, UUID> {
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT h FROM HealthLog h WHERE h.participant.id = :participantId " +
-           "ORDER BY h.logDate DESC")
+            "ORDER BY h.logDate DESC")
     List<HealthLog> findByParticipant(@Param("participantId") UUID participantId);
 
     @Query("SELECT SUM(h.value) FROM HealthLog h WHERE h.participant.id = :participantId")
     Double getTotalProgress(@Param("participantId") UUID participantId);
 
     @Query("SELECT h.logDate, SUM(h.value) FROM HealthLog h WHERE h.employeeId = :employeeId " +
-           "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate " +
-           "GROUP BY h.logDate ORDER BY h.logDate")
+            "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY h.logDate ORDER BY h.logDate")
     List<Object[]> getDailyTotals(
             @Param("employeeId") UUID employeeId,
             @Param("metricType") HealthLog.MetricType metricType,
@@ -53,7 +53,7 @@ public interface HealthLogRepository extends JpaRepository<HealthLog, UUID> {
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT AVG(h.value) FROM HealthLog h WHERE h.employeeId = :employeeId " +
-           "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate")
+            "AND h.metricType = :metricType AND h.logDate BETWEEN :startDate AND :endDate")
     Double getAverageValue(
             @Param("employeeId") UUID employeeId,
             @Param("metricType") HealthLog.MetricType metricType,

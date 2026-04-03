@@ -29,10 +29,10 @@ public interface PayrollComponentRepository extends JpaRepository<PayrollCompone
     List<PayrollComponent> findAllByTenantIdAndComponentType(UUID tenantId, ComponentType componentType);
 
     @Query("SELECT pc FROM PayrollComponent pc WHERE pc.tenantId = :tenantId " +
-           "AND pc.isActive = true AND pc.componentType = :type " +
-           "ORDER BY pc.evaluationOrder ASC")
+            "AND pc.isActive = true AND pc.componentType = :type " +
+            "ORDER BY pc.evaluationOrder ASC")
     List<PayrollComponent> findActiveByTenantIdAndType(
-        @Param("tenantId") UUID tenantId,
-        @Param("type") ComponentType type
+            @Param("tenantId") UUID tenantId,
+            @Param("type") ComponentType type
     );
 }

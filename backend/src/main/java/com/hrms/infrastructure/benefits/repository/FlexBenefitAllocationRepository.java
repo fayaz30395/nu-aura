@@ -23,51 +23,51 @@ public interface FlexBenefitAllocationRepository extends JpaRepository<FlexBenef
             UUID tenantId, UUID employeeId, int fiscalYear);
 
     @Query("SELECT fa FROM FlexBenefitAllocation fa WHERE fa.tenantId = :tenantId " +
-           "AND fa.employeeId = :employeeId AND fa.status = 'ACTIVE'")
+            "AND fa.employeeId = :employeeId AND fa.status = 'ACTIVE'")
     Optional<FlexBenefitAllocation> findActiveAllocation(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT fa FROM FlexBenefitAllocation fa WHERE fa.tenantId = :tenantId " +
-           "AND fa.fiscalYear = :fiscalYear")
+            "AND fa.fiscalYear = :fiscalYear")
     List<FlexBenefitAllocation> findAllByFiscalYear(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);
 
     @Query("SELECT fa FROM FlexBenefitAllocation fa WHERE fa.tenantId = :tenantId " +
-           "AND fa.status = 'ACTIVE' AND fa.expiryDate <= :date")
+            "AND fa.status = 'ACTIVE' AND fa.expiryDate <= :date")
     List<FlexBenefitAllocation> findExpiringAllocations(
             @Param("tenantId") UUID tenantId,
             @Param("date") LocalDate date);
 
     @Query("SELECT fa FROM FlexBenefitAllocation fa WHERE fa.tenantId = :tenantId " +
-           "AND fa.status = 'ACTIVE' AND fa.remainingCredits > 0 " +
-           "AND fa.expiryDate <= :date")
+            "AND fa.status = 'ACTIVE' AND fa.remainingCredits > 0 " +
+            "AND fa.expiryDate <= :date")
     List<FlexBenefitAllocation> findAllocationsToForfeit(
             @Param("tenantId") UUID tenantId,
             @Param("date") LocalDate date);
 
     @Query("SELECT SUM(fa.totalCredits) FROM FlexBenefitAllocation fa " +
-           "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
+            "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
     BigDecimal getTotalAllocatedCredits(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);
 
     @Query("SELECT SUM(fa.usedCredits) FROM FlexBenefitAllocation fa " +
-           "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
+            "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
     BigDecimal getTotalUsedCredits(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);
 
     @Query("SELECT SUM(fa.forfeitedCredits) FROM FlexBenefitAllocation fa " +
-           "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
+            "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear")
     BigDecimal getTotalForfeitedCredits(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);
 
     @Query("SELECT fa.status, COUNT(fa) FROM FlexBenefitAllocation fa " +
-           "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear " +
-           "GROUP BY fa.status")
+            "WHERE fa.tenantId = :tenantId AND fa.fiscalYear = :fiscalYear " +
+            "GROUP BY fa.status")
     List<Object[]> countByStatus(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);

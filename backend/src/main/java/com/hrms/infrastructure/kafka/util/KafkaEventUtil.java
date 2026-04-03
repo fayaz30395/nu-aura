@@ -33,7 +33,7 @@ public class KafkaEventUtil {
      * Format: tenantId:eventId:timestamp
      *
      * @param tenantId Tenant identifier
-     * @param eventId Event identifier
+     * @param eventId  Event identifier
      * @return Composite idempotency key
      */
     public String generateIdempotencyKey(UUID tenantId, String eventId) {
@@ -93,9 +93,9 @@ public class KafkaEventUtil {
     /**
      * Deserialize JSON to an event object.
      *
-     * @param json JSON string
+     * @param json       JSON string
      * @param eventClass Class to deserialize to
-     * @param <T> Event type
+     * @param <T>        Event type
      * @return Deserialized event
      */
     public <T> T fromJson(String json, Class<T> eventClass) {
@@ -126,7 +126,7 @@ public class KafkaEventUtil {
     /**
      * Create a detailed error context map for failed events.
      *
-     * @param event The failed event
+     * @param event     The failed event
      * @param exception The exception that occurred
      * @return Map of error details
      */
@@ -152,7 +152,7 @@ public class KafkaEventUtil {
     /**
      * Check if an event is stale (older than threshold).
      *
-     * @param event Event to check
+     * @param event            Event to check
      * @param thresholdMinutes Staleness threshold in minutes
      * @return true if event is older than threshold
      */

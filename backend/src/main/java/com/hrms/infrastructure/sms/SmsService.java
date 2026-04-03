@@ -12,7 +12,7 @@ public interface SmsService {
      * Send a simple SMS message
      *
      * @param phoneNumber Recipient phone number in E.164 format (e.g., +1234567890)
-     * @param message Message content
+     * @param message     Message content
      * @return Message ID from the SMS provider
      */
     String sendSms(String phoneNumber, String message);
@@ -21,8 +21,8 @@ public interface SmsService {
      * Send an SMS using a predefined template
      *
      * @param phoneNumber Recipient phone number in E.164 format
-     * @param templateId Template identifier
-     * @param variables Map of variable names to values for template replacement
+     * @param templateId  Template identifier
+     * @param variables   Map of variable names to values for template replacement
      * @return Message ID from the SMS provider
      */
     String sendTemplatedSms(String phoneNumber, String templateId, Map<String, String> variables);
@@ -31,7 +31,7 @@ public interface SmsService {
      * Send bulk SMS to multiple recipients
      *
      * @param phoneNumbers Array of recipient phone numbers
-     * @param message Message content
+     * @param message      Message content
      * @return Map of phone numbers to message IDs
      */
     Map<String, String> sendBulkSms(String[] phoneNumbers, String message);

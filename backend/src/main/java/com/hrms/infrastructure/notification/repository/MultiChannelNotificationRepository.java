@@ -26,8 +26,8 @@ public interface MultiChannelNotificationRepository extends JpaRepository<MultiC
     List<MultiChannelNotification> findByStatusAndScheduledAtBeforeAndTenantId(NotificationStatus status, LocalDateTime dateTime, UUID tenantId);
 
     @Query("SELECT n FROM MultiChannelNotification n WHERE n.tenantId = :tenantId " +
-           "AND n.status = :status AND n.retryCount < :maxRetries " +
-           "AND n.lastRetryAt < :retryAfter")
+            "AND n.status = :status AND n.retryCount < :maxRetries " +
+            "AND n.lastRetryAt < :retryAfter")
     List<MultiChannelNotification> findNotificationsForRetry(
             @Param("tenantId") UUID tenantId,
             @Param("status") NotificationStatus status,
@@ -35,23 +35,23 @@ public interface MultiChannelNotificationRepository extends JpaRepository<MultiC
             @Param("retryAfter") LocalDateTime retryAfter);
 
     @Query("SELECT COUNT(n) FROM MultiChannelNotification n WHERE n.recipientId = :userId " +
-           "AND n.tenantId = :tenantId AND n.status != 'READ' AND n.channel = 'IN_APP'")
+            "AND n.tenantId = :tenantId AND n.status != 'READ' AND n.channel = 'IN_APP'")
     Long countUnreadInAppNotifications(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
 
     @Modifying
     @Transactional
     @Query("UPDATE MultiChannelNotification n SET n.status = 'READ', n.readAt = :readAt " +
-           "WHERE n.recipientId = :userId AND n.tenantId = :tenantId AND n.channel = 'IN_APP' AND n.status != 'READ'")
+            "WHERE n.recipientId = :userId AND n.tenantId = :tenantId AND n.channel = 'IN_APP' AND n.status != 'READ'")
     int markAllAsRead(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId, @Param("readAt") LocalDateTime readAt);
 
     Page<MultiChannelNotification> findByChannelAndStatusAndTenantId(NotificationChannel channel, NotificationStatus status, UUID tenantId, Pageable pageable);
 
     @Query("SELECT n.channel, COUNT(n) FROM MultiChannelNotification n WHERE n.tenantId = :tenantId " +
-           "AND n.createdAt >= :startDate GROUP BY n.channel")
+            "AND n.createdAt >= :startDate GROUP BY n.channel")
     List<Object[]> countByChannelSince(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDateTime startDate);
 
     @Query("SELECT n.status, COUNT(n) FROM MultiChannelNotification n WHERE n.tenantId = :tenantId " +
-           "AND n.createdAt >= :startDate GROUP BY n.status")
+            "AND n.createdAt >= :startDate GROUP BY n.status")
     List<Object[]> countByStatusSince(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDateTime startDate);
 
     List<MultiChannelNotification> findByReferenceTypeAndReferenceIdAndTenantId(String referenceType, UUID referenceId, UUID tenantId);
@@ -59,8 +59,8 @@ public interface MultiChannelNotificationRepository extends JpaRepository<MultiC
     List<MultiChannelNotification> findByGroupKeyAndTenantId(String groupKey, UUID tenantId);
 
     @Query("SELECT n FROM MultiChannelNotification n WHERE n.tenantId = :tenantId " +
-           "AND n.recipientId = :userId AND n.channel = 'IN_APP' " +
-           "ORDER BY n.createdAt DESC")
+            "AND n.recipientId = :userId AND n.channel = 'IN_APP' " +
+            "ORDER BY n.createdAt DESC")
     Page<MultiChannelNotification> findInAppNotificationsForUser(
             @Param("tenantId") UUID tenantId,
             @Param("userId") UUID userId,

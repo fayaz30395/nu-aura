@@ -23,16 +23,16 @@ public interface WellnessChallengeRepository extends JpaRepository<WellnessChall
     List<WellnessChallenge> findByProgramId(UUID programId);
 
     @Query("SELECT c FROM WellnessChallenge c WHERE c.tenantId = :tenantId AND c.isActive = true " +
-           "AND c.startDate <= :date AND c.endDate >= :date")
+            "AND c.startDate <= :date AND c.endDate >= :date")
     List<WellnessChallenge> findActiveChallenges(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
     @Query("SELECT c FROM WellnessChallenge c WHERE c.tenantId = :tenantId AND c.isActive = true " +
-           "AND c.startDate > :date ORDER BY c.startDate")
+            "AND c.startDate > :date ORDER BY c.startDate")
     List<WellnessChallenge> findUpcomingChallenges(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
     @Query("SELECT c FROM WellnessChallenge c WHERE c.tenantId = :tenantId AND c.challengeType = :type AND c.isActive = true")
     List<WellnessChallenge> findByChallengeType(@Param("tenantId") UUID tenantId,
-                                                 @Param("type") WellnessChallenge.ChallengeType type);
+                                                @Param("type") WellnessChallenge.ChallengeType type);
 
     @Query("SELECT c FROM WellnessChallenge c WHERE c.tenantId = :tenantId AND c.isTeamBased = true AND c.isActive = true")
     List<WellnessChallenge> findTeamChallenges(@Param("tenantId") UUID tenantId);

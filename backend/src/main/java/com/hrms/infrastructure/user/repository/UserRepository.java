@@ -73,10 +73,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * access will cause LazyInitializationException or N+1 queries.</p>
      */
     @Query("SELECT DISTINCT u FROM User u " +
-           "LEFT JOIN FETCH u.roles r " +
-           "LEFT JOIN FETCH r.permissions rp " +
-           "LEFT JOIN FETCH rp.permission " +
-           "WHERE u.id = :userId")
+            "LEFT JOIN FETCH u.roles r " +
+            "LEFT JOIN FETCH r.permissions rp " +
+            "LEFT JOIN FETCH rp.permission " +
+            "WHERE u.id = :userId")
     Optional<User> findByIdWithRolesAndPermissions(@Param("userId") UUID userId);
 
     /**
@@ -84,8 +84,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Use when you need role codes/names but not full permission details.
      */
     @Query("SELECT DISTINCT u FROM User u " +
-           "LEFT JOIN FETCH u.roles " +
-           "WHERE u.id = :userId")
+            "LEFT JOIN FETCH u.roles " +
+            "WHERE u.id = :userId")
     Optional<User> findByIdWithRoles(@Param("userId") UUID userId);
 
     /**
@@ -93,10 +93,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Used for login/authentication flows.
      */
     @Query("SELECT DISTINCT u FROM User u " +
-           "LEFT JOIN FETCH u.roles r " +
-           "LEFT JOIN FETCH r.permissions rp " +
-           "LEFT JOIN FETCH rp.permission " +
-           "WHERE u.email = :email AND u.tenantId = :tenantId")
+            "LEFT JOIN FETCH u.roles r " +
+            "LEFT JOIN FETCH r.permissions rp " +
+            "LEFT JOIN FETCH rp.permission " +
+            "WHERE u.email = :email AND u.tenantId = :tenantId")
     Optional<User> findByEmailWithRolesAndPermissions(@Param("email") String email, @Param("tenantId") UUID tenantId);
 
     /**
@@ -104,10 +104,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Used for Google SSO where email uniquely identifies the user.
      */
     @Query("SELECT DISTINCT u FROM User u " +
-           "LEFT JOIN FETCH u.roles r " +
-           "LEFT JOIN FETCH r.permissions rp " +
-           "LEFT JOIN FETCH rp.permission " +
-           "WHERE u.email = :email")
+            "LEFT JOIN FETCH u.roles r " +
+            "LEFT JOIN FETCH r.permissions rp " +
+            "LEFT JOIN FETCH rp.permission " +
+            "WHERE u.email = :email")
     Optional<User> findByEmailWithRolesAndPermissionsAcrossTenants(@Param("email") String email);
 
     // ==================== ROLE-BASED QUERIES ====================

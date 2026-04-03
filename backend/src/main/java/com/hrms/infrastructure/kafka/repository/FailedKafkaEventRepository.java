@@ -34,7 +34,9 @@ public interface FailedKafkaEventRepository extends JpaRepository<FailedKafkaEve
 
     // ── Topic-based queries ────────────────────────────────────────────────────
 
-    /** Returns all events for a specific DLT topic, ordered newest-first. */
+    /**
+     * Returns all events for a specific DLT topic, ordered newest-first.
+     */
     Page<FailedKafkaEvent> findByTopicOrderByCreatedAtDesc(String topic, Pageable pageable);
 
     /**
@@ -69,7 +71,7 @@ public interface FailedKafkaEventRepository extends JpaRepository<FailedKafkaEve
     @Modifying
     @Transactional
     @Query("UPDATE FailedKafkaEvent f SET f.status = 'IGNORED' " +
-           "WHERE f.topic = :topic AND f.status = 'PENDING_REPLAY'")
+            "WHERE f.topic = :topic AND f.status = 'PENDING_REPLAY'")
     int ignoreAllPendingForTopic(@Param("topic") String topic);
 
     // ── Replay count guard ─────────────────────────────────────────────────────
@@ -79,6 +81,6 @@ public interface FailedKafkaEventRepository extends JpaRepository<FailedKafkaEve
      * are still in PENDING state (potential poison pills that keep failing post-replay).
      */
     @Query("SELECT f FROM FailedKafkaEvent f " +
-           "WHERE f.replayCount > :maxReplayCount AND f.status = 'PENDING_REPLAY'")
+            "WHERE f.replayCount > :maxReplayCount AND f.status = 'PENDING_REPLAY'")
     List<FailedKafkaEvent> findSuspectedPoisonPills(@Param("maxReplayCount") int maxReplayCount);
 }

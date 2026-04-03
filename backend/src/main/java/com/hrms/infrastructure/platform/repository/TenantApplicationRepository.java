@@ -22,10 +22,10 @@ public interface TenantApplicationRepository extends JpaRepository<TenantApplica
      * Find by tenant and app code
      */
     @Query("SELECT ta FROM TenantApplication ta JOIN ta.application a " +
-           "WHERE ta.tenantId = :tenantId AND a.code = :appCode")
+            "WHERE ta.tenantId = :tenantId AND a.code = :appCode")
     Optional<TenantApplication> findByTenantIdAndApplicationCode(
-        @Param("tenantId") UUID tenantId,
-        @Param("appCode") String appCode
+            @Param("tenantId") UUID tenantId,
+            @Param("appCode") String appCode
     );
 
     /**
@@ -37,31 +37,31 @@ public interface TenantApplicationRepository extends JpaRepository<TenantApplica
      * Find active subscriptions for a tenant
      */
     @Query("SELECT ta FROM TenantApplication ta JOIN FETCH ta.application a " +
-           "WHERE ta.tenantId = :tenantId AND ta.status IN ('ACTIVE', 'TRIAL') " +
-           "ORDER BY a.displayOrder ASC")
+            "WHERE ta.tenantId = :tenantId AND ta.status IN ('ACTIVE', 'TRIAL') " +
+            "ORDER BY a.displayOrder ASC")
     List<TenantApplication> findActiveByTenantId(@Param("tenantId") UUID tenantId);
 
     /**
      * Check if tenant has active subscription to an application
      */
     @Query("SELECT CASE WHEN COUNT(ta) > 0 THEN true ELSE false END " +
-           "FROM TenantApplication ta JOIN ta.application a " +
-           "WHERE ta.tenantId = :tenantId AND a.code = :appCode " +
-           "AND ta.status IN ('ACTIVE', 'TRIAL')")
+            "FROM TenantApplication ta JOIN ta.application a " +
+            "WHERE ta.tenantId = :tenantId AND a.code = :appCode " +
+            "AND ta.status IN ('ACTIVE', 'TRIAL')")
     boolean hasActiveSubscription(@Param("tenantId") UUID tenantId, @Param("appCode") String appCode);
 
     /**
      * Find all tenants subscribed to an application
      */
     List<TenantApplication> findByApplicationIdAndStatus(
-        UUID applicationId,
-        TenantApplication.SubscriptionStatus status
+            UUID applicationId,
+            TenantApplication.SubscriptionStatus status
     );
 
     /**
      * Count tenants per application
      */
     @Query("SELECT a.code, COUNT(ta) FROM TenantApplication ta JOIN ta.application a " +
-           "WHERE ta.status IN ('ACTIVE', 'TRIAL') GROUP BY a.code")
+            "WHERE ta.status IN ('ACTIVE', 'TRIAL') GROUP BY a.code")
     List<Object[]> countTenantsPerApplication();
 }

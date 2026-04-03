@@ -83,9 +83,9 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * when accessed in detail views or approvals processing.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "LEFT JOIN FETCH s.approvalStep " +
-           "WHERE s.id = :stepId AND s.tenantId = :tenantId")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "LEFT JOIN FETCH s.approvalStep " +
+            "WHERE s.id = :stepId AND s.tenantId = :tenantId")
     Optional<StepExecution> findByIdWithAssociations(@Param("stepId") UUID stepId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -93,8 +93,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Use when you need approval context but not the step definition details.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.id = :stepId AND s.tenantId = :tenantId")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.id = :stepId AND s.tenantId = :tenantId")
     Optional<StepExecution> findByIdWithExecution(@Param("stepId") UUID stepId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -102,8 +102,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Prevents N+1 queries when processing pending approvals.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.workflowExecution.id = :executionId AND s.status = 'PENDING'")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.workflowExecution.id = :executionId AND s.status = 'PENDING'")
     List<StepExecution> findPendingStepsWithExecution(@Param("executionId") UUID executionId);
 
     /**
@@ -111,8 +111,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Used in approval inbox to prevent N+1 queries over potentially hundreds of pending approvals.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.tenantId = :tenantId AND s.assignedToUserId = :userId AND s.status = 'PENDING'")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.tenantId = :tenantId AND s.assignedToUserId = :userId AND s.status = 'PENDING'")
     List<StepExecution> findPendingForUserWithExecution(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
     /**
@@ -120,9 +120,9 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Optimized for approval inbox listing with sort order.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.tenantId = :tenantId AND s.assignedToUserId = :userId AND s.status = 'PENDING' " +
-           "ORDER BY s.assignedAt ASC")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.tenantId = :tenantId AND s.assignedToUserId = :userId AND s.status = 'PENDING' " +
+            "ORDER BY s.assignedAt ASC")
     List<StepExecution> findPendingForUserSortedByDateWithExecution(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
     /**
@@ -130,8 +130,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Used for escalation and SLA tracking.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.tenantId = :tenantId AND s.status = 'PENDING' AND s.deadline < :now")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.tenantId = :tenantId AND s.status = 'PENDING' AND s.deadline < :now")
     List<StepExecution> findOverdueStepsWithExecution(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
 
     /**
@@ -139,8 +139,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Used for escalation processing.
      */
     @Query("SELECT DISTINCT s FROM StepExecution s " +
-           "LEFT JOIN FETCH s.workflowExecution " +
-           "WHERE s.tenantId = :tenantId AND s.escalated = true AND s.status = 'PENDING'")
+            "LEFT JOIN FETCH s.workflowExecution " +
+            "WHERE s.tenantId = :tenantId AND s.escalated = true AND s.status = 'PENDING'")
     List<StepExecution> findEscalatedPendingStepsWithExecution(@Param("tenantId") UUID tenantId);
 
     // ==================== Approval Inbox Queries ====================
@@ -148,37 +148,37 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
     /**
      * Paginated inbox query with server-side filters.
      * Returns step executions assigned to the user, joined with their workflow execution.
-     *
+     * <p>
      * BUG-017 FIX: Use JOIN (not JOIN FETCH) for pagination compatibility.
      * JOIN FETCH causes "cannot use FETCH with pagination" in Hibernate.
      * Plain JOIN works with pagination and is correct since workflowExecution is non-nullable.
      */
     @Query(value = "SELECT s.* FROM step_executions s " +
-           "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
-           "WHERE s.tenant_id = :tenantId " +
-           "AND s.assigned_to_user_id = :userId " +
-           "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
-           "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
-           "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
-           "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
-           "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
-           "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-           "ORDER BY s.assigned_at DESC",
-           countQuery = "SELECT COUNT(s.id) FROM step_executions s " +
-           "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
-           "WHERE s.tenant_id = :tenantId " +
-           "AND s.assigned_to_user_id = :userId " +
-           "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
-           "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
-           "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
-           "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
-           "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
-           "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%')))",
-           nativeQuery = true)
+            "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
+            "WHERE s.tenant_id = :tenantId " +
+            "AND s.assigned_to_user_id = :userId " +
+            "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
+            "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
+            "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
+            "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
+            "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
+            "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "ORDER BY s.assigned_at DESC",
+            countQuery = "SELECT COUNT(s.id) FROM step_executions s " +
+                    "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
+                    "WHERE s.tenant_id = :tenantId " +
+                    "AND s.assigned_to_user_id = :userId " +
+                    "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
+                    "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
+                    "AND (CAST(:fromDate AS TIMESTAMP) IS NULL OR e.submitted_at >= :fromDate) " +
+                    "AND (CAST(:toDate AS TIMESTAMP) IS NULL OR e.submitted_at <= :toDate) " +
+                    "AND (CAST(:search AS VARCHAR) IS NULL OR :search = '' " +
+                    "     OR LOWER(e.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                    "     OR LOWER(e.requester_name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                    "     OR LOWER(e.reference_number) LIKE LOWER(CONCAT('%', :search, '%')))",
+            nativeQuery = true)
     Page<StepExecution> findInboxForUser(
             @Param("tenantId") UUID tenantId,
             @Param("userId") UUID userId,
@@ -193,11 +193,11 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * Count steps acted upon (approved/rejected) by the user today.
      */
     @Query("SELECT s.action, COUNT(s) FROM StepExecution s " +
-           "WHERE s.tenantId = :tenantId " +
-           "AND s.actionByUserId = :userId " +
-           "AND s.executedAt >= :startOfDay " +
-           "AND s.action IN :actions " +
-           "GROUP BY s.action")
+            "WHERE s.tenantId = :tenantId " +
+            "AND s.actionByUserId = :userId " +
+            "AND s.executedAt >= :startOfDay " +
+            "AND s.action IN :actions " +
+            "GROUP BY s.action")
     List<Object[]> countTodayActionsByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, @Param("startOfDay") LocalDateTime startOfDay, @Param("actions") java.util.Collection<StepExecution.ApprovalAction> actions);
 
     /**
@@ -212,11 +212,11 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * @return List of stale step executions
      */
     @Query("SELECT s FROM StepExecution s " +
-           "JOIN FETCH s.workflowExecution we " +
-           "LEFT JOIN FETCH we.workflowDefinition " +
-           "WHERE s.tenantId = :tenantId " +
-           "AND s.status = 'PENDING' " +
-           "AND s.assignedAt < :cutoff")
+            "JOIN FETCH s.workflowExecution we " +
+            "LEFT JOIN FETCH we.workflowDefinition " +
+            "WHERE s.tenantId = :tenantId " +
+            "AND s.status = 'PENDING' " +
+            "AND s.assignedAt < :cutoff")
     List<StepExecution> findStaleStepsForEscalation(@Param("tenantId") UUID tenantId,
-                                                     @Param("cutoff") LocalDateTime cutoff);
+                                                    @Param("cutoff") LocalDateTime cutoff);
 }

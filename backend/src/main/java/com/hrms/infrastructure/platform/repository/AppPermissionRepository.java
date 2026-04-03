@@ -38,17 +38,17 @@ public interface AppPermissionRepository extends JpaRepository<AppPermission, UU
      * Find permissions by application code
      */
     @Query("SELECT p FROM AppPermission p JOIN p.application a WHERE a.code = :appCode " +
-           "ORDER BY p.module ASC, p.displayOrder ASC")
+            "ORDER BY p.module ASC, p.displayOrder ASC")
     List<AppPermission> findByApplicationCode(@Param("appCode") String appCode);
 
     /**
      * Find permissions by application and module
      */
     @Query("SELECT p FROM AppPermission p WHERE p.application.id = :appId AND p.module = :module " +
-           "ORDER BY p.displayOrder ASC")
+            "ORDER BY p.displayOrder ASC")
     List<AppPermission> findByApplicationIdAndModule(
-        @Param("appId") UUID applicationId,
-        @Param("module") String module
+            @Param("appId") UUID applicationId,
+            @Param("module") String module
     );
 
     /**

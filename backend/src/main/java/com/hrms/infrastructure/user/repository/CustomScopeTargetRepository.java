@@ -41,21 +41,21 @@ public interface CustomScopeTargetRepository extends JpaRepository<CustomScopeTa
      * Find all employee IDs that are custom targets for a given set of role permissions.
      */
     @Query("SELECT c.targetId FROM CustomScopeTarget c " +
-           "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'EMPLOYEE'")
+            "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'EMPLOYEE'")
     Set<UUID> findEmployeeTargetIdsByRolePermissionIds(@Param("rolePermissionIds") Set<UUID> rolePermissionIds);
 
     /**
      * Find all department IDs that are custom targets for a given set of role permissions.
      */
     @Query("SELECT c.targetId FROM CustomScopeTarget c " +
-           "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'DEPARTMENT'")
+            "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'DEPARTMENT'")
     Set<UUID> findDepartmentTargetIdsByRolePermissionIds(@Param("rolePermissionIds") Set<UUID> rolePermissionIds);
 
     /**
      * Find all location IDs that are custom targets for a given set of role permissions.
      */
     @Query("SELECT c.targetId FROM CustomScopeTarget c " +
-           "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'LOCATION'")
+            "WHERE c.rolePermission.id IN :rolePermissionIds AND c.targetType = 'LOCATION'")
     Set<UUID> findLocationTargetIdsByRolePermissionIds(@Param("rolePermissionIds") Set<UUID> rolePermissionIds);
 
     /**

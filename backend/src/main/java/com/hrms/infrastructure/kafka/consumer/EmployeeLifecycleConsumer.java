@@ -27,13 +27,13 @@ import java.util.UUID;
  *
  * <p>Listens to the nu-aura.employee-lifecycle topic and triggers downstream
  * effects for employee milestones:
- *
+ * <p>
  * - HIRED: Initialize employee record
  * - ONBOARDED: Create default leave balances, assign onboarding tasks, send welcome email
  * - PROMOTED: Update compensation, create performance review cycle
  * - TRANSFERRED: Update department/location, modify reporting structure
  * - OFFBOARDED: Disable access, collect documents, notify stakeholders
- *
+ * <p>
  * Ensures idempotent processing via eventId and coordinates with other services
  * (leave, performance, access control, etc.)
  * </p>
@@ -141,12 +141,12 @@ public class EmployeeLifecycleConsumer {
             }
 
             IntegrationEvent integrationEvent = new IntegrationEvent(
-                "EMPLOYEE_HIRED",
-                tenantId,
-                employeeId,
-                "Employee",
-                metadata,
-                Instant.now()
+                    "EMPLOYEE_HIRED",
+                    tenantId,
+                    employeeId,
+                    "Employee",
+                    metadata,
+                    Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -220,12 +220,12 @@ public class EmployeeLifecycleConsumer {
             }
 
             IntegrationEvent integrationEvent = new IntegrationEvent(
-                "EMPLOYEE_ONBOARDED",
-                tenantId,
-                employeeId,
-                "Employee",
-                integrationMetadata,
-                Instant.now()
+                    "EMPLOYEE_ONBOARDED",
+                    tenantId,
+                    employeeId,
+                    "Employee",
+                    integrationMetadata,
+                    Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -288,12 +288,12 @@ public class EmployeeLifecycleConsumer {
             }
 
             IntegrationEvent integrationEvent = new IntegrationEvent(
-                "EMPLOYEE_PROMOTED",
-                tenantId,
-                employeeId,
-                "Employee",
-                integrationMetadata,
-                Instant.now()
+                    "EMPLOYEE_PROMOTED",
+                    tenantId,
+                    employeeId,
+                    "Employee",
+                    integrationMetadata,
+                    Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -365,12 +365,12 @@ public class EmployeeLifecycleConsumer {
             }
 
             IntegrationEvent integrationEvent = new IntegrationEvent(
-                "EMPLOYEE_TRANSFERRED",
-                tenantId,
-                employeeId,
-                "Employee",
-                integrationMetadata,
-                Instant.now()
+                    "EMPLOYEE_TRANSFERRED",
+                    tenantId,
+                    employeeId,
+                    "Employee",
+                    integrationMetadata,
+                    Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -472,12 +472,12 @@ public class EmployeeLifecycleConsumer {
             }
 
             IntegrationEvent integrationEvent = new IntegrationEvent(
-                "EMPLOYEE_OFFBOARDED",
-                tenantId,
-                employeeId,
-                "Employee",
-                integrationMetadata,
-                Instant.now()
+                    "EMPLOYEE_OFFBOARDED",
+                    tenantId,
+                    employeeId,
+                    "Employee",
+                    integrationMetadata,
+                    Instant.now()
             );
             integrationEventRouter.routeToConnectors(integrationEvent);
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
@@ -519,7 +519,7 @@ public class EmployeeLifecycleConsumer {
             });
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.warn("Failed to recompute implicit roles for employee {} in tenant {}: {}",
-                employeeId, tenantId, e.getMessage());
+                    employeeId, tenantId, e.getMessage());
         }
     }
 }

@@ -18,7 +18,7 @@ public interface KnowledgeSearchRepository extends JpaRepository<KnowledgeSearch
     Page<KnowledgeSearch> findByTenantIdAndQuery(UUID tenantId, String query, Pageable pageable);
 
     @Query("SELECT ks FROM KnowledgeSearch ks WHERE ks.tenantId = :tenantId " +
-           "ORDER BY COUNT(ks.query) DESC")
+            "ORDER BY COUNT(ks.query) DESC")
     Page<KnowledgeSearch> findPopularSearchesByTenant(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     long countByTenantId(UUID tenantId);

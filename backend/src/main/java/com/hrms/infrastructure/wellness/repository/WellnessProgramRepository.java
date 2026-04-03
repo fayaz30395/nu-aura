@@ -23,8 +23,8 @@ public interface WellnessProgramRepository extends JpaRepository<WellnessProgram
     List<WellnessProgram> findByTenantIdAndIsActiveTrue(UUID tenantId);
 
     @Query("SELECT p FROM WellnessProgram p WHERE p.tenantId = :tenantId AND p.isActive = true " +
-           "AND (p.startDate IS NULL OR p.startDate <= :date) " +
-           "AND (p.endDate IS NULL OR p.endDate >= :date)")
+            "AND (p.startDate IS NULL OR p.startDate <= :date) " +
+            "AND (p.endDate IS NULL OR p.endDate >= :date)")
     List<WellnessProgram> findActivePrograms(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
     @Query("SELECT p FROM WellnessProgram p WHERE p.tenantId = :tenantId AND p.isFeatured = true AND p.isActive = true")
@@ -32,9 +32,9 @@ public interface WellnessProgramRepository extends JpaRepository<WellnessProgram
 
     @Query("SELECT p FROM WellnessProgram p WHERE p.tenantId = :tenantId AND p.category = :category AND p.isActive = true")
     List<WellnessProgram> findByCategory(@Param("tenantId") UUID tenantId,
-                                          @Param("category") WellnessProgram.ProgramCategory category);
+                                         @Param("category") WellnessProgram.ProgramCategory category);
 
     @Query("SELECT p FROM WellnessProgram p WHERE p.tenantId = :tenantId AND p.programType = :type AND p.isActive = true")
     List<WellnessProgram> findByType(@Param("tenantId") UUID tenantId,
-                                      @Param("type") WellnessProgram.ProgramType type);
+                                     @Param("type") WellnessProgram.ProgramType type);
 }

@@ -27,12 +27,12 @@ public interface CompOffRequestRepository extends JpaRepository<CompOffRequest, 
             UUID tenantId, CompOffRequest.CompOffStatus status, Pageable pageable);
 
     @Query("SELECT c FROM CompOffRequest c WHERE c.tenantId = :tenantId " +
-           "AND c.employeeId = :employeeId AND c.status = 'PENDING'")
+            "AND c.employeeId = :employeeId AND c.status = 'PENDING'")
     List<CompOffRequest> findPendingByEmployee(@Param("tenantId") UUID tenantId,
                                                @Param("employeeId") UUID employeeId);
 
     @Query("SELECT c FROM CompOffRequest c WHERE c.tenantId = :tenantId " +
-           "AND c.attendanceDate BETWEEN :start AND :end AND c.status = 'PENDING'")
+            "AND c.attendanceDate BETWEEN :start AND :end AND c.status = 'PENDING'")
     List<CompOffRequest> findPendingInDateRange(@Param("tenantId") UUID tenantId,
                                                 @Param("start") LocalDate start,
                                                 @Param("end") LocalDate end);

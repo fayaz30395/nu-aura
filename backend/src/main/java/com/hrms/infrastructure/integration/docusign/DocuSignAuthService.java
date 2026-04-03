@@ -56,41 +56,34 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class DocuSignAuthService {
 
-    private final ObjectMapper objectMapper;
-    private final HttpClient httpClient;
-
-    // Cache: tenantId -> {accessToken, expiresAt}
-    private final ConcurrentHashMap<UUID, TokenCache> tokenCache = new ConcurrentHashMap<>();
-
     // 5-minute buffer before expiry to refresh proactively
     private static final long REFRESH_BUFFER_MS = 5 * 60 * 1000;
-
-    /**
-     * Token cache entry containing the access token and its expiry timestamp.
-     */
-    private static class TokenCache {
-        final String accessToken;
-        final long expiresAtMs;
-
-        TokenCache(String accessToken, long expiresAtMs) {
-            this.accessToken = accessToken;
-            this.expiresAtMs = expiresAtMs;
-        }
-
-        /**
-         * Check if this cached token is still valid (not expired, with buffer).
-         */
-        boolean isValid() {
-            long now = System.currentTimeMillis();
-            return now < (expiresAtMs - REFRESH_BUFFER_MS);
-        }
-    }
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
+    // Cache: tenantId -> {accessToken, expiresAt}
+    private final ConcurrentHashMap<UUID, TokenCache> tokenCache = new ConcurrentHashMap<>();
 
     public DocuSignAuthService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
+    }
+
+    /**
+     * Extract a string value from the connector config settings.
+     *
+     * @param config the connector configuration
+     * @param key    the settings key
+     * @return the string value
+     * @throws IllegalArgumentException if the key is missing or not a string
+     */
+    private static String getString(ConnectorConfig config, String key) {
+        Object value = config.settings().get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("Missing required config: " + key);
+        }
+        return value.toString();
     }
 
     /**
@@ -211,7 +204,7 @@ public class DocuSignAuthService {
      *
      * <p>
      * Handles both PKCS#8 format with and without the PEM header/footer:
-     * 
+     *
      * <pre>
      * -----BEGIN PRIVATE KEY-----
      * base64-encoded-key
@@ -310,18 +303,23 @@ public class DocuSignAuthService {
     }
 
     /**
-     * Extract a string value from the connector config settings.
-     *
-     * @param config the connector configuration
-     * @param key    the settings key
-     * @return the string value
-     * @throws IllegalArgumentException if the key is missing or not a string
+     * Token cache entry containing the access token and its expiry timestamp.
      */
-    private static String getString(ConnectorConfig config, String key) {
-        Object value = config.settings().get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing required config: " + key);
+    private static class TokenCache {
+        final String accessToken;
+        final long expiresAtMs;
+
+        TokenCache(String accessToken, long expiresAtMs) {
+            this.accessToken = accessToken;
+            this.expiresAtMs = expiresAtMs;
         }
-        return value.toString();
+
+        /**
+         * Check if this cached token is still valid (not expired, with buffer).
+         */
+        boolean isValid() {
+            long now = System.currentTimeMillis();
+            return now < (expiresAtMs - REFRESH_BUFFER_MS);
+        }
     }
 }

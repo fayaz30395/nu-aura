@@ -16,8 +16,8 @@ public interface RosterEntryRepository extends JpaRepository<RosterEntry, UUID> 
     List<RosterEntry> findAllByRosterId(UUID rosterId);
 
     @Query("SELECT re FROM RosterEntry re WHERE re.tenantId = :tenantId " +
-           "AND re.employeeId = :employeeId " +
-           "AND re.workDate BETWEEN :startDate AND :endDate")
+            "AND re.employeeId = :employeeId " +
+            "AND re.workDate BETWEEN :startDate AND :endDate")
     List<RosterEntry> findByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -25,8 +25,8 @@ public interface RosterEntryRepository extends JpaRepository<RosterEntry, UUID> 
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT re FROM RosterEntry re WHERE re.tenantId = :tenantId " +
-           "AND re.rosterId = :rosterId " +
-           "AND re.workDate BETWEEN :startDate AND :endDate")
+            "AND re.rosterId = :rosterId " +
+            "AND re.workDate BETWEEN :startDate AND :endDate")
     List<RosterEntry> findByRosterAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("rosterId") UUID rosterId,
@@ -34,8 +34,8 @@ public interface RosterEntryRepository extends JpaRepository<RosterEntry, UUID> 
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT re FROM RosterEntry re WHERE re.tenantId = :tenantId " +
-           "AND re.employeeId = :employeeId " +
-           "AND re.workDate = :date")
+            "AND re.employeeId = :employeeId " +
+            "AND re.workDate = :date")
     List<RosterEntry> findByEmployeeAndDate(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,

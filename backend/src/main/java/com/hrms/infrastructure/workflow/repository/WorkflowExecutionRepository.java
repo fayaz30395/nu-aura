@@ -83,8 +83,8 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
      * Use this when loading workflow execution details.
      */
     @Query("SELECT DISTINCT e FROM WorkflowExecution e " +
-           "LEFT JOIN FETCH e.workflowDefinition " +
-           "WHERE e.id = :executionId AND e.tenantId = :tenantId")
+            "LEFT JOIN FETCH e.workflowDefinition " +
+            "WHERE e.id = :executionId AND e.tenantId = :tenantId")
     Optional<WorkflowExecution> findByIdWithDefinition(@Param("executionId") UUID executionId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -92,10 +92,10 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
      * Use when loading a workflow for approval processing with full step details.
      */
     @Query("SELECT DISTINCT e FROM WorkflowExecution e " +
-           "LEFT JOIN FETCH e.workflowDefinition " +
-           "LEFT JOIN FETCH e.stepExecutions " +
-           "WHERE e.id = :executionId AND e.tenantId = :tenantId " +
-           "ORDER BY e.id, e.stepExecutions ASC")
+            "LEFT JOIN FETCH e.workflowDefinition " +
+            "LEFT JOIN FETCH e.stepExecutions " +
+            "WHERE e.id = :executionId AND e.tenantId = :tenantId " +
+            "ORDER BY e.id, e.stepExecutions ASC")
     Optional<WorkflowExecution> findByIdWithDefinitionAndSteps(@Param("executionId") UUID executionId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -103,8 +103,8 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
      * Prevents N+1 queries when iterating over active approvals.
      */
     @Query("SELECT DISTINCT e FROM WorkflowExecution e " +
-           "LEFT JOIN FETCH e.workflowDefinition " +
-           "WHERE e.tenantId = :tenantId AND e.status IN ('PENDING', 'IN_PROGRESS')")
+            "LEFT JOIN FETCH e.workflowDefinition " +
+            "WHERE e.tenantId = :tenantId AND e.status IN ('PENDING', 'IN_PROGRESS')")
     List<WorkflowExecution> findActiveExecutionsWithDefinition(@Param("tenantId") UUID tenantId);
 
     /**
@@ -112,15 +112,15 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
      * Used for escalation processing.
      */
     @Query("SELECT DISTINCT e FROM WorkflowExecution e " +
-           "LEFT JOIN FETCH e.workflowDefinition " +
-           "WHERE e.tenantId = :tenantId AND e.status IN ('PENDING', 'IN_PROGRESS') AND e.deadline < :now")
+            "LEFT JOIN FETCH e.workflowDefinition " +
+            "WHERE e.tenantId = :tenantId AND e.status IN ('PENDING', 'IN_PROGRESS') AND e.deadline < :now")
     List<WorkflowExecution> findOverdueExecutionsWithDefinition(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
 
     /**
      * Find workflow executions due for escalation with WorkflowDefinition eagerly fetched.
      */
     @Query("SELECT DISTINCT e FROM WorkflowExecution e " +
-           "LEFT JOIN FETCH e.workflowDefinition " +
-           "WHERE e.tenantId = :tenantId AND e.status = 'PENDING' AND e.escalationDueAt < :now")
+            "LEFT JOIN FETCH e.workflowDefinition " +
+            "WHERE e.tenantId = :tenantId AND e.status = 'PENDING' AND e.escalationDueAt < :now")
     List<WorkflowExecution> findDueForEscalationWithDefinition(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
 }

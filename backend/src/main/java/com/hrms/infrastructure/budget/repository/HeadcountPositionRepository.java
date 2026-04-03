@@ -25,11 +25,11 @@ public interface HeadcountPositionRepository extends JpaRepository<HeadcountPosi
 
     @Query("SELECT p FROM HeadcountPosition p WHERE p.tenantId = :tenantId AND p.status = :status")
     List<HeadcountPosition> findByStatus(@Param("tenantId") UUID tenantId,
-                                          @Param("status") HeadcountPosition.PositionStatus status);
+                                         @Param("status") HeadcountPosition.PositionStatus status);
 
     @Query("SELECT p FROM HeadcountPosition p WHERE p.tenantId = :tenantId AND p.positionType = :type")
     List<HeadcountPosition> findByPositionType(@Param("tenantId") UUID tenantId,
-                                                @Param("type") HeadcountPosition.PositionType type);
+                                               @Param("type") HeadcountPosition.PositionType type);
 
     @Query("SELECT COUNT(p) FROM HeadcountPosition p WHERE p.budget.id = :budgetId AND p.status = :status")
     long countByBudgetAndStatus(@Param("budgetId") UUID budgetId,

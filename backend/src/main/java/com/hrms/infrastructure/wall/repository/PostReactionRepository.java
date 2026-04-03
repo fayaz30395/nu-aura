@@ -48,8 +48,8 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
      * Use this instead of calling countReactionsByTypeForPost() in a loop.
      */
     @Query("SELECT r.post.id, r.reactionType, COUNT(r) FROM PostReaction r " +
-           "WHERE r.post.id IN :postIds " +
-           "GROUP BY r.post.id, r.reactionType")
+            "WHERE r.post.id IN :postIds " +
+            "GROUP BY r.post.id, r.reactionType")
     List<Object[]> countReactionsByTypeForPosts(@Param("postIds") List<UUID> postIds);
 
     /**
@@ -57,7 +57,7 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
      * Returns list of post IDs the user has reacted to.
      */
     @Query("SELECT DISTINCT r.post.id FROM PostReaction r " +
-           "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
+            "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
     List<UUID> findPostIdsWithUserReaction(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
 
     /**
@@ -65,7 +65,7 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
      * Returns: [postId, reactionType]
      */
     @Query("SELECT r.post.id, r.reactionType FROM PostReaction r " +
-           "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
+            "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
     List<Object[]> findUserReactionsForPosts(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
 
     /**
@@ -73,10 +73,10 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
      * Eagerly fetches employee + user for avatar URL resolution.
      */
     @Query("SELECT r FROM PostReaction r " +
-           "JOIN FETCH r.employee e " +
-           "LEFT JOIN FETCH e.user u " +
-           "WHERE r.post.id = :postId " +
-           "ORDER BY r.createdAt DESC")
+            "JOIN FETCH r.employee e " +
+            "LEFT JOIN FETCH e.user u " +
+            "WHERE r.post.id = :postId " +
+            "ORDER BY r.createdAt DESC")
     List<PostReaction> findRecentByPostId(@Param("postId") UUID postId, Pageable pageable);
 
     /**
@@ -84,10 +84,10 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
      * Uses separate countQuery to avoid Hibernate JOIN FETCH + count conflict.
      */
     @Query(value = "SELECT r FROM PostReaction r " +
-           "JOIN FETCH r.employee e " +
-           "LEFT JOIN FETCH e.user u " +
-           "WHERE r.post.id = :postId " +
-           "ORDER BY r.createdAt DESC",
-           countQuery = "SELECT COUNT(r) FROM PostReaction r WHERE r.post.id = :postId")
+            "JOIN FETCH r.employee e " +
+            "LEFT JOIN FETCH e.user u " +
+            "WHERE r.post.id = :postId " +
+            "ORDER BY r.createdAt DESC",
+            countQuery = "SELECT COUNT(r) FROM PostReaction r WHERE r.post.id = :postId")
     Page<PostReaction> findAllByPostIdWithDetails(@Param("postId") UUID postId, Pageable pageable);
 }

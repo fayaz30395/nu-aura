@@ -49,7 +49,7 @@ public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, UUID
 
     // Get detailed balances for employee with leave type info (native query for JOIN)
     @Query(value = "SELECT lt.leave_code, lt.leave_name, lb.opening_balance, lb.used, lb.available, lb.pending " +
-           "FROM leave_balances lb JOIN leave_types lt ON lb.leave_type_id = lt.id " +
-           "WHERE lb.tenant_id = :tenantId AND lb.employee_id = :employeeId AND lb.year = :year", nativeQuery = true)
+            "FROM leave_balances lb JOIN leave_types lt ON lb.leave_type_id = lt.id " +
+            "WHERE lb.tenant_id = :tenantId AND lb.employee_id = :employeeId AND lb.year = :year", nativeQuery = true)
     List<Object[]> findBalancesByEmployeeId(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId, @Param("year") Integer year);
 }

@@ -45,15 +45,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class DocuSignApiClient {
 
+    private static final int RATE_LIMIT_PER_HOUR = 1000;
     private final DocuSignAuthService authService;
     private final CircuitBreaker circuitBreaker;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
-
     // Rate limiting: track request timestamps per tenant
     private final ConcurrentHashMap<UUID, List<Long>> requestTimestamps = new ConcurrentHashMap<>();
-
-    private static final int RATE_LIMIT_PER_HOUR = 1000;
 
     public DocuSignApiClient(DocuSignAuthService authService,
                              CircuitBreakerRegistry circuitBreakerRegistry,
@@ -64,6 +62,17 @@ public class DocuSignApiClient {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
+    }
+
+    /**
+     * Extract a string value from the connector config settings.
+     */
+    private static String getString(ConnectorConfig config, String key) {
+        Object value = config.settings().get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("Missing required config: " + key);
+        }
+        return value.toString();
     }
 
     /**
@@ -79,12 +88,12 @@ public class DocuSignApiClient {
      * <p><strong>Note:</strong> The recipient and document URLs are added to the template.
      * Refer to DocuSign's template merging documentation for details on variable substitution.</p>
      *
-     * @param config connector configuration
-     * @param templateId DocuSign template ID
+     * @param config         connector configuration
+     * @param templateId     DocuSign template ID
      * @param recipientEmail recipient's email address
-     * @param recipientName recipient's full name
-     * @param documentUrl URL to the document to sign
-     * @param subject envelope subject line
+     * @param recipientName  recipient's full name
+     * @param documentUrl    URL to the document to sign
+     * @param subject        envelope subject line
      * @return EnvelopeResponse with envelope ID and status
      * @throws RuntimeException if the request fails
      */
@@ -140,7 +149,7 @@ public class DocuSignApiClient {
     /**
      * Get the current status of an envelope.
      *
-     * @param config connector configuration
+     * @param config     connector configuration
      * @param envelopeId the envelope ID
      * @return EnvelopeStatusResponse with envelope status and recipient info
      * @throws RuntimeException if the request fails
@@ -187,9 +196,9 @@ public class DocuSignApiClient {
     /**
      * Void (cancel) an envelope.
      *
-     * @param config connector configuration
+     * @param config     connector configuration
      * @param envelopeId the envelope ID
-     * @param reason the reason for voiding
+     * @param reason     the reason for voiding
      * @throws RuntimeException if the request fails
      */
     public void voidEnvelope(ConnectorConfig config, String envelopeId, String reason) {
@@ -235,7 +244,7 @@ public class DocuSignApiClient {
      * <p><strong>Note:</strong> The document becomes available after the envelope is completed.
      * The documentId is typically "combined" for all documents or a specific document number.</p>
      *
-     * @param config connector configuration
+     * @param config     connector configuration
      * @param envelopeId the envelope ID
      * @param documentId the document ID (e.g., "combined" for all documents)
      * @return the document bytes
@@ -329,15 +338,17 @@ public class DocuSignApiClient {
         });
     }
 
+    // ==================== Helper Methods ====================
+
     /**
      * Register a Connect (webhook) callback URL with DocuSign.
      *
      * <p>This endpoint receives notifications about envelope status changes,
      * recipient actions, and other events.</p>
      *
-     * @param config connector configuration
+     * @param config     connector configuration
      * @param webhookUrl the webhook URL to register
-     * @param events comma-separated list of event types (e.g., "envelope-completed,envelope-sent")
+     * @param events     comma-separated list of event types (e.g., "envelope-completed,envelope-sent")
      * @throws RuntimeException if the request fails
      */
     public void registerConnectWebhook(ConnectorConfig config, String webhookUrl, String events) {
@@ -381,8 +392,6 @@ public class DocuSignApiClient {
             return null;
         });
     }
-
-    // ==================== Helper Methods ====================
 
     /**
      * Check if the rate limit has been exceeded for this tenant.
@@ -448,17 +457,6 @@ public class DocuSignApiClient {
         return recipients;
     }
 
-    /**
-     * Extract a string value from the connector config settings.
-     */
-    private static String getString(ConnectorConfig config, String key) {
-        Object value = config.settings().get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing required config: " + key);
-        }
-        return value.toString();
-    }
-
     // ==================== DTOs ====================
 
     /**
@@ -468,7 +466,8 @@ public class DocuSignApiClient {
             String envelopeId,
             String status,
             String uri
-    ) {}
+    ) {
+    }
 
     /**
      * Status information for a DocuSign envelope.
@@ -477,7 +476,8 @@ public class DocuSignApiClient {
             String envelopeId,
             String status,
             List<RecipientStatus> recipients
-    ) {}
+    ) {
+    }
 
     /**
      * Status of a single recipient in an envelope.
@@ -487,7 +487,8 @@ public class DocuSignApiClient {
             String email,
             String status,
             String signedAt
-    ) {}
+    ) {
+    }
 
     /**
      * Template information from the DocuSign account.
@@ -496,5 +497,6 @@ public class DocuSignApiClient {
             String templateId,
             String name,
             String description
-    ) {}
+    ) {
+    }
 }

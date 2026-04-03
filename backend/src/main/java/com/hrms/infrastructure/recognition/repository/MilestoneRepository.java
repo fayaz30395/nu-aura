@@ -24,19 +24,19 @@ public interface MilestoneRepository extends JpaRepository<Milestone, UUID> {
     List<Milestone> findByDate(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
     @Query("SELECT m FROM Milestone m WHERE m.tenantId = :tenantId " +
-           "AND m.milestoneDate BETWEEN :startDate AND :endDate ORDER BY m.milestoneDate")
+            "AND m.milestoneDate BETWEEN :startDate AND :endDate ORDER BY m.milestoneDate")
     List<Milestone> findUpcoming(@Param("tenantId") UUID tenantId,
-                                  @Param("startDate") LocalDate startDate,
-                                  @Param("endDate") LocalDate endDate);
+                                 @Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate);
 
     @Query("SELECT m FROM Milestone m WHERE m.tenantId = :tenantId " +
-           "AND m.type = :type AND m.milestoneDate BETWEEN :startDate AND :endDate")
+            "AND m.type = :type AND m.milestoneDate BETWEEN :startDate AND :endDate")
     List<Milestone> findByTypeAndDateRange(@Param("tenantId") UUID tenantId,
                                            @Param("type") Milestone.MilestoneType type,
                                            @Param("startDate") LocalDate startDate,
                                            @Param("endDate") LocalDate endDate);
 
     @Query("SELECT m FROM Milestone m WHERE m.tenantId = :tenantId " +
-           "AND m.notificationSent = false AND m.milestoneDate <= :date")
+            "AND m.notificationSent = false AND m.milestoneDate <= :date")
     List<Milestone> findPendingNotifications(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 }

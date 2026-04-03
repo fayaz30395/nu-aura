@@ -26,8 +26,8 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
     Optional<OvertimeRecord> findByTenantIdAndAttendanceRecordId(UUID tenantId, UUID attendanceRecordId);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-           "AND otr.employeeId = :employeeId " +
-           "AND otr.overtimeDate BETWEEN :startDate AND :endDate")
+            "AND otr.employeeId = :employeeId " +
+            "AND otr.overtimeDate BETWEEN :startDate AND :endDate")
     List<OvertimeRecord> findByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -35,30 +35,30 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-           "AND otr.status = :status")
+            "AND otr.status = :status")
     Page<OvertimeRecord> findByStatus(@Param("tenantId") UUID tenantId,
                                       @Param("status") OvertimeRecord.OvertimeStatus status,
                                       Pageable pageable);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-           "AND otr.status = 'PENDING'")
+            "AND otr.status = 'PENDING'")
     Page<OvertimeRecord> findPendingRecords(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-           "AND otr.status = 'APPROVED' " +
-           "AND otr.processedInPayroll = false")
+            "AND otr.status = 'APPROVED' " +
+            "AND otr.processedInPayroll = false")
     List<OvertimeRecord> findApprovedUnprocessedRecords(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-           "AND otr.payrollRunId = :payrollRunId")
+            "AND otr.payrollRunId = :payrollRunId")
     List<OvertimeRecord> findByPayrollRun(@Param("tenantId") UUID tenantId,
                                           @Param("payrollRunId") UUID payrollRunId);
 
     @Query("SELECT SUM(otr.effectiveHours) FROM OvertimeRecord otr " +
-           "WHERE otr.tenantId = :tenantId " +
-           "AND otr.employeeId = :employeeId " +
-           "AND otr.overtimeDate BETWEEN :startDate AND :endDate " +
-           "AND otr.status = 'APPROVED'")
+            "WHERE otr.tenantId = :tenantId " +
+            "AND otr.employeeId = :employeeId " +
+            "AND otr.overtimeDate BETWEEN :startDate AND :endDate " +
+            "AND otr.status = 'APPROVED'")
     BigDecimal sumApprovedEffectiveHoursByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -66,10 +66,10 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT SUM(otr.overtimeHours) FROM OvertimeRecord otr " +
-           "WHERE otr.tenantId = :tenantId " +
-           "AND otr.employeeId = :employeeId " +
-           "AND otr.overtimeDate BETWEEN :startDate AND :endDate " +
-           "AND otr.status IN ('APPROVED', 'PROCESSED', 'PAID')")
+            "WHERE otr.tenantId = :tenantId " +
+            "AND otr.employeeId = :employeeId " +
+            "AND otr.overtimeDate BETWEEN :startDate AND :endDate " +
+            "AND otr.status IN ('APPROVED', 'PROCESSED', 'PAID')")
     BigDecimal sumOvertimeHoursByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -77,8 +77,8 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT COUNT(otr) FROM OvertimeRecord otr " +
-           "WHERE otr.tenantId = :tenantId " +
-           "AND otr.status = 'PENDING'")
+            "WHERE otr.tenantId = :tenantId " +
+            "AND otr.status = 'PENDING'")
     long countPendingRecords(@Param("tenantId") UUID tenantId);
 
     boolean existsByTenantIdAndAttendanceRecordId(UUID tenantId, UUID attendanceRecordId);

@@ -22,49 +22,49 @@ public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, 
     Page<SurveyResponse> findBySurveyId(UUID surveyId, Pageable pageable);
 
     @Query("SELECT r FROM SurveyResponse r WHERE r.tenantId = :tenantId " +
-           "AND r.survey.id = :surveyId AND r.status = 'COMPLETED'")
+            "AND r.survey.id = :surveyId AND r.status = 'COMPLETED'")
     List<SurveyResponse> findCompletedResponses(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT r FROM SurveyResponse r WHERE r.tenantId = :tenantId " +
-           "AND r.employeeId = :employeeId AND r.survey.id = :surveyId")
+            "AND r.employeeId = :employeeId AND r.survey.id = :surveyId")
     Optional<SurveyResponse> findByEmployeeAndSurvey(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT COUNT(r) FROM SurveyResponse r WHERE r.survey.id = :surveyId " +
-           "AND r.status = 'COMPLETED'")
+            "AND r.status = 'COMPLETED'")
     long countCompletedResponses(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT AVG(r.engagementScore) FROM SurveyResponse r " +
-           "WHERE r.survey.id = :surveyId AND r.engagementScore IS NOT NULL")
+            "WHERE r.survey.id = :surveyId AND r.engagementScore IS NOT NULL")
     Double getAverageEngagementScore(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT AVG(r.npsScore) FROM SurveyResponse r " +
-           "WHERE r.survey.id = :surveyId AND r.npsScore IS NOT NULL")
+            "WHERE r.survey.id = :surveyId AND r.npsScore IS NOT NULL")
     Double getAverageNpsScore(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT r.overallSentiment, COUNT(r) FROM SurveyResponse r " +
-           "WHERE r.survey.id = :surveyId AND r.overallSentiment IS NOT NULL " +
-           "GROUP BY r.overallSentiment")
+            "WHERE r.survey.id = :surveyId AND r.overallSentiment IS NOT NULL " +
+            "GROUP BY r.overallSentiment")
     List<Object[]> countBySentiment(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT r.department, AVG(r.engagementScore) FROM SurveyResponse r " +
-           "WHERE r.survey.id = :surveyId AND r.department IS NOT NULL " +
-           "GROUP BY r.department")
+            "WHERE r.survey.id = :surveyId AND r.department IS NOT NULL " +
+            "GROUP BY r.department")
     List<Object[]> getEngagementByDepartment(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT r FROM SurveyResponse r WHERE r.tenantId = :tenantId " +
-           "AND r.survey.id = :surveyId AND r.department = :department " +
-           "AND r.status = 'COMPLETED'")
+            "AND r.survey.id = :surveyId AND r.department = :department " +
+            "AND r.status = 'COMPLETED'")
     List<SurveyResponse> findByDepartment(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId,
             @Param("department") String department);
 
     @Query("SELECT AVG(r.completionTimeMinutes) FROM SurveyResponse r " +
-           "WHERE r.survey.id = :surveyId AND r.status = 'COMPLETED'")
+            "WHERE r.survey.id = :surveyId AND r.status = 'COMPLETED'")
     Double getAverageCompletionTime(@Param("surveyId") UUID surveyId);
 }

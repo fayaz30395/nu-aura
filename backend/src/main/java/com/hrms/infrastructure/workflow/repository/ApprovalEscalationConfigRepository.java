@@ -49,7 +49,7 @@ public interface ApprovalEscalationConfigRepository extends JpaRepository<Approv
     @Modifying
     @Transactional
     @Query("DELETE FROM ApprovalEscalationConfig aec " +
-           "WHERE aec.workflowDefinitionId = :workflowDefinitionId AND aec.tenantId = :tenantId")
+            "WHERE aec.workflowDefinitionId = :workflowDefinitionId AND aec.tenantId = :tenantId")
     int deleteByWorkflowDefinitionIdAndTenantId(
             @Param("workflowDefinitionId") UUID workflowDefinitionId,
             @Param("tenantId") UUID tenantId);

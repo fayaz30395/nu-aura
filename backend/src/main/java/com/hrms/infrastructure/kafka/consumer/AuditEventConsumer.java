@@ -25,13 +25,13 @@ import java.util.UUID;
  *
  * <p>Listens to the nu-aura.audit topic and asynchronously persists audit trail
  * records to the audit_logs table.
- *
+ * <p>
  * Features:
  * - Batch processing for high throughput
  * - Never throws exceptions (logs errors but acknowledges)
  * - Idempotent processing via eventId
  * - Permanent storage of all audit events
- *
+ * <p>
  * High throughput design: Audit events should NOT block business operations.
  * If processing fails, we log the error but don't retry, ensuring high availability.
  * </p>

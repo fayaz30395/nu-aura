@@ -38,14 +38,14 @@ public interface LetterTemplateRepository extends JpaRepository<LetterTemplate, 
     Page<LetterTemplate> findCustomTemplates(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     @Query("SELECT t FROM LetterTemplate t WHERE t.tenantId = :tenantId " +
-           "AND (LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "OR LOWER(t.code) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "AND (LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(t.code) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<LetterTemplate> searchTemplates(@Param("tenantId") UUID tenantId,
                                          @Param("search") String search,
                                          Pageable pageable);
 
     @Query("SELECT t.category, COUNT(t) FROM LetterTemplate t " +
-           "WHERE t.tenantId = :tenantId AND t.isActive = true GROUP BY t.category")
+            "WHERE t.tenantId = :tenantId AND t.isActive = true GROUP BY t.category")
     List<Object[]> countByCategory(@Param("tenantId") UUID tenantId);
 
     boolean existsByCodeAndTenantId(String code, UUID tenantId);

@@ -1,7 +1,9 @@
 package com.hrms.infrastructure.statutory.repository;
+
 import com.hrms.domain.statutory.EmployeeTDSDeclaration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,7 +11,8 @@ import java.util.UUID;
 @Repository
 public interface EmployeeTDSDeclarationRepository extends JpaRepository<EmployeeTDSDeclaration, UUID> {
     Optional<EmployeeTDSDeclaration> findByTenantIdAndEmployeeIdAndFinancialYear(
-        UUID tenantId, UUID employeeId, String financialYear);
+            UUID tenantId, UUID employeeId, String financialYear);
+
     List<EmployeeTDSDeclaration> findByTenantIdAndFinancialYearAndStatus(
-        UUID tenantId, String financialYear, EmployeeTDSDeclaration.DeclarationStatus status);
+            UUID tenantId, String financialYear, EmployeeTDSDeclaration.DeclarationStatus status);
 }

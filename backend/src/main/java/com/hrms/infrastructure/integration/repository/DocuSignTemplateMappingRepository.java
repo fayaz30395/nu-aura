@@ -25,7 +25,7 @@ public interface DocuSignTemplateMappingRepository extends JpaRepository<DocuSig
      * This is the primary method used when creating a new envelope and needing to
      * look up the appropriate DocuSign template.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId     the tenant ID (required for isolation)
      * @param documentType the document type (e.g., "OfferLetter", "LeaveRequest")
      * @return an Optional containing the active mapping, or empty if not found
      */

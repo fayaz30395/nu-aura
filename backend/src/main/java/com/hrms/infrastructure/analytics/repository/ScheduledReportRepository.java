@@ -27,7 +27,7 @@ public interface ScheduledReportRepository extends JpaRepository<ScheduledReport
 
     @Query("SELECT sr FROM ScheduledReport sr WHERE sr.tenantId = :tenantId AND sr.reportDefinitionId = :reportDefinitionId")
     List<ScheduledReport> findByTenantIdAndReportDefinitionId(@Param("tenantId") UUID tenantId,
-                                                               @Param("reportDefinitionId") UUID reportDefinitionId);
+                                                              @Param("reportDefinitionId") UUID reportDefinitionId);
 
     long countByTenantId(UUID tenantId);
 

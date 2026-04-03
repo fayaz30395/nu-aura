@@ -31,7 +31,7 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Find value by field code and entity
      */
     @Query("SELECT v FROM CustomFieldValue v JOIN v.fieldDefinition d " +
-           "WHERE d.fieldCode = :fieldCode AND v.entityId = :entityId AND v.tenantId = :tenantId")
+            "WHERE d.fieldCode = :fieldCode AND v.entityId = :entityId AND v.tenantId = :tenantId")
     Optional<CustomFieldValue> findByFieldCodeAndEntityId(
             @Param("fieldCode") String fieldCode,
             @Param("entityId") UUID entityId,
@@ -76,8 +76,8 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Search entities by text value (for searchable fields)
      */
     @Query("SELECT DISTINCT v.entityId FROM CustomFieldValue v " +
-           "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId " +
-           "AND LOWER(v.textValue) LIKE LOWER(CONCAT('%', :searchText, '%'))")
+            "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId " +
+            "AND LOWER(v.textValue) LIKE LOWER(CONCAT('%', :searchText, '%'))")
     List<UUID> findEntityIdsByTextValueContaining(
             @Param("fieldDefinitionId") UUID fieldDefinitionId,
             @Param("tenantId") UUID tenantId,
@@ -87,8 +87,8 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Find entities with a specific dropdown value
      */
     @Query("SELECT DISTINCT v.entityId FROM CustomFieldValue v " +
-           "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId " +
-           "AND v.textValue = :value")
+            "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId " +
+            "AND v.textValue = :value")
     List<UUID> findEntityIdsByExactTextValue(
             @Param("fieldDefinitionId") UUID fieldDefinitionId,
             @Param("tenantId") UUID tenantId,
@@ -98,7 +98,7 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Count entities with values for a specific field
      */
     @Query("SELECT COUNT(DISTINCT v.entityId) FROM CustomFieldValue v " +
-           "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId")
+            "WHERE v.fieldDefinition.id = :fieldDefinitionId AND v.tenantId = :tenantId")
     long countEntitiesWithValue(
             @Param("fieldDefinitionId") UUID fieldDefinitionId,
             @Param("tenantId") UUID tenantId);
@@ -107,8 +107,8 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Get all values for multiple entities at once (for list views)
      */
     @Query("SELECT v FROM CustomFieldValue v " +
-           "WHERE v.entityType = :entityType AND v.entityId IN :entityIds AND v.tenantId = :tenantId " +
-           "AND v.fieldDefinition.isActive = true")
+            "WHERE v.entityType = :entityType AND v.entityId IN :entityIds AND v.tenantId = :tenantId " +
+            "AND v.fieldDefinition.isActive = true")
     List<CustomFieldValue> findByEntityTypeAndEntityIdInAndTenantId(
             @Param("entityType") EntityType entityType,
             @Param("entityIds") List<UUID> entityIds,
@@ -118,7 +118,7 @@ public interface CustomFieldValueRepository extends JpaRepository<CustomFieldVal
      * Get values for specific fields for an entity
      */
     @Query("SELECT v FROM CustomFieldValue v " +
-           "WHERE v.entityId = :entityId AND v.fieldDefinition.id IN :fieldDefinitionIds AND v.tenantId = :tenantId")
+            "WHERE v.entityId = :entityId AND v.fieldDefinition.id IN :fieldDefinitionIds AND v.tenantId = :tenantId")
     List<CustomFieldValue> findByEntityIdAndFieldDefinitionIds(
             @Param("entityId") UUID entityId,
             @Param("fieldDefinitionIds") List<UUID> fieldDefinitionIds,

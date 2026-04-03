@@ -23,7 +23,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RedisWebSocketRelay {
 
-    /** Redis Pub/Sub channel name for WebSocket message fan-out. */
+    /**
+     * Redis Pub/Sub channel name for WebSocket message fan-out.
+     */
     public static final String WS_RELAY_CHANNEL = "ws:relay";
 
     private final RedisTemplate<String, Object> redisTemplate;

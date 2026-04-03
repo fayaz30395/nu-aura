@@ -29,22 +29,22 @@ public interface IntegrationConnectorConfigRepository extends JpaRepository<Inte
      * <p>The unique constraint on (tenant_id, connector_id) ensures at most one active
      * configuration per connector type per tenant.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID (e.g., "docusign")
      * @return the configuration if found and not deleted
      */
     Optional<IntegrationConnectorConfigEntity> findByTenantIdAndConnectorIdAndIsDeletedFalse(
-        UUID tenantId, String connectorId);
+            UUID tenantId, String connectorId);
 
     /**
      * Finds all connector configurations for a tenant with a specific status, excluding soft-deleted rows.
      *
      * @param tenantId the tenant ID (required for isolation)
-     * @param status the desired connector status (ACTIVE, INACTIVE, ERROR)
+     * @param status   the desired connector status (ACTIVE, INACTIVE, ERROR)
      * @return list of matching configurations
      */
     List<IntegrationConnectorConfigEntity> findByTenantIdAndStatusAndIsDeletedFalse(
-        UUID tenantId, ConnectorStatus status);
+            UUID tenantId, ConnectorStatus status);
 
     /**
      * Finds all connector configurations for a tenant, excluding soft-deleted rows.
@@ -60,20 +60,20 @@ public interface IntegrationConnectorConfigRepository extends JpaRepository<Inte
      * <p>Event subscriptions are stored as comma-separated strings in the event_subscriptions column.
      * Uses a LIKE query with wildcard patterns to find matching subscriptions.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId  the tenant ID (required for isolation)
      * @param eventType the event type to search for (e.g., "employee.created")
      * @return list of configurations subscribed to this event
      */
     @Query("""
-        SELECT c FROM IntegrationConnectorConfigEntity c
-        WHERE c.tenantId = :tenantId
-        AND c.status = 'ACTIVE'
-        AND c.isDeleted = false
-        AND (
-            c.eventSubscriptions LIKE CONCAT('%', :eventType, '%')
-        )
-        """)
+            SELECT c FROM IntegrationConnectorConfigEntity c
+            WHERE c.tenantId = :tenantId
+            AND c.status = 'ACTIVE'
+            AND c.isDeleted = false
+            AND (
+                c.eventSubscriptions LIKE CONCAT('%', :eventType, '%')
+            )
+            """)
     List<IntegrationConnectorConfigEntity> findActiveByEventSubscription(
-        @Param("tenantId") UUID tenantId,
-        @Param("eventType") String eventType);
+            @Param("tenantId") UUID tenantId,
+            @Param("eventType") String eventType);
 }
