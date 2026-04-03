@@ -251,7 +251,14 @@ public class LeaveRequestController {
         LeaveRequest leaveRequestData = new LeaveRequest();
         BeanUtils.copyProperties(request, leaveRequestData);
         if (request.getHalfDayPeriod() != null) {
-            leaveRequestData.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(request.getHalfDayPeriod()));
+            // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
+            // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().
+            String normalizedPeriod = switch (request.getHalfDayPeriod().toUpperCase()) {
+                case "MORNING" -> "FIRST_HALF";
+                case "AFTERNOON" -> "SECOND_HALF";
+                default -> request.getHalfDayPeriod().toUpperCase();
+            };
+            leaveRequestData.setHalfDayPeriod(LeaveRequest.HalfDayPeriod.valueOf(normalizedPeriod));
         }
         LeaveRequest updated = leaveRequestService.updateLeaveRequest(id, leaveRequestData);
         return ResponseEntity.ok(toResponse(updated));

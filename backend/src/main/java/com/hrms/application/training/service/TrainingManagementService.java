@@ -265,6 +265,34 @@ public class TrainingManagementService {
         return mapToEnrollmentResponse(savedEnrollment);
     }
 
+    @Transactional
+    public TrainingEnrollmentResponse generateCertificate(UUID enrollmentId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Generating certificate for enrollment {} for tenant {}", enrollmentId, tenantId);
+
+        TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Training enrollment not found"));
+
+        if (enrollment.getStatus() != TrainingEnrollment.EnrollmentStatus.COMPLETED) {
+            throw new IllegalArgumentException(
+                    "Certificate can only be generated for COMPLETED enrollments, current status: " + enrollment.getStatus());
+        }
+
+        String certificateUrl = "/certificates/" + tenantId + "/" + enrollmentId + ".pdf";
+        enrollment.setCertificateUrl(certificateUrl);
+
+        TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
+
+        try {
+            auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.UPDATE, null, null, "Certificate generated: " + certificateUrl);
+        } catch (Exception e) {
+            log.warn("Audit log failed for certificate generation: {}", e.getMessage());
+        }
+
+        log.info("Certificate generated for enrollment {} at {}", enrollmentId, certificateUrl);
+        return mapToEnrollmentResponse(savedEnrollment);
+    }
+
     // ==================== Mapper Methods ====================
 
     private TrainingProgramResponse mapToProgramResponse(TrainingProgram program) {

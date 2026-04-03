@@ -110,7 +110,7 @@ public class LetterController {
     }
 
     @GetMapping("/{letterId}")
-    @RequiresPermission({LETTER_TEMPLATE_VIEW, SELF_SERVICE_VIEW_LETTERS})
+    @RequiresPermission({LETTER_TEMPLATE_VIEW, SELF_SERVICE_VIEW_LETTERS, LETTER_GENERATE})
     public ResponseEntity<GeneratedLetterResponse> getLetterById(@PathVariable UUID letterId) {
         return ResponseEntity.ok(letterService.getLetterById(letterId));
     }

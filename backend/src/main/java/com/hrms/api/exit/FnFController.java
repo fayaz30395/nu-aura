@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+// BUG-010 FIX: Added class-level @RequestMapping so each method uses a relative path
+// instead of duplicating the "/api/v1/exit" prefix on every annotation.
 @RestController
+@RequestMapping("/api/v1/exit")
 public class FnFController {
 
     private final FnFCalculationService fnfService;
@@ -32,13 +35,13 @@ public class FnFController {
 
     // ---- FnF Settlement endpoints (authenticated) ----
 
-    @GetMapping("/api/v1/exit/{exitProcessId}/fnf")
+    @GetMapping("/{exitProcessId}/fnf")
     @RequiresPermission(Permission.EXIT_VIEW)
     public ResponseEntity<FnFCalculationResponse> getOrCalculate(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(fnfService.getOrCalculate(exitProcessId));
     }
 
-    @PutMapping("/api/v1/exit/{exitProcessId}/fnf/adjustments")
+    @PutMapping("/{exitProcessId}/fnf/adjustments")
     @RequiresPermission(Permission.EXIT_MANAGE)
     public ResponseEntity<FnFCalculationResponse> adjust(
             @PathVariable UUID exitProcessId,
@@ -46,13 +49,13 @@ public class FnFController {
         return ResponseEntity.ok(fnfService.addAdjustment(exitProcessId, request));
     }
 
-    @PostMapping("/api/v1/exit/{exitProcessId}/fnf/approve")
+    @PostMapping("/{exitProcessId}/fnf/approve")
     @RequiresPermission(Permission.EXIT_APPROVE)
     public ResponseEntity<FnFCalculationResponse> approve(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(fnfService.approve(exitProcessId));
     }
 
-    @GetMapping("/api/v1/exit/fnf")
+    @GetMapping("/fnf")
     @RequiresPermission(Permission.EXIT_VIEW)
     public ResponseEntity<Page<FnFCalculationResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -63,7 +66,7 @@ public class FnFController {
 
     // ---- Generate public token for exit interview ----
 
-    @PostMapping("/api/v1/exit/interviews/{interviewId}/generate-token")
+    @PostMapping("/interviews/{interviewId}/generate-token")
     @RequiresPermission(Permission.EXIT_MANAGE)
     public ResponseEntity<String> generatePublicToken(@PathVariable UUID interviewId) {
         String token = publicInterviewService.generatePublicToken(interviewId);
@@ -72,12 +75,12 @@ public class FnFController {
 
     // ---- Public (unauthenticated) exit interview endpoints ----
 
-    @GetMapping("/api/v1/exit/interview/public/{token}")
+    @GetMapping("/interview/public/{token}")
     public ResponseEntity<ExitInterviewPublicResponse> getPublicInterview(@PathVariable String token) {
         return ResponseEntity.ok(publicInterviewService.getByToken(token));
     }
 
-    @PostMapping("/api/v1/exit/interview/public/{token}/submit")
+    @PostMapping("/interview/public/{token}/submit")
     public ResponseEntity<Void> submitPublicInterview(
             @PathVariable String token,
             @Valid @RequestBody ExitInterviewSubmitRequest request) {

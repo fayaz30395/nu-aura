@@ -57,7 +57,7 @@ public class CookieConfig {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(REFRESH_TOKEN_COOKIE, token)
                 .httpOnly(true)
                 .secure(secureCookie)
-                .path("/api/v1/auth") // Only sent to auth endpoints
+                .path("/") // Sent to all endpoints for token refresh support
                 .maxAge(refreshTokenExpiration / 1000)
                 .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
@@ -89,7 +89,7 @@ public class CookieConfig {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(REFRESH_TOKEN_COOKIE, "")
                 .httpOnly(true)
                 .secure(secureCookie)
-                .path("/api/v1/auth")
+                .path("/")
                 .maxAge(0)
                 .sameSite("Strict");
         if (cookieDomain != null && !cookieDomain.isBlank()) {
