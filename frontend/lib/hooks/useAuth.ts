@@ -163,22 +163,21 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
-        try {
-          await authApi.logout();
-        } catch (error) {
-          console.error('Logout error:', error);
-        } finally {
-          apiClient.clearTokens();
-          // Clear Google SSO tokens (Drive, Mail)
-          clearGoogleToken();
-          // SEC: Clear React Query cache to prevent data leakage between sessions
-          getQueryClient().clear();
-          if (typeof window !== 'undefined') {
-            sessionStorage.removeItem('user');
-            sessionStorage.removeItem('auth-storage'); // Clear Zustand persisted auth state
-          }
-          set({ user: null, isAuthenticated: false });
+        // Bug #5 FIX: deauthenticate FIRST so no new queries fire after this point,
+        // then cancel in-flight queries before clearing cache. Previously, auth state
+        // was cleared last — background intervals (notifications, workflow) fired 401s
+        // between authApi.logout() and set({ user: null }).
+        set({ user: null, isAuthenticated: false });
+        await getQueryClient().cancelQueries();
+        getQueryClient().clear();
+        apiClient.clearTokens();
+        clearGoogleToken();
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('user');
+          sessionStorage.removeItem('auth-storage');
         }
+        // Notify server best-effort — don't block redirect on network failure
+        authApi.logout().catch(() => {});
       },
 
       setUser: (user: User | null) => {
