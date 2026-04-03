@@ -86,6 +86,4 @@ LAYOUT_FILES_CREATED.txt
 # Kubernetes secrets (use secrets.yaml.example as template)
 deployment/kubernetes/secrets.yaml
 
-# Claude
-.claude/
 .fuse_hidden*
