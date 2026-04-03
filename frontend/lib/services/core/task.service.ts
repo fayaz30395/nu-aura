@@ -63,20 +63,21 @@ export const taskService = {
    */
   getProjectTasks: (projectId: string, options: TaskFilterOptions = {}): Promise<TasksPageResponse> =>
     wrapServiceCall(`${SERVICE_NAME}.getProjectTasks`, async () => {
-      const params = new URLSearchParams();
+      const params: Record<string, unknown> = {};
 
-      if (options.status) params.append('status', options.status);
-      if (options.priority) params.append('priority', options.priority);
-      if (options.assigneeId) params.append('assigneeId', options.assigneeId);
-      if (options.search) params.append('search', options.search);
-      if (options.page !== undefined) params.append('page', options.page.toString());
-      if (options.size !== undefined) params.append('size', options.size.toString());
-      if (options.sort) params.append('sort', options.sort);
+      if (options.status) params.status = options.status;
+      if (options.priority) params.priority = options.priority;
+      if (options.assigneeId) params.assigneeId = options.assigneeId;
+      if (options.search) params.search = options.search;
+      if (options.page !== undefined) params.page = options.page;
+      if (options.size !== undefined) params.size = options.size;
+      if (options.sort) params.sort = options.sort;
 
-      const queryString = params.toString();
-      const url = `${BASE_URL}/project/${projectId}${queryString ? `?${queryString}` : ''}`;
-
-      const response = await apiClient.get<TasksPageResponse>(url);
+      const hasParams = Object.keys(params).length > 0;
+      const response = await apiClient.get<TasksPageResponse>(
+        `${BASE_URL}/project/${projectId}`,
+        hasParams ? { params } : undefined
+      );
       return response.data;
     }, { context: { projectId } }),
 
