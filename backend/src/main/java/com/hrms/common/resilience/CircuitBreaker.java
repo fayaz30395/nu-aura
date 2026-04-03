@@ -24,45 +24,27 @@ import java.util.function.Supplier;
 @Slf4j
 public class CircuitBreaker {
 
-    public enum State {
-        CLOSED,
-        OPEN,
-        HALF_OPEN
-    }
-
-    /**
-     * Thrown when a request is rejected because the circuit breaker is in the OPEN state.
-     */
-    public static class CircuitBreakerOpenException extends RuntimeException {
-        public CircuitBreakerOpenException(String message) {
-            super(message);
-        }
-    }
-
     private final String name;
     private final int failureThreshold;
     private final int successThreshold;
     private final Duration openDuration;
-
     private final AtomicReference<State> state = new AtomicReference<>(State.CLOSED);
     private final AtomicInteger failureCount = new AtomicInteger(0);
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicReference<Instant> lastStateChange = new AtomicReference<>(Instant.now());
-
     /**
      * Create a circuit breaker with default settings.
      */
     public CircuitBreaker(String name) {
         this(name, 5, 2, Duration.ofSeconds(30));
     }
-
     /**
      * Create a circuit breaker with custom settings.
      *
-     * @param name Service name for logging
+     * @param name             Service name for logging
      * @param failureThreshold Number of failures before opening circuit
      * @param successThreshold Number of successes in half-open before closing
-     * @param openDuration Duration to keep circuit open before allowing tests
+     * @param openDuration     Duration to keep circuit open before allowing tests
      */
     public CircuitBreaker(String name, int failureThreshold, int successThreshold, Duration openDuration) {
         this.name = name;
@@ -259,5 +241,20 @@ public class CircuitBreaker {
      */
     public int getFailureCount() {
         return failureCount.get();
+    }
+
+    public enum State {
+        CLOSED,
+        OPEN,
+        HALF_OPEN
+    }
+
+    /**
+     * Thrown when a request is rejected because the circuit breaker is in the OPEN state.
+     */
+    public static class CircuitBreakerOpenException extends RuntimeException {
+        public CircuitBreakerOpenException(String message) {
+            super(message);
+        }
     }
 }

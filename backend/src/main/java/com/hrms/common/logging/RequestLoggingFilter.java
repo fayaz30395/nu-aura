@@ -99,8 +99,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         // Skip health checks and actuator endpoints for cleaner logs
         return !uri.startsWith("/actuator") &&
-               !uri.equals("/health") &&
-               !uri.endsWith("/favicon.ico");
+                !uri.equals("/health") &&
+                !uri.endsWith("/favicon.ico");
     }
 
     private String getClientIp(HttpServletRequest request) {

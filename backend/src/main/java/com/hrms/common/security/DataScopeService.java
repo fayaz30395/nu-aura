@@ -11,12 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to generate JPA Specifications based on User's RoleScope.
  * Implements Keka-style row-level security in the application layer.
- *
+ * <p>
  * Scope Hierarchy (Most to Least Permissive):
  * ALL > LOCATION > DEPARTMENT > TEAM > SELF > CUSTOM
  */

@@ -17,8 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class CircuitBreakerRegistry {
 
-    private final Map<String, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
-
     // Pre-defined circuit breaker names
     public static final String SLACK = "slack";
     public static final String AI_SERVICE = "ai-service";
@@ -27,32 +25,7 @@ public class CircuitBreakerRegistry {
     public static final String STORAGE = "storage";
     public static final String GOOGLE_AUTH = "google-auth";
     public static final String DOCUSIGN = "docusign";
-
-    /**
-     * Configuration for different service types.
-     */
-    private enum ServiceConfig {
-        // Fast failure for non-critical notifications
-        NOTIFICATION(3, 2, Duration.ofSeconds(30)),
-        // More tolerance for AI services (might be slow)
-        AI(5, 3, Duration.ofSeconds(60)),
-        // Critical auth services - strict
-        AUTH(3, 2, Duration.ofSeconds(15)),
-        // Storage services
-        STORAGE(5, 2, Duration.ofSeconds(45)),
-        // Default configuration
-        DEFAULT(5, 2, Duration.ofSeconds(30));
-
-        final int failureThreshold;
-        final int successThreshold;
-        final Duration openDuration;
-
-        ServiceConfig(int failureThreshold, int successThreshold, Duration openDuration) {
-            this.failureThreshold = failureThreshold;
-            this.successThreshold = successThreshold;
-            this.openDuration = openDuration;
-        }
-    }
+    private final Map<String, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
 
     /**
      * Get or create a circuit breaker for Slack notifications.
@@ -115,7 +88,7 @@ public class CircuitBreakerRegistry {
      */
     public CircuitBreaker get(String name, int failureThreshold, int successThreshold, Duration openDuration) {
         return circuitBreakers.computeIfAbsent(name, n ->
-            new CircuitBreaker(n, failureThreshold, successThreshold, openDuration)
+                new CircuitBreaker(n, failureThreshold, successThreshold, openDuration)
         );
     }
 
@@ -125,11 +98,11 @@ public class CircuitBreakerRegistry {
     public Map<String, CircuitBreakerStatus> getAllStatus() {
         Map<String, CircuitBreakerStatus> status = new ConcurrentHashMap<>();
         circuitBreakers.forEach((name, cb) ->
-            status.put(name, new CircuitBreakerStatus(
-                cb.getName(),
-                cb.getState().name(),
-                cb.getFailureCount()
-            ))
+                status.put(name, new CircuitBreakerStatus(
+                        cb.getName(),
+                        cb.getState().name(),
+                        cb.getFailureCount()
+                ))
         );
         return status;
     }
@@ -164,16 +137,43 @@ public class CircuitBreakerRegistry {
 
     private CircuitBreaker getOrCreate(String name, ServiceConfig config) {
         return circuitBreakers.computeIfAbsent(name, n ->
-            new CircuitBreaker(n, config.failureThreshold, config.successThreshold, config.openDuration)
+                new CircuitBreaker(n, config.failureThreshold, config.successThreshold, config.openDuration)
         );
+    }
+
+    /**
+     * Configuration for different service types.
+     */
+    private enum ServiceConfig {
+        // Fast failure for non-critical notifications
+        NOTIFICATION(3, 2, Duration.ofSeconds(30)),
+        // More tolerance for AI services (might be slow)
+        AI(5, 3, Duration.ofSeconds(60)),
+        // Critical auth services - strict
+        AUTH(3, 2, Duration.ofSeconds(15)),
+        // Storage services
+        STORAGE(5, 2, Duration.ofSeconds(45)),
+        // Default configuration
+        DEFAULT(5, 2, Duration.ofSeconds(30));
+
+        final int failureThreshold;
+        final int successThreshold;
+        final Duration openDuration;
+
+        ServiceConfig(int failureThreshold, int successThreshold, Duration openDuration) {
+            this.failureThreshold = failureThreshold;
+            this.successThreshold = successThreshold;
+            this.openDuration = openDuration;
+        }
     }
 
     /**
      * Status record for circuit breaker monitoring.
      */
     public record CircuitBreakerStatus(
-        String name,
-        String state,
-        int failureCount
-    ) {}
+            String name,
+            String state,
+            int failureCount
+    ) {
+    }
 }

@@ -47,29 +47,29 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class TenantFilter extends OncePerRequestFilter {
 
-    private final TenantRepository tenantRepository;
-
-    /** Maximum number of entries in the valid-tenant cache before a full reset is forced. */
+    /**
+     * Maximum number of entries in the valid-tenant cache before a full reset is forced.
+     */
     private static final int MAX_CACHE_SIZE = 10_000;
-
-    /** Cache full-refresh interval in milliseconds (5 minutes — reduced from 30 to limit stale tenant data). */
+    /**
+     * Cache full-refresh interval in milliseconds (5 minutes — reduced from 30 to limit stale tenant data).
+     */
     private static final long CACHE_REFRESH_INTERVAL_MS = 5 * 60 * 1_000L;
-
-    @Value("${app.tenant.header-name}")
-    private String tenantHeader;
-
-    @Value("${app.tenant.validation.enabled:true}")
-    private boolean tenantValidationEnabled;
-
+    private final TenantRepository tenantRepository;
     /**
      * Cache of validated tenant UUIDs.
      * Entries are added on first successful DB lookup and evicted on a scheduled refresh
      * or via {@link #invalidateTenant(UUID)}.
      */
     private final Set<UUID> validTenantCache = ConcurrentHashMap.newKeySet();
-
-    /** Epoch-ms of the last scheduled cache-clear. Used only for logging. */
+    /**
+     * Epoch-ms of the last scheduled cache-clear. Used only for logging.
+     */
     private final AtomicLong lastFullRefresh = new AtomicLong(System.currentTimeMillis());
+    @Value("${app.tenant.header-name}")
+    private String tenantHeader;
+    @Value("${app.tenant.validation.enabled:true}")
+    private boolean tenantValidationEnabled;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Filter logic

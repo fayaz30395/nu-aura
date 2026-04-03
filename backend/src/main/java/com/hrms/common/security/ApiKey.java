@@ -15,9 +15,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "api_keys", indexes = {
-    @Index(name = "idx_api_keys_tenant", columnList = "tenantId"),
-    @Index(name = "idx_api_keys_key_hash", columnList = "keyHash", unique = true),
-    @Index(name = "idx_api_keys_active", columnList = "isActive")
+        @Index(name = "idx_api_keys_tenant", columnList = "tenantId"),
+        @Index(name = "idx_api_keys_key_hash", columnList = "keyHash", unique = true),
+        @Index(name = "idx_api_keys_active", columnList = "isActive")
 })
 @Getter
 @Setter
@@ -40,8 +40,8 @@ public class ApiKey extends TenantAware {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
-        name = "api_key_scopes",
-        joinColumns = @JoinColumn(name = "api_key_id")
+            name = "api_key_scopes",
+            joinColumns = @JoinColumn(name = "api_key_id")
     )
     @Column(name = "scope")
     @Builder.Default

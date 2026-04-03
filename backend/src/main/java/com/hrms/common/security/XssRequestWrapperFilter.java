@@ -26,13 +26,13 @@ public class XssRequestWrapperFilter implements Filter {
     // Patterns that indicate XSS intent in parameter values
     private static final Pattern XSS_PATTERN = Pattern.compile(
             "(?i)<script[^>]*>.*?</script>" +
-            "|<[^>]+on\\w+\\s*=" +
-            "|javascript\\s*:" +
-            "|vbscript\\s*:" +
-            "|expression\\s*\\(" +
-            "|<\\s*iframe" +
-            "|<\\s*object" +
-            "|<\\s*embed",
+                    "|<[^>]+on\\w+\\s*=" +
+                    "|javascript\\s*:" +
+                    "|vbscript\\s*:" +
+                    "|expression\\s*\\(" +
+                    "|<\\s*iframe" +
+                    "|<\\s*object" +
+                    "|<\\s*embed",
             Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
     @Override
@@ -62,6 +62,12 @@ public class XssRequestWrapperFilter implements Filter {
             super(request);
         }
 
+        private static String sanitize(String value) {
+            if (value == null || value.isEmpty()) return value;
+            // Strip matches — don't encode, just remove the attack vector
+            return XSS_PATTERN.matcher(value).replaceAll("");
+        }
+
         @Override
         public String getParameter(String name) {
             return sanitize(super.getParameter(name));
@@ -89,12 +95,6 @@ public class XssRequestWrapperFilter implements Filter {
             String lower = name.toLowerCase();
             // Skip standard HTTP headers; only scrub custom/app-level headers
             return lower.startsWith("x-custom-") || lower.startsWith("x-app-");
-        }
-
-        private static String sanitize(String value) {
-            if (value == null || value.isEmpty()) return value;
-            // Strip matches — don't encode, just remove the attack vector
-            return XSS_PATTERN.matcher(value).replaceAll("");
         }
     }
 }

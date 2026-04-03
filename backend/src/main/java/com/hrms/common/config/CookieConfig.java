@@ -6,7 +6,7 @@ import org.springframework.http.ResponseCookie;
 
 /**
  * Configuration for secure cookie handling using ResponseCookie (supports SameSite natively).
- *
+ * <p>
  * Security properties:
  * - HttpOnly: Prevents JavaScript access (XSS protection)
  * - Secure: Only transmitted over HTTPS (in production)

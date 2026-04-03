@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * If the feature is not enabled for the current tenant, the method call will
  * fail.
  */
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresFeature {
     /**

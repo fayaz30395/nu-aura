@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Micrometer metrics configuration for observability.
- *
+ * <p>
  * Playbook Reference: Prompt 13 - Observability baseline
- *
+ * <p>
  * Metrics provided:
  * - auth_login_total: Total login attempts
  * - auth_login_success: Successful logins

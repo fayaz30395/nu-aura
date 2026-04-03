@@ -140,11 +140,13 @@ public class ApiKeyController {
             String description,
             Set<String> scopes,
             LocalDateTime expiresAt
-    ) {}
+    ) {
+    }
 
     public record UpdateScopesRequest(
             Set<String> scopes
-    ) {}
+    ) {
+    }
 
     public record ApiKeyCreationResponse(
             UUID id,
@@ -153,7 +155,8 @@ public class ApiKeyController {
             String keyPrefix,
             Set<String> scopes,
             LocalDateTime expiresAt
-    ) {}
+    ) {
+    }
 
     public record ApiKeyResponse(
             UUID id,
@@ -166,5 +169,6 @@ public class ApiKeyController {
             LocalDateTime lastUsedAt,
             String lastUsedIp,
             LocalDateTime createdAt
-    ) {}
+    ) {
+    }
 }

@@ -70,7 +70,7 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, UUID> {
      */
     @EntityGraph(attributePaths = {"scopes"})
     @Query("SELECT a FROM ApiKey a WHERE a.keyPrefix = :keyPrefix AND a.isActive = true AND " +
-           "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
+            "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
     List<ApiKey> findActiveByKeyPrefix(@Param("keyPrefix") String keyPrefix);
 
     /**
@@ -81,7 +81,7 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, UUID> {
      */
     @EntityGraph(attributePaths = {"scopes"})
     @Query("SELECT a FROM ApiKey a WHERE a.keyHash = :keyHash AND a.isActive = true AND " +
-           "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
+            "(a.expiresAt IS NULL OR a.expiresAt > CURRENT_TIMESTAMP)")
     Optional<ApiKey> findValidByKeyHash(@Param("keyHash") String keyHash);
 
     /**

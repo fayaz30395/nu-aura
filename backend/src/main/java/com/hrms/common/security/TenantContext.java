@@ -12,12 +12,12 @@ import java.util.UUID;
 public class TenantContext {
     private static final ThreadLocal<UUID> currentTenant = new ThreadLocal<>();
 
-    public static void setCurrentTenant(UUID tenantId) {
-        currentTenant.set(tenantId);
-    }
-
     public static UUID getCurrentTenant() {
         return currentTenant.get();
+    }
+
+    public static void setCurrentTenant(UUID tenantId) {
+        currentTenant.set(tenantId);
     }
 
     /**
@@ -34,8 +34,8 @@ public class TenantContext {
         UUID tenantId = currentTenant.get();
         if (tenantId == null) {
             throw new IllegalStateException(
-                "Tenant context not set. This operation requires a valid tenant context. " +
-                "Ensure the request passes through TenantFilter or tenant is explicitly set."
+                    "Tenant context not set. This operation requires a valid tenant context. " +
+                            "Ensure the request passes through TenantFilter or tenant is explicitly set."
             );
         }
         return tenantId;

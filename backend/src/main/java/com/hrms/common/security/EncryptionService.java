@@ -33,11 +33,11 @@ import java.util.Base64;
 @Service
 public class EncryptionService {
 
-    private static final String GCM_ALGORITHM  = "AES/GCM/NoPadding";
-    private static final String ECB_ALGORITHM  = "AES";         // legacy read-only
-    private static final String GCM_PREFIX     = "GCMv1:";
-    private static final int    GCM_IV_LENGTH  = 12;            // 96-bit IV (NIST recommended)
-    private static final int    GCM_TAG_LENGTH = 128;           // bits
+    private static final String GCM_ALGORITHM = "AES/GCM/NoPadding";
+    private static final String ECB_ALGORITHM = "AES";         // legacy read-only
+    private static final String GCM_PREFIX = "GCMv1:";
+    private static final int GCM_IV_LENGTH = 12;            // 96-bit IV (NIST recommended)
+    private static final int GCM_TAG_LENGTH = 128;           // bits
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -54,8 +54,8 @@ public class EncryptionService {
     void initKey() {
         if (encryptionKey == null || encryptionKey.isBlank()) {
             throw new IllegalStateException(
-                "app.security.encryption.key is not configured. " +
-                "Provide a 32-byte key via APP_SECURITY_ENCRYPTION_KEY environment variable."
+                    "app.security.encryption.key is not configured. " +
+                            "Provide a 32-byte key via APP_SECURITY_ENCRYPTION_KEY environment variable."
             );
         }
         keyBytes = encryptionKey.getBytes();
@@ -69,10 +69,10 @@ public class EncryptionService {
         }
         if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
             throw new IllegalStateException(
-                String.format(
-                    "app.security.encryption.key must be exactly 16, 24, or 32 bytes (got %d). " +
-                    "For AES-256, use a 32-byte key.", keyBytes.length
-                )
+                    String.format(
+                            "app.security.encryption.key must be exactly 16, 24, or 32 bytes (got %d). " +
+                                    "For AES-256, use a 32-byte key.", keyBytes.length
+                    )
             );
         }
     }
@@ -147,8 +147,8 @@ public class EncryptionService {
 
     private String decryptGcm(String base64Blob) throws Exception {
         byte[] blob = Base64.getDecoder().decode(base64Blob);
-        byte[] iv   = Arrays.copyOfRange(blob, 0, GCM_IV_LENGTH);
-        byte[] ct   = Arrays.copyOfRange(blob, GCM_IV_LENGTH, blob.length);
+        byte[] iv = Arrays.copyOfRange(blob, 0, GCM_IV_LENGTH);
+        byte[] ct = Arrays.copyOfRange(blob, GCM_IV_LENGTH, blob.length);
 
         Cipher cipher = Cipher.getInstance(GCM_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE,

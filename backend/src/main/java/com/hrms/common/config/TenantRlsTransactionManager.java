@@ -129,9 +129,9 @@ public class TenantRlsTransactionManager extends JpaTransactionManager {
             // application-layer tenant filtering (WHERE tenant_id = :tenantId)
             // still enforces isolation; RLS is a defence-in-depth layer here.
             log.warn(
-                "TenantRlsTransactionManager: Failed to set app.current_tenant_id={} — " +
-                "RLS enforcement degraded to application layer only. Error: {}",
-                tenantId, e.getMessage()
+                    "TenantRlsTransactionManager: Failed to set app.current_tenant_id={} — " +
+                            "RLS enforcement degraded to application layer only. Error: {}",
+                    tenantId, e.getMessage()
             );
         }
     }

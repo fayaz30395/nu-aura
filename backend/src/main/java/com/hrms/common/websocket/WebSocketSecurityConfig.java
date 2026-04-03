@@ -34,14 +34,13 @@ import java.util.regex.Pattern;
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtTokenProvider jwtTokenProvider;
-
     /**
      * Pattern to extract tenantId from tenant-scoped topic paths.
      * Matches: /topic/tenant/{uuid}/...
      */
     private static final Pattern TENANT_TOPIC_PATTERN =
             Pattern.compile("^/topic/tenant/([0-9a-fA-F\\-]{36})/.*$");
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {

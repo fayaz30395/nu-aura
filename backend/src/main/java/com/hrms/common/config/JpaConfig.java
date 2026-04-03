@@ -32,9 +32,9 @@ import javax.sql.DataSource;
  */
 @Configuration
 @ConditionalOnProperty(
-    name = "app.rls.transaction-manager.enabled",
-    havingValue = "true",
-    matchIfMissing = true
+        name = "app.rls.transaction-manager.enabled",
+        havingValue = "true",
+        matchIfMissing = true
 )
 @Slf4j
 public class JpaConfig {
@@ -53,7 +53,7 @@ public class JpaConfig {
             DataSource dataSource
     ) {
         log.info("RLS: Registering TenantRlsTransactionManager — PostgreSQL session variable " +
-                 "app.current_tenant_id will be SET LOCAL on every transaction begin");
+                "app.current_tenant_id will be SET LOCAL on every transaction begin");
         TenantRlsTransactionManager txManager = new TenantRlsTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         txManager.setDataSource(dataSource);

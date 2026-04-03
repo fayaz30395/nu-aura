@@ -72,9 +72,9 @@ import java.util.UUID;
  */
 @Component
 @ConditionalOnProperty(
-    name = "app.rls.datasource-wrapper.enabled",
-    havingValue = "true",
-    matchIfMissing = true
+        name = "app.rls.datasource-wrapper.enabled",
+        havingValue = "true",
+        matchIfMissing = true
 )
 @Slf4j
 public class TenantAwareDataSourceConfig implements BeanPostProcessor {
@@ -83,8 +83,8 @@ public class TenantAwareDataSourceConfig implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof HikariDataSource hikariDs) {
             log.info("RLS: Wrapping DataSource '{}' with TenantAwareDataSource — " +
-                     "app.current_tenant_id will be SET on every connection checkout " +
-                     "when tenant context is present", beanName);
+                    "app.current_tenant_id will be SET on every connection checkout " +
+                    "when tenant context is present", beanName);
             return new TenantAwareDataSource(hikariDs);
         }
         return bean;

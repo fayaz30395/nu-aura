@@ -32,11 +32,10 @@ import java.time.format.DateTimeParseException;
 @RequiredArgsConstructor
 public class ApiVersionInterceptor implements HandlerInterceptor {
 
-    private final MeterRegistry meterRegistry;
-
     // RFC 7231 date format for Sunset header
     private static final DateTimeFormatter RFC_7231_FORMAT =
             DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+    private final MeterRegistry meterRegistry;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,

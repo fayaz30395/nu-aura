@@ -18,7 +18,7 @@ public class FeatureFlagService {
 
     /**
      * Check if a feature is enabled.
-     * 
+     *
      * @param feature The feature to check
      * @return true if enabled, false otherwise (defaults to false)
      */

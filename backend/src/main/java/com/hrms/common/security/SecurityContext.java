@@ -2,6 +2,7 @@ package com.hrms.common.security;
 
 import com.hrms.domain.user.RoleScope;
 import org.springframework.stereotype.Component;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * Security context holder for current user in the NU Platform.
  * Supports multi-application permissions with app-prefixed permission codes.
- *
+ * <p>
  * Permission format: {APP_CODE}:{MODULE}:{ACTION}
  * Example: HRMS:EMPLOYEE:READ, CRM:CONTACT:CREATE
  */
@@ -43,7 +44,7 @@ public class SecurityContext {
      * Set current user context (called during authentication)
      */
     public static void setCurrentUser(UUID userId, UUID employeeId, Set<String> roles,
-            Map<String, RoleScope> permissions) {
+                                      Map<String, RoleScope> permissions) {
         currentUserId.set(userId);
         currentEmployeeId.set(employeeId);
         currentRoles.set(roles != null ? roles : Collections.emptySet());
@@ -57,22 +58,6 @@ public class SecurityContext {
         currentAppCode.set(appCode);
     }
 
-    /**
-     * Set applications the user has access to
-     */
-    public static void setAccessibleApps(Set<String> apps) {
-        accessibleApps.set(apps != null ? apps : Collections.emptySet());
-    }
-
-    /**
-     * Set current tenant ID. Delegates to TenantContext for single source of truth.
-     * @deprecated Use TenantContext.setCurrentTenant() directly
-     */
-    @Deprecated(forRemoval = true)
-    public static void setCurrentTenantId(UUID tenantId) {
-        TenantContext.setCurrentTenant(tenantId);
-    }
-
     public static void setOrgContext(UUID locationId, UUID departmentId, UUID teamId) {
         currentLocationId.set(locationId);
         currentDepartmentId.set(departmentId);
@@ -80,26 +65,12 @@ public class SecurityContext {
     }
 
     /**
-     * Set multiple location IDs for users with access to multiple locations
-     */
-    public static void setCurrentLocationIds(Set<UUID> locationIds) {
-        currentLocationIds.set(locationIds != null ? locationIds : Collections.emptySet());
-    }
-
-    /**
-     * Set all reportee IDs (direct + indirect) for TEAM scope filtering
-     */
-    public static void setAllReporteeIds(Set<UUID> reporteeIds) {
-        allReporteeIds.set(reporteeIds != null ? reporteeIds : Collections.emptySet());
-    }
-
-    /**
      * Set custom scope targets for a specific permission
      */
     public static void setCustomScopeTargets(String permission,
-                                              Set<UUID> employeeIds,
-                                              Set<UUID> departmentIds,
-                                              Set<UUID> locationIds) {
+                                             Set<UUID> employeeIds,
+                                             Set<UUID> departmentIds,
+                                             Set<UUID> locationIds) {
         if (customEmployeeIds.get() == null) {
             customEmployeeIds.set(new HashMap<>());
         }
@@ -121,8 +92,6 @@ public class SecurityContext {
         }
     }
 
-    // ==================== Getters ====================
-
     public static UUID getCurrentUserId() {
         return currentUserId.get();
     }
@@ -137,6 +106,18 @@ public class SecurityContext {
     public static UUID getCurrentTenantId() {
         return TenantContext.getCurrentTenant();
     }
+
+    /**
+     * Set current tenant ID. Delegates to TenantContext for single source of truth.
+     *
+     * @deprecated Use TenantContext.setCurrentTenant() directly
+     */
+    @Deprecated(forRemoval = true)
+    public static void setCurrentTenantId(UUID tenantId) {
+        TenantContext.setCurrentTenant(tenantId);
+    }
+
+    // ==================== Getters ====================
 
     public static String getCurrentAppCode() {
         return currentAppCode.get();
@@ -199,10 +180,24 @@ public class SecurityContext {
     }
 
     /**
+     * Set multiple location IDs for users with access to multiple locations
+     */
+    public static void setCurrentLocationIds(Set<UUID> locationIds) {
+        currentLocationIds.set(locationIds != null ? locationIds : Collections.emptySet());
+    }
+
+    /**
      * Get all reportee IDs (direct + indirect) for TEAM scope filtering
      */
     public static Set<UUID> getAllReporteeIds() {
         return allReporteeIds.get() != null ? allReporteeIds.get() : Collections.emptySet();
+    }
+
+    /**
+     * Set all reportee IDs (direct + indirect) for TEAM scope filtering
+     */
+    public static void setAllReporteeIds(Set<UUID> reporteeIds) {
+        allReporteeIds.set(reporteeIds != null ? reporteeIds : Collections.emptySet());
     }
 
     /**
@@ -236,6 +231,13 @@ public class SecurityContext {
         return accessibleApps.get() != null ? accessibleApps.get() : Collections.emptySet();
     }
 
+    /**
+     * Set applications the user has access to
+     */
+    public static void setAccessibleApps(Set<String> apps) {
+        accessibleApps.set(apps != null ? apps : Collections.emptySet());
+    }
+
     // ==================== Permission Checks ====================
 
     /**
@@ -243,7 +245,7 @@ public class SecurityContext {
      * Supports both new format (HRMS:EMPLOYEE:READ) and legacy format
      * (EMPLOYEE:READ) and DB format (employee.read).
      * Also checks for system admin permission and permission hierarchy.
-     *
+     * <p>
      * Permission hierarchy: MANAGE implies all actions (MARK, READ, VIEW_ALL, VIEW_TEAM, etc.)
      */
     public static boolean hasPermission(String permission) {
@@ -344,7 +346,7 @@ public class SecurityContext {
      * Check if a higher view scope grants the requested lower scope.
      */
     private static boolean matchesViewScopeHierarchy(String permission, Set<String> permissions,
-                                                      String module, String appCode) {
+                                                     String module, String appCode) {
         String[][] scopeHierarchy;
         if (permission.endsWith(":VIEW_SELF")) {
             scopeHierarchy = new String[][]{{":VIEW_TEAM"}, {":VIEW_DEPARTMENT"}, {":VIEW_ALL"}};
