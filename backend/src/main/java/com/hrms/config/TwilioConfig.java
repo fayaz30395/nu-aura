@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration properties for Twilio SMS integration.
- *
+ * <p>
  * When mock mode is enabled, SMS messages are logged instead of being sent via Twilio.
  * This is useful for development and testing without incurring Twilio charges.
  */
