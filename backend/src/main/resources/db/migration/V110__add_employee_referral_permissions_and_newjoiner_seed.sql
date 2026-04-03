@@ -32,41 +32,40 @@ WHERE p.code IN (
 -- ============================================================================
 
 -- Insert new joiner user account
-INSERT INTO users (id, tenant_id, email, password_hash, full_name,
-                   is_active, is_mfa_enabled, failed_login_attempts,
+INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, status,
+                   mfa_enabled, failed_login_attempts,
                    created_at, updated_at, version, is_deleted)
 VALUES ('aa000000-0000-0000-0000-000000000099',
         '660e8400-e29b-41d4-a716-446655440001',
         'newjoiner@nulogic.io',
+        'New', 'Joiner',
         '$2a$12$XMYaVk5yNVtCKiuFM5m3rOpR.73IKHFykmuvWP3OWYi8cqRbK0VHG', -- Welcome@123
-        'New Joiner QA',
-        true, false, 0,
-        NOW(), NOW(), 0, false) ON CONFLICT (email, tenant_id) DO NOTHING;
+        'ACTIVE',
+        false, 0,
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- Insert employee profile for new joiner
-INSERT INTO employees (id, tenant_id, user_id, employee_code, first_name, last_name,
-                       work_email, personal_email, employment_status,
-                       is_active, created_at, updated_at, version, is_deleted)
+INSERT INTO employees (id, tenant_id, employee_code, user_id, first_name, last_name,
+                       personal_email, joining_date, designation, level, job_role,
+                       employment_type, status, created_at, updated_at, version, is_deleted)
 VALUES ('aa000000-0000-0000-0000-000000000098',
         '660e8400-e29b-41d4-a716-446655440001',
-        'aa000000-0000-0000-0000-000000000099',
         'NL-QA-099',
+        'aa000000-0000-0000-0000-000000000099',
         'New', 'Joiner',
-        'newjoiner@nulogic.io',
         'newjoiner.personal@example.com',
+        CURRENT_DATE,
+        'New Joiner',
+        'ENTRY',
+        'OTHER',
+        'FULL_TIME',
         'ACTIVE',
-        true, NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- Assign EMPLOYEE role to new joiner
-INSERT INTO user_roles (id, tenant_id, user_id, role_id, created_at, updated_at, version, is_deleted)
-SELECT gen_random_uuid(),
-       '660e8400-e29b-41d4-a716-446655440001',
-       'aa000000-0000-0000-0000-000000000099',
-       r.id,
-       NOW(),
-       NOW(),
-       0,
-       false
+INSERT INTO user_roles (user_id, role_id)
+SELECT 'aa000000-0000-0000-0000-000000000099',
+       r.id
 FROM roles r
 WHERE r.name = 'EMPLOYEE'
   AND r.tenant_id = '660e8400-e29b-41d4-a716-446655440001'
