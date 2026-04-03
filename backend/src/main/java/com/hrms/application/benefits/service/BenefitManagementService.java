@@ -81,6 +81,7 @@ public class BenefitManagementService {
         return mapToResponse(updatedPlan);
     }
 
+    @Transactional
     @Audited(action = AuditAction.STATUS_CHANGE, entityType = "BENEFIT_PLAN", description = "Activated benefit plan", entityIdParam = 0)
     public BenefitPlanResponse activatePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -94,6 +95,7 @@ public class BenefitManagementService {
         return mapToResponse(updatedPlan);
     }
 
+    @Transactional
     @Audited(action = AuditAction.STATUS_CHANGE, entityType = "BENEFIT_PLAN", description = "Deactivated benefit plan", entityIdParam = 0)
     public BenefitPlanResponse deactivatePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();

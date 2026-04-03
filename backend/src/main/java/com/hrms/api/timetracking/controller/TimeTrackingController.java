@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class TimeTrackingController {
     public ResponseEntity<TimeEntryDto> createEntry(
             @Valid @RequestBody CreateTimeEntryRequest request
     ) {
-        return ResponseEntity.ok(timeTrackingService.createEntry(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(timeTrackingService.createEntry(request));
     }
 
     @PutMapping("/entries/{id}")

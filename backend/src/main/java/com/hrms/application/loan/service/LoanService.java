@@ -85,7 +85,7 @@ public class LoanService implements ApprovalCallbackHandler {
             throw new IllegalStateException("Cannot approve loan in status: " + loan.getStatus());
         }
 
-        if (approvedAmount != null && approvedAmount.compareTo(loan.getPrincipalAmount()) <= 0) {
+        if (approvedAmount != null && approvedAmount.compareTo(java.math.BigDecimal.ZERO) > 0) {
             loan.setPrincipalAmount(approvedAmount);
             loan.calculateEmi();
         }
