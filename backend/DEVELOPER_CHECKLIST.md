@@ -26,13 +26,13 @@
 
 ### Existing Test Coverage
 
-| Controller | Test Class | Methods |
-|------------|-----------|---------|
-| Employee | `EmployeeControllerTest` | 24 |
-| LeaveRequest | `LeaveRequestControllerTest` | 24 |
-| Payroll | `PayrollControllerTest` | 23 |
-| Attendance | `AttendanceControllerTest` | 23 |
-| Role | `RoleControllerTest` | 28 |
+| Controller   | Test Class                   | Methods |
+|--------------|------------------------------|---------|
+| Employee     | `EmployeeControllerTest`     | 24      |
+| LeaveRequest | `LeaveRequestControllerTest` | 24      |
+| Payroll      | `PayrollControllerTest`      | 23      |
+| Attendance   | `AttendanceControllerTest`   | 23      |
+| Role         | `RoleControllerTest`         | 28      |
 
 Total: 122 test methods across 5 controller test classes (~2,700 lines of test code).
 

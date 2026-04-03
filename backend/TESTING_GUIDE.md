@@ -49,6 +49,7 @@ class EmployeeControllerTest {
 ## Test Patterns
 
 ### 1. Happy Path
+
 ```java
 @Test
 void shouldCreateEmployeeWhenValidRequest() {
@@ -62,6 +63,7 @@ void shouldCreateEmployeeWhenValidRequest() {
 ```
 
 ### 2. Validation Error
+
 ```java
 @Test
 void shouldReturn400WhenEmailInvalid() {
@@ -74,6 +76,7 @@ void shouldReturn400WhenEmailInvalid() {
 ```
 
 ### 3. Not Found
+
 ```java
 @Test
 void shouldReturn404WhenEmployeeNotFound() {
@@ -84,6 +87,7 @@ void shouldReturn404WhenEmployeeNotFound() {
 ```
 
 ### 4. Pagination
+
 ```java
 @Test
 void shouldReturnPagedResults() {
@@ -103,6 +107,7 @@ should[ExpectedBehavior]When[Condition]
 ```
 
 Examples:
+
 - `shouldCreateEmployeeWhenValidRequest`
 - `shouldReturn400WhenRequiredFieldsMissing`
 - `shouldReturn404WhenEmployeeNotFound`
