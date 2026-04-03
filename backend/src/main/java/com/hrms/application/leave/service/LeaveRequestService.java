@@ -8,6 +8,7 @@ import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.leave.LeaveApprovedEvent;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -242,6 +244,13 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         LeaveRequest request = leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException(LEAVE_REQUEST_NOT_FOUND));
+
+        // BUG-NEW-009: Enforce ownership — only the owner, or someone with LEAVE:MANAGE /
+        // LEAVE:APPROVE permission, may cancel a leave request.
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && !request.getEmployeeId().equals(currentEmployeeId)) {
+            throw new AccessDeniedException("Cannot cancel another employee's leave request");
+        }
 
         boolean wasApproved = request.getStatus() == LeaveRequest.LeaveRequestStatus.APPROVED;
         boolean wasPending = request.getStatus() == LeaveRequest.LeaveRequestStatus.PENDING;

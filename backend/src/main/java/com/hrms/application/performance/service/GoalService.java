@@ -145,6 +145,14 @@ public class GoalService {
     }
 
     @Transactional
+    public void deleteGoal(UUID goalId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+        goalRepository.delete(goal);
+    }
+
+    @Transactional
     public GoalResponse approveGoal(UUID goalId, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

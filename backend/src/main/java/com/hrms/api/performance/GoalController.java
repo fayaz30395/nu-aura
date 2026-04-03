@@ -119,6 +119,13 @@ public class GoalController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    @RequiresPermission(Permission.GOAL_DELETE)
+    public ResponseEntity<Void> deleteGoal(@PathVariable UUID id) {
+        goalService.deleteGoal(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}/approve")
     @RequiresPermission(Permission.GOAL_APPROVE)
     public ResponseEntity<GoalResponse> approveGoal(

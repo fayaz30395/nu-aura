@@ -96,7 +96,7 @@ public class PerformanceReviewController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_UPDATE)
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable UUID id,
             @Valid @RequestBody ReviewRequest request
