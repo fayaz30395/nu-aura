@@ -28,11 +28,12 @@
 -- SECTION A: Enable RLS and create policies for all 115 missing tables
 -- =============================================================================
 
-DO $$
+DO
+$$
 DECLARE
     -- Full list of 115 tables from forensic report Appendix A
     -- Grouped by module for readability
-    missing_tables TEXT[] := ARRAY[
+missing_tables TEXT[] := ARRAY[
 
         -- Analytics & Dashboards
         'analytics_metrics',
@@ -206,69 +207,88 @@ DECLARE
         'tickets'
     ];
 
-    tbl_name TEXT;
-    rls_enabled BOOLEAN;
-    policy_exists BOOLEAN;
-    processed_count INT := 0;
-    skipped_count INT := 0;
-    error_count INT := 0;
+    tbl_name
+TEXT;
+    rls_enabled
+BOOLEAN;
+    policy_exists
+BOOLEAN;
+    processed_count
+INT := 0;
+    skipped_count
+INT := 0;
+    error_count
+INT := 0;
 BEGIN
-    RAISE NOTICE 'V81: Processing % tables for RLS enablement', array_length(missing_tables, 1);
+    RAISE
+NOTICE 'V81: Processing % tables for RLS enablement', array_length(missing_tables, 1);
 
-    FOREACH tbl_name IN ARRAY missing_tables
+    FOREACH
+tbl_name IN ARRAY missing_tables
     LOOP
-        BEGIN
+BEGIN
             -- Verify the table exists before attempting RLS
-            IF NOT EXISTS (
+            IF
+NOT EXISTS (
                 SELECT 1 FROM information_schema.tables
                 WHERE table_schema = 'public'
                   AND table_name = tbl_name
                   AND table_type = 'BASE TABLE'
             ) THEN
                 RAISE NOTICE 'Skipping % (table does not exist)', tbl_name;
-                skipped_count := skipped_count + 1;
-                CONTINUE;
-            END IF;
+                skipped_count
+:= skipped_count + 1;
+CONTINUE;
+END IF;
 
             -- Verify the table has a tenant_id column
-            IF NOT EXISTS (
+            IF
+NOT EXISTS (
                 SELECT 1 FROM information_schema.columns
                 WHERE table_schema = 'public'
                   AND table_name = tbl_name
                   AND column_name = 'tenant_id'
             ) THEN
                 RAISE NOTICE 'Skipping % (no tenant_id column)', tbl_name;
-                skipped_count := skipped_count + 1;
-                CONTINUE;
-            END IF;
+                skipped_count
+:= skipped_count + 1;
+CONTINUE;
+END IF;
 
             -- Check if RLS is already enabled
-            SELECT relrowsecurity INTO rls_enabled
-            FROM pg_class
-            WHERE relname = tbl_name AND relnamespace = 'public'::regnamespace;
+SELECT relrowsecurity
+INTO rls_enabled
+FROM pg_class
+WHERE relname = tbl_name
+  AND relnamespace = 'public'::regnamespace;
 
-            -- Check if tenant_rls policy already exists
-            SELECT EXISTS (
-                SELECT 1 FROM pg_policies
-                WHERE tablename = tbl_name
-                  AND policyname = tbl_name || '_tenant_rls'
-            ) INTO policy_exists;
+-- Check if tenant_rls policy already exists
+SELECT EXISTS (SELECT 1
+               FROM pg_policies
+               WHERE tablename = tbl_name
+                 AND policyname = tbl_name || '_tenant_rls')
+INTO policy_exists;
 
-            -- Skip if already fully configured
-            IF rls_enabled AND policy_exists THEN
+-- Skip if already fully configured
+IF
+rls_enabled AND policy_exists THEN
                 RAISE NOTICE 'Skipping % (already configured)', tbl_name;
-                skipped_count := skipped_count + 1;
-                CONTINUE;
-            END IF;
+                skipped_count
+:= skipped_count + 1;
+CONTINUE;
+END IF;
 
             -- Enable RLS if not already enabled
-            IF NOT rls_enabled THEN
+            IF
+NOT rls_enabled THEN
                 EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', tbl_name);
-                RAISE NOTICE 'Enabled RLS on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Enabled RLS on %', tbl_name;
+END IF;
 
             -- Create PERMISSIVE allow-all policy if not exists
-            IF NOT EXISTS (
+            IF
+NOT EXISTS (
                 SELECT 1 FROM pg_policies
                 WHERE tablename = tbl_name
                   AND policyname = tbl_name || '_allow_all'
@@ -278,11 +298,13 @@ BEGIN
                     tbl_name || '_allow_all',
                     tbl_name
                 );
-                RAISE NOTICE 'Created allow_all policy on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Created allow_all policy on %', tbl_name;
+END IF;
 
             -- Create RESTRICTIVE tenant-scoped policy if not exists
-            IF NOT policy_exists THEN
+            IF
+NOT policy_exists THEN
                 EXECUTE format($policy$
                     CREATE POLICY %I ON %I
                         AS RESTRICTIVE FOR ALL
@@ -300,18 +322,22 @@ BEGIN
                     tbl_name || '_tenant_rls',
                     tbl_name
                 );
-                RAISE NOTICE 'Created tenant_rls policy on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Created tenant_rls policy on %', tbl_name;
+END IF;
 
-            processed_count := processed_count + 1;
+            processed_count
+:= processed_count + 1;
 
-        EXCEPTION WHEN OTHERS THEN
+EXCEPTION WHEN OTHERS THEN
             RAISE WARNING 'Error processing table %: %', tbl_name, SQLERRM;
-            error_count := error_count + 1;
-        END;
-    END LOOP;
+            error_count
+:= error_count + 1;
+END;
+END LOOP;
 
-    RAISE NOTICE 'V81 Section A complete: % processed, % skipped, % errors',
+    RAISE
+NOTICE 'V81 Section A complete: % processed, % skipped, % errors',
         processed_count, skipped_count, error_count;
 END $$;
 
@@ -321,9 +347,10 @@ END $$;
 -- =============================================================================
 -- FORCE means RLS applies even to table owners (superusers still bypass)
 
-DO $$
+DO
+$$
 DECLARE
-    missing_tables TEXT[] := ARRAY[
+missing_tables TEXT[] := ARRAY[
         'analytics_metrics', 'app_roles', 'applicants', 'benefit_plans',
         'calendar_events', 'candidate_match_scores', 'chatbot_conversations',
         'comp_off_requests', 'content_views', 'custom_field_definitions',
@@ -363,26 +390,30 @@ DECLARE
         'ticket_metrics', 'ticket_slas', 'tickets', 'training_enrollments',
         'training_programs', 'user_basic_notification_preferences', 'webhooks'
     ];
-    tbl_name TEXT;
+    tbl_name
+TEXT;
 BEGIN
-    FOREACH tbl_name IN ARRAY missing_tables
+    FOREACH
+tbl_name IN ARRAY missing_tables
     LOOP
-        BEGIN
+BEGIN
             -- Only FORCE if the table exists
-            IF EXISTS (
+            IF
+EXISTS (
                 SELECT 1 FROM information_schema.tables
                 WHERE table_schema = 'public'
                   AND table_name = tbl_name
                   AND table_type = 'BASE TABLE'
             ) THEN
                 EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', tbl_name);
-            END IF;
-        EXCEPTION WHEN OTHERS THEN
+END IF;
+EXCEPTION WHEN OTHERS THEN
             RAISE WARNING 'Could not force RLS on %: %', tbl_name, SQLERRM;
-        END;
-    END LOOP;
+END;
+END LOOP;
 
-    RAISE NOTICE 'V81 Section B complete: FORCE RLS applied.';
+    RAISE
+NOTICE 'V81 Section B complete: FORCE RLS applied.';
 END $$;
 
 

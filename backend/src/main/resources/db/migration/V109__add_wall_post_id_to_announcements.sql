@@ -5,4 +5,4 @@
 -- causing a PSQLException "column wall_post_id does not exist" → HTTP 500 (BUG-014).
 
 ALTER TABLE announcements
-    ADD COLUMN IF NOT EXISTS wall_post_id UUID;
+  ADD COLUMN IF NOT EXISTS wall_post_id UUID;

@@ -14,4 +14,4 @@
 -- IF NOT EXISTS prevents failure on re-runs.
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_attendance_records_tenant_employee_date
-    ON attendance_records (tenant_id, employee_id, attendance_date);
+  ON attendance_records (tenant_id, employee_id, attendance_date);

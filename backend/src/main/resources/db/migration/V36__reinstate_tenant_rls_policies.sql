@@ -44,7 +44,8 @@
 -- V24 added PERMISSIVE allow-all policies. We now add RESTRICTIVE tenant-scoped
 -- policies on top. The PERMISSIVE policies remain as the baseline.
 
-CREATE POLICY wiki_spaces_tenant_rls ON wiki_spaces
+CREATE
+POLICY wiki_spaces_tenant_rls ON wiki_spaces
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -57,7 +58,8 @@ CREATE POLICY wiki_spaces_tenant_rls ON wiki_spaces
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY wiki_pages_tenant_rls ON wiki_pages
+CREATE
+POLICY wiki_pages_tenant_rls ON wiki_pages
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -70,7 +72,8 @@ CREATE POLICY wiki_pages_tenant_rls ON wiki_pages
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY wiki_page_versions_tenant_rls ON wiki_page_versions
+CREATE
+POLICY wiki_page_versions_tenant_rls ON wiki_page_versions
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -83,7 +86,8 @@ CREATE POLICY wiki_page_versions_tenant_rls ON wiki_page_versions
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY wiki_page_comments_tenant_rls ON wiki_page_comments
+CREATE
+POLICY wiki_page_comments_tenant_rls ON wiki_page_comments
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -96,7 +100,8 @@ CREATE POLICY wiki_page_comments_tenant_rls ON wiki_page_comments
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY wiki_page_watches_tenant_rls ON wiki_page_watches
+CREATE
+POLICY wiki_page_watches_tenant_rls ON wiki_page_watches
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -109,7 +114,8 @@ CREATE POLICY wiki_page_watches_tenant_rls ON wiki_page_watches
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY blog_categories_tenant_rls ON blog_categories
+CREATE
+POLICY blog_categories_tenant_rls ON blog_categories
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -122,7 +128,8 @@ CREATE POLICY blog_categories_tenant_rls ON blog_categories
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY blog_posts_tenant_rls ON blog_posts
+CREATE
+POLICY blog_posts_tenant_rls ON blog_posts
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -135,7 +142,8 @@ CREATE POLICY blog_posts_tenant_rls ON blog_posts
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY blog_comments_tenant_rls ON blog_comments
+CREATE
+POLICY blog_comments_tenant_rls ON blog_comments
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -148,7 +156,8 @@ CREATE POLICY blog_comments_tenant_rls ON blog_comments
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY blog_likes_tenant_rls ON blog_likes
+CREATE
+POLICY blog_likes_tenant_rls ON blog_likes
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -161,7 +170,8 @@ CREATE POLICY blog_likes_tenant_rls ON blog_likes
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY document_templates_tenant_rls ON document_templates
+CREATE
+POLICY document_templates_tenant_rls ON document_templates
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -174,7 +184,8 @@ CREATE POLICY document_templates_tenant_rls ON document_templates
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY template_instantiations_tenant_rls ON template_instantiations
+CREATE
+POLICY template_instantiations_tenant_rls ON template_instantiations
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -187,7 +198,8 @@ CREATE POLICY template_instantiations_tenant_rls ON template_instantiations
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY knowledge_attachments_tenant_rls ON knowledge_attachments
+CREATE
+POLICY knowledge_attachments_tenant_rls ON knowledge_attachments
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -200,7 +212,8 @@ CREATE POLICY knowledge_attachments_tenant_rls ON knowledge_attachments
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY knowledge_views_tenant_rls ON knowledge_views
+CREATE
+POLICY knowledge_views_tenant_rls ON knowledge_views
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -213,7 +226,8 @@ CREATE POLICY knowledge_views_tenant_rls ON knowledge_views
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY knowledge_searches_tenant_rls ON knowledge_searches
+CREATE
+POLICY knowledge_searches_tenant_rls ON knowledge_searches
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -226,7 +240,8 @@ CREATE POLICY knowledge_searches_tenant_rls ON knowledge_searches
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY wiki_page_approval_tasks_tenant_rls ON wiki_page_approval_tasks
+CREATE
+POLICY wiki_page_approval_tasks_tenant_rls ON wiki_page_approval_tasks
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -246,7 +261,8 @@ CREATE POLICY wiki_page_approval_tasks_tenant_rls ON wiki_page_approval_tasks
 -- V24 replaced the broken current_setting policies with allow-all.
 -- We now add RESTRICTIVE tenant-scoped policies on top of the V24 allow-all.
 
-CREATE POLICY contracts_tenant_rls ON contracts
+CREATE
+POLICY contracts_tenant_rls ON contracts
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -263,7 +279,8 @@ CREATE POLICY contracts_tenant_rls ON contracts
 -- RLS policies skipped for these tables. Tenant isolation is enforced
 -- via the parent contracts table FK (CASCADE delete).
 
-CREATE POLICY contract_templates_tenant_rls ON contract_templates
+CREATE
+POLICY contract_templates_tenant_rls ON contract_templates
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid
@@ -276,7 +293,8 @@ CREATE POLICY contract_templates_tenant_rls ON contract_templates
         OR current_setting('app.current_tenant_id', true) = ''
     );
 
-CREATE POLICY contract_reminders_tenant_rls ON contract_reminders
+CREATE
+POLICY contract_reminders_tenant_rls ON contract_reminders
     AS RESTRICTIVE FOR ALL
     USING (
         tenant_id = current_setting('app.current_tenant_id', true)::uuid

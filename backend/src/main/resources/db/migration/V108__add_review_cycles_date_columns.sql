@@ -5,9 +5,9 @@
 -- "column start_date does not exist" from PostgreSQL.
 
 ALTER TABLE review_cycles
-    ADD COLUMN IF NOT EXISTS start_date DATE,
-    ADD COLUMN IF NOT EXISTS end_date DATE;
+  ADD COLUMN IF NOT EXISTS start_date DATE,
+  ADD COLUMN IF NOT EXISTS end_date DATE;
 
 CREATE INDEX IF NOT EXISTS idx_review_cycles_dates
-    ON review_cycles (tenant_id, start_date, end_date)
-    WHERE is_deleted = false;
+  ON review_cycles (tenant_id, start_date, end_date)
+  WHERE is_deleted = false;

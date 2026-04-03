@@ -23,9 +23,10 @@
 -- SECTION A: Define tables already covered by V36 and V37
 -- =============================================================================
 
-DO $$
+DO
+$$
 DECLARE
-    already_covered TEXT[] := ARRAY[
+already_covered TEXT[] := ARRAY[
         -- V36: Fluence tables
         'wiki_spaces', 'wiki_pages', 'wiki_page_versions', 'wiki_page_comments',
         'wiki_page_watches', 'blog_categories', 'blog_posts', 'blog_comments',
@@ -48,60 +49,73 @@ DECLARE
         'tenants', 'flyway_schema_history', 'failed_kafka_events'
     ];
 
-    tables_to_cover TEXT[];
-    tbl_name TEXT;
-    policy_exists BOOLEAN;
-    rls_enabled BOOLEAN;
+    tables_to_cover
+TEXT[];
+    tbl_name
+TEXT;
+    policy_exists
+BOOLEAN;
+    rls_enabled
+BOOLEAN;
 BEGIN
     -- Find all tables with tenant_id that are NOT already covered
-    SELECT ARRAY_AGG(DISTINCT c.table_name::TEXT)
-    INTO tables_to_cover
-    FROM information_schema.columns c
-    JOIN information_schema.tables t
-        ON c.table_name = t.table_name AND c.table_schema = t.table_schema
-    WHERE c.column_name = 'tenant_id'
-      AND c.table_schema = 'public'
-      AND t.table_type = 'BASE TABLE'
-      AND c.table_name::TEXT != ALL(already_covered);
+SELECT ARRAY_AGG(DISTINCT c.table_name::TEXT)
+INTO tables_to_cover
+FROM information_schema.columns c
+       JOIN information_schema.tables t
+            ON c.table_name = t.table_name AND c.table_schema = t.table_schema
+WHERE c.column_name = 'tenant_id'
+  AND c.table_schema = 'public'
+  AND t.table_type = 'BASE TABLE'
+  AND c.table_name::TEXT != ALL(already_covered);
 
-    -- If no tables to cover, exit early
-    IF tables_to_cover IS NULL THEN
+-- If no tables to cover, exit early
+IF
+tables_to_cover IS NULL THEN
         RAISE NOTICE 'No additional tables require RLS coverage.';
         RETURN;
-    END IF;
+END IF;
 
-    RAISE NOTICE 'Found % tables requiring RLS coverage', array_length(tables_to_cover, 1);
+    RAISE
+NOTICE 'Found % tables requiring RLS coverage', array_length(tables_to_cover, 1);
 
     -- Process each table
-    FOREACH tbl_name IN ARRAY tables_to_cover
+    FOREACH
+tbl_name IN ARRAY tables_to_cover
     LOOP
-        BEGIN
+BEGIN
             -- Check if RLS is already enabled
-            SELECT relrowsecurity INTO rls_enabled
-            FROM pg_class
-            WHERE relname = tbl_name AND relnamespace = 'public'::regnamespace;
+SELECT relrowsecurity
+INTO rls_enabled
+FROM pg_class
+WHERE relname = tbl_name
+  AND relnamespace = 'public'::regnamespace;
 
-            -- Check if tenant_rls policy already exists
-            SELECT EXISTS (
-                SELECT 1 FROM pg_policies
-                WHERE tablename = tbl_name
-                  AND policyname = tbl_name || '_tenant_rls'
-            ) INTO policy_exists;
+-- Check if tenant_rls policy already exists
+SELECT EXISTS (SELECT 1
+               FROM pg_policies
+               WHERE tablename = tbl_name
+                 AND policyname = tbl_name || '_tenant_rls')
+INTO policy_exists;
 
-            -- Skip if already fully configured
-            IF rls_enabled AND policy_exists THEN
+-- Skip if already fully configured
+IF
+rls_enabled AND policy_exists THEN
                 RAISE NOTICE 'Skipping % (already configured)', tbl_name;
-                CONTINUE;
-            END IF;
+CONTINUE;
+END IF;
 
             -- Enable RLS if not already enabled
-            IF NOT rls_enabled THEN
+            IF
+NOT rls_enabled THEN
                 EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', tbl_name);
-                RAISE NOTICE 'Enabled RLS on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Enabled RLS on %', tbl_name;
+END IF;
 
             -- Create PERMISSIVE allow-all policy if not exists
-            IF NOT EXISTS (
+            IF
+NOT EXISTS (
                 SELECT 1 FROM pg_policies
                 WHERE tablename = tbl_name
                   AND policyname = tbl_name || '_allow_all'
@@ -111,11 +125,13 @@ BEGIN
                     tbl_name || '_allow_all',
                     tbl_name
                 );
-                RAISE NOTICE 'Created allow_all policy on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Created allow_all policy on %', tbl_name;
+END IF;
 
             -- Create RESTRICTIVE tenant-scoped policy if not exists
-            IF NOT policy_exists THEN
+            IF
+NOT policy_exists THEN
                 EXECUTE format($policy$
                     CREATE POLICY %I ON %I
                         AS RESTRICTIVE FOR ALL
@@ -133,16 +149,18 @@ BEGIN
                     tbl_name || '_tenant_rls',
                     tbl_name
                 );
-                RAISE NOTICE 'Created tenant_rls policy on %', tbl_name;
-            END IF;
+                RAISE
+NOTICE 'Created tenant_rls policy on %', tbl_name;
+END IF;
 
-        EXCEPTION WHEN OTHERS THEN
+EXCEPTION WHEN OTHERS THEN
             RAISE WARNING 'Error processing table %: %', tbl_name, SQLERRM;
             -- Continue with next table
-        END;
-    END LOOP;
+END;
+END LOOP;
 
-    RAISE NOTICE 'RLS coverage complete.';
+    RAISE
+NOTICE 'RLS coverage complete.';
 END $$;
 
 
@@ -151,33 +169,37 @@ END $$;
 -- =============================================================================
 -- FORCE means RLS applies even to table owners (superusers still bypass)
 
-DO $$
+DO
+$$
 DECLARE
-    tbl_name TEXT;
-    tables_with_tenant_id TEXT[];
+tbl_name TEXT;
+    tables_with_tenant_id
+TEXT[];
 BEGIN
-    SELECT ARRAY_AGG(DISTINCT c.table_name::TEXT)
-    INTO tables_with_tenant_id
-    FROM information_schema.columns c
-    JOIN information_schema.tables t
-        ON c.table_name = t.table_name AND c.table_schema = t.table_schema
-    WHERE c.column_name = 'tenant_id'
-      AND c.table_schema = 'public'
-      AND t.table_type = 'BASE TABLE'
-      AND c.table_name NOT IN ('tenants', 'flyway_schema_history', 'failed_kafka_events');
+SELECT ARRAY_AGG(DISTINCT c.table_name::TEXT)
+INTO tables_with_tenant_id
+FROM information_schema.columns c
+       JOIN information_schema.tables t
+            ON c.table_name = t.table_name AND c.table_schema = t.table_schema
+WHERE c.column_name = 'tenant_id'
+  AND c.table_schema = 'public'
+  AND t.table_type = 'BASE TABLE'
+  AND c.table_name NOT IN ('tenants', 'flyway_schema_history', 'failed_kafka_events');
 
-    IF tables_with_tenant_id IS NULL THEN
+IF
+tables_with_tenant_id IS NULL THEN
         RETURN;
-    END IF;
+END IF;
 
-    FOREACH tbl_name IN ARRAY tables_with_tenant_id
+    FOREACH
+tbl_name IN ARRAY tables_with_tenant_id
     LOOP
-        BEGIN
-            EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', tbl_name);
-        EXCEPTION WHEN OTHERS THEN
+BEGIN
+EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', tbl_name);
+EXCEPTION WHEN OTHERS THEN
             RAISE WARNING 'Could not force RLS on %: %', tbl_name, SQLERRM;
-        END;
-    END LOOP;
+END;
+END LOOP;
 END $$;
 
 

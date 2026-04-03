@@ -41,77 +41,92 @@
 -- so that the DB role used by the connection pool can read/write rows.
 -- The application layer provides tenant filtering.
 
-CREATE POLICY wiki_spaces_allow_all ON wiki_spaces
+CREATE
+POLICY wiki_spaces_allow_all ON wiki_spaces
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY wiki_pages_allow_all ON wiki_pages
+CREATE
+POLICY wiki_pages_allow_all ON wiki_pages
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY wiki_page_versions_allow_all ON wiki_page_versions
+CREATE
+POLICY wiki_page_versions_allow_all ON wiki_page_versions
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY wiki_page_comments_allow_all ON wiki_page_comments
+CREATE
+POLICY wiki_page_comments_allow_all ON wiki_page_comments
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY wiki_page_watches_allow_all ON wiki_page_watches
+CREATE
+POLICY wiki_page_watches_allow_all ON wiki_page_watches
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY blog_categories_allow_all ON blog_categories
+CREATE
+POLICY blog_categories_allow_all ON blog_categories
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY blog_posts_allow_all ON blog_posts
+CREATE
+POLICY blog_posts_allow_all ON blog_posts
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY blog_comments_allow_all ON blog_comments
+CREATE
+POLICY blog_comments_allow_all ON blog_comments
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY blog_likes_allow_all ON blog_likes
+CREATE
+POLICY blog_likes_allow_all ON blog_likes
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY document_templates_allow_all ON document_templates
+CREATE
+POLICY document_templates_allow_all ON document_templates
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY template_instantiations_allow_all ON template_instantiations
+CREATE
+POLICY template_instantiations_allow_all ON template_instantiations
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY knowledge_attachments_allow_all ON knowledge_attachments
+CREATE
+POLICY knowledge_attachments_allow_all ON knowledge_attachments
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY knowledge_views_allow_all ON knowledge_views
+CREATE
+POLICY knowledge_views_allow_all ON knowledge_views
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY knowledge_searches_allow_all ON knowledge_searches
+CREATE
+POLICY knowledge_searches_allow_all ON knowledge_searches
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
-CREATE POLICY wiki_page_approval_tasks_allow_all ON wiki_page_approval_tasks
+CREATE
+POLICY wiki_page_approval_tasks_allow_all ON wiki_page_approval_tasks
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
@@ -125,36 +140,46 @@ CREATE POLICY wiki_page_approval_tasks_allow_all ON wiki_page_approval_tasks
 -- allow-all policies backed by application-layer isolation.
 
 -- contracts
-DROP POLICY IF EXISTS contracts_tenant_isolation ON contracts;
-CREATE POLICY contracts_allow_all ON contracts
+DROP
+POLICY IF EXISTS contracts_tenant_isolation ON contracts;
+CREATE
+POLICY contracts_allow_all ON contracts
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
 -- contract_versions
-DROP POLICY IF EXISTS contract_versions_isolation ON contract_versions;
-CREATE POLICY contract_versions_allow_all ON contract_versions
+DROP
+POLICY IF EXISTS contract_versions_isolation ON contract_versions;
+CREATE
+POLICY contract_versions_allow_all ON contract_versions
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
 -- contract_signatures
-DROP POLICY IF EXISTS contract_signatures_isolation ON contract_signatures;
-CREATE POLICY contract_signatures_allow_all ON contract_signatures
+DROP
+POLICY IF EXISTS contract_signatures_isolation ON contract_signatures;
+CREATE
+POLICY contract_signatures_allow_all ON contract_signatures
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
 -- contract_templates
-DROP POLICY IF EXISTS contract_templates_tenant_isolation ON contract_templates;
-CREATE POLICY contract_templates_allow_all ON contract_templates
+DROP
+POLICY IF EXISTS contract_templates_tenant_isolation ON contract_templates;
+CREATE
+POLICY contract_templates_allow_all ON contract_templates
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);
 
 -- contract_reminders  (tenant_id column added in V23)
-DROP POLICY IF EXISTS contract_reminders_isolation ON contract_reminders;
-CREATE POLICY contract_reminders_allow_all ON contract_reminders
+DROP
+POLICY IF EXISTS contract_reminders_isolation ON contract_reminders;
+CREATE
+POLICY contract_reminders_allow_all ON contract_reminders
     AS PERMISSIVE FOR ALL
     USING (true)
     WITH CHECK (true);

@@ -9,23 +9,21 @@
 -- Allow employees to view their assigned assets
 
 INSERT INTO role_permissions (role_id, permission_id, tenant_id)
-SELECT
-    r.id AS role_id,
-    p.id AS permission_id,
-    t.id AS tenant_id
+SELECT r.id AS role_id,
+       p.id AS permission_id,
+       t.id AS tenant_id
 FROM roles r
-CROSS JOIN permissions p
-CROSS JOIN tenants t
+       CROSS JOIN permissions p
+       CROSS JOIN tenants t
 WHERE r.name = 'EMPLOYEE'
   AND p.name IN (
-    'ASSET:VIEW'
+  'ASSET:VIEW'
   )
-  AND NOT EXISTS (
-    SELECT 1 FROM role_permissions rp
-    WHERE rp.role_id = r.id
-      AND rp.permission_id = p.id
-      AND rp.tenant_id = t.id
-  );
+  AND NOT EXISTS (SELECT 1
+                  FROM role_permissions rp
+                  WHERE rp.role_id = r.id
+                    AND rp.permission_id = p.id
+                    AND rp.tenant_id = t.id);
 
 -- =============================================================================
 -- HR_ADMIN ROLE: Asset Management Permissions
@@ -33,26 +31,24 @@ WHERE r.name = 'EMPLOYEE'
 -- Allow HR admins to view, create, assign, and manage assets
 
 INSERT INTO role_permissions (role_id, permission_id, tenant_id)
-SELECT
-    r.id AS role_id,
-    p.id AS permission_id,
-    t.id AS tenant_id
+SELECT r.id AS role_id,
+       p.id AS permission_id,
+       t.id AS tenant_id
 FROM roles r
-CROSS JOIN permissions p
-CROSS JOIN tenants t
+       CROSS JOIN permissions p
+       CROSS JOIN tenants t
 WHERE r.name = 'HR_ADMIN'
   AND p.name IN (
-    'ASSET:VIEW',
-    'ASSET:CREATE',
-    'ASSET:ASSIGN',
-    'ASSET:MANAGE'
+                 'ASSET:VIEW',
+                 'ASSET:CREATE',
+                 'ASSET:ASSIGN',
+                 'ASSET:MANAGE'
   )
-  AND NOT EXISTS (
-    SELECT 1 FROM role_permissions rp
-    WHERE rp.role_id = r.id
-      AND rp.permission_id = p.id
-      AND rp.tenant_id = t.id
-  );
+  AND NOT EXISTS (SELECT 1
+                  FROM role_permissions rp
+                  WHERE rp.role_id = r.id
+                    AND rp.permission_id = p.id
+                    AND rp.tenant_id = t.id);
 
 -- =============================================================================
 -- HR_ADMIN ROLE: Preboarding/Onboarding Management Permissions
@@ -60,25 +56,23 @@ WHERE r.name = 'HR_ADMIN'
 -- Allow HR admins to manage the entire preboarding workflow
 
 INSERT INTO role_permissions (role_id, permission_id, tenant_id)
-SELECT
-    r.id AS role_id,
-    p.id AS permission_id,
-    t.id AS tenant_id
+SELECT r.id AS role_id,
+       p.id AS permission_id,
+       t.id AS tenant_id
 FROM roles r
-CROSS JOIN permissions p
-CROSS JOIN tenants t
+       CROSS JOIN permissions p
+       CROSS JOIN tenants t
 WHERE r.name = 'HR_ADMIN'
   AND p.name IN (
-    'PREBOARDING:VIEW',
-    'PREBOARDING:CREATE',
-    'PREBOARDING:MANAGE'
+                 'PREBOARDING:VIEW',
+                 'PREBOARDING:CREATE',
+                 'PREBOARDING:MANAGE'
   )
-  AND NOT EXISTS (
-    SELECT 1 FROM role_permissions rp
-    WHERE rp.role_id = r.id
-      AND rp.permission_id = p.id
-      AND rp.tenant_id = t.id
-  );
+  AND NOT EXISTS (SELECT 1
+                  FROM role_permissions rp
+                  WHERE rp.role_id = r.id
+                    AND rp.permission_id = p.id
+                    AND rp.tenant_id = t.id);
 
 -- =============================================================================
 -- VERIFICATION QUERY (uncomment to verify after migration)

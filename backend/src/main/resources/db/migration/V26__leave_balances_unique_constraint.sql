@@ -13,17 +13,18 @@
 
 -- Step 1: Delete duplicate rows, keeping the row with the highest 'available' balance.
 --         If balances are identical, keep the earliest (lowest id as UUID ordering).
-DELETE FROM leave_balances
-WHERE id NOT IN (
-    SELECT DISTINCT ON (tenant_id, employee_id, leave_type_id, year)
-           id
-    FROM   leave_balances
-    ORDER BY tenant_id, employee_id, leave_type_id, year,
-             available DESC NULLS LAST,
-             id ASC
-);
+DELETE
+FROM leave_balances
+WHERE id NOT IN (SELECT DISTINCT
+ON (tenant_id, employee_id, leave_type_id, year)
+  id
+FROM leave_balances
+ORDER BY tenant_id, employee_id, leave_type_id, year,
+  available DESC NULLS LAST,
+  id ASC
+  );
 
 -- Step 2: Add the unique constraint.
 ALTER TABLE leave_balances
-    ADD CONSTRAINT uq_leave_balances_key
-        UNIQUE (tenant_id, employee_id, leave_type_id, year);
+  ADD CONSTRAINT uq_leave_balances_key
+    UNIQUE (tenant_id, employee_id, leave_type_id, year);
