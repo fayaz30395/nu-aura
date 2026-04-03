@@ -112,6 +112,7 @@ export interface LeaveBalance {
   tenantId: string;
   employeeId: string;
   leaveTypeId: string;
+  leaveTypeName?: string;
   year: number;
   openingBalance: number;
   accrued: number;

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { useToast } from '@/components/notifications/ToastProvider';
-import { useAuthStore } from '@/lib/stores/authStore';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { leaveService } from '@/lib/services/hrms/leave.service';
 import { Coins } from 'lucide-react';
 
@@ -27,7 +27,7 @@ export default function LeaveEncashmentPage() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const { hasPermission, isReady: permReady } = usePermissions();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   const {
     register,
@@ -44,7 +44,10 @@ export default function LeaveEncashmentPage() {
 
   const encashMutation = useMutation({
     mutationFn: (data: EncashFormData) =>
-      leaveService.requestLeaveEncashment({ ...data }),
+      leaveService.requestLeaveEncashment({
+        leaveBalanceId: data.leaveBalanceId,
+        daysToEncash: data.daysToEncash,
+      }),
     onSuccess: (res) => {
       toast.success(res.message || 'Leave encashment requested successfully');
       queryClient.invalidateQueries({ queryKey: ['leave-balances'] });
@@ -119,7 +122,7 @@ export default function LeaveEncashmentPage() {
                     .filter((b) => b.available > 0)
                     .map((b) => (
                       <option key={b.id} value={b.id}>
-                        {b.leaveTypeName} — {b.available} days available
+                        {b.leaveTypeName ?? b.leaveTypeId} — {b.available} days available
                       </option>
                     ))}
                 </select>
@@ -164,7 +167,7 @@ export default function LeaveEncashmentPage() {
               <div className="space-y-2">
                 {balances.map((b) => (
                   <div key={b.id} className="skeuo-card p-4 flex items-center justify-between">
-                    <span className="text-sm font-medium">{b.leaveTypeName}</span>
+                    <span className="text-sm font-medium">{b.leaveTypeName ?? b.leaveTypeId}</span>
                     <span className="text-sm text-[var(--text-secondary)]">{b.available} days</span>
                   </div>
                 ))}
