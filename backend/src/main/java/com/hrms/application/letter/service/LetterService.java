@@ -656,11 +656,13 @@ public class LetterService {
     }
 
     private GeneratedLetterResponse enrichLetterResponse(GeneratedLetterResponse response, UUID tenantId) {
-        employeeRepository.findByIdAndTenantId(response.getEmployeeId(), tenantId)
-                .ifPresent(emp -> {
-                    response.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
-                    response.setEmployeeEmail(emp.getPersonalEmail());
-                });
+        if (response.getEmployeeId() != null) {
+            employeeRepository.findByIdAndTenantId(response.getEmployeeId(), tenantId)
+                    .ifPresent(emp -> {
+                        response.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
+                        response.setEmployeeEmail(emp.getPersonalEmail());
+                    });
+        }
 
         enrichCommonResponseFields(response, tenantId);
         return response;

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.LazyInitializationException;
 
 import java.util.UUID;
 
@@ -39,7 +40,15 @@ public class ApplicationDTO {
                 .displayOrder(app.getDisplayOrder())
                 .isSystemApp(app.getIsSystemApp())
                 .appVersion(app.getAppVersion())
-                .permissionCount(app.getPermissions() != null ? app.getPermissions().size() : 0)
+                .permissionCount(safePermissionCount(app))
                 .build();
+    }
+
+    private static int safePermissionCount(NuApplication app) {
+        try {
+            return app.getPermissions() != null ? app.getPermissions().size() : 0;
+        } catch (LazyInitializationException e) {
+            return 0;
+        }
     }
 }
