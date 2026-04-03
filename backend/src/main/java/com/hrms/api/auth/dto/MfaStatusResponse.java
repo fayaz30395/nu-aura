@@ -15,12 +15,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MfaStatusResponse {
-    
+
     /**
      * Whether MFA is enabled for the user.
      */
     private Boolean enabled;
-    
+
+    /**
+     * Whether the TOTP code was successfully verified (set to true on verify endpoint).
+     */
+    private Boolean verified;
+
     /**
      * Timestamp when MFA was set up.
      */

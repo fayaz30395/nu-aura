@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.time.Year;
 
 @Slf4j
 @Service
@@ -47,11 +48,21 @@ public class JobOpeningService {
     @Transactional
     public JobOpeningResponse createJobOpening(JobOpeningRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Creating job opening {} for tenant {}", request.getJobCode(), tenantId);
 
-        if (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, request.getJobCode())) {
-            throw new IllegalArgumentException("Job opening with code " + request.getJobCode() + " already exists");
+        // Auto-generate a unique job code if not provided
+        String jobCode = request.getJobCode();
+        if (jobCode == null || jobCode.isBlank()) {
+            jobCode = generateUniqueJobCode(tenantId);
+        } else if (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, jobCode)) {
+            // Provided code collides — append suffix to make it unique
+            String base = jobCode;
+            int suffix = 2;
+            while (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, jobCode)) {
+                jobCode = base + "-" + suffix++;
+            }
         }
+        log.info("Creating job opening {} for tenant {}", jobCode, tenantId);
+        request.setJobCode(jobCode);
 
         JobOpening jobOpening = new JobOpening();
         jobOpening.setId(UUID.randomUUID());
@@ -446,5 +457,16 @@ public class JobOpeningService {
         }
 
         return false;
+    }
+
+    private String generateUniqueJobCode(UUID tenantId) {
+        String year = String.valueOf(Year.now().getValue());
+        String base = "JOB-" + year + "-";
+        int seq = 1;
+        String code;
+        do {
+            code = base + String.format("%03d", seq++);
+        } while (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, code));
+        return code;
     }
 }

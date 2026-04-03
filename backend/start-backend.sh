@@ -80,17 +80,16 @@ fi
 #   -XX:+UseSerialGC               → lowest GC overhead for single-machine dev
 #   -Dspring.jmx.enabled=false     → skip JMX bean registration
 JVM_OPTS=(
-  -Xmx400m
-  -Xms64m
-  -XX:ReservedCodeCacheSize=64m
-  -Xss256k
-  -XX:TieredStopAtLevel=1
+  -Xmx1024m
+  -Xms256m
+  -XX:MaxMetaspaceSize=256m
+  -XX:ReservedCodeCacheSize=128m
+  -Xss512k
   -XX:+UseZGC
   -XX:+ZUncommit
   -XX:ZUncommitDelay=5
   -XX:+UseStringDeduplication
-  -XX:SoftRefLRUPolicyMSPerMB=0
-  -XX:+ExitOnOutOfMemoryError
+  -XX:SoftRefLRUPolicyMSPerMB=50
   -Dspring.jmx.enabled=false
   -Dspring.devtools.restart.enabled=false
 )

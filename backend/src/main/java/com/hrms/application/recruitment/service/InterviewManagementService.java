@@ -229,13 +229,19 @@ public class InterviewManagementService {
     // ==================== Mapper ====================
 
     InterviewResponse mapToInterviewResponse(Interview interview) {
-        String candidateName = candidateRepository.findById(interview.getCandidateId())
-                .map(Candidate::getFullName)
-                .orElse(null);
+        String candidateName = null;
+        if (interview.getCandidateId() != null) {
+            candidateName = candidateRepository.findById(interview.getCandidateId())
+                    .map(Candidate::getFullName)
+                    .orElse(null);
+        }
 
-        String jobTitle = jobOpeningRepository.findById(interview.getJobOpeningId())
-                .map(JobOpening::getJobTitle)
-                .orElse(null);
+        String jobTitle = null;
+        if (interview.getJobOpeningId() != null) {
+            jobTitle = jobOpeningRepository.findById(interview.getJobOpeningId())
+                    .map(JobOpening::getJobTitle)
+                    .orElse(null);
+        }
 
         String interviewerName = null;
         if (interview.getInterviewerId() != null) {

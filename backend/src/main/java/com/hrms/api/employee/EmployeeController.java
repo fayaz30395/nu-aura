@@ -121,7 +121,6 @@ public class EmployeeController {
      * discover the ID and ensures the backend always resolves the correct record.
      */
     @GetMapping("/me")
-    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     @Operation(summary = "Get current user's own employee profile")
     public ResponseEntity<EmployeeResponse> getMyEmployee() {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();

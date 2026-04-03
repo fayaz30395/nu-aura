@@ -47,6 +47,9 @@ public class TravelService implements ApprovalCallbackHandler {
     public TravelRequestDto createRequest(CreateTravelRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new IllegalStateException("Employee profile not found for current user — cannot submit travel request");
+        }
 
         TravelRequest travelRequest = TravelRequest.builder()
                 .employeeId(employeeId)
@@ -323,6 +326,7 @@ public class TravelService implements ApprovalCallbackHandler {
     }
 
     private String getEmployeeFullName(UUID employeeId, UUID tenantId) {
+        if (employeeId == null) return null;
         try {
             return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                     .map(emp -> emp.getFirstName() + " " + emp.getLastName())

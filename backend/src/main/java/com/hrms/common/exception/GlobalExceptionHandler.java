@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -221,6 +222,23 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Unauthorized",
                 "Invalid email or password", path);
         errorResponse.setErrorCode("BAD_CREDENTIALS");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ErrorResponse> handleLockedException(
+            LockedException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.valueOf(423); // 423 Locked
+
+        logError("auth", "account_locked", ex, status, path);
+        recordErrorMetric("auth", "account_locked", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Account Locked",
+                "Your account is temporarily locked due to too many failed login attempts. Please try again later.", path);
+        errorResponse.setErrorCode("ACCOUNT_LOCKED");
 
         return jsonResponse(status, errorResponse);
     }
