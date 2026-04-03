@@ -122,6 +122,18 @@ public class BlogPostService {
         return blogPostRepository.findPublishedPostsByTenant(tenantId, pageable);
     }
 
+    /**
+     * Returns active (PUBLISHED, non-ARCHIVED) posts.
+     * Uses an explicit status filter so that posts subsequently moved to ARCHIVED
+     * are never surfaced on the /active endpoint, even if the repository query
+     * or calling path changes in the future.
+     */
+    @Transactional(readOnly = true)
+    public Page<BlogPost> getActivePosts(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return blogPostRepository.findByTenantIdAndStatus(tenantId, BlogPost.BlogPostStatus.PUBLISHED, pageable);
+    }
+
     @Transactional(readOnly = true)
     public List<BlogPost> getFeaturedPosts() {
         UUID tenantId = TenantContext.getCurrentTenant();

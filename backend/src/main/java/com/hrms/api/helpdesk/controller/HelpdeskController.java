@@ -34,7 +34,7 @@ public class HelpdeskController {
     }
 
     @PutMapping("/tickets/{id}")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_TICKET_RESOLVE)
     public ResponseEntity<TicketResponse> updateTicket(
             @PathVariable UUID id,
             @Valid @RequestBody TicketRequest request) {
@@ -42,7 +42,7 @@ public class HelpdeskController {
     }
 
     @PatchMapping("/tickets/{id}/status")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_TICKET_RESOLVE)
     public ResponseEntity<TicketResponse> updateTicketStatus(
             @PathVariable UUID id,
             @RequestParam Ticket.TicketStatus status) {
@@ -50,19 +50,19 @@ public class HelpdeskController {
     }
 
     @PatchMapping("/tickets/{id}/resolve")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_TICKET_RESOLVE)
     public ResponseEntity<TicketResponse> resolveTicket(@PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.resolveTicket(id));
     }
 
     @PatchMapping("/tickets/{id}/close")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_TICKET_RESOLVE)
     public ResponseEntity<TicketResponse> closeTicket(@PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.closeTicket(id));
     }
 
     @PatchMapping("/tickets/{id}/assign")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_TICKET_ASSIGN)
     public ResponseEntity<TicketResponse> assignTicket(
             @PathVariable UUID id,
             @RequestParam UUID assigneeId) {
@@ -112,7 +112,7 @@ public class HelpdeskController {
     }
 
     @DeleteMapping("/tickets/{id}")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
     public ResponseEntity<Void> deleteTicket(@PathVariable UUID id) {
         helpdeskService.deleteTicket(id);
         return ResponseEntity.noContent().build();

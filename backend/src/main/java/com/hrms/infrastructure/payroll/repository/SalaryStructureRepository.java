@@ -45,4 +45,12 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
     Page<SalaryStructure> findAllByTenantIdAndIsActive(UUID tenantId, Boolean isActive, Pageable pageable);
 
     boolean existsByTenantIdAndEmployeeIdAndEffectiveDate(UUID tenantId, UUID employeeId, LocalDate effectiveDate);
+
+    /**
+     * Count distinct employees who have at least one active salary structure.
+     * Used for payroll pre-flight validation to detect employees missing a structure.
+     */
+    @Query("SELECT COUNT(DISTINCT s.employeeId) FROM SalaryStructure s " +
+            "WHERE s.tenantId = :tenantId AND s.isActive = true")
+    long countDistinctEmployeesWithActiveSalaryStructure(@Param("tenantId") UUID tenantId);
 }

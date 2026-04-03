@@ -2,11 +2,15 @@ package com.hrms.application.payroll.service;
 
 import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.audit.AuditLog.AuditAction;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.payroll.repository.PayrollRunRepository;
+import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +31,8 @@ public class PayrollRunService {
 
     private final PayrollRunRepository payrollRunRepository;
     private final AuditLogService auditLogService;
+    private final EmployeeRepository employeeRepository;
+    private final SalaryStructureRepository salaryStructureRepository;
 
     /**
      * Create a new payroll run for a given period.
@@ -117,8 +123,39 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun initiateProcessing(UUID id, UUID triggeredBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        validateSalaryStructuresCoverage(payrollRun);
         payrollRun.markProcessing(triggeredBy);
         return payrollRunRepository.save(payrollRun);
+    }
+
+    /**
+     * Pre-flight check: ensure every active employee has an active salary structure.
+     * Throws {@link ValidationException} if any active employees are missing a structure,
+     * blocking the payroll run from transitioning to PROCESSING.
+     * Logs a warning if the validation query itself cannot be completed.
+     */
+    private void validateSalaryStructuresCoverage(PayrollRun payrollRun) {
+        try {
+            UUID tenantId = payrollRun.getTenantId();
+            Long activeEmployeeCount = employeeRepository.countByTenantIdAndStatus(
+                    tenantId, Employee.EmployeeStatus.ACTIVE);
+            long employeesWithStructure = salaryStructureRepository
+                    .countDistinctEmployeesWithActiveSalaryStructure(tenantId);
+
+            if (activeEmployeeCount != null && activeEmployeeCount > 0
+                    && employeesWithStructure < activeEmployeeCount) {
+                long missing = activeEmployeeCount - employeesWithStructure;
+                throw new ValidationException(
+                        "Payroll pre-flight failed: " + missing + " active employee(s) are missing an active " +
+                        "salary structure. Assign salary structures before processing payroll for period " +
+                        payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth() + ".");
+            }
+        } catch (ValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Payroll pre-flight salary structure check could not be completed for run {}: {}. " +
+                    "Proceeding with processing.", payrollRun.getId(), e.getMessage());
+        }
     }
 
     /**

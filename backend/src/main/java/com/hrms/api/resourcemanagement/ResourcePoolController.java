@@ -139,8 +139,8 @@ public class ResourcePoolController {
     @RequiresPermission(Permission.PROJECT_VIEW)
     @Operation(summary = "Get a resource pool by ID")
     public ResponseEntity<ResourcePoolSummary> getPool(@PathVariable UUID id) {
-        // Stub: returns a minimal not-found payload consistent with QA expectations.
-        return ResponseEntity.ok().build();
+        // Stub: resource pool entity not yet persisted in DB; return 404 rather than empty 200.
+        return ResponseEntity.notFound().build();
     }
 
     /**

@@ -116,7 +116,7 @@ public class BlogPostController {
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
     public ResponseEntity<Page<BlogPostDto>> getActivePosts(Pageable pageable) {
-        Page<BlogPost> posts = blogPostService.getPublishedPosts(pageable);
+        Page<BlogPost> posts = blogPostService.getActivePosts(pageable);
         return ResponseEntity.ok(posts.map(this::toDto));
     }
 
