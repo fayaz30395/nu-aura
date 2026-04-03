@@ -43,25 +43,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ShiftManagementController Unit Tests")
 class ShiftControllerTest {
 
-    @Mock
-    private ShiftManagementService shiftManagementService;
-
-    @Mock
-    private ShiftPatternService shiftPatternService;
-
-    @Mock
-    private ShiftScheduleService shiftScheduleService;
-
-    @InjectMocks
-    private ShiftManagementController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID SHIFT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID PATTERN_ID = UUID.randomUUID();
     private static final UUID ASSIGNMENT_ID = UUID.randomUUID();
+    @Mock
+    private ShiftManagementService shiftManagementService;
+    @Mock
+    private ShiftPatternService shiftPatternService;
+    @Mock
+    private ShiftScheduleService shiftScheduleService;
+    @InjectMocks
+    private ShiftManagementController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

@@ -153,7 +153,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("employeeCode") &&
-                e.getErrorType() == ImportValidationError.ErrorType.REQUIRED_FIELD_MISSING);
+                        e.getErrorType() == ImportValidationError.ErrorType.REQUIRED_FIELD_MISSING);
     }
 
     @Test
@@ -171,7 +171,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("workEmail") &&
-                e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
+                        e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
     }
 
     @Test
@@ -189,7 +189,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("employee_id_card") &&
-                e.getErrorType() == ImportValidationError.ErrorType.REQUIRED_FIELD_MISSING);
+                        e.getErrorType() == ImportValidationError.ErrorType.REQUIRED_FIELD_MISSING);
     }
 
     @Test
@@ -225,7 +225,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("years_experience") &&
-                e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
+                        e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
     }
 
     @Test
@@ -260,7 +260,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("years_experience") &&
-                e.getMessage().contains("must be at least"));
+                        e.getMessage().contains("must be at least"));
     }
 
     @Test
@@ -279,7 +279,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("t_shirt_size") &&
-                e.getErrorType() == ImportValidationError.ErrorType.INVALID_VALUE);
+                        e.getErrorType() == ImportValidationError.ErrorType.INVALID_VALUE);
     }
 
     @Test
@@ -314,7 +314,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("certification_date") &&
-                e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
+                        e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
     }
 
     @Test
@@ -365,7 +365,7 @@ class EmployeeImportValidationServiceTest {
         assertThat(preview.isHasErrors()).isTrue();
         assertThat(preview.getErrors()).anyMatch(e ->
                 e.getField().equals("secondary_email") &&
-                e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
+                        e.getErrorType() == ImportValidationError.ErrorType.INVALID_FORMAT);
     }
 
     @Test

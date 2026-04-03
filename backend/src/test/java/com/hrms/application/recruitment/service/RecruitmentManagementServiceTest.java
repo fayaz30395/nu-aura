@@ -41,45 +41,32 @@ import static org.mockito.Mockito.*;
 @DisplayName("RecruitmentManagementService Tests")
 class RecruitmentManagementServiceTest {
 
-    @Mock
-    private JobOpeningRepository jobOpeningRepository;
-
-    @Mock
-    private CandidateRepository candidateRepository;
-
-    @Mock
-    private InterviewRepository interviewRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private DataScopeService dataScopeService;
-
-    @Mock
-    private com.hrms.application.workflow.service.WorkflowService workflowService;
-
-    @Mock
-    private com.hrms.application.audit.service.AuditLogService auditLogService;
-
-    @Mock
-    private GoogleMeetService googleMeetService;
-
-    @Mock
-    private JobOpeningService jobOpeningService;
-
-    @Mock
-    private InterviewManagementService interviewManagementService;
-
-    @Mock
-    private DomainEventPublisher eventPublisher;
-
-    @InjectMocks
-    private RecruitmentManagementService recruitmentManagementService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private JobOpeningRepository jobOpeningRepository;
+    @Mock
+    private CandidateRepository candidateRepository;
+    @Mock
+    private InterviewRepository interviewRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DataScopeService dataScopeService;
+    @Mock
+    private com.hrms.application.workflow.service.WorkflowService workflowService;
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+    @Mock
+    private GoogleMeetService googleMeetService;
+    @Mock
+    private JobOpeningService jobOpeningService;
+    @Mock
+    private InterviewManagementService interviewManagementService;
+    @Mock
+    private DomainEventPublisher eventPublisher;
+    @InjectMocks
+    private RecruitmentManagementService recruitmentManagementService;
     private UUID tenantId;
     private UUID jobOpeningId;
     private UUID candidateId;

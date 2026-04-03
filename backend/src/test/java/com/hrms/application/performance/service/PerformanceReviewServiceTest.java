@@ -39,23 +39,17 @@ import static org.mockito.Mockito.*;
 @DisplayName("PerformanceReviewService Tests")
 class PerformanceReviewServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private PerformanceReviewRepository reviewRepository;
-
     @Mock
     private ReviewCompetencyRepository competencyRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private ReviewCycleRepository reviewCycleRepository;
-
     @InjectMocks
     private PerformanceReviewService performanceReviewService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID reviewerId;

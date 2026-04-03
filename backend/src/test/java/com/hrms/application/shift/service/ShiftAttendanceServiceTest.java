@@ -31,17 +31,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("ShiftAttendanceService Tests")
 class ShiftAttendanceServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private ShiftAssignmentRepository shiftAssignmentRepository;
-
     @Mock
     private ShiftRepository shiftRepository;
-
     @InjectMocks
     private ShiftAttendanceService shiftAttendanceService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID shiftId;

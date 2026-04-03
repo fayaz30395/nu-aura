@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+
 import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,31 +48,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AttendanceE2ETest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private AttendanceRecordService attendanceRecordService;
-
-    @Autowired
-    private AttendanceRecordRepository attendanceRecordRepository;
-
-    @Autowired
-    private AttendanceTimeEntryRepository timeEntryRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     private static final String BASE_URL = "/api/v1/attendance";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private AttendanceRecordService attendanceRecordService;
+    @Autowired
+    private AttendanceRecordRepository attendanceRecordRepository;
+    @Autowired
+    private AttendanceTimeEntryRepository timeEntryRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private UserRepository userRepository;
     private UUID testEmployeeId;
     private UUID testUserId;
     private UUID attendanceRecordId;

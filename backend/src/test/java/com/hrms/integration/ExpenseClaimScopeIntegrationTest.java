@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * End-to-end integration tests for Expense Claim scope enforcement.
  * Tests the complete flow from HTTP request through controller, service, and database.
- *
+ * <p>
  * Test Scenarios:
  * 1. SELF scope - user can only see their own expense claims
  * 2. TEAM scope - manager can see their reportees' expense claims
@@ -52,29 +52,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Expense Claim Scope E2E Integration Tests")
 class ExpenseClaimScopeIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private ExpenseClaimRepository expenseClaimRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     private static final String BASE_URL = "/api/v1/expenses";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
     // Employee IDs for testing
     private static final UUID CURRENT_EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID REPORTEE_EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID OTHER_EMPLOYEE_ID = UUID.randomUUID();
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private ExpenseClaimRepository expenseClaimRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private UserRepository userRepository;
     private ExpenseClaim ownExpenseClaim;
     private ExpenseClaim reporteeExpenseClaim;
     private ExpenseClaim otherExpenseClaim;
@@ -96,6 +89,173 @@ class ExpenseClaimScopeIntegrationTest {
     }
 
     // ==================== SELF Scope Tests ====================
+
+    private ExpenseClaim createExpenseClaim(UUID employeeId, String description) {
+        ExpenseClaim claim = ExpenseClaim.builder()
+                .employeeId(employeeId)
+                .claimNumber("EXP-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 4))
+                .claimDate(LocalDate.now())
+                .category(ExpenseClaim.ExpenseCategory.TRAVEL)
+                .description(description)
+                .amount(BigDecimal.valueOf(500.00))
+                .currency("USD")
+                .status(ExpenseClaim.ExpenseStatus.DRAFT)
+                .notes("Test expense claim")
+                .build();
+        claim.setTenantId(TENANT_ID);
+        return expenseClaimRepository.save(claim);
+    }
+
+    // ==================== TEAM Scope Tests ====================
+
+    private Employee createEmployee(String employeeCodePrefix, UUID locationId, UUID departmentId) {
+        User user = User.builder()
+                .email(employeeCodePrefix.toLowerCase() + "@example.com")
+                .firstName("Test")
+                .lastName("User")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
+                .firstName("Test")
+                .lastName("Employee")
+                .joiningDate(LocalDate.now().minusDays(30))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .officeLocationId(locationId)
+                .departmentId(departmentId)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+        return employeeRepository.save(employee);
+    }
+
+    // ==================== ALL Scope Tests ====================
+
+    private void setupSelfScope(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== System Admin Tests ====================
+
+    private void setupTeamScope(UUID employeeId, Set<UUID> reporteeIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.TEAM);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.TEAM);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.TEAM);
+        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.TEAM);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setAllReporteeIds(reporteeIds);
+    }
+
+    // ==================== LOCATION Scope Tests ====================
+
+    private void setupAllScope(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.ALL);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== DEPARTMENT Scope Tests ====================
+
+    private void setupSystemAdmin(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== CUSTOM Scope Tests ====================
+
+    private void setupLocationScope(UUID employeeId, Set<UUID> locationIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.LOCATION);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.LOCATION);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.LOCATION);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setCurrentLocationIds(locationIds);
+    }
+
+    // ==================== Super Admin Tests ====================
+
+    private void setupDepartmentScope(UUID employeeId, UUID departmentId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setOrgContext(null, departmentId, null);
+    }
+
+    // ==================== Edge Cases ====================
+
+    private void setupCustomScope(UUID employeeId, Set<UUID> customEmployeeIds,
+                                  Set<UUID> customDepartmentIds, Set<UUID> customLocationIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.CUSTOM);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.CUSTOM);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.CUSTOM);
+        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.CUSTOM);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+
+        // Set custom targets for expense view permissions
+        if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
+            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW_TEAM,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW_ALL,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_APPROVE,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+        }
+    }
+
+    // ==================== Helper Methods ====================
+
+    private void setupSuperAdminByRole(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        // Include explicit system-admin permission for current authorization model
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.SELF);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
 
     @Nested
     @DisplayName("SELF Scope Tests")
@@ -192,8 +352,6 @@ class ExpenseClaimScopeIntegrationTest {
                     .andExpect(status().isOk());
         }
     }
-
-    // ==================== TEAM Scope Tests ====================
 
     @Nested
     @DisplayName("TEAM Scope Tests")
@@ -318,8 +476,6 @@ class ExpenseClaimScopeIntegrationTest {
         }
     }
 
-    // ==================== ALL Scope Tests ====================
-
     @Nested
     @DisplayName("ALL Scope Tests")
     class AllScopeTests {
@@ -422,8 +578,6 @@ class ExpenseClaimScopeIntegrationTest {
         }
     }
 
-    // ==================== System Admin Tests ====================
-
     @Nested
     @DisplayName("System Admin Tests")
     class SystemAdminTests {
@@ -440,8 +594,6 @@ class ExpenseClaimScopeIntegrationTest {
                     .andExpect(jsonPath("$.id").value(otherExpenseClaim.getId().toString()));
         }
     }
-
-    // ==================== LOCATION Scope Tests ====================
 
     @Nested
     @DisplayName("LOCATION Scope Tests")
@@ -541,8 +693,6 @@ class ExpenseClaimScopeIntegrationTest {
         }
     }
 
-    // ==================== DEPARTMENT Scope Tests ====================
-
     @Nested
     @DisplayName("DEPARTMENT Scope Tests")
     class DepartmentScopeTests {
@@ -585,8 +735,6 @@ class ExpenseClaimScopeIntegrationTest {
                     .andExpect(jsonPath("$.content").isArray());
         }
     }
-
-    // ==================== CUSTOM Scope Tests ====================
 
     @Nested
     @DisplayName("CUSTOM Scope Tests")
@@ -721,8 +869,6 @@ class ExpenseClaimScopeIntegrationTest {
         }
     }
 
-    // ==================== Super Admin Tests ====================
-
     @Nested
     @DisplayName("Super Admin Tests")
     class SuperAdminTests {
@@ -768,8 +914,6 @@ class ExpenseClaimScopeIntegrationTest {
         }
     }
 
-    // ==================== Edge Cases ====================
-
     @Nested
     @DisplayName("Edge Cases")
     class EdgeCaseTests {
@@ -802,157 +946,6 @@ class ExpenseClaimScopeIntegrationTest {
             mockMvc.perform(get(BASE_URL + "/" + otherExpenseClaim.getId()))
                     .andExpect(status().isForbidden());
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private ExpenseClaim createExpenseClaim(UUID employeeId, String description) {
-        ExpenseClaim claim = ExpenseClaim.builder()
-                .employeeId(employeeId)
-                .claimNumber("EXP-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 4))
-                .claimDate(LocalDate.now())
-                .category(ExpenseClaim.ExpenseCategory.TRAVEL)
-                .description(description)
-                .amount(BigDecimal.valueOf(500.00))
-                .currency("USD")
-                .status(ExpenseClaim.ExpenseStatus.DRAFT)
-                .notes("Test expense claim")
-                .build();
-        claim.setTenantId(TENANT_ID);
-        return expenseClaimRepository.save(claim);
-    }
-
-    private Employee createEmployee(String employeeCodePrefix, UUID locationId, UUID departmentId) {
-        User user = User.builder()
-                .email(employeeCodePrefix.toLowerCase() + "@example.com")
-                .firstName("Test")
-                .lastName("User")
-                .passwordHash("test-hash")
-                .status(User.UserStatus.ACTIVE)
-                .build();
-        user.setTenantId(TENANT_ID);
-        User savedUser = userRepository.save(user);
-
-        Employee employee = Employee.builder()
-                .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
-                .firstName("Test")
-                .lastName("Employee")
-                .joiningDate(LocalDate.now().minusDays(30))
-                .employmentType(Employee.EmploymentType.FULL_TIME)
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .officeLocationId(locationId)
-                .departmentId(departmentId)
-                .user(savedUser)
-                .build();
-        employee.setTenantId(TENANT_ID);
-        return employeeRepository.save(employee);
-    }
-
-    private void setupSelfScope(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupTeamScope(UUID employeeId, Set<UUID> reporteeIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.TEAM);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.TEAM);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.TEAM);
-        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.TEAM);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-        SecurityContext.setAllReporteeIds(reporteeIds);
-    }
-
-    private void setupAllScope(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.ALL);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupSystemAdmin(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupLocationScope(UUID employeeId, Set<UUID> locationIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.LOCATION);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.LOCATION);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.LOCATION);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-        SecurityContext.setCurrentLocationIds(locationIds);
-    }
-
-    private void setupDepartmentScope(UUID employeeId, UUID departmentId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.DEPARTMENT);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.DEPARTMENT);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.DEPARTMENT);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-        SecurityContext.setOrgContext(null, departmentId, null);
-    }
-
-    private void setupCustomScope(UUID employeeId, Set<UUID> customEmployeeIds,
-                                   Set<UUID> customDepartmentIds, Set<UUID> customLocationIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.CUSTOM);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.CUSTOM);
-        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.CUSTOM);
-        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.CUSTOM);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-
-        // Set custom targets for expense view permissions
-        if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
-            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW_TEAM,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_VIEW_ALL,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-            SecurityContext.setCustomScopeTargets(Permission.EXPENSE_APPROVE,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-        }
-    }
-
-    private void setupSuperAdminByRole(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        // Include explicit system-admin permission for current authorization model
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_APPROVE, RoleScope.SELF);
-        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
 }

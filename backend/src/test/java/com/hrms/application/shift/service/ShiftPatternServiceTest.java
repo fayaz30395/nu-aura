@@ -28,13 +28,11 @@ import static org.mockito.Mockito.*;
 @DisplayName("ShiftPatternService Tests")
 class ShiftPatternServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private ShiftPatternRepository shiftPatternRepository;
-
     @InjectMocks
     private ShiftPatternService shiftPatternService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
     private UUID tenantId;
 
     @BeforeAll

@@ -41,47 +41,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("OnboardingManagementController Integration Tests")
 class OnboardingManagementControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private OnboardingManagementService onboardingService;
-
     @MockitoBean
     private ApiKeyService apiKeyService;
-
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private RateLimitFilter rateLimitFilter;
-
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
     private UUID processId;
     private UUID employeeId;
     private UUID templateId;
@@ -121,6 +102,14 @@ class OnboardingManagementControllerTest {
                 .build();
     }
 
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
+
     @Nested
     @DisplayName("Onboarding Process Creation Tests")
     class ProcessCreationTests {
@@ -138,8 +127,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(processResponse);
 
             mockMvc.perform(post("/api/v1/onboarding/processes")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.employeeId").value(employeeId.toString()))
@@ -154,8 +143,8 @@ class OnboardingManagementControllerTest {
             OnboardingProcessRequest request = new OnboardingProcessRequest();
 
             mockMvc.perform(post("/api/v1/onboarding/processes")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -185,8 +174,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/onboarding/processes/{processId}", processId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
 
@@ -208,7 +197,7 @@ class OnboardingManagementControllerTest {
                     .thenReturn(completedResponse);
 
             mockMvc.perform(patch("/api/v1/onboarding/processes/{processId}/status", processId)
-                    .param("status", "COMPLETED"))
+                            .param("status", "COMPLETED"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("COMPLETED"))
                     .andExpect(jsonPath("$.completionPercentage").value(100));
@@ -231,7 +220,7 @@ class OnboardingManagementControllerTest {
                     .thenReturn(progressResponse);
 
             mockMvc.perform(patch("/api/v1/onboarding/processes/{processId}/progress", processId)
-                    .param("completionPercentage", "50"))
+                            .param("completionPercentage", "50"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.completionPercentage").value(50));
 
@@ -338,8 +327,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(templateResponse);
 
             mockMvc.perform(post("/api/v1/onboarding/templates")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.name").value("Standard Onboarding Template"));
@@ -394,8 +383,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(updatedResponse);
 
             mockMvc.perform(put("/api/v1/onboarding/templates/{templateId}", templateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value("Updated Template"));
 
@@ -436,8 +425,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(response);
 
             mockMvc.perform(post("/api/v1/onboarding/templates/{templateId}/tasks", templateId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.templateId").value(templateId.toString()));
 
@@ -474,8 +463,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(completedTask);
 
             mockMvc.perform(patch("/api/v1/onboarding/tasks/{taskId}/status", taskId)
-                    .param("status", "COMPLETED")
-                    .param("remarks", "Task completed"))
+                            .param("status", "COMPLETED")
+                            .param("remarks", "Task completed"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("COMPLETED"));
 
@@ -496,7 +485,7 @@ class OnboardingManagementControllerTest {
                     .thenReturn(inProgressTask);
 
             mockMvc.perform(patch("/api/v1/onboarding/tasks/{taskId}/status", taskId)
-                    .param("status", "IN_PROGRESS"))
+                            .param("status", "IN_PROGRESS"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
 
@@ -542,8 +531,8 @@ class OnboardingManagementControllerTest {
                     .thenReturn(response);
 
             mockMvc.perform(put("/api/v1/onboarding/templates/{templateId}/tasks/{taskId}", templateId, taskId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.taskName").value("Updated Task Title"));
 

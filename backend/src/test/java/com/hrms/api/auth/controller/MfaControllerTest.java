@@ -42,14 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("MfaController Unit Tests")
 class MfaControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
+    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
     @Autowired
     private MockMvc mockMvc;
 
@@ -85,11 +78,7 @@ class MfaControllerTest {
 
     @MockitoBean
     private ScopeContextService scopeContextService;
-
-    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
-
     private MockedStatic<SecurityContext> securityContextMock;
-
     private MfaSetupResponse sampleSetupResponse;
     private MfaStatusResponse enabledStatus;
     private MfaStatusResponse disabledStatus;
@@ -121,6 +110,14 @@ class MfaControllerTest {
     @AfterEach
     void tearDown() {
         securityContextMock.close();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 
     // ==================== Setup Tests ====================

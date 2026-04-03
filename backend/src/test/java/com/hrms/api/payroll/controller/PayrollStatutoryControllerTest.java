@@ -43,29 +43,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("PayrollStatutoryController Unit Tests")
 class PayrollStatutoryControllerTest {
 
+    private static final String BASE_URL = "/api/v1/payroll/statutory";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private StatutoryDeductionService statutoryDeductionService;
-
     @MockitoBean
     private PayslipService payslipService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static final String BASE_URL = "/api/v1/payroll/statutory";
-
     private UUID employeeId;
     private UUID payslipId;
     private StatutoryDeductions deductions;

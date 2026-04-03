@@ -31,17 +31,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class LWFServiceTest {
 
-    @Mock
-    private LWFConfigurationRepository configRepository;
-
-    @Mock
-    private LWFDeductionRepository deductionRepository;
-
-    @InjectMocks
-    private LWFService lwfService;
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
+    @Mock
+    private LWFConfigurationRepository configRepository;
+    @Mock
+    private LWFDeductionRepository deductionRepository;
+    @InjectMocks
+    private LWFService lwfService;
     private MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeEach

@@ -32,17 +32,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("ComplianceService Tests")
 class ComplianceServiceTest {
 
-    @Mock private CompliancePolicyRepository policyRepository;
-    @Mock private PolicyAcknowledgmentRepository acknowledgmentRepository;
-    @Mock private ComplianceChecklistRepository checklistRepository;
-    @Mock private ComplianceAuditLogRepository auditLogRepository;
-    @Mock private ComplianceAlertRepository alertRepository;
-
-    @InjectMocks
-    private ComplianceService complianceService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
+    @Mock
+    private CompliancePolicyRepository policyRepository;
+    @Mock
+    private PolicyAcknowledgmentRepository acknowledgmentRepository;
+    @Mock
+    private ComplianceChecklistRepository checklistRepository;
+    @Mock
+    private ComplianceAuditLogRepository auditLogRepository;
+    @Mock
+    private ComplianceAlertRepository alertRepository;
+    @InjectMocks
+    private ComplianceService complianceService;
     private UUID tenantId;
     private UUID userId;
     private UUID employeeId;
@@ -70,84 +73,6 @@ class ComplianceServiceTest {
     }
 
     // ==================== Policy Management Tests ====================
-
-    @Nested
-    @DisplayName("createPolicy")
-    class CreatePolicyTests {
-
-        @Test
-        @DisplayName("Should create policy with DRAFT status")
-        void shouldCreatePolicy() {
-            CompliancePolicy policy = new CompliancePolicy();
-            policy.setCode("POL-001");
-            policy.setName("Data Protection");
-
-            when(policyRepository.existsByCodeAndTenantId("POL-001", tenantId)).thenReturn(false);
-            when(policyRepository.save(any(CompliancePolicy.class))).thenAnswer(inv -> {
-                CompliancePolicy saved = inv.getArgument(0);
-                saved.setId(UUID.randomUUID());
-                return saved;
-            });
-
-            CompliancePolicy result = complianceService.createPolicy(policy);
-
-            assertThat(result.getStatus()).isEqualTo(CompliancePolicy.PolicyStatus.DRAFT);
-            assertThat(result.getPolicyVersion()).isEqualTo(1);
-            assertThat(result.getCreatedBy()).isEqualTo(userId);
-            verify(auditLogRepository).save(any(AuditLog.class));
-        }
-
-        @Test
-        @DisplayName("Should throw when policy code already exists")
-        void shouldThrowWhenCodeExists() {
-            CompliancePolicy policy = new CompliancePolicy();
-            policy.setCode("POL-001");
-
-            when(policyRepository.existsByCodeAndTenantId("POL-001", tenantId)).thenReturn(true);
-
-            assertThatThrownBy(() -> complianceService.createPolicy(policy))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("already exists");
-        }
-    }
-
-    @Nested
-    @DisplayName("updatePolicy")
-    class UpdatePolicyTests {
-
-        @Test
-        @DisplayName("Should update policy fields")
-        void shouldUpdatePolicy() {
-            UUID policyId = UUID.randomUUID();
-            CompliancePolicy existing = new CompliancePolicy();
-            existing.setId(policyId);
-            existing.setName("Old Name");
-            existing.setStatus(CompliancePolicy.PolicyStatus.DRAFT);
-
-            CompliancePolicy updates = new CompliancePolicy();
-            updates.setName("New Name");
-            updates.setDescription("Updated desc");
-            updates.setCategory(CompliancePolicy.PolicyCategory.EMPLOYMENT);
-
-            when(policyRepository.findByIdAndTenantId(policyId, tenantId)).thenReturn(Optional.of(existing));
-            when(policyRepository.save(any(CompliancePolicy.class))).thenAnswer(inv -> inv.getArgument(0));
-
-            CompliancePolicy result = complianceService.updatePolicy(policyId, updates);
-
-            assertThat(result.getName()).isEqualTo("New Name");
-            verify(auditLogRepository).save(any(AuditLog.class));
-        }
-
-        @Test
-        @DisplayName("Should throw when policy not found")
-        void shouldThrowWhenPolicyNotFound() {
-            UUID policyId = UUID.randomUUID();
-            when(policyRepository.findByIdAndTenantId(policyId, tenantId)).thenReturn(Optional.empty());
-
-            assertThatThrownBy(() -> complianceService.updatePolicy(policyId, new CompliancePolicy()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
 
     @Test
     @DisplayName("publishPolicy should set status to PUBLISHED")
@@ -218,7 +143,165 @@ class ComplianceServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("createChecklist should set status to NOT_STARTED")
+    void shouldCreateChecklist() {
+        ComplianceChecklist checklist = new ComplianceChecklist();
+        checklist.setName("Quarterly Review");
+
+        when(checklistRepository.save(any(ComplianceChecklist.class))).thenAnswer(inv -> {
+            ComplianceChecklist saved = inv.getArgument(0);
+            saved.setId(UUID.randomUUID());
+            return saved;
+        });
+
+        ComplianceChecklist result = complianceService.createChecklist(checklist);
+
+        assertThat(result.getStatus()).isEqualTo(ComplianceChecklist.ChecklistStatus.NOT_STARTED);
+        assertThat(result.getTenantId()).isEqualTo(tenantId);
+    }
+
+    @Test
+    @DisplayName("completeChecklist should set COMPLETED and create next cycle for recurring")
+    void shouldCompleteChecklist() {
+        UUID checklistId = UUID.randomUUID();
+        ComplianceChecklist checklist = new ComplianceChecklist();
+        checklist.setId(checklistId);
+        checklist.setName("Monthly Check");
+        checklist.setTotalItems(10);
+        checklist.setFrequency(ComplianceChecklist.ChecklistFrequency.MONTHLY);
+        checklist.setNextDueDate(LocalDate.now());
+
+        when(checklistRepository.findByIdAndTenantId(checklistId, tenantId)).thenReturn(Optional.of(checklist));
+        when(checklistRepository.save(any(ComplianceChecklist.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        ComplianceChecklist result = complianceService.completeChecklist(checklistId);
+
+        assertThat(result.getStatus()).isEqualTo(ComplianceChecklist.ChecklistStatus.COMPLETED);
+        assertThat(result.getCompletedItems()).isEqualTo(10);
+        // Verify next cycle was created
+        verify(checklistRepository, times(2)).save(any(ComplianceChecklist.class));
+    }
+
     // ==================== Acknowledgment Tests ====================
+
+    @Test
+    @DisplayName("getComplianceDashboard should aggregate all stats")
+    void shouldGetComplianceDashboard() {
+        when(policyRepository.findActivePolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of(new CompliancePolicy()));
+        when(policyRepository.findExpiringPolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(checklistRepository.findActiveChecklists(tenantId)).thenReturn(List.of());
+        when(checklistRepository.findOverdueChecklists(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(alertRepository.findActiveAlerts(tenantId)).thenReturn(List.of());
+        when(alertRepository.findCriticalAlerts(tenantId)).thenReturn(List.of());
+        when(alertRepository.findOverdueAlerts(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(alertRepository.countByStatus(tenantId)).thenReturn(List.of());
+        when(alertRepository.countByType(tenantId)).thenReturn(List.of());
+        when(acknowledgmentRepository.countAcknowledgmentsByPolicy(tenantId)).thenReturn(List.of());
+        when(auditLogRepository.countByAction(eq(tenantId), any(LocalDateTime.class))).thenReturn(List.of());
+
+        Map<String, Object> result = complianceService.getComplianceDashboard();
+
+        assertThat(result).containsKey("totalActivePolicies");
+        assertThat(result).containsKey("complianceScore");
+        assertThat(result.get("totalActivePolicies")).isEqualTo(1);
+    }
+
+    // ==================== Checklist Tests ====================
+
+    @Test
+    @DisplayName("logAudit should save audit log with correct severity")
+    void shouldLogAudit() {
+        complianceService.logAudit(
+                AuditLog.AuditAction.DELETE, "TestEntity", UUID.randomUUID(),
+                Map.of("field", "old"), Map.of("field", "new"));
+
+        verify(auditLogRepository).save(argThat(auditLog ->
+                auditLog.getSeverity() == AuditLog.AuditSeverity.HIGH &&
+                        auditLog.getAction() == AuditLog.AuditAction.DELETE));
+    }
+
+    @Nested
+    @DisplayName("createPolicy")
+    class CreatePolicyTests {
+
+        @Test
+        @DisplayName("Should create policy with DRAFT status")
+        void shouldCreatePolicy() {
+            CompliancePolicy policy = new CompliancePolicy();
+            policy.setCode("POL-001");
+            policy.setName("Data Protection");
+
+            when(policyRepository.existsByCodeAndTenantId("POL-001", tenantId)).thenReturn(false);
+            when(policyRepository.save(any(CompliancePolicy.class))).thenAnswer(inv -> {
+                CompliancePolicy saved = inv.getArgument(0);
+                saved.setId(UUID.randomUUID());
+                return saved;
+            });
+
+            CompliancePolicy result = complianceService.createPolicy(policy);
+
+            assertThat(result.getStatus()).isEqualTo(CompliancePolicy.PolicyStatus.DRAFT);
+            assertThat(result.getPolicyVersion()).isEqualTo(1);
+            assertThat(result.getCreatedBy()).isEqualTo(userId);
+            verify(auditLogRepository).save(any(AuditLog.class));
+        }
+
+        @Test
+        @DisplayName("Should throw when policy code already exists")
+        void shouldThrowWhenCodeExists() {
+            CompliancePolicy policy = new CompliancePolicy();
+            policy.setCode("POL-001");
+
+            when(policyRepository.existsByCodeAndTenantId("POL-001", tenantId)).thenReturn(true);
+
+            assertThatThrownBy(() -> complianceService.createPolicy(policy))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("already exists");
+        }
+    }
+
+    // ==================== Alert Tests ====================
+
+    @Nested
+    @DisplayName("updatePolicy")
+    class UpdatePolicyTests {
+
+        @Test
+        @DisplayName("Should update policy fields")
+        void shouldUpdatePolicy() {
+            UUID policyId = UUID.randomUUID();
+            CompliancePolicy existing = new CompliancePolicy();
+            existing.setId(policyId);
+            existing.setName("Old Name");
+            existing.setStatus(CompliancePolicy.PolicyStatus.DRAFT);
+
+            CompliancePolicy updates = new CompliancePolicy();
+            updates.setName("New Name");
+            updates.setDescription("Updated desc");
+            updates.setCategory(CompliancePolicy.PolicyCategory.EMPLOYMENT);
+
+            when(policyRepository.findByIdAndTenantId(policyId, tenantId)).thenReturn(Optional.of(existing));
+            when(policyRepository.save(any(CompliancePolicy.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            CompliancePolicy result = complianceService.updatePolicy(policyId, updates);
+
+            assertThat(result.getName()).isEqualTo("New Name");
+            verify(auditLogRepository).save(any(AuditLog.class));
+        }
+
+        @Test
+        @DisplayName("Should throw when policy not found")
+        void shouldThrowWhenPolicyNotFound() {
+            UUID policyId = UUID.randomUUID();
+            when(policyRepository.findByIdAndTenantId(policyId, tenantId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> complianceService.updatePolicy(policyId, new CompliancePolicy()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    // ==================== Dashboard Tests ====================
 
     @Nested
     @DisplayName("acknowledgePolicy")
@@ -265,49 +348,7 @@ class ComplianceServiceTest {
         }
     }
 
-    // ==================== Checklist Tests ====================
-
-    @Test
-    @DisplayName("createChecklist should set status to NOT_STARTED")
-    void shouldCreateChecklist() {
-        ComplianceChecklist checklist = new ComplianceChecklist();
-        checklist.setName("Quarterly Review");
-
-        when(checklistRepository.save(any(ComplianceChecklist.class))).thenAnswer(inv -> {
-            ComplianceChecklist saved = inv.getArgument(0);
-            saved.setId(UUID.randomUUID());
-            return saved;
-        });
-
-        ComplianceChecklist result = complianceService.createChecklist(checklist);
-
-        assertThat(result.getStatus()).isEqualTo(ComplianceChecklist.ChecklistStatus.NOT_STARTED);
-        assertThat(result.getTenantId()).isEqualTo(tenantId);
-    }
-
-    @Test
-    @DisplayName("completeChecklist should set COMPLETED and create next cycle for recurring")
-    void shouldCompleteChecklist() {
-        UUID checklistId = UUID.randomUUID();
-        ComplianceChecklist checklist = new ComplianceChecklist();
-        checklist.setId(checklistId);
-        checklist.setName("Monthly Check");
-        checklist.setTotalItems(10);
-        checklist.setFrequency(ComplianceChecklist.ChecklistFrequency.MONTHLY);
-        checklist.setNextDueDate(LocalDate.now());
-
-        when(checklistRepository.findByIdAndTenantId(checklistId, tenantId)).thenReturn(Optional.of(checklist));
-        when(checklistRepository.save(any(ComplianceChecklist.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        ComplianceChecklist result = complianceService.completeChecklist(checklistId);
-
-        assertThat(result.getStatus()).isEqualTo(ComplianceChecklist.ChecklistStatus.COMPLETED);
-        assertThat(result.getCompletedItems()).isEqualTo(10);
-        // Verify next cycle was created
-        verify(checklistRepository, times(2)).save(any(ComplianceChecklist.class));
-    }
-
-    // ==================== Alert Tests ====================
+    // ==================== Audit Logging Tests ====================
 
     @Nested
     @DisplayName("Alert management")
@@ -348,43 +389,5 @@ class ComplianceServiceTest {
             assertThat(result.getAssignedTo()).isEqualTo(assigneeId);
             assertThat(result.getStatus()).isEqualTo(ComplianceAlert.AlertStatus.IN_PROGRESS);
         }
-    }
-
-    // ==================== Dashboard Tests ====================
-
-    @Test
-    @DisplayName("getComplianceDashboard should aggregate all stats")
-    void shouldGetComplianceDashboard() {
-        when(policyRepository.findActivePolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of(new CompliancePolicy()));
-        when(policyRepository.findExpiringPolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
-        when(checklistRepository.findActiveChecklists(tenantId)).thenReturn(List.of());
-        when(checklistRepository.findOverdueChecklists(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
-        when(alertRepository.findActiveAlerts(tenantId)).thenReturn(List.of());
-        when(alertRepository.findCriticalAlerts(tenantId)).thenReturn(List.of());
-        when(alertRepository.findOverdueAlerts(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
-        when(alertRepository.countByStatus(tenantId)).thenReturn(List.of());
-        when(alertRepository.countByType(tenantId)).thenReturn(List.of());
-        when(acknowledgmentRepository.countAcknowledgmentsByPolicy(tenantId)).thenReturn(List.of());
-        when(auditLogRepository.countByAction(eq(tenantId), any(LocalDateTime.class))).thenReturn(List.of());
-
-        Map<String, Object> result = complianceService.getComplianceDashboard();
-
-        assertThat(result).containsKey("totalActivePolicies");
-        assertThat(result).containsKey("complianceScore");
-        assertThat(result.get("totalActivePolicies")).isEqualTo(1);
-    }
-
-    // ==================== Audit Logging Tests ====================
-
-    @Test
-    @DisplayName("logAudit should save audit log with correct severity")
-    void shouldLogAudit() {
-        complianceService.logAudit(
-                AuditLog.AuditAction.DELETE, "TestEntity", UUID.randomUUID(),
-                Map.of("field", "old"), Map.of("field", "new"));
-
-        verify(auditLogRepository).save(argThat(auditLog ->
-                auditLog.getSeverity() == AuditLog.AuditSeverity.HIGH &&
-                auditLog.getAction() == AuditLog.AuditAction.DELETE));
     }
 }

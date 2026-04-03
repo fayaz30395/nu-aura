@@ -44,50 +44,36 @@ class WorkflowServiceTest {
 
     // ==================== Mocks ====================
 
-    @Mock
-    private WorkflowDefinitionRepository workflowDefinitionRepository;
-
-    @Mock
-    private ApprovalStepRepository approvalStepRepository;
-
-    @Mock
-    private WorkflowExecutionRepository workflowExecutionRepository;
-
-    @Mock
-    private StepExecutionRepository stepExecutionRepository;
-
-    @Mock
-    private ApprovalDelegateRepository approvalDelegateRepository;
-
-    @Mock
-    private WorkflowRuleRepository workflowRuleRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private DepartmentRepository departmentRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private DomainEventPublisher domainEventPublisher;
-
-    @Mock
-    private AuditLogService auditLogService;
-
-    @Mock
-    private LeaveRequestRepository leaveRequestRepository;
-
-    private WorkflowService workflowService;
-
-    // ==================== Test Fixtures ====================
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
     private static final UUID OTHER_USER_ID = UUID.fromString("770e8400-e29b-41d4-a716-446655440002");
+    @Mock
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
+    @Mock
+    private ApprovalStepRepository approvalStepRepository;
+    @Mock
+    private WorkflowExecutionRepository workflowExecutionRepository;
+    @Mock
+    private StepExecutionRepository stepExecutionRepository;
+    @Mock
+    private ApprovalDelegateRepository approvalDelegateRepository;
+    @Mock
+    private WorkflowRuleRepository workflowRuleRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
 
+    // ==================== Test Fixtures ====================
+    @Mock
+    private AuditLogService auditLogService;
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
+    private WorkflowService workflowService;
     private MockedStatic<TenantContext> tenantContextMock;
     private MockedStatic<SecurityContext> securityContextMock;
 
@@ -123,6 +109,76 @@ class WorkflowServiceTest {
     }
 
     // ==================== getApprovalInbox Tests ====================
+
+    private WorkflowExecution createMockExecution() {
+        WorkflowExecution execution = mock(WorkflowExecution.class);
+        when(execution.getId()).thenReturn(UUID.randomUUID());
+        when(execution.getTenantId()).thenReturn(TENANT_ID);
+        when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.PENDING);
+        when(execution.getEntityType()).thenReturn(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+        when(execution.getTitle()).thenReturn("Leave Request - John Doe");
+        when(execution.getRequesterName()).thenReturn("John Doe");
+        when(execution.getReferenceNumber()).thenReturn("LR-2026-001");
+        when(execution.getRequesterId()).thenReturn(OTHER_USER_ID);
+        when(execution.getWorkflowDefinition()).thenReturn(mock(WorkflowDefinition.class));
+        lenient().when(execution.getStepExecutions()).thenReturn(new ArrayList<>());
+        return execution;
+    }
+
+    // ==================== getInboxCounts Tests ====================
+
+    private StepExecution createMockStepExecution(WorkflowExecution execution) {
+        StepExecution step = mock(StepExecution.class);
+        when(step.getWorkflowExecution()).thenReturn(execution);
+        when(step.getStatus()).thenReturn(StepExecution.StepStatus.PENDING);
+        when(step.getAssignedToUserId()).thenReturn(USER_ID);
+        return step;
+    }
+
+    // ==================== processApprovalAction Tests ====================
+
+    /**
+     * Creates a WorkflowExecution that passes all validation checks in processApprovalAction:
+     * - Not completed
+     * - canBeApproved = true
+     * - Has a current step that is PENDING and assignable to USER_ID
+     */
+    private WorkflowExecution createApprovableExecution(UUID executionId) {
+        ApprovalStep approvalStep = mock(ApprovalStep.class);
+        lenient().when(approvalStep.isDelegationAllowed()).thenReturn(false);
+        lenient().when(approvalStep.getStepOrder()).thenReturn(1);
+        lenient().when(approvalStep.getStepName()).thenReturn("Manager Approval");
+
+        WorkflowDefinition definition = mock(WorkflowDefinition.class);
+        lenient().when(definition.getNextStep(anyInt())).thenReturn(null);
+        lenient().when(definition.isLastStep(anyInt())).thenReturn(true);
+
+        StepExecution step = mock(StepExecution.class);
+        when(step.getStatus()).thenReturn(StepExecution.StepStatus.PENDING);
+        when(step.canBeActedUponBy(USER_ID)).thenReturn(true);
+        when(step.getApprovalStep()).thenReturn(approvalStep);
+        lenient().when(step.getStepOrder()).thenReturn(1);
+        lenient().when(step.getId()).thenReturn(UUID.randomUUID());
+
+        WorkflowExecution execution = mock(WorkflowExecution.class);
+        when(execution.getId()).thenReturn(executionId);
+        when(execution.isCompleted()).thenReturn(false);
+        when(execution.canBeApproved()).thenReturn(true);
+        when(execution.getCurrentStepExecution()).thenReturn(step);
+        when(execution.getWorkflowDefinition()).thenReturn(definition);
+        lenient().when(execution.getTenantId()).thenReturn(TENANT_ID);
+        lenient().when(execution.getEntityType()).thenReturn(WorkflowDefinition.EntityType.LEAVE_REQUEST);
+        lenient().when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.PENDING);
+        lenient().when(execution.getRequesterId()).thenReturn(OTHER_USER_ID);
+        lenient().when(execution.getTitle()).thenReturn("Test Execution");
+        lenient().when(execution.getRequesterName()).thenReturn("Test User");
+        lenient().when(execution.getReferenceNumber()).thenReturn("TEST-001");
+        lenient().when(execution.getStepExecutions()).thenReturn(new ArrayList<>());
+
+        return execution;
+    }
+
+    // ==================== Auto-Delegation Tests ====================
 
     @Nested
     @DisplayName("getApprovalInbox")
@@ -302,7 +358,7 @@ class WorkflowServiceTest {
         }
     }
 
-    // ==================== getInboxCounts Tests ====================
+    // ==================== Helper Methods ====================
 
     @Nested
     @DisplayName("getInboxCounts")
@@ -363,8 +419,6 @@ class WorkflowServiceTest {
             verify(stepExecutionRepository).countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(), any());
         }
     }
-
-    // ==================== processApprovalAction Tests ====================
 
     @Nested
     @DisplayName("processApprovalAction")
@@ -568,8 +622,6 @@ class WorkflowServiceTest {
         }
     }
 
-    // ==================== Auto-Delegation Tests ====================
-
     @Nested
     @DisplayName("Auto-Delegation (approver on leave)")
     class AutoDelegationTests {
@@ -749,71 +801,5 @@ class WorkflowServiceTest {
             step.setWorkflowDefinition(definition);
             return definition;
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private WorkflowExecution createMockExecution() {
-        WorkflowExecution execution = mock(WorkflowExecution.class);
-        when(execution.getId()).thenReturn(UUID.randomUUID());
-        when(execution.getTenantId()).thenReturn(TENANT_ID);
-        when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.PENDING);
-        when(execution.getEntityType()).thenReturn(WorkflowDefinition.EntityType.LEAVE_REQUEST);
-        when(execution.getTitle()).thenReturn("Leave Request - John Doe");
-        when(execution.getRequesterName()).thenReturn("John Doe");
-        when(execution.getReferenceNumber()).thenReturn("LR-2026-001");
-        when(execution.getRequesterId()).thenReturn(OTHER_USER_ID);
-        when(execution.getWorkflowDefinition()).thenReturn(mock(WorkflowDefinition.class));
-        lenient().when(execution.getStepExecutions()).thenReturn(new ArrayList<>());
-        return execution;
-    }
-
-    private StepExecution createMockStepExecution(WorkflowExecution execution) {
-        StepExecution step = mock(StepExecution.class);
-        when(step.getWorkflowExecution()).thenReturn(execution);
-        when(step.getStatus()).thenReturn(StepExecution.StepStatus.PENDING);
-        when(step.getAssignedToUserId()).thenReturn(USER_ID);
-        return step;
-    }
-
-    /**
-     * Creates a WorkflowExecution that passes all validation checks in processApprovalAction:
-     * - Not completed
-     * - canBeApproved = true
-     * - Has a current step that is PENDING and assignable to USER_ID
-     */
-    private WorkflowExecution createApprovableExecution(UUID executionId) {
-        ApprovalStep approvalStep = mock(ApprovalStep.class);
-        lenient().when(approvalStep.isDelegationAllowed()).thenReturn(false);
-        lenient().when(approvalStep.getStepOrder()).thenReturn(1);
-        lenient().when(approvalStep.getStepName()).thenReturn("Manager Approval");
-
-        WorkflowDefinition definition = mock(WorkflowDefinition.class);
-        lenient().when(definition.getNextStep(anyInt())).thenReturn(null);
-        lenient().when(definition.isLastStep(anyInt())).thenReturn(true);
-
-        StepExecution step = mock(StepExecution.class);
-        when(step.getStatus()).thenReturn(StepExecution.StepStatus.PENDING);
-        when(step.canBeActedUponBy(USER_ID)).thenReturn(true);
-        when(step.getApprovalStep()).thenReturn(approvalStep);
-        lenient().when(step.getStepOrder()).thenReturn(1);
-        lenient().when(step.getId()).thenReturn(UUID.randomUUID());
-
-        WorkflowExecution execution = mock(WorkflowExecution.class);
-        when(execution.getId()).thenReturn(executionId);
-        when(execution.isCompleted()).thenReturn(false);
-        when(execution.canBeApproved()).thenReturn(true);
-        when(execution.getCurrentStepExecution()).thenReturn(step);
-        when(execution.getWorkflowDefinition()).thenReturn(definition);
-        lenient().when(execution.getTenantId()).thenReturn(TENANT_ID);
-        lenient().when(execution.getEntityType()).thenReturn(WorkflowDefinition.EntityType.LEAVE_REQUEST);
-        lenient().when(execution.getStatus()).thenReturn(WorkflowExecution.ExecutionStatus.PENDING);
-        lenient().when(execution.getRequesterId()).thenReturn(OTHER_USER_ID);
-        lenient().when(execution.getTitle()).thenReturn("Test Execution");
-        lenient().when(execution.getRequesterName()).thenReturn("Test User");
-        lenient().when(execution.getReferenceNumber()).thenReturn("TEST-001");
-        lenient().when(execution.getStepExecutions()).thenReturn(new ArrayList<>());
-
-        return execution;
     }
 }

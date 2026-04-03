@@ -39,29 +39,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("AssetManagementService Tests")
 class AssetManagementServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private AssetRepository assetRepository;
-
     @Mock
     private AssetMaintenanceRequestRepository maintenanceRequestRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private WorkflowService workflowService;
-
     @Mock
     private EventPublisher eventPublisher;
-
     @Mock
     private AuditLogService auditLogService;
-
     @InjectMocks
     private AssetManagementService assetManagementService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID assetId;
     private UUID employeeId;

@@ -50,69 +50,66 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("DocuSignController Unit Tests")
 class DocuSignControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private DocuSignEnvelopeRepository envelopeRepository;
-
-    @MockitoBean
-    private DocuSignTemplateMappingRepository templateMappingRepository;
-
-    @MockitoBean
-    private IntegrationConnectorConfigService configService;
-
-    @MockitoBean
-    private DocuSignApiClient apiClient;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private TenantFilter tenantFilter;
-
-    @MockitoBean
-    private RateLimitingFilter rateLimitingFilter;
-
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
-    @MockitoBean
-    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-    @MockitoBean
-    private ApiKeyService apiKeyService;
-
-    @MockitoBean
-    private ScopeContextService scopeContextService;
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID ENVELOPE_DB_ID = UUID.randomUUID();
     private static final String DOCUSIGN_ENVELOPE_ID = "DS-ENV-12345";
     private static final String HMAC_SECRET = "test-hmac-secret-32-bytes-minimum!";
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private DocuSignEnvelopeRepository envelopeRepository;
+    @MockitoBean
+    private DocuSignTemplateMappingRepository templateMappingRepository;
+    @MockitoBean
+    private IntegrationConnectorConfigService configService;
+    @MockitoBean
+    private DocuSignApiClient apiClient;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private ScopeContextService scopeContextService;
     private MockedStatic<TenantContext> tenantContextMock;
-
     private DocuSignEnvelope sampleEnvelope;
     private DocuSignEnvelopeResponse sampleEnvelopeResponse;
+
+    /**
+     * Computes HMAC-SHA256 for test verification.
+     * Mirrors the logic in DocuSignController.verifyHmacSignature.
+     */
+    private static String computeHmac(String secret, String payload) {
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            javax.crypto.spec.SecretKeySpec keySpec = new javax.crypto.spec.SecretKeySpec(
+                    secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256");
+            mac.init(keySpec);
+            byte[] hmacBytes = mac.doFinal(
+                    payload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            // Convert to hex string
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hmacBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to compute HMAC for test", e);
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -146,6 +143,16 @@ class DocuSignControllerTest {
     }
 
     // ==================== Webhook Tests ====================
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
+
+    // ==================== Envelope Management Tests ====================
 
     @Nested
     @DisplayName("Webhook Endpoint Tests")
@@ -253,7 +260,7 @@ class DocuSignControllerTest {
         }
     }
 
-    // ==================== Envelope Management Tests ====================
+    // ==================== Template Management Tests ====================
 
     @Nested
     @DisplayName("Envelope Management Tests")
@@ -384,7 +391,7 @@ class DocuSignControllerTest {
         }
     }
 
-    // ==================== Template Management Tests ====================
+    // ==================== Template Mapping Tests ====================
 
     @Nested
     @DisplayName("DocuSign Template Tests")
@@ -424,7 +431,7 @@ class DocuSignControllerTest {
         }
     }
 
-    // ==================== Template Mapping Tests ====================
+    // ==================== Permission Annotation Tests ====================
 
     @Nested
     @DisplayName("Template Mapping Tests")
@@ -542,7 +549,7 @@ class DocuSignControllerTest {
         }
     }
 
-    // ==================== Permission Annotation Tests ====================
+    // ==================== Helper Methods ====================
 
     @Nested
     @DisplayName("Permission Annotation Tests")
@@ -601,31 +608,6 @@ class DocuSignControllerTest {
             assertThat(found)
                     .as("Method '%s' should have @RequiresPermission(\"%s\")", methodName, expectedPermission)
                     .isTrue();
-        }
-    }
-
-    // ==================== Helper Methods ====================
-
-    /**
-     * Computes HMAC-SHA256 for test verification.
-     * Mirrors the logic in DocuSignController.verifyHmacSignature.
-     */
-    private static String computeHmac(String secret, String payload) {
-        try {
-            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
-            javax.crypto.spec.SecretKeySpec keySpec = new javax.crypto.spec.SecretKeySpec(
-                    secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256");
-            mac.init(keySpec);
-            byte[] hmacBytes = mac.doFinal(
-                    payload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            // Convert to hex string
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hmacBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to compute HMAC for test", e);
         }
     }
 }

@@ -38,26 +38,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {HomeController.class, HomeControllerTest.TestConfig.class})
 class HomeControllerTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private HomeService homeService;
-
     @MockitoBean
     private JwtTokenProvider tokenProvider;
-
     @MockitoBean
     private UserDetailsService userDetailsService;
-
     @MockitoBean
     private EmployeeRepository employeeRepository;
 
@@ -188,10 +176,6 @@ class HomeControllerTest {
                 .andExpect(jsonPath("$.content[0].leaveType", is("Sick Leave")));
     }
 
-    // Note: The /api/v1/home/attendance/me endpoint uses SecurityContext.getCurrentEmployeeId()
-    // internally, so it requires proper SecurityContext setup which is handled by the
-    // integration tests. These unit tests verify the endpoint mapping and response structure.
-
     @Test
     @DisplayName("GET /api/v1/home/attendance/me - should return NOT_APPLICABLE for null employeeId (SuperAdmin case)")
     @WithMockUser
@@ -216,6 +200,10 @@ class HomeControllerTest {
                 .andExpect(jsonPath("$.canCheckIn", is(false)))
                 .andExpect(jsonPath("$.canCheckOut", is(false)));
     }
+
+    // Note: The /api/v1/home/attendance/me endpoint uses SecurityContext.getCurrentEmployeeId()
+    // internally, so it requires proper SecurityContext setup which is handled by the
+    // integration tests. These unit tests verify the endpoint mapping and response structure.
 
     @Test
     @DisplayName("GET /api/v1/home/holidays - should return upcoming holidays")
@@ -260,5 +248,13 @@ class HomeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

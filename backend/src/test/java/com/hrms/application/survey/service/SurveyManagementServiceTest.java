@@ -37,17 +37,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("SurveyManagementService Tests")
 class SurveyManagementServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private SurveyRepository surveyRepository;
-
     @Mock
     private UserRepository userRepository;
-
     @InjectMocks
     private SurveyManagementService surveyManagementService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID surveyId;
     private UUID createdBy;

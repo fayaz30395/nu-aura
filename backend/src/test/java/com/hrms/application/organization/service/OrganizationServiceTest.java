@@ -30,17 +30,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("OrganizationService Tests")
 class OrganizationServiceTest {
 
-    @Mock private OrganizationUnitRepository unitRepository;
-    @Mock private PositionRepository positionRepository;
-    @Mock private SuccessionPlanRepository planRepository;
-    @Mock private SuccessionCandidateRepository candidateRepository;
-    @Mock private TalentPoolRepository poolRepository;
-    @Mock private TalentPoolMemberRepository memberRepository;
-
+    private static MockedStatic<TenantContext> tenantContextMock;
+    @Mock
+    private OrganizationUnitRepository unitRepository;
+    @Mock
+    private PositionRepository positionRepository;
+    @Mock
+    private SuccessionPlanRepository planRepository;
+    @Mock
+    private SuccessionCandidateRepository candidateRepository;
+    @Mock
+    private TalentPoolRepository poolRepository;
+    @Mock
+    private TalentPoolMemberRepository memberRepository;
     @InjectMocks
     private OrganizationService organizationService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
     private UUID tenantId;
 
     @BeforeAll
@@ -60,6 +64,124 @@ class OrganizationServiceTest {
     }
 
     // ==================== Organization Unit Tests ====================
+
+    @Test
+    @DisplayName("getOrgChart should return root units")
+    void shouldGetOrgChart() {
+        List<OrganizationUnit> roots = List.of(new OrganizationUnit());
+        when(unitRepository.findRootUnits(tenantId)).thenReturn(roots);
+
+        List<OrganizationUnit> result = organizationService.getOrgChart();
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getChildUnits should delegate to repository")
+    void shouldGetChildUnits() {
+        UUID parentId = UUID.randomUUID();
+        when(unitRepository.findByParent(tenantId, parentId)).thenReturn(List.of(new OrganizationUnit()));
+
+        List<OrganizationUnit> result = organizationService.getChildUnits(parentId);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getAllActiveUnits should return active units")
+    void shouldGetAllActiveUnits() {
+        when(unitRepository.findByTenantIdAndIsActiveTrue(tenantId)).thenReturn(List.of(new OrganizationUnit()));
+
+        List<OrganizationUnit> result = organizationService.getAllActiveUnits();
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getPositionById should return position when found")
+    void shouldGetPositionById() {
+        UUID positionId = UUID.randomUUID();
+        Position position = new Position();
+        position.setId(positionId);
+        when(positionRepository.findByIdAndTenantId(positionId, tenantId)).thenReturn(Optional.of(position));
+
+        Position result = organizationService.getPositionById(positionId);
+
+        assertThat(result.getId()).isEqualTo(positionId);
+    }
+
+    @Test
+    @DisplayName("getAllPositions should return paged positions")
+    void shouldGetAllPositions() {
+        Page<Position> page = new PageImpl<>(List.of(new Position()));
+        when(positionRepository.findByTenantId(eq(tenantId), any())).thenReturn(page);
+
+        Page<Position> result = organizationService.getAllPositions(PageRequest.of(0, 10));
+
+        assertThat(result.getTotalElements()).isEqualTo(1);
+    }
+
+    // ==================== Position Tests ====================
+
+    @Test
+    @DisplayName("getCriticalPositions should delegate to repository")
+    void shouldGetCriticalPositions() {
+        when(positionRepository.findCriticalPositions(tenantId)).thenReturn(List.of(new Position()));
+
+        List<Position> result = organizationService.getCriticalPositions();
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getPositionsWithVacancies should delegate to repository")
+    void shouldGetPositionsWithVacancies() {
+        when(positionRepository.findWithVacancies(tenantId)).thenReturn(List.of(new Position()));
+
+        List<Position> result = organizationService.getPositionsWithVacancies();
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getSuccessionPlanById should return plan when found")
+    void shouldGetSuccessionPlanById() {
+        UUID planId = UUID.randomUUID();
+        SuccessionPlan plan = new SuccessionPlan();
+        plan.setId(planId);
+        when(planRepository.findByIdAndTenantId(planId, tenantId)).thenReturn(Optional.of(plan));
+
+        SuccessionPlan result = organizationService.getSuccessionPlanById(planId);
+
+        assertThat(result.getId()).isEqualTo(planId);
+    }
+
+    @Test
+    @DisplayName("getSuccessionAnalytics should aggregate plan and candidate data")
+    void shouldGetSuccessionAnalytics() {
+        when(planRepository.countActivePlans(tenantId)).thenReturn(5L);
+        when(planRepository.findHighRiskPlans(tenantId)).thenReturn(List.of(new SuccessionPlan()));
+        when(positionRepository.findCriticalPositions(tenantId)).thenReturn(List.of());
+        when(candidateRepository.countByReadiness(tenantId)).thenReturn(List.of());
+        when(poolRepository.findByTenantIdAndIsActiveTrue(tenantId)).thenReturn(List.of());
+
+        var result = organizationService.getSuccessionAnalytics();
+
+        assertThat(result.getActivePlans()).isEqualTo(5L);
+        assertThat(result.getHighRiskPlans()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("getNineBoxData should compute distribution")
+    void shouldGetNineBoxData() {
+        when(planRepository.findActivePlans(tenantId)).thenReturn(List.of());
+
+        var result = organizationService.getNineBoxData();
+
+        assertThat(result.getTotalCandidates()).isEqualTo(0);
+    }
+
+    // ==================== Succession Plan Tests ====================
 
     @Nested
     @DisplayName("createUnit")
@@ -155,39 +277,7 @@ class OrganizationServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("getOrgChart should return root units")
-    void shouldGetOrgChart() {
-        List<OrganizationUnit> roots = List.of(new OrganizationUnit());
-        when(unitRepository.findRootUnits(tenantId)).thenReturn(roots);
-
-        List<OrganizationUnit> result = organizationService.getOrgChart();
-
-        assertThat(result).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("getChildUnits should delegate to repository")
-    void shouldGetChildUnits() {
-        UUID parentId = UUID.randomUUID();
-        when(unitRepository.findByParent(tenantId, parentId)).thenReturn(List.of(new OrganizationUnit()));
-
-        List<OrganizationUnit> result = organizationService.getChildUnits(parentId);
-
-        assertThat(result).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("getAllActiveUnits should return active units")
-    void shouldGetAllActiveUnits() {
-        when(unitRepository.findByTenantIdAndIsActiveTrue(tenantId)).thenReturn(List.of(new OrganizationUnit()));
-
-        List<OrganizationUnit> result = organizationService.getAllActiveUnits();
-
-        assertThat(result).hasSize(1);
-    }
-
-    // ==================== Position Tests ====================
+    // ==================== Succession Candidate Tests ====================
 
     @Nested
     @DisplayName("createPosition")
@@ -225,51 +315,7 @@ class OrganizationServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("getPositionById should return position when found")
-    void shouldGetPositionById() {
-        UUID positionId = UUID.randomUUID();
-        Position position = new Position();
-        position.setId(positionId);
-        when(positionRepository.findByIdAndTenantId(positionId, tenantId)).thenReturn(Optional.of(position));
-
-        Position result = organizationService.getPositionById(positionId);
-
-        assertThat(result.getId()).isEqualTo(positionId);
-    }
-
-    @Test
-    @DisplayName("getAllPositions should return paged positions")
-    void shouldGetAllPositions() {
-        Page<Position> page = new PageImpl<>(List.of(new Position()));
-        when(positionRepository.findByTenantId(eq(tenantId), any())).thenReturn(page);
-
-        Page<Position> result = organizationService.getAllPositions(PageRequest.of(0, 10));
-
-        assertThat(result.getTotalElements()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("getCriticalPositions should delegate to repository")
-    void shouldGetCriticalPositions() {
-        when(positionRepository.findCriticalPositions(tenantId)).thenReturn(List.of(new Position()));
-
-        List<Position> result = organizationService.getCriticalPositions();
-
-        assertThat(result).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("getPositionsWithVacancies should delegate to repository")
-    void shouldGetPositionsWithVacancies() {
-        when(positionRepository.findWithVacancies(tenantId)).thenReturn(List.of(new Position()));
-
-        List<Position> result = organizationService.getPositionsWithVacancies();
-
-        assertThat(result).hasSize(1);
-    }
-
-    // ==================== Succession Plan Tests ====================
+    // ==================== Talent Pool Tests ====================
 
     @Nested
     @DisplayName("createSuccessionPlan")
@@ -312,21 +358,6 @@ class OrganizationServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("getSuccessionPlanById should return plan when found")
-    void shouldGetSuccessionPlanById() {
-        UUID planId = UUID.randomUUID();
-        SuccessionPlan plan = new SuccessionPlan();
-        plan.setId(planId);
-        when(planRepository.findByIdAndTenantId(planId, tenantId)).thenReturn(Optional.of(plan));
-
-        SuccessionPlan result = organizationService.getSuccessionPlanById(planId);
-
-        assertThat(result.getId()).isEqualTo(planId);
-    }
-
-    // ==================== Succession Candidate Tests ====================
-
     @Nested
     @DisplayName("addCandidate")
     class AddCandidateTests {
@@ -365,8 +396,6 @@ class OrganizationServiceTest {
         }
     }
 
-    // ==================== Talent Pool Tests ====================
-
     @Nested
     @DisplayName("createTalentPool")
     class CreateTalentPoolTests {
@@ -389,6 +418,8 @@ class OrganizationServiceTest {
             verify(poolRepository).save(any(TalentPool.class));
         }
     }
+
+    // ==================== Analytics Tests ====================
 
     @Nested
     @DisplayName("addToPool")
@@ -464,32 +495,5 @@ class OrganizationServiceTest {
             assertThatThrownBy(() -> organizationService.removeFromPool(poolId, UUID.randomUUID()))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
-    }
-
-    // ==================== Analytics Tests ====================
-
-    @Test
-    @DisplayName("getSuccessionAnalytics should aggregate plan and candidate data")
-    void shouldGetSuccessionAnalytics() {
-        when(planRepository.countActivePlans(tenantId)).thenReturn(5L);
-        when(planRepository.findHighRiskPlans(tenantId)).thenReturn(List.of(new SuccessionPlan()));
-        when(positionRepository.findCriticalPositions(tenantId)).thenReturn(List.of());
-        when(candidateRepository.countByReadiness(tenantId)).thenReturn(List.of());
-        when(poolRepository.findByTenantIdAndIsActiveTrue(tenantId)).thenReturn(List.of());
-
-        var result = organizationService.getSuccessionAnalytics();
-
-        assertThat(result.getActivePlans()).isEqualTo(5L);
-        assertThat(result.getHighRiskPlans()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("getNineBoxData should compute distribution")
-    void shouldGetNineBoxData() {
-        when(planRepository.findActivePlans(tenantId)).thenReturn(List.of());
-
-        var result = organizationService.getNineBoxData();
-
-        assertThat(result.getTotalCandidates()).isEqualTo(0);
     }
 }

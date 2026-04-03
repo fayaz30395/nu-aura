@@ -26,6 +26,27 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("SystemAdminController @RequiresPermission(revalidate) annotation tests")
 class SystemAdminControllerAnnotationTest {
 
+    /**
+     * Accepts all known forms of the SYSTEM_ADMIN permission constant:
+     * - "SYSTEM:ADMIN"  — the canonical value in {@code Permission.SYSTEM_ADMIN}
+     * - "SYSTEM_ADMIN"  — bare constant name (used as static import alias)
+     * - "system.admin"  — legacy dot-notation form
+     */
+    private static boolean containsSystemAdmin(String[] permissions) {
+        for (String p : permissions) {
+            if ("SYSTEM:ADMIN".equalsIgnoreCase(p) ||
+                    "SYSTEM_ADMIN".equalsIgnoreCase(p) ||
+                    "system.admin".equalsIgnoreCase(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // -----------------------------------------------------------------------
+    // impersonate endpoint — must require revalidation (CRIT-005)
+    // -----------------------------------------------------------------------
+
     private RequiresPermission getAnnotation(String methodName, Class<?>... paramTypes)
             throws NoSuchMethodException {
         Method method = SystemAdminController.class.getDeclaredMethod(methodName, paramTypes);
@@ -33,7 +54,7 @@ class SystemAdminControllerAnnotationTest {
     }
 
     // -----------------------------------------------------------------------
-    // impersonate endpoint — must require revalidation (CRIT-005)
+    // Read-only endpoints — SYSTEM_ADMIN required but revalidation not expected
     // -----------------------------------------------------------------------
 
     @Nested
@@ -58,7 +79,7 @@ class SystemAdminControllerAnnotationTest {
             assertThat(annotation).isNotNull();
             assertThat(annotation.revalidate())
                     .as("Impersonation is a highest-privilege action — " +
-                        "revalidate=true is required to prevent stale-JWT exploitation (CRIT-005)")
+                            "revalidate=true is required to prevent stale-JWT exploitation (CRIT-005)")
                     .isTrue();
         }
 
@@ -71,7 +92,7 @@ class SystemAdminControllerAnnotationTest {
             // Either value() or allOf() must contain SYSTEM_ADMIN
             boolean hasSystemAdmin =
                     containsSystemAdmin(annotation.value()) ||
-                    containsSystemAdmin(annotation.allOf());
+                            containsSystemAdmin(annotation.allOf());
 
             assertThat(hasSystemAdmin)
                     .as("generateImpersonationToken must require SYSTEM_ADMIN permission")
@@ -80,7 +101,7 @@ class SystemAdminControllerAnnotationTest {
     }
 
     // -----------------------------------------------------------------------
-    // Read-only endpoints — SYSTEM_ADMIN required but revalidation not expected
+    // Suspend / activate tenant endpoints — state-mutation (should require SYSTEM_ADMIN)
     // -----------------------------------------------------------------------
 
     @Nested
@@ -105,7 +126,7 @@ class SystemAdminControllerAnnotationTest {
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
                     containsSystemAdmin(annotation.value()) ||
-                    containsSystemAdmin(annotation.allOf());
+                            containsSystemAdmin(annotation.allOf());
 
             assertThat(hasSystemAdmin).isTrue();
         }
@@ -124,7 +145,7 @@ class SystemAdminControllerAnnotationTest {
     }
 
     // -----------------------------------------------------------------------
-    // Suspend / activate tenant endpoints — state-mutation (should require SYSTEM_ADMIN)
+    // Private helpers
     // -----------------------------------------------------------------------
 
     @Nested
@@ -139,7 +160,7 @@ class SystemAdminControllerAnnotationTest {
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
                     containsSystemAdmin(annotation.value()) ||
-                    containsSystemAdmin(annotation.allOf());
+                            containsSystemAdmin(annotation.allOf());
             assertThat(hasSystemAdmin).isTrue();
         }
 
@@ -151,29 +172,8 @@ class SystemAdminControllerAnnotationTest {
             assertThat(annotation).isNotNull();
             boolean hasSystemAdmin =
                     containsSystemAdmin(annotation.value()) ||
-                    containsSystemAdmin(annotation.allOf());
+                            containsSystemAdmin(annotation.allOf());
             assertThat(hasSystemAdmin).isTrue();
         }
-    }
-
-    // -----------------------------------------------------------------------
-    // Private helpers
-    // -----------------------------------------------------------------------
-
-    /**
-     * Accepts all known forms of the SYSTEM_ADMIN permission constant:
-     * - "SYSTEM:ADMIN"  — the canonical value in {@code Permission.SYSTEM_ADMIN}
-     * - "SYSTEM_ADMIN"  — bare constant name (used as static import alias)
-     * - "system.admin"  — legacy dot-notation form
-     */
-    private static boolean containsSystemAdmin(String[] permissions) {
-        for (String p : permissions) {
-            if ("SYSTEM:ADMIN".equalsIgnoreCase(p) ||
-                "SYSTEM_ADMIN".equalsIgnoreCase(p) ||
-                "system.admin".equalsIgnoreCase(p)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

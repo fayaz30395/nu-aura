@@ -103,6 +103,28 @@ class ContractServiceTest {
         }
     }
 
+    private Contract buildContract(CreateContractRequest request) {
+        return Contract.builder()
+                .id(CONTRACT_ID)
+                .tenantId(TENANT_ID)
+                .title(request.getTitle())
+                .type(request.getType())
+                .status(ContractStatus.DRAFT)
+                .employeeId(request.getEmployeeId())
+                .vendorName(request.getVendorName())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .autoRenew(request.getAutoRenew())
+                .renewalPeriodDays(request.getRenewalPeriodDays())
+                .value(request.getValue())
+                .currency(request.getCurrency())
+                .description(request.getDescription())
+                .terms(request.getTerms())
+                .documentUrl(request.getDocumentUrl())
+                .createdBy(USER_ID)
+                .build();
+    }
+
     @Nested
     @DisplayName("createContract")
     class CreateContract {
@@ -592,6 +614,8 @@ class ContractServiceTest {
         }
     }
 
+    // Helper Methods
+
     @Nested
     @DisplayName("deleteContract")
     class DeleteContract {
@@ -630,29 +654,5 @@ class ContractServiceTest {
             assertThatThrownBy(() -> contractService.deleteContract(CONTRACT_ID))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
-    }
-
-    // Helper Methods
-
-    private Contract buildContract(CreateContractRequest request) {
-        return Contract.builder()
-                .id(CONTRACT_ID)
-                .tenantId(TENANT_ID)
-                .title(request.getTitle())
-                .type(request.getType())
-                .status(ContractStatus.DRAFT)
-                .employeeId(request.getEmployeeId())
-                .vendorName(request.getVendorName())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .autoRenew(request.getAutoRenew())
-                .renewalPeriodDays(request.getRenewalPeriodDays())
-                .value(request.getValue())
-                .currency(request.getCurrency())
-                .description(request.getDescription())
-                .terms(request.getTerms())
-                .documentUrl(request.getDocumentUrl())
-                .createdBy(USER_ID)
-                .build();
     }
 }

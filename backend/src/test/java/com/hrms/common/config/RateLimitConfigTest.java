@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for RateLimitConfig.
- *
+ * <p>
  * Tests token bucket creation and rate limit enforcement across different
  * endpoint categories: auth, api, export, and wall endpoints.
  */

@@ -35,23 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ExpenseReportController Unit Tests")
 class ExpenseReportControllerTest {
 
+    private static final String BASE_URL = "/api/v1/expenses/reports";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private ExpenseReportService reportService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-
-    private static final String BASE_URL = "/api/v1/expenses/reports";
 
     // ===================== Expense Report Tests =====================
 

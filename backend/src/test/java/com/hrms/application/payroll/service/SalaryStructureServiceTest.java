@@ -29,17 +29,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("SalaryStructureService Tests")
 class SalaryStructureServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private SalaryStructureRepository salaryStructureRepository;
-
     @Mock
     private AuditLogService auditLogService;
-
     @InjectMocks
     private SalaryStructureService salaryStructureService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private SalaryStructure salaryStructure;

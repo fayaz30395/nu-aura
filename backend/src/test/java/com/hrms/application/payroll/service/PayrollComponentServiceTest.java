@@ -24,17 +24,13 @@ import static org.mockito.Mockito.*;
 @DisplayName("PayrollComponentService Tests")
 class PayrollComponentServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private PayrollComponentRepository payrollComponentRepository;
-
     @Mock
     private AuditLogService auditLogService;
-
     @InjectMocks
     private PayrollComponentService payrollComponentService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
 
     @BeforeAll
@@ -314,7 +310,7 @@ class PayrollComponentServiceTest {
     }
 
     private PayrollComponent buildComponentWithOrder(String code, String formula,
-                                                      BigDecimal defaultValue, int order) {
+                                                     BigDecimal defaultValue, int order) {
         return PayrollComponent.builder()
                 .code(code)
                 .name(code.toUpperCase())

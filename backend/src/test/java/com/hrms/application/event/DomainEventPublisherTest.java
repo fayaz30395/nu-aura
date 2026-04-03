@@ -25,14 +25,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DomainEventPublisherTest {
 
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    private DomainEventPublisher domainEventPublisher;
-
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID USER_ID = UUID.randomUUID();
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+    private DomainEventPublisher domainEventPublisher;
 
     @BeforeEach
     void setUp() {

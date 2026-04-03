@@ -40,18 +40,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("RestrictedHolidayController Unit Tests")
 class RestrictedHolidayControllerTest {
 
-    @Mock
-    private RestrictedHolidayService service;
-
-    @InjectMocks
-    private RestrictedHolidayController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID HOLIDAY_ID = UUID.randomUUID();
     private static final UUID SELECTION_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
+    @Mock
+    private RestrictedHolidayService service;
+    @InjectMocks
+    private RestrictedHolidayController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

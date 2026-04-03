@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for RateLimitFilter.
- *
+ * <p>
  * Tests rate limiting behavior across different endpoint types:
  * - Authentication endpoints (stricter limits)
  * - Export endpoints (resource-intensive)

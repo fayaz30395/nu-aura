@@ -66,13 +66,12 @@ class ApplicantControllerTest {
         applicantId = UUID.randomUUID();
         jobOpeningId = UUID.randomUUID();
 
-        applicantResponse = new ApplicantResponse();
-        applicantResponse.setId(applicantId);
-        applicantResponse.setFirstName("Jane");
-        applicantResponse.setLastName("Smith");
-        applicantResponse.setEmail("jane.smith@example.com");
-        applicantResponse.setStatus(ApplicationStatus.APPLIED);
-        applicantResponse.setJobOpeningId(jobOpeningId);
+        applicantResponse = ApplicantResponse.builder()
+                .id(applicantId)
+                .candidateName("Jane Smith")
+                .status(ApplicationStatus.APPLIED)
+                .jobOpeningId(jobOpeningId)
+                .build();
     }
 
     @Nested
@@ -83,9 +82,7 @@ class ApplicantControllerTest {
         @DisplayName("Should create applicant successfully")
         void shouldCreateApplicantSuccessfully() throws Exception {
             ApplicantRequest request = new ApplicantRequest();
-            request.setFirstName("Jane");
-            request.setLastName("Smith");
-            request.setEmail("jane.smith@example.com");
+            request.setCandidateId(UUID.randomUUID());
             request.setJobOpeningId(jobOpeningId);
 
             when(applicantService.createApplicant(any(ApplicantRequest.class))).thenReturn(applicantResponse);
@@ -95,8 +92,6 @@ class ApplicantControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(applicantId.toString()))
-                    .andExpect(jsonPath("$.firstName").value("Jane"))
-                    .andExpect(jsonPath("$.email").value("jane.smith@example.com"))
                     .andExpect(jsonPath("$.status").value("APPLIED"));
 
             verify(applicantService).createApplicant(any(ApplicantRequest.class));
@@ -173,14 +168,15 @@ class ApplicantControllerTest {
         @Test
         @DisplayName("Should get pipeline for job opening")
         void shouldGetPipelineForJobOpening() throws Exception {
-            ApplicantPipelineResponse pipelineResponse = new ApplicantPipelineResponse();
-            pipelineResponse.setJobOpeningId(jobOpeningId);
+            ApplicantPipelineResponse pipelineResponse = ApplicantPipelineResponse.builder()
+                    .pipeline(new java.util.HashMap<>())
+                    .build();
 
             when(applicantService.getPipeline(jobOpeningId)).thenReturn(pipelineResponse);
 
             mockMvc.perform(get("/api/v1/recruitment/applicants/pipeline/{jobOpeningId}", jobOpeningId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.jobOpeningId").value(jobOpeningId.toString()));
+                    .andExpect(jsonPath("$.pipeline").exists());
 
             verify(applicantService).getPipeline(jobOpeningId);
         }
@@ -194,11 +190,12 @@ class ApplicantControllerTest {
         @DisplayName("Should update applicant status")
         void shouldUpdateApplicantStatus() throws Exception {
             ApplicantStatusUpdateRequest request = new ApplicantStatusUpdateRequest();
-            request.setStatus(ApplicationStatus.SHORTLISTED);
+            request.setStatus(ApplicationStatus.SCREENING);
 
-            ApplicantResponse updated = new ApplicantResponse();
-            updated.setId(applicantId);
-            updated.setStatus(ApplicationStatus.SHORTLISTED);
+            ApplicantResponse updated = ApplicantResponse.builder()
+                    .id(applicantId)
+                    .status(ApplicationStatus.SCREENING)
+                    .build();
 
             when(applicantService.updateStatus(eq(applicantId), any(ApplicantStatusUpdateRequest.class)))
                     .thenReturn(updated);
@@ -207,7 +204,7 @@ class ApplicantControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("SHORTLISTED"));
+                    .andExpect(jsonPath("$.status").value("SCREENING"));
 
             verify(applicantService).updateStatus(eq(applicantId), any(ApplicantStatusUpdateRequest.class));
         }
@@ -215,9 +212,10 @@ class ApplicantControllerTest {
         @Test
         @DisplayName("Should rate applicant")
         void shouldRateApplicant() throws Exception {
-            ApplicantResponse rated = new ApplicantResponse();
-            rated.setId(applicantId);
-            rated.setRating(4);
+            ApplicantResponse rated = ApplicantResponse.builder()
+                    .id(applicantId)
+                    .rating(4)
+                    .build();
 
             when(applicantService.rateApplicant(applicantId, 4)).thenReturn(rated);
 

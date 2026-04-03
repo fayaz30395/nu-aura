@@ -44,31 +44,24 @@ import static org.mockito.Mockito.*;
 @DisplayName("MileageService Tests")
 class MileageServiceTest {
 
-    @Mock
-    private MileageLogRepository mileageLogRepository;
-
-    @Mock
-    private MileagePolicyService mileagePolicyService;
-
-    @Mock
-    private ExpenseClaimRepository expenseClaimRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private ObjectMapper objectMapper;
-
-    @InjectMocks
-    private MileageService mileageService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-    private static MockedStatic<SecurityContext> securityContextMock;
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID APPROVER_ID = UUID.randomUUID();
     private static final UUID LOG_ID = UUID.randomUUID();
+    private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
+    @Mock
+    private MileageLogRepository mileageLogRepository;
+    @Mock
+    private MileagePolicyService mileagePolicyService;
+    @Mock
+    private ExpenseClaimRepository expenseClaimRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private ObjectMapper objectMapper;
+    @InjectMocks
+    private MileageService mileageService;
 
     @BeforeAll
     static void setUpStatic() {

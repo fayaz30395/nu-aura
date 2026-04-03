@@ -94,6 +94,49 @@ class WorkloadAnalyticsServiceTest {
     // getWorkloadDashboard
     // ============================================
 
+    private EmployeeWorkload buildWorkload(AllocationStatus status, int allocation) {
+        return EmployeeWorkload.builder()
+                .employeeId(employeeId)
+                .employeeName("Alice Example")
+                .employeeCode("EMP001")
+                .totalAllocation(allocation)
+                .approvedAllocation(allocation)
+                .pendingAllocation(0)
+                .allocationStatus(status)
+                .projectCount(0)
+                .allocations(Collections.emptyList())
+                .hasPendingApprovals(false)
+                .build();
+    }
+
+    // ============================================
+    // getDepartmentWorkloads
+    // ============================================
+
+    private EmployeeCapacity buildCapacity(int allocation) {
+        return EmployeeCapacity.builder()
+                .employeeId(employeeId)
+                .employeeName("Alice Example")
+                .employeeCode("EMP001")
+                .totalAllocation(allocation)
+                .approvedAllocation(allocation)
+                .pendingAllocation(0)
+                .availableCapacity(100 - allocation)
+                .isOverAllocated(allocation > 100)
+                .hasPendingApprovals(false)
+                .allocationStatus(allocation > 100 ? AllocationStatus.OVER_ALLOCATED
+                        : allocation >= 75 ? AllocationStatus.OPTIMAL
+                          : allocation > 0 ? AllocationStatus.UNDER_UTILIZED
+                            : AllocationStatus.UNASSIGNED)
+                .allocations(Collections.emptyList())
+                .effectiveDate(LocalDate.now().toString())
+                .build();
+    }
+
+    // ============================================
+    // exportWorkloadReport
+    // ============================================
+
     @Nested
     @DisplayName("getWorkloadDashboard")
     class DashboardTests {
@@ -152,7 +195,7 @@ class WorkloadAnalyticsServiceTest {
     }
 
     // ============================================
-    // getDepartmentWorkloads
+    // getWorkloadHeatmap
     // ============================================
 
     @Nested
@@ -178,7 +221,7 @@ class WorkloadAnalyticsServiceTest {
     }
 
     // ============================================
-    // exportWorkloadReport
+    // Helpers
     // ============================================
 
     @Nested
@@ -240,10 +283,6 @@ class WorkloadAnalyticsServiceTest {
         }
     }
 
-    // ============================================
-    // getWorkloadHeatmap
-    // ============================================
-
     @Nested
     @DisplayName("getWorkloadHeatmap")
     class HeatmapTests {
@@ -286,44 +325,5 @@ class WorkloadAnalyticsServiceTest {
                 assertThat(rows).isEmpty();
             }
         }
-    }
-
-    // ============================================
-    // Helpers
-    // ============================================
-
-    private EmployeeWorkload buildWorkload(AllocationStatus status, int allocation) {
-        return EmployeeWorkload.builder()
-                .employeeId(employeeId)
-                .employeeName("Alice Example")
-                .employeeCode("EMP001")
-                .totalAllocation(allocation)
-                .approvedAllocation(allocation)
-                .pendingAllocation(0)
-                .allocationStatus(status)
-                .projectCount(0)
-                .allocations(Collections.emptyList())
-                .hasPendingApprovals(false)
-                .build();
-    }
-
-    private EmployeeCapacity buildCapacity(int allocation) {
-        return EmployeeCapacity.builder()
-                .employeeId(employeeId)
-                .employeeName("Alice Example")
-                .employeeCode("EMP001")
-                .totalAllocation(allocation)
-                .approvedAllocation(allocation)
-                .pendingAllocation(0)
-                .availableCapacity(100 - allocation)
-                .isOverAllocated(allocation > 100)
-                .hasPendingApprovals(false)
-                .allocationStatus(allocation > 100 ? AllocationStatus.OVER_ALLOCATED
-                        : allocation >= 75 ? AllocationStatus.OPTIMAL
-                        : allocation > 0 ? AllocationStatus.UNDER_UTILIZED
-                        : AllocationStatus.UNASSIGNED)
-                .allocations(Collections.emptyList())
-                .effectiveDate(LocalDate.now().toString())
-                .build();
     }
 }

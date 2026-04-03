@@ -65,6 +65,24 @@ class DocuSignConnectorTest {
 
     // ===================== Connector Identity Tests =====================
 
+    private ConnectorConfig createTestConfig() {
+        return new ConnectorConfig(
+                TENANT_ID,
+                "docusign",
+                Map.of(
+                        "integrationKey", "test-key",
+                        "userId", "test-user",
+                        "accountId", "test-account",
+                        "rsaPrivateKey", "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4/4eoP+KwbGOHS2CTamRiYknLBulJ+PrH5XO5qXSaFEQ8kLuzHxM2P\nSP2qsKbSYwBYcB9F4g7qxZQAm8n0zzuc5p+0yHf4+qNlY5X7lXgp0OqEdB1rz7Ys\nPwvEdJLQlDUfXKWNmV9B9PXhMJgOEaLG2YvTWCIf4eBJP0bBnvEMy3fT0CJ1OdSI\nshHGEjPeP7TDUvI8PmI5X4+f4gYPHnU/6KT3VjWmKKK0oHn0fEp8g/K8Pu6EqhEq\nZFvnAWeLxLLQcsH5sXrY30pPKG2Kq1J5JLY3yPKhC7gO4rL8MN8ry9qvBL5YxjBu\nxBb10T0bAgMBAAECggEAIqwwb3AiPt8pfzQQjXxU1sNAx7C8q0gfJBBxVkGR31w3\nd+yYRxRVlVdBBfTTZCZzE2WTUxR+8VCGXx4+lGBGLfRDzwPHhR5AqfvbfQhMXpJh\nvmjN9Ir2kMIqVkAXmYEu0FZ6C6XfBYp7A0R1R0bAhQVmUDxs0aXLzVQpRCLjnRm+\n+rMvNEbdxmqkKGpwXPL1PFpFX/WELhRUhyL+w3gZ5p5YJN1qsHRc6pVYMgKn/bxd\nYZXn8K7BK3wW5LqQmjSZtW8W5F0OhpMzEw0tOPVKCEIGFZLr5OY0O7CQVXg3pxvz\nCwZfXSn3QrJu9D+7eUFCLMrNqNZn0eqJUQa5JYJEAQKBgQDyMFLJ6L2qH9WFpQhf\nFwqRUO6xZ5K7rz5h0C5gIqR2Z3QbKHMpKN6V7wRFcTQGQ+5w5PUJZJpXB2YYTmHi\nN1CZL7XM7+RpYnLrAr5MWvQJCLGU6p9jFKJQa8jGgPSDNxqFiQiT5tWMlVh+L8RT\nUE5QZWvdl6TwTmQYJFz/GpYYAQKBgQDFqKxkZ3XBlJbfLqP8fpSp0TYFBsYPQ2nF\nQJ4TpQmqt6G+YM+Xr6NbnWOPdE2l2OgL2V5dX7ktVQhFYwVRwuDXv+BhWJ3xXkE3\nKVu3R5qyB6dBWbxmY3V7TpPlwX1bD8JOa/RBCfYlNCJYlcfBpQqcWHgmaqXWqhNr\n8P9nG8UywQKBgQDe8U2v/0o6spJ/LRLa7hkH7yt2T7UzVZbMvNpJdWlGh0s7F4cV\ndLJjqp5V0xHFJQiYl0VTQqD4PdG0aaANZ3I1dUxJAhQXuQwbM/kGLSY/AvAi8hvY\nYWNXxbFBQCnhXW6mCHZEVxVAFdMl5b7PeVKYxs1Jqjz5z3zZ3UBF0tPOAQKBgGEV\nqMcVH0Wkp2BL3zLzXCWRXFVaJL5NYVsvMDhT4LXPZS9cYcECdvIJzcHsGKE1sXOj\n6E/7L5sQrQ0IMLL6z+z/FYaEAkVXJFyKK9TcWq7Z7q1YzEJMqz8U9qTLQGD/+vvx\n7e7+vl8xGswD4zw8XyLIhqBvUK4N0qPiVA1nZZGBAoGAfULJpwDf8c+p8XPKqKwp\nBbLPDHaRsJJyQkCYhpVlLXZhHKnv2pMAuMmVj7x8sTm7NYzBSRpZs5O4LZQCVRb0\ncqLcxeHDZVnRHbslCvQQzPx3rALcVYELN6wvwKYcAhYpW+3/2yNIiLKPl5aXQJQl\nKfDvZz6FZx7rJRKJzFmvMnU=\n-----END PRIVATE KEY-----",
+                        "baseUrl", "https://demo.docusign.net",
+                        "connectWebhookUrl", "https://example.com/webhook"
+                ),
+                Set.of("OFFER_CREATED", "DOCUMENT_CREATED")
+        );
+    }
+
+    // ===================== Connection Testing Tests =====================
+
     @Nested
     @DisplayName("Connector Identity")
     class ConnectorIdentityTests {
@@ -142,7 +160,7 @@ class DocuSignConnectorTest {
         }
     }
 
-    // ===================== Connection Testing Tests =====================
+    // ===================== Event Handling Tests =====================
 
     @Nested
     @DisplayName("Connection Testing")
@@ -201,7 +219,7 @@ class DocuSignConnectorTest {
         }
     }
 
-    // ===================== Event Handling Tests =====================
+    // ===================== Webhook Callback Tests =====================
 
     @Nested
     @DisplayName("Event Handling")
@@ -350,7 +368,7 @@ class DocuSignConnectorTest {
         }
     }
 
-    // ===================== Webhook Callback Tests =====================
+    // ===================== Configuration Tests =====================
 
     @Nested
     @DisplayName("Webhook Callback Processing")
@@ -563,7 +581,7 @@ class DocuSignConnectorTest {
         }
     }
 
-    // ===================== Configuration Tests =====================
+    // ===================== Helper Methods =====================
 
     @Nested
     @DisplayName("Configuration")
@@ -600,23 +618,5 @@ class DocuSignConnectorTest {
             // Assert
             verify(authService).getAccessToken(config);
         }
-    }
-
-    // ===================== Helper Methods =====================
-
-    private ConnectorConfig createTestConfig() {
-        return new ConnectorConfig(
-                TENANT_ID,
-                "docusign",
-                Map.of(
-                        "integrationKey", "test-key",
-                        "userId", "test-user",
-                        "accountId", "test-account",
-                        "rsaPrivateKey", "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4/4eoP+KwbGOHS2CTamRiYknLBulJ+PrH5XO5qXSaFEQ8kLuzHxM2P\nSP2qsKbSYwBYcB9F4g7qxZQAm8n0zzuc5p+0yHf4+qNlY5X7lXgp0OqEdB1rz7Ys\nPwvEdJLQlDUfXKWNmV9B9PXhMJgOEaLG2YvTWCIf4eBJP0bBnvEMy3fT0CJ1OdSI\nshHGEjPeP7TDUvI8PmI5X4+f4gYPHnU/6KT3VjWmKKK0oHn0fEp8g/K8Pu6EqhEq\nZFvnAWeLxLLQcsH5sXrY30pPKG2Kq1J5JLY3yPKhC7gO4rL8MN8ry9qvBL5YxjBu\nxBb10T0bAgMBAAECggEAIqwwb3AiPt8pfzQQjXxU1sNAx7C8q0gfJBBxVkGR31w3\nd+yYRxRVlVdBBfTTZCZzE2WTUxR+8VCGXx4+lGBGLfRDzwPHhR5AqfvbfQhMXpJh\nvmjN9Ir2kMIqVkAXmYEu0FZ6C6XfBYp7A0R1R0bAhQVmUDxs0aXLzVQpRCLjnRm+\n+rMvNEbdxmqkKGpwXPL1PFpFX/WELhRUhyL+w3gZ5p5YJN1qsHRc6pVYMgKn/bxd\nYZXn8K7BK3wW5LqQmjSZtW8W5F0OhpMzEw0tOPVKCEIGFZLr5OY0O7CQVXg3pxvz\nCwZfXSn3QrJu9D+7eUFCLMrNqNZn0eqJUQa5JYJEAQKBgQDyMFLJ6L2qH9WFpQhf\nFwqRUO6xZ5K7rz5h0C5gIqR2Z3QbKHMpKN6V7wRFcTQGQ+5w5PUJZJpXB2YYTmHi\nN1CZL7XM7+RpYnLrAr5MWvQJCLGU6p9jFKJQa8jGgPSDNxqFiQiT5tWMlVh+L8RT\nUE5QZWvdl6TwTmQYJFz/GpYYAQKBgQDFqKxkZ3XBlJbfLqP8fpSp0TYFBsYPQ2nF\nQJ4TpQmqt6G+YM+Xr6NbnWOPdE2l2OgL2V5dX7ktVQhFYwVRwuDXv+BhWJ3xXkE3\nKVu3R5qyB6dBWbxmY3V7TpPlwX1bD8JOa/RBCfYlNCJYlcfBpQqcWHgmaqXWqhNr\n8P9nG8UywQKBgQDe8U2v/0o6spJ/LRLa7hkH7yt2T7UzVZbMvNpJdWlGh0s7F4cV\ndLJjqp5V0xHFJQiYl0VTQqD4PdG0aaANZ3I1dUxJAhQXuQwbM/kGLSY/AvAi8hvY\nYWNXxbFBQCnhXW6mCHZEVxVAFdMl5b7PeVKYxs1Jqjz5z3zZ3UBF0tPOAQKBgGEV\nqMcVH0Wkp2BL3zLzXCWRXFVaJL5NYVsvMDhT4LXPZS9cYcECdvIJzcHsGKE1sXOj\n6E/7L5sQrQ0IMLL6z+z/FYaEAkVXJFyKK9TcWq7Z7q1YzEJMqz8U9qTLQGD/+vvx\n7e7+vl8xGswD4zw8XyLIhqBvUK4N0qPiVA1nZZGBAoGAfULJpwDf8c+p8XPKqKwp\nBbLPDHaRsJJyQkCYhpVlLXZhHKnv2pMAuMmVj7x8sTm7NYzBSRpZs5O4LZQCVRb0\ncqLcxeHDZVnRHbslCvQQzPx3rALcVYELN6wvwKYcAhYpW+3/2yNIiLKPl5aXQJQl\nKfDvZz6FZx7rJRKJzFmvMnU=\n-----END PRIVATE KEY-----",
-                        "baseUrl", "https://demo.docusign.net",
-                        "connectWebhookUrl", "https://example.com/webhook"
-                ),
-                Set.of("OFFER_CREATED", "DOCUMENT_CREATED")
-        );
     }
 }

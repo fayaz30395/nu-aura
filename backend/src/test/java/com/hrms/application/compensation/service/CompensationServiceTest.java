@@ -46,27 +46,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("CompensationService Tests")
 class CompensationServiceTest {
 
-    @Mock
-    private SalaryRevisionRepository revisionRepository;
-
-    @Mock
-    private CompensationReviewCycleRepository cycleRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private SalaryStructureRepository salaryStructureRepository;
-
-    @Mock
-    private AuditLogService auditLogService;
-
-    @InjectMocks
-    private CompensationService compensationService;
-
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
-
+    @Mock
+    private SalaryRevisionRepository revisionRepository;
+    @Mock
+    private CompensationReviewCycleRepository cycleRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private SalaryStructureRepository salaryStructureRepository;
+    @Mock
+    private AuditLogService auditLogService;
+    @InjectMocks
+    private CompensationService compensationService;
     private UUID tenantId;
     private UUID userId;
     private UUID cycleId;

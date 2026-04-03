@@ -28,6 +28,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BiometricIntegrationServiceTest {
 
+    private static final UUID TENANT_ID = UUID.randomUUID();
+    private static final UUID DEVICE_ID = UUID.randomUUID();
+    private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     @Mock
     private BiometricDeviceRepository deviceRepository;
     @Mock
@@ -44,13 +47,8 @@ class BiometricIntegrationServiceTest {
     private EventPublisher eventPublisher;
     @Mock
     private List<BiometricAdapter> adapters;
-
     @InjectMocks
     private BiometricIntegrationService service;
-
-    private static final UUID TENANT_ID = UUID.randomUUID();
-    private static final UUID DEVICE_ID = UUID.randomUUID();
-    private static final UUID EMPLOYEE_ID = UUID.randomUUID();
 
     @BeforeEach
     void setUp() {

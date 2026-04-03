@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for ContractLifecycleScheduler.
- *
+ * <p>
  * Covers:
  * - Auto-expiry of contracts past end date
  * - Auto-renewal of eligible contracts
@@ -49,35 +49,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ContractLifecycleSchedulerTest {
 
-    @Mock
-    private ContractRepository contractRepository;
-
-    @Mock
-    private ContractReminderRepository reminderRepository;
-
-    @Mock
-    private NotificationService notificationService;
-
-    @Mock
-    private MetricsService metricsService;
-
-    @Mock
-    private JdbcTemplate jdbcTemplate;
-
-    @InjectMocks
-    private ContractLifecycleScheduler scheduler;
-
-    @Captor
-    private ArgumentCaptor<ContractReminder> reminderCaptor;
-
-    @Captor
-    private ArgumentCaptor<Contract> contractCaptor;
-
     private static final UUID TENANT_A = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final UUID TENANT_B = UUID.fromString("00000000-0000-0000-0000-000000000002");
     private static final UUID CONTRACT_ID_1 = UUID.randomUUID();
     private static final UUID CONTRACT_ID_2 = UUID.randomUUID();
     private static final UUID USER_ID = UUID.randomUUID();
+    @Mock
+    private ContractRepository contractRepository;
+    @Mock
+    private ContractReminderRepository reminderRepository;
+    @Mock
+    private NotificationService notificationService;
+    @Mock
+    private MetricsService metricsService;
+    @Mock
+    private JdbcTemplate jdbcTemplate;
+    @InjectMocks
+    private ContractLifecycleScheduler scheduler;
+    @Captor
+    private ArgumentCaptor<ContractReminder> reminderCaptor;
+    @Captor
+    private ArgumentCaptor<Contract> contractCaptor;
 
     @BeforeEach
     void setUp() {
@@ -94,6 +86,40 @@ class ContractLifecycleSchedulerTest {
 
     // ================================================================
     // Auto-Expire Tests
+    // ================================================================
+
+    private Contract buildContract(UUID id, UUID tenantId, ContractStatus status,
+                                   LocalDate endDate, boolean autoRenew) {
+        return Contract.builder()
+                .id(id)
+                .tenantId(tenantId)
+                .title("Test Contract " + id)
+                .type(ContractType.EMPLOYMENT)
+                .status(status)
+                .startDate(LocalDate.now().minusYears(1))
+                .endDate(endDate)
+                .autoRenew(autoRenew)
+                .build();
+    }
+
+    // ================================================================
+    // Auto-Renew Tests
+    // ================================================================
+
+    private ContractReminder buildReminder(UUID tenantId, UUID contractId,
+                                           ReminderType type, LocalDate reminderDate) {
+        return ContractReminder.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .contractId(contractId)
+                .reminderType(type)
+                .reminderDate(reminderDate)
+                .isCompleted(false)
+                .build();
+    }
+
+    // ================================================================
+    // Expiry Reminder Creation Tests
     // ================================================================
 
     @Nested
@@ -171,7 +197,7 @@ class ContractLifecycleSchedulerTest {
     }
 
     // ================================================================
-    // Auto-Renew Tests
+    // Notification Dispatch Tests
     // ================================================================
 
     @Nested
@@ -214,7 +240,7 @@ class ContractLifecycleSchedulerTest {
     }
 
     // ================================================================
-    // Expiry Reminder Creation Tests
+    // Tenant Isolation Tests
     // ================================================================
 
     @Nested
@@ -333,7 +359,7 @@ class ContractLifecycleSchedulerTest {
     }
 
     // ================================================================
-    // Notification Dispatch Tests
+    // Configuration Tests
     // ================================================================
 
     @Nested
@@ -415,7 +441,7 @@ class ContractLifecycleSchedulerTest {
     }
 
     // ================================================================
-    // Tenant Isolation Tests
+    // Edge Case Tests
     // ================================================================
 
     @Nested
@@ -471,7 +497,7 @@ class ContractLifecycleSchedulerTest {
     }
 
     // ================================================================
-    // Configuration Tests
+    // Helper Methods
     // ================================================================
 
     @Nested
@@ -509,10 +535,6 @@ class ContractLifecycleSchedulerTest {
         }
     }
 
-    // ================================================================
-    // Edge Case Tests
-    // ================================================================
-
     @Nested
     @DisplayName("Edge Cases")
     class EdgeCaseTests {
@@ -540,35 +562,5 @@ class ContractLifecycleSchedulerTest {
 
             verify(contractRepository, never()).findActiveContractsPastEndDate(any());
         }
-    }
-
-    // ================================================================
-    // Helper Methods
-    // ================================================================
-
-    private Contract buildContract(UUID id, UUID tenantId, ContractStatus status,
-                                   LocalDate endDate, boolean autoRenew) {
-        return Contract.builder()
-                .id(id)
-                .tenantId(tenantId)
-                .title("Test Contract " + id)
-                .type(ContractType.EMPLOYMENT)
-                .status(status)
-                .startDate(LocalDate.now().minusYears(1))
-                .endDate(endDate)
-                .autoRenew(autoRenew)
-                .build();
-    }
-
-    private ContractReminder buildReminder(UUID tenantId, UUID contractId,
-                                           ReminderType type, LocalDate reminderDate) {
-        return ContractReminder.builder()
-                .id(UUID.randomUUID())
-                .tenantId(tenantId)
-                .contractId(contractId)
-                .reminderType(type)
-                .reminderDate(reminderDate)
-                .isCompleted(false)
-                .build();
     }
 }

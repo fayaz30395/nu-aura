@@ -33,14 +33,11 @@ import static org.mockito.Mockito.*;
 @DisplayName("BenefitManagementService Tests")
 class BenefitManagementServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private BenefitPlanRepository benefitPlanRepository;
-
     @InjectMocks
     private BenefitManagementService benefitManagementService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID planId;
     private BenefitPlan benefitPlan;

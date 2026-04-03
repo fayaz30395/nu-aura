@@ -35,20 +35,16 @@ import static org.mockito.Mockito.*;
 @DisplayName("LeaveTypeService Tests")
 class LeaveTypeServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
-
     @Mock
     private AuditLogService auditLogService;
-
     @InjectMocks
     private LeaveTypeService leaveTypeService;
-
     private UUID tenantId;
     private UUID leaveTypeId;
     private LeaveType testLeaveType;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeAll
     static void setUpClass() {

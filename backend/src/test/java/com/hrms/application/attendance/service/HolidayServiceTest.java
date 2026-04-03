@@ -25,21 +25,17 @@ import static org.mockito.Mockito.*;
 @DisplayName("HolidayService Tests")
 class HolidayServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private HolidayRepository holidayRepository;
-
     @Mock
     private com.hrms.application.audit.service.AuditLogService auditLogService;
-
     @InjectMocks
     private HolidayService holidayService;
-
     private UUID tenantId;
     private UUID holidayId;
     private Holiday testHoliday;
     private LocalDate holidayDate;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeAll
     static void setUpClass() {

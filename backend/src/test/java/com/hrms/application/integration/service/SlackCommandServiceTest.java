@@ -30,19 +30,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SlackCommandServiceTest {
 
-    @Mock private EmployeeRepository employeeRepository;
-    @Mock private LeaveBalanceRepository leaveBalanceRepository;
-    @Mock private LeaveTypeRepository leaveTypeRepository;
-    @Mock private NotificationChannelConfigRepository channelConfigRepository;
-
-    @InjectMocks
-    private SlackCommandService slackCommandService;
-
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final String TEAM_ID = "T12345";
     private static final String SLACK_USER_ID = "U12345";
-
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private LeaveBalanceRepository leaveBalanceRepository;
+    @Mock
+    private LeaveTypeRepository leaveTypeRepository;
+    @Mock
+    private NotificationChannelConfigRepository channelConfigRepository;
+    @InjectMocks
+    private SlackCommandService slackCommandService;
     private NotificationChannelConfig slackConfig;
     private Employee employee;
 

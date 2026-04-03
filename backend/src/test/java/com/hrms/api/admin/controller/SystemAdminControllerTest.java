@@ -97,6 +97,19 @@ class SystemAdminControllerTest {
 
     // ==================== @RequiresPermission Annotation Tests ====================
 
+    /**
+     * Build a mock Tenant domain object.
+     */
+    private com.hrms.domain.tenant.Tenant buildMockTenant(String statusName) {
+        com.hrms.domain.tenant.Tenant tenant = new com.hrms.domain.tenant.Tenant();
+        tenant.setId(TARGET_TENANT_ID);
+        tenant.setName("Acme Corp");
+        tenant.setStatus(com.hrms.domain.tenant.Tenant.TenantStatus.valueOf(statusName));
+        return tenant;
+    }
+
+    // ==================== GET /api/v1/admin/system/overview ====================
+
     @Nested
     @DisplayName("Permission Annotation Verification — All endpoints require SYSTEM_ADMIN")
     class PermissionAnnotationTests {
@@ -176,7 +189,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== GET /api/v1/admin/system/overview ====================
+    // ==================== GET /api/v1/admin/system/tenants ====================
 
     @Nested
     @DisplayName("GET /overview — System Overview")
@@ -217,7 +230,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== GET /api/v1/admin/system/tenants ====================
+    // ==================== GET /api/v1/admin/system/tenants/{tenantId}/metrics ====================
 
     @Nested
     @DisplayName("GET /tenants — Tenant List")
@@ -259,7 +272,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== GET /api/v1/admin/system/tenants/{tenantId}/metrics ====================
+    // ==================== GET /api/v1/admin/system/growth-metrics ====================
 
     @Nested
     @DisplayName("GET /tenants/{tenantId}/metrics — Tenant Metrics")
@@ -301,7 +314,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== GET /api/v1/admin/system/growth-metrics ====================
+    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/suspend ====================
 
     @Nested
     @DisplayName("GET /growth-metrics — Platform Growth Metrics")
@@ -350,7 +363,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/suspend ====================
+    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/activate ====================
 
     @Nested
     @DisplayName("POST /tenants/{tenantId}/suspend — Suspend Tenant")
@@ -385,7 +398,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/activate ====================
+    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/impersonate ====================
 
     @Nested
     @DisplayName("POST /tenants/{tenantId}/activate — Activate Tenant")
@@ -419,7 +432,7 @@ class SystemAdminControllerTest {
         }
     }
 
-    // ==================== POST /api/v1/admin/system/tenants/{tenantId}/impersonate ====================
+    // ==================== Helpers ====================
 
     @Nested
     @DisplayName("POST /tenants/{tenantId}/impersonate — Generate Impersonation Token")
@@ -493,18 +506,5 @@ class SystemAdminControllerTest {
                     .andExpect(jsonPath("$.token").isNotEmpty())
                     .andExpect(jsonPath("$.expiresIn").isNumber());
         }
-    }
-
-    // ==================== Helpers ====================
-
-    /**
-     * Build a mock Tenant domain object.
-     */
-    private com.hrms.domain.tenant.Tenant buildMockTenant(String statusName) {
-        com.hrms.domain.tenant.Tenant tenant = new com.hrms.domain.tenant.Tenant();
-        tenant.setId(TARGET_TENANT_ID);
-        tenant.setName("Acme Corp");
-        tenant.setStatus(com.hrms.domain.tenant.Tenant.TenantStatus.valueOf(statusName));
-        return tenant;
     }
 }

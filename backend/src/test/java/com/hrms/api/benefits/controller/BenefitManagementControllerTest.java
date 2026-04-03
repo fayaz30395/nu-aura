@@ -62,11 +62,12 @@ class BenefitManagementControllerTest {
     void setUp() {
         planId = UUID.randomUUID();
 
-        planResponse = new BenefitPlanResponse();
-        planResponse.setId(planId);
-        planResponse.setName("Health Insurance");
-        planResponse.setBenefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE);
-        planResponse.setIsActive(true);
+        planResponse = BenefitPlanResponse.builder()
+                .id(planId)
+                .planName("Health Insurance")
+                .benefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE)
+                .isActive(true)
+                .build();
     }
 
     @Nested
@@ -77,7 +78,7 @@ class BenefitManagementControllerTest {
         @DisplayName("Should create benefit plan successfully")
         void shouldCreateBenefitPlanSuccessfully() throws Exception {
             BenefitPlanRequest request = new BenefitPlanRequest();
-            request.setName("Health Insurance");
+            request.setPlanName("Health Insurance");
             request.setBenefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE);
 
             when(benefitService.createPlan(any(BenefitPlanRequest.class))).thenReturn(planResponse);
@@ -87,7 +88,7 @@ class BenefitManagementControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(planId.toString()))
-                    .andExpect(jsonPath("$.name").value("Health Insurance"));
+                    .andExpect(jsonPath("$.planName").value("Health Insurance"));
 
             verify(benefitService).createPlan(any(BenefitPlanRequest.class));
         }
@@ -105,7 +106,7 @@ class BenefitManagementControllerTest {
             mockMvc.perform(get("/api/v1/benefits/plans/{planId}", planId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(planId.toString()))
-                    .andExpect(jsonPath("$.name").value("Health Insurance"));
+                    .andExpect(jsonPath("$.planName").value("Health Insurance"));
 
             verify(benefitService).getPlanById(planId);
         }
@@ -162,12 +163,13 @@ class BenefitManagementControllerTest {
         @DisplayName("Should update benefit plan")
         void shouldUpdateBenefitPlan() throws Exception {
             BenefitPlanRequest request = new BenefitPlanRequest();
-            request.setName("Updated Health Insurance");
+            request.setPlanName("Updated Health Insurance");
             request.setBenefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE);
 
-            BenefitPlanResponse updated = new BenefitPlanResponse();
-            updated.setId(planId);
-            updated.setName("Updated Health Insurance");
+            BenefitPlanResponse updated = BenefitPlanResponse.builder()
+                    .id(planId)
+                    .planName("Updated Health Insurance")
+                    .build();
 
             when(benefitService.updatePlan(eq(planId), any(BenefitPlanRequest.class))).thenReturn(updated);
 
@@ -175,7 +177,7 @@ class BenefitManagementControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("Updated Health Insurance"));
+                    .andExpect(jsonPath("$.planName").value("Updated Health Insurance"));
 
             verify(benefitService).updatePlan(eq(planId), any(BenefitPlanRequest.class));
         }
@@ -199,9 +201,10 @@ class BenefitManagementControllerTest {
         @Test
         @DisplayName("Should deactivate benefit plan")
         void shouldDeactivateBenefitPlan() throws Exception {
-            BenefitPlanResponse inactive = new BenefitPlanResponse();
-            inactive.setId(planId);
-            inactive.setIsActive(false);
+            BenefitPlanResponse inactive = BenefitPlanResponse.builder()
+                    .id(planId)
+                    .isActive(false)
+                    .build();
 
             when(benefitService.deactivatePlan(planId)).thenReturn(inactive);
 

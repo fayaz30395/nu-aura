@@ -81,9 +81,9 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(post("/api/v1/recruitment/ai/parse-resume")
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id")))
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(request)))
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id")))
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -122,8 +122,8 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                    .file(file)
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file)
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -152,8 +152,8 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                    .file(file)
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file)
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -181,8 +181,8 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                    .file(emptyFile)
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(emptyFile)
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -206,9 +206,9 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(post("/api/v1/recruitment/ai/parse-resume")
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id")))
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(request)))
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id")))
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andReturn();
 
@@ -239,8 +239,8 @@ class AIRecruitmentFileParsingIntegrationTest {
 
             // Act & Assert
             MvcResult result = mockMvc.perform(multipart("/api/v1/recruitment/ai/parse-resume/upload")
-                    .file(file)
-                    .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
+                            .file(file)
+                            .with(jwt().jwt(jwt -> jwt.subject("user-id"))))
                     .andExpect(status().isOk())
                     .andReturn();
 

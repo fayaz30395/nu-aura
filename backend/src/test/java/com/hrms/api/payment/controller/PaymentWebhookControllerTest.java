@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Unit tests for PaymentWebhookController.
- *
+ * <p>
  * Key security assertions:
  * - Requests without a signature header receive 401 (not processed)
  * - Error responses do NOT leak internal exception stack traces or messages (LOW-2 FIX)
@@ -46,28 +46,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("PaymentWebhookController Unit Tests")
 class PaymentWebhookControllerTest {
 
-    @MockitoBean
-    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private PaymentService paymentService;
-
-    @MockitoBean
-    private PaymentFeatureGuard paymentFeatureGuard;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private TenantFilter tenantFilter;
-
     private static final String BASE_URL = "/api/v1/payments/webhooks";
     private static final String VALID_PAYLOAD = "{\"event\":\"payment.captured\",\"id\":\"evt_001\"}";
     private static final String VALID_SIGNATURE = "sha256=abc123";
+    @MockitoBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    @Autowired
+    private MockMvc mockMvc;
+    @MockitoBean
+    private PaymentService paymentService;
+    @MockitoBean
+    private PaymentFeatureGuard paymentFeatureGuard;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     // ──────────────────────────────────────────────────────────────────────
     // POST /api/v1/payments/webhooks/{provider}  — Generic provider webhook
@@ -375,9 +368,9 @@ class PaymentWebhookControllerTest {
             doNothing().when(paymentFeatureGuard).requirePaymentsEnabled();
 
             mockMvc.perform(post(BASE_URL + "/test-provider")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-Signature", VALID_SIGNATURE)
-                            .content(VALID_PAYLOAD));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("X-Signature", VALID_SIGNATURE)
+                    .content(VALID_PAYLOAD));
 
             verify(paymentFeatureGuard, atLeastOnce()).requirePaymentsEnabled();
         }

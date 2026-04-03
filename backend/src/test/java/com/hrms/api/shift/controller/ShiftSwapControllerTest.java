@@ -38,21 +38,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ShiftSwapController Unit Tests")
 class ShiftSwapControllerTest {
 
-    @Mock
-    private ShiftSwapService shiftSwapService;
-
-    @InjectMocks
-    private ShiftSwapController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID REQUEST_ID = UUID.randomUUID();
     private static final UUID REQUESTER_ID = UUID.randomUUID();
     private static final UUID TARGET_ID = UUID.randomUUID();
     private static final UUID MANAGER_ID = UUID.randomUUID();
     private static final UUID REQUESTER_ASSIGNMENT_ID = UUID.randomUUID();
     private static final UUID TARGET_ASSIGNMENT_ID = UUID.randomUUID();
+    @Mock
+    private ShiftSwapService shiftSwapService;
+    @InjectMocks
+    private ShiftSwapController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

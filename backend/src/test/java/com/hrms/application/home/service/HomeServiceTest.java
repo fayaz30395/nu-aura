@@ -85,6 +85,78 @@ class HomeServiceTest {
 
     // ==================== Birthday Tests ====================
 
+    private Employee createTestEmployee(UUID id, String firstName, String lastName, LocalDate dob) {
+        Employee employee = new Employee();
+        employee.setId(id);
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        employee.setDateOfBirth(dob);
+        employee.setJoiningDate(LocalDate.now().minusYears(1));
+        employee.setDepartmentId(departmentId);
+        employee.setDesignation("Software Engineer");
+        employee.setStatus(Employee.EmployeeStatus.ACTIVE);
+        return employee;
+    }
+
+    // ==================== Work Anniversary Tests ====================
+
+    private Department createTestDepartment(UUID id, String name) {
+        Department department = new Department();
+        department.setId(id);
+        department.setName(name);
+        department.setCode(name.toUpperCase().substring(0, Math.min(3, name.length())));
+        return department;
+    }
+
+    // ==================== New Joinee Tests ====================
+
+    private LeaveRequest createTestLeaveRequest(UUID employeeId, UUID leaveTypeId, LocalDate startDate, LocalDate endDate) {
+        LeaveRequest leaveRequest = new LeaveRequest();
+        leaveRequest.setId(UUID.randomUUID());
+        leaveRequest.setEmployeeId(employeeId);
+        leaveRequest.setLeaveTypeId(leaveTypeId);
+        leaveRequest.setStartDate(startDate);
+        leaveRequest.setEndDate(endDate);
+        leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
+        leaveRequest.setReason("Personal");
+        return leaveRequest;
+    }
+
+    // ==================== On Leave Today Tests ====================
+
+    private LeaveType createTestLeaveType(UUID id, String name) {
+        LeaveType leaveType = new LeaveType();
+        leaveType.setId(id);
+        leaveType.setLeaveName(name);
+        leaveType.setLeaveCode(name.toUpperCase().replace(" ", "_"));
+        return leaveType;
+    }
+
+    // ==================== Attendance Today Tests ====================
+
+    private Holiday createTestHoliday(String name, LocalDate date) {
+        Holiday holiday = new Holiday();
+        holiday.setId(UUID.randomUUID());
+        holiday.setHolidayName(name);
+        holiday.setHolidayDate(date);
+        holiday.setDescription("Test holiday");
+        holiday.setIsOptional(false);
+        return holiday;
+    }
+
+    // ==================== Holiday Tests ====================
+
+    private AttendanceRecord createTestAttendanceRecord(UUID employeeId, LocalDate date) {
+        AttendanceRecord record = new AttendanceRecord();
+        record.setId(UUID.randomUUID());
+        record.setEmployeeId(employeeId);
+        record.setAttendanceDate(date);
+        record.setWorkDurationMinutes(0);
+        return record;
+    }
+
+    // ==================== Helper Methods ====================
+
     @Nested
     @DisplayName("Birthday Tests")
     class BirthdayTests {
@@ -205,8 +277,6 @@ class HomeServiceTest {
         }
     }
 
-    // ==================== Work Anniversary Tests ====================
-
     @Nested
     @DisplayName("Work Anniversary Tests")
     class WorkAnniversaryTests {
@@ -286,8 +356,6 @@ class HomeServiceTest {
             assertThat(result).isEmpty();
         }
     }
-
-    // ==================== New Joinee Tests ====================
 
     @Nested
     @DisplayName("New Joinee Tests")
@@ -400,8 +468,6 @@ class HomeServiceTest {
             assertThat(result.get(0).getDaysSinceJoining()).isEqualTo(0);
         }
     }
-
-    // ==================== On Leave Today Tests ====================
 
     @Nested
     @DisplayName("On Leave Today Tests")
@@ -531,8 +597,6 @@ class HomeServiceTest {
             assertThat(result).hasSize(2);
         }
     }
-
-    // ==================== Attendance Today Tests ====================
 
     @Nested
     @DisplayName("Attendance Today Tests")
@@ -722,8 +786,6 @@ class HomeServiceTest {
         }
     }
 
-    // ==================== Holiday Tests ====================
-
     @Nested
     @DisplayName("Holiday Tests")
     class HolidayTests {
@@ -842,67 +904,5 @@ class HomeServiceTest {
                     eq(LocalDate.now().plusDays(days))
             );
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private Employee createTestEmployee(UUID id, String firstName, String lastName, LocalDate dob) {
-        Employee employee = new Employee();
-        employee.setId(id);
-        employee.setFirstName(firstName);
-        employee.setLastName(lastName);
-        employee.setDateOfBirth(dob);
-        employee.setJoiningDate(LocalDate.now().minusYears(1));
-        employee.setDepartmentId(departmentId);
-        employee.setDesignation("Software Engineer");
-        employee.setStatus(Employee.EmployeeStatus.ACTIVE);
-        return employee;
-    }
-
-    private Department createTestDepartment(UUID id, String name) {
-        Department department = new Department();
-        department.setId(id);
-        department.setName(name);
-        department.setCode(name.toUpperCase().substring(0, Math.min(3, name.length())));
-        return department;
-    }
-
-    private LeaveRequest createTestLeaveRequest(UUID employeeId, UUID leaveTypeId, LocalDate startDate, LocalDate endDate) {
-        LeaveRequest leaveRequest = new LeaveRequest();
-        leaveRequest.setId(UUID.randomUUID());
-        leaveRequest.setEmployeeId(employeeId);
-        leaveRequest.setLeaveTypeId(leaveTypeId);
-        leaveRequest.setStartDate(startDate);
-        leaveRequest.setEndDate(endDate);
-        leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
-        leaveRequest.setReason("Personal");
-        return leaveRequest;
-    }
-
-    private LeaveType createTestLeaveType(UUID id, String name) {
-        LeaveType leaveType = new LeaveType();
-        leaveType.setId(id);
-        leaveType.setLeaveName(name);
-        leaveType.setLeaveCode(name.toUpperCase().replace(" ", "_"));
-        return leaveType;
-    }
-
-    private Holiday createTestHoliday(String name, LocalDate date) {
-        Holiday holiday = new Holiday();
-        holiday.setId(UUID.randomUUID());
-        holiday.setHolidayName(name);
-        holiday.setHolidayDate(date);
-        holiday.setDescription("Test holiday");
-        holiday.setIsOptional(false);
-        return holiday;
-    }
-
-    private AttendanceRecord createTestAttendanceRecord(UUID employeeId, LocalDate date) {
-        AttendanceRecord record = new AttendanceRecord();
-        record.setId(UUID.randomUUID());
-        record.setEmployeeId(employeeId);
-        record.setAttendanceDate(date);
-        record.setWorkDurationMinutes(0);
-        return record;
     }
 }

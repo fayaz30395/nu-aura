@@ -26,29 +26,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OfficeLocationServiceTest {
 
-    @Mock
-    private OfficeLocationRepository officeLocationRepository;
-
-    @InjectMocks
-    private OfficeLocationService officeLocationService;
-
-    private MockedStatic<TenantContext> tenantContextMock;
-
-    private UUID tenantId;
-    private UUID locationId;
-    private OfficeLocation testLocation;
-
     // Test coordinates (Bangalore, India)
     private static final BigDecimal OFFICE_LAT = new BigDecimal("12.9716");
     private static final BigDecimal OFFICE_LNG = new BigDecimal("77.5946");
-
     // Location within geofence (50m away)
     private static final BigDecimal NEAR_LAT = new BigDecimal("12.9720");
     private static final BigDecimal NEAR_LNG = new BigDecimal("77.5946");
-
     // Location outside geofence (500m away)
     private static final BigDecimal FAR_LAT = new BigDecimal("12.9760");
     private static final BigDecimal FAR_LNG = new BigDecimal("77.5946");
+    @Mock
+    private OfficeLocationRepository officeLocationRepository;
+    @InjectMocks
+    private OfficeLocationService officeLocationService;
+    private MockedStatic<TenantContext> tenantContextMock;
+    private UUID tenantId;
+    private UUID locationId;
+    private OfficeLocation testLocation;
 
     @BeforeEach
     void setUp() {

@@ -66,9 +66,9 @@ class LeaveBalanceControllerTest {
         leaveBalance = new LeaveBalance();
         leaveBalance.setId(leaveBalanceId);
         leaveBalance.setEmployeeId(employeeId);
-        leaveBalance.setTotalDays(BigDecimal.valueOf(21));
-        leaveBalance.setUsedDays(BigDecimal.valueOf(5));
-        leaveBalance.setRemainingDays(BigDecimal.valueOf(16));
+        leaveBalance.setAccrued(BigDecimal.valueOf(21));
+        leaveBalance.setUsed(BigDecimal.valueOf(5));
+        leaveBalance.setAvailable(BigDecimal.valueOf(16));
         leaveBalance.setYear(2024);
     }
 

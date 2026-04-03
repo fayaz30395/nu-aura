@@ -33,7 +33,7 @@ class DataScopeServiceTest {
     }
 
     private void setupSecurityContext(UUID userId, UUID employeeId, UUID tenantId,
-                                       String permission, RoleScope scope) {
+                                      String permission, RoleScope scope) {
         SecurityContext.setCurrentUser(userId, employeeId,
                 Collections.emptySet(),
                 Map.of(permission, scope));
@@ -41,7 +41,7 @@ class DataScopeServiceTest {
     }
 
     private void setupSecurityContextWithRoles(UUID userId, UUID employeeId, UUID tenantId,
-                                                String permission, RoleScope scope, Set<String> roles) {
+                                               String permission, RoleScope scope, Set<String> roles) {
         SecurityContext.setCurrentUser(userId, employeeId, roles, Map.of(permission, scope));
         SecurityContext.setCurrentTenantId(tenantId);
     }

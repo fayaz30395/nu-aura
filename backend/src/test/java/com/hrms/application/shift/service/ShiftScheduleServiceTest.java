@@ -33,26 +33,19 @@ import static org.mockito.Mockito.*;
 @DisplayName("ShiftScheduleService Tests")
 class ShiftScheduleServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private ShiftRepository shiftRepository;
-
     @Mock
     private ShiftAssignmentRepository shiftAssignmentRepository;
-
     @Mock
     private ShiftPatternRepository shiftPatternRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private ObjectMapper objectMapper;
-
     @InjectMocks
     private ShiftScheduleService shiftScheduleService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID shiftId;

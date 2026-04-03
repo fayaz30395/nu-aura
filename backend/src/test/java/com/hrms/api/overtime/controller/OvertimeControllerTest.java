@@ -42,18 +42,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("OvertimeManagementController Unit Tests")
 class OvertimeControllerTest {
 
-    @Mock
-    private OvertimeManagementService overtimeManagementService;
-
-    @InjectMocks
-    private OvertimeManagementController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID RECORD_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID APPROVER_ID = UUID.randomUUID();
+    @Mock
+    private OvertimeManagementService overtimeManagementService;
+    @InjectMocks
+    private OvertimeManagementController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

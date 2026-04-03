@@ -26,13 +26,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OcrReceiptServiceTest {
 
+    private static final UUID TENANT_ID = UUID.randomUUID();
     @Mock
     private FileStorageService fileStorageService;
-
     @InjectMocks
     private OcrReceiptService ocrReceiptService;
-
-    private static final UUID TENANT_ID = UUID.randomUUID();
 
     @BeforeEach
     void setUp() {

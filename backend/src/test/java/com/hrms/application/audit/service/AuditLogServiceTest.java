@@ -34,25 +34,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("AuditLogService Tests")
 class AuditLogServiceTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private AuditLogRepository auditLogRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private ObjectMapper objectMapper;
-
     @InjectMocks
     private AuditLogService auditLogService;
-
     private UUID tenantId;
     private UUID userId;
     private UUID entityId;
     private AuditLog testAuditLog;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-    private static MockedStatic<SecurityContext> securityContextMock;
 
     @BeforeAll
     static void setUpClass() {
@@ -172,7 +167,8 @@ class AuditLogServiceTest {
             Map<String, String> oldValue = Map.of("key", "value");
 
             when(objectMapper.writeValueAsString(oldValue))
-                    .thenThrow(new com.fasterxml.jackson.core.JsonProcessingException("Serialization error") {});
+                    .thenThrow(new com.fasterxml.jackson.core.JsonProcessingException("Serialization error") {
+                    });
 
             // Act & Assert
             assertThatThrownBy(() -> auditLogService.logAction(

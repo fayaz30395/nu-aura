@@ -45,23 +45,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ContractController Tests")
 class ContractControllerTest {
 
+    private static final String BASE_URL = "/api/v1/contracts";
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private ContractService contractService;
-
     @MockitoBean
     private ContractSignatureService signatureService;
-
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
-    private static final String BASE_URL = "/api/v1/contracts";
 
     @Nested
     @DisplayName("POST /api/v1/contracts")

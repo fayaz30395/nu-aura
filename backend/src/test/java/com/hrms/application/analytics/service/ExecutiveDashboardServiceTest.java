@@ -327,7 +327,7 @@ class ExecutiveDashboardServiceTest {
         void shouldIncludeCriticalAttritionAlertWhenHighRisk() {
             // Given
             Object[] criticalRow = new Object[]{
-                com.hrms.domain.analytics.AttritionPrediction.RiskLevel.CRITICAL, 10L
+                    com.hrms.domain.analytics.AttritionPrediction.RiskLevel.CRITICAL, 10L
             };
             List<Object[]> criticalRows = new java.util.ArrayList<>();
             criticalRows.add(criticalRow);

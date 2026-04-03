@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * End-to-end integration tests for Leave Request scope enforcement.
  * Tests the complete flow from HTTP request through controller, service, and database.
- *
+ * <p>
  * Test Scenarios:
  * 1. SELF scope - user can only see their own leave requests
  * 2. TEAM scope - manager can see their reportees' leave requests
@@ -45,26 +45,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Leave Request Scope E2E Integration Tests")
 class LeaveRequestScopeIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private LeaveRequestRepository leaveRequestRepository;
-
-    @Autowired
-    private LeaveTypeRepository leaveTypeRepository;
-
     private static final String BASE_URL = "/api/v1/leave-requests";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
     // Employee IDs for testing
     private static final UUID CURRENT_EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID REPORTEE_EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID OTHER_EMPLOYEE_ID = UUID.randomUUID();
-
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private LeaveTypeRepository leaveTypeRepository;
     private LeaveType casualLeave;
     private LeaveRequest ownLeaveRequest;
     private LeaveRequest reporteeLeaveRequest;
@@ -90,6 +84,142 @@ class LeaveRequestScopeIntegrationTest {
     }
 
     // ==================== SELF Scope Tests ====================
+
+    private LeaveType createLeaveType(String name, String code) {
+        LeaveType leaveType = LeaveType.builder()
+                .leaveName(name)
+                .leaveCode(code)
+                .description("Test leave type")
+                .annualQuota(BigDecimal.valueOf(20))
+                .isCarryForwardAllowed(false)
+                .isEncashable(false)
+                .isPaid(true)
+                .isActive(true)
+                .build();
+        leaveType.setTenantId(TENANT_ID);
+        return leaveTypeRepository.save(leaveType);
+    }
+
+    // ==================== TEAM Scope Tests ====================
+
+    private LeaveRequest createLeaveRequest(UUID employeeId, String reason) {
+        LeaveRequest leaveRequest = LeaveRequest.builder()
+                .employeeId(employeeId)
+                .leaveTypeId(casualLeave.getId())
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(3))
+                .totalDays(BigDecimal.valueOf(3))
+                .reason(reason)
+                .status(LeaveRequest.LeaveRequestStatus.PENDING)
+                .isHalfDay(false)
+                .build();
+        leaveRequest.setRequestNumber("LR-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 4));
+        leaveRequest.setTenantId(TENANT_ID);
+        return leaveRequestRepository.save(leaveRequest);
+    }
+
+    // ==================== ALL Scope Tests ====================
+
+    private void setupSelfScope(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.SELF);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.SELF);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== System Admin Tests ====================
+
+    private void setupTeamScope(UUID employeeId, Set<UUID> reporteeIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.TEAM);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.TEAM);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.TEAM);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setAllReporteeIds(reporteeIds);
+    }
+
+    // ==================== LOCATION Scope Tests ====================
+
+    private void setupAllScope(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.ALL);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== CUSTOM Scope Tests ====================
+
+    private void setupSystemAdmin(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
+    // ==================== Super Admin Tests ====================
+
+    private void setupLocationScope(UUID employeeId, Set<UUID> locationIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.LOCATION);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.LOCATION);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.LOCATION);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setCurrentLocationIds(locationIds);
+    }
+
+    // ==================== Edge Cases ====================
+
+    private void setupCustomScope(UUID employeeId, Set<UUID> customEmployeeIds,
+                                  Set<UUID> customDepartmentIds, Set<UUID> customLocationIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.CUSTOM);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.CUSTOM);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.CUSTOM);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+
+        // Set custom targets for leave view permissions
+        if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
+            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_SELF,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_TEAM,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_ALL,
+                    customEmployeeIds, customDepartmentIds, customLocationIds);
+        }
+    }
+
+    // ==================== Helper Methods ====================
+
+    private void setupSuperAdminByRole(UUID employeeId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        // Include explicit system-admin permission for current authorization model
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
+        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.SELF);
+        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
 
     @Nested
     @DisplayName("SELF Scope Tests")
@@ -142,8 +272,6 @@ class LeaveRequestScopeIntegrationTest {
                     .andExpect(status().isForbidden());
         }
     }
-
-    // ==================== TEAM Scope Tests ====================
 
     @Nested
     @DisplayName("TEAM Scope Tests")
@@ -208,8 +336,6 @@ class LeaveRequestScopeIntegrationTest {
         }
     }
 
-    // ==================== ALL Scope Tests ====================
-
     @Nested
     @DisplayName("ALL Scope Tests")
     class AllScopeTests {
@@ -264,8 +390,6 @@ class LeaveRequestScopeIntegrationTest {
         }
     }
 
-    // ==================== System Admin Tests ====================
-
     @Nested
     @DisplayName("System Admin Tests")
     class SystemAdminTests {
@@ -282,8 +406,6 @@ class LeaveRequestScopeIntegrationTest {
                     .andExpect(jsonPath("$.id").value(otherLeaveRequest.getId().toString()));
         }
     }
-
-    // ==================== LOCATION Scope Tests ====================
 
     @Nested
     @DisplayName("LOCATION Scope Tests")
@@ -350,8 +472,6 @@ class LeaveRequestScopeIntegrationTest {
                     .andExpect(status().isForbidden());
         }
     }
-
-    // ==================== CUSTOM Scope Tests ====================
 
     @Nested
     @DisplayName("CUSTOM Scope Tests")
@@ -457,8 +577,6 @@ class LeaveRequestScopeIntegrationTest {
         }
     }
 
-    // ==================== Super Admin Tests ====================
-
     @Nested
     @DisplayName("Super Admin Tests")
     class SuperAdminTests {
@@ -488,8 +606,6 @@ class LeaveRequestScopeIntegrationTest {
                     .andExpect(jsonPath("$.content").isArray());
         }
     }
-
-    // ==================== Edge Cases ====================
 
     @Nested
     @DisplayName("Edge Cases")
@@ -521,128 +637,6 @@ class LeaveRequestScopeIntegrationTest {
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
         }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private LeaveType createLeaveType(String name, String code) {
-        LeaveType leaveType = LeaveType.builder()
-                .leaveName(name)
-                .leaveCode(code)
-                .description("Test leave type")
-                .annualQuota(BigDecimal.valueOf(20))
-                .isCarryForwardAllowed(false)
-                .isEncashable(false)
-                .isPaid(true)
-                .isActive(true)
-                .build();
-        leaveType.setTenantId(TENANT_ID);
-        return leaveTypeRepository.save(leaveType);
-    }
-
-    private LeaveRequest createLeaveRequest(UUID employeeId, String reason) {
-        LeaveRequest leaveRequest = LeaveRequest.builder()
-                .employeeId(employeeId)
-                .leaveTypeId(casualLeave.getId())
-                .startDate(LocalDate.now().plusDays(1))
-                .endDate(LocalDate.now().plusDays(3))
-                .totalDays(BigDecimal.valueOf(3))
-                .reason(reason)
-                .status(LeaveRequest.LeaveRequestStatus.PENDING)
-                .isHalfDay(false)
-                .build();
-        leaveRequest.setRequestNumber("LR-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 4));
-        leaveRequest.setTenantId(TENANT_ID);
-        return leaveRequestRepository.save(leaveRequest);
-    }
-
-    private void setupSelfScope(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.SELF);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.SELF);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupTeamScope(UUID employeeId, Set<UUID> reporteeIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.TEAM);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.TEAM);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.TEAM);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-        SecurityContext.setAllReporteeIds(reporteeIds);
-    }
-
-    private void setupAllScope(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.ALL);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.ALL);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.ALL);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.ALL);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupSystemAdmin(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-    }
-
-    private void setupLocationScope(UUID employeeId, Set<UUID> locationIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.LOCATION);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.LOCATION);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.LOCATION);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-        SecurityContext.setCurrentLocationIds(locationIds);
-    }
-
-    private void setupCustomScope(UUID employeeId, Set<UUID> customEmployeeIds,
-                                   Set<UUID> customDepartmentIds, Set<UUID> customLocationIds) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.CUSTOM);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.CUSTOM);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.CUSTOM);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
-
-        // Set custom targets for leave view permissions
-        if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
-            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_SELF,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_TEAM,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-            SecurityContext.setCustomScopeTargets(Permission.LEAVE_VIEW_ALL,
-                    customEmployeeIds, customDepartmentIds, customLocationIds);
-        }
-    }
-
-    private void setupSuperAdminByRole(UUID employeeId) {
-        Map<String, RoleScope> permissions = new HashMap<>();
-        // Include explicit system-admin permission for current authorization model
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
-        permissions.put(Permission.LEAVE_VIEW_TEAM, RoleScope.SELF);
-        permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
-
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
 }

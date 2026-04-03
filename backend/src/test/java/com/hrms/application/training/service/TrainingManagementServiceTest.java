@@ -33,14 +33,15 @@ import static org.mockito.Mockito.*;
 @DisplayName("TrainingManagementService Tests")
 class TrainingManagementServiceTest {
 
-    @Mock private TrainingProgramRepository programRepository;
-    @Mock private TrainingEnrollmentRepository enrollmentRepository;
-    @Mock private EmployeeRepository employeeRepository;
-
+    private static MockedStatic<TenantContext> tenantContextMock;
+    @Mock
+    private TrainingProgramRepository programRepository;
+    @Mock
+    private TrainingEnrollmentRepository enrollmentRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
     @InjectMocks
     private TrainingManagementService trainingService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
     private UUID tenantId;
 
     @BeforeAll
@@ -87,6 +88,82 @@ class TrainingManagementServiceTest {
 
     // ==================== createProgram ====================
 
+    @Test
+    @DisplayName("updateProgram should update fields")
+    void shouldUpdateProgram() {
+        UUID programId = UUID.randomUUID();
+        TrainingProgram existing = buildProgram();
+        existing.setId(programId);
+
+        TrainingProgramRequest request = buildRequest();
+        request.setProgramName("Updated Name");
+
+        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(existing));
+        when(programRepository.save(any(TrainingProgram.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        TrainingProgramResponse result = trainingService.updateProgram(programId, request);
+
+        assertThat(result.getProgramName()).isEqualTo("Updated Name");
+    }
+
+    // ==================== updateProgram ====================
+
+    @Test
+    @DisplayName("updateProgram should throw when not found")
+    void shouldThrowWhenProgramNotFound() {
+        UUID programId = UUID.randomUUID();
+        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> trainingService.updateProgram(programId, buildRequest()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("getProgramById should return program response")
+    void shouldGetProgramById() {
+        UUID programId = UUID.randomUUID();
+        TrainingProgram program = buildProgram();
+        program.setId(programId);
+
+        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(program));
+
+        TrainingProgramResponse result = trainingService.getProgramById(programId);
+
+        assertThat(result.getProgramName()).isEqualTo("Leadership 101");
+    }
+
+    // ==================== getProgramById ====================
+
+    @Test
+    @DisplayName("getProgramsByStatus should filter by status")
+    void shouldGetProgramsByStatus() {
+        TrainingProgram program = buildProgram();
+        when(programRepository.findByTenantIdAndStatus(tenantId, TrainingProgram.ProgramStatus.DRAFT))
+                .thenReturn(List.of(program));
+
+        List<TrainingProgramResponse> result = trainingService.getProgramsByStatus(TrainingProgram.ProgramStatus.DRAFT);
+
+        assertThat(result).hasSize(1);
+    }
+
+    // ==================== getProgramsByStatus ====================
+
+    @Test
+    @DisplayName("deleteProgram should delete when found")
+    void shouldDeleteProgram() {
+        UUID programId = UUID.randomUUID();
+        TrainingProgram program = buildProgram();
+        program.setId(programId);
+
+        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(program));
+
+        trainingService.deleteProgram(programId);
+
+        verify(programRepository).delete(program);
+    }
+
+    // ==================== deleteProgram ====================
+
     @Nested
     @DisplayName("createProgram")
     class CreateProgramTests {
@@ -122,81 +199,5 @@ class TrainingManagementServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("already exists");
         }
-    }
-
-    // ==================== updateProgram ====================
-
-    @Test
-    @DisplayName("updateProgram should update fields")
-    void shouldUpdateProgram() {
-        UUID programId = UUID.randomUUID();
-        TrainingProgram existing = buildProgram();
-        existing.setId(programId);
-
-        TrainingProgramRequest request = buildRequest();
-        request.setProgramName("Updated Name");
-
-        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(existing));
-        when(programRepository.save(any(TrainingProgram.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        TrainingProgramResponse result = trainingService.updateProgram(programId, request);
-
-        assertThat(result.getProgramName()).isEqualTo("Updated Name");
-    }
-
-    @Test
-    @DisplayName("updateProgram should throw when not found")
-    void shouldThrowWhenProgramNotFound() {
-        UUID programId = UUID.randomUUID();
-        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> trainingService.updateProgram(programId, buildRequest()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    // ==================== getProgramById ====================
-
-    @Test
-    @DisplayName("getProgramById should return program response")
-    void shouldGetProgramById() {
-        UUID programId = UUID.randomUUID();
-        TrainingProgram program = buildProgram();
-        program.setId(programId);
-
-        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(program));
-
-        TrainingProgramResponse result = trainingService.getProgramById(programId);
-
-        assertThat(result.getProgramName()).isEqualTo("Leadership 101");
-    }
-
-    // ==================== getProgramsByStatus ====================
-
-    @Test
-    @DisplayName("getProgramsByStatus should filter by status")
-    void shouldGetProgramsByStatus() {
-        TrainingProgram program = buildProgram();
-        when(programRepository.findByTenantIdAndStatus(tenantId, TrainingProgram.ProgramStatus.DRAFT))
-                .thenReturn(List.of(program));
-
-        List<TrainingProgramResponse> result = trainingService.getProgramsByStatus(TrainingProgram.ProgramStatus.DRAFT);
-
-        assertThat(result).hasSize(1);
-    }
-
-    // ==================== deleteProgram ====================
-
-    @Test
-    @DisplayName("deleteProgram should delete when found")
-    void shouldDeleteProgram() {
-        UUID programId = UUID.randomUUID();
-        TrainingProgram program = buildProgram();
-        program.setId(programId);
-
-        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(program));
-
-        trainingService.deleteProgram(programId);
-
-        verify(programRepository).delete(program);
     }
 }

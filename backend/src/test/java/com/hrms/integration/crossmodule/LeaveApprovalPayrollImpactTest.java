@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Cross-module business flow test: Leave Approval -> Payroll / Balance Impact.
- *
+ * <p>
  * Verifies that when a leave request is approved:
  * 1. The leave balance is properly deducted (balance service called)
  * 2. Half-day leaves deduct 0.5 (not 1.0) — R2-006 regression guard
@@ -38,29 +38,21 @@ import static org.mockito.Mockito.*;
 @DisplayName("Cross-Module: Leave Approval -> Payroll/Balance Impact")
 class LeaveApprovalPayrollImpactTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
-
     @Mock
     private LeaveBalanceService leaveBalanceService;
-
     @Mock
     private WebSocketNotificationService webSocketNotificationService;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
-
     @Mock
     private DomainEventPublisher domainEventPublisher;
-
     @InjectMocks
     private LeaveRequestService leaveRequestService;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID tenantId;
     private UUID employeeId;
     private UUID leaveTypeId;

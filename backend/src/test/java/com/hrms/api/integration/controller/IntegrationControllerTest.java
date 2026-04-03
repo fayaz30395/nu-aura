@@ -42,32 +42,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("IntegrationController Unit Tests")
 class IntegrationControllerTest {
 
+    private static final String BASE_URL = "/api/v1/integrations";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private SmsService smsService;
-
     @MockitoBean
     private SmsTemplate smsTemplate;
-
     @MockitoBean
     private PaymentGatewayService paymentGatewayService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static final String BASE_URL = "/api/v1/integrations";
 
     // ===================== SMS Tests =====================
 

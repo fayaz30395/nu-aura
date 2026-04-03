@@ -48,30 +48,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("PaymentConfigController Unit Tests")
 class PaymentConfigControllerTest {
 
+    private static final String BASE_URL = "/api/v1/payments/config";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private PaymentService paymentService;
-
     @MockitoBean
     private PaymentFeatureGuard paymentFeatureGuard;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static final String BASE_URL = "/api/v1/payments/config";
-
     private PaymentConfigDto validConfigRequest;
     private PaymentConfig savedConfig;
 

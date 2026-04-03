@@ -45,23 +45,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ProjectTimesheetController Unit Tests")
 class TimesheetControllerTest {
 
-    @Mock
-    private ProjectTimesheetService projectTimesheetService;
-
-    @Mock
-    private TimeTrackingReportService reportService;
-
-    @InjectMocks
-    private ProjectTimesheetController controller;
-
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-
     private static final UUID ENTRY_ID = UUID.randomUUID();
     private static final UUID PROJECT_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID APPROVER_ID = UUID.randomUUID();
     private static final UUID MEMBER_ID = UUID.randomUUID();
+    @Mock
+    private ProjectTimesheetService projectTimesheetService;
+    @Mock
+    private TimeTrackingReportService reportService;
+    @InjectMocks
+    private ProjectTimesheetController controller;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

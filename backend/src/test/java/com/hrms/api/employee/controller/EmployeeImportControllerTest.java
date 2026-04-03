@@ -167,7 +167,7 @@ class EmployeeImportControllerTest {
         void shouldExecuteCsvImport() throws Exception {
             EmployeeImportResult result = new EmployeeImportResult();
             result.setSuccessCount(8);
-            result.setFailureCount(2);
+            result.setFailedCount(2);
             result.setTotalProcessed(10);
 
             when(employeeImportService.executeImport(any(), anyBoolean())).thenReturn(result);
@@ -182,7 +182,7 @@ class EmployeeImportControllerTest {
                             .param("skipInvalid", "true"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.successCount").value(8))
-                    .andExpect(jsonPath("$.failureCount").value(2));
+                    .andExpect(jsonPath("$.failedCount").value(2));
 
             verify(employeeImportService).executeImport(any(), eq(true));
         }
@@ -192,7 +192,7 @@ class EmployeeImportControllerTest {
         void shouldExecuteImportWithStrictMode() throws Exception {
             EmployeeImportResult result = new EmployeeImportResult();
             result.setSuccessCount(10);
-            result.setFailureCount(0);
+            result.setFailedCount(0);
             result.setTotalProcessed(10);
 
             when(employeeImportService.executeImport(any(), anyBoolean())).thenReturn(result);
@@ -216,7 +216,7 @@ class EmployeeImportControllerTest {
         void shouldDefaultSkipInvalidToTrue() throws Exception {
             EmployeeImportResult result = new EmployeeImportResult();
             result.setSuccessCount(5);
-            result.setFailureCount(0);
+            result.setFailedCount(0);
             result.setTotalProcessed(5);
 
             when(employeeImportService.executeImport(any(), anyBoolean())).thenReturn(result);

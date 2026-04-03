@@ -32,18 +32,30 @@ class ApprovalCallbackHandlerTest {
     private static final UUID ENTITY_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
     private static final UUID APPROVER_ID = UUID.fromString("770e8400-e29b-41d4-a716-446655440002");
 
-    @Mock private WorkflowDefinitionRepository workflowDefinitionRepository;
-    @Mock private ApprovalStepRepository approvalStepRepository;
-    @Mock private WorkflowExecutionRepository workflowExecutionRepository;
-    @Mock private StepExecutionRepository stepExecutionRepository;
-    @Mock private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock private WorkflowRuleRepository workflowRuleRepository;
-    @Mock private EmployeeRepository employeeRepository;
-    @Mock private DepartmentRepository departmentRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private DomainEventPublisher domainEventPublisher;
-    @Mock private AuditLogService auditLogService;
-    @Mock private LeaveRequestRepository leaveRequestRepository;
+    @Mock
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
+    @Mock
+    private ApprovalStepRepository approvalStepRepository;
+    @Mock
+    private WorkflowExecutionRepository workflowExecutionRepository;
+    @Mock
+    private StepExecutionRepository stepExecutionRepository;
+    @Mock
+    private ApprovalDelegateRepository approvalDelegateRepository;
+    @Mock
+    private WorkflowRuleRepository workflowRuleRepository;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
+    @Mock
+    private AuditLogService auditLogService;
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
 
     @Test
     @DisplayName("should register callback handlers by entity type at construction time")

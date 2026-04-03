@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
+
 import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,16 +35,14 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class WebSocketNotificationE2ETest {
 
-    @Autowired
-    private WebSocketNotificationService webSocketNotificationService;
-
-    @SpyBean
-    private SimpMessagingTemplate messagingTemplate;
-
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_DEPARTMENT_ID = UUID.fromString("333e8400-e29b-41d4-a716-446655440099");
+    @Autowired
+    private WebSocketNotificationService webSocketNotificationService;
+    @SpyBean
+    private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
     void setUp() {
@@ -80,8 +79,8 @@ class WebSocketNotificationE2ETest {
                 argThat(arg -> {
                     NotificationMessage msg = (NotificationMessage) arg;
                     return "Test Notification".equals(msg.getTitle()) &&
-                           msg.getId() != null &&
-                           msg.getTimestamp() != null;
+                            msg.getId() != null &&
+                            msg.getTimestamp() != null;
                 })
         );
     }
@@ -217,9 +216,9 @@ class WebSocketNotificationE2ETest {
                 argThat(arg -> {
                     NotificationMessage msg = (NotificationMessage) arg;
                     return "New Leave Request".equals(msg.getTitle()) &&
-                           msg.getMessage().contains("John Doe") &&
-                           msg.getMessage().contains("Annual Leave") &&
-                           NotificationMessage.NotificationType.LEAVE_REQUEST.equals(msg.getType());
+                            msg.getMessage().contains("John Doe") &&
+                            msg.getMessage().contains("Annual Leave") &&
+                            NotificationMessage.NotificationType.LEAVE_REQUEST.equals(msg.getType());
                 })
         );
     }

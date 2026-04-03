@@ -27,15 +27,12 @@ import static org.mockito.Mockito.*;
 @DisplayName("NotificationService Tests")
 class NotificationServiceTest {
 
-    @Mock
-    private NotificationRepository notificationRepository;
-
-    @InjectMocks
-    private NotificationService notificationService;
-
     private static MockedStatic<SecurityContext> securityContextMock;
     private static MockedStatic<TenantContext> tenantContextMock;
-
+    @Mock
+    private NotificationRepository notificationRepository;
+    @InjectMocks
+    private NotificationService notificationService;
     private UUID tenantId;
     private UUID userId;
     private Notification notification;

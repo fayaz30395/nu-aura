@@ -33,6 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -59,27 +60,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("LoanController Unit Tests")
 class LoanControllerTest {
 
+    private static final String BASE_URL = "/api/v1/loans";
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private LoanService loanService;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static final String BASE_URL = "/api/v1/loans";
-
     private UUID loanId;
     private UUID employeeId;
     private EmployeeLoanDto loanDto;
