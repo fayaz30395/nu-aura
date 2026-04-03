@@ -86,7 +86,7 @@ export const taskService = {
   getAssigneeTasks: (assigneeId: string, page = 0, size = 50): Promise<TasksPageResponse> =>
     wrapServiceCall(`${SERVICE_NAME}.getAssigneeTasks`, async () => {
       const response = await apiClient.get<TasksPageResponse>(
-        `${BASE_URL}/assignee/${assigneeId}?page=${page}&size=${size}`
+        `${BASE_URL}/assignee/${assigneeId}`, { params: { page, size } }
       );
       return response.data;
     }, { context: { assigneeId } }),
@@ -96,7 +96,7 @@ export const taskService = {
    */
   getAllTasks: (page = 0, size = 50): Promise<TasksPageResponse> =>
     wrapServiceCall(`${SERVICE_NAME}.getAllTasks`, async () => {
-      const response = await apiClient.get<TasksPageResponse>(`${BASE_URL}?page=${page}&size=${size}`);
+      const response = await apiClient.get<TasksPageResponse>(BASE_URL, { params: { page, size } });
       return response.data;
     }),
 

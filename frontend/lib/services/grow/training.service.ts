@@ -37,7 +37,7 @@ export const trainingService = {
 
   async getAllPrograms(page = 0, size = 20): Promise<PagedResponse<TrainingProgram>> {
     const response = await apiClient.get<PagedResponse<TrainingProgram>>(
-      `${BASE_URL}/programs?page=${page}&size=${size}`
+      `${BASE_URL}/programs`, { params: { page, size } }
     );
     return response.data;
   },
@@ -62,7 +62,7 @@ export const trainingService = {
     status: EnrollmentStatus
   ): Promise<TrainingEnrollment> {
     const response = await apiClient.patch<TrainingEnrollment>(
-      `${BASE_URL}/enrollments/${enrollmentId}/status?status=${status}`
+      `${BASE_URL}/enrollments/${enrollmentId}/status`, { params: { status } }
     );
     return response.data;
   },

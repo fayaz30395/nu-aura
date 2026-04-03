@@ -71,7 +71,7 @@ export const wellnessService = {
 
   async getHealthLogs(startDate: string, endDate: string): Promise<HealthLog[]> {
     const response = await apiClient.get<HealthLog[]>(
-      `${BASE_URL}/health-logs?startDate=${startDate}&endDate=${endDate}`
+      `${BASE_URL}/health-logs`, { params: { startDate, endDate } }
     );
     return response.data;
   },
@@ -83,13 +83,13 @@ export const wellnessService = {
   },
 
   async getLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
-    const response = await apiClient.get<LeaderboardEntry[]>(`${BASE_URL}/leaderboard?limit=${limit}`);
+    const response = await apiClient.get<LeaderboardEntry[]>(`${BASE_URL}/leaderboard`, { params: { limit } });
     return response.data;
   },
 
   async getChallengeLeaderboard(challengeId: string, limit = 10): Promise<LeaderboardEntry[]> {
     const response = await apiClient.get<LeaderboardEntry[]>(
-      `${BASE_URL}/challenges/${challengeId}/leaderboard?limit=${limit}`
+      `${BASE_URL}/challenges/${challengeId}/leaderboard`, { params: { limit } }
     );
     return response.data;
   },
