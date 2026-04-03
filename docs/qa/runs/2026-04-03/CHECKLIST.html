@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="30">
+<title>NU-AURA QA Checklist — 2026-04-03 22:41</title>
+<style>
+  :root {--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--green:#3fb950;--amber:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',monospace;font-size:13px;line-height:1.6;padding:24px}
+  h1{font-size:22px;color:var(--blue);margin-bottom:4px}
+  .subtitle{color:var(--muted);font-size:12px;margin-bottom:20px}
+  .stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+  .stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:100px;text-align:center}
+  .stat-val{font-size:24px;font-weight:700;display:block}
+  .stat-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .green{color:var(--green)} .amber{color:var(--amber)} .red{color:var(--red)} .blue{color:var(--blue)}
+  h2{font-size:16px;color:var(--blue);margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+  h3{font-size:14px;color:var(--muted);margin:16px 0 8px}
+  table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px}
+  th{background:var(--bg3);color:var(--muted);text-align:left;padding:6px 10px;border:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+  td{padding:6px 10px;border:1px solid var(--border);vertical-align:top}
+  tr:nth-child(even){background:var(--bg2)}
+  .fixed{color:var(--green)} .open{color:var(--amber)} .progress{color:var(--blue)} .fail{color:var(--red)} .pending{color:var(--muted)}
+  .refresh{position:fixed;top:12px;right:16px;font-size:11px;color:var(--muted)}
+  code{background:var(--bg3);padding:1px 5px;border-radius:3px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="refresh">Auto-refresh every 30s · Last updated: 2026-04-03 22:41</div>
+<h1>NU-AURA QA Checklist</h1>
+<div class="subtitle">2026-04-03 QA Run | All bugs and use cases tracked below</div>
+
+<div class="stats">
+  <div class="stat"><span class="stat-val green">34</span><span class="stat-label">Bugs Fixed</span></div>
+  <div class="stat"><span class="stat-val amber">14</span><span class="stat-label">Open Bugs</span></div>
+  <div class="stat"><span class="stat-val blue">134</span><span class="stat-label">UCs Written</span></div>
+  <div class="stat"><span class="stat-val" style="color:var(--muted)">7</span><span class="stat-label">Pending</span></div>
+  <div class="stat"><span class="stat-val blue">2</span><span class="stat-label">In Progress</span></div>
+</div>
+<p style="margin:4px 0;color:var(--muted)"># NU-AURA QA & Deployment Checklist — 2026-04-03</p>
+<p style="margin:4px 0;color:var(--muted)">> **Last updated:** 2026-04-03 | **Source:** QA Run #3 + JUnit Generation Pass</p>
+<p style="margin:4px 0;color:var(--muted)">> Legend: <span class="fixed">✅</span> Done · <span class="progress">⏳</span> In Progress · <span class="fail">❌</span> Failing · <span class="open">⚠️</span> Needs Fix · 🔵 Skipped · 📋 Pending</p>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Overall Status</h2>
+<table><thead><tr><th>Category</th><th>Total</th><th>Done</th><th>Pending</th><th>Failing</th></tr></thead><tbody>
+<tr><td>Use Cases (JUnit)</td><td>318</td><td>**264**</td><td>54</td><td>0</td></tr>
+<tr><td>Bugs Found</td><td>43</td><td>**29 fixed**</td><td>—</td><td>14 open</td></tr>
+<tr><td>P0 Bugs</td><td>2</td><td><span class="fixed">✅</span> 2 fixed</td><td>—</td><td>0</td></tr>
+<tr><td>P1 Bugs</td><td>8</td><td>5 fixed</td><td>—</td><td>3 in-progress</td></tr>
+<tr><td>P2 Bugs</td><td>33</td><td>22 fixed</td><td>—</td><td>11 open</td></tr>
+<tr><td>Backend Compile</td><td>—</td><td><span class="fixed">✅</span> Clean</td><td>—</td><td>—</td></tr>
+<tr><td>Frontend Build</td><td>—</td><td><span class="fixed">✅</span> Clean</td><td>—</td><td>—</td></tr>
+<tr><td>Flyway Migrations</td><td>V0–V112</td><td><span class="fixed">✅</span> Applied</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Bug Tracker</h2>
+<h3>🔴 P0 — Release Blockers</h3>
+<table><thead><tr><th>Bug</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>BUG-004</td><td>RBAC failure — V96 wiped role_permissions</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V107 repopulates all roles</td></tr>
+<tr><td>BUG-QA3-001</td><td>Permission prefix mismatch (HRMS: prefix)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — normalizePermissionCode() strips prefix</td></tr>
+</tbody></table>
+<h3>🟠 P1 — Major Functional Issues</h3>
+<table><thead><tr><th>Bug</th><th>Endpoint</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>BUG-001</td><td>POST /auth/mfa/verify</td><td>Missing <code>verified</code> field in response</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span></td></tr>
+<tr><td>BUG-002</td><td>POST /auth/refresh</td><td>JWT refresh always 401</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — validateRefreshToken()</td></tr>
+<tr><td>BUG-005</td><td>POST /loans</td><td>Loan creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td></tr>
+<tr><td>BUG-006</td><td>POST /travel/requests</td><td>Travel creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td></tr>
+<tr><td>BUG-QA3-002</td><td>POST /auth/login</td><td>Account lockout not enforced</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — AccountLockoutService wired</td></tr>
+<tr><td>BUG-QA2-009</td><td>PUT /employees/{id}/deactivate</td><td>Deactivation 500 NPE</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — gate userRepository.save() behind firstName/lastName check (LazyInit fix)</td></tr>
+<tr><td>BUG-QA2-010</td><td>POST /assets</td><td>Asset creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V112 adds <code>version</code> column</td></tr>
+<tr><td>BUG-QA2-012</td><td>POST /self-service/profile-updates</td><td>Profile update 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard on getCurrentEmployeeId()</td></tr>
+<tr><td>BUG-QA2-003</td><td>POST /letters/generate</td><td>Letter saved then 404 on GET</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+</tbody></table>
+<h3>🟡 P2 — Significant Issues</h3>
+<table><thead><tr><th>Bug</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>BUG-007</td><td>Backend OOM — heap 92-96% of Xmx400m</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — Xmx1024m, ZGC</td></tr>
+<tr><td>BUG-014</td><td>Announcement creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V109 wall_post_id</td></tr>
+<tr><td>BUG-QA3-003</td><td>/employees/me has @RequiresPermission (MY SPACE violation)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — removed annotation</td></tr>
+<tr><td>BUG-QA3-004</td><td>No NEW_JOINER seed user</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 newjoiner@nulogic.io</td></tr>
+<tr><td>BUG-QA3-006</td><td>EMPLOYEE cannot submit referrals</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 adds REFERRAL perms</td></tr>
+<tr><td>BUG-QA3-007</td><td>Interview scheduling 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards in InterviewService</td></tr>
+<tr><td>BUG-QA3-008</td><td>Job requisition creation 400</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — auto-generate job code</td></tr>
+<tr><td>BUG-QA3-009</td><td>Referral creation 500 for SUPER_ADMIN</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards + validation</td></tr>
+<tr><td>BUG-QA4-001</td><td>Review cycle activate 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V108 start_date/end_date columns</td></tr>
+<tr><td>BUG-QA4-002</td><td>Self-review 403 for all non-admin</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA4-003</td><td>360 feedback 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA4-004</td><td>OKR creation 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA4-005</td><td>Survey creation 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA4-006</td><td>Dashboard 403 for non-admin</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA4-008</td><td>1-on-1 meeting creation 400</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
+<tr><td>BUG-QA2-002</td><td>Contract creation null <code>terms</code> 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard in createVersion()</td></tr>
+<tr><td>BUG-QA3-005</td><td>Document upload 404 (path mismatch)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — new EmployeeDocumentController delegates to FileStorageService</td></tr>
+<tr><td>BUG-QA2-001</td><td>Leave field aliases (<code>name</code>, <code>maxDaysPerYear</code>)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — @JsonAlias added; totalDays now optional (computed from dates)</td></tr>
+<tr><td>BUG-QA2-004</td><td>Probation <code>durationMonths</code> required but undocumented</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — defaults to 3 months when omitted</td></tr>
+<tr><td>BUG-003</td><td>Salary structure per-employee vs templates (design gap)</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — architectural</td></tr>
+<tr><td>BUG-008</td><td>Report endpoint GET vs POST mismatch</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
+<tr><td>BUG-009</td><td>Feature flag path /admin prefix mismatch</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
+<tr><td>BUG-010</td><td>FnF endpoint path/field mismatch</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
+<tr><td>BUG-011</td><td>Leave request endpoint path mismatch</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
+<tr><td>BUG-012</td><td>Refresh token cookie path too restrictive</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — verify in browser</td></tr>
+<tr><td>BUG-013</td><td>Statutory endpoint paths wrong in spec</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — spec correction</td></tr>
+<tr><td>BUG-QA2-005</td><td>Platform /applications endpoint 500</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA2-006</td><td>Shift roster blocked by SQL injection false-positive</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA2-007</td><td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA2-008</td><td>Retroactive leave blocked by @FutureOrPresent</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA2-011</td><td>Resource pool endpoints missing (404)</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
+<tr><td>BUG-QA4-007</td><td>Certificate generation pipeline incomplete</td><td><span class="open"><span class="open">⚠️</span> OPEN</span> — feature gap</td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Use Case Test Coverage</h2>
+<h3>🔐 Auth (UC-AUTH-001 to 007)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-AUTH-001</td><td>Email/password login + lockout</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-AUTH-002</td><td>Google OAuth login</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-AUTH-003</td><td>MFA setup & verify</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-001 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-AUTH-004</td><td>Logout + token blacklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-AUTH-005</td><td>Token refresh</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-002 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-AUTH-006</td><td>Password reset flow</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-AUTH-007</td><td>Rate limiting (429)</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+</tbody></table>
+<h3>💰 Payroll (UC-PAY-001 to 016)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-PAY-001</td><td>Create salary structure</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-003 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-PAY-002</td><td>Initiate payroll run</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PAY-003</td><td>SpEL formula evaluation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PAY-004</td><td>Payslip PDF generation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PAY-005</td><td>Lock payroll run</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PAY-006</td><td>Payroll adjustments</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PAY-007 to 016</td><td>Extended payroll UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
+</tbody></table>
+<h3><span class="fixed">✅</span> Approvals (UC-APPR-001 to 005)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-APPR-001</td><td>Leave approval chain</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-APPR-002</td><td>Leave rejection with reason</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-APPR-003</td><td>Expense approval chain</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-APPR-004</td><td>Overtime approval / wrong approver</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-APPR-005</td><td>Escalation on timeout</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+</tbody></table>
+<h3>🧾 FnF Settlement (UC-FNF-001 to 005)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-FNF-001</td><td>Pro-rata calculation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-FNF-002</td><td>Leave encashment in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-FNF-003</td><td>Pending expense in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-FNF-004</td><td>Loan deduction in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-FNF-005</td><td>Final payslip PDF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>⚡ Performance Benchmarks (UC-PERF-001 to 008)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-PERF-001</td><td>Dashboard < 3000ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-002</td><td>Employee list 500 rows < 5000ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-003</td><td>Payroll run < 60s</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-004</td><td>API median < 300ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-005</td><td>Leave submit < 500ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-006</td><td>1000-row export < 30s</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-007</td><td>WebSocket notification < 500ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-PERF-008</td><td>5 concurrent requests all 200</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>👤 Employees (UC-EMP-001 to 018)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-EMP-001</td><td>Create employee</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-EMP-002</td><td>Update employee fields</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-EMP-003</td><td>Bulk import</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-EMP-004</td><td>Employment change</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-EMP-005</td><td>Org chart</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-EMP-006 to 011</td><td>Extended employee UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
+<tr><td>UC-EMP-012</td><td>Deactivate employee</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-009 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-EMP-013 to 018</td><td>Further employee UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
+</tbody></table>
+<h3>🕐 Attendance (UC-ATT-001 to 012)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-ATT-001</td><td>Check-in / check-out</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-ATT-002</td><td>Regularization flow</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-ATT-003</td><td>Shift assignment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-ATT-004 to 012</td><td>Extended attendance UCs</td><td><span class="pending">📋 PENDING</span></td></tr>
+</tbody></table>
+<h3>🏖️ Leave (UC-LEAVE-001 to 015)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-LEAVE-001</td><td>Apply leave</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-001 <span class="progress">⏳</span></td></tr>
+<tr><td>UC-LEAVE-002</td><td>Carry-forward balance</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-LEAVE-003</td><td>Leave encashment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-LEAVE-004 to 015</td><td>Extended leave UCs</td><td><span class="pending">📋 PENDING</span></td><td>BUG-QA2-007/008 <span class="open">⚠️</span></td></tr>
+</tbody></table>
+<h3>🎁 Benefits (UC-BEN-001 to 008)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-BEN-001</td><td>Benefit enrollment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-BEN-002</td><td>Auto-enrollment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-BEN-003 to 008</td><td>Extended benefit UCs</td><td><span class="pending">📋 PENDING</span></td></tr>
+</tbody></table>
+<h3>💻 Assets (UC-ASSET-001 to 005+)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-ASSET-001</td><td>Assign asset</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-ASSET-002</td><td>Return asset</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-ASSET-003 to 005</td><td>Create/update assets</td><td><span class="pending">📋 PENDING</span></td><td>BUG-QA2-010 <span class="fixed">✅</span> V112</td></tr>
+</tbody></table>
+<h3>🏢 Departments (UC-DEPT-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-DEPT-001</td><td>Create / delete dept</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>💵 Compensation (UC-COMP-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-COMP-001</td><td>Bands + history</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>🧑‍💼 Probation (UC-PROB-001 to 005)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-PROB-001</td><td>Probation list + confirm</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PROB-002</td><td>Extend probation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PROB-003</td><td>Manager review</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PROB-004</td><td>Auto-notification</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-PROB-005</td><td>HR dashboard aggregation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-004 <span class="progress">⏳</span></td></tr>
+</tbody></table>
+<h3>🙋 My Space (UC-MY-001 to 008)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-MY-001</td><td>All MY SPACE 200</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-002</td><td>Payslip history scoped</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-003</td><td>Payslip PDF download</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-004</td><td>Leave balance</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-005</td><td>Attendance history</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-006</td><td>My assets</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-007</td><td>Loan repayment schedule</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-MY-008</td><td>Profile self-update</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-012 <span class="fixed">✅</span></td></tr>
+</tbody></table>
+<h3>💸 Expenses (UC-EXP-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-EXP-001</td><td>Submit / scope expense</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>🏦 Loans (UC-LOAN-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-LOAN-001</td><td>Apply + repayment schedule</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-005 <span class="fixed">✅</span></td></tr>
+</tbody></table>
+<h3>✈️ Travel (UC-TRAVEL-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-TRAVEL-001</td><td>Submit + approve travel</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-006 <span class="fixed">✅</span></td></tr>
+</tbody></table>
+<h3>📊 Statutory (UC-STAT-001 to 003)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-STAT-001</td><td>PF calculation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-STAT-002</td><td>TDS + Form 16</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-STAT-003</td><td>LWF deduction</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
+</tbody></table>
+<h3>🎫 Helpdesk (UC-HELP-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-HELP-001</td><td>Ticket CRUD + resolve</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>⏱️ Timesheets (UC-TIME-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-TIME-001</td><td>Log time + view own</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>📦 Resources (UC-RESOURCE-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-RESOURCE-001</td><td>Allocate resources</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-011 <span class="open">⚠️</span></td></tr>
+</tbody></table>
+<h3>📄 Contracts (UC-CONTRACT-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-CONTRACT-001</td><td>Create + e-sign</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>📝 Letters (UC-LETTER-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-LETTER-001</td><td>Generate experience letter</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-003 <span class="open">⚠️</span></td></tr>
+</tbody></table>
+<h3>📈 Reports (UC-REPORT-001 to 002)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-REPORT-001</td><td>Headcount report</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-008 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-REPORT-002</td><td>Scheduled report</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-008 <span class="open">⚠️</span></td></tr>
+</tbody></table>
+<h3>⚙️ Admin (UC-ADMIN-001 to 002)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-ADMIN-001</td><td>Feature flags</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-009 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-ADMIN-002</td><td>Holiday management</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+</tbody></table>
+<h3>🔔 Notifications (UC-NOTIF-001)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-NOTIF-001</td><td>View + mark read</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>⚙️ Settings (UC-SETTINGS-001 to 007)</h3>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-SETTINGS-001</td><td>Change password</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-002</td><td>Password complexity</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-003</td><td>MFA from settings</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-004</td><td>Revoke session</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-005</td><td>Notification preferences</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-006</td><td>SSO configuration</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+<tr><td>UC-SETTINGS-007</td><td>Display preferences</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>📢 Announcements (UC-ANNC-*)</h3>
+<table><thead><tr><th>UC</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-ANNC-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-014 <span class="fixed">✅</span></td></tr>
+</tbody></table>
+<h3>📅 Calendar (UC-CAL-*)</h3>
+<table><thead><tr><th>UC</th><th>Test</th></tr></thead><tbody>
+<tr><td>UC-CAL-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
+</tbody></table>
+<h3>📁 Documents (UC-DOC-*)</h3>
+<table><thead><tr><th>UC</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-DOC-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-005 <span class="progress">⏳</span></td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>NU-Hire (UC-HIRE-001 to 018)</h2>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-HIRE-001</td><td>Job requisition create</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-008 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-HIRE-002</td><td>Pipeline stage move</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-003</td><td>Schedule interview + feedback</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-007 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-HIRE-004</td><td>Generate + send offer letter</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-003 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-HIRE-005</td><td>Preboarding valid token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-006</td><td>Onboarding checklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-007</td><td>Offboarding + FnF trigger</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-008</td><td>Employee referral submit</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-006 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-HIRE-009</td><td>Resume parse from upload</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-010</td><td>Bulk candidate import</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-011</td><td>Resend expired offer</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-012</td><td>Invalid preboarding token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-013</td><td>Expired preboarding token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-014</td><td>Exit interview public URL</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-015</td><td>Career portal job listing</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-016</td><td>Referral rewards</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-017</td><td>Interview scorecard</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-HIRE-018</td><td>Onboarding doc checklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>NU-Grow (UC-GROW-001 to 022)</h2>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-GROW-001</td><td>Review cycle create</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-001 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-GROW-002</td><td>Self-review submit</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-002 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-GROW-003</td><td>Manager review + final rating</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-004</td><td>360 feedback request</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-003 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-GROW-005</td><td>Create OKR + cascade</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-004 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-GROW-006</td><td>LMS enrollment + completion</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-007</td><td>Kudos to peer</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-008</td><td>Survey create + respond</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-005 <span class="fixed">✅</span></td></tr>
+<tr><td>UC-GROW-009</td><td>Wellness program join</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-010</td><td>Calibration 9-box</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-011</td><td>9-box assessment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-012</td><td>PIP initiation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-013</td><td>PIP progress update</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-014</td><td>Goal check-in</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-015</td><td>OKR cascade</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-016</td><td>OKR progress scoring</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-017</td><td>360 anonymity verified</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-018</td><td>Aggregate perf scores</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-019</td><td>Training certificate</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-007 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-GROW-020</td><td>Training prerequisite check</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-021</td><td>Pulse survey launch</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-GROW-022</td><td>1-on-1 notes</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-008 <span class="fixed">✅</span></td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>RBAC & Security (UC-RBAC, UC-TENANT, UC-SEC)</h2>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Status</th></tr></thead><tbody>
+<tr><td>UC-RBAC-001 to 020</td><td>Full RBAC boundary matrix</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS</td></tr>
+<tr><td>UC-TENANT-001</td><td>Cross-tenant isolation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS</td></tr>
+<tr><td>UC-SEC-001 to 012</td><td>Security hardening checks</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS (2 SKIP)</td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Dashboard & Platform (UC-DASH, UC-APPSW, UC-SMOKE)</h2>
+<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
+<tr><td>UC-DASH-001 to 008</td><td>Dashboard variants per role</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-005 <span class="open">⚠️</span></td></tr>
+<tr><td>UC-APPSW-001 to 003</td><td>App switcher access</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+<tr><td>UC-SMOKE-001 to 005</td><td>Smoke tests — all modules</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Deployment Readiness</h2>
+<h3>Backend Services</h3>
+<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
+<tr><td>Spring Boot compile</td><td><span class="fixed">✅</span> Clean</td></tr>
+<tr><td>Flyway migrations (V0–V112)</td><td><span class="fixed">✅</span> Applied</td></tr>
+<tr><td>JWT auth + refresh</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
+<tr><td>RBAC (role_permissions)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V107)</td></tr>
+<tr><td>JVM heap (1024m / ZGC)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
+<tr><td>Redis connectivity</td><td><span class="fixed">✅</span> OK</td></tr>
+<tr><td>Kafka (5 topics + DLT)</td><td><span class="fixed">✅</span> Configured</td></tr>
+<tr><td>Asset creation (version col)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V112)</td></tr>
+<tr><td>Employee deactivation 500</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
+<tr><td>Profile self-update 500</td><td><span class="progress"><span class="progress">⏳</span> In progress</span></td></tr>
+<tr><td>Document upload path</td><td><span class="progress"><span class="progress">⏳</span> In progress</span></td></tr>
+<tr><td>Letter generation rollback</td><td><span class="open">⚠️</span> Open</td></tr>
+<tr><td>Resource pool endpoints</td><td><span class="open">⚠️</span> Open</td></tr>
+</tbody></table>
+<h3>Frontend</h3>
+<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
+<tr><td>Next.js 14 build</td><td><span class="fixed">✅</span> Clean</td></tr>
+<tr><td>All 200+ routes mapped</td><td><span class="fixed">✅</span></td></tr>
+<tr><td>RBAC sidebar</td><td><span class="fixed">✅</span></td></tr>
+<tr><td>Dark/light mode</td><td><span class="fixed">✅</span></td></tr>
+</tbody></table>
+<h3>Infrastructure</h3>
+<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
+<tr><td>Docker Compose</td><td><span class="fixed">✅</span></td></tr>
+<tr><td>K8s manifests (10)</td><td><span class="fixed">✅</span></td></tr>
+<tr><td>GitHub Actions CI</td><td><span class="fixed">✅</span></td></tr>
+<tr><td>Prometheus + Grafana</td><td><span class="fixed">✅</span></td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<h2>Active Fixes (In Progress)</h2>
+<table><thead><tr><th>Agent</th><th>Fixing</th><th>ETA</th></tr></thead><tbody>
+<tr><td>fix-emp-profile</td><td>BUG-QA2-009 <span class="fixed">✅</span> + BUG-QA2-012 <span class="fixed">✅</span></td><td><span class="fixed"><span class="fixed">✅</span> DONE</span></td></tr>
+<tr><td>fix-api-contracts</td><td>BUG-QA3-005 <span class="fixed">✅</span> + BUG-QA2-001 <span class="fixed">✅</span> + BUG-QA2-004 <span class="fixed">✅</span> + BUG-QA2-012 <span class="fixed">✅</span></td><td><span class="fixed"><span class="fixed">✅</span> DONE</span></td></tr>
+</tbody></table>
+<hr style="border-color:var(--border);margin:16px 0">
+<p style="margin:4px 0;color:var(--muted)">*Auto-generated from QA run 2026-04-03. Update this file as bugs are resolved.*</p>
+</body></html>

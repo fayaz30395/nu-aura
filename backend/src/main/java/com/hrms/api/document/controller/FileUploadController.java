@@ -127,11 +127,12 @@ public class FileUploadController {
 
         InputStream inputStream = fileStorageService.getFile(objectName);
 
-        String downloadFilename = filename != null ? filename :
-                objectName.substring(objectName.lastIndexOf('/') + 1);
+        String downloadFilename = filename != null ? filename : objectName.substring(objectName.lastIndexOf('/') + 1);
 
-        // SEC-007 FIX: Sanitize filename to prevent Content-Disposition header injection.
-        // Remove any characters that could be used for header injection (CR, LF, quotes, backslashes).
+        // SEC-007 FIX: Sanitize filename to prevent Content-Disposition header
+        // injection.
+        // Remove any characters that could be used for header injection (CR, LF,
+        // quotes, backslashes).
         String sanitizedFilename = downloadFilename
                 .replaceAll("[\\r\\n\"\\\\]", "_")
                 .replaceAll("[^a-zA-Z0-9._\\-]", "_");
