@@ -53,10 +53,10 @@ export const wellnessService = {
   },
 
   async joinChallenge(challengeId: string, teamId?: string, teamName?: string): Promise<void> {
-    const params = new URLSearchParams();
-    if (teamId) params.append('teamId', teamId);
-    if (teamName) params.append('teamName', teamName);
-    await apiClient.post(`${BASE_URL}/challenges/${challengeId}/join?${params.toString()}`);
+    const params: Record<string, string> = {};
+    if (teamId) params.teamId = teamId;
+    if (teamName) params.teamName = teamName;
+    await apiClient.post(`${BASE_URL}/challenges/${challengeId}/join`, undefined, { params });
   },
 
   async leaveChallenge(challengeId: string): Promise<void> {

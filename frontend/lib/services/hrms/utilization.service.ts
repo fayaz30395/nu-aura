@@ -149,15 +149,16 @@ export const utilizationService = {
     format: 'csv' | 'excel' | 'pdf',
     filters: UtilizationFilterOptions
   ): Promise<Blob> {
-    const params = new URLSearchParams({ format });
-    if (filters.startDate) params.append('startDate', filters.startDate);
-    if (filters.endDate) params.append('endDate', filters.endDate);
-    if (filters.departmentId) params.append('departmentId', filters.departmentId);
-    if (filters.projectId) params.append('projectId', filters.projectId);
+    const params: Record<string, string> = { format };
+    if (filters.startDate) params.startDate = filters.startDate;
+    if (filters.endDate) params.endDate = filters.endDate;
+    if (filters.departmentId) params.departmentId = filters.departmentId;
+    if (filters.projectId) params.projectId = filters.projectId;
 
     const response = await apiClient.get<Blob>(
-      `/time-tracking/reports/export?${params}`,
+      '/time-tracking/reports/export',
       {
+        params,
         responseType: 'blob',
       }
     );

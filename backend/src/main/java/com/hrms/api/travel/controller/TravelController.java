@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class TravelController {
     public ResponseEntity<TravelRequestDto> createRequest(
             @Valid @RequestBody CreateTravelRequest request
     ) {
-        return ResponseEntity.ok(travelService.createRequest(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(travelService.createRequest(request));
     }
 
     @PutMapping("/requests/{id}")
