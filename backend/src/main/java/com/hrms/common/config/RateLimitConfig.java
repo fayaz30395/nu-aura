@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Rate limiting configuration using Bucket4j.
  * Implements token bucket algorithm for API rate limiting.
- *
+ * <p>
  * Playbook Reference: Prompt 14 - Security headers + rate limiting
  */
 @Slf4j
@@ -23,50 +23,39 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RateLimitConfig {
 
-    @Value("${app.rate-limit.auth.capacity:5}")
-    private int authCapacity;
-
-    @Value("${app.rate-limit.auth.refill-tokens:5}")
-    private int authRefillTokens;
-
-    @Value("${app.rate-limit.auth.refill-minutes:1}")
-    private int authRefillMinutes;
-
-    @Value("${app.rate-limit.api.capacity:100}")
-    private int apiCapacity;
-
-    @Value("${app.rate-limit.api.refill-tokens:100}")
-    private int apiRefillTokens;
-
-    @Value("${app.rate-limit.api.refill-minutes:1}")
-    private int apiRefillMinutes;
-
-    @Value("${app.rate-limit.export.capacity:5}")
-    private int exportCapacity;
-
-    @Value("${app.rate-limit.export.refill-tokens:5}")
-    private int exportRefillTokens;
-
-    @Value("${app.rate-limit.export.refill-minutes:5}")
-    private int exportRefillMinutes;
-
-    @Value("${app.rate-limit.wall.capacity:30}")
-    private int wallCapacity;
-
-    @Value("${app.rate-limit.wall.refill-tokens:30}")
-    private int wallRefillTokens;
-
-    @Value("${app.rate-limit.wall.refill-minutes:1}")
-    private int wallRefillMinutes;
-
-    /** Maximum number of bucket entries per type before a forced eviction is triggered. */
+    /**
+     * Maximum number of bucket entries per type before a forced eviction is triggered.
+     */
     private static final int MAX_BUCKET_ENTRIES = 10_000;
-
     // Cache buckets by IP or user+tenant
     private final Map<String, Bucket> authBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> apiBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> exportBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> wallBuckets = new ConcurrentHashMap<>();
+    @Value("${app.rate-limit.auth.capacity:5}")
+    private int authCapacity;
+    @Value("${app.rate-limit.auth.refill-tokens:5}")
+    private int authRefillTokens;
+    @Value("${app.rate-limit.auth.refill-minutes:1}")
+    private int authRefillMinutes;
+    @Value("${app.rate-limit.api.capacity:100}")
+    private int apiCapacity;
+    @Value("${app.rate-limit.api.refill-tokens:100}")
+    private int apiRefillTokens;
+    @Value("${app.rate-limit.api.refill-minutes:1}")
+    private int apiRefillMinutes;
+    @Value("${app.rate-limit.export.capacity:5}")
+    private int exportCapacity;
+    @Value("${app.rate-limit.export.refill-tokens:5}")
+    private int exportRefillTokens;
+    @Value("${app.rate-limit.export.refill-minutes:5}")
+    private int exportRefillMinutes;
+    @Value("${app.rate-limit.wall.capacity:30}")
+    private int wallCapacity;
+    @Value("${app.rate-limit.wall.refill-tokens:30}")
+    private int wallRefillTokens;
+    @Value("${app.rate-limit.wall.refill-minutes:1}")
+    private int wallRefillMinutes;
 
     /**
      * Get or create a rate limit bucket for authentication endpoints.
@@ -102,25 +91,25 @@ public class RateLimitConfig {
 
     private Bucket createAuthBucket() {
         Bandwidth limit = Bandwidth.classic(authCapacity,
-            Refill.greedy(authRefillTokens, Duration.ofMinutes(authRefillMinutes)));
+                Refill.greedy(authRefillTokens, Duration.ofMinutes(authRefillMinutes)));
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createApiBucket() {
         Bandwidth limit = Bandwidth.classic(apiCapacity,
-            Refill.greedy(apiRefillTokens, Duration.ofMinutes(apiRefillMinutes)));
+                Refill.greedy(apiRefillTokens, Duration.ofMinutes(apiRefillMinutes)));
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createExportBucket() {
         Bandwidth limit = Bandwidth.classic(exportCapacity,
-            Refill.greedy(exportRefillTokens, Duration.ofMinutes(exportRefillMinutes)));
+                Refill.greedy(exportRefillTokens, Duration.ofMinutes(exportRefillMinutes)));
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createWallBucket() {
         Bandwidth limit = Bandwidth.classic(wallCapacity,
-            Refill.greedy(wallRefillTokens, Duration.ofMinutes(wallRefillMinutes)));
+                Refill.greedy(wallRefillTokens, Duration.ofMinutes(wallRefillMinutes)));
         return Bucket.builder().addLimit(limit).build();
     }
 

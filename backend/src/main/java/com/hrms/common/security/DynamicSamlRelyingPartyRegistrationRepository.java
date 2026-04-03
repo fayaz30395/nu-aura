@@ -35,7 +35,9 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
     private final EncryptionService encryptionService;
     private final String appBaseUrl;
 
-    /** Cache of registrations by registrationId (tenantId) */
+    /**
+     * Cache of registrations by registrationId (tenantId)
+     */
     private final ConcurrentHashMap<String, RelyingPartyRegistration> registrationCache = new ConcurrentHashMap<>();
 
     public DynamicSamlRelyingPartyRegistrationRepository(

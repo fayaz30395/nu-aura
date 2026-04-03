@@ -42,38 +42,38 @@ public class OpenApiConfig {
         return new Info()
                 .title("HRMS Platform API")
                 .description("""
-                    ## Human Resource Management System API
+                        ## Human Resource Management System API
 
-                    This API provides comprehensive HR management capabilities including:
+                        This API provides comprehensive HR management capabilities including:
 
-                    ### Core Modules
-                    - **Authentication** - JWT-based authentication with refresh tokens
-                    - **Employee Management** - Employee CRUD, profiles, and organizational structure
-                    - **Leave Management** - Leave requests, approvals, balances, and types
-                    - **Attendance** - Check-in/out, time tracking, and regularization
-                    - **Payroll** - Payroll runs, payslips, and salary management
-                    - **Department** - Organizational structure management
+                        ### Core Modules
+                        - **Authentication** - JWT-based authentication with refresh tokens
+                        - **Employee Management** - Employee CRUD, profiles, and organizational structure
+                        - **Leave Management** - Leave requests, approvals, balances, and types
+                        - **Attendance** - Check-in/out, time tracking, and regularization
+                        - **Payroll** - Payroll runs, payslips, and salary management
+                        - **Department** - Organizational structure management
 
-                    ### Additional Features
-                    - **Analytics** - Dashboard metrics and reporting
-                    - **Notifications** - Real-time WebSocket notifications
-                    - **Document Management** - File uploads and storage
+                        ### Additional Features
+                        - **Analytics** - Dashboard metrics and reporting
+                        - **Notifications** - Real-time WebSocket notifications
+                        - **Document Management** - File uploads and storage
 
-                    ### Multi-tenancy
-                    All endpoints require `X-Tenant-ID` header for tenant isolation.
+                        ### Multi-tenancy
+                        All endpoints require `X-Tenant-ID` header for tenant isolation.
 
-                    ### Authentication
-                    Use the `/api/v1/auth/login` endpoint to obtain JWT tokens.
-                    Include the access token in the `Authorization` header as `Bearer {token}`.
+                        ### Authentication
+                        Use the `/api/v1/auth/login` endpoint to obtain JWT tokens.
+                        Include the access token in the `Authorization` header as `Bearer {token}`.
 
-                    ### API Versioning
-                    - **Current Version:** %s
-                    - **URL Pattern:** `/api/v1/...` (major version in path)
-                    - **Response Headers:**
-                      - `X-API-Version` - Current API version
-                      - `X-API-Deprecated` - Present if endpoint is deprecated
-                      - `Sunset` - Date when deprecated endpoint will be removed
-                    """.formatted(ApiVersion.CURRENT))
+                        ### API Versioning
+                        - **Current Version:** %s
+                        - **URL Pattern:** `/api/v1/...` (major version in path)
+                        - **Response Headers:**
+                          - `X-API-Version` - Current API version
+                          - `X-API-Deprecated` - Present if endpoint is deprecated
+                          - `Sunset` - Date when deprecated endpoint will be removed
+                        """.formatted(ApiVersion.CURRENT))
                 .version(ApiVersion.CURRENT)
                 .contact(new Contact()
                         .name("NuLogic Support")

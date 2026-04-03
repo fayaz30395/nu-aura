@@ -24,11 +24,11 @@ import java.time.Duration;
 @Slf4j
 public class AccountLockoutService {
 
-    private static final int      MAX_ATTEMPTS          = 5;
-    private static final Duration ATTEMPTS_WINDOW       = Duration.ofMinutes(15);
-    private static final Duration LOCK_DURATION         = Duration.ofMinutes(15);
-    private static final String   ATTEMPTS_KEY_PREFIX   = "lockout:attempts:";
-    private static final String   LOCKED_KEY_PREFIX     = "lockout:locked:";
+    private static final int MAX_ATTEMPTS = 5;
+    private static final Duration ATTEMPTS_WINDOW = Duration.ofMinutes(15);
+    private static final Duration LOCK_DURATION = Duration.ofMinutes(15);
+    private static final String ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
+    private static final String LOCKED_KEY_PREFIX = "lockout:locked:";
 
     private final StringRedisTemplate redis;
 
@@ -38,7 +38,7 @@ public class AccountLockoutService {
      */
     public void loginFailed(String username) {
         String attemptsKey = ATTEMPTS_KEY_PREFIX + username;
-        String lockedKey   = LOCKED_KEY_PREFIX   + username;
+        String lockedKey = LOCKED_KEY_PREFIX + username;
 
         Long attempts = redis.opsForValue().increment(attemptsKey);
         // Set / refresh TTL on first write to enforce the sliding window
@@ -59,7 +59,7 @@ public class AccountLockoutService {
      */
     public void loginSucceeded(String username) {
         redis.delete(ATTEMPTS_KEY_PREFIX + username);
-        redis.delete(LOCKED_KEY_PREFIX   + username);
+        redis.delete(LOCKED_KEY_PREFIX + username);
         log.debug("Lockout state cleared for user: {}", username);
     }
 

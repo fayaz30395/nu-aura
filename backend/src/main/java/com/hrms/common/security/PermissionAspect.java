@@ -83,7 +83,7 @@ public class PermissionAspect {
         if (anyOfPermissions.length == 0 && allOfPermissions.length == 0) {
             throw new AccessDeniedException(
                     "Invalid @RequiresPermission configuration on method '" + method.getName()
-                    + "': at least one permission must be specified");
+                            + "': at least one permission must be specified");
         }
 
         // If revalidate is true, fetch permissions from DB instead of JWT
@@ -156,7 +156,7 @@ public class PermissionAspect {
             boolean hasAny = Arrays.stream(anyOfPermissions).anyMatch(freshPermissions::contains);
             if (!hasAny) {
                 log.warn("[Revalidation] Access denied - User lacks required permissions (ANY OF: {}) " +
-                        "for method: {}. Fresh DB permissions: {}",
+                                "for method: {}. Fresh DB permissions: {}",
                         Arrays.toString(anyOfPermissions), method.getName(), freshPermissions);
                 throw new AccessDeniedException(
                         "Insufficient permissions (revalidated). Required any of: " + Arrays.toString(anyOfPermissions)
@@ -169,7 +169,7 @@ public class PermissionAspect {
             boolean hasAll = Arrays.stream(allOfPermissions).allMatch(freshPermissions::contains);
             if (!hasAll) {
                 log.warn("[Revalidation] Access denied - User lacks required permissions (ALL OF: {}) " +
-                        "for method: {}. Fresh DB permissions: {}",
+                                "for method: {}. Fresh DB permissions: {}",
                         Arrays.toString(allOfPermissions), method.getName(), freshPermissions);
                 throw new AccessDeniedException(
                         "Insufficient permissions (revalidated). Required all of: " + Arrays.toString(allOfPermissions)

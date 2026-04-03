@@ -35,11 +35,11 @@ import java.util.Base64;
 @Slf4j
 public class CryptoConverter implements AttributeConverter<String, String> {
 
-    private static final String GCM_ALGORITHM  = "AES/GCM/NoPadding";
-    private static final String ECB_ALGORITHM  = "AES/ECB/PKCS5Padding"; // legacy read-only
-    private static final String GCM_PREFIX     = "GCMv1:";
-    private static final int    GCM_IV_LENGTH  = 12;  // bytes (96-bit IV, NIST recommended)
-    private static final int    GCM_TAG_LENGTH = 128; // bits
+    private static final String GCM_ALGORITHM = "AES/GCM/NoPadding";
+    private static final String ECB_ALGORITHM = "AES/ECB/PKCS5Padding"; // legacy read-only
+    private static final String GCM_PREFIX = "GCMv1:";
+    private static final int GCM_IV_LENGTH = 12;  // bytes (96-bit IV, NIST recommended)
+    private static final int GCM_TAG_LENGTH = 128; // bits
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -118,8 +118,8 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     private String decryptGcm(String base64Blob) throws java.security.GeneralSecurityException {
         byte[] blob = Base64.getDecoder().decode(base64Blob);
-        byte[] iv   = Arrays.copyOfRange(blob, 0, GCM_IV_LENGTH);
-        byte[] ct   = Arrays.copyOfRange(blob, GCM_IV_LENGTH, blob.length);
+        byte[] iv = Arrays.copyOfRange(blob, 0, GCM_IV_LENGTH);
+        byte[] ct = Arrays.copyOfRange(blob, GCM_IV_LENGTH, blob.length);
 
         Cipher cipher = Cipher.getInstance(GCM_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE,
@@ -129,7 +129,9 @@ public class CryptoConverter implements AttributeConverter<String, String> {
         return new String(cipher.doFinal(ct));
     }
 
-    /** Legacy AES/ECB decryption — used only to read values written before the GCM migration. */
+    /**
+     * Legacy AES/ECB decryption — used only to read values written before the GCM migration.
+     */
     private String decryptLegacyEcb(String base64Data) throws java.security.GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(ECB_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"));

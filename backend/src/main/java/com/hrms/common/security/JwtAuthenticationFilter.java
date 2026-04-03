@@ -56,8 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
 
@@ -228,8 +228,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * Normalize a permission code from DB format ("employee.read") to the canonical
      * UPPERCASE:COLON format ("EMPLOYEE:READ") used by Permission.java constants and
-     * @RequiresPermission annotations.
      *
+     * @RequiresPermission annotations.
+     * <p>
      * Handles multiple formats:
      * - "employee.read" → "EMPLOYEE:READ"
      * - "EMPLOYEE:READ" → "EMPLOYEE:READ" (already canonical)

@@ -3,7 +3,7 @@ package com.hrms.common.exception;
 /**
  * Thrown when a request targets a feature module that has been disabled
  * via static configuration (application.yml kill-switch).
- *
+ * <p>
  * Maps to HTTP 503 Service Unavailable — the feature exists but is
  * intentionally turned off.
  */

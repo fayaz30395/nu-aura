@@ -22,17 +22,15 @@ import java.util.UUID;
 @Slf4j
 public class ApiKeyService {
 
+    private static final String API_KEY_PREFIX = "hrms_";
+    private static final int API_KEY_LENGTH = 32;
+    private static final SecureRandom secureRandom = new SecureRandom();
     private final ApiKeyRepository apiKeyRepository;
     private final PasswordEncoder passwordEncoder;
-
     public ApiKeyService(@Lazy ApiKeyRepository apiKeyRepository, PasswordEncoder passwordEncoder) {
         this.apiKeyRepository = apiKeyRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    private static final String API_KEY_PREFIX = "hrms_";
-    private static final int API_KEY_LENGTH = 32;
-    private static final SecureRandom secureRandom = new SecureRandom();
 
     /**
      * Generate a new API key.
@@ -40,8 +38,8 @@ public class ApiKeyService {
      */
     @Transactional
     public ApiKeyCreationResult createApiKey(String name, String description,
-                                              Set<String> scopes, LocalDateTime expiresAt,
-                                              UUID tenantId, UUID createdBy) {
+                                             Set<String> scopes, LocalDateTime expiresAt,
+                                             UUID tenantId, UUID createdBy) {
         String rawKey = generateRawKey();
         String keyHash = passwordEncoder.encode(rawKey);
         String keyPrefix = rawKey.substring(0, 8);
@@ -103,7 +101,7 @@ public class ApiKeyService {
                 apiKey.recordUsage(clientIp);
                 apiKeyRepository.save(apiKey);
                 log.info("API key '{}' validated successfully for tenant {}",
-                         apiKey.getName(), apiKey.getTenantId());
+                        apiKey.getName(), apiKey.getTenantId());
                 return Optional.of(apiKey);
             }
         }
@@ -197,5 +195,6 @@ public class ApiKeyService {
     /**
      * Result of API key creation containing the raw key (shown only once).
      */
-    public record ApiKeyCreationResult(UUID id, String rawKey, ApiKey apiKey) {}
+    public record ApiKeyCreationResult(UUID id, String rawKey, ApiKey apiKey) {
+    }
 }

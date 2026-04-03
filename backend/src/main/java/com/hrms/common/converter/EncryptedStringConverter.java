@@ -38,7 +38,9 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
     private static final int GCM_TAG_LENGTH = 128;  // bits
     private static final String ENV_KEY = "ENCRYPTION_KEY";
 
-    /** Lazily resolved key — avoids failing at class-load time in test contexts. */
+    /**
+     * Lazily resolved key — avoids failing at class-load time in test contexts.
+     */
     private volatile SecretKeySpec secretKey;
 
     private SecretKeySpec getKey() {
@@ -52,14 +54,14 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             String keyBase64 = System.getenv(ENV_KEY);
             if (keyBase64 == null || keyBase64.isBlank()) {
                 throw new IllegalStateException(
-                    "ENCRYPTION_KEY environment variable is not set. " +
-                    "Provide a Base64-encoded 32-byte AES-256 key.");
+                        "ENCRYPTION_KEY environment variable is not set. " +
+                                "Provide a Base64-encoded 32-byte AES-256 key.");
             }
             byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
             if (keyBytes.length != 32) {
                 throw new IllegalStateException(
-                    "ENCRYPTION_KEY must decode to exactly 32 bytes (256 bits), " +
-                    "got " + keyBytes.length + " bytes.");
+                        "ENCRYPTION_KEY must decode to exactly 32 bytes (256 bits), " +
+                                "got " + keyBytes.length + " bytes.");
             }
             secretKey = new SecretKeySpec(keyBytes, "AES");
             return secretKey;

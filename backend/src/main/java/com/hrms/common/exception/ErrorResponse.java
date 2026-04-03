@@ -25,12 +25,18 @@ public class ErrorResponse {
     private Map<String, String> errors;
     private String path;
 
-    /** Request ID for correlation with logs */
+    /**
+     * Request ID for correlation with logs
+     */
     private String requestId;
 
-    /** Tenant ID for multi-tenant context */
+    /**
+     * Tenant ID for multi-tenant context
+     */
     private String tenantId;
 
-    /** Error code for programmatic handling (optional) */
+    /**
+     * Error code for programmatic handling (optional)
+     */
     private String errorCode;
 }

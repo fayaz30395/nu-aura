@@ -60,11 +60,11 @@ public class TenantEntityListener {
         } else if (currentTenant != null && !tenantEntity.getTenantId().equals(currentTenant)) {
             // Entity has a different tenant ID than the current context — potential cross-tenant write
             log.error("[TenantEntityListener] TENANT MISMATCH on persist! Entity {} has tenantId={} " +
-                    "but current context is {}. Blocking write.",
+                            "but current context is {}. Blocking write.",
                     entity.getClass().getSimpleName(), tenantEntity.getTenantId(), currentTenant);
             throw new SecurityException(
                     "Tenant isolation violation: cannot persist entity belonging to tenant " +
-                    tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
+                            tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
         }
     }
 
@@ -83,14 +83,14 @@ public class TenantEntityListener {
         if (currentTenant != null && tenantEntity.getTenantId() != null
                 && !tenantEntity.getTenantId().equals(currentTenant)) {
             log.error("[TenantEntityListener] TENANT MISMATCH on update! Entity {} (id={}) " +
-                    "belongs to tenant {} but current context is {}. Blocking update.",
+                            "belongs to tenant {} but current context is {}. Blocking update.",
                     entity.getClass().getSimpleName(),
                     tenantEntity.getId(),
                     tenantEntity.getTenantId(),
                     currentTenant);
             throw new SecurityException(
                     "Tenant isolation violation: cannot update entity belonging to tenant " +
-                    tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
+                            tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
         }
     }
 
@@ -109,14 +109,14 @@ public class TenantEntityListener {
         if (currentTenant != null && tenantEntity.getTenantId() != null
                 && !tenantEntity.getTenantId().equals(currentTenant)) {
             log.error("[TenantEntityListener] TENANT MISMATCH on delete! Entity {} (id={}) " +
-                    "belongs to tenant {} but current context is {}. Blocking delete.",
+                            "belongs to tenant {} but current context is {}. Blocking delete.",
                     entity.getClass().getSimpleName(),
                     tenantEntity.getId(),
                     tenantEntity.getTenantId(),
                     currentTenant);
             throw new SecurityException(
                     "Tenant isolation violation: cannot delete entity belonging to tenant " +
-                    tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
+                            tenantEntity.getTenantId() + " in context of tenant " + currentTenant);
         }
     }
 }

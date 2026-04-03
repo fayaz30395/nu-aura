@@ -14,35 +14,30 @@ package com.hrms.common.api;
  */
 public final class ApiVersion {
 
-    private ApiVersion() {
-        // Utility class
-    }
-
     // Current stable version
     public static final String CURRENT = "1.0";
     public static final int CURRENT_MAJOR = 1;
     public static final int CURRENT_MINOR = 0;
-
     // Supported versions
     public static final String V1 = "1.0";
     public static final String V1_1 = "1.1";
-
     // URL path prefixes
     public static final String V1_PATH = "/api/v1";
     public static final String V2_PATH = "/api/v2";
-
     // Media type patterns
     public static final String MEDIA_TYPE_PREFIX = "application/vnd.hrms.v";
     public static final String MEDIA_TYPE_SUFFIX = "+json";
     public static final String MEDIA_TYPE_V1 = MEDIA_TYPE_PREFIX + "1" + MEDIA_TYPE_SUFFIX;
     public static final String MEDIA_TYPE_V1_1 = MEDIA_TYPE_PREFIX + "1.1" + MEDIA_TYPE_SUFFIX;
-
     // Response headers
     public static final String HEADER_API_VERSION = "X-API-Version";
     public static final String HEADER_API_DEPRECATED = "X-API-Deprecated";
     public static final String HEADER_API_SUNSET = "Sunset";
     public static final String HEADER_API_DEPRECATION_NOTICE = "X-API-Deprecation-Notice";
     public static final String HEADER_API_LATEST_VERSION = "X-API-Latest-Version";
+    private ApiVersion() {
+        // Utility class
+    }
 
     /**
      * Parse version string into major and minor components.

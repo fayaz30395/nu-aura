@@ -20,14 +20,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class WebhookHealthIndicator implements HealthIndicator {
 
-    private final WebhookRepository webhookRepository;
-    private final WebhookDeliveryRepository deliveryRepository;
-
     // Thresholds for health status
     private static final int PENDING_QUEUE_WARNING = 100;
     private static final int PENDING_QUEUE_CRITICAL = 500;
     private static final double SUCCESS_RATE_WARNING = 0.9;
     private static final double SUCCESS_RATE_CRITICAL = 0.7;
+    private final WebhookRepository webhookRepository;
+    private final WebhookDeliveryRepository deliveryRepository;
 
     @Override
     public Health health() {

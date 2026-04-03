@@ -108,7 +108,7 @@ public class ScopeContextService {
      */
     @Transactional(readOnly = true)
     public void populateScopeContext(UUID userId, UUID employeeId, UUID tenantId,
-                                      Map<String, RoleScope> permissionScopes) {
+                                     Map<String, RoleScope> permissionScopes) {
         // Load reportee IDs if user has any TEAM scope permissions
         boolean hasTeamScope = permissionScopes.values().stream()
                 .anyMatch(scope -> scope == RoleScope.TEAM);

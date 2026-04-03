@@ -16,9 +16,17 @@ public class InputSanitizer {
             "<script[^>]*>.*?</script>|<[^>]+on\\w+\\s*=|javascript:|vbscript:|data:",
             Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
-    // Pattern to detect potential SQL injection
+    // BUG-QA2-006 FIX: Tightened SQL injection pattern to prevent false positives on JSON arrays.
+    // Original pattern matched bare double-quotes (") which are valid in JSON array fields like
+    // ["MON","TUE","WED"] causing legitimate shift roster requests to be rejected with 400.
+    //
+    // Rules:
+    //   - Block single-quote followed by SQL operator/keyword (real SQL injection vector)
+    //   - Block double-dash comment sequences (--)
+    //   - Block semicolons followed by SQL DML/DDL keywords
+    //   - Allow standalone double-quotes (valid JSON character)
     private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile(
-            "('|\"|--)|(;\\s*(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|ALTER|CREATE|EXEC))",
+            "('\\s*(OR|AND|SELECT|INSERT|UPDATE|DELETE|DROP|UNION|--|;|=))|(--)|(;\\s*(SELECT|INSERT|UPDATE|DELETE|DROP|TRUNCATE|ALTER|CREATE|EXEC))",
             Pattern.CASE_INSENSITIVE);
 
     // Pattern for valid email

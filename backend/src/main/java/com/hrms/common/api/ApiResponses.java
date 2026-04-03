@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
  */
 public final class ApiResponses {
 
-    private ApiResponses() {}
+    private ApiResponses() {
+    }
 
     // ========== Success Responses ==========
 
@@ -38,7 +39,8 @@ public final class ApiResponses {
             responseCode = "200",
             description = "Request completed successfully"
     )
-    public @interface Success {}
+    public @interface Success {
+    }
 
     /**
      * Standard 201 Created response.
@@ -49,7 +51,8 @@ public final class ApiResponses {
             responseCode = "201",
             description = "Resource created successfully"
     )
-    public @interface Created {}
+    public @interface Created {
+    }
 
     /**
      * Standard 204 No Content response.
@@ -60,7 +63,8 @@ public final class ApiResponses {
             responseCode = "204",
             description = "Request completed successfully with no content to return"
     )
-    public @interface NoContent {}
+    public @interface NoContent {
+    }
 
     // ========== Client Error Responses ==========
 
@@ -95,7 +99,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface BadRequest {}
+    public @interface BadRequest {
+    }
 
     /**
      * Standard 401 Unauthorized response.
@@ -124,7 +129,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface Unauthorized {}
+    public @interface Unauthorized {
+    }
 
     /**
      * Standard 403 Forbidden response.
@@ -153,7 +159,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface Forbidden {}
+    public @interface Forbidden {
+    }
 
     /**
      * Standard 404 Not Found response.
@@ -182,7 +189,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface NotFound {}
+    public @interface NotFound {
+    }
 
     /**
      * Standard 409 Conflict response.
@@ -211,7 +219,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface Conflict {}
+    public @interface Conflict {
+    }
 
     /**
      * Standard 429 Too Many Requests response.
@@ -240,7 +249,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface TooManyRequests {}
+    public @interface TooManyRequests {
+    }
 
     // ========== Server Error Responses ==========
 
@@ -271,7 +281,8 @@ public final class ApiResponses {
                     )
             )
     )
-    public @interface InternalError {}
+    public @interface InternalError {
+    }
 
     // ========== Composite Annotations ==========
 
@@ -285,7 +296,8 @@ public final class ApiResponses {
     @Unauthorized
     @Forbidden
     @InternalError
-    public @interface GetOne {}
+    public @interface GetOne {
+    }
 
     /**
      * Standard responses for GET list endpoints.
@@ -297,7 +309,8 @@ public final class ApiResponses {
     @Unauthorized
     @Forbidden
     @InternalError
-    public @interface GetList {}
+    public @interface GetList {
+    }
 
     /**
      * Standard responses for POST create endpoints.
@@ -310,7 +323,8 @@ public final class ApiResponses {
     @Forbidden
     @Conflict
     @InternalError
-    public @interface Create {}
+    public @interface Create {
+    }
 
     /**
      * Standard responses for PUT/PATCH update endpoints.
@@ -324,7 +338,8 @@ public final class ApiResponses {
     @Forbidden
     @Conflict
     @InternalError
-    public @interface Update {}
+    public @interface Update {
+    }
 
     /**
      * Standard responses for DELETE endpoints.
@@ -336,5 +351,6 @@ public final class ApiResponses {
     @Unauthorized
     @Forbidden
     @InternalError
-    public @interface Delete {}
+    public @interface Delete {
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,8 +28,18 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
+    private final TokenBlacklistService tokenBlacklistService;
     @Value("${app.jwt.secret}")
     private String jwtSecret;
+    @Value("${app.jwt.expiration}")
+    private long jwtExpiration;
+
+    @Value("${app.jwt.refresh-expiration}")
+    private long refreshTokenExpiration;
+
+    public JwtTokenProvider(TokenBlacklistService tokenBlacklistService) {
+        this.tokenBlacklistService = tokenBlacklistService;
+    }
 
     /**
      * Validate JWT secret entropy at startup to prevent token forgery.
@@ -44,46 +55,34 @@ public class JwtTokenProvider {
     void validateJwtSecret() {
         if (jwtSecret == null || jwtSecret.isBlank()) {
             throw new IllegalStateException(
-                "JWT_SECRET is not configured. Set the JWT_SECRET environment variable " +
-                "with a cryptographically random string of at least 32 bytes."
+                    "JWT_SECRET is not configured. Set the JWT_SECRET environment variable " +
+                            "with a cryptographically random string of at least 32 bytes."
             );
         }
 
         int byteLength = jwtSecret.getBytes(StandardCharsets.UTF_8).length;
         if (byteLength < 32) {
             throw new IllegalStateException(
-                String.format(
-                    "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
-                    "Generate a secure secret with: openssl rand -base64 48", byteLength
-                )
+                    String.format(
+                            "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
+                                    "Generate a secure secret with: openssl rand -base64 48", byteLength
+                    )
             );
         }
 
         // Reject well-known placeholder secrets that might be copy-pasted from docs/tutorials
         Set<String> knownWeakSecrets = Set.of(
-            "secret", "mysecret", "jwt-secret", "changeme", "password",
-            "your-secret-key", "my-secret-key", "test-secret", "development-secret",
-            "your-256-bit-secret", "super-secret-key"
+                "secret", "mysecret", "jwt-secret", "changeme", "password",
+                "your-secret-key", "my-secret-key", "test-secret", "development-secret",
+                "your-256-bit-secret", "super-secret-key"
         );
 
         if (knownWeakSecrets.contains(jwtSecret.toLowerCase().trim())) {
             throw new IllegalStateException(
-                "JWT_SECRET is a known weak/placeholder value. " +
-                "Generate a secure secret with: openssl rand -base64 48"
+                    "JWT_SECRET is a known weak/placeholder value. " +
+                            "Generate a secure secret with: openssl rand -base64 48"
             );
         }
-    }
-
-    @Value("${app.jwt.expiration}")
-    private long jwtExpiration;
-
-    @Value("${app.jwt.refresh-expiration}")
-    private long refreshTokenExpiration;
-
-    private final TokenBlacklistService tokenBlacklistService;
-
-    public JwtTokenProvider(TokenBlacklistService tokenBlacklistService) {
-        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     private SecretKey getSigningKey() {
@@ -121,7 +120,7 @@ public class JwtTokenProvider {
 
     /**
      * Generate JWT token with NU Platform app-aware identity claims.
-     *
+     * <p>
      * CRIT-001: Permissions and permissionScopes are NO LONGER embedded in the JWT
      * to keep the cookie under the browser's 4096-byte limit. The frontend must
      * fetch permissions from the /auth/me endpoint after login and store them in
@@ -129,8 +128,8 @@ public class JwtTokenProvider {
      * SecurityContext (loaded from the database on each request).
      */
     public String generateTokenWithAppPermissions(User user, UUID tenantId, String appCode,
-            Map<String, com.hrms.domain.user.RoleScope> permissions, Set<String> roles,
-            Set<String> accessibleApps, UUID employeeId, UUID locationId, UUID departmentId, UUID teamId) {
+                                                  Map<String, com.hrms.domain.user.RoleScope> permissions, Set<String> roles,
+                                                  Set<String> accessibleApps, UUID employeeId, UUID locationId, UUID departmentId, UUID teamId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
@@ -228,7 +227,7 @@ public class JwtTokenProvider {
             String userId = claims.get("userId", String.class);
             Date issuedAt = claims.getIssuedAt();
             if (userId != null && issuedAt != null &&
-                tokenBlacklistService.isTokenRevokedByTimestamp(userId, issuedAt)) {
+                    tokenBlacklistService.isTokenRevokedByTimestamp(userId, issuedAt)) {
                 return false;
             }
 

@@ -18,56 +18,50 @@ import java.util.Set;
  */
 public final class WebhookScopes {
 
-    private WebhookScopes() {
-        // Prevent instantiation
-    }
-
     /**
      * Scope for reading webhook configurations.
      * Allows: GET /api/webhooks, GET /api/webhooks/{id}
      */
     public static final String WEBHOOK_READ = "webhook:read";
-
     /**
      * Scope for creating and updating webhooks.
      * Allows: POST /api/webhooks, PUT /api/webhooks/{id}
      */
     public static final String WEBHOOK_WRITE = "webhook:write";
-
     /**
      * Scope for deleting webhooks.
      * Allows: DELETE /api/webhooks/{id}
      */
     public static final String WEBHOOK_DELETE = "webhook:delete";
-
     /**
      * Scope for managing webhook status (activate/deactivate).
      * Allows: POST /api/webhooks/{id}/activate, POST /api/webhooks/{id}/deactivate
      */
     public static final String WEBHOOK_MANAGE = "webhook:manage";
-
     /**
      * Scope for viewing webhook delivery history.
      * Allows: GET /api/webhooks/{id}/deliveries
      */
     public static final String WEBHOOK_DELIVERIES_READ = "webhook:deliveries:read";
-
     /**
      * Scope for retrying failed webhook deliveries.
      * Allows: POST /api/webhooks/deliveries/{id}/retry
      */
     public static final String WEBHOOK_DELIVERIES_RETRY = "webhook:deliveries:retry";
-
     /**
      * Full admin scope - grants all webhook permissions.
      * Equivalent to having all individual scopes.
      */
     public static final String WEBHOOK_ADMIN = "webhook:admin";
 
+    private WebhookScopes() {
+        // Prevent instantiation
+    }
+
     /**
      * Check if the given scope grants access to the specified operation scope.
      *
-     * @param grantedScope The scope the API key has
+     * @param grantedScope  The scope the API key has
      * @param requiredScope The scope required for the operation
      * @return true if access is granted
      */

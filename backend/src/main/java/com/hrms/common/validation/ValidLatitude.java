@@ -2,6 +2,7 @@ package com.hrms.common.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,6 +15,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidLatitude {
     String message() default "Latitude must be between -90 and 90 degrees";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

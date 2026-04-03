@@ -10,10 +10,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Development-only security configuration.
- *
+ * <p>
  * This configuration provides open access to Swagger UI and API docs
  * ONLY when the 'dev' profile is active.
- *
+ * <p>
  * In production (non-dev profiles), the main SecurityConfig requires
  * SYSTEM_ADMIN authority for these endpoints.
  */

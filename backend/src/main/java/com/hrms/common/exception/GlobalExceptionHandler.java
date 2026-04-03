@@ -396,8 +396,8 @@ public class GlobalExceptionHandler {
         String providedValue = ex.getValue() != null ? ex.getValue().toString() : "null";
 
         String errorMessage = String.format(
-            "Invalid value '%s' for parameter '%s'. Expected type: %s",
-            providedValue, paramName, requiredType
+                "Invalid value '%s' for parameter '%s'. Expected type: %s",
+                providedValue, paramName, requiredType
         );
 
         logError("validation", "type_mismatch", ex, status, path);

@@ -128,5 +128,6 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             UUID tenantId,
             UUID apiKeyId,
             Set<String> scopes
-    ) {}
+    ) {
+    }
 }

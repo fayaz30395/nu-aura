@@ -52,7 +52,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class RateLimitingFilter extends OncePerRequestFilter {
 
-    /** Maximum number of live bucket entries before a forced eviction sweep is triggered. */
+    /**
+     * Maximum number of live bucket entries before a forced eviction sweep is triggered.
+     */
     private static final int MAX_BUCKETS = 50_000;
 
     /**
@@ -62,37 +64,42 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      */
     private static final long BUCKET_TTL_MINUTES = 2L;
 
-    /** Background cleanup interval in milliseconds (every 5 minutes). */
+    /**
+     * Background cleanup interval in milliseconds (every 5 minutes).
+     */
     private static final long CLEANUP_INTERVAL_MS = 5 * 60 * 1_000L;
-
-    /** Fallback in-memory buckets used when Redis is unavailable */
+    private static final long REDIS_RETRY_INTERVAL_MS = 30_000; // 30 seconds
+    /**
+     * Fallback in-memory buckets used when Redis is unavailable
+     */
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
-
     /**
      * Parallel map tracking the last-access epoch-millisecond for each client key.
      * Kept in sync with {@link #buckets} — an entry is added/updated on every request
      * and removed when the corresponding bucket is evicted.
      */
     private final Map<String, Long> lastAccess = new ConcurrentHashMap<>();
-
-    /** Tracks whether we're using Redis (true) or fallback mode (false) */
+    /**
+     * Tracks whether we're using Redis (true) or fallback mode (false)
+     */
     private final AtomicBoolean redisAvailable = new AtomicBoolean(true);
-
     @Autowired(required = false)
     private DistributedRateLimiter distributedRateLimiter;
-
     @Value("${app.rate-limit.requests-per-minute:60}")
     private int requestsPerMinute;
-
     @Value("${app.rate-limit.enabled:true}")
     private boolean rateLimitEnabled;
-
-    @Value("${app.rate-limit.use-redis:true}")
-    private boolean useRedis;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Filter logic
     // ─────────────────────────────────────────────────────────────────────────
+    @Value("${app.rate-limit.use-redis:true}")
+    private boolean useRedis;
+    /**
+     * Schedules a check to see if Redis is available again.
+     * Simple implementation: check on next request after 30 seconds.
+     */
+    private volatile long lastRedisRetryTime = 0;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -164,10 +171,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             try {
                 DistributedRateLimiter.RateLimitResult redisResult = distributedRateLimiter.tryAcquire(clientId, type);
                 return new RateLimitCheckResult(
-                    redisResult.allowed(),
-                    redisResult.remainingTokens(),
-                    redisResult.resetSeconds(),
-                    "redis"
+                        redisResult.allowed(),
+                        redisResult.remainingTokens(),
+                        redisResult.resetSeconds(),
+                        "redis"
                 );
             } catch (RuntimeException e) {
                 // Redis failed - mark as unavailable and fall back
@@ -185,13 +192,6 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
         return new RateLimitCheckResult(allowed, remaining, 60, "local");
     }
-
-    /**
-     * Schedules a check to see if Redis is available again.
-     * Simple implementation: check on next request after 30 seconds.
-     */
-    private volatile long lastRedisRetryTime = 0;
-    private static final long REDIS_RETRY_INTERVAL_MS = 30_000; // 30 seconds
 
     private void scheduleRedisRetry() {
         long now = System.currentTimeMillis();
@@ -222,13 +222,6 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
     }
 
-    /** Result of a rate limit check */
-    private record RateLimitCheckResult(boolean allowed, long remainingTokens, int retryAfterSeconds, String mode) {}
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Bucket management (memory-safe)
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Returns an existing bucket for the client or creates a new one.
      * Triggers a size-based eviction sweep if {@link #MAX_BUCKETS} is reached.
@@ -246,6 +239,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return createBucket(id);
         });
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bucket management (memory-safe)
+    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Removes all bucket entries whose last-access time is older than {@link #BUCKET_TTL_MINUTES}.
@@ -280,10 +277,6 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         evictStaleBuckets();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Client identification & bucket creation
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Resolves a stable client identifier for rate-limit bucketing.
      *
@@ -313,6 +306,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         // Anonymous: fall back to the client IP
         return "ip:" + getClientIp(request);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Client identification & bucket creation
+    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Extracts the {@code sub} claim from a JWT without full signature verification.
@@ -378,18 +375,28 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         return request.getRemoteAddr();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Test helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /** Clears all rate-limit buckets. Intended for use in integration tests only. */
+    /**
+     * Clears all rate-limit buckets. Intended for use in integration tests only.
+     */
     public void clearBuckets() {
         buckets.clear();
         lastAccess.clear();
     }
 
-    /** Returns the current number of active bucket entries (for monitoring/metrics). */
+    // ─────────────────────────────────────────────────────────────────────────
+    // Test helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns the current number of active bucket entries (for monitoring/metrics).
+     */
     public int getBucketCount() {
         return buckets.size();
+    }
+
+    /**
+     * Result of a rate limit check
+     */
+    private record RateLimitCheckResult(boolean allowed, long remainingTokens, int retryAfterSeconds, String mode) {
     }
 }

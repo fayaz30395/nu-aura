@@ -47,6 +47,8 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
     private final SamlIdentityProviderRepository samlIdpRepository;
     private final JwtTokenProvider tokenProvider;
     private final CookieConfig cookieConfig;
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String frontendUrl;
 
     public SamlAuthenticationSuccessHandler(SamlAuthenticationHandler samlAuthHandler,
                                             SamlIdentityProviderRepository samlIdpRepository,
@@ -58,12 +60,9 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
         this.cookieConfig = cookieConfig;
     }
 
-    @Value("${app.frontend.url:http://localhost:3000}")
-    private String frontendUrl;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                       Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException, ServletException {
 
         if (!(authentication.getPrincipal() instanceof Saml2AuthenticatedPrincipal)) {
             log.error("SAML authentication principal is not Saml2AuthenticatedPrincipal: {}",

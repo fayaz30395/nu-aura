@@ -42,7 +42,9 @@ public class AsyncConfig implements AsyncConfigurer {
     @Value("${app.async.queue-capacity:500}")
     private int queueCapacity;
 
-    /** Named executor bean — can be referenced explicitly via {@code @Async("taskExecutor")}. */
+    /**
+     * Named executor bean — can be referenced explicitly via {@code @Async("taskExecutor")}.
+     */
     @Bean(name = "taskExecutor")
     @Override
     public Executor getAsyncExecutor() {

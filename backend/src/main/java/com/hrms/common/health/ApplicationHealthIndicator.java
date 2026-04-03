@@ -24,12 +24,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplicationHealthIndicator implements HealthIndicator {
 
-    private final Environment environment;
-    private final Optional<BuildProperties> buildProperties;
-
     // Memory thresholds
     private static final double MEMORY_WARNING_THRESHOLD = 0.8;
     private static final double MEMORY_CRITICAL_THRESHOLD = 0.95;
+    private final Environment environment;
+    private final Optional<BuildProperties> buildProperties;
 
     @Override
     public Health health() {

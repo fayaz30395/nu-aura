@@ -36,6 +36,24 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
     public static final String REQUEST_PATH_MDC_KEY = "requestPath";
     public static final String REQUEST_METHOD_MDC_KEY = "requestMethod";
 
+    /**
+     * Get the current correlation ID from MDC.
+     * Useful for including in outbound requests.
+     */
+    public static String getCurrentCorrelationId() {
+        return MDC.get(CORRELATION_ID_MDC_KEY);
+    }
+
+    /**
+     * Set user ID in MDC after authentication.
+     * Call this from security filter after user is authenticated.
+     */
+    public static void setUserId(String userId) {
+        if (userId != null) {
+            MDC.put(USER_ID_MDC_KEY, userId);
+        }
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -87,23 +105,5 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
 
         // Generate new correlation ID
         return UUID.randomUUID().toString();
-    }
-
-    /**
-     * Get the current correlation ID from MDC.
-     * Useful for including in outbound requests.
-     */
-    public static String getCurrentCorrelationId() {
-        return MDC.get(CORRELATION_ID_MDC_KEY);
-    }
-
-    /**
-     * Set user ID in MDC after authentication.
-     * Call this from security filter after user is authenticated.
-     */
-    public static void setUserId(String userId) {
-        if (userId != null) {
-            MDC.put(USER_ID_MDC_KEY, userId);
-        }
     }
 }

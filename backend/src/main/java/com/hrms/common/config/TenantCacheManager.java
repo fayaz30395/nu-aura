@@ -23,11 +23,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TenantCacheManager {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final org.springframework.context.ApplicationContext ctx;
-
     // Cache name patterns
     private static final String TENANT_KEY_PREFIX = "tenant:";
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final org.springframework.context.ApplicationContext ctx;
 
     /**
      * Invalidate all caches for the current tenant.
@@ -83,7 +82,7 @@ public class TenantCacheManager {
     /**
      * Invalidate a specific cache type for a specific tenant.
      *
-     * @param tenantId The tenant ID
+     * @param tenantId  The tenant ID
      * @param cacheName The name of the cache to invalidate
      */
     public void invalidateCache(UUID tenantId, String cacheName) {

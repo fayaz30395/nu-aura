@@ -62,7 +62,7 @@ public class WebhookScopeAspect {
     }
 
     private Object handleApiKeyAuthentication(ProceedingJoinPoint joinPoint, Authentication authentication,
-                                               String[] requiredScopes) throws Throwable {
+                                              String[] requiredScopes) throws Throwable {
         // Get scopes from authentication details
         Object details = authentication.getDetails();
         if (!(details instanceof ApiKeyAuthenticationFilter.ApiKeyAuthenticationDetails apiKeyDetails)) {
@@ -89,7 +89,7 @@ public class WebhookScopeAspect {
     }
 
     private Object handleJwtAuthentication(ProceedingJoinPoint joinPoint, Authentication authentication,
-                                            String[] requiredScopes) throws Throwable {
+                                           String[] requiredScopes) throws Throwable {
         // For JWT auth, check if user has SYSTEM:ADMIN permission
         Set<String> authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -97,14 +97,14 @@ public class WebhookScopeAspect {
 
         // Check for system admin permission (grants all webhook access)
         boolean isSystemAdmin = authorities.contains(SYSTEM_ADMIN_PERMISSION) ||
-                                authorities.contains("ROLE_" + SYSTEM_ADMIN_PERMISSION) ||
-                                authorities.contains("PERMISSION_" + SYSTEM_ADMIN_PERMISSION);
+                authorities.contains("ROLE_" + SYSTEM_ADMIN_PERMISSION) ||
+                authorities.contains("PERMISSION_" + SYSTEM_ADMIN_PERMISSION);
 
         if (!isSystemAdmin) {
             // Also check for the scopes directly (in case JWT has scope-based authorities)
             boolean hasRequiredAuthority = Arrays.stream(requiredScopes)
                     .anyMatch(scope -> authorities.contains("SCOPE_" + scope) ||
-                                      authorities.contains(scope));
+                            authorities.contains(scope));
 
             if (!hasRequiredAuthority) {
                 String methodName = getMethodName(joinPoint);

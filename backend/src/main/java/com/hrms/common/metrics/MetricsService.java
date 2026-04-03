@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 /**
  * Service for recording application metrics.
- *
+ * <p>
  * Playbook Reference: Prompt 13 - Observability baseline
  */
 @Service

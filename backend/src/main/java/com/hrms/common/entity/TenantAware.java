@@ -23,6 +23,11 @@ public abstract class TenantAware extends BaseEntity {
     @Column(nullable = false, updatable = false)
     private UUID tenantId;
 
-    public UUID getTenantId() { return tenantId; }
-    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public UUID getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UUID tenantId) {
+        this.tenantId = tenantId;
+    }
 }

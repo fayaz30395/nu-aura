@@ -35,9 +35,6 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
-    private String allowedOriginsStr;
-
     /**
      * BUG-013 FIX: CSRF disabled for stateless JWT-based authentication.
      * JWT tokens in httpOnly cookies provide sufficient CSRF protection.
@@ -51,6 +48,8 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final RelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
     private final SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler;
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
+    private String allowedOriginsStr;
 
     public SecurityConfig(Environment environment,
                           JwtAuthenticationFilter jwtAuthenticationFilter,

@@ -8,13 +8,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing JWT token revocation.
  * Uses Redis for distributed blacklist with TTL matching token expiration.
  * Falls back to in-memory cache if Redis is unavailable.
- *
+ * <p>
  * Token revocation is critical for:
  * - Logout functionality (invalidate tokens before natural expiry)
  * - Password changes (invalidate all existing tokens)

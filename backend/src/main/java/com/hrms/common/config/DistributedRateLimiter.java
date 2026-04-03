@@ -23,60 +23,32 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class DistributedRateLimiter {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     // Lua script for atomic rate limiting (increment and check with TTL)
     private static final String RATE_LIMIT_SCRIPT = """
-        local key = KEYS[1]
-        local limit = tonumber(ARGV[1])
-        local window = tonumber(ARGV[2])
+            local key = KEYS[1]
+            local limit = tonumber(ARGV[1])
+            local window = tonumber(ARGV[2])
 
-        local current = redis.call('INCR', key)
+            local current = redis.call('INCR', key)
 
-        if current == 1 then
-            redis.call('EXPIRE', key, window)
-        end
+            if current == 1 then
+                redis.call('EXPIRE', key, window)
+            end
 
-        if current > limit then
-            return 0
-        end
+            if current > limit then
+                return 0
+            end
 
-        return limit - current
-        """;
-
+            return limit - current
+            """;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final RedisScript<Long> rateLimitScript = RedisScript.of(RATE_LIMIT_SCRIPT, Long.class);
-
-    /**
-     * Rate limit configurations for different endpoint types.
-     */
-    public enum RateLimitType {
-        AUTH("ratelimit:auth:", 10, 60),           // 10 requests per minute
-        API("ratelimit:api:", 100, 60),            // 100 requests per minute
-        EXPORT("ratelimit:export:", 5, 300),       // 5 requests per 5 minutes
-        WALL("ratelimit:wall:", 30, 60),           // 30 requests per minute
-        UPLOAD("ratelimit:upload:", 20, 60),       // 20 uploads per minute
-        WEBHOOK("ratelimit:webhook:", 50, 60);     // 50 webhook operations per minute
-
-        private final String prefix;
-        private final int limit;
-        private final int windowSeconds;
-
-        RateLimitType(String prefix, int limit, int windowSeconds) {
-            this.prefix = prefix;
-            this.limit = limit;
-            this.windowSeconds = windowSeconds;
-        }
-
-        public String getPrefix() { return prefix; }
-        public int getLimit() { return limit; }
-        public int getWindowSeconds() { return windowSeconds; }
-    }
 
     /**
      * Check if a request should be allowed based on rate limits.
      *
      * @param clientKey Unique identifier for the client (e.g., userId:tenantId or ip:address)
-     * @param type The type of rate limit to apply
+     * @param type      The type of rate limit to apply
      * @return RateLimitResult containing whether allowed and remaining tokens
      */
     public RateLimitResult tryAcquire(String clientKey, RateLimitType type) {
@@ -84,10 +56,10 @@ public class DistributedRateLimiter {
 
         try {
             Long remaining = redisTemplate.execute(
-                rateLimitScript,
-                Collections.singletonList(key),
-                type.getLimit(),
-                type.getWindowSeconds()
+                    rateLimitScript,
+                    Collections.singletonList(key),
+                    type.getLimit(),
+                    type.getWindowSeconds()
             );
 
             if (remaining == null) {
@@ -158,11 +130,46 @@ public class DistributedRateLimiter {
     }
 
     /**
+     * Rate limit configurations for different endpoint types.
+     */
+    public enum RateLimitType {
+        AUTH("ratelimit:auth:", 10, 60),           // 10 requests per minute
+        API("ratelimit:api:", 100, 60),            // 100 requests per minute
+        EXPORT("ratelimit:export:", 5, 300),       // 5 requests per 5 minutes
+        WALL("ratelimit:wall:", 30, 60),           // 30 requests per minute
+        UPLOAD("ratelimit:upload:", 20, 60),       // 20 uploads per minute
+        WEBHOOK("ratelimit:webhook:", 50, 60);     // 50 webhook operations per minute
+
+        private final String prefix;
+        private final int limit;
+        private final int windowSeconds;
+
+        RateLimitType(String prefix, int limit, int windowSeconds) {
+            this.prefix = prefix;
+            this.limit = limit;
+            this.windowSeconds = windowSeconds;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public int getLimit() {
+            return limit;
+        }
+
+        public int getWindowSeconds() {
+            return windowSeconds;
+        }
+    }
+
+    /**
      * Result of a rate limit check.
      */
     public record RateLimitResult(
-        boolean allowed,
-        long remainingTokens,
-        int resetSeconds
-    ) {}
+            boolean allowed,
+            long remainingTokens,
+            int resetSeconds
+    ) {
+    }
 }

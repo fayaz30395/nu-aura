@@ -135,8 +135,8 @@ public @interface WebhookUrlValidator {
             try {
                 InetAddress address = InetAddress.getByName(host);
                 return !address.isLoopbackAddress() &&
-                       !address.isSiteLocalAddress() &&
-                       !address.isLinkLocalAddress();
+                        !address.isSiteLocalAddress() &&
+                        !address.isLinkLocalAddress();
             } catch (java.net.UnknownHostException e) {
                 // DNS resolution failed - may be temporary
                 return true;

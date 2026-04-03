@@ -195,5 +195,6 @@ public class CacheMetricsConfig {
             long misses,
             long accesses,
             double hitRatio
-    ) {}
+    ) {
+    }
 }

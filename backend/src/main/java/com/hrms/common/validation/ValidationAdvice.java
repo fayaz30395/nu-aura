@@ -40,7 +40,7 @@ public class ValidationAdvice {
         // Skip validation for core Java types and non-application classes
         String packageName = clazz.getPackageName();
         if (packageName.startsWith("java.") || packageName.startsWith("javax.") ||
-            packageName.startsWith("sun.") || packageName.startsWith("jdk.")) {
+                packageName.startsWith("sun.") || packageName.startsWith("jdk.")) {
             return;
         }
 

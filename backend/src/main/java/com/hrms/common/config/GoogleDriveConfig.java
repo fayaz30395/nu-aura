@@ -66,16 +66,45 @@ public class GoogleDriveConfig {
 
     private StorageProvider mockProvider() {
         return new StorageProvider() {
-            @Override public String upload(String n, InputStream in, long s, String ct, Map<String, String> m) {
-                log.warn("MockStorageProvider.upload({}) — no-op", n); return n;
+            @Override
+            public String upload(String n, InputStream in, long s, String ct, Map<String, String> m) {
+                log.warn("MockStorageProvider.upload({}) — no-op", n);
+                return n;
             }
-            @Override public String getDownloadUrl(String n, int h) { return "/mock-file/" + n; }
-            @Override public InputStream download(String n) { return InputStream.nullInputStream(); }
-            @Override public void delete(String n) { log.warn("MockStorageProvider.delete({}) — no-op", n); }
-            @Override public boolean exists(String n) { return false; }
-            @Override public String copy(String src, String dst) { return dst; }
-            @Override public void ensureStorageReady() {}
-            @Override public List<StoredObjectInfo> listObjects(String p) { return List.of(); }
+
+            @Override
+            public String getDownloadUrl(String n, int h) {
+                return "/mock-file/" + n;
+            }
+
+            @Override
+            public InputStream download(String n) {
+                return InputStream.nullInputStream();
+            }
+
+            @Override
+            public void delete(String n) {
+                log.warn("MockStorageProvider.delete({}) — no-op", n);
+            }
+
+            @Override
+            public boolean exists(String n) {
+                return false;
+            }
+
+            @Override
+            public String copy(String src, String dst) {
+                return dst;
+            }
+
+            @Override
+            public void ensureStorageReady() {
+            }
+
+            @Override
+            public List<StoredObjectInfo> listObjects(String p) {
+                return List.of();
+            }
         };
     }
 }

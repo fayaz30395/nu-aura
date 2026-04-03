@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * (including @Valid validation) inside {@code InvocableHandlerMethod.invokeForRequest()}
  * <em>before</em> the method is invoked through the Spring AOP proxy. This means
  * the existing {@link PermissionAspect} (which uses @Around AOP) fires <em>after</em>
+ *
  * @Valid. Unauthorized users therefore receive HTTP 400 (validation failure) instead
  * of HTTP 403 (forbidden) when they send an invalid request body to a protected
  * endpoint — inadvertently exposing the API field structure.</p>
@@ -127,9 +128,9 @@ public class PermissionHandlerInterceptor implements HandlerInterceptor {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(String.format(
-            "{\"status\":403,\"error\":\"Forbidden\",\"message\":\"%s\",\"timestamp\":\"%s\"}",
-            message.replace("\"", "'"),
-            Instant.now()));
+                "{\"status\":403,\"error\":\"Forbidden\",\"message\":\"%s\",\"timestamp\":\"%s\"}",
+                message.replace("\"", "'"),
+                Instant.now()));
     }
 
     private String buildDeniedMessage(String[] anyOf, String[] allOf) {

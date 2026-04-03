@@ -69,14 +69,14 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
             // Adjust these values based on your frontend requirements
             response.setHeader("Content-Security-Policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-                    "style-src 'self' 'unsafe-inline'; " +
-                    "img-src 'self' data: https:; " +
-                    "font-src 'self' data:; " +
-                    "connect-src 'self'; " +
-                    "frame-ancestors 'none'; " +
-                    "base-uri 'self'; " +
-                    "form-action 'self'");
+                            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                            "style-src 'self' 'unsafe-inline'; " +
+                            "img-src 'self' data: https:; " +
+                            "font-src 'self' data:; " +
+                            "connect-src 'self'; " +
+                            "frame-ancestors 'none'; " +
+                            "base-uri 'self'; " +
+                            "form-action 'self'");
 
             // Control referrer information - prevents sending referrer to cross-origin sites
             response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -84,10 +84,10 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
             // Disable unnecessary browser features - controls which browser APIs can be used
             response.setHeader("Permissions-Policy",
                     "geolocation=(), " +
-                    "microphone=(), " +
-                    "camera=(), " +
-                    "payment=(), " +
-                    "usb=()");
+                            "microphone=(), " +
+                            "camera=(), " +
+                            "payment=(), " +
+                            "usb=()");
 
             // Prevent caching of sensitive API responses
             if (isApiRequest(request) && !isCacheableEndpoint(request)) {
@@ -102,7 +102,7 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
 
     private boolean isSecureRequest(HttpServletRequest request) {
         return request.isSecure() ||
-               "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto"));
+                "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto"));
     }
 
     private boolean isApiRequest(HttpServletRequest request) {
@@ -113,12 +113,12 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         // Allow caching for static-like endpoints
         return path.contains("/static/") ||
-               path.contains("/assets/") ||
-               path.endsWith(".js") ||
-               path.endsWith(".css") ||
-               path.endsWith(".png") ||
-               path.endsWith(".jpg") ||
-               path.endsWith(".ico");
+                path.contains("/assets/") ||
+                path.endsWith(".js") ||
+                path.endsWith(".css") ||
+                path.endsWith(".png") ||
+                path.endsWith(".jpg") ||
+                path.endsWith(".ico");
     }
 
     @Override

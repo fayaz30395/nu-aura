@@ -96,7 +96,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.setHeader("X-RateLimit-Reset", String.valueOf(result.resetSeconds()));
             response.setHeader("Retry-After", String.valueOf(result.resetSeconds()));
             response.getWriter().write(
-                "{\"error\":\"Too many requests\",\"message\":\"Rate limit exceeded. Please try again later.\",\"status\":429}"
+                    "{\"error\":\"Too many requests\",\"message\":\"Rate limit exceeded. Please try again later.\",\"status\":429}"
             );
             return;
         }
@@ -204,8 +204,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private boolean isTrustedProxy(String ip) {
         return ip != null && (
-            ip.equals("127.0.0.1") || ip.equals("::1") ||
-            ip.startsWith("10.") || ip.startsWith("172.") || ip.startsWith("192.168.")
+                ip.equals("127.0.0.1") || ip.equals("::1") ||
+                        ip.startsWith("10.") || ip.startsWith("172.") || ip.startsWith("192.168.")
         );
     }
 
@@ -215,9 +215,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private boolean isExportEndpoint(String path) {
         return path.contains("/export") ||
-               path.contains("/download") ||
-               path.endsWith("/csv") ||
-               path.endsWith("/pdf");
+                path.contains("/download") ||
+                path.endsWith("/csv") ||
+                path.endsWith("/pdf");
     }
 
     private boolean isWallEndpoint(String path) {
@@ -237,8 +237,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         // Skip rate limiting for actuator, swagger, and static resources
         return path.startsWith("/actuator/") ||
-               path.startsWith("/swagger") ||
-               path.startsWith("/v3/api-docs") ||
-               path.startsWith("/static/");
+                path.startsWith("/swagger") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/static/");
     }
 }

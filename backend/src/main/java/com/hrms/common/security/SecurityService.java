@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -82,9 +83,9 @@ public class SecurityService {
      * set so callers deny access safely in async contexts.</p>
      */
     @Cacheable(
-        value = CacheConfig.ROLE_PERMISSIONS,
-        key = "#root.target.rolesCacheKey(#roles)",
-        condition = "#root.target.isTenantContextPresent()"
+            value = CacheConfig.ROLE_PERMISSIONS,
+            key = "#root.target.rolesCacheKey(#roles)",
+            condition = "#root.target.isTenantContextPresent()"
     )
     @Transactional(readOnly = true)
     public Set<String> getCachedPermissions(Collection<String> roles) {
@@ -134,7 +135,9 @@ public class SecurityService {
         return permissions;
     }
 
-    /** Used by the {@code @Cacheable} condition SpEL expression. */
+    /**
+     * Used by the {@code @Cacheable} condition SpEL expression.
+     */
     public boolean isTenantContextPresent() {
         return TenantContext.getCurrentTenant() != null;
     }
@@ -153,10 +156,10 @@ public class SecurityService {
     /**
      * NEW METHOD (Task 8): Load permissions for a specific user, merging explicit roles
      * + implicit roles + role hierarchy inheritance.
-     *
+     * <p>
      * Cache key: "permissions:{tenantId}:{userId}"
      * TTL: 5 minutes (short-lived, user-specific)
-     *
+     * <p>
      * Algorithm:
      * 1. Load explicit role permissions from provided role codes
      * 2. Walk parent_role_id chain for each explicit role (max depth 10, cycle detection)
@@ -164,14 +167,14 @@ public class SecurityService {
      * 4. Walk parent chain for each implicit role's role
      * 5. Merge all permissions additively into a Set<String>
      *
-     * @param userId UUID of the user (from JWT)
+     * @param userId            UUID of the user (from JWT)
      * @param explicitRoleCodes Collection of explicit role codes (from JWT)
      * @return Set of permission codes (database format: "module.action")
      */
     @Cacheable(
-        value = CacheConfig.ROLE_PERMISSIONS,
-        key = "'permissions:' + #root.target.userCacheKey(#userId)",
-        condition = "#root.target.isTenantContextPresent()"
+            value = CacheConfig.ROLE_PERMISSIONS,
+            key = "'permissions:' + #root.target.userCacheKey(#userId)",
+            condition = "#root.target.isTenantContextPresent()"
     )
     @Transactional(readOnly = true)
     public Set<String> getCachedPermissionsForUser(UUID userId, Collection<String> explicitRoleCodes) {
@@ -221,12 +224,12 @@ public class SecurityService {
     /**
      * PERF-M01 FIX: Walk parent_role_id chain to collect all permissions for a role
      * and all its ancestors (up the inheritance hierarchy).
-     *
+     * <p>
      * Uses a pre-loaded in-memory roleMap to avoid any DB queries during hierarchy walks.
      * The caller is responsible for loading all tenant roles once via
      * {@code roleRepository.findByTenantIdWithPermissions(tenantId)}.
      *
-     * @param role The role to start from
+     * @param role    The role to start from
      * @param roleMap Pre-loaded map of roleId -> Role (with permissions) for the tenant
      * @return Set of permission codes (directly assigned + inherited from parent roles)
      */

@@ -160,30 +160,30 @@ public class CacheConfig implements CachingConfigurer {
     public CacheErrorHandler errorHandler() {
         return new CacheErrorHandler() {
             private static final org.slf4j.Logger log =
-                org.slf4j.LoggerFactory.getLogger("CacheErrorHandler");
+                    org.slf4j.LoggerFactory.getLogger("CacheErrorHandler");
 
             @Override
             public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
                 log.warn("Cache GET failed for key={} in cache={}: {}",
-                    key, cache.getName(), exception.getMessage());
+                        key, cache.getName(), exception.getMessage());
             }
 
             @Override
             public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
                 log.warn("Cache PUT failed for key={} in cache={}: {}",
-                    key, cache.getName(), exception.getMessage());
+                        key, cache.getName(), exception.getMessage());
             }
 
             @Override
             public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
                 log.warn("Cache EVICT failed for key={} in cache={}: {}",
-                    key, cache.getName(), exception.getMessage());
+                        key, cache.getName(), exception.getMessage());
             }
 
             @Override
             public void handleCacheClearError(RuntimeException exception, Cache cache) {
                 log.warn("Cache CLEAR failed for cache={}: {}",
-                    cache.getName(), exception.getMessage());
+                        cache.getName(), exception.getMessage());
             }
         };
     }
