@@ -116,12 +116,13 @@ class EmployeeService {
     const formData = new FormData();
     formData.append('file', file);
     const response = await apiClient.post<EmployeeImportResult>(
-      `/employees/import/execute?skipInvalid=${skipInvalid}`,
+      '/employees/import/execute',
       formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        params: { skipInvalid },
       }
     );
     return response.data;

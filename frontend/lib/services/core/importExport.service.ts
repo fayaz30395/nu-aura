@@ -154,9 +154,9 @@ class ImportExportService {
     const formData = new FormData();
     formData.append('file', file);
     const response = await apiClient.post<FileValidationResult>(
-      `/api/v1/migration/validate?type=${type}`,
+      '/api/v1/migration/validate',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      { headers: { 'Content-Type': 'multipart/form-data' }, params: { type } },
     );
     return response.data;
   }
@@ -192,9 +192,9 @@ class ImportExportService {
     const formData = new FormData();
     formData.append('file', file);
     const response = await apiClient.post<EmployeeImportResult>(
-      `/api/v1/employees/import/execute?skipInvalid=${skipInvalid}`,
+      '/api/v1/employees/import/execute',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      { headers: { 'Content-Type': 'multipart/form-data' }, params: { skipInvalid } },
     );
     return response.data;
   }
@@ -207,9 +207,9 @@ class ImportExportService {
     request: ExportRequest,
   ): Promise<Blob> {
     const response = await apiClient.post<Blob>(
-      `/api/v1/export/${type}?format=${format}`,
+      `/api/v1/export/${type}`,
       request,
-      { responseType: 'blob' },
+      { responseType: 'blob', params: { format } },
     );
     return response.data;
   }

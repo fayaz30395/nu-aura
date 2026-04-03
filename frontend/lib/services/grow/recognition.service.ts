@@ -32,31 +32,31 @@ export const recognitionService = {
 
   async getPublicFeed(page = 0, size = 20): Promise<PagedResponse<Recognition>> {
     const response = await apiClient.get<PagedResponse<Recognition>>(
-      `${BASE_URL}/feed?page=${page}&size=${size}`
+      `${BASE_URL}/feed`, { params: { page, size } }
     );
     return response.data;
   },
 
   async getMyReceivedRecognitions(page = 0, size = 20): Promise<PagedResponse<Recognition>> {
     const response = await apiClient.get<PagedResponse<Recognition>>(
-      `${BASE_URL}/received?page=${page}&size=${size}`
+      `${BASE_URL}/received`, { params: { page, size } }
     );
     return response.data;
   },
 
   async getMyGivenRecognitions(page = 0, size = 20): Promise<PagedResponse<Recognition>> {
     const response = await apiClient.get<PagedResponse<Recognition>>(
-      `${BASE_URL}/given?page=${page}&size=${size}`
+      `${BASE_URL}/given`, { params: { page, size } }
     );
     return response.data;
   },
 
   async addReaction(recognitionId: string, reactionType: ReactionType): Promise<void> {
-    await apiClient.post(`${BASE_URL}/${recognitionId}/react?reactionType=${reactionType}`);
+    await apiClient.post(`${BASE_URL}/${recognitionId}/react`, undefined, { params: { reactionType } });
   },
 
   async removeReaction(recognitionId: string, reactionType: ReactionType): Promise<void> {
-    await apiClient.delete(`${BASE_URL}/${recognitionId}/react?reactionType=${reactionType}`);
+    await apiClient.delete(`${BASE_URL}/${recognitionId}/react`, { params: { reactionType } });
   },
 
   async getActiveBadges(): Promise<RecognitionBadge[]> {
@@ -70,7 +70,7 @@ export const recognitionService = {
   },
 
   async getLeaderboard(limit = 10): Promise<EmployeePoints[]> {
-    const response = await apiClient.get<EmployeePoints[]>(`${BASE_URL}/leaderboard?limit=${limit}`);
+    const response = await apiClient.get<EmployeePoints[]>(`${BASE_URL}/leaderboard`, { params: { limit } });
     return response.data;
   },
 
@@ -80,7 +80,7 @@ export const recognitionService = {
   },
 
   async getUpcomingMilestones(days = 7): Promise<Milestone[]> {
-    const response = await apiClient.get<Milestone[]>(`${BASE_URL}/milestones/upcoming?days=${days}`);
+    const response = await apiClient.get<Milestone[]>(`${BASE_URL}/milestones/upcoming`, { params: { days } });
     return response.data;
   },
 };
