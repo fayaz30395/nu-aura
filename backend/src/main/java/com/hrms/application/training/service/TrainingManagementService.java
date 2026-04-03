@@ -144,7 +144,7 @@ public class TrainingManagementService {
                 .orElseThrow(() -> new IllegalArgumentException("Training program not found"));
 
         // Check if employee exists
-        Employee employee = employeeRepository.findById(request.getEmployeeId())
+        Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check for duplicate enrollment
@@ -270,7 +270,7 @@ public class TrainingManagementService {
     private TrainingProgramResponse mapToProgramResponse(TrainingProgram program) {
         String instructorName = null;
         if (program.getInstructorId() != null) {
-            instructorName = employeeRepository.findById(program.getInstructorId())
+            instructorName = employeeRepository.findByIdAndTenantId(program.getInstructorId(), program.getTenantId())
                     .map(Employee::getFullName)
                     .orElse(null);
         }
@@ -313,7 +313,7 @@ public class TrainingManagementService {
                 .map(TrainingProgram::getProgramName)
                 .orElse(null);
 
-        String employeeName = employeeRepository.findById(enrollment.getEmployeeId())
+        String employeeName = employeeRepository.findByIdAndTenantId(enrollment.getEmployeeId(), enrollment.getTenantId())
                 .map(Employee::getFullName)
                 .orElse(null);
 

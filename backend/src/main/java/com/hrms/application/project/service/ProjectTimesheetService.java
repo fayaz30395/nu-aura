@@ -71,7 +71,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         }
 
         // Verify employee exists
-        employeeRepository.findById(request.getEmployeeId())
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         TimeEntry timeEntry = new TimeEntry();
@@ -300,7 +300,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         log.info("Adding member {} to project {}", request.getEmployeeId(), request.getProjectId());
 
         // Verify employee exists
-        employeeRepository.findById(request.getEmployeeId())
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check if member already exists
@@ -450,7 +450,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
      */
     private void startTimesheetApprovalWorkflow(TimeEntry timeEntry, UUID tenantId) {
         try {
-            String employeeName = employeeRepository.findById(timeEntry.getEmployeeId())
+            String employeeName = employeeRepository.findByIdAndTenantId(timeEntry.getEmployeeId(), tenantId)
                     .map(Employee::getFullName).orElse("Employee");
 
             WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
@@ -472,13 +472,13 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     private TimeEntryResponse mapToTimeEntryResponse(TimeEntry entry) {
         String projectName = null; // Would fetch from ProjectRepository
 
-        String employeeName = employeeRepository.findById(entry.getEmployeeId())
+        String employeeName = employeeRepository.findByIdAndTenantId(entry.getEmployeeId(), entry.getTenantId())
                 .map(Employee::getFullName)
                 .orElse(null);
 
         String approvedByName = null;
         if (entry.getApprovedBy() != null) {
-            approvedByName = employeeRepository.findById(entry.getApprovedBy())
+            approvedByName = employeeRepository.findByIdAndTenantId(entry.getApprovedBy(), entry.getTenantId())
                     .map(Employee::getFullName)
                     .orElse(null);
         }
@@ -512,7 +512,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     private ProjectMemberResponse mapToProjectMemberResponse(ProjectMember member) {
         String projectName = null; // Would fetch from ProjectRepository
 
-        String employeeName = employeeRepository.findById(member.getEmployeeId())
+        String employeeName = employeeRepository.findByIdAndTenantId(member.getEmployeeId(), member.getTenantId())
                 .map(Employee::getFullName)
                 .orElse(null);
 

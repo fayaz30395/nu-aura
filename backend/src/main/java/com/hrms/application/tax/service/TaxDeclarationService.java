@@ -41,7 +41,7 @@ public class TaxDeclarationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating tax declaration for employee {} for FY {}", request.getEmployeeId(), request.getFinancialYear());
 
-        employeeRepository.findById(request.getEmployeeId())
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check if declaration already exists for this FY
@@ -322,16 +322,16 @@ public class TaxDeclarationService {
     }
 
     private TaxDeclarationResponse mapToResponse(TaxDeclaration decl) {
-        String employeeName = employeeRepository.findById(decl.getEmployeeId())
+        String employeeName = employeeRepository.findByIdAndTenantId(decl.getEmployeeId(), decl.getTenantId())
                 .map(Employee::getFullName)
                 .orElse(null);
 
         String approvedByName = decl.getApprovedBy() != null
-                ? employeeRepository.findById(decl.getApprovedBy()).map(Employee::getFullName).orElse(null)
+                ? employeeRepository.findByIdAndTenantId(decl.getApprovedBy(), decl.getTenantId()).map(Employee::getFullName).orElse(null)
                 : null;
 
         String rejectedByName = decl.getRejectedBy() != null
-                ? employeeRepository.findById(decl.getRejectedBy()).map(Employee::getFullName).orElse(null)
+                ? employeeRepository.findByIdAndTenantId(decl.getRejectedBy(), decl.getTenantId()).map(Employee::getFullName).orElse(null)
                 : null;
 
         List<TaxProofResponse> proofs = taxProofRepository
@@ -379,16 +379,16 @@ public class TaxDeclarationService {
     }
 
     private TaxProofResponse mapToProofResponse(TaxProof proof) {
-        String employeeName = employeeRepository.findById(proof.getEmployeeId())
+        String employeeName = employeeRepository.findByIdAndTenantId(proof.getEmployeeId(), proof.getTenantId())
                 .map(Employee::getFullName)
                 .orElse(null);
 
         String verifiedByName = proof.getVerifiedBy() != null
-                ? employeeRepository.findById(proof.getVerifiedBy()).map(Employee::getFullName).orElse(null)
+                ? employeeRepository.findByIdAndTenantId(proof.getVerifiedBy(), proof.getTenantId()).map(Employee::getFullName).orElse(null)
                 : null;
 
         String rejectedByName = proof.getRejectedBy() != null
-                ? employeeRepository.findById(proof.getRejectedBy()).map(Employee::getFullName).orElse(null)
+                ? employeeRepository.findByIdAndTenantId(proof.getRejectedBy(), proof.getTenantId()).map(Employee::getFullName).orElse(null)
                 : null;
 
         return TaxProofResponse.builder()
