@@ -276,7 +276,9 @@ class PayrollService {
   // ── Payroll Component Methods ──────────────────────────────────────────────
 
   async getPayrollComponents(page = 0, size = 20): Promise<Page<PayrollComponent>> {
-    const response = await apiClient.get<Page<PayrollComponent>>(`/payroll/components?page=${page}&size=${size}&sort=evaluationOrder,asc`);
+    const response = await apiClient.get<Page<PayrollComponent>>('/payroll/components', {
+      params: { page, size, sort: 'evaluationOrder,asc' }
+    });
     return response.data;
   }
 

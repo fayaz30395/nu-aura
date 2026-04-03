@@ -2,6 +2,7 @@ package com.hrms.api.customfield.controller;
 
 import com.hrms.api.customfield.dto.*;
 import com.hrms.application.customfield.service.CustomFieldService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.customfield.CustomFieldDefinition.EntityType;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class CustomFieldController {
      * Create a new custom field definition.
      */
     @PostMapping("/definitions")
-    @RequiresPermission("CUSTOM_FIELD:CREATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_CREATE)
     public ResponseEntity<CustomFieldDefinitionResponse> createFieldDefinition(
             @Valid @RequestBody CustomFieldDefinitionRequest request) {
         CustomFieldDefinitionResponse response = customFieldService.createFieldDefinition(request);
@@ -45,7 +46,7 @@ public class CustomFieldController {
      * Update an existing custom field definition.
      */
     @PutMapping("/definitions/{id}")
-    @RequiresPermission("CUSTOM_FIELD:UPDATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_UPDATE)
     public ResponseEntity<CustomFieldDefinitionResponse> updateFieldDefinition(
             @PathVariable UUID id,
             @Valid @RequestBody CustomFieldDefinitionRequest request) {
@@ -57,7 +58,7 @@ public class CustomFieldController {
      * Get a custom field definition by ID.
      */
     @GetMapping("/definitions/{id}")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<CustomFieldDefinitionResponse> getFieldDefinition(@PathVariable UUID id) {
         CustomFieldDefinitionResponse response = customFieldService.getFieldDefinition(id);
         return ResponseEntity.ok(response);
@@ -67,7 +68,7 @@ public class CustomFieldController {
      * Get a custom field definition by field code.
      */
     @GetMapping("/definitions/code/{fieldCode}")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<CustomFieldDefinitionResponse> getFieldDefinitionByCode(
             @PathVariable String fieldCode) {
         CustomFieldDefinitionResponse response = customFieldService.getFieldDefinitionByCode(fieldCode);
@@ -78,7 +79,7 @@ public class CustomFieldController {
      * Get all custom field definitions with pagination.
      */
     @GetMapping("/definitions")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<Page<CustomFieldDefinitionResponse>> getAllFieldDefinitions(Pageable pageable) {
         Page<CustomFieldDefinitionResponse> response = customFieldService.getAllFieldDefinitions(pageable);
         return ResponseEntity.ok(response);
@@ -88,7 +89,7 @@ public class CustomFieldController {
      * Get custom field definitions for a specific entity type.
      */
     @GetMapping("/definitions/entity-type/{entityType}")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<List<CustomFieldDefinitionResponse>> getFieldDefinitionsByEntityType(
             @PathVariable EntityType entityType,
             @RequestParam(required = false, defaultValue = "false") boolean activeOnly) {
@@ -101,7 +102,7 @@ public class CustomFieldController {
      * Get custom field definitions grouped by field group.
      */
     @GetMapping("/definitions/entity-type/{entityType}/grouped")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<Map<String, List<CustomFieldDefinitionResponse>>> getFieldDefinitionsGrouped(
             @PathVariable EntityType entityType) {
         Map<String, List<CustomFieldDefinitionResponse>> response = customFieldService
@@ -113,7 +114,7 @@ public class CustomFieldController {
      * Get custom field definitions for list view.
      */
     @GetMapping("/definitions/entity-type/{entityType}/list-view")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<List<CustomFieldDefinitionResponse>> getFieldDefinitionsForListView(
             @PathVariable EntityType entityType) {
         List<CustomFieldDefinitionResponse> response = customFieldService
@@ -125,7 +126,7 @@ public class CustomFieldController {
      * Search custom field definitions by name or code.
      */
     @GetMapping("/definitions/search")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<Page<CustomFieldDefinitionResponse>> searchFieldDefinitions(
             @RequestParam String query,
             Pageable pageable) {
@@ -138,7 +139,7 @@ public class CustomFieldController {
      * Get all field groups for an entity type.
      */
     @GetMapping("/definitions/entity-type/{entityType}/groups")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<List<String>> getFieldGroups(@PathVariable EntityType entityType) {
         List<String> response = customFieldService.getFieldGroups(entityType);
         return ResponseEntity.ok(response);
@@ -148,7 +149,7 @@ public class CustomFieldController {
      * Deactivate a custom field definition.
      */
     @PostMapping("/definitions/{id}/deactivate")
-    @RequiresPermission("CUSTOM_FIELD:UPDATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_UPDATE)
     public ResponseEntity<Void> deactivateFieldDefinition(@PathVariable UUID id) {
         customFieldService.deactivateFieldDefinition(id);
         return ResponseEntity.noContent().build();
@@ -158,7 +159,7 @@ public class CustomFieldController {
      * Activate a custom field definition.
      */
     @PostMapping("/definitions/{id}/activate")
-    @RequiresPermission("CUSTOM_FIELD:UPDATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_UPDATE)
     public ResponseEntity<Void> activateFieldDefinition(@PathVariable UUID id) {
         customFieldService.activateFieldDefinition(id);
         return ResponseEntity.noContent().build();
@@ -169,7 +170,7 @@ public class CustomFieldController {
      * This will also delete all associated values.
      */
     @DeleteMapping("/definitions/{id}")
-    @RequiresPermission("CUSTOM_FIELD:DELETE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_DELETE)
     public ResponseEntity<Void> deleteFieldDefinition(@PathVariable UUID id) {
         customFieldService.deleteFieldDefinition(id);
         return ResponseEntity.noContent().build();
@@ -183,7 +184,7 @@ public class CustomFieldController {
      * Set a single custom field value for an entity.
      */
     @PostMapping("/values/{entityType}/{entityId}")
-    @RequiresPermission("CUSTOM_FIELD:UPDATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_UPDATE)
     public ResponseEntity<CustomFieldValueResponse> setFieldValue(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId,
@@ -196,7 +197,7 @@ public class CustomFieldController {
      * Set multiple custom field values for an entity (bulk operation).
      */
     @PostMapping("/values/bulk")
-    @RequiresPermission("CUSTOM_FIELD:UPDATE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_UPDATE)
     public ResponseEntity<List<CustomFieldValueResponse>> setFieldValues(
             @Valid @RequestBody BulkCustomFieldValueRequest request) {
         List<CustomFieldValueResponse> response = customFieldService.setFieldValues(
@@ -210,7 +211,7 @@ public class CustomFieldController {
      * Get all custom field values for an entity.
      */
     @GetMapping("/values/{entityType}/{entityId}")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<List<CustomFieldValueResponse>> getFieldValues(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId) {
@@ -222,7 +223,7 @@ public class CustomFieldController {
      * Get custom field values grouped by field group.
      */
     @GetMapping("/values/{entityType}/{entityId}/grouped")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<Map<String, List<CustomFieldValueResponse>>> getFieldValuesGrouped(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId) {
@@ -235,7 +236,7 @@ public class CustomFieldController {
      * Get a specific custom field value by field code.
      */
     @GetMapping("/values/{entityType}/{entityId}/field/{fieldCode}")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<CustomFieldValueResponse> getFieldValueByCode(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId,
@@ -248,7 +249,7 @@ public class CustomFieldController {
      * Delete a custom field value for an entity.
      */
     @DeleteMapping("/values/{entityType}/{entityId}/field/{fieldDefinitionId}")
-    @RequiresPermission("CUSTOM_FIELD:DELETE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_DELETE)
     public ResponseEntity<Void> deleteFieldValue(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId,
@@ -261,7 +262,7 @@ public class CustomFieldController {
      * Delete all custom field values for an entity.
      */
     @DeleteMapping("/values/{entityType}/{entityId}")
-    @RequiresPermission("CUSTOM_FIELD:DELETE")
+    @RequiresPermission(Permission.CUSTOM_FIELD_DELETE)
     public ResponseEntity<Void> deleteAllFieldValues(
             @PathVariable EntityType entityType,
             @PathVariable UUID entityId) {
@@ -277,7 +278,7 @@ public class CustomFieldController {
      * Get all supported entity types.
      */
     @GetMapping("/entity-types")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<EntityType[]> getEntityTypes() {
         return ResponseEntity.ok(EntityType.values());
     }
@@ -286,7 +287,7 @@ public class CustomFieldController {
      * Check if a field code is available.
      */
     @GetMapping("/definitions/check-code")
-    @RequiresPermission("CUSTOM_FIELD:VIEW")
+    @RequiresPermission(Permission.CUSTOM_FIELD_VIEW)
     public ResponseEntity<Boolean> isFieldCodeAvailable(
             @RequestParam String fieldCode,
             @RequestParam(required = false) UUID excludeId) {
