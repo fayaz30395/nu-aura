@@ -70,14 +70,21 @@ if [ ! -f "$JAR_FILE" ]; then
   mvn clean package -DskipTests -q
 fi
 
-# Fast-startup JVM flags for dev:
-#   -XX:TieredStopAtLevel=1  → skip C2 JIT (saves ~5-10s)
-#   -XX:+UseParallelGC       → faster GC during startup
-#   -Dspring.jmx.enabled=false → skip JMX bean registration
-#   -Dspring.devtools.restart.enabled=false → disable devtools restart classloader
+# JVM flags tuned for low-memory local dev (macOS OOM-kill prevention):
+#   -Xmx768m                      → heap cap (leaves room for metaspace+stacks+native)
+#   -Xms128m                      → start small, grow on demand
+#   -XX:MaxMetaspaceSize=192m      → cap class metadata (default is unlimited)
+#   -XX:ReservedCodeCacheSize=64m  → cap JIT code cache (default 240m, unused at TieredStopAtLevel=1)
+#   -Xss512k                       → reduce per-thread stack (default 1m × many threads)
+#   -XX:TieredStopAtLevel=1        → C1 JIT only, skip C2 compilation
+#   -XX:+UseSerialGC               → lowest GC overhead for single-machine dev
+#   -Dspring.jmx.enabled=false     → skip JMX bean registration
 java \
-  -Xmx512m \
-  -Xms256m \
+  -Xmx768m \
+  -Xms128m \
+  -XX:MaxMetaspaceSize=192m \
+  -XX:ReservedCodeCacheSize=64m \
+  -Xss512k \
   -XX:TieredStopAtLevel=1 \
   -XX:+UseSerialGC \
   -Dspring.jmx.enabled=false \

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 public class CreateEmployeeRequest {
 
-    @NotBlank(message = "Employee code is required")
+    // F-02: employeeCode is optional — omit or pass null/blank to auto-generate (e.g. EMP-0042)
     @Size(min = 2, max = 50, message = "Employee code must be between 2 and 50 characters")
     @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Employee code can only contain letters, numbers, underscore and hyphen")
     private String employeeCode;

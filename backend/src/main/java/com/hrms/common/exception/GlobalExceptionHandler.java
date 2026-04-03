@@ -263,7 +263,9 @@ public class GlobalExceptionHandler {
             BusinessException ex, WebRequest request) {
 
         String path = extractPath(request);
-        HttpStatus status = HttpStatus.CONFLICT;
+        // F-08 FIX: BusinessException is a rejected business rule (e.g. "dept has employees"),
+        // which is a 400 Bad Request, not a 409 Conflict (reserved for resource version conflicts).
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         logError("business", "business_rule_violation", ex, status, path);
         recordErrorMetric("business", "business_rule_violation", status);
@@ -347,12 +349,14 @@ public class GlobalExceptionHandler {
             IllegalStateException ex, WebRequest request) {
 
         String path = extractPath(request);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        // F-09 FIX: IllegalStateException signals a resource conflict (e.g. double check-in),
+        // which is 409 Conflict, not 400 Bad Request.
+        HttpStatus status = HttpStatus.CONFLICT;
 
         logError("state", "illegal_state", ex, status, path);
         recordErrorMetric("state", "illegal_state", status);
 
-        ErrorResponse errorResponse = buildErrorResponse(status, "Invalid State", ex.getMessage(), path);
+        ErrorResponse errorResponse = buildErrorResponse(status, "Conflict", ex.getMessage(), path);
         errorResponse.setErrorCode("ILLEGAL_STATE");
 
         return jsonResponse(status, errorResponse);
