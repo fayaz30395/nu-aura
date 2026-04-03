@@ -93,24 +93,6 @@ public class OvertimeRequest extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
-    public enum RequestType {
-        PRE_APPROVAL,       // Request before working OT
-        POST_FACTO,         // Record OT after the fact
-        AUTOMATIC           // Auto-generated from attendance
-    }
-
-    public enum RequestStatus {
-        DRAFT,
-        PENDING_APPROVAL,
-        APPROVED,
-        REJECTED,
-        CANCELLED,
-        COMPLETED,
-        PAYMENT_PENDING,
-        PAID,
-        CONVERTED_TO_COMP_TIME
-    }
-
     @PrePersist
     protected void onCreate() {
         if (requestNumber == null) {
@@ -144,5 +126,23 @@ public class OvertimeRequest extends TenantAware {
         this.takeAsCompTime = true;
         this.compTimeHours = compHours;
         this.status = RequestStatus.CONVERTED_TO_COMP_TIME;
+    }
+
+    public enum RequestType {
+        PRE_APPROVAL,       // Request before working OT
+        POST_FACTO,         // Record OT after the fact
+        AUTOMATIC           // Auto-generated from attendance
+    }
+
+    public enum RequestStatus {
+        DRAFT,
+        PENDING_APPROVAL,
+        APPROVED,
+        REJECTED,
+        CANCELLED,
+        COMPLETED,
+        PAYMENT_PENDING,
+        PAID,
+        CONVERTED_TO_COMP_TIME
     }
 }

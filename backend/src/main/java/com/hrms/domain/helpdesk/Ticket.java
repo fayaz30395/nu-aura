@@ -12,16 +12,16 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tickets", indexes = {
-    @Index(name = "idx_ticket_tenant", columnList = "tenant_id"),
-    @Index(name = "idx_ticket_tenant_employee", columnList = "tenant_id,employee_id"),
-    @Index(name = "idx_ticket_tenant_status", columnList = "tenant_id,status"),
-    @Index(name = "idx_ticket_tenant_priority", columnList = "tenant_id,priority"),
-    @Index(name = "idx_ticket_assigned_to", columnList = "assigned_to"),
-    @Index(name = "idx_ticket_category", columnList = "category_id"),
-    @Index(name = "idx_ticket_created_at", columnList = "created_at"),
-    @Index(name = "idx_ticket_due_date", columnList = "due_date")
+        @Index(name = "idx_ticket_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_ticket_tenant_employee", columnList = "tenant_id,employee_id"),
+        @Index(name = "idx_ticket_tenant_status", columnList = "tenant_id,status"),
+        @Index(name = "idx_ticket_tenant_priority", columnList = "tenant_id,priority"),
+        @Index(name = "idx_ticket_assigned_to", columnList = "assigned_to"),
+        @Index(name = "idx_ticket_category", columnList = "category_id"),
+        @Index(name = "idx_ticket_created_at", columnList = "created_at"),
+        @Index(name = "idx_ticket_due_date", columnList = "due_date")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_ticket_tenant_number", columnNames = {"tenant_id", "ticket_number"})
+        @UniqueConstraint(name = "uk_ticket_tenant_number", columnNames = {"tenant_id", "ticket_number"})
 })
 @Data
 @NoArgsConstructor

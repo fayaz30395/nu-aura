@@ -121,6 +121,14 @@ public class Course extends TenantAware {
     @Builder.Default
     private List<CourseModule> modules = new ArrayList<>();
 
+    public String getTitle() {
+        return title;
+    }
+
+    public Integer getTotalEnrollments() {
+        return totalEnrollments;
+    }
+
     public enum CourseStatus {
         DRAFT,
         UNDER_REVIEW,
@@ -133,13 +141,5 @@ public class Course extends TenantAware {
         INTERMEDIATE,
         ADVANCED,
         EXPERT
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Integer getTotalEnrollments() {
-        return totalEnrollments;
     }
 }

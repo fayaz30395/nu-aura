@@ -16,18 +16,18 @@ import java.util.UUID;
 /**
  * Represents a user's access to a specific NU application.
  * This is the link between User, Application, and App-specific Roles.
- *
+ * <p>
  * A single user can have access to multiple applications with different roles.
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "user_app_access", indexes = {
-    @Index(name = "idx_user_app_user", columnList = "user_id"),
-    @Index(name = "idx_user_app_app", columnList = "application_id"),
-    @Index(name = "idx_user_app_tenant", columnList = "tenantId"),
-    @Index(name = "idx_user_app_status", columnList = "status")
+        @Index(name = "idx_user_app_user", columnList = "user_id"),
+        @Index(name = "idx_user_app_app", columnList = "application_id"),
+        @Index(name = "idx_user_app_tenant", columnList = "tenantId"),
+        @Index(name = "idx_user_app_status", columnList = "status")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_user_app_access", columnNames = {"user_id", "application_id"})
+        @UniqueConstraint(name = "uk_user_app_access", columnNames = {"user_id", "application_id"})
 })
 @Getter
 @Setter
@@ -82,13 +82,13 @@ public class UserAppAccess extends TenantAware {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "user_app_roles",
-        joinColumns = @JoinColumn(name = "user_app_access_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id"),
-        indexes = {
-            @Index(name = "idx_user_app_roles_access", columnList = "user_app_access_id"),
-            @Index(name = "idx_user_app_roles_role", columnList = "role_id")
-        }
+            name = "user_app_roles",
+            joinColumns = @JoinColumn(name = "user_app_access_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            indexes = {
+                    @Index(name = "idx_user_app_roles_access", columnList = "user_app_access_id"),
+                    @Index(name = "idx_user_app_roles_role", columnList = "role_id")
+            }
     )
     @Builder.Default
     private Set<AppRole> roles = new HashSet<>();
@@ -98,23 +98,16 @@ public class UserAppAccess extends TenantAware {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "user_app_direct_permissions",
-        joinColumns = @JoinColumn(name = "user_app_access_id"),
-        inverseJoinColumns = @JoinColumn(name = "permission_id"),
-        indexes = {
-            @Index(name = "idx_user_app_direct_perm_access", columnList = "user_app_access_id"),
-            @Index(name = "idx_user_app_direct_perm_perm", columnList = "permission_id")
-        }
+            name = "user_app_direct_permissions",
+            joinColumns = @JoinColumn(name = "user_app_access_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"),
+            indexes = {
+                    @Index(name = "idx_user_app_direct_perm_access", columnList = "user_app_access_id"),
+                    @Index(name = "idx_user_app_direct_perm_perm", columnList = "permission_id")
+            }
     )
     @Builder.Default
     private Set<AppPermission> directPermissions = new HashSet<>();
-
-    public enum AccessStatus {
-        ACTIVE,           // Currently has access
-        SUSPENDED,        // Temporarily suspended
-        REVOKED,          // Access revoked
-        PENDING_APPROVAL  // Waiting for approval
-    }
 
     /**
      * Add a role to this user's access
@@ -122,9 +115,9 @@ public class UserAppAccess extends TenantAware {
     public void addRole(AppRole role) {
         if (!role.getApplication().getId().equals(this.application.getId())) {
             throw new IllegalArgumentException(
-                "Cannot add role from different application. Access app: " +
-                this.application.getCode() + ", Role app: " +
-                role.getApplication().getCode()
+                    "Cannot add role from different application. Access app: " +
+                            this.application.getCode() + ", Role app: " +
+                            role.getApplication().getCode()
             );
         }
         this.roles.add(role);
@@ -143,9 +136,9 @@ public class UserAppAccess extends TenantAware {
     public void addDirectPermission(AppPermission permission) {
         if (!permission.getApplication().getId().equals(this.application.getId())) {
             throw new IllegalArgumentException(
-                "Cannot add permission from different application. Access app: " +
-                this.application.getCode() + ", Permission app: " +
-                permission.getApplication().getCode()
+                    "Cannot add permission from different application. Access app: " +
+                            this.application.getCode() + ", Permission app: " +
+                            permission.getApplication().getCode()
             );
         }
         this.directPermissions.add(permission);
@@ -215,8 +208,8 @@ public class UserAppAccess extends TenantAware {
      */
     public Set<String> getRoleCodes() {
         return roles.stream()
-            .map(AppRole::getCode)
-            .collect(Collectors.toSet());
+                .map(AppRole::getCode)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -224,8 +217,15 @@ public class UserAppAccess extends TenantAware {
      */
     public int getHighestRoleLevel() {
         return roles.stream()
-            .mapToInt(AppRole::getLevel)
-            .max()
-            .orElse(0);
+                .mapToInt(AppRole::getLevel)
+                .max()
+                .orElse(0);
+    }
+
+    public enum AccessStatus {
+        ACTIVE,           // Currently has access
+        SUSPENDED,        // Temporarily suspended
+        REVOKED,          // Access revoked
+        PENDING_APPROVAL  // Waiting for approval
     }
 }

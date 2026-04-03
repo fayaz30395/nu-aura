@@ -77,6 +77,14 @@ public class TravelExpense extends TenantAware {
     @Column(name = "remarks")
     private String remarks;
 
+    @PrePersist
+    @PreUpdate
+    public void calculateBaseCurrency() {
+        if (amount != null && exchangeRate != null) {
+            this.amountInBaseCurrency = amount.multiply(exchangeRate);
+        }
+    }
+
     public enum ExpenseType {
         AIRFARE,
         TRAIN_FARE,
@@ -98,13 +106,5 @@ public class TravelExpense extends TenantAware {
         PARTIALLY_APPROVED,
         REJECTED,
         REIMBURSED
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void calculateBaseCurrency() {
-        if (amount != null && exchangeRate != null) {
-            this.amountInBaseCurrency = amount.multiply(exchangeRate);
-        }
     }
 }

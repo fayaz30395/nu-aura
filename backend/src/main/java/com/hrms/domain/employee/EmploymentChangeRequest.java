@@ -117,24 +117,6 @@ public class EmploymentChangeRequest extends TenantAware {
     @Column(name = "rejected_at")
     private LocalDateTime rejectedAt;
 
-    public enum ChangeRequestStatus {
-        PENDING,
-        APPROVED,
-        REJECTED,
-        CANCELLED
-    }
-
-    public enum ChangeType {
-        PROMOTION,           // Level/designation upgrade
-        DEMOTION,           // Level/designation downgrade
-        TRANSFER,           // Department change
-        ROLE_CHANGE,        // Job role change
-        MANAGER_CHANGE,     // Reporting line change
-        STATUS_CHANGE,      // Employment status change
-        CONFIRMATION,       // Confirmation date update
-        MULTIPLE            // Multiple fields changed
-    }
-
     /**
      * Determines the change type based on what fields are being modified
      */
@@ -201,5 +183,23 @@ public class EmploymentChangeRequest extends TenantAware {
         }
 
         return primaryType != null ? primaryType : ChangeType.MULTIPLE;
+    }
+
+    public enum ChangeRequestStatus {
+        PENDING,
+        APPROVED,
+        REJECTED,
+        CANCELLED
+    }
+
+    public enum ChangeType {
+        PROMOTION,           // Level/designation upgrade
+        DEMOTION,           // Level/designation downgrade
+        TRANSFER,           // Department change
+        ROLE_CHANGE,        // Job role change
+        MANAGER_CHANGE,     // Reporting line change
+        STATUS_CHANGE,      // Employment status change
+        CONFIRMATION,       // Confirmation date update
+        MULTIPLE            // Multiple fields changed
     }
 }

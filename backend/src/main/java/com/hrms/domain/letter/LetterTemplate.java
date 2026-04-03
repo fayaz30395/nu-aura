@@ -19,55 +19,50 @@ import java.util.UUID;
 public class LetterTemplate extends TenantAware {
 
 
+    // Common placeholders that can be used in templates
+    public static final String PLACEHOLDER_EMPLOYEE_NAME = "{{employee.name}}";
+    public static final String PLACEHOLDER_EMPLOYEE_ID = "{{employee.id}}";
+    public static final String PLACEHOLDER_DESIGNATION = "{{employee.designation}}";
+    public static final String PLACEHOLDER_DEPARTMENT = "{{employee.department}}";
+    public static final String PLACEHOLDER_DATE_OF_JOINING = "{{employee.dateOfJoining}}";
+    public static final String PLACEHOLDER_CURRENT_DATE = "{{currentDate}}";
+    public static final String PLACEHOLDER_COMPANY_NAME = "{{company.name}}";
+    public static final String PLACEHOLDER_SALARY = "{{employee.salary}}";
+    public static final String PLACEHOLDER_LAST_WORKING_DAY = "{{employee.lastWorkingDay}}";
+    public static final String PLACEHOLDER_REFERENCE_NUMBER = "{{letter.referenceNumber}}";
     @Column(nullable = false)
     private String name;
-
     @Column(nullable = false, unique = true)
     private String code;
-
     @Column(columnDefinition = "TEXT")
     private String description;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LetterCategory category;
-
     @Column(columnDefinition = "TEXT", nullable = false)
     private String templateContent;
-
     @Column(columnDefinition = "TEXT")
     private String headerHtml;
-
     @Column(columnDefinition = "TEXT")
     private String footerHtml;
-
     @Column(columnDefinition = "TEXT")
     private String cssStyles;
-
     @Builder.Default
     private Boolean includeCompanyLogo = true;
-
     @Builder.Default
     private Boolean includeSignature = true;
-
     private String signatureTitle;
     private String signatoryName;
     private String signatoryDesignation;
-
     @Builder.Default
     private Boolean requiresApproval = true;
-
     @Builder.Default
     private Boolean isActive = true;
-
     @Builder.Default
     private Boolean isSystemTemplate = false;
-
     private Integer templateVersion;
-
     @Column(columnDefinition = "TEXT")
     private String availablePlaceholders;
-
     public enum LetterCategory {
         OFFER,
         APPOINTMENT,
@@ -91,16 +86,4 @@ public class LetterTemplate extends TenantAware {
         APPRECIATION,
         CUSTOM
     }
-
-    // Common placeholders that can be used in templates
-    public static final String PLACEHOLDER_EMPLOYEE_NAME = "{{employee.name}}";
-    public static final String PLACEHOLDER_EMPLOYEE_ID = "{{employee.id}}";
-    public static final String PLACEHOLDER_DESIGNATION = "{{employee.designation}}";
-    public static final String PLACEHOLDER_DEPARTMENT = "{{employee.department}}";
-    public static final String PLACEHOLDER_DATE_OF_JOINING = "{{employee.dateOfJoining}}";
-    public static final String PLACEHOLDER_CURRENT_DATE = "{{currentDate}}";
-    public static final String PLACEHOLDER_COMPANY_NAME = "{{company.name}}";
-    public static final String PLACEHOLDER_SALARY = "{{employee.salary}}";
-    public static final String PLACEHOLDER_LAST_WORKING_DAY = "{{employee.lastWorkingDay}}";
-    public static final String PLACEHOLDER_REFERENCE_NUMBER = "{{letter.referenceNumber}}";
 }

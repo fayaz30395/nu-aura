@@ -46,6 +46,21 @@ public class PerformanceReviewCompletedEvent extends DomainEvent {
         this.completedAt = completedAt;
     }
 
+    /**
+     * Factory method for creating the event.
+     */
+    public static PerformanceReviewCompletedEvent of(Object source,
+                                                     UUID tenantId,
+                                                     UUID employeeId,
+                                                     UUID reviewId,
+                                                     UUID reviewCycleId,
+                                                     BigDecimal overallRating,
+                                                     String reviewerName,
+                                                     LocalDateTime completedAt) {
+        return new PerformanceReviewCompletedEvent(source, tenantId, employeeId,
+                reviewId, reviewCycleId, overallRating, reviewerName, completedAt);
+    }
+
     @Override
     public String getEventType() {
         return "PERFORMANCE_REVIEW_COMPLETED";
@@ -69,20 +84,5 @@ public class PerformanceReviewCompletedEvent extends DomainEvent {
             payload.put("completedAt", completedAt.toString());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static PerformanceReviewCompletedEvent of(Object source,
-                                                      UUID tenantId,
-                                                      UUID employeeId,
-                                                      UUID reviewId,
-                                                      UUID reviewCycleId,
-                                                      BigDecimal overallRating,
-                                                      String reviewerName,
-                                                      LocalDateTime completedAt) {
-        return new PerformanceReviewCompletedEvent(source, tenantId, employeeId,
-                reviewId, reviewCycleId, overallRating, reviewerName, completedAt);
     }
 }

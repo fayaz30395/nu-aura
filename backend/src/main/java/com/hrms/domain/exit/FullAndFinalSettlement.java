@@ -133,22 +133,6 @@ public class FullAndFinalSettlement extends TenantAware {
     @Column(name = "last_drawn_salary", precision = 12, scale = 2)
     private BigDecimal lastDrawnSalary;
 
-    public enum SettlementStatus {
-        DRAFT,
-        PENDING_APPROVAL,
-        APPROVED,
-        PROCESSING,
-        PAID,
-        CANCELLED
-    }
-
-    public enum PaymentMode {
-        BANK_TRANSFER,
-        CHEQUE,
-        CASH,
-        DEMAND_DRAFT
-    }
-
     public void calculateTotals() {
         this.totalEarnings = pendingSalary
                 .add(leaveEncashment)
@@ -181,5 +165,21 @@ public class FullAndFinalSettlement extends TenantAware {
                         .setScale(2, java.math.RoundingMode.HALF_UP);
             }
         }
+    }
+
+    public enum SettlementStatus {
+        DRAFT,
+        PENDING_APPROVAL,
+        APPROVED,
+        PROCESSING,
+        PAID,
+        CANCELLED
+    }
+
+    public enum PaymentMode {
+        BANK_TRANSFER,
+        CHEQUE,
+        CASH,
+        DEMAND_DRAFT
     }
 }

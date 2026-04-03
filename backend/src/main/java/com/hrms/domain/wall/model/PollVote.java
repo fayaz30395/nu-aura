@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "poll_votes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"tenant_id", "poll_option_id", "employee_id"})
+        @UniqueConstraint(columnNames = {"tenant_id", "poll_option_id", "employee_id"})
 })
 @EntityListeners(AuditingEntityListener.class)
 public class PollVote {
@@ -37,7 +37,8 @@ public class PollVote {
     private LocalDateTime createdAt;
 
     // Constructors
-    public PollVote() {}
+    public PollVote() {
+    }
 
     public PollVote(PollOption pollOption, Employee employee) {
         this.pollOption = pollOption;

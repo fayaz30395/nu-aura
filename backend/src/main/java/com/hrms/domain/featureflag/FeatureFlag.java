@@ -10,12 +10,12 @@ import java.util.UUID;
 
 /**
  * Feature Flag entity for tenant-level feature toggles.
- *
+ * <p>
  * Playbook Reference: Prompt 34 - Feature flags (tenant-level)
  */
 @Entity
 @Table(name = "feature_flags", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"tenant_id", "feature_key"})
+        @UniqueConstraint(columnNames = {"tenant_id", "feature_key"})
 })
 @Getter
 @Setter
@@ -23,49 +23,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class FeatureFlag {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @Column(name = "tenant_id", nullable = false)
-    private UUID tenantId;
-
-    @Column(name = "feature_key", nullable = false, length = 100)
-    private String featureKey;
-
-    @Column(name = "feature_name", nullable = false, length = 200)
-    private String featureName;
-
-    @Column(name = "description", length = 500)
-    private String description;
-
-    @Column(name = "enabled", nullable = false)
-    @Builder.Default
-    private boolean enabled = false;
-
-    @Column(name = "percentage_rollout")
-    private Integer percentageRollout; // 0-100 for gradual rollout
-
-    @Column(name = "metadata", columnDefinition = "TEXT")
-    private String metadata; // JSON string for additional config
-
-    @Column(name = "category", length = 50)
-    private String category; // e.g., "HRMS", "PROJECTS", "INTEGRATION"
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "created_by")
-    private UUID createdBy;
-
-    @Column(name = "updated_by")
-    private UUID updatedBy;
 
     // Common feature flag keys as constants
     public static final String ENABLE_PROJECTS = "enable_projects";
@@ -80,4 +37,34 @@ public class FeatureFlag {
     public static final String ENABLE_HELPDESK = "enable_helpdesk";
     public static final String ENABLE_PAYMENTS = "enable_payments";
     public static final String ENABLE_FLUENCE = "enable_fluence";
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Column(name = "tenant_id", nullable = false)
+    private UUID tenantId;
+    @Column(name = "feature_key", nullable = false, length = 100)
+    private String featureKey;
+    @Column(name = "feature_name", nullable = false, length = 200)
+    private String featureName;
+    @Column(name = "description", length = 500)
+    private String description;
+    @Column(name = "enabled", nullable = false)
+    @Builder.Default
+    private boolean enabled = false;
+    @Column(name = "percentage_rollout")
+    private Integer percentageRollout; // 0-100 for gradual rollout
+    @Column(name = "metadata", columnDefinition = "TEXT")
+    private String metadata; // JSON string for additional config
+    @Column(name = "category", length = 50)
+    private String category; // e.g., "HRMS", "PROJECTS", "INTEGRATION"
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private UUID createdBy;
+    @Column(name = "updated_by")
+    private UUID updatedBy;
 }

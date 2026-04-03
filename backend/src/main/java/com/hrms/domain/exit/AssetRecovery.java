@@ -90,6 +90,12 @@ public class AssetRecovery extends TenantAware {
     @Column(name = "waived_by")
     private UUID waivedBy;
 
+    public boolean isRecovered() {
+        return status == RecoveryStatus.RETURNED ||
+                status == RecoveryStatus.WAIVED ||
+                status == RecoveryStatus.NOT_APPLICABLE;
+    }
+
     public enum AssetType {
         LAPTOP,
         DESKTOP,
@@ -129,11 +135,5 @@ public class AssetRecovery extends TenantAware {
         POOR,
         DAMAGED,
         NON_FUNCTIONAL
-    }
-
-    public boolean isRecovered() {
-        return status == RecoveryStatus.RETURNED ||
-               status == RecoveryStatus.WAIVED ||
-               status == RecoveryStatus.NOT_APPLICABLE;
     }
 }

@@ -13,10 +13,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "document_expiry_tracking", indexes = {
-    @Index(name = "idx_doc_expiry_tenant", columnList = "tenantId"),
-    @Index(name = "idx_doc_expiry_document", columnList = "documentId"),
-    @Index(name = "idx_doc_expiry_date", columnList = "tenantId,expiryDate"),
-    @Index(name = "idx_doc_expiry_notified", columnList = "tenantId,isNotified")
+        @Index(name = "idx_doc_expiry_tenant", columnList = "tenantId"),
+        @Index(name = "idx_doc_expiry_document", columnList = "documentId"),
+        @Index(name = "idx_doc_expiry_date", columnList = "tenantId,expiryDate"),
+        @Index(name = "idx_doc_expiry_notified", columnList = "tenantId,isNotified")
 })
 @Getter
 @Setter

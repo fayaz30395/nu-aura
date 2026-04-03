@@ -32,10 +32,10 @@ import java.util.Set;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "integration_connector_configs", indexes = {
-    @Index(name = "idx_icc_tenant_id", columnList = "tenant_id"),
-    @Index(name = "idx_icc_connector_id", columnList = "connector_id"),
-    @Index(name = "idx_icc_status", columnList = "status"),
-    @Index(name = "idx_icc_is_deleted", columnList = "is_deleted")
+        @Index(name = "idx_icc_tenant_id", columnList = "tenant_id"),
+        @Index(name = "idx_icc_connector_id", columnList = "connector_id"),
+        @Index(name = "idx_icc_status", columnList = "status"),
+        @Index(name = "idx_icc_is_deleted", columnList = "is_deleted")
 })
 @Getter
 @Setter
@@ -60,7 +60,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
     /**
      * JSON-serialized configuration settings.
      * Includes API keys, URLs, feature flags, and other sensitive data.
-     *
+     * <p>
      * CRIT-3 FIX: Field-level AES-256-GCM encryption via EncryptedStringConverter.
      * The encryption key is loaded from the ENCRYPTION_KEY environment variable.
      */
@@ -127,7 +127,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
             return new ConnectorConfig(getTenantId(), connectorId, settings, subscriptions);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalArgumentException(
-                "Failed to parse connector configuration: " + e.getMessage(), e);
+                    "Failed to parse connector configuration: " + e.getMessage(), e);
         }
     }
 
@@ -136,7 +136,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
      *
      * <p>Called when updating connector settings.</p>
      *
-     * @param config the source config
+     * @param config       the source config
      * @param objectMapper the ObjectMapper to use for serialization
      * @throws IllegalArgumentException if serialization fails
      */
@@ -146,7 +146,7 @@ public class IntegrationConnectorConfigEntity extends TenantAware {
             this.eventSubscriptions = String.join(",", config.eventSubscriptions());
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new IllegalArgumentException(
-                "Failed to serialize connector configuration: " + e.getMessage(), e);
+                    "Failed to serialize connector configuration: " + e.getMessage(), e);
         }
     }
 

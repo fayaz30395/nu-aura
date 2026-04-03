@@ -130,15 +130,6 @@ public class EmployeePayrollRecord extends TenantAware {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    public enum RecordStatus {
-        PENDING,
-        CALCULATED,
-        APPROVED,
-        PAID,
-        ERROR,
-        ON_HOLD
-    }
-
     @PrePersist
     @PreUpdate
     public void calculateTotals() {
@@ -169,5 +160,14 @@ public class EmployeePayrollRecord extends TenantAware {
             netPayBase = netPayLocal.multiply(exchangeRate);
             totalEmployerCostBase = totalEmployerCostLocal.multiply(exchangeRate);
         }
+    }
+
+    public enum RecordStatus {
+        PENDING,
+        CALCULATED,
+        APPROVED,
+        PAID,
+        ERROR,
+        ON_HOLD
     }
 }

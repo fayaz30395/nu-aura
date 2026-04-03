@@ -17,9 +17,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_runs", indexes = {
-    @Index(name = "idx_sfr_tenant", columnList = "tenantId"),
-    @Index(name = "idx_sfr_tenant_type_period", columnList = "tenantId, filingType, periodMonth, periodYear"),
-    @Index(name = "idx_sfr_status", columnList = "tenantId, status")
+        @Index(name = "idx_sfr_tenant", columnList = "tenantId"),
+        @Index(name = "idx_sfr_tenant_type_period", columnList = "tenantId, filingType, periodMonth, periodYear"),
+        @Index(name = "idx_sfr_status", columnList = "tenantId, status")
 })
 @Getter
 @Setter
@@ -84,14 +84,6 @@ public class StatutoryFilingRun extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String remarks;
 
-    public enum FilingStatus {
-        DRAFT,
-        GENERATED,
-        VALIDATED,
-        SUBMITTED,
-        REJECTED
-    }
-
     /**
      * Transition from DRAFT/GENERATED to GENERATED after file generation.
      */
@@ -120,7 +112,7 @@ public class StatutoryFilingRun extends TenantAware {
     public void markSubmitted(UUID submittedBy, String remarks) {
         if (this.status != FilingStatus.VALIDATED && this.status != FilingStatus.GENERATED) {
             throw new IllegalStateException(
-                "Only validated or generated filings can be marked as submitted");
+                    "Only validated or generated filings can be marked as submitted");
         }
         this.status = FilingStatus.SUBMITTED;
         this.submittedBy = submittedBy;
@@ -134,5 +126,13 @@ public class StatutoryFilingRun extends TenantAware {
     public void markRejected(String remarks) {
         this.status = FilingStatus.REJECTED;
         this.remarks = remarks;
+    }
+
+    public enum FilingStatus {
+        DRAFT,
+        GENERATED,
+        VALIDATED,
+        SUBMITTED,
+        REJECTED
     }
 }

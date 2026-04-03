@@ -120,6 +120,45 @@ public class BenefitClaim extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
+    @PrePersist
+    protected void onCreate() {
+        if (claimDate == null) claimDate = LocalDate.now();
+        if (status == null) status = ClaimStatus.DRAFT;
+        if (claimNumber == null) {
+            claimNumber = "CLM-" + System.currentTimeMillis();
+        }
+    }
+
+    public void submit() {
+        this.status = ClaimStatus.SUBMITTED;
+    }
+
+    public void approve(BigDecimal amount, UUID approver, String comments) {
+        this.approvedAmount = amount;
+        this.approvedBy = approver;
+        this.approvedAt = LocalDateTime.now();
+        this.approvalComments = comments;
+        this.status = amount.compareTo(claimedAmount) < 0 ?
+                ClaimStatus.PARTIALLY_APPROVED : ClaimStatus.APPROVED;
+    }
+
+    public void reject(String reason, UUID processor) {
+        this.status = ClaimStatus.REJECTED;
+        this.rejectionReason = reason;
+        this.processedBy = processor;
+        this.processedAt = LocalDateTime.now();
+    }
+
+    public void initiatePayment() {
+        this.status = ClaimStatus.PAYMENT_INITIATED;
+    }
+
+    public void completePayment(String reference) {
+        this.status = ClaimStatus.PAYMENT_COMPLETED;
+        this.paymentReference = reference;
+        this.paymentDate = LocalDate.now();
+    }
+
     public enum ClaimType {
         // Health insurance
         HOSPITALIZATION,
@@ -180,44 +219,5 @@ public class BenefitClaim extends TenantAware {
         PAYROLL_CREDIT,
         UPI,
         DIRECT_SETTLEMENT
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (claimDate == null) claimDate = LocalDate.now();
-        if (status == null) status = ClaimStatus.DRAFT;
-        if (claimNumber == null) {
-            claimNumber = "CLM-" + System.currentTimeMillis();
-        }
-    }
-
-    public void submit() {
-        this.status = ClaimStatus.SUBMITTED;
-    }
-
-    public void approve(BigDecimal amount, UUID approver, String comments) {
-        this.approvedAmount = amount;
-        this.approvedBy = approver;
-        this.approvedAt = LocalDateTime.now();
-        this.approvalComments = comments;
-        this.status = amount.compareTo(claimedAmount) < 0 ?
-            ClaimStatus.PARTIALLY_APPROVED : ClaimStatus.APPROVED;
-    }
-
-    public void reject(String reason, UUID processor) {
-        this.status = ClaimStatus.REJECTED;
-        this.rejectionReason = reason;
-        this.processedBy = processor;
-        this.processedAt = LocalDateTime.now();
-    }
-
-    public void initiatePayment() {
-        this.status = ClaimStatus.PAYMENT_INITIATED;
-    }
-
-    public void completePayment(String reference) {
-        this.status = ClaimStatus.PAYMENT_COMPLETED;
-        this.paymentReference = reference;
-        this.paymentDate = LocalDate.now();
     }
 }

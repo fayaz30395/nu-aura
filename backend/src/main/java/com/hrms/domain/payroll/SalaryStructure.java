@@ -13,9 +13,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "salary_structures", indexes = {
-    @Index(name = "idx_salary_employee", columnList = "employeeId"),
-    @Index(name = "idx_salary_tenant", columnList = "tenantId"),
-    @Index(name = "idx_salary_effective_date", columnList = "effectiveDate")
+        @Index(name = "idx_salary_employee", columnList = "employeeId"),
+        @Index(name = "idx_salary_tenant", columnList = "tenantId"),
+        @Index(name = "idx_salary_effective_date", columnList = "effectiveDate")
 })
 @Getter
 @Setter

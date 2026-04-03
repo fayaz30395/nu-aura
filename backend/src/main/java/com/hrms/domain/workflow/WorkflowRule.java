@@ -87,68 +87,6 @@ public class WorkflowRule extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
-    public enum RuleType {
-        WORKFLOW_SELECTION,     // Determines which workflow to use
-        STEP_CONDITION,         // Determines if a step should be executed
-        APPROVER_ASSIGNMENT,    // Determines who the approver should be
-        AUTO_ACTION,            // Auto-approve or auto-reject
-        NOTIFICATION,           // Send additional notifications
-        ESCALATION,             // Custom escalation rules
-        PRIORITY,               // Set priority based on conditions
-        VALIDATION              // Validate the request data
-    }
-
-    public enum RuleAction {
-        ROUTE_TO_WORKFLOW,      // Route to specific workflow
-        ADD_APPROVER,           // Add additional approver
-        REMOVE_APPROVER,        // Remove an approver
-        SKIP_STEP,              // Skip a step
-        ADD_STEP,               // Add a step
-        AUTO_APPROVE,           // Automatically approve
-        AUTO_REJECT,            // Automatically reject
-        SET_PRIORITY,           // Set priority level
-        SEND_NOTIFICATION,      // Send notification
-        ESCALATE,               // Escalate immediately
-        HOLD,                   // Put on hold
-        RETURN                  // Return for modification
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (priority == 0) priority = 100;
-    }
-
-    public boolean isCurrentlyEffective() {
-        if (!isActive) return false;
-        LocalDateTime now = LocalDateTime.now();
-        if (effectiveFrom != null && now.isBefore(effectiveFrom)) return false;
-        if (effectiveTo != null && now.isAfter(effectiveTo)) return false;
-        return true;
-    }
-
-    /**
-     * BUG-011 FIX: Evaluate the rule expression against the supplied context using
-     * Spring SpEL with {@link SimpleEvaluationContext} (read-only, restricted).
-     *
-     * <p>SimpleEvaluationContext is intentionally restricted: it allows property
-     * access and comparison operators but blocks arbitrary Java method invocations,
-     * preventing expression-injection attacks from user-supplied rule strings stored
-     * in the database.</p>
-     *
-     * <p>Expression syntax depends on the type of {@code context}:
-     * <ul>
-     *   <li>{@code Map<String,Object>} — each entry is exposed as a SpEL variable
-     *       prefixed with {@code #}, e.g. {@code #amount > 10000 && #department == 'SALES'}</li>
-     *   <li>Any POJO — used as the SpEL root object; properties are accessed directly,
-     *       e.g. {@code amount > 10000 && department == 'SALES'}</li>
-     * </ul>
-     *
-     * <p>On any parse or evaluation error the method returns {@code false} (fail-closed)
-     * so a broken rule expression never accidentally grants access.</p>
-     *
-     * @param context evaluation context — either a {@code Map<String,Object>} or a POJO
-     * @return {@code true} if the expression evaluates to {@code true}; {@code false} otherwise
-     */
     /**
      * SEC: Validate a SpEL expression to reject dangerous patterns that could lead to RCE.
      */
@@ -163,6 +101,19 @@ public class WorkflowRule extends TenantAware {
                         "SEC: Rule expression contains forbidden pattern '" + pattern + "'");
             }
         }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (priority == 0) priority = 100;
+    }
+
+    public boolean isCurrentlyEffective() {
+        if (!isActive) return false;
+        LocalDateTime now = LocalDateTime.now();
+        if (effectiveFrom != null && now.isBefore(effectiveFrom)) return false;
+        if (effectiveTo != null && now.isAfter(effectiveTo)) return false;
+        return true;
     }
 
     public boolean evaluate(Object context) {
@@ -206,5 +157,54 @@ public class WorkflowRule extends TenantAware {
                     name, ruleExpression, e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * BUG-011 FIX: Evaluate the rule expression against the supplied context using
+     * Spring SpEL with {@link SimpleEvaluationContext} (read-only, restricted).
+     *
+     * <p>SimpleEvaluationContext is intentionally restricted: it allows property
+     * access and comparison operators but blocks arbitrary Java method invocations,
+     * preventing expression-injection attacks from user-supplied rule strings stored
+     * in the database.</p>
+     *
+     * <p>Expression syntax depends on the type of {@code context}:
+     * <ul>
+     *   <li>{@code Map<String,Object>} — each entry is exposed as a SpEL variable
+     *       prefixed with {@code #}, e.g. {@code #amount > 10000 && #department == 'SALES'}</li>
+     *   <li>Any POJO — used as the SpEL root object; properties are accessed directly,
+     *       e.g. {@code amount > 10000 && department == 'SALES'}</li>
+     * </ul>
+     *
+     * <p>On any parse or evaluation error the method returns {@code false} (fail-closed)
+     * so a broken rule expression never accidentally grants access.</p>
+     *
+     * @param context evaluation context — either a {@code Map<String,Object>} or a POJO
+     * @return {@code true} if the expression evaluates to {@code true}; {@code false} otherwise
+     */
+    public enum RuleType {
+        WORKFLOW_SELECTION,     // Determines which workflow to use
+        STEP_CONDITION,         // Determines if a step should be executed
+        APPROVER_ASSIGNMENT,    // Determines who the approver should be
+        AUTO_ACTION,            // Auto-approve or auto-reject
+        NOTIFICATION,           // Send additional notifications
+        ESCALATION,             // Custom escalation rules
+        PRIORITY,               // Set priority based on conditions
+        VALIDATION              // Validate the request data
+    }
+
+    public enum RuleAction {
+        ROUTE_TO_WORKFLOW,      // Route to specific workflow
+        ADD_APPROVER,           // Add additional approver
+        REMOVE_APPROVER,        // Remove an approver
+        SKIP_STEP,              // Skip a step
+        ADD_STEP,               // Add a step
+        AUTO_APPROVE,           // Automatically approve
+        AUTO_REJECT,            // Automatically reject
+        SET_PRIORITY,           // Set priority level
+        SEND_NOTIFICATION,      // Send notification
+        ESCALATE,               // Escalate immediately
+        HOLD,                   // Put on hold
+        RETURN                  // Return for modification
     }
 }

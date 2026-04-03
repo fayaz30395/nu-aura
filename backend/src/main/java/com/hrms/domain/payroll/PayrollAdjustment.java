@@ -13,16 +13,16 @@ import java.util.UUID;
 /**
  * One-time payroll adjustment created by cross-module events.
  * Picked up during payroll processing to add/deduct from the next payslip.
- *
+ * <p>
  * Examples: overtime earnings, expense reimbursements, LOP deductions,
  * performance-linked increments, mileage reimbursements.
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payroll_adjustments", indexes = {
-    @Index(name = "idx_pa_tenant_employee", columnList = "tenantId, employee_id"),
-    @Index(name = "idx_pa_tenant_status", columnList = "tenantId, status"),
-    @Index(name = "idx_pa_effective_date", columnList = "effective_date")
+        @Index(name = "idx_pa_tenant_employee", columnList = "tenantId, employee_id"),
+        @Index(name = "idx_pa_tenant_status", columnList = "tenantId, status"),
+        @Index(name = "idx_pa_effective_date", columnList = "effective_date")
 })
 @Getter
 @Setter
@@ -73,6 +73,12 @@ public class PayrollAdjustment extends TenantAware {
     @Column(name = "processed_at")
     private java.time.LocalDateTime processedAt;
 
+    public void markProcessed(UUID payrollRunId) {
+        this.status = AdjustmentStatus.PROCESSED;
+        this.payrollRunId = payrollRunId;
+        this.processedAt = java.time.LocalDateTime.now();
+    }
+
     public enum AdjustmentType {
         OVERTIME_EARNING,
         EXPENSE_REIMBURSEMENT,
@@ -92,11 +98,5 @@ public class PayrollAdjustment extends TenantAware {
         PENDING,
         PROCESSED,
         CANCELLED
-    }
-
-    public void markProcessed(UUID payrollRunId) {
-        this.status = AdjustmentStatus.PROCESSED;
-        this.payrollRunId = payrollRunId;
-        this.processedAt = java.time.LocalDateTime.now();
     }
 }

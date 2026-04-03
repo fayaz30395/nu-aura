@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "audit_logs", indexes = {
-    @Index(name = "idx_audit_tenant", columnList = "tenantId"),
-    @Index(name = "idx_audit_entity", columnList = "entityType,entityId"),
-    @Index(name = "idx_audit_actor", columnList = "actorId"),
-    @Index(name = "idx_audit_timestamp", columnList = "createdAt")
+        @Index(name = "idx_audit_tenant", columnList = "tenantId"),
+        @Index(name = "idx_audit_entity", columnList = "entityType,entityId"),
+        @Index(name = "idx_audit_actor", columnList = "actorId"),
+        @Index(name = "idx_audit_timestamp", columnList = "createdAt")
 })
 @Getter
 @Setter

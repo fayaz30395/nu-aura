@@ -12,7 +12,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "recognition_reactions",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"recognition_id", "employee_id", "reaction_type"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"recognition_id", "employee_id", "reaction_type"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,18 +33,18 @@ public class RecognitionReaction extends TenantAware {
 
     private LocalDateTime reactedAt;
 
+    @PrePersist
+    public void prePersist() {
+        if (reactedAt == null) {
+            reactedAt = LocalDateTime.now();
+        }
+    }
+
     public enum ReactionType {
         LIKE,
         CELEBRATE,
         LOVE,
         INSIGHTFUL,
         CURIOUS
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (reactedAt == null) {
-            reactedAt = LocalDateTime.now();
-        }
     }
 }

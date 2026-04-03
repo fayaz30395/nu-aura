@@ -11,8 +11,8 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "lms_module_contents", indexes = {
-    @Index(name = "idx_lms_content_tenant", columnList = "tenantId"),
-    @Index(name = "idx_lms_content_module", columnList = "moduleId")
+        @Index(name = "idx_lms_content_tenant", columnList = "tenantId"),
+        @Index(name = "idx_lms_content_module", columnList = "moduleId")
 })
 @Getter
 @Setter
@@ -80,6 +80,11 @@ public class ModuleContent extends TenantAware {
     @Builder.Default
     private Boolean completionRequired = true; // Must complete to proceed
 
+    // Explicit getter for service layer access
+    public UUID getModuleId() {
+        return moduleId;
+    }
+
     public enum ContentType {
         VIDEO,
         DOCUMENT,
@@ -89,10 +94,5 @@ public class ModuleContent extends TenantAware {
         SCORM,
         EXTERNAL_LINK,
         LIVE_SESSION
-    }
-
-    // Explicit getter for service layer access
-    public UUID getModuleId() {
-        return moduleId;
     }
 }

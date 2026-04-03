@@ -16,12 +16,12 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "biometric_devices", indexes = {
-    @Index(name = "idx_biometric_device_tenant", columnList = "tenantId"),
-    @Index(name = "idx_biometric_device_serial", columnList = "serialNumber"),
-    @Index(name = "idx_biometric_device_active", columnList = "tenantId, isActive")
+        @Index(name = "idx_biometric_device_tenant", columnList = "tenantId"),
+        @Index(name = "idx_biometric_device_serial", columnList = "serialNumber"),
+        @Index(name = "idx_biometric_device_active", columnList = "tenantId, isActive")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_biometric_device_serial_tenant",
-                      columnNames = {"serialNumber", "tenantId"})
+        @UniqueConstraint(name = "uk_biometric_device_serial_tenant",
+                columnNames = {"serialNumber", "tenantId"})
 })
 @Getter
 @Setter
@@ -74,14 +74,6 @@ public class BiometricDevice extends TenantAware {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    public enum DeviceType {
-        FINGERPRINT,
-        FACE,
-        IRIS,
-        CARD,
-        MULTI_MODAL
-    }
-
     /**
      * Returns true if the device has communicated within the last 10 minutes.
      */
@@ -106,5 +98,13 @@ public class BiometricDevice extends TenantAware {
 
     public void activate() {
         this.isActive = true;
+    }
+
+    public enum DeviceType {
+        FINGERPRINT,
+        FACE,
+        IRIS,
+        CARD,
+        MULTI_MODAL
     }
 }

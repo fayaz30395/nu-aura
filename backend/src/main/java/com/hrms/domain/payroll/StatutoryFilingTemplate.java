@@ -14,8 +14,8 @@ import lombok.experimental.SuperBuilder;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_templates", indexes = {
-    @Index(name = "idx_sft_tenant", columnList = "tenantId"),
-    @Index(name = "idx_sft_type", columnList = "tenantId, filingType", unique = true)
+        @Index(name = "idx_sft_tenant", columnList = "tenantId"),
+        @Index(name = "idx_sft_type", columnList = "tenantId, filingType", unique = true)
 })
 @Getter
 @Setter
@@ -50,17 +50,29 @@ public class StatutoryFilingTemplate extends TenantAware {
      * Indian statutory filing types supported by the platform.
      */
     public enum FilingType {
-        /** PF Electronic Challan-cum-Return (EPFO portal, pipe-delimited text) */
+        /**
+         * PF Electronic Challan-cum-Return (EPFO portal, pipe-delimited text)
+         */
         PF_ECR,
-        /** ESI half-yearly return */
+        /**
+         * ESI half-yearly return
+         */
         ESI_RETURN,
-        /** Professional Tax challan */
+        /**
+         * Professional Tax challan
+         */
         PT_CHALLAN,
-        /** Form 16 — Annual TDS certificate for employees */
+        /**
+         * Form 16 — Annual TDS certificate for employees
+         */
         FORM_16,
-        /** Form 24Q — Quarterly TDS return to Income Tax department */
+        /**
+         * Form 24Q — Quarterly TDS return to Income Tax department
+         */
         FORM_24Q,
-        /** Labour Welfare Fund return */
+        /**
+         * Labour Welfare Fund return
+         */
         LWF_RETURN
     }
 

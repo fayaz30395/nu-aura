@@ -16,8 +16,8 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "attendance_time_entries", indexes = {
-    @Index(name = "idx_time_entry_attendance_id", columnList = "attendanceRecordId"),
-    @Index(name = "idx_time_entry_type", columnList = "entryType")
+        @Index(name = "idx_time_entry_attendance_id", columnList = "attendanceRecordId"),
+        @Index(name = "idx_time_entry_type", columnList = "entryType")
 })
 @Getter
 @Setter
@@ -68,15 +68,6 @@ public class AttendanceTimeEntry extends TenantAware {
     @Builder.Default
     private Integer sequenceNumber = 1;
 
-    public enum EntryType {
-        REGULAR,      // Normal work session
-        BREAK,        // Break (tea/coffee)
-        LUNCH,        // Lunch break
-        MEETING,      // Out for meeting
-        CLIENT_VISIT, // Client site visit
-        OTHER         // Other reason
-    }
-
     public void checkOut(LocalDateTime time, String source, String location, String ip) {
         this.checkOutTime = time;
         this.checkOutSource = source;
@@ -94,5 +85,14 @@ public class AttendanceTimeEntry extends TenantAware {
 
     public boolean isOpen() {
         return checkOutTime == null;
+    }
+
+    public enum EntryType {
+        REGULAR,      // Normal work session
+        BREAK,        // Break (tea/coffee)
+        LUNCH,        // Lunch break
+        MEETING,      // Out for meeting
+        CLIENT_VISIT, // Client site visit
+        OTHER         // Other reason
     }
 }

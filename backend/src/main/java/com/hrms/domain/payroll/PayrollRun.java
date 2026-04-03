@@ -13,9 +13,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payroll_runs", indexes = {
-    @Index(name = "idx_payroll_tenant_period", columnList = "tenantId,payPeriodMonth,payPeriodYear", unique = true),
-    @Index(name = "idx_payroll_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payroll_status", columnList = "status")
+        @Index(name = "idx_payroll_tenant_period", columnList = "tenantId,payPeriodMonth,payPeriodYear", unique = true),
+        @Index(name = "idx_payroll_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payroll_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -55,14 +55,6 @@ public class PayrollRun extends TenantAware {
 
     @Column(columnDefinition = "TEXT")
     private String remarks;
-
-    public enum PayrollStatus {
-        DRAFT,
-        PROCESSING,
-        PROCESSED,
-        APPROVED,
-        LOCKED
-    }
 
     /**
      * Transition DRAFT → PROCESSING.
@@ -120,5 +112,13 @@ public class PayrollRun extends TenantAware {
             throw new IllegalStateException("Only approved payroll runs can be locked");
         }
         this.status = PayrollStatus.LOCKED;
+    }
+
+    public enum PayrollStatus {
+        DRAFT,
+        PROCESSING,
+        PROCESSED,
+        APPROVED,
+        LOCKED
     }
 }

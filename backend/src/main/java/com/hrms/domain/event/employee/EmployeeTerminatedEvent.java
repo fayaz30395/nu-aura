@@ -25,13 +25,20 @@ public class EmployeeTerminatedEvent extends EmployeeEvent {
 
     public EmployeeTerminatedEvent(Object source, Employee employee, String terminationReason) {
         super(source,
-              employee.getTenantId(),
-              employee.getId(),
-              employee.getEmployeeCode(),
-              employee.getFullName(),
-              employee.getUser() != null ? employee.getUser().getEmail() : null);
+                employee.getTenantId(),
+                employee.getId(),
+                employee.getEmployeeCode(),
+                employee.getFullName(),
+                employee.getUser() != null ? employee.getUser().getEmail() : null);
         this.employee = employee;
         this.terminationReason = terminationReason;
+    }
+
+    /**
+     * Factory method for creating the event.
+     */
+    public static EmployeeTerminatedEvent of(Object source, Employee employee, String reason) {
+        return new EmployeeTerminatedEvent(source, employee, reason);
     }
 
     @Override
@@ -47,12 +54,5 @@ public class EmployeeTerminatedEvent extends EmployeeEvent {
             payload.put("exitDate", employee.getExitDate().toString());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static EmployeeTerminatedEvent of(Object source, Employee employee, String reason) {
-        return new EmployeeTerminatedEvent(source, employee, reason);
     }
 }

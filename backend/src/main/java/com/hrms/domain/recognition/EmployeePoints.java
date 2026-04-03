@@ -12,7 +12,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "employee_points",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "tenant_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "tenant_id"}))
 @Getter
 @Setter
 @NoArgsConstructor

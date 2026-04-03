@@ -51,13 +51,6 @@ public class ExchangeRate extends TenantAware {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    public enum RateType {
-        SPOT,        // Current market rate
-        BUDGET,      // Rate used for budgeting
-        CONTRACTED,  // Locked-in rate for payroll
-        AVERAGE      // Average rate for period
-    }
-
     // Explicit getters for service layer access
     public UUID getId() {
         return super.getId();
@@ -97,5 +90,12 @@ public class ExchangeRate extends TenantAware {
 
     public String getNotes() {
         return notes;
+    }
+
+    public enum RateType {
+        SPOT,        // Current market rate
+        BUDGET,      // Rate used for budgeting
+        CONTRACTED,  // Locked-in rate for payroll
+        AVERAGE      // Average rate for period
     }
 }

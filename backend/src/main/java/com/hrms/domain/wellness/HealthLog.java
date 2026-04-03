@@ -64,6 +64,12 @@ public class HealthLog extends TenantAware {
     @Column(name = "logged_at")
     private LocalDateTime loggedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        loggedAt = LocalDateTime.now();
+        if (logDate == null) logDate = LocalDate.now();
+    }
+
     public enum MetricType {
         STEPS,
         DISTANCE_KM,
@@ -83,11 +89,5 @@ public class HealthLog extends TenantAware {
         STRESS_LEVEL,
         ENERGY_LEVEL,
         CUSTOM
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        loggedAt = LocalDateTime.now();
-        if (logDate == null) logDate = LocalDate.now();
     }
 }

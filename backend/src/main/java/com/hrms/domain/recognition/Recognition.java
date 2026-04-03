@@ -67,6 +67,26 @@ public class Recognition extends TenantAware {
 
     private LocalDateTime recognizedAt;
 
+    public void approve(UUID approverId) {
+        this.isApproved = true;
+        this.approvedBy = approverId;
+        this.approvedAt = LocalDateTime.now();
+    }
+
+    public void incrementLikes() {
+        this.likesCount++;
+    }
+
+    public void decrementLikes() {
+        if (this.likesCount > 0) {
+            this.likesCount--;
+        }
+    }
+
+    public void incrementComments() {
+        this.commentsCount++;
+    }
+
     public enum RecognitionType {
         KUDOS,
         APPRECIATION,
@@ -91,25 +111,5 @@ public class Recognition extends TenantAware {
         COLLABORATION,
         COMMUNICATION,
         OTHER
-    }
-
-    public void approve(UUID approverId) {
-        this.isApproved = true;
-        this.approvedBy = approverId;
-        this.approvedAt = LocalDateTime.now();
-    }
-
-    public void incrementLikes() {
-        this.likesCount++;
-    }
-
-    public void decrementLikes() {
-        if (this.likesCount > 0) {
-            this.likesCount--;
-        }
-    }
-
-    public void incrementComments() {
-        this.commentsCount++;
     }
 }

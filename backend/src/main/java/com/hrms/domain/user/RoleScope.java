@@ -3,7 +3,7 @@ package com.hrms.domain.user;
 /**
  * Defines the scope/granularity at which permissions can be applied.
  * Implements Keka-style row-level security in the application layer.
- *
+ * <p>
  * Scope Hierarchy (Most to Least Permissive):
  * ALL > LOCATION > DEPARTMENT > TEAM > SELF > CUSTOM (varies)
  */
@@ -52,6 +52,7 @@ public enum RoleScope {
 
     /**
      * Converts legacy scope names to new names.
+     *
      * @param scopeName The scope name (may be legacy)
      * @return The corresponding RoleScope
      */

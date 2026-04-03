@@ -11,17 +11,17 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "shift_assignments",
-    indexes = {
-        @Index(name = "idx_shift_assignment_tenant", columnList = "tenant_id"),
-        @Index(name = "idx_shift_assignment_tenant_employee", columnList = "tenant_id,employee_id"),
-        @Index(name = "idx_shift_assignment_employee_date", columnList = "employee_id,assignment_date"),
-        @Index(name = "idx_shift_assignment_shift_date", columnList = "shift_id,assignment_date"),
-        @Index(name = "idx_shift_assignment_effective", columnList = "effective_from,effective_to"),
-        @Index(name = "idx_shift_assignment_status", columnList = "status")
-    },
-    uniqueConstraints = {
-        @UniqueConstraint(name = "uq_shift_assignment_employee_effective", columnNames = {"employee_id", "effective_from"})
-    }
+        indexes = {
+                @Index(name = "idx_shift_assignment_tenant", columnList = "tenant_id"),
+                @Index(name = "idx_shift_assignment_tenant_employee", columnList = "tenant_id,employee_id"),
+                @Index(name = "idx_shift_assignment_employee_date", columnList = "employee_id,assignment_date"),
+                @Index(name = "idx_shift_assignment_shift_date", columnList = "shift_id,assignment_date"),
+                @Index(name = "idx_shift_assignment_effective", columnList = "effective_from,effective_to"),
+                @Index(name = "idx_shift_assignment_status", columnList = "status")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_shift_assignment_employee_effective", columnNames = {"employee_id", "effective_from"})
+        }
 )
 @Getter
 @Setter
@@ -92,6 +92,16 @@ public class ShiftAssignment {
     @Column(name = "version")
     private Long version;
 
+    /**
+     * Check if assignment is currently active
+     */
+    public boolean isCurrentlyActive() {
+        LocalDate today = LocalDate.now();
+        boolean afterStart = !today.isBefore(effectiveFrom);
+        boolean beforeEnd = effectiveTo == null || !today.isAfter(effectiveTo);
+        return status == AssignmentStatus.ACTIVE && afterStart && beforeEnd;
+    }
+
     public enum AssignmentType {
         PERMANENT,   // Permanent shift assignment
         TEMPORARY,   // Temporary shift change
@@ -104,15 +114,5 @@ public class ShiftAssignment {
         COMPLETED,
         CANCELLED,
         PENDING
-    }
-
-    /**
-     * Check if assignment is currently active
-     */
-    public boolean isCurrentlyActive() {
-        LocalDate today = LocalDate.now();
-        boolean afterStart = !today.isBefore(effectiveFrom);
-        boolean beforeEnd = effectiveTo == null || !today.isAfter(effectiveTo);
-        return status == AssignmentStatus.ACTIVE && afterStart && beforeEnd;
     }
 }

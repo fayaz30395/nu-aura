@@ -18,11 +18,11 @@ import java.util.UUID;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "biometric_api_keys", indexes = {
-    @Index(name = "idx_biometric_api_key_tenant", columnList = "tenantId"),
-    @Index(name = "idx_biometric_api_key_hash", columnList = "keyHash"),
-    @Index(name = "idx_biometric_api_key_device", columnList = "deviceId")
+        @Index(name = "idx_biometric_api_key_tenant", columnList = "tenantId"),
+        @Index(name = "idx_biometric_api_key_hash", columnList = "keyHash"),
+        @Index(name = "idx_biometric_api_key_device", columnList = "deviceId")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_biometric_api_key_hash", columnNames = {"keyHash"})
+        @UniqueConstraint(name = "uk_biometric_api_key_hash", columnNames = {"keyHash"})
 })
 @Getter
 @Setter

@@ -15,13 +15,13 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "restricted_holiday_selections", indexes = {
-    @Index(name = "idx_rhs_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_rhs_employee_id", columnList = "employeeId"),
-    @Index(name = "idx_rhs_holiday_id", columnList = "restrictedHolidayId"),
-    @Index(name = "idx_rhs_status", columnList = "status")
+        @Index(name = "idx_rhs_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_rhs_employee_id", columnList = "employeeId"),
+        @Index(name = "idx_rhs_holiday_id", columnList = "restrictedHolidayId"),
+        @Index(name = "idx_rhs_status", columnList = "status")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_rhs_employee_holiday",
-        columnNames = {"tenantId", "employeeId", "restrictedHolidayId"})
+        @UniqueConstraint(name = "uk_rhs_employee_holiday",
+                columnNames = {"tenantId", "employeeId", "restrictedHolidayId"})
 })
 @Getter
 @Setter

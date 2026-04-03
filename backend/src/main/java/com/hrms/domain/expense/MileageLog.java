@@ -14,12 +14,12 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "mileage_logs", indexes = {
-    @Index(name = "idx_mileage_log_tenant", columnList = "tenantId"),
-    @Index(name = "idx_mileage_log_tenant_employee", columnList = "tenantId,employee_id"),
-    @Index(name = "idx_mileage_log_status", columnList = "status"),
-    @Index(name = "idx_mileage_log_tenant_status", columnList = "tenantId,status"),
-    @Index(name = "idx_mileage_log_travel_date", columnList = "travel_date"),
-    @Index(name = "idx_mileage_log_expense_claim", columnList = "expense_claim_id")
+        @Index(name = "idx_mileage_log_tenant", columnList = "tenantId"),
+        @Index(name = "idx_mileage_log_tenant_employee", columnList = "tenantId,employee_id"),
+        @Index(name = "idx_mileage_log_status", columnList = "status"),
+        @Index(name = "idx_mileage_log_tenant_status", columnList = "tenantId,status"),
+        @Index(name = "idx_mileage_log_travel_date", columnList = "travel_date"),
+        @Index(name = "idx_mileage_log_expense_claim", columnList = "expense_claim_id")
 })
 @Getter
 @Setter
@@ -77,21 +77,6 @@ public class MileageLog extends TenantAware {
     @Column(length = 1000)
     private String notes;
 
-    public enum VehicleType {
-        CAR,
-        MOTORCYCLE,
-        BICYCLE,
-        PUBLIC_TRANSPORT
-    }
-
-    public enum MileageStatus {
-        DRAFT,
-        SUBMITTED,
-        APPROVED,
-        REJECTED,
-        PAID
-    }
-
     public void submit() {
         if (this.status != MileageStatus.DRAFT) {
             throw new IllegalStateException("Can only submit mileage logs in DRAFT status");
@@ -116,5 +101,20 @@ public class MileageLog extends TenantAware {
         this.approvedBy = rejecterId;
         this.approvedAt = LocalDateTime.now();
         this.rejectionReason = reason;
+    }
+
+    public enum VehicleType {
+        CAR,
+        MOTORCYCLE,
+        BICYCLE,
+        PUBLIC_TRANSPORT
+    }
+
+    public enum MileageStatus {
+        DRAFT,
+        SUBMITTED,
+        APPROVED,
+        REJECTED,
+        PAID
     }
 }

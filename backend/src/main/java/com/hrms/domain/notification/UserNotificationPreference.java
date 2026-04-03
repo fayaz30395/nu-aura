@@ -15,7 +15,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "user_notification_preferences", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"userId", "category"})
+        @UniqueConstraint(columnNames = {"userId", "category"})
 })
 @Getter
 @Setter

@@ -89,15 +89,6 @@ public class ProbationPeriod extends TenantAware {
     @Builder.Default
     private List<ProbationEvaluation> evaluations = new ArrayList<>();
 
-    public enum ProbationStatus {
-        ACTIVE,           // Currently in probation
-        EXTENDED,         // Probation has been extended
-        CONFIRMED,        // Successfully completed, employee confirmed
-        FAILED,           // Failed probation, employment may be terminated
-        TERMINATED,       // Employment terminated during probation
-        ON_HOLD           // Probation paused (e.g., extended leave)
-    }
-
     public void extend(int additionalDays, String reason) {
         this.extensionCount++;
         this.totalExtensionDays += additionalDays;
@@ -156,5 +147,14 @@ public class ProbationPeriod extends TenantAware {
         evaluation.setProbationPeriod(this);
         // Update next evaluation date
         this.nextEvaluationDate = LocalDate.now().plusDays(evaluationFrequencyDays);
+    }
+
+    public enum ProbationStatus {
+        ACTIVE,           // Currently in probation
+        EXTENDED,         // Probation has been extended
+        CONFIRMED,        // Successfully completed, employee confirmed
+        FAILED,           // Failed probation, employment may be terminated
+        TERMINATED,       // Employment terminated during probation
+        ON_HOLD           // Probation paused (e.g., extended leave)
     }
 }

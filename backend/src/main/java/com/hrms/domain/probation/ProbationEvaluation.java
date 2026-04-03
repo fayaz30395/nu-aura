@@ -88,6 +88,39 @@ public class ProbationEvaluation extends TenantAware {
     @Column(name = "acknowledged_date")
     private LocalDate acknowledgedDate;
 
+    public void calculateOverallRating() {
+        int count = 0;
+        double sum = 0;
+
+        if (performanceRating != null) {
+            sum += performanceRating;
+            count++;
+        }
+        if (attendanceRating != null) {
+            sum += attendanceRating;
+            count++;
+        }
+        if (communicationRating != null) {
+            sum += communicationRating;
+            count++;
+        }
+        if (teamworkRating != null) {
+            sum += teamworkRating;
+            count++;
+        }
+        if (technicalSkillsRating != null) {
+            sum += technicalSkillsRating;
+            count++;
+        }
+
+        this.overallRating = count > 0 ? sum / count : null;
+    }
+
+    public void acknowledge() {
+        this.employeeAcknowledged = true;
+        this.acknowledgedDate = LocalDate.now();
+    }
+
     public enum EvaluationType {
         WEEKLY,
         BI_WEEKLY,
@@ -103,23 +136,5 @@ public class ProbationEvaluation extends TenantAware {
         TERMINATE,            // Recommend termination
         NEEDS_IMPROVEMENT,    // Continue with close monitoring
         ON_TRACK              // Progressing as expected
-    }
-
-    public void calculateOverallRating() {
-        int count = 0;
-        double sum = 0;
-
-        if (performanceRating != null) { sum += performanceRating; count++; }
-        if (attendanceRating != null) { sum += attendanceRating; count++; }
-        if (communicationRating != null) { sum += communicationRating; count++; }
-        if (teamworkRating != null) { sum += teamworkRating; count++; }
-        if (technicalSkillsRating != null) { sum += technicalSkillsRating; count++; }
-
-        this.overallRating = count > 0 ? sum / count : null;
-    }
-
-    public void acknowledge() {
-        this.employeeAcknowledged = true;
-        this.acknowledgedDate = LocalDate.now();
     }
 }

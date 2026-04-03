@@ -58,6 +58,17 @@ public class ComplianceAlert extends TenantAware {
 
     private LocalDateTime lastReminderSent;
 
+    public void resolve(UUID resolvedById, String notes) {
+        this.status = AlertStatus.RESOLVED;
+        this.resolvedBy = resolvedById;
+        this.resolvedAt = LocalDateTime.now();
+        this.resolutionNotes = notes;
+    }
+
+    public void escalate() {
+        this.status = AlertStatus.ESCALATED;
+    }
+
     public enum AlertType {
         POLICY_EXPIRY,
         LICENSE_RENEWAL,
@@ -83,16 +94,5 @@ public class ComplianceAlert extends TenantAware {
         RESOLVED,
         DISMISSED,
         ESCALATED
-    }
-
-    public void resolve(UUID resolvedById, String notes) {
-        this.status = AlertStatus.RESOLVED;
-        this.resolvedBy = resolvedById;
-        this.resolvedAt = LocalDateTime.now();
-        this.resolutionNotes = notes;
-    }
-
-    public void escalate() {
-        this.status = AlertStatus.ESCALATED;
     }
 }

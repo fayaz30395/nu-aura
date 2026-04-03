@@ -12,10 +12,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "document_approval_workflows", indexes = {
-    @Index(name = "idx_doc_approval_workflow_tenant", columnList = "tenantId"),
-    @Index(name = "idx_doc_approval_workflow_document", columnList = "documentId"),
-    @Index(name = "idx_doc_approval_workflow_status", columnList = "tenantId,status"),
-    @Index(name = "idx_doc_approval_workflow_approver", columnList = "currentApproverId")
+        @Index(name = "idx_doc_approval_workflow_tenant", columnList = "tenantId"),
+        @Index(name = "idx_doc_approval_workflow_document", columnList = "documentId"),
+        @Index(name = "idx_doc_approval_workflow_status", columnList = "tenantId,status"),
+        @Index(name = "idx_doc_approval_workflow_approver", columnList = "currentApproverId")
 })
 @Getter
 @Setter

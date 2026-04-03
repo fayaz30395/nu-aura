@@ -15,9 +15,9 @@ import java.time.LocalDate;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "restricted_holidays", indexes = {
-    @Index(name = "idx_restricted_holidays_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_restricted_holidays_date", columnList = "holidayDate"),
-    @Index(name = "idx_restricted_holidays_year", columnList = "year")
+        @Index(name = "idx_restricted_holidays_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_restricted_holidays_date", columnList = "holidayDate"),
+        @Index(name = "idx_restricted_holidays_year", columnList = "year")
 })
 @Getter
 @Setter
@@ -40,11 +40,15 @@ public class RestrictedHoliday extends TenantAware {
     @Builder.Default
     private HolidayCategory category = HolidayCategory.RELIGIOUS;
 
-    /** JSON array of region/location codes, e.g. ["IN-MH","IN-KA"]. Null means all. */
+    /**
+     * JSON array of region/location codes, e.g. ["IN-MH","IN-KA"]. Null means all.
+     */
     @Column(name = "applicable_regions", columnDefinition = "TEXT")
     private String applicableRegions;
 
-    /** JSON array of department UUIDs. Null means all departments. */
+    /**
+     * JSON array of department UUIDs. Null means all departments.
+     */
     @Column(name = "applicable_departments", columnDefinition = "TEXT")
     private String applicableDepartments;
 

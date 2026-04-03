@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "tenants", indexes = {
-    @Index(name = "idx_tenant_code", columnList = "code", unique = true),
-    @Index(name = "idx_tenant_status", columnList = "status")
+        @Index(name = "idx_tenant_code", columnList = "code", unique = true),
+        @Index(name = "idx_tenant_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -41,13 +41,6 @@ public class Tenant extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String settings;
 
-    public enum TenantStatus {
-        ACTIVE,
-        SUSPENDED,
-        INACTIVE,
-        PENDING_ACTIVATION
-    }
-
     public void activate() {
         if (this.status == TenantStatus.PENDING_ACTIVATION || this.status == TenantStatus.SUSPENDED) {
             this.status = TenantStatus.ACTIVE;
@@ -62,5 +55,12 @@ public class Tenant extends BaseEntity {
         } else {
             throw new IllegalStateException("Cannot suspend tenant in status: " + this.status);
         }
+    }
+
+    public enum TenantStatus {
+        ACTIVE,
+        SUSPENDED,
+        INACTIVE,
+        PENDING_ACTIVATION
     }
 }

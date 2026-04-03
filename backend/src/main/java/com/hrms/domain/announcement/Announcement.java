@@ -14,10 +14,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "announcements", indexes = {
-    @Index(name = "idx_announcement_tenant", columnList = "tenant_id"),
-    @Index(name = "idx_announcement_status", columnList = "status"),
-    @Index(name = "idx_announcement_published", columnList = "published_at"),
-    @Index(name = "idx_announcement_pinned", columnList = "is_pinned")
+        @Index(name = "idx_announcement_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_announcement_status", columnList = "status"),
+        @Index(name = "idx_announcement_published", columnList = "published_at"),
+        @Index(name = "idx_announcement_pinned", columnList = "is_pinned")
 })
 @Getter
 @Setter
@@ -54,14 +54,14 @@ public class Announcement extends TenantAware {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "announcement_target_departments",
-                     joinColumns = @JoinColumn(name = "announcement_id"))
+            joinColumns = @JoinColumn(name = "announcement_id"))
     @Column(name = "department_id")
     @Builder.Default
     private Set<UUID> targetDepartmentIds = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "announcement_target_employees",
-                     joinColumns = @JoinColumn(name = "announcement_id"))
+            joinColumns = @JoinColumn(name = "announcement_id"))
     @Column(name = "employee_id")
     @Builder.Default
     private Set<UUID> targetEmployeeIds = new HashSet<>();
@@ -105,6 +105,21 @@ public class Announcement extends TenantAware {
     @Column(name = "wall_post_id")
     private UUID wallPostId;
 
+    public void publish(UUID publisherId, String publisherName) {
+        this.status = AnnouncementStatus.PUBLISHED;
+        this.publishedAt = LocalDateTime.now();
+        this.publishedBy = publisherId;
+        this.publishedByName = publisherName;
+    }
+
+    public void incrementReadCount() {
+        this.readCount = (this.readCount == null ? 0 : this.readCount) + 1;
+    }
+
+    public void incrementAcceptedCount() {
+        this.acceptedCount = (this.acceptedCount == null ? 0 : this.acceptedCount) + 1;
+    }
+
     public enum AnnouncementCategory {
         GENERAL, POLICY_UPDATE, EVENT, HOLIDAY, ACHIEVEMENT, URGENT,
         BENEFIT, TRAINING, SOCIAL, IT_MAINTENANCE, HEALTH_SAFETY, OTHER
@@ -120,20 +135,5 @@ public class Announcement extends TenantAware {
 
     public enum TargetAudience {
         ALL_EMPLOYEES, SPECIFIC_DEPARTMENTS, SPECIFIC_EMPLOYEES, MANAGERS_ONLY, NEW_JOINERS
-    }
-
-    public void publish(UUID publisherId, String publisherName) {
-        this.status = AnnouncementStatus.PUBLISHED;
-        this.publishedAt = LocalDateTime.now();
-        this.publishedBy = publisherId;
-        this.publishedByName = publisherName;
-    }
-
-    public void incrementReadCount() {
-        this.readCount = (this.readCount == null ? 0 : this.readCount) + 1;
-    }
-
-    public void incrementAcceptedCount() {
-        this.acceptedCount = (this.acceptedCount == null ? 0 : this.acceptedCount) + 1;
     }
 }

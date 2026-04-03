@@ -18,12 +18,12 @@ import java.util.UUID;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "post_comments", indexes = {
-    @Index(name = "idx_post_comment_tenant", columnList = "tenant_id"),
-    @Index(name = "idx_post_comment_post", columnList = "post_id"),
-    @Index(name = "idx_post_comment_tenant_post", columnList = "tenant_id,post_id"),
-    @Index(name = "idx_post_comment_author", columnList = "author_id"),
-    @Index(name = "idx_post_comment_parent", columnList = "parent_comment_id"),
-    @Index(name = "idx_post_comment_created_at", columnList = "created_at")
+        @Index(name = "idx_post_comment_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_post_comment_post", columnList = "post_id"),
+        @Index(name = "idx_post_comment_tenant_post", columnList = "tenant_id,post_id"),
+        @Index(name = "idx_post_comment_author", columnList = "author_id"),
+        @Index(name = "idx_post_comment_parent", columnList = "parent_comment_id"),
+        @Index(name = "idx_post_comment_created_at", columnList = "created_at")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class PostComment {
@@ -77,7 +77,8 @@ public class PostComment {
     private UUID updatedBy;
 
     // Constructors
-    public PostComment() {}
+    public PostComment() {
+    }
 
     public PostComment(WallPost post, Employee author, String content) {
         this.post = post;

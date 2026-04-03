@@ -22,14 +22,21 @@ public class ExpenseSubmittedEvent extends DomainEvent {
     private final UUID approverId;
 
     public ExpenseSubmittedEvent(Object source, UUID tenantId, UUID expenseId,
-                                UUID employeeId, String requesterName,
-                                BigDecimal amount, String currency, UUID approverId) {
+                                 UUID employeeId, String requesterName,
+                                 BigDecimal amount, String currency, UUID approverId) {
         super(source, tenantId, expenseId, "ExpenseClaim");
         this.employeeId = employeeId;
         this.requesterName = requesterName;
         this.amount = amount;
         this.currency = currency;
         this.approverId = approverId;
+    }
+
+    public static ExpenseSubmittedEvent of(Object source, UUID tenantId, UUID expenseId,
+                                           UUID employeeId, String requesterName,
+                                           BigDecimal amount, String currency, UUID approverId) {
+        return new ExpenseSubmittedEvent(source, tenantId, expenseId,
+                employeeId, requesterName, amount, currency, approverId);
     }
 
     @Override
@@ -49,12 +56,5 @@ public class ExpenseSubmittedEvent extends DomainEvent {
             payload.put("approverId", approverId.toString());
         }
         return payload;
-    }
-
-    public static ExpenseSubmittedEvent of(Object source, UUID tenantId, UUID expenseId,
-                                           UUID employeeId, String requesterName,
-                                           BigDecimal amount, String currency, UUID approverId) {
-        return new ExpenseSubmittedEvent(source, tenantId, expenseId,
-                employeeId, requesterName, amount, currency, approverId);
     }
 }

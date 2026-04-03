@@ -113,16 +113,16 @@ public class Certificate extends TenantAware {
         this.issuedBy = issuedBy;
     }
 
-    // BaseEntity overrides if needed, but adding here to be safe
-    public void setId(UUID id) {
-        super.setId(id);
-    }
-
     public void setTenantId(UUID tenantId) {
         super.setTenantId(tenantId);
     }
 
     public UUID getId() {
         return super.getId();
+    }
+
+    // BaseEntity overrides if needed, but adding here to be safe
+    public void setId(UUID id) {
+        super.setId(id);
     }
 }

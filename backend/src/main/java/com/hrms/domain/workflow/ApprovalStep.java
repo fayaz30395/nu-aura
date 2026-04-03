@@ -90,6 +90,15 @@ public class ApprovalStep extends TenantAware {
     private boolean commentsRequired;
     private boolean attachmentsAllowed;
 
+    @SuppressWarnings("unused")
+    public boolean isApplicable(Object context) {
+        if (condition == null || condition.isEmpty()) {
+            return true;
+        }
+        // Condition evaluation would be done by WorkflowEngine
+        return true;
+    }
+
     public enum ApproverType {
         SPECIFIC_USER,       // A specific user
         ROLE,                // Anyone with a specific role
@@ -103,14 +112,5 @@ public class ApprovalStep extends TenantAware {
         DYNAMIC,             // Determined at runtime by expression
         COMMITTEE,           // Multiple approvers (committee)
         ANY_OF_ROLE          // Any one person with the role
-    }
-
-    @SuppressWarnings("unused")
-    public boolean isApplicable(Object context) {
-        if (condition == null || condition.isEmpty()) {
-            return true;
-        }
-        // Condition evaluation would be done by WorkflowEngine
-        return true;
     }
 }

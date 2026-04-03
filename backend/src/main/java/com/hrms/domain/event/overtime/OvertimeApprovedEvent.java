@@ -23,14 +23,21 @@ public class OvertimeApprovedEvent extends DomainEvent {
     private final BigDecimal overtimeRate;
 
     public OvertimeApprovedEvent(Object source, UUID tenantId, UUID overtimeRecordId,
-                                  UUID employeeId, UUID approverId,
-                                  LocalDate overtimeDate, BigDecimal hoursWorked, BigDecimal overtimeRate) {
+                                 UUID employeeId, UUID approverId,
+                                 LocalDate overtimeDate, BigDecimal hoursWorked, BigDecimal overtimeRate) {
         super(source, tenantId, overtimeRecordId, "OvertimeRecord");
         this.employeeId = employeeId;
         this.approverId = approverId;
         this.overtimeDate = overtimeDate;
         this.hoursWorked = hoursWorked;
         this.overtimeRate = overtimeRate;
+    }
+
+    public static OvertimeApprovedEvent of(Object source, UUID tenantId, UUID overtimeRecordId,
+                                           UUID employeeId, UUID approverId,
+                                           LocalDate overtimeDate, BigDecimal hoursWorked, BigDecimal overtimeRate) {
+        return new OvertimeApprovedEvent(source, tenantId, overtimeRecordId,
+                employeeId, approverId, overtimeDate, hoursWorked, overtimeRate);
     }
 
     @Override
@@ -48,12 +55,5 @@ public class OvertimeApprovedEvent extends DomainEvent {
         payload.put("hoursWorked", hoursWorked.toString());
         payload.put("overtimeRate", overtimeRate != null ? overtimeRate.toString() : "1.5");
         return payload;
-    }
-
-    public static OvertimeApprovedEvent of(Object source, UUID tenantId, UUID overtimeRecordId,
-                                            UUID employeeId, UUID approverId,
-                                            LocalDate overtimeDate, BigDecimal hoursWorked, BigDecimal overtimeRate) {
-        return new OvertimeApprovedEvent(source, tenantId, overtimeRecordId,
-                employeeId, approverId, overtimeDate, hoursWorked, overtimeRate);
     }
 }

@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "ticket_metrics", indexes = {
-    @Index(name = "idx_metrics_tenant", columnList = "tenantId"),
-    @Index(name = "idx_metrics_ticket", columnList = "ticketId")
+        @Index(name = "idx_metrics_tenant", columnList = "tenantId"),
+        @Index(name = "idx_metrics_ticket", columnList = "ticketId")
 })
 @Getter
 @Setter

@@ -29,8 +29,8 @@ public interface DocumentAccessRepository extends JpaRepository<DocumentAccess, 
     List<DocumentAccess> findByDepartmentId(UUID departmentId);
 
     @Query("SELECT da FROM DocumentAccess da WHERE da.documentId = :documentId AND " +
-           "((da.userId = :userId) OR (da.roleId IN :roleIds) OR (da.departmentId = :departmentId)) AND " +
-           "da.isActive = true AND (da.expiresAt IS NULL OR da.expiresAt > CURRENT_TIMESTAMP)")
+            "((da.userId = :userId) OR (da.roleId IN :roleIds) OR (da.departmentId = :departmentId)) AND " +
+            "da.isActive = true AND (da.expiresAt IS NULL OR da.expiresAt > CURRENT_TIMESTAMP)")
     List<DocumentAccess> findAccessibleByUserOrRoleOrDepartment(
             @Param("documentId") UUID documentId,
             @Param("userId") UUID userId,

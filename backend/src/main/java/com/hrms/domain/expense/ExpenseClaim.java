@@ -14,15 +14,15 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_claims", indexes = {
-    @Index(name = "idx_expense_claim_tenant", columnList = "tenantId"),
-    @Index(name = "idx_expense_claim_tenant_employee", columnList = "tenantId,employee_id"),
-    @Index(name = "idx_expense_claim_status", columnList = "status"),
-    @Index(name = "idx_expense_claim_tenant_status", columnList = "tenantId,status"),
-    @Index(name = "idx_expense_claim_date", columnList = "claim_date"),
-    @Index(name = "idx_expense_claim_category", columnList = "category"),
-    @Index(name = "idx_expense_claim_submitted_at", columnList = "submitted_at")
+        @Index(name = "idx_expense_claim_tenant", columnList = "tenantId"),
+        @Index(name = "idx_expense_claim_tenant_employee", columnList = "tenantId,employee_id"),
+        @Index(name = "idx_expense_claim_status", columnList = "status"),
+        @Index(name = "idx_expense_claim_tenant_status", columnList = "tenantId,status"),
+        @Index(name = "idx_expense_claim_date", columnList = "claim_date"),
+        @Index(name = "idx_expense_claim_category", columnList = "category"),
+        @Index(name = "idx_expense_claim_submitted_at", columnList = "submitted_at")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_expense_claim_tenant_number", columnNames = {"tenantId", "claim_number"})
+        @UniqueConstraint(name = "uk_expense_claim_tenant_number", columnNames = {"tenantId", "claim_number"})
 })
 @Getter
 @Setter
@@ -110,34 +110,6 @@ public class ExpenseClaim extends TenantAware {
     @Column(name = "receipt_scan_status", length = 20)
     private String receiptScanStatus;
 
-    public enum ExpenseStatus {
-        DRAFT,
-        SUBMITTED,
-        PENDING_APPROVAL,
-        APPROVED,
-        REJECTED,
-        PROCESSING,
-        REIMBURSED,
-        PAID,
-        CANCELLED
-    }
-
-    public enum ExpenseCategory {
-        TRAVEL,
-        ACCOMMODATION,
-        MEALS,
-        TRANSPORT,
-        OFFICE_SUPPLIES,
-        EQUIPMENT,
-        SOFTWARE,
-        TRAINING,
-        MEDICAL,
-        COMMUNICATION,
-        ENTERTAINMENT,
-        RELOCATION,
-        OTHER
-    }
-
     public void submit() {
         if (this.status != ExpenseStatus.DRAFT) {
             throw new IllegalStateException("Can only submit expense claims in DRAFT status");
@@ -195,5 +167,33 @@ public class ExpenseClaim extends TenantAware {
             throw new IllegalStateException("Cannot cancel paid/reimbursed expense claims");
         }
         this.status = ExpenseStatus.CANCELLED;
+    }
+
+    public enum ExpenseStatus {
+        DRAFT,
+        SUBMITTED,
+        PENDING_APPROVAL,
+        APPROVED,
+        REJECTED,
+        PROCESSING,
+        REIMBURSED,
+        PAID,
+        CANCELLED
+    }
+
+    public enum ExpenseCategory {
+        TRAVEL,
+        ACCOMMODATION,
+        MEALS,
+        TRANSPORT,
+        OFFICE_SUPPLIES,
+        EQUIPMENT,
+        SOFTWARE,
+        TRAINING,
+        MEDICAL,
+        COMMUNICATION,
+        ENTERTAINMENT,
+        RELOCATION,
+        OTHER
     }
 }

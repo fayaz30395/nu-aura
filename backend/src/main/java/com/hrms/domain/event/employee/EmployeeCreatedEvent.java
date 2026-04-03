@@ -24,12 +24,19 @@ public class EmployeeCreatedEvent extends EmployeeEvent {
 
     public EmployeeCreatedEvent(Object source, Employee employee) {
         super(source,
-              employee.getTenantId(),
-              employee.getId(),
-              employee.getEmployeeCode(),
-              employee.getFullName(),
-              employee.getUser() != null ? employee.getUser().getEmail() : null);
+                employee.getTenantId(),
+                employee.getId(),
+                employee.getEmployeeCode(),
+                employee.getFullName(),
+                employee.getUser() != null ? employee.getUser().getEmail() : null);
         this.employee = employee;
+    }
+
+    /**
+     * Factory method for creating the event.
+     */
+    public static EmployeeCreatedEvent of(Object source, Employee employee) {
+        return new EmployeeCreatedEvent(source, employee);
     }
 
     @Override
@@ -46,12 +53,5 @@ public class EmployeeCreatedEvent extends EmployeeEvent {
             payload.put("userId", employee.getUser().getId().toString());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static EmployeeCreatedEvent of(Object source, Employee employee) {
-        return new EmployeeCreatedEvent(source, employee);
     }
 }

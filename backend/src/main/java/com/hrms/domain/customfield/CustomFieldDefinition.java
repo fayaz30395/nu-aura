@@ -16,11 +16,11 @@ import java.util.List;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "custom_field_definitions", indexes = {
-    @Index(name = "idx_cfd_tenant", columnList = "tenantId"),
-    @Index(name = "idx_cfd_entity_type", columnList = "entityType"),
-    @Index(name = "idx_cfd_code_tenant", columnList = "fieldCode,tenantId", unique = true),
-    @Index(name = "idx_cfd_group", columnList = "fieldGroup"),
-    @Index(name = "idx_cfd_active", columnList = "isActive")
+        @Index(name = "idx_cfd_tenant", columnList = "tenantId"),
+        @Index(name = "idx_cfd_entity_type", columnList = "entityType"),
+        @Index(name = "idx_cfd_code_tenant", columnList = "fieldCode,tenantId", unique = true),
+        @Index(name = "idx_cfd_group", columnList = "fieldGroup"),
+        @Index(name = "idx_cfd_active", columnList = "isActive")
 })
 @Getter
 @Setter
@@ -177,6 +177,25 @@ public class CustomFieldDefinition extends TenantAware {
     private FieldVisibility editVisibility = FieldVisibility.ADMIN_HR;
 
     /**
+     * Get options as a list (parses comma-separated or JSON array)
+     */
+    public List<String> getOptionsList() {
+        if (options == null || options.isBlank()) {
+            return new ArrayList<>();
+        }
+        // Simple comma-separated parsing
+        String[] parts = options.split(",");
+        List<String> result = new ArrayList<>();
+        for (String part : parts) {
+            String trimmed = part.trim();
+            if (!trimmed.isEmpty()) {
+                result.add(trimmed);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Entity types that can have custom fields
      */
     public enum EntityType {
@@ -220,24 +239,5 @@ public class CustomFieldDefinition extends TenantAware {
         HR,             // HR team only
         ADMIN_HR,       // Admin and HR only
         ADMIN_ONLY      // Only system admins
-    }
-
-    /**
-     * Get options as a list (parses comma-separated or JSON array)
-     */
-    public List<String> getOptionsList() {
-        if (options == null || options.isBlank()) {
-            return new ArrayList<>();
-        }
-        // Simple comma-separated parsing
-        String[] parts = options.split(",");
-        List<String> result = new ArrayList<>();
-        for (String part : parts) {
-            String trimmed = part.trim();
-            if (!trimmed.isEmpty()) {
-                result.add(trimmed);
-            }
-        }
-        return result;
     }
 }

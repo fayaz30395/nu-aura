@@ -27,14 +27,23 @@ public class EmployeeStatusChangedEvent extends EmployeeEvent {
                                       Employee.EmployeeStatus previousStatus,
                                       Employee.EmployeeStatus newStatus) {
         super(source,
-              employee.getTenantId(),
-              employee.getId(),
-              employee.getEmployeeCode(),
-              employee.getFullName(),
-              employee.getUser() != null ? employee.getUser().getEmail() : null);
+                employee.getTenantId(),
+                employee.getId(),
+                employee.getEmployeeCode(),
+                employee.getFullName(),
+                employee.getUser() != null ? employee.getUser().getEmail() : null);
         this.employee = employee;
         this.previousStatus = previousStatus;
         this.newStatus = newStatus;
+    }
+
+    /**
+     * Factory method for creating the event.
+     */
+    public static EmployeeStatusChangedEvent of(Object source, Employee employee,
+                                                Employee.EmployeeStatus previousStatus,
+                                                Employee.EmployeeStatus newStatus) {
+        return new EmployeeStatusChangedEvent(source, employee, previousStatus, newStatus);
     }
 
     @Override
@@ -48,14 +57,5 @@ public class EmployeeStatusChangedEvent extends EmployeeEvent {
         payload.put("previousStatus", previousStatus.name());
         payload.put("newStatus", newStatus.name());
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static EmployeeStatusChangedEvent of(Object source, Employee employee,
-                                                Employee.EmployeeStatus previousStatus,
-                                                Employee.EmployeeStatus newStatus) {
-        return new EmployeeStatusChangedEvent(source, employee, previousStatus, newStatus);
     }
 }

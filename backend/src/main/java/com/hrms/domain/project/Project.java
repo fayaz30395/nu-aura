@@ -63,22 +63,6 @@ public class Project extends TenantAware {
     @Column(length = 3)
     private String currency;
 
-    public enum ProjectStatus {
-        DRAFT,
-        PLANNED,
-        IN_PROGRESS,
-        ON_HOLD,
-        COMPLETED,
-        CANCELLED
-    }
-
-    public enum Priority {
-        LOW,
-        MEDIUM,
-        HIGH,
-        CRITICAL
-    }
-
     public void start() {
         this.status = ProjectStatus.IN_PROGRESS;
     }
@@ -95,5 +79,21 @@ public class Project extends TenantAware {
     public void cancel() {
         this.status = ProjectStatus.CANCELLED;
         this.endDate = LocalDate.now();
+    }
+
+    public enum ProjectStatus {
+        DRAFT,
+        PLANNED,
+        IN_PROGRESS,
+        ON_HOLD,
+        COMPLETED,
+        CANCELLED
+    }
+
+    public enum Priority {
+        LOW,
+        MEDIUM,
+        HIGH,
+        CRITICAL
     }
 }

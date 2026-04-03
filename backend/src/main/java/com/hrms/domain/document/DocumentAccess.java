@@ -12,12 +12,12 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "document_access", indexes = {
-    @Index(name = "idx_doc_access_tenant", columnList = "tenantId"),
-    @Index(name = "idx_doc_access_document", columnList = "documentId"),
-    @Index(name = "idx_doc_access_user", columnList = "userId"),
-    @Index(name = "idx_doc_access_role", columnList = "roleId"),
-    @Index(name = "idx_doc_access_department", columnList = "departmentId"),
-    @Index(name = "idx_doc_access_level", columnList = "tenantId,accessLevel")
+        @Index(name = "idx_doc_access_tenant", columnList = "tenantId"),
+        @Index(name = "idx_doc_access_document", columnList = "documentId"),
+        @Index(name = "idx_doc_access_user", columnList = "userId"),
+        @Index(name = "idx_doc_access_role", columnList = "roleId"),
+        @Index(name = "idx_doc_access_department", columnList = "departmentId"),
+        @Index(name = "idx_doc_access_level", columnList = "tenantId,accessLevel")
 })
 @Getter
 @Setter
@@ -58,14 +58,14 @@ public class DocumentAccess extends TenantAware {
     @Column(columnDefinition = "JSONB")
     private String metadata;
 
+    public boolean isExpired() {
+        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
+    }
+
     public enum AccessLevel {
         VIEW,
         EDIT,
         MANAGE,
         APPROVE
-    }
-
-    public boolean isExpired() {
-        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
     }
 }

@@ -15,10 +15,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "objectives", indexes = {
-    @Index(name = "idx_objective_tenant", columnList = "tenantId"),
-    @Index(name = "idx_objective_owner", columnList = "ownerId"),
-    @Index(name = "idx_objective_cycle", columnList = "cycleId"),
-    @Index(name = "idx_objective_status", columnList = "status")
+        @Index(name = "idx_objective_tenant", columnList = "tenantId"),
+        @Index(name = "idx_objective_owner", columnList = "ownerId"),
+        @Index(name = "idx_objective_cycle", columnList = "cycleId"),
+        @Index(name = "idx_objective_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -99,24 +99,6 @@ public class Objective extends TenantAware {
     @Builder.Default
     private List<KeyResult> keyResults = new ArrayList<>();
 
-    public enum ObjectiveLevel {
-        COMPANY,
-        DEPARTMENT,
-        TEAM,
-        INDIVIDUAL
-    }
-
-    public enum ObjectiveStatus {
-        DRAFT,
-        PENDING_APPROVAL,
-        ACTIVE,
-        ON_TRACK,
-        AT_RISK,
-        BEHIND,
-        COMPLETED,
-        CANCELLED
-    }
-
     public void calculateProgress() {
         if (keyResults == null || keyResults.isEmpty()) {
             this.progressPercentage = BigDecimal.ZERO;
@@ -130,7 +112,7 @@ public class Objective extends TenantAware {
             BigDecimal krWeight = BigDecimal.valueOf(kr.getWeight() != null ? kr.getWeight() : 100);
             totalWeight = totalWeight.add(krWeight);
             weightedProgress = weightedProgress.add(
-                kr.getProgressPercentage().multiply(krWeight)
+                    kr.getProgressPercentage().multiply(krWeight)
             );
         }
 
@@ -160,5 +142,23 @@ public class Objective extends TenantAware {
                 this.status = ObjectiveStatus.BEHIND;
             }
         }
+    }
+
+    public enum ObjectiveLevel {
+        COMPANY,
+        DEPARTMENT,
+        TEAM,
+        INDIVIDUAL
+    }
+
+    public enum ObjectiveStatus {
+        DRAFT,
+        PENDING_APPROVAL,
+        ACTIVE,
+        ON_TRACK,
+        AT_RISK,
+        BEHIND,
+        COMPLETED,
+        CANCELLED
     }
 }

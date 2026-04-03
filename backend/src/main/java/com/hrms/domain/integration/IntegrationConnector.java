@@ -105,8 +105,8 @@ public interface IntegrationConnector {
      * <p>The connector ID is provided separately to allow stateless implementations.</p>
      *
      * @param connectorId the ID of the connector receiving the callback
-     * @param headers HTTP headers from the webhook request
-     * @param body the raw body of the webhook request
+     * @param headers     HTTP headers from the webhook request
+     * @param body        the raw body of the webhook request
      * @return a WebhookCallbackResult indicating success/failure
      */
     WebhookCallbackResult handleWebhookCallback(String connectorId, Map<String, String> headers, String body);

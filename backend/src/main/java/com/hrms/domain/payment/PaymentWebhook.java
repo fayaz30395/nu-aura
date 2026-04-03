@@ -8,11 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "payment_webhooks", indexes = {
-    @Index(name = "idx_payment_webhook_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payment_webhook_provider", columnList = "tenantId,provider"),
-    @Index(name = "idx_payment_webhook_event", columnList = "tenantId,eventType"),
-    @Index(name = "idx_payment_webhook_processed", columnList = "tenantId,processed"),
-    @Index(name = "idx_payment_webhook_external_event_id", columnList = "externalEventId")
+        @Index(name = "idx_payment_webhook_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payment_webhook_provider", columnList = "tenantId,provider"),
+        @Index(name = "idx_payment_webhook_event", columnList = "tenantId,eventType"),
+        @Index(name = "idx_payment_webhook_processed", columnList = "tenantId,processed"),
+        @Index(name = "idx_payment_webhook_external_event_id", columnList = "externalEventId")
 })
 @Getter
 @Setter

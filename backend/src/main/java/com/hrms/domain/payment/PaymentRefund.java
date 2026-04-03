@@ -13,9 +13,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "payment_refunds", indexes = {
-    @Index(name = "idx_payment_refund_tenant", columnList = "tenantId"),
-    @Index(name = "idx_payment_refund_transaction", columnList = "transactionId"),
-    @Index(name = "idx_payment_refund_status", columnList = "tenantId,status")
+        @Index(name = "idx_payment_refund_tenant", columnList = "tenantId"),
+        @Index(name = "idx_payment_refund_transaction", columnList = "transactionId"),
+        @Index(name = "idx_payment_refund_status", columnList = "tenantId,status")
 })
 @Getter
 @Setter

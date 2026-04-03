@@ -52,6 +52,13 @@ public class CandidateHiredEvent extends DomainEvent {
         this.employmentType = jobOpening.getEmploymentType();
     }
 
+    /**
+     * Factory method for creating the event.
+     */
+    public static CandidateHiredEvent of(Object source, Candidate candidate, JobOpening jobOpening) {
+        return new CandidateHiredEvent(source, candidate, jobOpening);
+    }
+
     @Override
     public String getEventType() {
         return "CANDIDATE_HIRED";
@@ -76,12 +83,5 @@ public class CandidateHiredEvent extends DomainEvent {
             payload.put("employmentType", employmentType.name());
         }
         return payload;
-    }
-
-    /**
-     * Factory method for creating the event.
-     */
-    public static CandidateHiredEvent of(Object source, Candidate candidate, JobOpening jobOpening) {
-        return new CandidateHiredEvent(source, candidate, jobOpening);
     }
 }

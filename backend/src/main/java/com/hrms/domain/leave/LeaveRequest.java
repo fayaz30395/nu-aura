@@ -14,13 +14,13 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "leave_requests", indexes = {
-    @Index(name = "idx_leave_requests_tenant_id", columnList = "tenantId"),
-    @Index(name = "idx_leave_requests_employee_id", columnList = "employeeId"),
-    @Index(name = "idx_leave_requests_status", columnList = "status"),
-    @Index(name = "idx_leave_requests_dates", columnList = "startDate,endDate"),
-    @Index(name = "idx_leave_requests_employee_status", columnList = "employeeId,status"),
-    @Index(name = "idx_leave_requests_leave_type", columnList = "leave_type_id"),
-    @Index(name = "idx_leave_requests_tenant_employee", columnList = "tenantId,employeeId")
+        @Index(name = "idx_leave_requests_tenant_id", columnList = "tenantId"),
+        @Index(name = "idx_leave_requests_employee_id", columnList = "employeeId"),
+        @Index(name = "idx_leave_requests_status", columnList = "status"),
+        @Index(name = "idx_leave_requests_dates", columnList = "startDate,endDate"),
+        @Index(name = "idx_leave_requests_employee_status", columnList = "employeeId,status"),
+        @Index(name = "idx_leave_requests_leave_type", columnList = "leave_type_id"),
+        @Index(name = "idx_leave_requests_tenant_employee", columnList = "tenantId,employeeId")
 })
 @Getter
 @Setter
@@ -88,18 +88,6 @@ public class LeaveRequest extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String comments;
 
-    public enum LeaveRequestStatus {
-        PENDING,
-        APPROVED,
-        REJECTED,
-        CANCELLED
-    }
-
-    public enum HalfDayPeriod {
-        MORNING,
-        AFTERNOON
-    }
-
     public void approve(UUID approverId) {
         approve(approverId, null);
     }
@@ -139,5 +127,17 @@ public class LeaveRequest extends TenantAware {
 
     public boolean isActive() {
         return this.status == LeaveRequestStatus.APPROVED || this.status == LeaveRequestStatus.PENDING;
+    }
+
+    public enum LeaveRequestStatus {
+        PENDING,
+        APPROVED,
+        REJECTED,
+        CANCELLED
+    }
+
+    public enum HalfDayPeriod {
+        MORNING,
+        AFTERNOON
     }
 }

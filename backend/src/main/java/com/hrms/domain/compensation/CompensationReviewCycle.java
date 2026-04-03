@@ -122,25 +122,6 @@ public class CompensationReviewCycle extends TenantAware {
     @Builder.Default
     private String currency = "USD";
 
-    public enum CycleType {
-        ANNUAL,
-        MID_YEAR,
-        QUARTERLY,
-        SPECIAL,
-        AD_HOC
-    }
-
-    public enum CycleStatus {
-        DRAFT,
-        PLANNING,
-        IN_PROGRESS,
-        REVIEW,
-        APPROVAL,
-        APPROVED,
-        COMPLETED,
-        CANCELLED
-    }
-
     public void activate() {
         this.status = CycleStatus.IN_PROGRESS;
     }
@@ -181,5 +162,24 @@ public class CompensationReviewCycle extends TenantAware {
 
     public boolean isActive() {
         return status == CycleStatus.IN_PROGRESS || status == CycleStatus.REVIEW;
+    }
+
+    public enum CycleType {
+        ANNUAL,
+        MID_YEAR,
+        QUARTERLY,
+        SPECIAL,
+        AD_HOC
+    }
+
+    public enum CycleStatus {
+        DRAFT,
+        PLANNING,
+        IN_PROGRESS,
+        REVIEW,
+        APPROVAL,
+        APPROVED,
+        COMPLETED,
+        CANCELLED
     }
 }

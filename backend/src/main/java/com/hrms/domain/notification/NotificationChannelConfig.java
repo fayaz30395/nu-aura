@@ -12,7 +12,7 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "notification_channel_configs", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"tenantId", "channel"})
+        @UniqueConstraint(columnNames = {"tenantId", "channel"})
 })
 @Getter
 @Setter

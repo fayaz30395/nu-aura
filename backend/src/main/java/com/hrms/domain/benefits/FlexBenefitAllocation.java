@@ -67,14 +67,6 @@ public class FlexBenefitAllocation extends TenantAware {
 
     // Audit fields (createdBy, createdAt, updatedAt, lastModifiedBy) inherited from BaseEntity
 
-    public enum AllocationStatus {
-        PENDING,
-        ACTIVE,
-        EXHAUSTED,
-        EXPIRED,
-        FORFEITED
-    }
-
     @PrePersist
     protected void onCreate() {
         if (usedCredits == null) usedCredits = BigDecimal.ZERO;
@@ -108,5 +100,13 @@ public class FlexBenefitAllocation extends TenantAware {
 
     public boolean hasAvailableCredits(BigDecimal amount) {
         return remainingCredits.compareTo(amount) >= 0;
+    }
+
+    public enum AllocationStatus {
+        PENDING,
+        ACTIVE,
+        EXHAUSTED,
+        EXPIRED,
+        FORFEITED
     }
 }

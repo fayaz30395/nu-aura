@@ -40,6 +40,13 @@ public class LeaveRejectedEvent extends DomainEvent {
         this.reason = reason;
     }
 
+    public static LeaveRejectedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
+                                        UUID employeeId, UUID approverId, String leaveType,
+                                        LocalDate startDate, LocalDate endDate, String reason) {
+        return new LeaveRejectedEvent(source, tenantId, leaveRequestId,
+                employeeId, approverId, leaveType, startDate, endDate, reason);
+    }
+
     @Override
     public String getEventType() {
         return "LEAVE_REJECTED";
@@ -58,12 +65,5 @@ public class LeaveRejectedEvent extends DomainEvent {
             payload.put("reason", reason);
         }
         return payload;
-    }
-
-    public static LeaveRejectedEvent of(Object source, UUID tenantId, UUID leaveRequestId,
-                                        UUID employeeId, UUID approverId, String leaveType,
-                                        LocalDate startDate, LocalDate endDate, String reason) {
-        return new LeaveRejectedEvent(source, tenantId, leaveRequestId,
-                employeeId, approverId, leaveType, startDate, endDate, reason);
     }
 }

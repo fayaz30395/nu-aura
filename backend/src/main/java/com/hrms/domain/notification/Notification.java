@@ -12,10 +12,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "notifications", indexes = {
-    @Index(name = "idx_notification_user", columnList = "userId"),
-    @Index(name = "idx_notification_tenant", columnList = "tenantId"),
-    @Index(name = "idx_notification_read", columnList = "isRead"),
-    @Index(name = "idx_notification_created", columnList = "createdAt")
+        @Index(name = "idx_notification_user", columnList = "userId"),
+        @Index(name = "idx_notification_tenant", columnList = "tenantId"),
+        @Index(name = "idx_notification_read", columnList = "isRead"),
+        @Index(name = "idx_notification_created", columnList = "createdAt")
 })
 @Getter
 @Setter
@@ -61,6 +61,11 @@ public class Notification extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String metadata; // JSON string for additional context
 
+    public void markAsRead() {
+        this.isRead = true;
+        this.readAt = LocalDateTime.now();
+    }
+
     public enum NotificationType {
         LEAVE_APPROVED,
         LEAVE_REJECTED,
@@ -97,10 +102,5 @@ public class Notification extends TenantAware {
         NORMAL,
         HIGH,
         URGENT
-    }
-
-    public void markAsRead() {
-        this.isRead = true;
-        this.readAt = LocalDateTime.now();
     }
 }

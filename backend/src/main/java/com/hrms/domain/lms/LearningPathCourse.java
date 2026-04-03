@@ -8,8 +8,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "lms_learning_path_courses", indexes = {
-    @Index(name = "idx_lpc_path", columnList = "pathId"),
-    @Index(name = "idx_lpc_course", columnList = "courseId")
+        @Index(name = "idx_lpc_path", columnList = "pathId"),
+        @Index(name = "idx_lpc_course", columnList = "courseId")
 })
 @Getter
 @Setter

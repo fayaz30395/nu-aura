@@ -9,16 +9,16 @@ import lombok.experimental.SuperBuilder;
 /**
  * Application-specific permission definition.
  * Permissions are prefixed with application code: HRMS:EMPLOYEE:READ, CRM:CONTACT:CREATE
- *
+ * <p>
  * This replaces the old Permission entity with app-awareness.
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "app_permissions", indexes = {
-    @Index(name = "idx_app_perm_code", columnList = "code", unique = true),
-    @Index(name = "idx_app_perm_app", columnList = "application_id"),
-    @Index(name = "idx_app_perm_module", columnList = "module"),
-    @Index(name = "idx_app_perm_action", columnList = "action")
+        @Index(name = "idx_app_perm_code", columnList = "code", unique = true),
+        @Index(name = "idx_app_perm_app", columnList = "application_id"),
+        @Index(name = "idx_app_perm_module", columnList = "module"),
+        @Index(name = "idx_app_perm_action", columnList = "action")
 })
 @Getter
 @Setter

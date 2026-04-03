@@ -22,14 +22,21 @@ public class TrainingCompletedEvent extends DomainEvent {
     private final LocalDateTime completedAt;
 
     public TrainingCompletedEvent(Object source, UUID tenantId, UUID enrollmentId,
-                                 UUID employeeId, UUID programId, String programName,
-                                 LocalDateTime completedAt) {
+                                  UUID employeeId, UUID programId, String programName,
+                                  LocalDateTime completedAt) {
         super(source, tenantId, enrollmentId, "TrainingEnrollment");
         this.employeeId = employeeId;
         this.enrollmentId = enrollmentId;
         this.programId = programId;
         this.programName = programName;
         this.completedAt = completedAt;
+    }
+
+    public static TrainingCompletedEvent of(Object source, UUID tenantId, UUID enrollmentId,
+                                            UUID employeeId, UUID programId, String programName,
+                                            LocalDateTime completedAt) {
+        return new TrainingCompletedEvent(source, tenantId, enrollmentId,
+                employeeId, programId, programName, completedAt);
     }
 
     @Override
@@ -46,12 +53,5 @@ public class TrainingCompletedEvent extends DomainEvent {
         payload.put("programName", programName);
         payload.put("completedAt", completedAt.toString());
         return payload;
-    }
-
-    public static TrainingCompletedEvent of(Object source, UUID tenantId, UUID enrollmentId,
-                                            UUID employeeId, UUID programId, String programName,
-                                            LocalDateTime completedAt) {
-        return new TrainingCompletedEvent(source, tenantId, enrollmentId,
-                employeeId, programId, programName, completedAt);
     }
 }

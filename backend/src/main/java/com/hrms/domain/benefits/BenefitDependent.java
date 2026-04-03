@@ -81,24 +81,6 @@ public class BenefitDependent extends TenantAware {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public enum Relationship {
-        SPOUSE,
-        CHILD,
-        PARENT,
-        PARENT_IN_LAW,
-        SIBLING,
-        DOMESTIC_PARTNER,
-        LEGAL_GUARDIAN,
-        OTHER
-    }
-
-    public enum DependentStatus {
-        PENDING_VERIFICATION,
-        ACTIVE,
-        INACTIVE,
-        REMOVED
-    }
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -123,5 +105,23 @@ public class BenefitDependent extends TenantAware {
             return getAge() <= 26;
         }
         return true;
+    }
+
+    public enum Relationship {
+        SPOUSE,
+        CHILD,
+        PARENT,
+        PARENT_IN_LAW,
+        SIBLING,
+        DOMESTIC_PARTNER,
+        LEGAL_GUARDIAN,
+        OTHER
+    }
+
+    public enum DependentStatus {
+        PENDING_VERIFICATION,
+        ACTIVE,
+        INACTIVE,
+        REMOVED
     }
 }

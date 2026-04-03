@@ -86,13 +86,8 @@ public class GeneratedLetter extends TenantAware {
 
     private UUID previousVersionId;
 
-    public enum LetterStatus {
-        DRAFT,
-        PENDING_APPROVAL,
-        APPROVED,
-        ISSUED,
-        REVOKED,
-        EXPIRED
+    public static String generateReferenceNumber(String prefix, int sequence) {
+        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence);
     }
 
     public void submitForApproval() {
@@ -134,7 +129,12 @@ public class GeneratedLetter extends TenantAware {
         return true;
     }
 
-    public static String generateReferenceNumber(String prefix, int sequence) {
-        return String.format("%s/%d/%04d", prefix, LocalDate.now().getYear(), sequence);
+    public enum LetterStatus {
+        DRAFT,
+        PENDING_APPROVAL,
+        APPROVED,
+        ISSUED,
+        REVOKED,
+        EXPIRED
     }
 }

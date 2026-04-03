@@ -151,20 +151,6 @@ public class HeadcountBudget extends TenantAware {
     @Builder.Default
     private List<HeadcountPosition> positions = new ArrayList<>();
 
-    public enum BudgetStatus {
-        DRAFT,
-        SUBMITTED,
-        PENDING_APPROVAL,
-        UNDER_REVIEW,
-        APPROVED,
-        REJECTED,
-        CLOSED
-    }
-
-    public enum Quarter {
-        Q1, Q2, Q3, Q4, ANNUAL
-    }
-
     @PrePersist
     @PreUpdate
     protected void calculateTotals() {
@@ -184,5 +170,19 @@ public class HeadcountBudget extends TenantAware {
             if (plannedTransfersIn != null) closingHeadcount += plannedTransfersIn;
             if (plannedTransfersOut != null) closingHeadcount -= plannedTransfersOut;
         }
+    }
+
+    public enum BudgetStatus {
+        DRAFT,
+        SUBMITTED,
+        PENDING_APPROVAL,
+        UNDER_REVIEW,
+        APPROVED,
+        REJECTED,
+        CLOSED
+    }
+
+    public enum Quarter {
+        Q1, Q2, Q3, Q4, ANNUAL
     }
 }

@@ -71,6 +71,13 @@ public class MeetingActionItem extends TenantAware {
     @Builder.Default
     private Boolean reminderSent = false;
 
+    public boolean isOverdue() {
+        return dueDate != null &&
+                dueDate.isBefore(LocalDate.now()) &&
+                status != ActionStatus.COMPLETED &&
+                status != ActionStatus.CANCELLED;
+    }
+
     public enum AssigneeRole {
         MANAGER,
         EMPLOYEE
@@ -86,12 +93,5 @@ public class MeetingActionItem extends TenantAware {
 
     public enum Priority {
         LOW, MEDIUM, HIGH, URGENT
-    }
-
-    public boolean isOverdue() {
-        return dueDate != null &&
-               dueDate.isBefore(LocalDate.now()) &&
-               status != ActionStatus.COMPLETED &&
-               status != ActionStatus.CANCELLED;
     }
 }

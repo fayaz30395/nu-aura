@@ -9,21 +9,21 @@ import java.util.Map;
  * to indicate whether the webhook was successfully processed.</p>
  */
 public record WebhookCallbackResult(
-    /**
-     * Whether the webhook callback was successfully processed.
-     */
-    boolean success,
+        /**
+         * Whether the webhook callback was successfully processed.
+         */
+        boolean success,
 
-    /**
-     * Human-readable message describing the processing result.
-     */
-    String message,
+        /**
+         * Human-readable message describing the processing result.
+         */
+        String message,
 
-    /**
-     * Optional response data to return to the webhook sender.
-     * May include acknowledgment tokens, next steps, or error details.
-     */
-    Map<String, Object> data
+        /**
+         * Optional response data to return to the webhook sender.
+         * May include acknowledgment tokens, next steps, or error details.
+         */
+        Map<String, Object> data
 ) {
 
     /**

@@ -13,10 +13,10 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "okr_check_ins", indexes = {
-    @Index(name = "idx_okr_checkin_tenant", columnList = "tenantId"),
-    @Index(name = "idx_okr_checkin_objective", columnList = "objectiveId"),
-    @Index(name = "idx_okr_checkin_kr", columnList = "keyResultId"),
-    @Index(name = "idx_okr_checkin_date", columnList = "checkInDate")
+        @Index(name = "idx_okr_checkin_tenant", columnList = "tenantId"),
+        @Index(name = "idx_okr_checkin_objective", columnList = "objectiveId"),
+        @Index(name = "idx_okr_checkin_kr", columnList = "keyResultId"),
+        @Index(name = "idx_okr_checkin_date", columnList = "checkInDate")
 })
 @Getter
 @Setter

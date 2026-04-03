@@ -17,7 +17,7 @@ import java.util.UUID;
         @Index(name = "idx_lms_progress_enrollment", columnList = "enrollmentId"),
         @Index(name = "idx_lms_progress_content", columnList = "contentId")
 }, uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "enrollmentId", "contentId", "tenantId" })
+        @UniqueConstraint(columnNames = {"enrollmentId", "contentId", "tenantId"})
 })
 @Getter
 @Setter
@@ -78,16 +78,6 @@ public class ContentProgress extends TenantAware {
         super.setUpdatedAt(updatedAt);
     }
 
-    public void setStatus(ProgressStatus status) {
-        this.status = status;
-    }
-
-    public enum ProgressStatus {
-        NOT_STARTED,
-        IN_PROGRESS,
-        COMPLETED
-    }
-
     // Explicit setters for service layer access
     public void setId(UUID id) {
         super.setId(id);
@@ -117,6 +107,10 @@ public class ContentProgress extends TenantAware {
         return status;
     }
 
+    public void setStatus(ProgressStatus status) {
+        this.status = status;
+    }
+
     public UUID getModuleId() {
         return moduleId;
     }
@@ -127,5 +121,11 @@ public class ContentProgress extends TenantAware {
 
     public UUID getEnrollmentId() {
         return enrollmentId;
+    }
+
+    public enum ProgressStatus {
+        NOT_STARTED,
+        IN_PROGRESS,
+        COMPLETED
     }
 }

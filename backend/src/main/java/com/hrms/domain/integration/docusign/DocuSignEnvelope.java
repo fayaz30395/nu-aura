@@ -43,10 +43,10 @@ import java.util.UUID;
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_envelopes", indexes = {
-    @Index(name = "idx_docusign_envelope_tenant_entity", columnList = "tenant_id, entity_type, entity_id"),
-    @Index(name = "idx_docusign_envelope_id", columnList = "envelope_id"),
-    @Index(name = "idx_docusign_envelope_status", columnList = "status"),
-    @Index(name = "idx_docusign_envelope_created_at", columnList = "created_at")
+        @Index(name = "idx_docusign_envelope_tenant_entity", columnList = "tenant_id, entity_type, entity_id"),
+        @Index(name = "idx_docusign_envelope_id", columnList = "envelope_id"),
+        @Index(name = "idx_docusign_envelope_status", columnList = "status"),
+        @Index(name = "idx_docusign_envelope_created_at", columnList = "created_at")
 })
 @Slf4j
 public class DocuSignEnvelope extends TenantAware {
@@ -83,8 +83,8 @@ public class DocuSignEnvelope extends TenantAware {
      * JSON array of recipient details, including names, email addresses, and signing status.
      * Example structure:
      * [
-     *   {"email": "john@example.com", "name": "John Doe", "status": "sent"},
-     *   {"email": "jane@example.com", "name": "Jane Doe", "status": "completed"}
+     * {"email": "john@example.com", "name": "John Doe", "status": "sent"},
+     * {"email": "jane@example.com", "name": "Jane Doe", "status": "completed"}
      * ]
      */
     @Column(columnDefinition = "TEXT")

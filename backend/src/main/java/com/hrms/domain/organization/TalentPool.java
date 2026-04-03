@@ -39,6 +39,16 @@ public class TalentPool extends TenantAware {
 
     private UUID ownerId;
 
+    public void incrementMemberCount() {
+        this.memberCount++;
+    }
+
+    public void decrementMemberCount() {
+        if (this.memberCount > 0) {
+            this.memberCount--;
+        }
+    }
+
     public enum PoolType {
         HIGH_POTENTIAL,
         LEADERSHIP,
@@ -48,15 +58,5 @@ public class TalentPool extends TenantAware {
         EMERGING_TALENT,
         CRITICAL_SKILLS,
         CUSTOM
-    }
-
-    public void incrementMemberCount() {
-        this.memberCount++;
-    }
-
-    public void decrementMemberCount() {
-        if (this.memberCount > 0) {
-            this.memberCount--;
-        }
     }
 }

@@ -17,9 +17,9 @@ import java.util.UUID;
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "expense_advances", indexes = {
-    @Index(name = "idx_expense_adv_tenant", columnList = "tenantId"),
-    @Index(name = "idx_expense_adv_tenant_employee", columnList = "tenantId,employee_id"),
-    @Index(name = "idx_expense_adv_status", columnList = "status")
+        @Index(name = "idx_expense_adv_tenant", columnList = "tenantId"),
+        @Index(name = "idx_expense_adv_tenant_employee", columnList = "tenantId,employee_id"),
+        @Index(name = "idx_expense_adv_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -67,14 +67,6 @@ public class ExpenseAdvance extends TenantAware {
     @Column(length = 1000)
     private String notes;
 
-    public enum AdvanceStatus {
-        REQUESTED,
-        APPROVED,
-        DISBURSED,
-        SETTLED,
-        CANCELLED
-    }
-
     public void approve(UUID approverId) {
         if (this.status != AdvanceStatus.REQUESTED) {
             throw new IllegalStateException("Can only approve advances in REQUESTED status");
@@ -106,5 +98,13 @@ public class ExpenseAdvance extends TenantAware {
             throw new IllegalStateException("Cannot cancel settled advances");
         }
         this.status = AdvanceStatus.CANCELLED;
+    }
+
+    public enum AdvanceStatus {
+        REQUESTED,
+        APPROVED,
+        DISBURSED,
+        SETTLED,
+        CANCELLED
     }
 }

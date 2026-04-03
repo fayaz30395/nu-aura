@@ -23,9 +23,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "integration_event_log", indexes = {
-    @Index(name = "idx_event_log_tenant_connector", columnList = "tenant_id, connector_id"),
-    @Index(name = "idx_event_log_tenant_status", columnList = "tenant_id, status"),
-    @Index(name = "idx_event_log_created_at", columnList = "created_at")
+        @Index(name = "idx_event_log_tenant_connector", columnList = "tenant_id, connector_id"),
+        @Index(name = "idx_event_log_tenant_status", columnList = "tenant_id, status"),
+        @Index(name = "idx_event_log_created_at", columnList = "created_at")
 })
 @Slf4j
 public class IntegrationEventLog extends TenantAware {

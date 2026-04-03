@@ -13,14 +13,14 @@ import java.util.Set;
 /**
  * Represents an application in the NU Platform ecosystem.
  * Examples: NU-HRMS, NU-CRM, NU-FLUENCE, etc.
- *
+ * <p>
  * Each application has its own set of permissions and can be enabled/disabled per tenant.
  */
 @Where(clause = "is_deleted = false")
 @Entity
 @Table(name = "nu_applications", indexes = {
-    @Index(name = "idx_nu_app_code", columnList = "code", unique = true),
-    @Index(name = "idx_nu_app_status", columnList = "status")
+        @Index(name = "idx_nu_app_code", columnList = "code", unique = true),
+        @Index(name = "idx_nu_app_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -101,15 +101,9 @@ public class NuApplication extends BaseEntity {
     @Builder.Default
     private Set<AppPermission> permissions = new HashSet<>();
 
-    public enum ApplicationStatus {
-        ACTIVE,           // Available for use
-        INACTIVE,         // Disabled globally
-        MAINTENANCE,      // Under maintenance
-        DEPRECATED        // Being phased out
-    }
-
     /**
      * Get the permission prefix for this application
+     *
      * @return Code followed by colon (e.g., "HRMS:")
      */
     public String getPermissionPrefix() {
@@ -121,5 +115,12 @@ public class NuApplication extends BaseEntity {
      */
     public boolean ownsPermission(String permissionCode) {
         return permissionCode != null && permissionCode.startsWith(getPermissionPrefix());
+    }
+
+    public enum ApplicationStatus {
+        ACTIVE,           // Available for use
+        INACTIVE,         // Disabled globally
+        MAINTENANCE,      // Under maintenance
+        DEPRECATED        // Being phased out
     }
 }

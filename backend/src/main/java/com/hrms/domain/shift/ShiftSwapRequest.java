@@ -91,6 +91,20 @@ public class ShiftSwapRequest {
     @Column(name = "version")
     private Long version;
 
+    /**
+     * Check if swap can be cancelled
+     */
+    public boolean canBeCancelled() {
+        return status == SwapStatus.PENDING || status == SwapStatus.TARGET_ACCEPTED;
+    }
+
+    /**
+     * Check if requires manager approval
+     */
+    public boolean requiresManagerApproval() {
+        return status == SwapStatus.TARGET_ACCEPTED || status == SwapStatus.PENDING_APPROVAL;
+    }
+
     public enum SwapType {
         SWAP,           // Swap shifts with another employee
         GIVE_AWAY,      // Give away shift to any available employee
@@ -106,19 +120,5 @@ public class ShiftSwapRequest {
         REJECTED,                   // Rejected by manager
         COMPLETED,                  // Swap completed
         CANCELLED                   // Cancelled by requester
-    }
-
-    /**
-     * Check if swap can be cancelled
-     */
-    public boolean canBeCancelled() {
-        return status == SwapStatus.PENDING || status == SwapStatus.TARGET_ACCEPTED;
-    }
-
-    /**
-     * Check if requires manager approval
-     */
-    public boolean requiresManagerApproval() {
-        return status == SwapStatus.TARGET_ACCEPTED || status == SwapStatus.PENDING_APPROVAL;
     }
 }

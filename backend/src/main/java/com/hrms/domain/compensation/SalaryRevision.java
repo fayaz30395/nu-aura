@@ -116,29 +116,6 @@ public class SalaryRevision extends TenantAware {
     @Builder.Default
     private String currency = "USD";
 
-    public enum RevisionType {
-        ANNUAL_INCREMENT,
-        PROMOTION,
-        ROLE_CHANGE,
-        MARKET_ADJUSTMENT,
-        PERFORMANCE_BONUS,
-        SPECIAL_INCREMENT,
-        PROBATION_CONFIRMATION,
-        RETENTION,
-        CORRECTION
-    }
-
-    public enum RevisionStatus {
-        DRAFT,
-        PENDING_REVIEW,
-        REVIEWED,
-        PENDING_APPROVAL,
-        APPROVED,
-        REJECTED,
-        CANCELLED,
-        APPLIED
-    }
-
     public void calculateIncrement() {
         if (previousSalary != null && newSalary != null) {
             this.incrementAmount = newSalary.subtract(previousSalary);
@@ -183,5 +160,28 @@ public class SalaryRevision extends TenantAware {
     public boolean isPromotion() {
         return revisionType == RevisionType.PROMOTION ||
                 (newDesignation != null && !newDesignation.equals(previousDesignation));
+    }
+
+    public enum RevisionType {
+        ANNUAL_INCREMENT,
+        PROMOTION,
+        ROLE_CHANGE,
+        MARKET_ADJUSTMENT,
+        PERFORMANCE_BONUS,
+        SPECIAL_INCREMENT,
+        PROBATION_CONFIRMATION,
+        RETENTION,
+        CORRECTION
+    }
+
+    public enum RevisionStatus {
+        DRAFT,
+        PENDING_REVIEW,
+        REVIEWED,
+        PENDING_APPROVAL,
+        APPROVED,
+        REJECTED,
+        CANCELLED,
+        APPLIED
     }
 }
