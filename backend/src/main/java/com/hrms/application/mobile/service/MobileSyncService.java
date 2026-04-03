@@ -58,7 +58,7 @@ public class MobileSyncService {
      * Helper method to fetch leave balance changes
      */
     private void fetchLeaveBalanceChanges(UUID userId, LocalDateTime lastSyncAt,
-                                         List<MobileSyncDto.SyncResponse.LeaveBalanceChange> changes) {
+                                          List<MobileSyncDto.SyncResponse.LeaveBalanceChange> changes) {
         // Query leave balance table for changes since lastSyncAt
         // Placeholder implementation
     }
@@ -67,7 +67,7 @@ public class MobileSyncService {
      * Helper method to fetch attendance record changes
      */
     private void fetchAttendanceChanges(UUID userId, LocalDateTime lastSyncAt,
-                                       List<MobileSyncDto.SyncResponse.AttendanceRecordChange> changes) {
+                                        List<MobileSyncDto.SyncResponse.AttendanceRecordChange> changes) {
         // Query attendance records for changes since lastSyncAt
         // Placeholder implementation
     }
@@ -76,7 +76,7 @@ public class MobileSyncService {
      * Helper method to fetch approval status changes
      */
     private void fetchApprovalChanges(UUID userId, LocalDateTime lastSyncAt,
-                                     List<MobileSyncDto.SyncResponse.ApprovalChange> changes) {
+                                      List<MobileSyncDto.SyncResponse.ApprovalChange> changes) {
         // Query approval instances for status changes since lastSyncAt
         // Placeholder implementation
     }
@@ -85,7 +85,7 @@ public class MobileSyncService {
      * Helper method to fetch new notifications
      */
     private void fetchNotificationChanges(UUID userId, LocalDateTime lastSyncAt,
-                                         List<MobileSyncDto.SyncResponse.NotificationChange> changes) {
+                                          List<MobileSyncDto.SyncResponse.NotificationChange> changes) {
         // Query notifications for new/updated notifications since lastSyncAt
         // Placeholder implementation
     }

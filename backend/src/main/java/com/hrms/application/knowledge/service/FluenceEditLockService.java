@@ -23,11 +23,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class FluenceEditLockService {
 
-    private final StringRedisTemplate redisTemplate;
-    private final ObjectMapper objectMapper;
-
     private static final long LOCK_TTL_MINUTES = 5;
     private static final String KEY_PREFIX = "fluence:edit-lock:";
+    private final StringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * Attempt to acquire an edit lock on a piece of content.

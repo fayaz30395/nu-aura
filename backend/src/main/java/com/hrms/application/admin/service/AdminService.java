@@ -45,6 +45,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminService {
 
+    /**
+     * Privileged role codes that can only be assigned by a SuperAdmin.
+     */
+    private static final Set<String> PRIVILEGED_ROLE_CODES = Set.of(RoleHierarchy.SUPER_ADMIN);
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
@@ -159,11 +163,6 @@ public class AdminService {
                 tenantMap.get(user.getTenantId()),
                 userDeptNameMap.get(user.getId())));
     }
-
-    /**
-     * Privileged role codes that can only be assigned by a SuperAdmin.
-     */
-    private static final Set<String> PRIVILEGED_ROLE_CODES = Set.of(RoleHierarchy.SUPER_ADMIN);
 
     /**
      * Update a user's roles (SuperAdmin only)
@@ -295,8 +294,8 @@ public class AdminService {
         // Map custom targets if CUSTOM scope
         Set<com.hrms.api.user.dto.PermissionResponse.CustomTargetResponse> customTargetResponses = null;
         if (rolePermission.getScope() == com.hrms.domain.user.RoleScope.CUSTOM &&
-            rolePermission.getCustomTargets() != null &&
-            !rolePermission.getCustomTargets().isEmpty()) {
+                rolePermission.getCustomTargets() != null &&
+                !rolePermission.getCustomTargets().isEmpty()) {
             customTargetResponses = rolePermission.getCustomTargets().stream()
                     .map(target -> com.hrms.api.user.dto.PermissionResponse.CustomTargetResponse.builder()
                             .id(target.getId())

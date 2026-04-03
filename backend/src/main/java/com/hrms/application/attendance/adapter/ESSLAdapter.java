@@ -30,8 +30,8 @@ public class ESSLAdapter implements BiometricAdapter {
     @Override
     public boolean supports(String manufacturer) {
         return manufacturer != null &&
-               (manufacturer.toUpperCase().contains("ESSL") ||
-                manufacturer.toUpperCase().contains("MATRIX"));
+                (manufacturer.toUpperCase().contains("ESSL") ||
+                        manufacturer.toUpperCase().contains("MATRIX"));
     }
 
     @Override

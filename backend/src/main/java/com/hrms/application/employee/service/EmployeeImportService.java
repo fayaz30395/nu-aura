@@ -46,6 +46,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeImportService {
 
+    private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
     private final EmployeeImportParserService parserService;
     private final EmployeeImportValidationService validationService;
     private final EmployeeRepository employeeRepository;
@@ -56,10 +59,6 @@ public class EmployeeImportService {
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
     private final CustomFieldValueRepository customFieldValueRepository;
     private final EmailNotificationService emailNotificationService;
-
-    private static final String DEFAULT_ROLE_CODE = "EMPLOYEE";
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*";
 
     /**
      * Parse and validate an import file, returning a preview of what will be imported.
@@ -249,6 +248,7 @@ public class EmployeeImportService {
 
     /**
      * Generate a secure random password.
+     *
      * @param length desired password length
      * @return cryptographically secure random password
      */

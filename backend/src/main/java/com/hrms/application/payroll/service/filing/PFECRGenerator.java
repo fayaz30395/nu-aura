@@ -42,13 +42,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PFECRGenerator implements FilingFormatGenerator {
 
-    private final PayslipRepository payslipRepository;
-    private final ObjectMapper objectMapper;
-
     private static final BigDecimal PF_WAGE_CEILING = new BigDecimal("15000");
     private static final BigDecimal EPF_RATE = new BigDecimal("0.12");
     private static final BigDecimal EPS_RATE = new BigDecimal("0.0833");
     private static final String PIPE = "#~#";
+    private final PayslipRepository payslipRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public FilingType getFilingType() {
@@ -105,17 +104,17 @@ public class PFECRGenerator implements FilingFormatGenerator {
             String uan = payslip.getEmployeeId().toString().substring(0, 12).replaceAll("-", "");
 
             sb.append(uan).append(PIPE)                                        // UAN
-              .append("Employee-").append(payslip.getEmployeeId()).append(PIPE) // Member Name
-              .append(grossWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)    // Gross Wages
-              .append(epfWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)      // EPF Wages
-              .append(epsWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)      // EPS Wages
-              .append(edliWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)     // EDLI Wages
-              .append(epfContribution).append(PIPE)                            // EPF Contribution (Employee)
-              .append(epsContribution).append(PIPE)                            // EPS Contribution (Employer)
-              .append(epfDifference).append(PIPE)                              // EPF Difference (Employer)
-              .append(ncpDays).append(PIPE)                                    // NCP Days
-              .append(0)                                                       // Refund of Advances
-              .append("\n");
+                    .append("Employee-").append(payslip.getEmployeeId()).append(PIPE) // Member Name
+                    .append(grossWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)    // Gross Wages
+                    .append(epfWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)      // EPF Wages
+                    .append(epsWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)      // EPS Wages
+                    .append(edliWages.setScale(0, RoundingMode.HALF_UP)).append(PIPE)     // EDLI Wages
+                    .append(epfContribution).append(PIPE)                            // EPF Contribution (Employee)
+                    .append(epsContribution).append(PIPE)                            // EPS Contribution (Employer)
+                    .append(epfDifference).append(PIPE)                              // EPF Difference (Employer)
+                    .append(ncpDays).append(PIPE)                                    // NCP Days
+                    .append(0)                                                       // Refund of Advances
+                    .append("\n");
         }
 
         byte[] fileBytes = sb.toString().getBytes(StandardCharsets.UTF_8);

@@ -46,17 +46,11 @@ import java.util.UUID;
 @Slf4j
 public class PerformanceCompensationListener {
 
-    private final CompensationReviewCycleRepository cycleRepository;
-    private final SalaryRevisionRepository revisionRepository;
-    private final SalaryStructureRepository salaryStructureRepository;
-    private final CompensationRevisionConfigRepository configRepository;
-
     private static final List<SalaryRevision.RevisionStatus> PENDING_STATUSES = Arrays.asList(
             SalaryRevision.RevisionStatus.DRAFT,
             SalaryRevision.RevisionStatus.PENDING_REVIEW,
             SalaryRevision.RevisionStatus.REVIEWED,
             SalaryRevision.RevisionStatus.PENDING_APPROVAL);
-
     /**
      * Default rating-to-increment mapping used when no tenant-specific
      * {@link CompensationRevisionConfig} records exist.
@@ -71,8 +65,11 @@ public class PerformanceCompensationListener {
             "2", new BigDecimal("3.00"),    // Below expectations
             "1", new BigDecimal("0.00")     // Unsatisfactory
     );
-
     private static final BigDecimal FALLBACK_INCREMENT = new BigDecimal("5.00");
+    private final CompensationReviewCycleRepository cycleRepository;
+    private final SalaryRevisionRepository revisionRepository;
+    private final SalaryStructureRepository salaryStructureRepository;
+    private final CompensationRevisionConfigRepository configRepository;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -121,10 +118,10 @@ public class PerformanceCompensationListener {
     }
 
     private void createDraftRevisionForCycle(CompensationReviewCycle cycle,
-                                              UUID tenantId,
-                                              UUID employeeId,
-                                              UUID reviewId,
-                                              BigDecimal overallRating) {
+                                             UUID tenantId,
+                                             UUID employeeId,
+                                             UUID reviewId,
+                                             BigDecimal overallRating) {
         // Check minimum performance rating threshold
         if (cycle.getMinPerformanceRating() != null
                 && overallRating.doubleValue() < cycle.getMinPerformanceRating()) {

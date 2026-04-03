@@ -42,7 +42,7 @@ public class IntegrationConnectorConfigService {
      * <p>Decrypts the configuration JSON and returns a {@link ConnectorConfig} record
      * with parsed settings and event subscriptions.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID (e.g., "docusign")
      * @return the parsed configuration
      * @throws IllegalArgumentException if the connector is not configured or invalid
@@ -52,10 +52,10 @@ public class IntegrationConnectorConfigService {
         log.debug("Retrieving configuration for connector: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         return entity.toConnectorConfig(objectMapper);
     }
@@ -67,9 +67,9 @@ public class IntegrationConnectorConfigService {
      * in the database. If a configuration already exists, it is updated; otherwise,
      * a new one is created.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
-     * @param connectorId the connector ID
-     * @param settings the configuration settings
+     * @param tenantId           the tenant ID (required for isolation)
+     * @param connectorId        the connector ID
+     * @param settings           the configuration settings
      * @param eventSubscriptions the set of events to subscribe to
      * @return the saved configuration entity
      */
@@ -83,17 +83,17 @@ public class IntegrationConnectorConfigService {
         log.info("Saving configuration for connector: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElse(null);
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElse(null);
 
         if (entity == null) {
             // Create new configuration
             entity = IntegrationConnectorConfigEntity.builder()
-                .tenantId(tenantId)
-                .connectorId(connectorId)
-                .displayName(connectorId) // Default display name
-                .status(ConnectorStatus.INACTIVE)
-                .build();
+                    .tenantId(tenantId)
+                    .connectorId(connectorId)
+                    .displayName(connectorId) // Default display name
+                    .status(ConnectorStatus.INACTIVE)
+                    .build();
         }
 
         // Update configuration
@@ -106,7 +106,7 @@ public class IntegrationConnectorConfigService {
     /**
      * Finds all active connector configurations subscribed to a specific event type.
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId  the tenant ID (required for isolation)
      * @param eventType the event type (e.g., "employee.created")
      * @return list of active configurations subscribed to this event
      */
@@ -119,7 +119,7 @@ public class IntegrationConnectorConfigService {
     /**
      * Activates a connector configuration (sets status to ACTIVE).
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID
      * @throws IllegalArgumentException if the connector is not configured
      */
@@ -128,10 +128,10 @@ public class IntegrationConnectorConfigService {
         log.info("Activating connector: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         entity.setStatus(ConnectorStatus.ACTIVE);
         repository.save(entity);
@@ -140,7 +140,7 @@ public class IntegrationConnectorConfigService {
     /**
      * Deactivates a connector configuration (sets status to INACTIVE).
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID
      * @throws IllegalArgumentException if the connector is not configured
      */
@@ -149,10 +149,10 @@ public class IntegrationConnectorConfigService {
         log.info("Deactivating connector: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         entity.setStatus(ConnectorStatus.INACTIVE);
         repository.save(entity);
@@ -163,7 +163,7 @@ public class IntegrationConnectorConfigService {
      *
      * <p>Clears the error message and updates the last_health_check_at timestamp.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID
      * @throws IllegalArgumentException if the connector is not configured
      */
@@ -172,10 +172,10 @@ public class IntegrationConnectorConfigService {
         log.debug("Recording health check success for connector: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         entity.recordHealthCheckSuccess();
         repository.save(entity);
@@ -187,21 +187,21 @@ public class IntegrationConnectorConfigService {
      * <p>Sets the error message and updates the last_health_check_at timestamp.
      * The connector status is set to ERROR.</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
-     * @param connectorId the connector ID
+     * @param tenantId     the tenant ID (required for isolation)
+     * @param connectorId  the connector ID
      * @param errorMessage a description of the failure
      * @throws IllegalArgumentException if the connector is not configured
      */
     @Transactional
     public void recordHealthCheckFailure(UUID tenantId, String connectorId, String errorMessage) {
         log.warn("Recording health check failure for connector: {} in tenant: {}: {}",
-            connectorId, tenantId, errorMessage);
+                connectorId, tenantId, errorMessage);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         entity.recordHealthCheckFailure(errorMessage);
         repository.save(entity);
@@ -234,7 +234,7 @@ public class IntegrationConnectorConfigService {
     /**
      * Soft-deletes a connector configuration (marks as deleted without removing from DB).
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID
      * @throws IllegalArgumentException if the connector is not configured
      */
@@ -243,10 +243,10 @@ public class IntegrationConnectorConfigService {
         log.info("Deleting connector configuration: {} in tenant: {}", connectorId, tenantId);
 
         IntegrationConnectorConfigEntity entity = repository
-            .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
-            .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "Connector configuration not found: " + connectorId));
+                .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Connector configuration not found: " + connectorId));
 
         entity.softDelete();
         repository.save(entity);

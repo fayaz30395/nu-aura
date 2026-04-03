@@ -108,7 +108,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Created expense claim: {} for employee: {}", saved.getClaimNumber(), employeeId);
 
-        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.CREATE, null, null, "Expense claim created: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim create: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.CREATE, null, null, "Expense claim created: " + saved.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Audit log failed for expense claim create: {}", e.getMessage());
+        }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -172,7 +176,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Approved expense claim: {} by {}", saved.getClaimNumber(), approverId);
 
-        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.APPROVE, null, null, "Expense claim approved: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim approve: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.APPROVE, null, null, "Expense claim approved: " + saved.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Audit log failed for expense claim approve: {}", e.getMessage());
+        }
 
         // FIX-002: Publish event for payroll to add expense reimbursement earning
         domainEventPublisher.publish(ExpenseApprovedEvent.of(
@@ -199,7 +207,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Rejected expense claim: {} by {}", saved.getClaimNumber(), rejecterId);
 
-        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.REJECT, null, null, "Expense claim rejected: " + saved.getClaimNumber() + ", reason: " + reason); } catch (Exception e) { log.warn("Audit log failed for expense claim reject: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.REJECT, null, null, "Expense claim rejected: " + saved.getClaimNumber() + ", reason: " + reason);
+        } catch (Exception e) {
+            log.warn("Audit log failed for expense claim reject: {}", e.getMessage());
+        }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -215,7 +227,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as paid: {}", saved.getClaimNumber());
 
-        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim marked as paid: " + saved.getClaimNumber()); } catch (Exception e) { log.warn("Audit log failed for expense claim paid: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim marked as paid: " + saved.getClaimNumber());
+        } catch (Exception e) {
+            log.warn("Audit log failed for expense claim paid: {}", e.getMessage());
+        }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -369,7 +385,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByStatus(ExpenseClaim.ExpenseStatus status,
-            Specification<ExpenseClaim> spec, Pageable pageable) {
+                                                               Specification<ExpenseClaim> spec, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
@@ -409,7 +425,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByDateRange(LocalDate startDate, LocalDate endDate,
-            Specification<ExpenseClaim> spec, Pageable pageable) {
+                                                                  Specification<ExpenseClaim> spec, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
@@ -428,7 +444,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate,
-            Specification<ExpenseClaim> spec) {
+                                                 Specification<ExpenseClaim> spec) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Specification<ExpenseClaim> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<ExpenseClaim> dateSpec = (root, query, cb) -> cb.between(root.get("claimDate"), startDate, endDate);
@@ -475,7 +491,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as reimbursed: {} ref: {}", saved.getClaimNumber(), reimbursementRef);
 
-        try { auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim reimbursed: " + saved.getClaimNumber() + ", ref: " + reimbursementRef); } catch (Exception e) { log.warn("Audit log failed for expense claim reimbursed: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("EXPENSE_CLAIM", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Expense claim reimbursed: " + saved.getClaimNumber() + ", ref: " + reimbursementRef);
+        } catch (Exception e) {
+            log.warn("Audit log failed for expense claim reimbursed: {}", e.getMessage());
+        }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
     }
@@ -509,7 +529,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
-            claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
+                claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
             log.warn("Expense claim {} already in status {}, skipping approval", entityId, claim.getStatus());
             return;
         }
@@ -535,7 +555,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.SUBMITTED &&
-            claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
+                claim.getStatus() != ExpenseClaim.ExpenseStatus.PENDING_APPROVAL) {
             log.warn("Expense claim {} already in status {}, skipping rejection", entityId, claim.getStatus());
             return;
         }
@@ -573,7 +593,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * HIGH-003 FIX: Generates a unique claim number using synchronized block to prevent
      * race conditions where concurrent requests could read the same max number and
      * produce duplicate claim numbers.
-     *
+     * <p>
      * Additionally appends a UUID fragment as a safety net for edge cases where
      * two JVM instances could generate the same number.
      */
@@ -650,7 +670,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * Determines which view permission the user has (in priority order).
      * Returns the actual permission that has a scope assigned, not just any permission that passes
      * hasPermission() check. This ensures getPermissionScope() can find the scope for validation.
-     *
+     * <p>
      * Note: Checks for explicit EXPENSE_VIEW_* permissions first, then falls back to EXPENSE:MANAGE.
      * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled by @RequiresPermission
      * for access control, and this method ensures scope enforcement works for users with only MANAGE.
@@ -824,12 +844,12 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             // Send real-time WebSocket notification
             com.hrms.application.notification.dto.NotificationMessage wsNotification =
                     com.hrms.application.notification.dto.NotificationMessage.builder()
-                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
-                    .title("Expense Claim Approved")
-                    .message(String.format("Your expense claim #%s for %s has been approved", claim.getClaimNumber(), amountFormatted))
-                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
-                    .actionUrl("/expenses/my-claims")
-                    .build();
+                            .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                            .title("Expense Claim Approved")
+                            .message(String.format("Your expense claim #%s for %s has been approved", claim.getClaimNumber(), amountFormatted))
+                            .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/expenses/my-claims")
+                            .build();
 
             webSocketNotificationService.sendToUser(claim.getEmployeeId(), wsNotification);
             log.info("Notifications sent for approved expense claim: {}", claim.getClaimNumber());
@@ -859,12 +879,12 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             // Send real-time WebSocket notification
             com.hrms.application.notification.dto.NotificationMessage wsNotification =
                     com.hrms.application.notification.dto.NotificationMessage.builder()
-                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
-                    .title("Expense Claim Rejected")
-                    .message(String.format("Your expense claim #%s for %s has been rejected: %s", claim.getClaimNumber(), amountFormatted, rejectionReason))
-                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
-                    .actionUrl("/expenses/my-claims")
-                    .build();
+                            .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                            .title("Expense Claim Rejected")
+                            .message(String.format("Your expense claim #%s for %s has been rejected: %s", claim.getClaimNumber(), amountFormatted, rejectionReason))
+                            .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/expenses/my-claims")
+                            .build();
 
             webSocketNotificationService.sendToUser(claim.getEmployeeId(), wsNotification);
             log.info("Notifications sent for rejected expense claim: {}", claim.getClaimNumber());

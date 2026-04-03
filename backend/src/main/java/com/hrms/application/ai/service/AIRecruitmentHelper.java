@@ -166,39 +166,39 @@ class AIRecruitmentHelper {
             String recommendation = getRecommendationForScore(overallScore);
 
             String summary = String.format(
-                "Candidate demonstrates %s match for the role. %s. %s",
-                overallScore >= 75 ? "strong" : (overallScore >= 50 ? "moderate" : "limited"),
-                !strengths.isEmpty() ? "Strengths include: " + String.join(", ", strengths) : "Some training may be required",
-                !gaps.isEmpty() ? "Consider developing: " + String.join(", ", gaps) : "Well-rounded profile"
+                    "Candidate demonstrates %s match for the role. %s. %s",
+                    overallScore >= 75 ? "strong" : (overallScore >= 50 ? "moderate" : "limited"),
+                    !strengths.isEmpty() ? "Strengths include: " + String.join(", ", strengths) : "Some training may be required",
+                    !gaps.isEmpty() ? "Consider developing: " + String.join(", ", gaps) : "Well-rounded profile"
             );
 
             List<String> interviewFocus = generateFollowUpQuestions(seed);
 
             return String.format("""
-                    {
-                      "overallScore": %d,
-                      "skillsScore": %d,
-                      "experienceScore": %d,
-                      "educationScore": %d,
-                      "culturalFitScore": %d,
-                      "strengths": %s,
-                      "gaps": %s,
-                      "recommendation": "%s",
-                      "summary": "%s",
-                      "interviewFocus": %s,
-                      "aiModelVersion": "mock-v1"
-                    }
-                    """,
-                overallScore,
-                skillsScore,
-                experienceScore,
-                educationScore,
-                culturalFitScore,
-                toJsonArray(strengths),
-                toJsonArray(gaps),
-                recommendation,
-                summary.replace("\"", "\\\""),
-                toJsonArray(interviewFocus)
+                            {
+                              "overallScore": %d,
+                              "skillsScore": %d,
+                              "experienceScore": %d,
+                              "educationScore": %d,
+                              "culturalFitScore": %d,
+                              "strengths": %s,
+                              "gaps": %s,
+                              "recommendation": "%s",
+                              "summary": "%s",
+                              "interviewFocus": %s,
+                              "aiModelVersion": "mock-v1"
+                            }
+                            """,
+                    overallScore,
+                    skillsScore,
+                    experienceScore,
+                    educationScore,
+                    culturalFitScore,
+                    toJsonArray(strengths),
+                    toJsonArray(gaps),
+                    recommendation,
+                    summary.replace("\"", "\\\""),
+                    toJsonArray(interviewFocus)
             );
         } else if (prompt.contains("screening summary") || prompt.contains("Screening")) {
             String candidateName = extractBetween(prompt, "- Name: ", "\n");
@@ -213,30 +213,30 @@ class AIRecruitmentHelper {
             String recommendation = getScreeningRecommendationForFitLevel(fitLevel);
 
             String summary = String.format(
-                "Candidate shows %s fit for this role. %s",
-                fitLevel.toLowerCase(),
-                fitLevel.equals("HIGH") ? "Ready to advance to next stage." : (fitLevel.equals("MEDIUM") ? "Further evaluation recommended." : "Consider alternative candidates.")
+                    "Candidate shows %s fit for this role. %s",
+                    fitLevel.toLowerCase(),
+                    fitLevel.equals("HIGH") ? "Ready to advance to next stage." : (fitLevel.equals("MEDIUM") ? "Further evaluation recommended." : "Consider alternative candidates.")
             );
 
             return String.format("""
-                    {
-                      "fitLevel": "%s",
-                      "strengths": %s,
-                      "gaps": %s,
-                      "followUpQuestions": %s,
-                      "riskFlags": %s,
-                      "recommendation": "%s",
-                      "summary": "%s",
-                      "aiModelVersion": "mock-v1"
-                    }
-                    """,
-                fitLevel,
-                toJsonArray(strengths),
-                toJsonArray(gaps),
-                toJsonArray(followUpQuestions),
-                toJsonArray(riskFlags),
-                recommendation,
-                summary.replace("\"", "\\\"")
+                            {
+                              "fitLevel": "%s",
+                              "strengths": %s,
+                              "gaps": %s,
+                              "followUpQuestions": %s,
+                              "riskFlags": %s,
+                              "recommendation": "%s",
+                              "summary": "%s",
+                              "aiModelVersion": "mock-v1"
+                            }
+                            """,
+                    fitLevel,
+                    toJsonArray(strengths),
+                    toJsonArray(gaps),
+                    toJsonArray(followUpQuestions),
+                    toJsonArray(riskFlags),
+                    recommendation,
+                    summary.replace("\"", "\\\"")
             );
         } else if (prompt.contains("synthesizing feedback") || prompt.contains("Synthesize")) {
             return """
@@ -380,16 +380,16 @@ class AIRecruitmentHelper {
     private List<String> generateStrengths(long seed, int overallScore) {
         java.util.Random rand = new java.util.Random(seed);
         List<String> allStrengths = List.of(
-            "Strong technical skills",
-            "Relevant industry experience",
-            "Excellent communication abilities",
-            "Leadership potential",
-            "Problem-solving aptitude",
-            "Cultural fit",
-            "Proven track record",
-            "Quick learner",
-            "Team collaboration skills",
-            "Adaptability"
+                "Strong technical skills",
+                "Relevant industry experience",
+                "Excellent communication abilities",
+                "Leadership potential",
+                "Problem-solving aptitude",
+                "Cultural fit",
+                "Proven track record",
+                "Quick learner",
+                "Team collaboration skills",
+                "Adaptability"
         );
 
         List<String> selected = new ArrayList<>();
@@ -403,16 +403,16 @@ class AIRecruitmentHelper {
     private List<String> generateGaps(long seed, int overallScore) {
         java.util.Random rand = new java.util.Random(seed + 1000);
         List<String> allGaps = List.of(
-            "Limited leadership experience",
-            "No cloud platform certification",
-            "Gap in specific technical domain",
-            "Limited experience with modern frameworks",
-            "Lacking advanced degree",
-            "No international experience",
-            "Limited project management background",
-            "Unfamiliar with industry best practices",
-            "Communication gaps",
-            "Geographic mismatch"
+                "Limited leadership experience",
+                "No cloud platform certification",
+                "Gap in specific technical domain",
+                "Limited experience with modern frameworks",
+                "Lacking advanced degree",
+                "No international experience",
+                "Limited project management background",
+                "Unfamiliar with industry best practices",
+                "Communication gaps",
+                "Geographic mismatch"
         );
 
         List<String> selected = new ArrayList<>();
@@ -426,16 +426,16 @@ class AIRecruitmentHelper {
     private List<String> generateFollowUpQuestions(long seed) {
         java.util.Random rand = new java.util.Random(seed + 2000);
         List<String> allQuestions = List.of(
-            "Can you elaborate on your most recent project experience?",
-            "How do you approach learning new technologies?",
-            "Tell us about your team collaboration experience",
-            "What are your career goals for the next 3-5 years?",
-            "How do you handle pressure and tight deadlines?",
-            "Describe your approach to problem-solving",
-            "What attracted you to this role?",
-            "How do you stay current with industry trends?",
-            "Tell us about a time you faced conflict at work",
-            "What is your approach to code quality and testing?"
+                "Can you elaborate on your most recent project experience?",
+                "How do you approach learning new technologies?",
+                "Tell us about your team collaboration experience",
+                "What are your career goals for the next 3-5 years?",
+                "How do you handle pressure and tight deadlines?",
+                "Describe your approach to problem-solving",
+                "What attracted you to this role?",
+                "How do you stay current with industry trends?",
+                "Tell us about a time you faced conflict at work",
+                "What is your approach to code quality and testing?"
         );
 
         List<String> selected = new ArrayList<>();
@@ -448,13 +448,13 @@ class AIRecruitmentHelper {
     private List<String> generateRiskFlags(long seed, String fitLevel) {
         java.util.Random rand = new java.util.Random(seed + 3000);
         List<String> allRisks = List.of(
-            "High salary expectations may not align with offer",
-            "Short tenure at last position",
-            "Geographic relocation required",
-            "Skill gaps in critical areas",
-            "Limited availability (long notice period)",
-            "Technology stack mismatch",
-            "Career progression expectations unclear"
+                "High salary expectations may not align with offer",
+                "Short tenure at last position",
+                "Geographic relocation required",
+                "Skill gaps in critical areas",
+                "Limited availability (long notice period)",
+                "Technology stack mismatch",
+                "Career progression expectations unclear"
         );
 
         List<String> selected = new ArrayList<>();

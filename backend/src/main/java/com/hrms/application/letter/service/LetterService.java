@@ -186,7 +186,7 @@ public class LetterService {
 
     // ==================== Letter Generation Operations ====================
 
-    @Transactional(readOnly = true)
+    @Transactional
     public GeneratedLetterResponse generateLetter(GenerateLetterRequest request, UUID generatedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -236,7 +236,7 @@ public class LetterService {
      * Generate an offer letter for a candidate (not yet an employee).
      * Updates candidate with offer details and optionally links to e-signature flow.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public GeneratedLetterResponse generateOfferLetter(GenerateOfferLetterRequest request, UUID generatedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -677,7 +677,9 @@ public class LetterService {
         return response;
     }
 
-    /** Shared enrichment for template name, generatedBy, approvedBy, and issuedBy. */
+    /**
+     * Shared enrichment for template name, generatedBy, approvedBy, and issuedBy.
+     */
     private void enrichCommonResponseFields(GeneratedLetterResponse response, UUID tenantId) {
         templateRepository.findByIdAndTenantId(response.getTemplateId(), tenantId)
                 .ifPresent(template -> response.setTemplateName(template.getName()));
@@ -687,7 +689,9 @@ public class LetterService {
         enrichEmployeeName(response.getIssuedBy(), tenantId, response::setIssuedByName);
     }
 
-    /** Resolve employee full name by ID and apply to the given setter. */
+    /**
+     * Resolve employee full name by ID and apply to the given setter.
+     */
     private void enrichEmployeeName(UUID employeeId, UUID tenantId, java.util.function.Consumer<String> setter) {
         if (employeeId != null) {
             employeeRepository.findByIdAndTenantId(employeeId, tenantId)
@@ -863,7 +867,9 @@ public class LetterService {
         return replacePlaceholders(template.getTemplateContent(), sampleData);
     }
 
-    /** Builds sample placeholder values used for template preview. */
+    /**
+     * Builds sample placeholder values used for template preview.
+     */
     private Map<String, String> buildSamplePlaceholderData() {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("employee.name", "John Doe");
@@ -896,7 +902,9 @@ public class LetterService {
         return data;
     }
 
-    /** Replace {{key}} placeholders in content with the provided values. */
+    /**
+     * Replace {{key}} placeholders in content with the provided values.
+     */
     private String replacePlaceholders(String content, Map<String, String> values) {
         String result = content;
         for (Map.Entry<String, String> entry : values.entrySet()) {

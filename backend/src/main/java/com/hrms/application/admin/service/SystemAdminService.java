@@ -227,7 +227,7 @@ public class SystemAdminService {
             LocalDateTime monthEndDateTime = monthEnd.atTime(23, 59, 59);
 
             // Delegate counting to the database — zero heap allocation for entity graphs
-            long tenantCount   = tenantRepository.countByCreatedAtBefore(monthEndDateTime);
+            long tenantCount = tenantRepository.countByCreatedAtBefore(monthEndDateTime);
             long employeeCount = employeeRepository.countJoinedOnOrBefore(monthEnd, monthEndDateTime);
             long activeUserCount = userRepository.countByStatusAndCreatedAtBefore(
                     User.UserStatus.ACTIVE, monthEndDateTime);
@@ -382,7 +382,7 @@ public class SystemAdminService {
      * Map a Tenant to TenantListItemDTO using pre-fetched batch counts (N+1 fix).
      */
     private TenantListItemDTO mapToTenantListItem(Tenant tenant, long employeeCount, long userCount,
-            LocalDateTime lastActivityAt) {
+                                                  LocalDateTime lastActivityAt) {
         long storageUsageBytes = storageMetricsService.getStorageBytesForTenant(tenant.getId());
 
         return TenantListItemDTO.builder()

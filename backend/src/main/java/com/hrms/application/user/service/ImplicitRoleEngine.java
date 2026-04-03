@@ -140,8 +140,8 @@ public class ImplicitRoleEngine {
         for (ImplicitRoleAssignment assignment : toRemove) {
             for (ImplicitUserRole role : currentRoles) {
                 if (role.getRoleId().equals(assignment.roleId)
-                    && role.getScope().equals(assignment.scope)
-                    && role.getDerivedFromRuleId().equals(assignment.ruleId)) {
+                        && role.getScope().equals(assignment.scope)
+                        && role.getDerivedFromRuleId().equals(assignment.ruleId)) {
                     role.setIsActive(false);
                     implicitUserRoleRepository.save(role);
                     log.debug("Deactivated implicit role {} (scope={}) from user {} (rule {})",

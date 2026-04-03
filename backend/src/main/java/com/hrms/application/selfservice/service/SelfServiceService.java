@@ -320,7 +320,7 @@ public class SelfServiceService {
         long pendingDocumentRequests = documentRequestRepository
                 .findByEmployeeIdAndTenantId(employeeId, tenantId).stream()
                 .filter(d -> d.getStatus() == DocumentRequest.RequestStatus.PENDING ||
-                             d.getStatus() == DocumentRequest.RequestStatus.IN_PROGRESS)
+                        d.getStatus() == DocumentRequest.RequestStatus.IN_PROGRESS)
                 .count();
 
         // Get leave balances
@@ -352,9 +352,9 @@ public class SelfServiceService {
         // Add employee info if available
         if (employee != null) {
             builder.employeeName(employee.getFirstName() + " " + employee.getLastName())
-                   .employeeId(employee.getEmployeeCode())
-                   .designation(employee.getDesignation())
-                   .dateOfJoining(employee.getJoiningDate());
+                    .employeeId(employee.getEmployeeCode())
+                    .designation(employee.getDesignation())
+                    .dateOfJoining(employee.getJoiningDate());
 
             // Get reporting manager name
             if (employee.getManagerId() != null) {
@@ -415,7 +415,7 @@ public class SelfServiceService {
             AttendanceRecord.AttendanceStatus status = record.getStatus();
 
             if (status == AttendanceRecord.AttendanceStatus.PRESENT ||
-                status == AttendanceRecord.AttendanceStatus.HALF_DAY) {
+                    status == AttendanceRecord.AttendanceStatus.HALF_DAY) {
                 presentDays++;
                 if (Boolean.TRUE.equals(record.getIsLate())) {
                     lateDays++;
@@ -441,13 +441,6 @@ public class SelfServiceService {
         return new AttendanceSummary(presentDays, absentDays, lateDays, attendancePercentage, todayStatus,
                 todayCheckInTime, todayCheckOutTime);
     }
-
-    // Helper class for attendance summary
-    private record AttendanceSummary(int presentDays, int absentDays, int lateDays,
-                                     double attendancePercentage, String todayStatus,
-                                     LocalDateTime todayCheckInTime, LocalDateTime todayCheckOutTime) {}
-
-    // ==================== Helper Methods ====================
 
     /**
      * Apply the approved profile update to the employee record
@@ -503,6 +496,8 @@ public class SelfServiceService {
         }
     }
 
+    // ==================== Helper Methods ====================
+
     private ProfileUpdateResponse enrichProfileUpdateResponse(ProfileUpdateResponse response, UUID tenantId) {
         employeeRepository.findByIdAndTenantId(response.getEmployeeId(), tenantId)
                 .ifPresent(emp -> {
@@ -533,5 +528,11 @@ public class SelfServiceService {
         }
 
         return response;
+    }
+
+    // Helper class for attendance summary
+    private record AttendanceSummary(int presentDays, int absentDays, int lateDays,
+                                     double attendancePercentage, String todayStatus,
+                                     LocalDateTime todayCheckInTime, LocalDateTime todayCheckOutTime) {
     }
 }

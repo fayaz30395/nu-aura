@@ -174,7 +174,7 @@ public class InterviewManagementService {
         Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
         Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         return interviewRepository.findAll(
-                Specification.where(tenantSpec).and(scopeSpec), pageable)
+                        Specification.where(tenantSpec).and(scopeSpec), pageable)
                 .map(this::mapToInterviewResponse);
     }
 

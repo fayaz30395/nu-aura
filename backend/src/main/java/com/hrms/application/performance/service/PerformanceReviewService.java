@@ -78,7 +78,11 @@ public class PerformanceReviewService {
         review.setTenantId(tenantId);
         review = reviewRepository.save(review);
 
-        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.CREATE, null, null, "Performance review created for employee " + request.getEmployeeId()); } catch (Exception e) { log.warn("Audit log failed for review create: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.CREATE, null, null, "Performance review created for employee " + request.getEmployeeId());
+        } catch (Exception e) {
+            log.warn("Audit log failed for review create: {}", e.getMessage());
+        }
 
         return mapToResponse(review);
     }
@@ -188,7 +192,11 @@ public class PerformanceReviewService {
 
         review = reviewRepository.save(review);
 
-        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review submitted"); } catch (Exception e) { log.warn("Audit log failed for review submit: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review submitted");
+        } catch (Exception e) {
+            log.warn("Audit log failed for review submit: {}", e.getMessage());
+        }
 
         return mapToResponse(review);
     }
@@ -225,7 +233,11 @@ public class PerformanceReviewService {
                 review.getCompletedAt()
         ));
 
-        try { auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review completed with rating " + review.getOverallRating()); } catch (Exception e) { log.warn("Audit log failed for review complete: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("PERFORMANCE_REVIEW", review.getId(), AuditAction.STATUS_CHANGE, null, null, "Performance review completed with rating " + review.getOverallRating());
+        } catch (Exception e) {
+            log.warn("Audit log failed for review complete: {}", e.getMessage());
+        }
 
         log.info("Performance review {} completed for employee {} with rating {}",
                 reviewId, review.getEmployeeId(), review.getOverallRating());

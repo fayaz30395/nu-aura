@@ -159,7 +159,7 @@ public class SurveyManagementService {
                 .filter(survey -> {
                     LocalDateTime now = LocalDateTime.now();
                     return (survey.getStartDate() == null || survey.getStartDate().isBefore(now)) &&
-                           (survey.getEndDate() == null || survey.getEndDate().isAfter(now));
+                            (survey.getEndDate() == null || survey.getEndDate().isAfter(now));
                 })
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

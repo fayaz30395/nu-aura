@@ -48,14 +48,14 @@ public class NuPlatformService {
         }
 
         NuApplication app = NuApplication.builder()
-            .code(code.toUpperCase())
-            .name(name)
-            .description(description)
-            .baseUrl(baseUrl)
-            .apiBasePath(apiBasePath)
-            .status(NuApplication.ApplicationStatus.ACTIVE)
-            .isSystemApp(false)
-            .build();
+                .code(code.toUpperCase())
+                .name(name)
+                .description(description)
+                .baseUrl(baseUrl)
+                .apiBasePath(apiBasePath)
+                .status(NuApplication.ApplicationStatus.ACTIVE)
+                .isSystemApp(false)
+                .build();
 
         app = applicationRepository.save(app);
         log.info("Registered new application: {} ({})", name, code);
@@ -95,15 +95,15 @@ public class NuPlatformService {
      */
     public void registerPermissions(String appCode, List<PermissionDefinition> permissions) {
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-            .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
+                .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
         // Batch: fetch all existing permission codes in ONE query instead of N individual existsByCode calls
         Set<String> allCodes = permissions.stream()
-            .map(def -> AppPermission.buildCode(appCode.toUpperCase(), def.module(), def.action()))
-            .collect(Collectors.toSet());
+                .map(def -> AppPermission.buildCode(appCode.toUpperCase(), def.module(), def.action()))
+                .collect(Collectors.toSet());
         Set<String> existingCodes = permissionRepository.findByCodeIn(allCodes).stream()
-            .map(AppPermission::getCode)
-            .collect(Collectors.toSet());
+                .map(AppPermission::getCode)
+                .collect(Collectors.toSet());
 
         List<AppPermission> newPermissions = new java.util.ArrayList<>();
         for (PermissionDefinition def : permissions) {
@@ -111,16 +111,16 @@ public class NuPlatformService {
 
             if (!existingCodes.contains(fullCode)) {
                 AppPermission permission = AppPermission.builder()
-                    .application(app)
-                    .code(fullCode)
-                    .module(def.module())
-                    .action(def.action())
-                    .name(def.name())
-                    .description(def.description())
-                    .category(def.category())
-                    .isSystemPermission(def.isSystem())
-                    .displayOrder(def.order())
-                    .build();
+                        .application(app)
+                        .code(fullCode)
+                        .module(def.module())
+                        .action(def.action())
+                        .name(def.name())
+                        .description(def.description())
+                        .category(def.category())
+                        .isSystemPermission(def.isSystem())
+                        .displayOrder(def.order())
+                        .build();
 
                 newPermissions.add(permission);
                 log.debug("Registered permission: {}", fullCode);
@@ -132,7 +132,7 @@ public class NuPlatformService {
         }
 
         log.info("Registered {} permissions for application: {} ({} new)",
-            permissions.size(), appCode, newPermissions.size());
+                permissions.size(), appCode, newPermissions.size());
     }
 
     /**
@@ -150,7 +150,7 @@ public class NuPlatformService {
     public Map<String, List<AppPermission>> getPermissionsByModule(String appCode) {
         List<AppPermission> permissions = getApplicationPermissions(appCode);
         return permissions.stream()
-            .collect(Collectors.groupingBy(AppPermission::getModule));
+                .collect(Collectors.groupingBy(AppPermission::getModule));
     }
 
     // ==================== Role Management ====================
@@ -163,21 +163,21 @@ public class NuPlatformService {
                               int level, Set<String> permissionCodes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-            .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
+                .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
         if (roleRepository.existsByCodeAndTenantIdAndApplicationId(roleCode, tenantId, app.getId())) {
             throw new IllegalArgumentException("Role already exists: " + roleCode);
         }
 
         AppRole role = AppRole.builder()
-            .application(app)
-            .code(roleCode)
-            .name(name)
-            .description(description)
-            .level(level)
-            .isSystemRole(false)
-            .isDefaultRole(false)
-            .build();
+                .application(app)
+                .code(roleCode)
+                .name(name)
+                .description(description)
+                .level(level)
+                .isSystemRole(false)
+                .isDefaultRole(false)
+                .build();
         role.setTenantId(tenantId);
 
         // Add permissions
@@ -219,7 +219,7 @@ public class NuPlatformService {
     public AppRole updateRolePermissions(UUID roleId, Set<String> permissionCodes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         AppRole role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
-            .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
         if (role.getIsSystemRole()) {
             throw new IllegalStateException("Cannot modify system role");
@@ -248,10 +248,10 @@ public class NuPlatformService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-            .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
+                .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
         // Check if user already has access
         Optional<UserAppAccess> existing = userAppAccessRepository.findByUserIdAndApplicationId(userId, app.getId());
@@ -265,12 +265,12 @@ public class NuPlatformService {
 
         // Create new access
         UserAppAccess access = UserAppAccess.builder()
-            .user(user)
-            .application(app)
-            .status(UserAppAccess.AccessStatus.ACTIVE)
-            .grantedAt(LocalDateTime.now())
-            .grantedBy(grantedBy)
-            .build();
+                .user(user)
+                .application(app)
+                .status(UserAppAccess.AccessStatus.ACTIVE)
+                .grantedAt(LocalDateTime.now())
+                .grantedBy(grantedBy)
+                .build();
         access.setTenantId(tenantId);
 
         // Add roles
@@ -287,7 +287,7 @@ public class NuPlatformService {
         if (roleCodes != null && !roleCodes.isEmpty()) {
             for (String roleCode : roleCodes) {
                 roleRepository.findByCodeAndTenantIdAndApplicationId(
-                    roleCode, access.getTenantId(), access.getApplication().getId()
+                        roleCode, access.getTenantId(), access.getApplication().getId()
                 ).ifPresent(access::addRole);
             }
         }
@@ -295,7 +295,7 @@ public class NuPlatformService {
         // If no roles assigned, assign default role
         if (access.getRoles().isEmpty()) {
             roleRepository.findByTenantIdAndApplicationIdAndIsDefaultRoleTrue(
-                access.getTenantId(), access.getApplication().getId()
+                    access.getTenantId(), access.getApplication().getId()
             ).ifPresent(access::addRole);
         }
     }
@@ -306,10 +306,10 @@ public class NuPlatformService {
     @Transactional
     public void revokeAccess(UUID userId, String appCode) {
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-            .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
+                .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
         UserAppAccess access = userAppAccessRepository.findByUserIdAndApplicationId(userId, app.getId())
-            .orElseThrow(() -> new IllegalArgumentException("User does not have access to this application"));
+                .orElseThrow(() -> new IllegalArgumentException("User does not have access to this application"));
 
         access.setStatus(UserAppAccess.AccessStatus.REVOKED);
         userAppAccessRepository.save(access);
@@ -329,7 +329,7 @@ public class NuPlatformService {
             return Collections.emptyList();
         }
         return userAppAccessRepository.findByApplicationIdAndStatus(
-            appOpt.get().getId(), UserAppAccess.AccessStatus.ACTIVE);
+                appOpt.get().getId(), UserAppAccess.AccessStatus.ACTIVE);
     }
 
     /**
@@ -354,8 +354,8 @@ public class NuPlatformService {
     @Transactional(readOnly = true)
     public Set<String> getUserPermissions(UUID userId, String appCode) {
         return userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(userId, appCode.toUpperCase())
-            .map(UserAppAccess::getAllPermissions)
-            .orElse(Collections.emptySet());
+                .map(UserAppAccess::getAllPermissions)
+                .orElse(Collections.emptySet());
     }
 
     /**
@@ -382,10 +382,10 @@ public class NuPlatformService {
     public TenantApplication enableApplicationForTenant(UUID tenantId, String appCode,
                                                         String tier, Integer maxUsers) {
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-            .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
+                .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));
 
         Optional<TenantApplication> existing = tenantApplicationRepository
-            .findByTenantIdAndApplicationId(tenantId, app.getId());
+                .findByTenantIdAndApplicationId(tenantId, app.getId());
 
         if (existing.isPresent()) {
             TenantApplication ta = existing.get();
@@ -396,12 +396,12 @@ public class NuPlatformService {
         }
 
         TenantApplication ta = TenantApplication.builder()
-            .application(app)
-            .status(TenantApplication.SubscriptionStatus.ACTIVE)
-            .activatedAt(LocalDateTime.now())
-            .subscriptionTier(tier)
-            .maxUsers(maxUsers)
-            .build();
+                .application(app)
+                .status(TenantApplication.SubscriptionStatus.ACTIVE)
+                .activatedAt(LocalDateTime.now())
+                .subscriptionTier(tier)
+                .maxUsers(maxUsers)
+                .build();
         ta.setTenantId(tenantId);
 
         return tenantApplicationRepository.save(ta);
@@ -418,13 +418,13 @@ public class NuPlatformService {
     // ==================== Permission Definition Helper ====================
 
     public record PermissionDefinition(
-        String module,
-        String action,
-        String name,
-        String description,
-        String category,
-        boolean isSystem,
-        int order
+            String module,
+            String action,
+            String name,
+            String description,
+            String category,
+            boolean isSystem,
+            int order
     ) {
         public static PermissionDefinition of(String module, String action, String name) {
             return new PermissionDefinition(module, action, name, null, null, false, 0);

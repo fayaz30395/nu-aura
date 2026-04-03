@@ -39,12 +39,11 @@ import java.util.UUID;
 @Service
 public class StatutoryFilingService {
 
+    private static final String CATEGORY_STATUTORY = "statutory-filings";
     private final StatutoryFilingTemplateRepository templateRepository;
     private final StatutoryFilingRunRepository filingRunRepository;
     private final FileStorageService fileStorageService;
     private final Map<FilingType, FilingFormatGenerator> generators;
-
-    private static final String CATEGORY_STATUTORY = "statutory-filings";
 
     public StatutoryFilingService(
             StatutoryFilingTemplateRepository templateRepository,
@@ -71,60 +70,60 @@ public class StatutoryFilingService {
      */
     public List<FilingTypeInfo> getAvailableFilingTypes() {
         return List.of(
-            FilingTypeInfo.builder()
-                .filingType(FilingType.PF_ECR)
-                .name("PF ECR")
-                .description("Electronic Challan-cum-Return for EPFO portal")
-                .format(OutputFormat.TEXT)
-                .frequency("Monthly")
-                .portalName("EPFO Unified Portal")
-                .portalUrl("https://unifiedportal-emp.epfindia.gov.in")
-                .build(),
-            FilingTypeInfo.builder()
-                .filingType(FilingType.ESI_RETURN)
-                .name("ESI Return")
-                .description("Employee State Insurance contribution return")
-                .format(OutputFormat.EXCEL)
-                .frequency("Monthly")
-                .portalName("ESIC Portal")
-                .portalUrl("https://www.esic.in")
-                .build(),
-            FilingTypeInfo.builder()
-                .filingType(FilingType.PT_CHALLAN)
-                .name("Professional Tax Challan")
-                .description("State-level Professional Tax payment challan")
-                .format(OutputFormat.CSV)
-                .frequency("Monthly")
-                .portalName("State Tax Portal")
-                .portalUrl("")
-                .build(),
-            FilingTypeInfo.builder()
-                .filingType(FilingType.FORM_16)
-                .name("Form 16")
-                .description("Annual TDS certificate for employees")
-                .format(OutputFormat.PDF)
-                .frequency("Annual (Financial Year)")
-                .portalName("TRACES Portal")
-                .portalUrl("https://www.tdscpc.gov.in")
-                .build(),
-            FilingTypeInfo.builder()
-                .filingType(FilingType.FORM_24Q)
-                .name("Form 24Q")
-                .description("Quarterly TDS return for salary payments")
-                .format(OutputFormat.EXCEL)
-                .frequency("Quarterly")
-                .portalName("TRACES Portal")
-                .portalUrl("https://www.tdscpc.gov.in")
-                .build(),
-            FilingTypeInfo.builder()
-                .filingType(FilingType.LWF_RETURN)
-                .name("LWF Return")
-                .description("Labour Welfare Fund contribution return")
-                .format(OutputFormat.CSV)
-                .frequency("Semi-Annual (June & December)")
-                .portalName("State LWF Portal")
-                .portalUrl("")
-                .build()
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.PF_ECR)
+                        .name("PF ECR")
+                        .description("Electronic Challan-cum-Return for EPFO portal")
+                        .format(OutputFormat.TEXT)
+                        .frequency("Monthly")
+                        .portalName("EPFO Unified Portal")
+                        .portalUrl("https://unifiedportal-emp.epfindia.gov.in")
+                        .build(),
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.ESI_RETURN)
+                        .name("ESI Return")
+                        .description("Employee State Insurance contribution return")
+                        .format(OutputFormat.EXCEL)
+                        .frequency("Monthly")
+                        .portalName("ESIC Portal")
+                        .portalUrl("https://www.esic.in")
+                        .build(),
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.PT_CHALLAN)
+                        .name("Professional Tax Challan")
+                        .description("State-level Professional Tax payment challan")
+                        .format(OutputFormat.CSV)
+                        .frequency("Monthly")
+                        .portalName("State Tax Portal")
+                        .portalUrl("")
+                        .build(),
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.FORM_16)
+                        .name("Form 16")
+                        .description("Annual TDS certificate for employees")
+                        .format(OutputFormat.PDF)
+                        .frequency("Annual (Financial Year)")
+                        .portalName("TRACES Portal")
+                        .portalUrl("https://www.tdscpc.gov.in")
+                        .build(),
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.FORM_24Q)
+                        .name("Form 24Q")
+                        .description("Quarterly TDS return for salary payments")
+                        .format(OutputFormat.EXCEL)
+                        .frequency("Quarterly")
+                        .portalName("TRACES Portal")
+                        .portalUrl("https://www.tdscpc.gov.in")
+                        .build(),
+                FilingTypeInfo.builder()
+                        .filingType(FilingType.LWF_RETURN)
+                        .name("LWF Return")
+                        .description("Labour Welfare Fund contribution return")
+                        .format(OutputFormat.CSV)
+                        .frequency("Semi-Annual (June & December)")
+                        .portalName("State LWF Portal")
+                        .portalUrl("")
+                        .build()
         );
     }
 

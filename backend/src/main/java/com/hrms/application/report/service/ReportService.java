@@ -65,20 +65,20 @@ public class ReportService {
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             employees = employees.stream()
-                .filter(e -> e.getDepartmentId() != null &&
-                    request.getDepartmentIds().contains(e.getDepartmentId()))
-                .collect(Collectors.toList());
+                    .filter(e -> e.getDepartmentId() != null &&
+                            request.getDepartmentIds().contains(e.getDepartmentId()))
+                    .collect(Collectors.toList());
         }
 
         if (request.getEmployeeStatus() != null) {
             employees = employees.stream()
-                .filter(e -> e.getStatus().name().equals(request.getEmployeeStatus()))
-                .collect(Collectors.toList());
+                    .filter(e -> e.getStatus().name().equals(request.getEmployeeStatus()))
+                    .collect(Collectors.toList());
         }
 
         List<EmployeeDirectoryReportRow> reportData = employees.stream()
-            .map(this::mapToEmployeeDirectoryRow)
-            .collect(Collectors.toList());
+                .map(this::mapToEmployeeDirectoryRow)
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "employee");
     }
@@ -91,43 +91,43 @@ public class ReportService {
         }
 
         List<AttendanceRecord> records = attendanceRecordRepository
-            .findAllByTenantIdAndAttendanceDateBetween(tenantId, request.getStartDate(), request.getEndDate());
+                .findAllByTenantIdAndAttendanceDateBetween(tenantId, request.getStartDate(), request.getEndDate());
 
         // Fetch all employees once to avoid N+1 queries
         Set<UUID> employeeIds = records.stream()
-            .map(AttendanceRecord::getEmployeeId)
-            .collect(Collectors.toSet());
+                .map(AttendanceRecord::getEmployeeId)
+                .collect(Collectors.toSet());
 
         Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
-            .collect(Collectors.toMap(Employee::getId, e -> e));
+                .collect(Collectors.toMap(Employee::getId, e -> e));
 
         // Apply filters
         if (request.getEmployeeIds() != null && !request.getEmployeeIds().isEmpty()) {
             records = records.stream()
-                .filter(r -> request.getEmployeeIds().contains(r.getEmployeeId()))
-                .collect(Collectors.toList());
+                    .filter(r -> request.getEmployeeIds().contains(r.getEmployeeId()))
+                    .collect(Collectors.toList());
         }
 
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             records = records.stream()
-                .filter(r -> {
-                    Employee emp = employeeMap.get(r.getEmployeeId());
-                    return emp != null && emp.getDepartmentId() != null &&
-                        request.getDepartmentIds().contains(emp.getDepartmentId());
-                })
-                .collect(Collectors.toList());
+                    .filter(r -> {
+                        Employee emp = employeeMap.get(r.getEmployeeId());
+                        return emp != null && emp.getDepartmentId() != null &&
+                                request.getDepartmentIds().contains(emp.getDepartmentId());
+                    })
+                    .collect(Collectors.toList());
         }
 
         if (request.getAttendanceStatus() != null) {
             records = records.stream()
-                .filter(r -> r.getStatus().name().equals(request.getAttendanceStatus()))
-                .collect(Collectors.toList());
+                    .filter(r -> r.getStatus().name().equals(request.getAttendanceStatus()))
+                    .collect(Collectors.toList());
         }
 
         List<AttendanceReportRow> reportData = records.stream()
-            .map(r -> mapToAttendanceRow(r, employeeMap))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(r -> mapToAttendanceRow(r, employeeMap))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "attendance");
     }
@@ -140,8 +140,8 @@ public class ReportService {
         LocalDate endDate = request.getEndDate();
 
         List<DepartmentHeadcountReportRow> reportData = departments.stream()
-            .map(dept -> mapToDepartmentHeadcountRow(dept, tenantId, startDate, endDate))
-            .collect(Collectors.toList());
+                .map(dept -> mapToDepartmentHeadcountRow(dept, tenantId, startDate, endDate))
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "department");
     }
@@ -153,60 +153,60 @@ public class ReportService {
         List<LeaveRequest> leaveRequests;
         if (request.getStartDate() != null && request.getEndDate() != null) {
             leaveRequests = leaveRequestRepository.findByTenantIdAndStartDateBetween(
-                tenantId, request.getStartDate(), request.getEndDate());
+                    tenantId, request.getStartDate(), request.getEndDate());
         } else {
             Pageable bounded = PageRequest.of(0, MAX_REPORT_ROWS);
             leaveRequests = leaveRequestRepository.findAllByTenantId(tenantId, bounded).getContent();
             if (leaveRequests.size() == MAX_REPORT_ROWS) {
                 log.warn("[ReportService] Leave report hit MAX_REPORT_ROWS={} for tenant {}. " +
-                    "Results may be truncated. Consider implementing streaming export.", MAX_REPORT_ROWS, tenantId);
+                        "Results may be truncated. Consider implementing streaming export.", MAX_REPORT_ROWS, tenantId);
             }
         }
 
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             Set<UUID> employeeIds = employeeRepository.findByTenantId(tenantId).stream()
-                .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
-                .map(Employee::getId)
-                .collect(Collectors.toSet());
+                    .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
+                    .map(Employee::getId)
+                    .collect(Collectors.toSet());
 
             leaveRequests = leaveRequests.stream()
-                .filter(lr -> employeeIds.contains(lr.getEmployeeId()))
-                .collect(Collectors.toList());
+                    .filter(lr -> employeeIds.contains(lr.getEmployeeId()))
+                    .collect(Collectors.toList());
         }
 
         if (request.getLeaveType() != null) {
             leaveRequests = leaveRequests.stream()
-                .filter(lr -> {
-                    LeaveType type = leaveTypeRepository.findById(lr.getLeaveTypeId()).orElse(null);
-                    return type != null && type.getLeaveName().equalsIgnoreCase(request.getLeaveType());
-                })
-                .collect(Collectors.toList());
+                    .filter(lr -> {
+                        LeaveType type = leaveTypeRepository.findById(lr.getLeaveTypeId()).orElse(null);
+                        return type != null && type.getLeaveName().equalsIgnoreCase(request.getLeaveType());
+                    })
+                    .collect(Collectors.toList());
         }
 
         if (request.getLeaveStatus() != null) {
             leaveRequests = leaveRequests.stream()
-                .filter(lr -> lr.getStatus().name().equals(request.getLeaveStatus()))
-                .collect(Collectors.toList());
+                    .filter(lr -> lr.getStatus().name().equals(request.getLeaveStatus()))
+                    .collect(Collectors.toList());
         }
 
         // Fetch all employees and leave types to avoid N+1 queries
         Set<UUID> employeeIds = leaveRequests.stream()
-            .map(LeaveRequest::getEmployeeId)
-            .collect(Collectors.toSet());
+                .map(LeaveRequest::getEmployeeId)
+                .collect(Collectors.toSet());
         Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
-            .collect(Collectors.toMap(Employee::getId, e -> e));
+                .collect(Collectors.toMap(Employee::getId, e -> e));
 
         Set<UUID> leaveTypeIds = leaveRequests.stream()
-            .map(LeaveRequest::getLeaveTypeId)
-            .collect(Collectors.toSet());
+                .map(LeaveRequest::getLeaveTypeId)
+                .collect(Collectors.toSet());
         Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllById(leaveTypeIds).stream()
-            .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
+                .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
 
         List<LeaveReportRow> reportData = leaveRequests.stream()
-            .map(lr -> mapToLeaveRow(lr, employeeMap, leaveTypeMap))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(lr -> mapToLeaveRow(lr, employeeMap, leaveTypeMap))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "leave");
     }
@@ -220,37 +220,37 @@ public class ReportService {
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             payrollRecords = payrollRecords.stream()
-                .filter(pr -> pr.getDepartmentId() != null && request.getDepartmentIds().contains(pr.getDepartmentId()))
-                .collect(Collectors.toList());
+                    .filter(pr -> pr.getDepartmentId() != null && request.getDepartmentIds().contains(pr.getDepartmentId()))
+                    .collect(Collectors.toList());
         }
 
         if (request.getStartDate() != null && request.getEndDate() != null) {
             payrollRecords = payrollRecords.stream()
-                .filter(pr -> {
-                    if (pr.getPayrollRun() != null && pr.getPayrollRun().getPayPeriodStart() != null) {
-                        LocalDate periodStart = pr.getPayrollRun().getPayPeriodStart();
-                        return !periodStart.isBefore(request.getStartDate()) &&
-                               !periodStart.isAfter(request.getEndDate());
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
+                    .filter(pr -> {
+                        if (pr.getPayrollRun() != null && pr.getPayrollRun().getPayPeriodStart() != null) {
+                            LocalDate periodStart = pr.getPayrollRun().getPayPeriodStart();
+                            return !periodStart.isBefore(request.getStartDate()) &&
+                                    !periodStart.isAfter(request.getEndDate());
+                        }
+                        return false;
+                    })
+                    .collect(Collectors.toList());
         }
 
         // Fetch departments for mapping
         Map<UUID, Department> departmentMap = departmentRepository
-            .findByTenantId(tenantId).stream()
-            .collect(Collectors.toMap(Department::getId, d -> d));
+                .findByTenantId(tenantId).stream()
+                .collect(Collectors.toMap(Department::getId, d -> d));
 
         // Fetch employees for designation mapping
         Map<UUID, Employee> employeeMap = employeeRepository
-            .findByTenantId(tenantId).stream()
-            .collect(Collectors.toMap(Employee::getId, e -> e));
+                .findByTenantId(tenantId).stream()
+                .collect(Collectors.toMap(Employee::getId, e -> e));
 
         List<PayrollReportRow> reportData = payrollRecords.stream()
-            .map(pr -> mapToPayrollRow(pr, departmentMap, employeeMap))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(pr -> mapToPayrollRow(pr, departmentMap, employeeMap))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "payroll");
     }
@@ -261,7 +261,7 @@ public class ReportService {
         List<PerformanceReview> reviews;
         if (request.getStartDate() != null && request.getEndDate() != null) {
             reviews = performanceReviewRepository.findByTenantIdAndReviewDateBetween(
-                tenantId, request.getStartDate(), request.getEndDate());
+                    tenantId, request.getStartDate(), request.getEndDate());
         } else {
             reviews = performanceReviewRepository.findByTenantId(tenantId);
         }
@@ -269,34 +269,34 @@ public class ReportService {
         // Apply department filter
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
             Set<UUID> employeeIds = employeeRepository.findByTenantId(tenantId).stream()
-                .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
-                .map(Employee::getId)
-                .collect(Collectors.toSet());
+                    .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
+                    .map(Employee::getId)
+                    .collect(Collectors.toSet());
 
             reviews = reviews.stream()
-                .filter(r -> employeeIds.contains(r.getEmployeeId()))
-                .collect(Collectors.toList());
+                    .filter(r -> employeeIds.contains(r.getEmployeeId()))
+                    .collect(Collectors.toList());
         }
 
         // Fetch all employees and reviewers
         Set<UUID> employeeIds = reviews.stream()
-            .map(PerformanceReview::getEmployeeId)
-            .collect(Collectors.toSet());
+                .map(PerformanceReview::getEmployeeId)
+                .collect(Collectors.toSet());
         Set<UUID> reviewerIds = reviews.stream()
-            .map(PerformanceReview::getReviewerId)
-            .collect(Collectors.toSet());
+                .map(PerformanceReview::getReviewerId)
+                .collect(Collectors.toSet());
 
         Set<UUID> allUserIds = new HashSet<>();
         allUserIds.addAll(employeeIds);
         allUserIds.addAll(reviewerIds);
 
         Map<UUID, Employee> employeeMap = employeeRepository.findAllById(allUserIds).stream()
-            .collect(Collectors.toMap(Employee::getId, e -> e));
+                .collect(Collectors.toMap(Employee::getId, e -> e));
 
         List<PerformanceReportRow> reportData = reviews.stream()
-            .map(r -> mapToPerformanceRow(r, employeeMap))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(r -> mapToPerformanceRow(r, employeeMap))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return exportReport(reportData, request.getFormat(), "performance");
     }
@@ -307,26 +307,26 @@ public class ReportService {
         String departmentName = "";
         if (employee.getDepartmentId() != null) {
             departmentName = departmentRepository.findById(employee.getDepartmentId())
-                .map(Department::getName)
-                .orElse("");
+                    .map(Department::getName)
+                    .orElse("");
         }
 
         return EmployeeDirectoryReportRow.builder()
-            .employeeId(employee.getId())
-            .employeeCode(employee.getEmployeeCode())
-            .fullName(employee.getFullName())
-            .email(employee.getPersonalEmail())
-            .phoneNumber(employee.getPhoneNumber())
-            .department(departmentName)
-            .designation(employee.getDesignation())
-            .jobRole(employee.getJobRole() != null ? employee.getJobRole().name() : "")
-            .level(employee.getLevel() != null ? employee.getLevel().name() : "")
-            .employmentType(employee.getEmploymentType() != null ? employee.getEmploymentType().name() : "")
-            .joiningDate(employee.getJoiningDate())
-            .status(employee.getStatus() != null ? employee.getStatus().name() : "")
-            .workLocation("")
-            .reportingManager("")
-            .build();
+                .employeeId(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .fullName(employee.getFullName())
+                .email(employee.getPersonalEmail())
+                .phoneNumber(employee.getPhoneNumber())
+                .department(departmentName)
+                .designation(employee.getDesignation())
+                .jobRole(employee.getJobRole() != null ? employee.getJobRole().name() : "")
+                .level(employee.getLevel() != null ? employee.getLevel().name() : "")
+                .employmentType(employee.getEmploymentType() != null ? employee.getEmploymentType().name() : "")
+                .joiningDate(employee.getJoiningDate())
+                .status(employee.getStatus() != null ? employee.getStatus().name() : "")
+                .workLocation("")
+                .reportingManager("")
+                .build();
     }
 
     private AttendanceReportRow mapToAttendanceRow(AttendanceRecord record, Map<UUID, Employee> employeeMap) {
@@ -340,42 +340,42 @@ public class ReportService {
         String departmentName = "";
         if (employee.getDepartmentId() != null) {
             departmentName = departmentRepository.findById(employee.getDepartmentId())
-                .map(Department::getName)
-                .orElse("");
+                    .map(Department::getName)
+                    .orElse("");
         }
 
         // Calculate hours worked from minutes
         Double hoursWorked = record.getWorkDurationMinutes() != null ?
-            record.getWorkDurationMinutes() / 60.0 : 0.0;
+                record.getWorkDurationMinutes() / 60.0 : 0.0;
 
         return AttendanceReportRow.builder()
-            .employeeId(employee.getId())
-            .employeeCode(employee.getEmployeeCode())
-            .employeeName(employee.getFullName())
-            .department(departmentName)
-            .date(record.getAttendanceDate())
-            .status(record.getStatus() != null ? record.getStatus().name() : "")
-            .checkInTime(record.getCheckInTime() != null ? record.getCheckInTime().toLocalTime() : null)
-            .checkOutTime(record.getCheckOutTime() != null ? record.getCheckOutTime().toLocalTime() : null)
-            .hoursWorked(hoursWorked)
-            .shift("") // Shift relationship not available
-            .remarks(record.getNotes())
-            .build();
+                .employeeId(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .employeeName(employee.getFullName())
+                .department(departmentName)
+                .date(record.getAttendanceDate())
+                .status(record.getStatus() != null ? record.getStatus().name() : "")
+                .checkInTime(record.getCheckInTime() != null ? record.getCheckInTime().toLocalTime() : null)
+                .checkOutTime(record.getCheckOutTime() != null ? record.getCheckOutTime().toLocalTime() : null)
+                .hoursWorked(hoursWorked)
+                .shift("") // Shift relationship not available
+                .remarks(record.getNotes())
+                .build();
     }
 
     private DepartmentHeadcountReportRow mapToDepartmentHeadcountRow(
-        Department dept, UUID tenantId, LocalDate startDate, LocalDate endDate) {
+            Department dept, UUID tenantId, LocalDate startDate, LocalDate endDate) {
 
         // Get all employees in this department
         Pageable bounded = PageRequest.of(0, MAX_REPORT_ROWS);
         List<Employee> deptEmployees = employeeRepository
-            .findAllByTenantIdAndDepartmentId(tenantId, dept.getId(), bounded)
-            .getContent();
+                .findAllByTenantIdAndDepartmentId(tenantId, dept.getId(), bounded)
+                .getContent();
 
         long totalEmployees = deptEmployees.size();
         long activeEmployees = deptEmployees.stream()
-            .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
-            .count();
+                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .count();
         long inactiveEmployees = totalEmployees - activeEmployees;
 
         // Calculate new hires and terminations within the period
@@ -384,35 +384,35 @@ public class ReportService {
 
         if (startDate != null && endDate != null) {
             newHires = deptEmployees.stream()
-                .filter(e -> e.getJoiningDate() != null &&
-                    !e.getJoiningDate().isBefore(startDate) &&
-                    !e.getJoiningDate().isAfter(endDate))
-                .count();
+                    .filter(e -> e.getJoiningDate() != null &&
+                            !e.getJoiningDate().isBefore(startDate) &&
+                            !e.getJoiningDate().isAfter(endDate))
+                    .count();
 
             terminations = deptEmployees.stream()
-                .filter(e -> e.getExitDate() != null &&
-                    !e.getExitDate().isBefore(startDate) &&
-                    !e.getExitDate().isAfter(endDate))
-                .count();
+                    .filter(e -> e.getExitDate() != null &&
+                            !e.getExitDate().isBefore(startDate) &&
+                            !e.getExitDate().isAfter(endDate))
+                    .count();
         }
 
         return DepartmentHeadcountReportRow.builder()
-            .departmentId(dept.getId())
-            .departmentName(dept.getName())
-            .departmentCode(dept.getCode())
-            .totalEmployees(totalEmployees)
-            .activeEmployees(activeEmployees)
-            .inactiveEmployees(inactiveEmployees)
-            .onLeave(0L)
-            .newHires(newHires)
-            .terminations(terminations)
-            .departmentHead("")
-            .build();
+                .departmentId(dept.getId())
+                .departmentName(dept.getName())
+                .departmentCode(dept.getCode())
+                .totalEmployees(totalEmployees)
+                .activeEmployees(activeEmployees)
+                .inactiveEmployees(inactiveEmployees)
+                .onLeave(0L)
+                .newHires(newHires)
+                .terminations(terminations)
+                .departmentHead("")
+                .build();
     }
 
     private LeaveReportRow mapToLeaveRow(LeaveRequest leaveRequest,
-                                          Map<UUID, Employee> employeeMap,
-                                          Map<UUID, LeaveType> leaveTypeMap) {
+                                         Map<UUID, Employee> employeeMap,
+                                         Map<UUID, LeaveType> leaveTypeMap) {
         Employee employee = employeeMap.get(leaveRequest.getEmployeeId());
         if (employee == null) {
             return null;
@@ -424,30 +424,30 @@ public class ReportService {
         String departmentName = "";
         if (employee.getDepartmentId() != null) {
             departmentName = departmentRepository.findById(employee.getDepartmentId())
-                .map(Department::getName)
-                .orElse("");
+                    .map(Department::getName)
+                    .orElse("");
         }
 
         String approvedByName = "";
         if (leaveRequest.getApprovedBy() != null) {
             approvedByName = employeeMap.containsKey(leaveRequest.getApprovedBy()) ?
-                employeeMap.get(leaveRequest.getApprovedBy()).getFullName() : "";
+                    employeeMap.get(leaveRequest.getApprovedBy()).getFullName() : "";
         }
 
         return LeaveReportRow.builder()
-            .employeeId(employee.getId())
-            .employeeCode(employee.getEmployeeCode())
-            .employeeName(employee.getFullName())
-            .department(departmentName)
-            .leaveType(leaveTypeName)
-            .startDate(leaveRequest.getStartDate())
-            .endDate(leaveRequest.getEndDate())
-            .days(leaveRequest.getTotalDays() != null ? leaveRequest.getTotalDays().doubleValue() : 0.0)
-            .status(leaveRequest.getStatus().name())
-            .reason(leaveRequest.getReason())
-            .approvedBy(approvedByName)
-            .approvedOn(leaveRequest.getApprovedOn() != null ? leaveRequest.getApprovedOn().toLocalDate() : null)
-            .build();
+                .employeeId(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .employeeName(employee.getFullName())
+                .department(departmentName)
+                .leaveType(leaveTypeName)
+                .startDate(leaveRequest.getStartDate())
+                .endDate(leaveRequest.getEndDate())
+                .days(leaveRequest.getTotalDays() != null ? leaveRequest.getTotalDays().doubleValue() : 0.0)
+                .status(leaveRequest.getStatus().name())
+                .reason(leaveRequest.getReason())
+                .approvedBy(approvedByName)
+                .approvedOn(leaveRequest.getApprovedOn() != null ? leaveRequest.getApprovedOn().toLocalDate() : null)
+                .build();
     }
 
     private PayrollReportRow mapToPayrollRow(EmployeePayrollRecord record,
@@ -469,19 +469,19 @@ public class ReportService {
         }
 
         return PayrollReportRow.builder()
-            .employeeId(record.getEmployeeId())
-            .employeeCode(record.getEmployeeNumber())
-            .employeeName(record.getEmployeeName())
-            .department(departmentName)
-            .designation(designation)
-            .payrollMonth(payrollMonth)
-            .basicSalary(record.getBaseSalaryLocal())
-            .allowances(record.getAllowancesLocal().add(record.getBonusesLocal()).add(record.getOvertimeLocal()))
-            .deductions(record.getTotalDeductionsLocal())
-            .netSalary(record.getNetPayLocal())
-            .paymentStatus(record.getStatus() != null ? record.getStatus().name() : "")
-            .paymentDate(null) // Payment date not available in current schema
-            .build();
+                .employeeId(record.getEmployeeId())
+                .employeeCode(record.getEmployeeNumber())
+                .employeeName(record.getEmployeeName())
+                .department(departmentName)
+                .designation(designation)
+                .payrollMonth(payrollMonth)
+                .basicSalary(record.getBaseSalaryLocal())
+                .allowances(record.getAllowancesLocal().add(record.getBonusesLocal()).add(record.getOvertimeLocal()))
+                .deductions(record.getTotalDeductionsLocal())
+                .netSalary(record.getNetPayLocal())
+                .paymentStatus(record.getStatus() != null ? record.getStatus().name() : "")
+                .paymentDate(null) // Payment date not available in current schema
+                .build();
     }
 
     private PerformanceReportRow mapToPerformanceRow(PerformanceReview review,
@@ -497,8 +497,8 @@ public class ReportService {
         String departmentName = "";
         if (employee.getDepartmentId() != null) {
             departmentName = departmentRepository.findById(employee.getDepartmentId())
-                .map(Department::getName)
-                .orElse("");
+                    .map(Department::getName)
+                    .orElse("");
         }
 
         // For review cycle, we'll use the review type if cycle ID is not available
@@ -522,25 +522,25 @@ public class ReportService {
         }
 
         return PerformanceReportRow.builder()
-            .employeeId(employee.getId())
-            .employeeCode(employee.getEmployeeCode())
-            .employeeName(employee.getFullName())
-            .department(departmentName)
-            .designation(employee.getDesignation())
-            .reviewCycle(reviewCycle)
-            .reviewDate(review.getReviewPeriodStart())
-            .reviewer(reviewerName)
-            .overallRating(review.getOverallRating() != null ? review.getOverallRating().doubleValue() : 0.0)
-            .performanceLevel(performanceLevel)
-            .goalsCompleted(0) // Not available in current schema
-            .totalGoals(0) // Not available in current schema
-            .comments(review.getManagerComments())
-            .build();
+                .employeeId(employee.getId())
+                .employeeCode(employee.getEmployeeCode())
+                .employeeName(employee.getFullName())
+                .department(departmentName)
+                .designation(employee.getDesignation())
+                .reviewCycle(reviewCycle)
+                .reviewDate(review.getReviewPeriodStart())
+                .reviewer(reviewerName)
+                .overallRating(review.getOverallRating() != null ? review.getOverallRating().doubleValue() : 0.0)
+                .performanceLevel(performanceLevel)
+                .goalsCompleted(0) // Not available in current schema
+                .totalGoals(0) // Not available in current schema
+                .comments(review.getManagerComments())
+                .build();
     }
 
     // Export helper methods
     private byte[] exportReport(List<?> data, ReportRequest.ExportFormat format, String reportType)
-        throws IOException, DocumentException {
+            throws IOException, DocumentException {
 
         if (format == null) {
             format = ReportRequest.ExportFormat.EXCEL; // Default to Excel
@@ -557,17 +557,17 @@ public class ReportService {
     private byte[] exportToExcel(List<?> data, String reportType) throws IOException {
         return switch (reportType) {
             case "employee" -> excelExportService.exportEmployeeDirectoryToExcel(
-                (List<EmployeeDirectoryReportRow>) data);
+                    (List<EmployeeDirectoryReportRow>) data);
             case "attendance" -> excelExportService.exportAttendanceToExcel(
-                (List<AttendanceReportRow>) data);
+                    (List<AttendanceReportRow>) data);
             case "department" -> excelExportService.exportDepartmentHeadcountToExcel(
-                (List<DepartmentHeadcountReportRow>) data);
+                    (List<DepartmentHeadcountReportRow>) data);
             case "leave" -> excelExportService.exportLeaveToExcel(
-                (List<LeaveReportRow>) data);
+                    (List<LeaveReportRow>) data);
             case "payroll" -> excelExportService.exportPayrollToExcel(
-                (List<PayrollReportRow>) data);
+                    (List<PayrollReportRow>) data);
             case "performance" -> excelExportService.exportPerformanceToExcel(
-                (List<PerformanceReportRow>) data);
+                    (List<PerformanceReportRow>) data);
             default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
         };
     }
@@ -576,17 +576,17 @@ public class ReportService {
     private byte[] exportToPdf(List<?> data, String reportType) throws DocumentException {
         return switch (reportType) {
             case "employee" -> pdfExportService.exportEmployeeDirectoryToPdf(
-                (List<EmployeeDirectoryReportRow>) data);
+                    (List<EmployeeDirectoryReportRow>) data);
             case "attendance" -> pdfExportService.exportAttendanceToPdf(
-                (List<AttendanceReportRow>) data);
+                    (List<AttendanceReportRow>) data);
             case "department" -> pdfExportService.exportDepartmentHeadcountToPdf(
-                (List<DepartmentHeadcountReportRow>) data);
+                    (List<DepartmentHeadcountReportRow>) data);
             case "leave" -> pdfExportService.exportLeaveToPdf(
-                (List<LeaveReportRow>) data);
+                    (List<LeaveReportRow>) data);
             case "payroll" -> pdfExportService.exportPayrollToPdf(
-                (List<PayrollReportRow>) data);
+                    (List<PayrollReportRow>) data);
             case "performance" -> pdfExportService.exportPerformanceToPdf(
-                (List<PerformanceReportRow>) data);
+                    (List<PerformanceReportRow>) data);
             default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
         };
     }
@@ -595,17 +595,17 @@ public class ReportService {
     private byte[] exportToCsv(List<?> data, String reportType) throws IOException {
         return switch (reportType) {
             case "employee" -> csvExportService.exportEmployeeDirectoryToCsv(
-                (List<EmployeeDirectoryReportRow>) data);
+                    (List<EmployeeDirectoryReportRow>) data);
             case "attendance" -> csvExportService.exportAttendanceToCsv(
-                (List<AttendanceReportRow>) data);
+                    (List<AttendanceReportRow>) data);
             case "department" -> csvExportService.exportDepartmentHeadcountToCsv(
-                (List<DepartmentHeadcountReportRow>) data);
+                    (List<DepartmentHeadcountReportRow>) data);
             case "leave" -> csvExportService.exportLeaveToCsv(
-                (List<LeaveReportRow>) data);
+                    (List<LeaveReportRow>) data);
             case "payroll" -> csvExportService.exportPayrollToCsv(
-                (List<PayrollReportRow>) data);
+                    (List<PayrollReportRow>) data);
             case "performance" -> csvExportService.exportPerformanceToCsv(
-                (List<PerformanceReportRow>) data);
+                    (List<PerformanceReportRow>) data);
             default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
         };
     }

@@ -184,7 +184,7 @@ public class MultiChannelNotificationService {
         // Process immediate notifications
         for (MultiChannelNotification notification : saved) {
             if (notification.getScheduledAt() == null ||
-                notification.getScheduledAt().isBefore(LocalDateTime.now())) {
+                    notification.getScheduledAt().isBefore(LocalDateTime.now())) {
                 processNotification(notification);
             }
         }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -35,13 +36,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmployeeImportParserService {
 
-    private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
-
     private static final String[] REQUIRED_HEADERS = {
             "employeeCode", "firstName", "lastName", "workEmail",
             "joiningDate", "designation", "employmentType"
     };
-
     private static final Map<String, String> HEADER_ALIASES = new HashMap<>() {{
         // Allow common variations of header names
         put("employee_code", "employeeCode");
@@ -106,6 +104,7 @@ public class EmployeeImportParserService {
         put("zip_code", "postalCode");
         put("pincode", "postalCode");
     }};
+    private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
 
     /**
      * Parse a CSV or Excel file and return list of import rows.

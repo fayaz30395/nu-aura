@@ -39,15 +39,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ScheduledNotificationService {
 
-    private final EmployeeRepository employeeRepository;
-    private final AttendanceRecordRepository attendanceRecordRepository;
-    private final TenantRepository tenantRepository;
-    private final MultiChannelNotificationService notificationService;
-
     private static final Set<NotificationChannel> DEFAULT_CHANNELS = Set.of(
             NotificationChannel.EMAIL,
             NotificationChannel.PUSH,
             NotificationChannel.IN_APP);
+    private final EmployeeRepository employeeRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final TenantRepository tenantRepository;
+    private final MultiChannelNotificationService notificationService;
 
     // ==================== BIRTHDAY NOTIFICATIONS ====================
 

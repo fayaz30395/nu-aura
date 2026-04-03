@@ -58,7 +58,7 @@ public class AttendanceRecordService {
     // on some JPA providers (or throws an exception on others).
     @Transactional
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location,
-            String ip) {
+                                    String ip) {
         return checkIn(employeeId, checkInTime, source, location, ip, null);
     }
 
@@ -81,7 +81,7 @@ public class AttendanceRecordService {
     @Transactional
     @Audited(action = AuditAction.CREATE, entityType = "ATTENDANCE_RECORD", description = "Employee checked in", entityIdParam = 0)
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location,
-            String ip, LocalDate attendanceDate) {
+                                    String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
@@ -114,9 +114,9 @@ public class AttendanceRecordService {
             if (record.getCheckInTime() != null && record.getCheckOutTime() != null) {
                 throw new IllegalStateException(
                         "Attendance already recorded for today (checked in at " +
-                        record.getCheckInTime().toLocalTime() + " and checked out at " +
-                        record.getCheckOutTime().toLocalTime() + "). " +
-                        "Use regularization to modify attendance records.");
+                                record.getCheckInTime().toLocalTime() + " and checked out at " +
+                                record.getCheckOutTime().toLocalTime() + "). " +
+                                "Use regularization to modify attendance records.");
             }
         }
 
@@ -152,7 +152,7 @@ public class AttendanceRecordService {
      */
     @Transactional
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
-            String ip) {
+                                     String ip) {
         return checkOut(employeeId, checkOutTime, source, location, ip, null);
     }
 
@@ -175,7 +175,7 @@ public class AttendanceRecordService {
     @Transactional
     @Audited(action = AuditAction.UPDATE, entityType = "ATTENDANCE_RECORD", description = "Employee checked out", entityIdParam = 0)
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
-            String ip, LocalDate attendanceDate) {
+                                     String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
@@ -276,7 +276,7 @@ public class AttendanceRecordService {
      * Create a new time entry (for tracking breaks, lunch, etc.)
      */
     public AttendanceTimeEntry multiCheckIn(UUID employeeId, LocalDateTime checkInTime,
-            String entryType, String source, String location, String ip, String notes) {
+                                            String entryType, String source, String location, String ip, String notes) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
@@ -305,7 +305,7 @@ public class AttendanceRecordService {
      * Close an open time entry
      */
     public AttendanceTimeEntry multiCheckOut(UUID employeeId, UUID timeEntryId,
-            LocalDateTime checkOutTime, String source, String location, String ip) {
+                                             LocalDateTime checkOutTime, String source, String location, String ip) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
@@ -368,11 +368,11 @@ public class AttendanceRecordService {
      * provide partial-success semantics (failed entries are collected, not thrown).
      *
      * <p>FUTURE: NUAURA-ATTENDANCE-001 — Replace per-employee checkIn() calls with a true batch path:
-     *   1 SELECT (all existing records for date) + 1 batch INSERT via saveAll(), eliminating N round-trips.
-     *   Pre-condition: extract shared validation logic from checkIn() into a package-private helper.
+     * 1 SELECT (all existing records for date) + 1 batch INSERT via saveAll(), eliminating N round-trips.
+     * Pre-condition: extract shared validation logic from checkIn() into a package-private helper.
      */
     public BulkResult bulkCheckIn(List<UUID> employeeIds, LocalDateTime checkInTime,
-            String source, String location, String ip) {
+                                  String source, String location, String ip) {
         List<AttendanceRecord> successful = new ArrayList<>();
         List<BulkResult.FailedEntry> failed = new ArrayList<>();
 
@@ -401,7 +401,7 @@ public class AttendanceRecordService {
      * then persist with saveAll().
      */
     public BulkResult bulkCheckOut(List<UUID> employeeIds, LocalDateTime checkOutTime,
-            String source, String location, String ip) {
+                                   String source, String location, String ip) {
         List<AttendanceRecord> successful = new ArrayList<>();
         List<BulkResult.FailedEntry> failed = new ArrayList<>();
 
@@ -425,15 +425,15 @@ public class AttendanceRecordService {
      * Finds the attendance record for the given employee + date, or creates a stub ABSENT
      * record if none exists, then flags it for regularization approval.
      *
-     * @param employeeId    the employee whose attendance needs correction
-     * @param date          the date to regularize
-     * @param checkInTime   optional desired check-in time (pending approval)
-     * @param checkOutTime  optional desired check-out time (pending approval)
-     * @param reason        mandatory reason for the regularization
+     * @param employeeId   the employee whose attendance needs correction
+     * @param date         the date to regularize
+     * @param checkInTime  optional desired check-in time (pending approval)
+     * @param checkOutTime optional desired check-out time (pending approval)
+     * @param reason       mandatory reason for the regularization
      */
     @Transactional
     public AttendanceRecord submitRegularizationRequest(UUID employeeId, java.time.LocalDate date,
-            java.time.LocalDateTime checkInTime, java.time.LocalDateTime checkOutTime, String reason) {
+                                                        java.time.LocalDateTime checkInTime, java.time.LocalDateTime checkOutTime, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         AttendanceRecord record = attendanceRecordRepository
@@ -542,7 +542,7 @@ public class AttendanceRecordService {
 
     @Transactional(readOnly = true)
     public Page<AttendanceRecord> getAttendanceByDate(LocalDate date,
-            org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec, Pageable pageable) {
+                                                      org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<AttendanceRecord> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
@@ -555,7 +555,7 @@ public class AttendanceRecordService {
     // ===================== Private Helper Methods =====================
 
     private AttendanceTimeEntry createTimeEntry(UUID attendanceRecordId, LocalDateTime checkInTime,
-            String source, String location, String ip, AttendanceTimeEntry.EntryType type, String notes) {
+                                                String source, String location, String ip, AttendanceTimeEntry.EntryType type, String notes) {
         int sequence = timeEntryRepository.getMaxSequenceNumber(attendanceRecordId) + 1;
 
         AttendanceTimeEntry entry = AttendanceTimeEntry.builder()
@@ -573,7 +573,7 @@ public class AttendanceRecordService {
     }
 
     private void closeOpenTimeEntry(UUID attendanceRecordId, LocalDateTime checkOutTime,
-            String source, String location, String ip) {
+                                    String source, String location, String ip) {
         // Close ALL open time entries (handles cases where multiple entries were
         // created)
         List<AttendanceTimeEntry> openEntries = timeEntryRepository
@@ -707,13 +707,13 @@ public class AttendanceRecordService {
     /**
      * Publishes an audit event for attendance operations asynchronously. Best-effort: logs errors
      * but never fails the business operation.
-     *
+     * <p>
      * BUG-014 FIX: Made async to prevent blocking check-in/out operations.
      * Kafka event publishing is now non-blocking.
      */
     @Async
     private void publishAttendanceAuditEvent(UUID userId, String action, String entityType,
-            UUID entityId, UUID tenantId, String description) {
+                                             UUID entityId, UUID tenantId, String description) {
         try {
             eventPublisher.publishAuditEvent(
                     userId, action, entityType, entityId, tenantId,
@@ -728,9 +728,6 @@ public class AttendanceRecordService {
     // ===================== Result Classes =====================
 
     public record BulkResult(List<AttendanceRecord> successful, List<FailedEntry> failed) {
-        public record FailedEntry(UUID employeeId, String error) {
-        }
-
         public int totalCount() {
             return successful.size() + failed.size();
         }
@@ -745,6 +742,9 @@ public class AttendanceRecordService {
 
         public boolean hasFailures() {
             return !failed.isEmpty();
+        }
+
+        public record FailedEntry(UUID employeeId, String error) {
         }
     }
 }

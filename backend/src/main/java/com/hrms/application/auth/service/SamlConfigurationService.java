@@ -43,10 +43,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SamlConfigurationService {
 
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
     private final SamlIdentityProviderRepository samlIdpRepository;
     private final RoleRepository roleRepository;
     private final EncryptionService encryptionService;
     private final ObjectMapper objectMapper;
+    @Value("${app.base-url:http://localhost:8080}")
+    private String appBaseUrl;
 
     public SamlConfigurationService(SamlIdentityProviderRepository samlIdpRepository,
                                     RoleRepository roleRepository,
@@ -57,13 +62,6 @@ public class SamlConfigurationService {
         this.encryptionService = encryptionService;
         this.objectMapper = objectMapper;
     }
-
-    @Value("${app.base-url:http://localhost:8080}")
-    private String appBaseUrl;
-
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .build();
 
     // ==================== CRUD Operations ====================
 

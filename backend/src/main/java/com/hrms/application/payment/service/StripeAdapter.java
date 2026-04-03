@@ -7,12 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Stripe payment gateway adapter
  * Handles Stripe API integration for payments and refunds
- *
+ * <p>
  * Note: This is a stub implementation. Integrate with actual Stripe SDK as needed.
  * Documentation: https://stripe.com/docs/payments
  */
@@ -51,8 +52,8 @@ public class StripeAdapter implements PaymentGatewayAdapter {
     public List<PaymentGatewayResponse> initiateBatchPayments(List<PaymentTransaction> transactions) {
         // Integration point: Call Stripe batch API
         return transactions.stream()
-            .map(this::initiatePayment)
-            .toList();
+                .map(this::initiatePayment)
+                .toList();
     }
 
     @Override

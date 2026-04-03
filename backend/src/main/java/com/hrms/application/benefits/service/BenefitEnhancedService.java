@@ -263,7 +263,11 @@ public class BenefitEnhancedService {
 
         log.info("Created enrollment: {} for employee: {}", enrollment.getId(), request.getEmployeeId());
 
-        try { auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.CREATE, null, null, "Benefit enrollment created for employee " + request.getEmployeeId()); } catch (Exception e) { log.warn("Audit log failed for benefit enrollment create: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.CREATE, null, null, "Benefit enrollment created for employee " + request.getEmployeeId());
+        } catch (Exception e) {
+            log.warn("Audit log failed for benefit enrollment create: {}", e.getMessage());
+        }
 
         // Publish audit event for enrollment creation (best-effort)
         publishBenefitAuditEvent(currentUser, "CREATE", "BenefitEnrollment", enrollment.getId(),
@@ -314,7 +318,11 @@ public class BenefitEnhancedService {
 
         enrollment = enrollmentRepository.save(enrollment);
 
-        try { auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.APPROVE, null, null, "Benefit enrollment approved: " + comments); } catch (Exception e) { log.warn("Audit log failed for benefit enrollment approve: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("BENEFIT_ENROLLMENT", enrollment.getId(), AuditAction.APPROVE, null, null, "Benefit enrollment approved: " + comments);
+        } catch (Exception e) {
+            log.warn("Audit log failed for benefit enrollment approve: {}", e.getMessage());
+        }
 
         return EnrollmentResponse.from(enrollment);
     }
@@ -398,7 +406,7 @@ public class BenefitEnhancedService {
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
 
         if (enrollment.getStatus() != BenefitEnrollment.EnrollmentStatus.ACTIVE &&
-            enrollment.getStatus() != BenefitEnrollment.EnrollmentStatus.COBRA_CONTINUATION) {
+                enrollment.getStatus() != BenefitEnrollment.EnrollmentStatus.COBRA_CONTINUATION) {
             throw new IllegalStateException("Enrollment is not active");
         }
 
@@ -528,7 +536,7 @@ public class BenefitEnhancedService {
                 .orElseThrow(() -> new EntityNotFoundException("Claim not found"));
 
         if (claim.getStatus() != BenefitClaim.ClaimStatus.APPROVED &&
-            claim.getStatus() != BenefitClaim.ClaimStatus.PARTIALLY_APPROVED) {
+                claim.getStatus() != BenefitClaim.ClaimStatus.PARTIALLY_APPROVED) {
             throw new IllegalStateException("Claim is not approved");
         }
 
@@ -555,7 +563,7 @@ public class BenefitEnhancedService {
                 .orElseThrow(() -> new EntityNotFoundException("Claim not found"));
 
         if (claim.getStatus() != BenefitClaim.ClaimStatus.REJECTED &&
-            claim.getStatus() != BenefitClaim.ClaimStatus.PARTIALLY_APPROVED) {
+                claim.getStatus() != BenefitClaim.ClaimStatus.PARTIALLY_APPROVED) {
             throw new IllegalStateException("Only rejected or partially approved claims can be appealed");
         }
 
@@ -675,7 +683,7 @@ public class BenefitEnhancedService {
      * but never fails the business operation.
      */
     private void publishBenefitAuditEvent(UUID userId, String action, String entityType,
-            UUID entityId, UUID tenantId, String description) {
+                                          UUID entityId, UUID tenantId, String description) {
         try {
             eventPublisher.publishAuditEvent(
                     userId, action, entityType, entityId, tenantId,
@@ -746,7 +754,7 @@ public class BenefitEnhancedService {
         List<BenefitClaim> claims = claimRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
         long pendingClaims = claims.stream()
                 .filter(c -> c.getStatus() == BenefitClaim.ClaimStatus.SUBMITTED ||
-                             c.getStatus() == BenefitClaim.ClaimStatus.UNDER_REVIEW)
+                        c.getStatus() == BenefitClaim.ClaimStatus.UNDER_REVIEW)
                 .count();
         BigDecimal totalClaimsThisYear = claims.stream()
                 .filter(c -> c.getServiceDate() != null && c.getServiceDate().getYear() == currentYear)

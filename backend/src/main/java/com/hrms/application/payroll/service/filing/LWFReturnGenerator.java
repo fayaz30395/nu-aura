@@ -30,12 +30,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LWFReturnGenerator implements FilingFormatGenerator {
 
-    private final PayslipRepository payslipRepository;
-    private final ObjectMapper objectMapper;
-
     // Default LWF rates (Maharashtra) — these should ideally be configurable per tenant/state
     private static final BigDecimal LWF_EMPLOYEE_AMOUNT = new BigDecimal("6.00");
     private static final BigDecimal LWF_EMPLOYER_AMOUNT = new BigDecimal("18.00");
+    private final PayslipRepository payslipRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public FilingType getFilingType() {
@@ -64,11 +63,11 @@ public class LWFReturnGenerator implements FilingFormatGenerator {
         for (Map.Entry<UUID, Payslip> entry : uniqueEmployees.entrySet()) {
             BigDecimal total = LWF_EMPLOYEE_AMOUNT.add(LWF_EMPLOYER_AMOUNT);
             csv.append(sno++).append(",")
-               .append(entry.getKey()).append(",")
-               .append("Employee-").append(entry.getKey()).append(",")
-               .append(LWF_EMPLOYEE_AMOUNT).append(",")
-               .append(LWF_EMPLOYER_AMOUNT).append(",")
-               .append(total).append("\n");
+                    .append(entry.getKey()).append(",")
+                    .append("Employee-").append(entry.getKey()).append(",")
+                    .append(LWF_EMPLOYEE_AMOUNT).append(",")
+                    .append(LWF_EMPLOYER_AMOUNT).append(",")
+                    .append(total).append("\n");
             totalEmp = totalEmp.add(LWF_EMPLOYEE_AMOUNT);
             totalEmplr = totalEmplr.add(LWF_EMPLOYER_AMOUNT);
         }

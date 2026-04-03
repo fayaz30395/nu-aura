@@ -108,7 +108,7 @@ public class TenantProvisioningService {
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
-        String accessToken  = jwtTokenProvider.generateToken(auth, tenantId, adminUser.getId());
+        String accessToken = jwtTokenProvider.generateToken(auth, tenantId, adminUser.getId());
         String refreshToken = jwtTokenProvider.generateRefreshToken(adminUser.getEmail(), tenantId);
 
         return AuthResponse.builder()

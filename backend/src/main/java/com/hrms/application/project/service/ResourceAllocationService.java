@@ -100,18 +100,18 @@ public class ResourceAllocationService {
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         List<EmployeeTimelineResponse.TimelineSlot> slots = all.stream().map(pe -> {
-            String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
-                    .map(Project::getName)
-                    .orElse("Unknown");
-            return EmployeeTimelineResponse.TimelineSlot.builder()
-                    .projectId(pe.getProjectId())
-                    .projectName(projName)
-                    .startDate(pe.getStartDate() != null ? pe.getStartDate().toString() : null)
-                    .endDate(pe.getEndDate() != null ? pe.getEndDate().toString() : null)
-                    .allocationPercent(pe.getAllocationPercentage() != null ? pe.getAllocationPercentage() : 0)
-                    .isActive(Boolean.TRUE.equals(pe.getIsActive()))
-                    .build();
-        }).sorted(Comparator.comparing(s -> s.getStartDate() != null ? s.getStartDate() : ""))
+                    String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
+                            .map(Project::getName)
+                            .orElse("Unknown");
+                    return EmployeeTimelineResponse.TimelineSlot.builder()
+                            .projectId(pe.getProjectId())
+                            .projectName(projName)
+                            .startDate(pe.getStartDate() != null ? pe.getStartDate().toString() : null)
+                            .endDate(pe.getEndDate() != null ? pe.getEndDate().toString() : null)
+                            .allocationPercent(pe.getAllocationPercentage() != null ? pe.getAllocationPercentage() : 0)
+                            .isActive(Boolean.TRUE.equals(pe.getIsActive()))
+                            .build();
+                }).sorted(Comparator.comparing(s -> s.getStartDate() != null ? s.getStartDate() : ""))
                 .collect(Collectors.toList());
 
         return EmployeeTimelineResponse.builder()

@@ -26,12 +26,12 @@ import java.util.stream.Collectors;
 /**
  * Service to migrate existing legacy permissions to the new NU Platform RBAC
  * system.
- *
+ * <p>
  * This migration:
  * 1. Maps legacy Permission entities to AppPermission entities
  * 2. Maps legacy Role entities to AppRole entities
  * 3. Creates UserAppAccess records for all users based on their legacy roles
- *
+ * <p>
  * Legacy format: EMPLOYEE:READ, LEAVE:APPROVE
  * New format: HRMS:EMPLOYEE:READ, HRMS:LEAVE:APPROVE
  */
@@ -303,14 +303,14 @@ public class PermissionMigrationService {
      * Migration result container
      */
     public static class MigrationResult {
+        private final Map<String, String> mappedPermissions = new LinkedHashMap<>();
+        private final Map<String, Integer> mappedRoles = new LinkedHashMap<>();
+        private final Map<String, List<String>> processedUsers = new LinkedHashMap<>();
         private boolean success;
         private String errorMessage;
         private int permissionsMigrated;
         private int rolesMigrated;
         private int usersProcessed;
-        private final Map<String, String> mappedPermissions = new LinkedHashMap<>();
-        private final Map<String, Integer> mappedRoles = new LinkedHashMap<>();
-        private final Map<String, List<String>> processedUsers = new LinkedHashMap<>();
 
         // Getters and setters
         public boolean isSuccess() {

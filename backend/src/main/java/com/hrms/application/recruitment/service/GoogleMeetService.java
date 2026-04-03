@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for creating Google Calendar events with Google Meet
  * video conferencing links for interview scheduling.
- *
+ * <p>
  * Uses the user's OAuth access token (obtained during SSO login with calendar scopes)
  * to create events on their behalf. No mock mode — always connects to real Google API.
  */
@@ -171,5 +172,6 @@ public class GoogleMeetService {
             String calendarEventId,
             boolean success,
             String errorMessage
-    ) {}
+    ) {
+    }
 }

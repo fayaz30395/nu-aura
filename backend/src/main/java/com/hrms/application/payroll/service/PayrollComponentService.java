@@ -52,18 +52,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class PayrollComponentService {
 
-    private final PayrollComponentRepository payrollComponentRepository;
-    private final AuditLogService auditLogService;
-
-    private final ExpressionParser spelParser = new SpelExpressionParser();
-
     /**
      * Pattern to extract component code references from SpEL formulas.
      * Matches identifiers that could be component codes (lowercase letters, digits, underscores).
      * Excludes SpEL keywords and numeric literals.
      */
     private static final Pattern COMPONENT_REF_PATTERN = Pattern.compile("\\b([a-z][a-z0-9_]*)\\b");
-
     /**
      * SpEL keywords and built-in identifiers that should NOT be treated as component references.
      */
@@ -73,6 +67,9 @@ public class PayrollComponentService {
             "div", "mod", "instanceof", "matches",
             "new", "T", "abs", "min", "max", "round", "ceil", "floor"
     );
+    private final PayrollComponentRepository payrollComponentRepository;
+    private final AuditLogService auditLogService;
+    private final ExpressionParser spelParser = new SpelExpressionParser();
 
     // ===== CRUD Operations =====
 
@@ -214,7 +211,7 @@ public class PayrollComponentService {
         if (!dependents.isEmpty()) {
             throw new BusinessException(
                     "Cannot delete component '" + component.getCode() +
-                    "' because it is referenced by: " + String.join(", ", dependents));
+                            "' because it is referenced by: " + String.join(", ", dependents));
         }
 
         auditLogService.logAction(
@@ -410,7 +407,7 @@ public class PayrollComponentService {
 
             throw new BusinessException(
                     "Circular dependency detected in salary components: " + cyclePath +
-                    ". Please review the formulas for components: " + involvedComponents);
+                            ". Please review the formulas for components: " + involvedComponents);
         }
 
         // Return components in topological order
@@ -567,8 +564,8 @@ public class PayrollComponentService {
         if (!unknownRefs.isEmpty()) {
             throw new BusinessException(
                     "Formula for component '" + component.getCode() +
-                    "' references unknown components: " + unknownRefs +
-                    ". Available components: " + existingCodes);
+                            "' references unknown components: " + unknownRefs +
+                            ". Available components: " + existingCodes);
         }
     }
 

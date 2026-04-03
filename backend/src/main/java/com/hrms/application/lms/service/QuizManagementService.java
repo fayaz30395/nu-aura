@@ -181,7 +181,7 @@ public class QuizManagementService {
     public Quiz getQuizWithQuestions(UUID quizId, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
-        
+
         List<QuizQuestion> questions = questionRepository.findByQuizIdAndTenantIdOrderByOrderIndexAsc(quizId, tenantId);
         quiz.setQuestions(questions);
         return quiz;
@@ -215,11 +215,11 @@ public class QuizManagementService {
             QuizQuestion question = questionRepository.findByIdAndTenantId(questionIds.get(orderIndex), tenantId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                             "Question not found: " + questionIds.get(orderIndex)));
-            
+
             if (!question.getQuizId().equals(quizId)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Question does not belong to this quiz");
             }
-            
+
             question.setOrderIndex(orderIndex + 1);
             questionRepository.save(question);
         }

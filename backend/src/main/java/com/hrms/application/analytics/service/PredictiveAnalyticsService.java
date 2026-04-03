@@ -270,7 +270,7 @@ public class PredictiveAnalyticsService {
 
     @Transactional
     public AnalyticsInsightDto createInsight(String title, String description, String category,
-                                              String severity, String recommendation) {
+                                             String severity, String recommendation) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         AnalyticsInsight insight = AnalyticsInsight.builder()

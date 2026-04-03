@@ -19,7 +19,7 @@ import java.util.UUID;
 
 /**
  * Service for managing feature flags.
- *
+ * <p>
  * Playbook Reference: Prompt 34 - Feature flags (tenant-level)
  */
 @Slf4j

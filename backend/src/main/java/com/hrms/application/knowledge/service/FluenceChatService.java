@@ -36,13 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FluenceChatService {
 
-    private final FluenceContentRetriever contentRetriever;
-    private final LlmStreamingService llmStreamingService;
-    private final ChatbotConversationRepository conversationRepository;
-    private final ObjectMapper objectMapper;
-
     private static final long SSE_TIMEOUT = 120_000L; // 2 minutes
-
     private static final String SYSTEM_PROMPT = """
             You are NU-Fluence AI — think of yourself as a helpful coworker who knows the company knowledge base really well.
 
@@ -72,6 +66,10 @@ public class FluenceChatService {
             - Keep most responses to 1-4 sentences. Only go longer if the question genuinely needs it.
             - You're not a search engine — you're a colleague who happens to have read all the docs.
             """;
+    private final FluenceContentRetriever contentRetriever;
+    private final LlmStreamingService llmStreamingService;
+    private final ChatbotConversationRepository conversationRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Handle a chat message: retrieve context, stream LLM response, send sources.
@@ -170,7 +168,9 @@ public class FluenceChatService {
         }
     }
 
-    /** Safely complete the SSE emitter, ignoring errors if already completed/timed out */
+    /**
+     * Safely complete the SSE emitter, ignoring errors if already completed/timed out
+     */
     private void safeComplete(SseEmitter emitter) {
         try {
             emitter.complete();
@@ -193,8 +193,8 @@ public class FluenceChatService {
         String contextBlock = chunks.isEmpty()
                 ? "No relevant content was found in the knowledge base."
                 : chunks.stream()
-                        .map(FluenceContentRetriever.ContentChunk::toPromptBlock)
-                        .collect(Collectors.joining("\n---\n"));
+                  .map(FluenceContentRetriever.ContentChunk::toPromptBlock)
+                  .collect(Collectors.joining("\n---\n"));
 
         String systemMessage = SYSTEM_PROMPT + "\n\n## Knowledge Base Context:\n\n" + contextBlock;
         messages.add(Map.of("role", "system", "content", systemMessage));
@@ -214,8 +214,8 @@ public class FluenceChatService {
         boolean lastHistoryIsCurrentMessage = request.getHistory() != null
                 && !request.getHistory().isEmpty()
                 && request.getMessage().equals(
-                        request.getHistory().get(request.getHistory().size() - 1).getContent()
-                );
+                request.getHistory().get(request.getHistory().size() - 1).getContent()
+        );
 
         if (!lastHistoryIsCurrentMessage) {
             messages.add(Map.of("role", "user", "content", request.getMessage()));

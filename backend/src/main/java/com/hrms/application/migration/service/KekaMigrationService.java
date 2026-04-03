@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
@@ -47,18 +48,6 @@ import java.util.UUID;
 @Slf4j
 public class KekaMigrationService {
 
-    @Value("${app.migration.default-password:Welcome@123}")
-    private String defaultMigrationPassword;
-
-    private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository departmentRepository;
-    private final UserRepository userRepository;
-    private final AttendanceRecordRepository attendanceRepository;
-    private final LeaveTypeRepository leaveTypeRepository;
-    private final LeaveBalanceRepository leaveBalanceRepository;
-    private final SalaryStructureRepository salaryStructureRepository;
-    private final PasswordEncoder passwordEncoder;
-
     private static final DateTimeFormatter[] DATE_FORMATTERS = {
             DateTimeFormatter.ofPattern("yyyy-MM-dd"),
             DateTimeFormatter.ofPattern("dd/MM/yyyy"),
@@ -67,6 +56,16 @@ public class KekaMigrationService {
             DateTimeFormatter.ofPattern("dd-MMM-yyyy"),
             DateTimeFormatter.ISO_LOCAL_DATE
     };
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final UserRepository userRepository;
+    private final AttendanceRecordRepository attendanceRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
+    private final SalaryStructureRepository salaryStructureRepository;
+    private final PasswordEncoder passwordEncoder;
+    @Value("${app.migration.default-password:Welcome@123}")
+    private String defaultMigrationPassword;
 
     // ==================== Import Employees ====================
 
@@ -102,7 +101,7 @@ public class KekaMigrationService {
     }
 
     private void importEmployeeRow(Map<String, String> row, int rowNum, UUID tenantId,
-            Map<String, UUID> departmentCache, ImportResult result) {
+                                   Map<String, UUID> departmentCache, ImportResult result) {
         String employeeCode = getOrError(row, "employee_code", "Employee Code", rowNum, result);
         String email = getOrError(row, "email", "Email", rowNum, result);
         String firstName = getOrError(row, "first_name", "First Name", rowNum, result);
@@ -211,7 +210,7 @@ public class KekaMigrationService {
     }
 
     private void importAttendanceRow(Map<String, String> row, int rowNum, UUID tenantId,
-            Map<String, UUID> employeeCache, ImportResult result) {
+                                     Map<String, UUID> employeeCache, ImportResult result) {
         String employeeCode = getOrError(row, "employee_code", "Employee Code", rowNum, result);
         String dateStr = getOrError(row, "date", "Date", rowNum, result);
 
@@ -290,8 +289,8 @@ public class KekaMigrationService {
     }
 
     private void importLeaveBalanceRow(Map<String, String> row, int rowNum, UUID tenantId,
-            Map<String, UUID> employeeCache, Map<String, UUID> leaveTypeCache,
-            ImportResult result) {
+                                       Map<String, UUID> employeeCache, Map<String, UUID> leaveTypeCache,
+                                       ImportResult result) {
         String employeeCode = getOrError(row, "employee_code", "Employee Code", rowNum, result);
         String leaveTypeName = getOrError(row, "leave_type", "Leave Type", rowNum, result);
 
@@ -363,7 +362,7 @@ public class KekaMigrationService {
     }
 
     private void importSalaryRow(Map<String, String> row, int rowNum, UUID tenantId,
-            Map<String, UUID> employeeCache, ImportResult result) {
+                                 Map<String, UUID> employeeCache, ImportResult result) {
         String employeeCode = getOrError(row, "employee_code", "Employee Code", rowNum, result);
         String basicStr = getOrError(row, "basic_salary", "Basic Salary", rowNum, result);
 
@@ -594,7 +593,7 @@ public class KekaMigrationService {
     }
 
     private String getOrError(Map<String, String> row, String key, String displayName, int rowNum,
-            ImportResult result) {
+                              ImportResult result) {
         String value = row.get(key);
         if (value == null || value.isBlank()) {
             result.addError(rowNum, key, "", displayName + " is required");

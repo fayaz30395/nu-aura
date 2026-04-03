@@ -34,11 +34,12 @@ import java.util.Set;
 @Slf4j
 public class OrphanFileCleanupScheduler {
 
+    /**
+     * Minimum age in hours before a file is considered potentially orphaned.
+     */
+    private static final int ORPHAN_AGE_THRESHOLD_HOURS = 48;
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
-
-    /** Minimum age in hours before a file is considered potentially orphaned. */
-    private static final int ORPHAN_AGE_THRESHOLD_HOURS = 48;
 
     /**
      * Weekly orphan file detection job.

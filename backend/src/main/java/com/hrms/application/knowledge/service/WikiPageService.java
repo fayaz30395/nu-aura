@@ -61,8 +61,8 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         // Store old version before update
         createPageVersion(page, pageData.getExcerpt(), tenantId, SecurityContext.getCurrentUserId());
@@ -90,8 +90,8 @@ public class WikiPageService {
     public WikiPage getPageById(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         // Track view
         page.setViewCount(page.getViewCount() + 1);
@@ -106,7 +106,7 @@ public class WikiPageService {
     public WikiPage getPageBySlug(UUID spaceId, String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WikiPage page = wikiPageRepository.findByTenantIdAndSpaceIdAndSlug(tenantId, spaceId, slug)
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         // Track view
         page.setViewCount(page.getViewCount() + 1);
@@ -146,8 +146,8 @@ public class WikiPageService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setStatus(WikiPage.PageStatus.PUBLISHED);
         page.setPublishedAt(LocalDateTime.now());
@@ -169,8 +169,8 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setStatus(WikiPage.PageStatus.ARCHIVED);
         WikiPage updated = wikiPageRepository.save(page);
@@ -183,8 +183,8 @@ public class WikiPageService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         page.setIsPinned(!page.getIsPinned());
         if (page.getIsPinned()) {
@@ -205,8 +205,8 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         WikiPage page = wikiPageRepository.findById(pageId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
         wikiPageRepository.delete(page);
         log.info("Deleted wiki page: {}", pageId);
@@ -223,7 +223,7 @@ public class WikiPageService {
     public WikiPageVersion getPageVersion(UUID pageId, Integer versionNumber) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiPageVersionRepository.findByTenantIdAndPageIdAndVersionNumber(tenantId, pageId, versionNumber)
-            .orElseThrow(() -> new IllegalArgumentException("Version not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Version not found"));
     }
 
     private void publishFluenceEvent(UUID pageId, UUID tenantId, String action) {

@@ -21,16 +21,16 @@ import java.util.UUID;
 @Slf4j
 public class TimeEntryValidator {
 
-    private final ProjectTimeEntryRepository timeEntryRepository;
-
     private static final BigDecimal MAX_HOURS_PER_DAY = new BigDecimal("24.00");
     private static final BigDecimal MIN_HOURS = new BigDecimal("0.01");
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
+    private final ProjectTimeEntryRepository timeEntryRepository;
 
     /**
      * Validates a time entry request
-     * @param request Time entry to validate
-     * @param tenantId Tenant ID
+     *
+     * @param request         Time entry to validate
+     * @param tenantId        Tenant ID
      * @param existingEntryId ID of existing entry (null for new entries)
      * @return List of validation errors (empty if valid)
      */
@@ -160,9 +160,10 @@ public class TimeEntryValidator {
 
     /**
      * Calculates overtime hours for a given time entry
+     *
      * @param employeeId Employee ID
-     * @param workDate Work date
-     * @param tenantId Tenant ID
+     * @param workDate   Work date
+     * @param tenantId   Tenant ID
      * @return Overtime hours (0 if no overtime)
      */
     public BigDecimal calculateOvertimeHours(UUID employeeId, LocalDate workDate, UUID tenantId) {
@@ -192,7 +193,7 @@ public class TimeEntryValidator {
      */
     public boolean canModifyEntry(TimeEntry entry) {
         return entry.getStatus() == TimeEntry.TimeEntryStatus.DRAFT ||
-               entry.getStatus() == TimeEntry.TimeEntryStatus.REJECTED;
+                entry.getStatus() == TimeEntry.TimeEntryStatus.REJECTED;
     }
 
     /**
@@ -229,11 +230,28 @@ public class TimeEntryValidator {
             this.billingRate = billingRate;
         }
 
-        public UUID getEmployeeId() { return employeeId; }
-        public UUID getProjectId() { return projectId; }
-        public LocalDate getWorkDate() { return workDate; }
-        public BigDecimal getHoursWorked() { return hoursWorked; }
-        public Boolean getIsBillable() { return isBillable; }
-        public BigDecimal getBillingRate() { return billingRate; }
+        public UUID getEmployeeId() {
+            return employeeId;
+        }
+
+        public UUID getProjectId() {
+            return projectId;
+        }
+
+        public LocalDate getWorkDate() {
+            return workDate;
+        }
+
+        public BigDecimal getHoursWorked() {
+            return hoursWorked;
+        }
+
+        public Boolean getIsBillable() {
+            return isBillable;
+        }
+
+        public BigDecimal getBillingRate() {
+            return billingRate;
+        }
     }
 }

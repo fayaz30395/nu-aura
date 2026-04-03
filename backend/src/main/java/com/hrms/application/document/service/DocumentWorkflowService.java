@@ -45,15 +45,15 @@ public class DocumentWorkflowService {
         }
 
         DocumentApprovalWorkflow workflow = DocumentApprovalWorkflow.builder()
-            .tenantId(tenantId)
-            .documentId(documentId)
-            .status(DocumentApprovalWorkflow.WorkflowStatus.PENDING)
-            .requestedBy(userId)
-            .approvalLevel(1)
-            .totalApprovalLevels(totalApprovalLevels)
-            .initiatedAt(LocalDateTime.now())
-            .createdBy(userId)
-            .build();
+                .tenantId(tenantId)
+                .documentId(documentId)
+                .status(DocumentApprovalWorkflow.WorkflowStatus.PENDING)
+                .requestedBy(userId)
+                .approvalLevel(1)
+                .totalApprovalLevels(totalApprovalLevels)
+                .initiatedAt(LocalDateTime.now())
+                .createdBy(userId)
+                .build();
 
         DocumentApprovalWorkflow savedWorkflow = approvalWorkflowRepository.save(workflow);
         log.info("Approval workflow initiated for document: {} with {} approval levels", documentId, totalApprovalLevels);
@@ -70,20 +70,20 @@ public class DocumentWorkflowService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-            .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
 
         if (!workflow.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to workflow");
         }
 
         DocumentApprovalTask task = DocumentApprovalTask.builder()
-            .tenantId(tenantId)
-            .workflowId(workflowId)
-            .approverId(approverId)
-            .status(DocumentApprovalTask.TaskStatus.PENDING)
-            .approvalLevel(approvalLevel)
-            .createdBy(userId)
-            .build();
+                .tenantId(tenantId)
+                .workflowId(workflowId)
+                .approverId(approverId)
+                .status(DocumentApprovalTask.TaskStatus.PENDING)
+                .approvalLevel(approvalLevel)
+                .createdBy(userId)
+                .build();
 
         DocumentApprovalTask savedTask = approvalTaskRepository.save(task);
         log.info("Approval task created: {} for approver: {}", savedTask.getId(), approverId);
@@ -100,7 +100,7 @@ public class DocumentWorkflowService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-            .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
 
         if (!workflow.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to workflow");
@@ -108,8 +108,8 @@ public class DocumentWorkflowService {
 
         // Find current approval task
         DocumentApprovalTask currentTask = approvalTaskRepository.findByWorkflowIdAndApprovalLevel(
-                workflowId, workflow.getApprovalLevel())
-            .orElseThrow(() -> new BusinessException("Current approval task not found"));
+                        workflowId, workflow.getApprovalLevel())
+                .orElseThrow(() -> new BusinessException("Current approval task not found"));
 
         // Verify current user is the approver
         if (!currentTask.getApproverId().equals(userId)) {
@@ -145,7 +145,7 @@ public class DocumentWorkflowService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-            .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
 
         if (!workflow.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access to workflow");
@@ -153,8 +153,8 @@ public class DocumentWorkflowService {
 
         // Find current approval task
         DocumentApprovalTask currentTask = approvalTaskRepository.findByWorkflowIdAndApprovalLevel(
-                workflowId, workflow.getApprovalLevel())
-            .orElseThrow(() -> new BusinessException("Current approval task not found"));
+                        workflowId, workflow.getApprovalLevel())
+                .orElseThrow(() -> new BusinessException("Current approval task not found"));
 
         // Verify current user is the approver
         if (!currentTask.getApproverId().equals(userId)) {
@@ -189,17 +189,17 @@ public class DocumentWorkflowService {
         }
 
         DocumentAccess access = DocumentAccess.builder()
-            .tenantId(tenantId)
-            .documentId(documentId)
-            .userId(userId)
-            .roleId(roleId)
-            .departmentId(departmentId)
-            .accessLevel(accessLevel)
-            .grantedBy(grantedBy)
-            .grantedAt(LocalDateTime.now())
-            .isActive(true)
-            .createdBy(grantedBy)
-            .build();
+                .tenantId(tenantId)
+                .documentId(documentId)
+                .userId(userId)
+                .roleId(roleId)
+                .departmentId(departmentId)
+                .accessLevel(accessLevel)
+                .grantedBy(grantedBy)
+                .grantedAt(LocalDateTime.now())
+                .isActive(true)
+                .createdBy(grantedBy)
+                .build();
 
         DocumentAccess savedAccess = documentAccessRepository.save(access);
         log.info("Document access granted: document={}, accessLevel={}", documentId, accessLevel);
@@ -215,7 +215,7 @@ public class DocumentWorkflowService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         DocumentAccess access = documentAccessRepository.findById(accessId)
-            .orElseThrow(() -> new ResourceNotFoundException("Access record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Access record not found"));
 
         if (!access.getTenantId().equals(tenantId)) {
             throw new BusinessException("Unauthorized access");
@@ -238,11 +238,11 @@ public class DocumentWorkflowService {
         }
 
         DocumentExpiryTracking tracking = expiryTrackingRepository.findByTenantIdAndDocumentId(tenantId, documentId)
-            .orElse(DocumentExpiryTracking.builder()
-                .tenantId(tenantId)
-                .documentId(documentId)
-                .createdBy(userId)
-                .build());
+                .orElse(DocumentExpiryTracking.builder()
+                        .tenantId(tenantId)
+                        .documentId(documentId)
+                        .createdBy(userId)
+                        .build());
 
         tracking.setExpiryDate(expiryDate);
         tracking.setReminderDaysBefore(reminderDaysBefore != null ? reminderDaysBefore : 30);
@@ -278,7 +278,7 @@ public class DocumentWorkflowService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
         DocumentExpiryTracking tracking = expiryTrackingRepository.findById(expiryTrackingId)
-            .orElseThrow(() -> new ResourceNotFoundException("Expiry tracking not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Expiry tracking not found"));
 
         // Tenant isolation check to prevent cross-tenant reminder manipulation
         if (!tracking.getTenantId().equals(tenantId)) {
@@ -308,7 +308,7 @@ public class DocumentWorkflowService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         return approvalWorkflowRepository.findByTenantIdAndCurrentApproverIdAndStatus(
-            tenantId, userId, DocumentApprovalWorkflow.WorkflowStatus.IN_PROGRESS, pageable);
+                tenantId, userId, DocumentApprovalWorkflow.WorkflowStatus.IN_PROGRESS, pageable);
     }
 
     /**
@@ -324,13 +324,13 @@ public class DocumentWorkflowService {
      */
     public boolean hasAccessToDocument(UUID documentId, UUID userId, DocumentAccess.AccessLevel requiredLevel) {
         List<DocumentAccess> accesses = documentAccessRepository.findByTenantIdAndDocumentId(
-            SecurityContext.getCurrentTenantId(), documentId);
+                SecurityContext.getCurrentTenantId(), documentId);
 
         return accesses.stream()
-            .filter(access -> userId.equals(access.getUserId()))
-            .filter(access -> Boolean.TRUE.equals(access.getIsActive()))
-            .filter(access -> !access.isExpired())
-            .anyMatch(access -> hasRequiredAccessLevel(access.getAccessLevel(), requiredLevel));
+                .filter(access -> userId.equals(access.getUserId()))
+                .filter(access -> Boolean.TRUE.equals(access.getIsActive()))
+                .filter(access -> !access.isExpired())
+                .anyMatch(access -> hasRequiredAccessLevel(access.getAccessLevel(), requiredLevel));
     }
 
     /**

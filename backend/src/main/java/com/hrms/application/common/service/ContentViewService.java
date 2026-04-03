@@ -203,7 +203,9 @@ public class ContentViewService {
             java.time.LocalDateTime lastViewedAt,
             int viewCount,
             String viewSource
-    ) {}
+    ) {
+    }
 
-    public record ViewStats(long uniqueViewers, long totalViews) {}
+    public record ViewStats(long uniqueViewers, long totalViews) {
+    }
 }

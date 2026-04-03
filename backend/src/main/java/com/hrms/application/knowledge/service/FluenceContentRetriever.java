@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * Retrieves relevant NU-Fluence content chunks for the RAG pipeline.
- *
+ * <p>
  * Strategy: BROAD retrieval (high recall) — the LLM handles precision.
  * Extracts keywords from the user query and searches each keyword independently
  * using ILIKE-based queries across title, excerpt, and content fields.
@@ -40,16 +40,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FluenceContentRetriever {
 
-    private final WikiPageRepository wikiPageRepository;
-    private final BlogPostRepository blogPostRepository;
-    private final DocumentTemplateRepository documentTemplateRepository;
-    private final ObjectMapper objectMapper;
-
     private static final int MAX_CHUNKS = 8; // More context for RAG — LLM filters
     private static final int MAX_CONTENT_LENGTH = 2000; // chars per chunk
     private static final int RESULTS_PER_KEYWORD = 3;
-
-    /** Common stop words to strip from queries for better keyword extraction */
+    /**
+     * Common stop words to strip from queries for better keyword extraction
+     */
     private static final Set<String> STOP_WORDS = Set.of(
             "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
             "have", "has", "had", "do", "does", "did", "will", "would", "could",
@@ -66,6 +62,10 @@ public class FluenceContentRetriever {
             "who", "whom", "this", "that", "these", "those", "am", "tell", "know",
             "show", "give", "find", "get", "want", "like", "think", "say", "said"
     );
+    private final WikiPageRepository wikiPageRepository;
+    private final BlogPostRepository blogPostRepository;
+    private final DocumentTemplateRepository documentTemplateRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Retrieve the most relevant content chunks for a given natural language query.
@@ -187,10 +187,10 @@ public class FluenceContentRetriever {
 
     /**
      * Extract plain text from TipTap JSON content.
-     *
+     * <p>
      * TipTap stores content as a JSON AST like:
      * {"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]}
-     *
+     * <p>
      * This method recursively walks the JSON tree and extracts all "text" values
      * from text nodes, producing clean readable text for the LLM prompt.
      */
@@ -212,7 +212,9 @@ public class FluenceContentRetriever {
         }
     }
 
-    /** Recursively walk TipTap JSON and collect text node values */
+    /**
+     * Recursively walk TipTap JSON and collect text node values
+     */
     private void extractTextNodes(JsonNode node, StringBuilder sb) {
         if (node == null) return;
 
@@ -261,7 +263,9 @@ public class FluenceContentRetriever {
         @Builder.Default
         private int relevanceScore = 0;
 
-        /** Format this chunk for inclusion in the LLM prompt */
+        /**
+         * Format this chunk for inclusion in the LLM prompt
+         */
         public String toPromptBlock() {
             return String.format(
                     "Document: \"%s\" (Type: %s)\nURL: %s\nContent: %s\n",

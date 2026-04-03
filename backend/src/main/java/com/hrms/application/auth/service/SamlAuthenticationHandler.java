@@ -73,17 +73,6 @@ public class SamlAuthenticationHandler {
     }
 
     /**
-     * DTO for SAML-extracted user attributes.
-     */
-    public record SamlUserAttributes(
-            String email,
-            String firstName,
-            String lastName,
-            String employeeId,
-            String department
-    ) {}
-
-    /**
      * Map SAML assertion attributes to user fields using the tenant's attribute mapping.
      *
      * @param attributes  raw SAML attributes from the assertion (attribute name -> first value)
@@ -161,7 +150,7 @@ public class SamlAuthenticationHandler {
         if (!Boolean.TRUE.equals(idp.getAutoProvisionUsers())) {
             throw new com.hrms.common.exception.AuthenticationException(
                     "User " + samlAttributes.email() + " does not exist and auto-provisioning is disabled. " +
-                    "Contact your HR administrator to create your account.");
+                            "Contact your HR administrator to create your account.");
         }
 
         // Auto-provision new user
@@ -227,8 +216,6 @@ public class SamlAuthenticationHandler {
                 employeeId, locationId, departmentId, teamId);
     }
 
-    // ==================== Private Helpers ====================
-
     /**
      * Find an attribute value by trying multiple possible attribute names.
      */
@@ -242,6 +229,8 @@ public class SamlAuthenticationHandler {
         return null;
     }
 
+    // ==================== Private Helpers ====================
+
     /**
      * Get an attribute value using the configured mapping.
      */
@@ -253,5 +242,17 @@ public class SamlAuthenticationHandler {
         }
         // Fallback: try the field name directly
         return attributes.get(field);
+    }
+
+    /**
+     * DTO for SAML-extracted user attributes.
+     */
+    public record SamlUserAttributes(
+            String email,
+            String firstName,
+            String lastName,
+            String employeeId,
+            String department
+    ) {
     }
 }

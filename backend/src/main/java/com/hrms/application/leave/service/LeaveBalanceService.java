@@ -53,32 +53,32 @@ public class LeaveBalanceService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         return leaveBalanceRepository
-            .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, year, tenantId)
-            .orElseGet(() -> {
-                // R2-007 FIX: Seed openingBalance from LeaveType.annualQuota for
-                // yearly / no-accrual types so employees start the year with their
-                // full entitlement already visible.
-                BigDecimal opening = BigDecimal.ZERO;
-                LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
-                if (leaveType != null && leaveType.getAnnualQuota() != null) {
-                    LeaveType.AccrualType accrualType = leaveType.getAccrualType();
-                    if (accrualType == null
-                            || accrualType == LeaveType.AccrualType.NONE
-                            || accrualType == LeaveType.AccrualType.YEARLY) {
-                        opening = leaveType.getAnnualQuota();
+                .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, year, tenantId)
+                .orElseGet(() -> {
+                    // R2-007 FIX: Seed openingBalance from LeaveType.annualQuota for
+                    // yearly / no-accrual types so employees start the year with their
+                    // full entitlement already visible.
+                    BigDecimal opening = BigDecimal.ZERO;
+                    LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
+                    if (leaveType != null && leaveType.getAnnualQuota() != null) {
+                        LeaveType.AccrualType accrualType = leaveType.getAccrualType();
+                        if (accrualType == null
+                                || accrualType == LeaveType.AccrualType.NONE
+                                || accrualType == LeaveType.AccrualType.YEARLY) {
+                            opening = leaveType.getAnnualQuota();
+                        }
                     }
-                }
 
-                LeaveBalance balance = LeaveBalance.builder()
-                    .employeeId(employeeId)
-                    .leaveTypeId(leaveTypeId)
-                    .year(year)
-                    .openingBalance(opening)
-                    .build();
-                balance.setTenantId(tenantId);
-                balance.calculateAvailable();
-                return leaveBalanceRepository.save(balance);
-            });
+                    LeaveBalance balance = LeaveBalance.builder()
+                            .employeeId(employeeId)
+                            .leaveTypeId(leaveTypeId)
+                            .year(year)
+                            .openingBalance(opening)
+                            .build();
+                    balance.setTenantId(tenantId);
+                    balance.calculateAvailable();
+                    return leaveBalanceRepository.save(balance);
+                });
     }
 
     @Transactional(readOnly = true)
@@ -134,8 +134,8 @@ public class LeaveBalanceService {
         LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, Year.now().getValue());
         if (balance.getAvailable().compareTo(days) < 0) {
             throw new IllegalArgumentException(String.format(
-                "Insufficient leave balance. Available: %.1f day(s), Requested: %.1f day(s)",
-                balance.getAvailable(), days));
+                    "Insufficient leave balance. Available: %.1f day(s), Requested: %.1f day(s)",
+                    balance.getAvailable(), days));
         }
         balance.addPending(days);
         leaveBalanceRepository.save(balance);
@@ -150,11 +150,11 @@ public class LeaveBalanceService {
     public void releasePendingLeave(UUID employeeId, UUID leaveTypeId, BigDecimal days) {
         UUID tenantId = TenantContext.getCurrentTenant();
         leaveBalanceRepository
-            .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, Year.now().getValue(), tenantId)
-            .ifPresent(balance -> {
-                balance.removePending(days);
-                leaveBalanceRepository.save(balance);
-            });
+                .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, Year.now().getValue(), tenantId)
+                .ifPresent(balance -> {
+                    balance.removePending(days);
+                    leaveBalanceRepository.save(balance);
+                });
     }
 
     /**
@@ -286,27 +286,27 @@ public class LeaveBalanceService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         return leaveBalanceRepository.findForUpdate(employeeId, leaveTypeId, year, tenantId)
-            .orElseGet(() -> {
-                BigDecimal opening = BigDecimal.ZERO;
-                LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
-                if (leaveType != null && leaveType.getAnnualQuota() != null) {
-                    LeaveType.AccrualType accrualType = leaveType.getAccrualType();
-                    if (accrualType == null
-                            || accrualType == LeaveType.AccrualType.NONE
-                            || accrualType == LeaveType.AccrualType.YEARLY) {
-                        opening = leaveType.getAnnualQuota();
+                .orElseGet(() -> {
+                    BigDecimal opening = BigDecimal.ZERO;
+                    LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
+                    if (leaveType != null && leaveType.getAnnualQuota() != null) {
+                        LeaveType.AccrualType accrualType = leaveType.getAccrualType();
+                        if (accrualType == null
+                                || accrualType == LeaveType.AccrualType.NONE
+                                || accrualType == LeaveType.AccrualType.YEARLY) {
+                            opening = leaveType.getAnnualQuota();
+                        }
                     }
-                }
 
-                LeaveBalance balance = LeaveBalance.builder()
-                    .employeeId(employeeId)
-                    .leaveTypeId(leaveTypeId)
-                    .year(year)
-                    .openingBalance(opening)
-                    .build();
-                balance.setTenantId(tenantId);
-                balance.calculateAvailable();
-                return leaveBalanceRepository.save(balance);
-            });
+                    LeaveBalance balance = LeaveBalance.builder()
+                            .employeeId(employeeId)
+                            .leaveTypeId(leaveTypeId)
+                            .year(year)
+                            .openingBalance(opening)
+                            .build();
+                    balance.setTenantId(tenantId);
+                    balance.calculateAvailable();
+                    return leaveBalanceRepository.save(balance);
+                });
     }
 }

@@ -248,7 +248,7 @@ public class LmsService {
 
     @Transactional
     public ContentProgress updateContentProgress(UUID tenantId, UUID enrollmentId, UUID contentId,
-            ProgressStatus status, int timeSpentSeconds) {
+                                                 ProgressStatus status, int timeSpentSeconds) {
         ContentProgress progress = progressRepository
                 .findByEnrollmentIdAndContentIdAndTenantId(enrollmentId, contentId, tenantId)
                 .orElseGet(() -> {

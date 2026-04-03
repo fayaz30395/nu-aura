@@ -113,7 +113,7 @@ public class PSAService {
     /**
      * Updates an existing PSA project.
      *
-     * @param id the project ID to update
+     * @param id      the project ID to update
      * @param project the updated project data
      * @return Optional containing the updated project if found
      */
@@ -123,11 +123,11 @@ public class PSAService {
         log.info("Updating PSA project {} for tenant {}", id, tenantId);
 
         return projectRepository.findByIdAndTenantId(id, tenantId)
-            .map(existing -> {
-                project.setId(id);
-                project.setTenantId(tenantId);
-                return projectRepository.save(project);
-            });
+                .map(existing -> {
+                    project.setId(id);
+                    project.setTenantId(tenantId);
+                    return projectRepository.save(project);
+                });
     }
 
     /**
@@ -151,7 +151,7 @@ public class PSAService {
     /**
      * Allocates resources to a PSA project.
      *
-     * @param id the project ID
+     * @param id         the project ID
      * @param allocation the resource allocation details
      * @return Optional containing the updated project if found
      */
@@ -160,12 +160,12 @@ public class PSAService {
         log.info("Allocating resources to PSA project {} for tenant {}", id, tenantId);
 
         return projectRepository.findByIdAndTenantId(id, tenantId)
-            .map(project -> {
-                // Resource allocation logic would go here
-                // This could include updating project assignments, budget allocations, etc.
-                log.debug("Processing resource allocation for project {}: {}", id, allocation);
-                return projectRepository.save(project);
-            });
+                .map(project -> {
+                    // Resource allocation logic would go here
+                    // This could include updating project assignments, budget allocations, etc.
+                    log.debug("Processing resource allocation for project {}: {}", id, allocation);
+                    return projectRepository.save(project);
+                });
     }
 
     // ==================== Timesheet Operations ====================
@@ -215,7 +215,7 @@ public class PSAService {
 
         // Note: Using findById here for simplicity, but in production should use tenant-scoped query
         return timesheetRepository.findById(id)
-            .filter(ts -> tenantId.equals(ts.getTenantId()));
+                .filter(ts -> tenantId.equals(ts.getTenantId()));
     }
 
     /**
@@ -230,18 +230,18 @@ public class PSAService {
         log.info("Submitting timesheet {} for tenant {}", id, tenantId);
 
         return timesheetRepository.findById(id)
-            .filter(ts -> tenantId.equals(ts.getTenantId()))
-            .map(ts -> {
-                ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
-                ts.setSubmittedAt(LocalDateTime.now());
-                return timesheetRepository.save(ts);
-            });
+                .filter(ts -> tenantId.equals(ts.getTenantId()))
+                .map(ts -> {
+                    ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
+                    ts.setSubmittedAt(LocalDateTime.now());
+                    return timesheetRepository.save(ts);
+                });
     }
 
     /**
      * Approves a submitted timesheet.
      *
-     * @param id the timesheet ID
+     * @param id         the timesheet ID
      * @param approverId the ID of the approving user
      * @return Optional containing the approved timesheet if found
      */
@@ -251,19 +251,19 @@ public class PSAService {
         log.info("Approving timesheet {} by approver {} for tenant {}", id, approverId, tenantId);
 
         return timesheetRepository.findById(id)
-            .filter(ts -> tenantId.equals(ts.getTenantId()))
-            .map(ts -> {
-                ts.setStatus(PSATimesheet.TimesheetStatus.APPROVED);
-                ts.setApprovedAt(LocalDateTime.now());
-                ts.setApprovedBy(approverId);
-                return timesheetRepository.save(ts);
-            });
+                .filter(ts -> tenantId.equals(ts.getTenantId()))
+                .map(ts -> {
+                    ts.setStatus(PSATimesheet.TimesheetStatus.APPROVED);
+                    ts.setApprovedAt(LocalDateTime.now());
+                    ts.setApprovedBy(approverId);
+                    return timesheetRepository.save(ts);
+                });
     }
 
     /**
      * Rejects a submitted timesheet.
      *
-     * @param id the timesheet ID
+     * @param id     the timesheet ID
      * @param reason the rejection reason
      * @return Optional containing the rejected timesheet if found
      */
@@ -273,19 +273,19 @@ public class PSAService {
         log.info("Rejecting timesheet {} with reason for tenant {}", id, tenantId);
 
         return timesheetRepository.findById(id)
-            .filter(ts -> tenantId.equals(ts.getTenantId()))
-            .map(ts -> {
-                ts.setStatus(PSATimesheet.TimesheetStatus.REJECTED);
-                ts.setRejectionReason(reason);
-                return timesheetRepository.save(ts);
-            });
+                .filter(ts -> tenantId.equals(ts.getTenantId()))
+                .map(ts -> {
+                    ts.setStatus(PSATimesheet.TimesheetStatus.REJECTED);
+                    ts.setRejectionReason(reason);
+                    return timesheetRepository.save(ts);
+                });
     }
 
     /**
      * Adds a time entry to a timesheet.
      *
      * @param timesheetId the timesheet ID
-     * @param entry the time entry to add
+     * @param entry       the time entry to add
      * @return the created time entry with generated ID and tenant ID set
      */
     @Transactional
@@ -388,13 +388,13 @@ public class PSAService {
 
         // Note: Using findById here for simplicity, but filtering by tenant
         return invoiceRepository.findById(id)
-            .filter(inv -> tenantId.equals(inv.getTenantId()));
+                .filter(inv -> tenantId.equals(inv.getTenantId()));
     }
 
     /**
      * Updates an existing invoice.
      *
-     * @param id the invoice ID to update
+     * @param id      the invoice ID to update
      * @param invoice the updated invoice data
      * @return Optional containing the updated invoice if found
      */
@@ -404,12 +404,12 @@ public class PSAService {
         log.info("Updating invoice {} for tenant {}", id, tenantId);
 
         return invoiceRepository.findById(id)
-            .filter(existing -> tenantId.equals(existing.getTenantId()))
-            .map(existing -> {
-                invoice.setId(id);
-                invoice.setTenantId(existing.getTenantId());
-                return invoiceRepository.save(invoice);
-            });
+                .filter(existing -> tenantId.equals(existing.getTenantId()))
+                .map(existing -> {
+                    invoice.setId(id);
+                    invoice.setTenantId(existing.getTenantId());
+                    return invoiceRepository.save(invoice);
+                });
     }
 
     /**
@@ -424,10 +424,10 @@ public class PSAService {
         log.info("Approving invoice {} for tenant {}", id, tenantId);
 
         return invoiceRepository.findById(id)
-            .filter(inv -> tenantId.equals(inv.getTenantId()))
-            .map(inv -> {
-                inv.setStatus(PSAInvoice.InvoiceStatus.SENT);
-                return invoiceRepository.save(inv);
-            });
+                .filter(inv -> tenantId.equals(inv.getTenantId()))
+                .map(inv -> {
+                    inv.setStatus(PSAInvoice.InvoiceStatus.SENT);
+                    return invoiceRepository.save(inv);
+                });
     }
 }

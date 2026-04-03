@@ -120,7 +120,7 @@ public class CourseEnrollmentService {
                 enrollmentRepository.findAllByCourseIdAndTenantId(courseId, tenantId, PageRequest.of(0, MAX_ENROLLMENT_ROWS));
         if (enrollments.getTotalElements() > MAX_ENROLLMENT_ROWS) {
             log.warn("[CourseEnrollmentService] Completion stats truncated at {} rows for course {} tenant {}",
-                MAX_ENROLLMENT_ROWS, courseId, tenantId);
+                    MAX_ENROLLMENT_ROWS, courseId, tenantId);
         }
 
         double avgProgress = enrollments.getContent().stream()

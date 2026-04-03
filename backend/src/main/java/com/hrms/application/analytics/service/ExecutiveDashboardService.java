@@ -186,7 +186,7 @@ public class ExecutiveDashboardService {
 
         // Projected Annual
         BigDecimal projectedAnnual = month > 0 ? ytdPayroll.divide(BigDecimal.valueOf(month), 2, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(12)) : BigDecimal.ZERO;
+                                                 .multiply(BigDecimal.valueOf(12)) : BigDecimal.ZERO;
 
         // Cost per Employee
         Long headcount = employeeRepository.countByTenantIdAndStatus(tenantId, Employee.EmployeeStatus.ACTIVE);
@@ -232,8 +232,8 @@ public class ExecutiveDashboardService {
                     Long count = ((Number) row[1]).longValue();
                     BigDecimal percentOfTotal = totalCost.compareTo(BigDecimal.ZERO) > 0 ?
                             BigDecimal.valueOf(count).divide(BigDecimal.valueOf(deptCounts.stream()
-                                    .mapToLong(r -> ((Number) r[1]).longValue()).sum()), 4, RoundingMode.HALF_UP)
-                                    .multiply(BigDecimal.valueOf(100)) : BigDecimal.ZERO;
+                                                                                .mapToLong(r -> ((Number) r[1]).longValue()).sum()), 4, RoundingMode.HALF_UP)
+                            .multiply(BigDecimal.valueOf(100)) : BigDecimal.ZERO;
                     BigDecimal deptCost = totalCost.multiply(percentOfTotal).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
                     return DepartmentCost.builder()
@@ -386,16 +386,16 @@ public class ExecutiveDashboardService {
 
         // PERFORMANCE FIX (HIGH-2): Batch queries — 3 queries total instead of 48 (4 per month × 12).
         YearMonth startYM = YearMonth.now().minusMonths(11);
-        YearMonth endYM   = YearMonth.now();
+        YearMonth endYM = YearMonth.now();
         LocalDate rangeStart = startYM.atDay(1);
-        LocalDate rangeEnd   = endYM.atEndOfMonth();
+        LocalDate rangeEnd = endYM.atEndOfMonth();
 
         // 1. Single query: payroll totals for the 12-month window
         Map<String, BigDecimal> payrollByYearMonth = new HashMap<>();
         List<Object[]> payrollRows = payslipRepository.sumNetSalaryByTenantIdAndYearMonthRange(
                 tenantId,
                 startYM.getYear(), startYM.getMonthValue(),
-                endYM.getYear(),   endYM.getMonthValue());
+                endYM.getYear(), endYM.getMonthValue());
         for (Object[] row : payrollRows) {
             String key = row[0] + "-" + row[1]; // "year-month"
             payrollByYearMonth.put(key, (BigDecimal) row[2]);
@@ -448,7 +448,7 @@ public class ExecutiveDashboardService {
                     .build());
 
             // Hiring vs Attrition
-            long hires        = hiresByYearMonth.getOrDefault(key, 0L);
+            long hires = hiresByYearMonth.getOrDefault(key, 0L);
             long terminations = terminationsByYearMonth.getOrDefault(key, 0L);
             hiringVsAttrition.add(HiringAttritionPoint.builder()
                     .period(period)

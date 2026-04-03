@@ -53,8 +53,8 @@ public class BlogPostService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         post.setTitle(postData.getTitle());
         post.setSlug(postData.getSlug());
@@ -83,8 +83,8 @@ public class BlogPostService {
     public BlogPost getPostById(UUID postId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         // Track view
         post.setViewCount(post.getViewCount() + 1);
@@ -99,7 +99,7 @@ public class BlogPostService {
     public BlogPost getPostBySlug(String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BlogPost post = blogPostRepository.findByTenantIdAndSlug(tenantId, slug)
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         // Track view
         post.setViewCount(post.getViewCount() + 1);
@@ -145,8 +145,8 @@ public class BlogPostService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         post.setStatus(BlogPost.BlogPostStatus.PUBLISHED);
         post.setPublishedAt(LocalDateTime.now());
@@ -163,8 +163,8 @@ public class BlogPostService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         post.setStatus(BlogPost.BlogPostStatus.SCHEDULED);
         post.setScheduledFor(scheduledFor);
@@ -178,8 +178,8 @@ public class BlogPostService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         post.setStatus(BlogPost.BlogPostStatus.ARCHIVED);
         BlogPost updated = blogPostRepository.save(post);
@@ -192,8 +192,8 @@ public class BlogPostService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogPost post = blogPostRepository.findById(postId)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
 
         blogPostRepository.delete(post);
         log.info("Deleted blog post: {}", postId);

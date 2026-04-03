@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -30,8 +31,8 @@ public class ExcelExportService {
             // Create header row
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Employee Code", "Full Name", "Email", "Phone", "Department",
-                               "Designation", "Job Role", "Level", "Employment Type",
-                               "Joining Date", "Status", "Work Location", "Reporting Manager"};
+                    "Designation", "Job Role", "Level", "Employment Type",
+                    "Joining Date", "Status", "Work Location", "Reporting Manager"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -85,7 +86,7 @@ public class ExcelExportService {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Employee Code", "Employee Name", "Department", "Date", "Status",
-                               "Check In", "Check Out", "Hours Worked", "Shift", "Remarks"};
+                    "Check In", "Check Out", "Hours Worked", "Shift", "Remarks"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -109,11 +110,11 @@ public class ExcelExportService {
 
                 dataRow.createCell(4).setCellValue(row.getStatus());
                 dataRow.createCell(5).setCellValue(row.getCheckInTime() != null ?
-                    row.getCheckInTime().format(TIME_FORMATTER) : "");
+                        row.getCheckInTime().format(TIME_FORMATTER) : "");
                 dataRow.createCell(6).setCellValue(row.getCheckOutTime() != null ?
-                    row.getCheckOutTime().format(TIME_FORMATTER) : "");
+                        row.getCheckOutTime().format(TIME_FORMATTER) : "");
                 dataRow.createCell(7).setCellValue(row.getHoursWorked() != null ?
-                    row.getHoursWorked() : 0.0);
+                        row.getHoursWorked() : 0.0);
                 dataRow.createCell(8).setCellValue(row.getShift());
                 dataRow.createCell(9).setCellValue(row.getRemarks());
             }
@@ -137,8 +138,8 @@ public class ExcelExportService {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Employee Code", "Employee Name", "Department", "Leave Type",
-                               "Start Date", "End Date", "Days", "Status", "Reason",
-                               "Approved By", "Approved On"};
+                    "Start Date", "End Date", "Days", "Status", "Reason",
+                    "Approved By", "Approved On"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -199,8 +200,8 @@ public class ExcelExportService {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Employee Code", "Employee Name", "Department", "Designation",
-                               "Payroll Month", "Basic Salary", "Allowances", "Deductions",
-                               "Net Salary", "Payment Status", "Payment Date"};
+                    "Payroll Month", "Basic Salary", "Allowances", "Deductions",
+                    "Net Salary", "Payment Status", "Payment Date"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -266,8 +267,8 @@ public class ExcelExportService {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Department Code", "Department Name", "Total Employees",
-                               "Active", "Inactive", "On Leave", "New Hires", "Terminations",
-                               "Department Head"};
+                    "Active", "Inactive", "On Leave", "New Hires", "Terminations",
+                    "Department Head"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -309,8 +310,8 @@ public class ExcelExportService {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Employee Code", "Employee Name", "Department", "Designation",
-                               "Review Cycle", "Review Date", "Reviewer", "Overall Rating",
-                               "Performance Level", "Goals Completed", "Total Goals", "Comments"};
+                    "Review Cycle", "Review Date", "Reviewer", "Overall Rating",
+                    "Performance Level", "Goals Completed", "Total Goals", "Comments"};
 
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);

@@ -55,7 +55,7 @@ public class ConnectorRegistry {
                 capabilitiesCache.put(connectorId, connector.getCapabilities());
             }
             log.info("Successfully registered {} connectors: {}",
-                connectorsByIdMap.size(), connectorsByIdMap.keySet());
+                    connectorsByIdMap.size(), connectorsByIdMap.keySet());
         } else {
             log.info("No integration connectors found");
         }
@@ -154,8 +154,8 @@ public class ConnectorRegistry {
      */
     public List<IntegrationConnector> findConnectorsByEventType(String eventType) {
         return connectorsByIdMap.values().stream()
-            .filter(connector -> connector.getCapabilities().supportedEvents().contains(eventType))
-            .collect(Collectors.toUnmodifiableList());
+                .filter(connector -> connector.getCapabilities().supportedEvents().contains(eventType))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -165,8 +165,8 @@ public class ConnectorRegistry {
      */
     public List<IntegrationConnector> findConnectorsWithWebhookSupport() {
         return connectorsByIdMap.values().stream()
-            .filter(connector -> connector.getCapabilities().supportsWebhookCallback())
-            .collect(Collectors.toUnmodifiableList());
+                .filter(connector -> connector.getCapabilities().supportsWebhookCallback())
+                .collect(Collectors.toUnmodifiableList());
     }
 
     /**

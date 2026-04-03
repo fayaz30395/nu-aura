@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -38,25 +39,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class SlackNotificationService {
 
+    private static final String SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
     private final CircuitBreaker circuitBreaker;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
-
     @Value("${app.slack.webhook-url:}")
     private String defaultWebhookUrl;
-
     @Value("${app.slack.bot-token:}")
     private String botToken;
-
     @Value("${app.slack.enabled:false}")
     private boolean slackEnabled;
-
     @Value("${app.slack.default-channel:#hrms-notifications}")
     private String defaultChannel;
-
-    private static final String SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 
     public SlackNotificationService(CircuitBreakerRegistry circuitBreakerRegistry, ObjectMapper objectMapper) {
         this.circuitBreaker = circuitBreakerRegistry.forSlack();
@@ -88,7 +84,7 @@ public class SlackNotificationService {
     @Async
     @Transactional
     public void sendToWebhook(String webhookUrl, String message,
-                               List<SlackAttachment> attachments, List<SlackBlock> blocks) {
+                              List<SlackAttachment> attachments, List<SlackBlock> blocks) {
         if (!slackEnabled || webhookUrl == null || webhookUrl.isEmpty()) {
             log.debug("Slack notifications disabled or webhook not configured");
             return;
@@ -235,9 +231,9 @@ public class SlackNotificationService {
      * Notify about a new leave request submitted.
      */
     public void notifyLeaveRequestSubmitted(String employeeName, String leaveType,
-                                             LocalDate startDate, LocalDate endDate, int days) {
+                                            LocalDate startDate, LocalDate endDate, int days) {
         String message = String.format(":palm_tree: *Leave Request Submitted*\n" +
-                "*Employee:* %s\n*Type:* %s\n*Period:* %s to %s (%d days)",
+                        "*Employee:* %s\n*Type:* %s\n*Period:* %s to %s (%d days)",
                 employeeName, leaveType,
                 startDate.format(DateTimeFormatter.ISO_DATE),
                 endDate.format(DateTimeFormatter.ISO_DATE), days);
@@ -252,10 +248,10 @@ public class SlackNotificationService {
      * Notify a manager about a pending leave request for approval.
      */
     public void notifyManagerPendingLeave(String managerEmail, String employeeName,
-                                           String leaveType, LocalDate startDate,
-                                           LocalDate endDate, int days, String requestId) {
+                                          String leaveType, LocalDate startDate,
+                                          LocalDate endDate, int days, String requestId) {
         String message = String.format(":inbox_tray: *Leave Request Pending Your Approval*\n" +
-                "%s has requested %s leave from %s to %s (%d days)",
+                        "%s has requested %s leave from %s to %s (%d days)",
                 employeeName, leaveType,
                 startDate.format(DateTimeFormatter.ISO_DATE),
                 endDate.format(DateTimeFormatter.ISO_DATE), days);
@@ -276,11 +272,11 @@ public class SlackNotificationService {
      * Notify about leave request approval/rejection.
      */
     public void notifyLeaveRequestStatus(String employeeEmail, String leaveType,
-                                          LocalDate startDate, LocalDate endDate,
-                                          String status, String approverName, String comments) {
+                                         LocalDate startDate, LocalDate endDate,
+                                         String status, String approverName, String comments) {
         String emoji = "APPROVED".equalsIgnoreCase(status) ? ":white_check_mark:" : ":x:";
         String message = String.format("%s *Leave Request %s*\n" +
-                "*Type:* %s\n*Period:* %s to %s\n*By:* %s",
+                        "*Type:* %s\n*Period:* %s to %s\n*By:* %s",
                 emoji, status, leaveType,
                 startDate.format(DateTimeFormatter.ISO_DATE),
                 endDate.format(DateTimeFormatter.ISO_DATE), approverName);
@@ -322,7 +318,7 @@ public class SlackNotificationService {
      */
     public void notifyUpcomingBirthday(String employeeName, LocalDate birthday) {
         String message = String.format(":birthday: *Birthday Celebration*\n" +
-                "Please join us in wishing *%s* a very Happy Birthday today! :tada:",
+                        "Please join us in wishing *%s* a very Happy Birthday today! :tada:",
                 employeeName);
 
         sendToChannel(defaultChannel, message, null);
@@ -333,7 +329,7 @@ public class SlackNotificationService {
      */
     public void notifyWorkAnniversary(String employeeName, int years) {
         String message = String.format(":star2: *Work Anniversary*\n" +
-                "Congratulations to *%s* on completing *%d year%s* with us! :clap:",
+                        "Congratulations to *%s* on completing *%d year%s* with us! :clap:",
                 employeeName, years, years > 1 ? "s" : "");
 
         sendToChannel(defaultChannel, message, null);
@@ -344,7 +340,7 @@ public class SlackNotificationService {
      */
     public void notifyNewJoining(String employeeName, String department, String designation, LocalDate joiningDate) {
         String message = String.format(":wave: *Welcome New Team Member*\n" +
-                "Please welcome *%s* who is joining us as *%s* in the *%s* department on %s!",
+                        "Please welcome *%s* who is joining us as *%s* in the *%s* department on %s!",
                 employeeName, designation, department,
                 joiningDate.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")));
 
@@ -379,15 +375,15 @@ public class SlackNotificationService {
      * Notify about daily attendance summary.
      */
     public void notifyDailyAttendanceSummary(int totalEmployees, int present, int absent,
-                                              int onLeave, int late) {
+                                             int onLeave, int late) {
         String message = String.format(":chart_with_upwards_trend: *Daily Attendance Summary*\n" +
-                "*Date:* %s\n*Total:* %d | *Present:* %d | *Absent:* %d | *On Leave:* %d | *Late:* %d",
+                        "*Date:* %s\n*Total:* %d | *Present:* %d | *Absent:* %d | *On Leave:* %d | *Late:* %d",
                 LocalDate.now().format(DateTimeFormatter.ISO_DATE),
                 totalEmployees, present, absent, onLeave, late);
 
         double attendanceRate = totalEmployees > 0 ? (present * 100.0 / totalEmployees) : 0;
         String rateEmoji = attendanceRate >= 90 ? ":green_circle:" :
-                          (attendanceRate >= 75 ? ":large_yellow_circle:" : ":red_circle:");
+                (attendanceRate >= 75 ? ":large_yellow_circle:" : ":red_circle:");
 
         List<SlackBlock> blocks = new ArrayList<>();
         blocks.add(SlackBlock.header(":chart_with_upwards_trend: Daily Attendance Summary"));
@@ -398,10 +394,10 @@ public class SlackNotificationService {
         blocks.add(SlackBlock.divider());
         blocks.add(SlackBlock.section(String.format(
                 ":busts_in_silhouette: *Total:* %d\n" +
-                ":white_check_mark: *Present:* %d\n" +
-                ":x: *Absent:* %d\n" +
-                ":palm_tree: *On Leave:* %d\n" +
-                ":clock1: *Late:* %d",
+                        ":white_check_mark: *Present:* %d\n" +
+                        ":x: *Absent:* %d\n" +
+                        ":palm_tree: *On Leave:* %d\n" +
+                        ":clock1: *Late:* %d",
                 totalEmployees, present, absent, onLeave, late)));
 
         sendToChannel(defaultChannel, message, blocks);
@@ -410,8 +406,8 @@ public class SlackNotificationService {
     // ==================== Helper Methods ====================
 
     private List<SlackBlock> buildLeaveRequestBlocks(String employeeName, String leaveType,
-                                                      LocalDate startDate, LocalDate endDate,
-                                                      int days, String status, String statusEmoji) {
+                                                     LocalDate startDate, LocalDate endDate,
+                                                     int days, String status, String statusEmoji) {
         List<SlackBlock> blocks = new ArrayList<>();
         blocks.add(SlackBlock.header(":palm_tree: Leave Request"));
         blocks.add(SlackBlock.section(String.format(

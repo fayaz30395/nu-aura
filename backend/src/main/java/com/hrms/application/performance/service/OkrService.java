@@ -315,9 +315,9 @@ public class OkrService {
         // Average progress
         BigDecimal avgProgress = myObjectives.isEmpty() ? BigDecimal.ZERO :
                 myObjectives.stream()
-                        .map(o -> o.getProgressPercentage() != null ? o.getProgressPercentage() : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(BigDecimal.valueOf(myObjectives.size()), 2, RoundingMode.HALF_UP);
+                .map(o -> o.getProgressPercentage() != null ? o.getProgressPercentage() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(myObjectives.size()), 2, RoundingMode.HALF_UP);
 
         // Get all key results for my objectives
         List<KeyResult> allKeyResults = new ArrayList<>();
@@ -335,9 +335,9 @@ public class OkrService {
         List<Objective> companyObjectives = objectiveRepository.findByLevel(tenantId, ObjectiveLevel.COMPANY);
         BigDecimal companyProgress = companyObjectives.isEmpty() ? BigDecimal.ZERO :
                 companyObjectives.stream()
-                        .map(o -> o.getProgressPercentage() != null ? o.getProgressPercentage() : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(BigDecimal.valueOf(companyObjectives.size()), 2, RoundingMode.HALF_UP);
+                .map(o -> o.getProgressPercentage() != null ? o.getProgressPercentage() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(companyObjectives.size()), 2, RoundingMode.HALF_UP);
 
         summary.put("totalObjectives", totalObjectives);
         summary.put("activeObjectives", activeObjectives);

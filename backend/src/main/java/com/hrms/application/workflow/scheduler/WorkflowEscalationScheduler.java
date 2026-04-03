@@ -267,9 +267,9 @@ public class WorkflowEscalationScheduler {
             try {
                 UUID userId = jdbcTemplate.queryForObject(
                         "SELECT ur.user_id FROM user_roles ur " +
-                        "JOIN users u ON ur.user_id = u.id " +
-                        "WHERE ur.role_id = ? AND u.tenant_id = ? AND u.is_active = true " +
-                        "LIMIT 1",
+                                "JOIN users u ON ur.user_id = u.id " +
+                                "WHERE ur.role_id = ? AND u.tenant_id = ? AND u.is_active = true " +
+                                "LIMIT 1",
                         UUID.class,
                         approvalStepDef.getEscalateToRoleId(),
                         tenantId);
@@ -286,9 +286,9 @@ public class WorkflowEscalationScheduler {
                 // Get the approver's manager's manager
                 UUID skipLevelManager = jdbcTemplate.queryForObject(
                         "SELECT m2.user_id FROM employees e " +
-                        "JOIN employees m1 ON e.reporting_manager_id = m1.id " +
-                        "JOIN employees m2 ON m1.reporting_manager_id = m2.id " +
-                        "WHERE e.user_id = ? AND e.tenant_id = ?",
+                                "JOIN employees m1 ON e.reporting_manager_id = m1.id " +
+                                "JOIN employees m2 ON m1.reporting_manager_id = m2.id " +
+                                "WHERE e.user_id = ? AND e.tenant_id = ?",
                         UUID.class,
                         step.getAssignedToUserId(),
                         tenantId);
@@ -298,8 +298,8 @@ public class WorkflowEscalationScheduler {
                 try {
                     UUID directManager = jdbcTemplate.queryForObject(
                             "SELECT m.user_id FROM employees e " +
-                            "JOIN employees m ON e.reporting_manager_id = m.id " +
-                            "WHERE e.user_id = ? AND e.tenant_id = ?",
+                                    "JOIN employees m ON e.reporting_manager_id = m.id " +
+                                    "WHERE e.user_id = ? AND e.tenant_id = ?",
                             UUID.class,
                             step.getAssignedToUserId(),
                             tenantId);
@@ -319,7 +319,7 @@ public class WorkflowEscalationScheduler {
             String title = "Escalated Approval: " + execution.getTitle();
             String message = String.format(
                     "An approval request '%s' has been escalated to you because it was not actioned within the deadline. " +
-                    "Reference: %s. Please review and take action.",
+                            "Reference: %s. Please review and take action.",
                     execution.getTitle(),
                     execution.getReferenceNumber() != null ? execution.getReferenceNumber() : execution.getId().toString()
             );
@@ -345,7 +345,7 @@ public class WorkflowEscalationScheduler {
             String title = "Approval Escalated";
             String message = String.format(
                     "The approval request '%s' has been escalated due to missed deadline. " +
-                    "Reference: %s.",
+                            "Reference: %s.",
                     execution.getTitle(),
                     execution.getReferenceNumber() != null ? execution.getReferenceNumber() : execution.getId().toString()
             );
@@ -377,7 +377,7 @@ public class WorkflowEscalationScheduler {
             String title = String.format("Request Auto-%s", action.substring(0, 1).toUpperCase() + action.substring(1));
             String message = String.format(
                     "Your request '%s' has been auto-%s due to SLA timeout. " +
-                    "Reference: %s.",
+                            "Reference: %s.",
                     execution.getTitle(),
                     action,
                     execution.getReferenceNumber() != null ? execution.getReferenceNumber() : execution.getId().toString()
@@ -411,7 +411,7 @@ public class WorkflowEscalationScheduler {
             String title = "Reminder: Pending Approval";
             String message = String.format(
                     "You have a pending approval for '%s' that requires your attention. " +
-                    "Deadline: %d hours remaining. Reference: %s.",
+                            "Deadline: %d hours remaining. Reference: %s.",
                     execution.getTitle(),
                     Math.max(hoursRemaining, 1),
                     execution.getReferenceNumber() != null ? execution.getReferenceNumber() : execution.getId().toString()

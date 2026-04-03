@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -24,28 +25,28 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Employee Code", "Full Name", "Email", "Phone", "Department",
-                "Designation", "Job Role", "Level", "Employment Type",
-                "Joining Date", "Status", "Work Location", "Reporting Manager"
+                    "Employee Code", "Full Name", "Email", "Phone", "Department",
+                    "Designation", "Job Role", "Level", "Employment Type",
+                    "Joining Date", "Status", "Work Location", "Reporting Manager"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (EmployeeDirectoryReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getEmployeeCode()),
-                    escapeCsv(row.getFullName()),
-                    escapeCsv(row.getEmail()),
-                    escapeCsv(row.getPhoneNumber()),
-                    escapeCsv(row.getDepartment()),
-                    escapeCsv(row.getDesignation()),
-                    escapeCsv(row.getJobRole()),
-                    escapeCsv(row.getLevel()),
-                    escapeCsv(row.getEmploymentType()),
-                    row.getJoiningDate() != null ? row.getJoiningDate().format(DATE_FORMATTER) : "",
-                    escapeCsv(row.getStatus()),
-                    escapeCsv(row.getWorkLocation()),
-                    escapeCsv(row.getReportingManager())
+                        escapeCsv(row.getEmployeeCode()),
+                        escapeCsv(row.getFullName()),
+                        escapeCsv(row.getEmail()),
+                        escapeCsv(row.getPhoneNumber()),
+                        escapeCsv(row.getDepartment()),
+                        escapeCsv(row.getDesignation()),
+                        escapeCsv(row.getJobRole()),
+                        escapeCsv(row.getLevel()),
+                        escapeCsv(row.getEmploymentType()),
+                        row.getJoiningDate() != null ? row.getJoiningDate().format(DATE_FORMATTER) : "",
+                        escapeCsv(row.getStatus()),
+                        escapeCsv(row.getWorkLocation()),
+                        escapeCsv(row.getReportingManager())
                 ));
                 writer.write(NEW_LINE);
             }
@@ -61,24 +62,24 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Employee Code", "Employee Name", "Department", "Date", "Status",
-                "Check In", "Check Out", "Hours Worked", "Shift", "Remarks"
+                    "Employee Code", "Employee Name", "Department", "Date", "Status",
+                    "Check In", "Check Out", "Hours Worked", "Shift", "Remarks"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (AttendanceReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getEmployeeCode()),
-                    escapeCsv(row.getEmployeeName()),
-                    escapeCsv(row.getDepartment()),
-                    row.getDate() != null ? row.getDate().format(DATE_FORMATTER) : "",
-                    escapeCsv(row.getStatus()),
-                    row.getCheckInTime() != null ? row.getCheckInTime().format(TIME_FORMATTER) : "",
-                    row.getCheckOutTime() != null ? row.getCheckOutTime().format(TIME_FORMATTER) : "",
-                    row.getHoursWorked() != null ? String.format("%.2f", row.getHoursWorked()) : "0.00",
-                    escapeCsv(row.getShift()),
-                    escapeCsv(row.getRemarks())
+                        escapeCsv(row.getEmployeeCode()),
+                        escapeCsv(row.getEmployeeName()),
+                        escapeCsv(row.getDepartment()),
+                        row.getDate() != null ? row.getDate().format(DATE_FORMATTER) : "",
+                        escapeCsv(row.getStatus()),
+                        row.getCheckInTime() != null ? row.getCheckInTime().format(TIME_FORMATTER) : "",
+                        row.getCheckOutTime() != null ? row.getCheckOutTime().format(TIME_FORMATTER) : "",
+                        row.getHoursWorked() != null ? String.format("%.2f", row.getHoursWorked()) : "0.00",
+                        escapeCsv(row.getShift()),
+                        escapeCsv(row.getRemarks())
                 ));
                 writer.write(NEW_LINE);
             }
@@ -94,26 +95,26 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Employee Code", "Employee Name", "Department", "Leave Type",
-                "Start Date", "End Date", "Days", "Status", "Reason",
-                "Approved By", "Approved On"
+                    "Employee Code", "Employee Name", "Department", "Leave Type",
+                    "Start Date", "End Date", "Days", "Status", "Reason",
+                    "Approved By", "Approved On"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (LeaveReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getEmployeeCode()),
-                    escapeCsv(row.getEmployeeName()),
-                    escapeCsv(row.getDepartment()),
-                    escapeCsv(row.getLeaveType()),
-                    row.getStartDate() != null ? row.getStartDate().format(DATE_FORMATTER) : "",
-                    row.getEndDate() != null ? row.getEndDate().format(DATE_FORMATTER) : "",
-                    row.getDays() != null ? String.format("%.1f", row.getDays()) : "0.0",
-                    escapeCsv(row.getStatus()),
-                    escapeCsv(row.getReason()),
-                    escapeCsv(row.getApprovedBy()),
-                    row.getApprovedOn() != null ? row.getApprovedOn().format(DATE_FORMATTER) : ""
+                        escapeCsv(row.getEmployeeCode()),
+                        escapeCsv(row.getEmployeeName()),
+                        escapeCsv(row.getDepartment()),
+                        escapeCsv(row.getLeaveType()),
+                        row.getStartDate() != null ? row.getStartDate().format(DATE_FORMATTER) : "",
+                        row.getEndDate() != null ? row.getEndDate().format(DATE_FORMATTER) : "",
+                        row.getDays() != null ? String.format("%.1f", row.getDays()) : "0.0",
+                        escapeCsv(row.getStatus()),
+                        escapeCsv(row.getReason()),
+                        escapeCsv(row.getApprovedBy()),
+                        row.getApprovedOn() != null ? row.getApprovedOn().format(DATE_FORMATTER) : ""
                 ));
                 writer.write(NEW_LINE);
             }
@@ -129,26 +130,26 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Employee Code", "Employee Name", "Department", "Designation",
-                "Payroll Month", "Basic Salary", "Allowances", "Deductions",
-                "Net Salary", "Payment Status", "Payment Date"
+                    "Employee Code", "Employee Name", "Department", "Designation",
+                    "Payroll Month", "Basic Salary", "Allowances", "Deductions",
+                    "Net Salary", "Payment Status", "Payment Date"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (PayrollReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getEmployeeCode()),
-                    escapeCsv(row.getEmployeeName()),
-                    escapeCsv(row.getDepartment()),
-                    escapeCsv(row.getDesignation()),
-                    row.getPayrollMonth() != null ? row.getPayrollMonth().format(DATE_FORMATTER) : "",
-                    row.getBasicSalary() != null ? row.getBasicSalary().toString() : "0.00",
-                    row.getAllowances() != null ? row.getAllowances().toString() : "0.00",
-                    row.getDeductions() != null ? row.getDeductions().toString() : "0.00",
-                    row.getNetSalary() != null ? row.getNetSalary().toString() : "0.00",
-                    escapeCsv(row.getPaymentStatus()),
-                    row.getPaymentDate() != null ? row.getPaymentDate().format(DATE_FORMATTER) : ""
+                        escapeCsv(row.getEmployeeCode()),
+                        escapeCsv(row.getEmployeeName()),
+                        escapeCsv(row.getDepartment()),
+                        escapeCsv(row.getDesignation()),
+                        row.getPayrollMonth() != null ? row.getPayrollMonth().format(DATE_FORMATTER) : "",
+                        row.getBasicSalary() != null ? row.getBasicSalary().toString() : "0.00",
+                        row.getAllowances() != null ? row.getAllowances().toString() : "0.00",
+                        row.getDeductions() != null ? row.getDeductions().toString() : "0.00",
+                        row.getNetSalary() != null ? row.getNetSalary().toString() : "0.00",
+                        escapeCsv(row.getPaymentStatus()),
+                        row.getPaymentDate() != null ? row.getPaymentDate().format(DATE_FORMATTER) : ""
                 ));
                 writer.write(NEW_LINE);
             }
@@ -164,24 +165,24 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Department Code", "Department Name", "Total Employees",
-                "Active", "Inactive", "On Leave", "New Hires", "Terminations",
-                "Department Head"
+                    "Department Code", "Department Name", "Total Employees",
+                    "Active", "Inactive", "On Leave", "New Hires", "Terminations",
+                    "Department Head"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (DepartmentHeadcountReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getDepartmentCode()),
-                    escapeCsv(row.getDepartmentName()),
-                    String.valueOf(row.getTotalEmployees() != null ? row.getTotalEmployees() : 0),
-                    String.valueOf(row.getActiveEmployees() != null ? row.getActiveEmployees() : 0),
-                    String.valueOf(row.getInactiveEmployees() != null ? row.getInactiveEmployees() : 0),
-                    String.valueOf(row.getOnLeave() != null ? row.getOnLeave() : 0),
-                    String.valueOf(row.getNewHires() != null ? row.getNewHires() : 0),
-                    String.valueOf(row.getTerminations() != null ? row.getTerminations() : 0),
-                    escapeCsv(row.getDepartmentHead())
+                        escapeCsv(row.getDepartmentCode()),
+                        escapeCsv(row.getDepartmentName()),
+                        String.valueOf(row.getTotalEmployees() != null ? row.getTotalEmployees() : 0),
+                        String.valueOf(row.getActiveEmployees() != null ? row.getActiveEmployees() : 0),
+                        String.valueOf(row.getInactiveEmployees() != null ? row.getInactiveEmployees() : 0),
+                        String.valueOf(row.getOnLeave() != null ? row.getOnLeave() : 0),
+                        String.valueOf(row.getNewHires() != null ? row.getNewHires() : 0),
+                        String.valueOf(row.getTerminations() != null ? row.getTerminations() : 0),
+                        escapeCsv(row.getDepartmentHead())
                 ));
                 writer.write(NEW_LINE);
             }
@@ -197,27 +198,27 @@ public class CsvExportService {
         try (PrintWriter writer = new PrintWriter(out)) {
             // Write header
             writer.write(String.join(SEPARATOR,
-                "Employee Code", "Employee Name", "Department", "Designation",
-                "Review Cycle", "Review Date", "Reviewer", "Overall Rating",
-                "Performance Level", "Goals Completed", "Total Goals", "Comments"
+                    "Employee Code", "Employee Name", "Department", "Designation",
+                    "Review Cycle", "Review Date", "Reviewer", "Overall Rating",
+                    "Performance Level", "Goals Completed", "Total Goals", "Comments"
             ));
             writer.write(NEW_LINE);
 
             // Write data
             for (PerformanceReportRow row : data) {
                 writer.write(String.join(SEPARATOR,
-                    escapeCsv(row.getEmployeeCode()),
-                    escapeCsv(row.getEmployeeName()),
-                    escapeCsv(row.getDepartment()),
-                    escapeCsv(row.getDesignation()),
-                    escapeCsv(row.getReviewCycle()),
-                    row.getReviewDate() != null ? row.getReviewDate().format(DATE_FORMATTER) : "",
-                    escapeCsv(row.getReviewer()),
-                    row.getOverallRating() != null ? String.format("%.2f", row.getOverallRating()) : "0.00",
-                    escapeCsv(row.getPerformanceLevel()),
-                    String.valueOf(row.getGoalsCompleted() != null ? row.getGoalsCompleted() : 0),
-                    String.valueOf(row.getTotalGoals() != null ? row.getTotalGoals() : 0),
-                    escapeCsv(row.getComments())
+                        escapeCsv(row.getEmployeeCode()),
+                        escapeCsv(row.getEmployeeName()),
+                        escapeCsv(row.getDepartment()),
+                        escapeCsv(row.getDesignation()),
+                        escapeCsv(row.getReviewCycle()),
+                        row.getReviewDate() != null ? row.getReviewDate().format(DATE_FORMATTER) : "",
+                        escapeCsv(row.getReviewer()),
+                        row.getOverallRating() != null ? String.format("%.2f", row.getOverallRating()) : "0.00",
+                        escapeCsv(row.getPerformanceLevel()),
+                        String.valueOf(row.getGoalsCompleted() != null ? row.getGoalsCompleted() : 0),
+                        String.valueOf(row.getTotalGoals() != null ? row.getTotalGoals() : 0),
+                        escapeCsv(row.getComments())
                 ));
                 writer.write(NEW_LINE);
             }

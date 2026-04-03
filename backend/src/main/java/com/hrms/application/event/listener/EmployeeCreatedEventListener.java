@@ -41,16 +41,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmployeeCreatedEventListener {
 
-    private final StatutoryService statutoryService;
-    private final SalaryStructureService salaryStructureService;
-
     // Statutory thresholds (India)
     private static final BigDecimal PF_THRESHOLD = new BigDecimal("15000"); // ₹15,000/month
     private static final BigDecimal ESI_THRESHOLD = new BigDecimal("21000"); // ₹21,000/month
+    private final StatutoryService statutoryService;
+    private final SalaryStructureService salaryStructureService;
 
     /**
      * Handles the employee created event by auto-enrolling in statutory schemes.
-     *
+     * <p>
      * Runs AFTER the employee creation transaction commits for better isolation.
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -89,7 +88,7 @@ public class EmployeeCreatedEventListener {
 
     /**
      * Enrolls employee in Provident Fund if salary meets threshold.
-     *
+     * <p>
      * PF is mandatory if Basic + DA >= ₹15,000/month.
      * If salary structure not yet assigned, enrollment is deferred.
      */
@@ -131,7 +130,7 @@ public class EmployeeCreatedEventListener {
 
     /**
      * Enrolls employee in ESI if salary is below threshold.
-     *
+     * <p>
      * ESI is mandatory if Gross Salary <= ₹21,000/month.
      * If salary structure not yet assigned, enrollment is deferred.
      */
@@ -173,7 +172,7 @@ public class EmployeeCreatedEventListener {
 
     /**
      * Assigns default salary structure to the employee (if available).
-     *
+     * <p>
      * This is optional and depends on organization policy.
      * If no default structure exists, HR will assign manually.
      */
@@ -191,7 +190,7 @@ public class EmployeeCreatedEventListener {
 
     /**
      * Gets monthly salary for statutory eligibility check.
-     *
+     * <p>
      * Returns null if no salary structure exists yet.
      * For PF: Returns Basic + DA
      * For ESI: Returns Gross Salary

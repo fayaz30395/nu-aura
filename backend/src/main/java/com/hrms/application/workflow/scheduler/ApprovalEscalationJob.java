@@ -124,7 +124,7 @@ public class ApprovalEscalationJob {
     /**
      * Escalate a single step if it meets eligibility criteria.
      *
-     * @param step The step execution to consider
+     * @param step     The step execution to consider
      * @param tenantId The tenant ID
      * @return true if escalation succeeded, false otherwise
      */

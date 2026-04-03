@@ -7,12 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Razorpay payment gateway adapter
  * Handles Razorpay API integration for payments and refunds
- *
+ * <p>
  * Note: This is a stub implementation. Integrate with actual Razorpay SDK as needed.
  * Documentation: https://razorpay.com/docs/
  */
@@ -51,8 +52,8 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
     public List<PaymentGatewayResponse> initiateBatchPayments(List<PaymentTransaction> transactions) {
         // Integration point: Call Razorpay batch API
         return transactions.stream()
-            .map(this::initiatePayment)
-            .toList();
+                .map(this::initiatePayment)
+                .toList();
     }
 
     @Override

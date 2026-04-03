@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Implements Keka-style RBAC rules:
  * - For each permission, use the most permissive scope (highest rank)
  * - For CUSTOM scope, union all custom targets from all roles
- *
+ * <p>
  * Scope hierarchy (most to least permissive):
  * ALL (100) > LOCATION (80) > DEPARTMENT (60) > TEAM (40) > SELF (20) > CUSTOM (10)
  */
@@ -62,7 +63,7 @@ public class PermissionScopeMerger {
         for (Role role : roles) {
             for (RolePermission rp : role.getPermissions()) {
                 if (rp.getPermission().getCode().equals(permissionCode) &&
-                    rp.getScope() == RoleScope.CUSTOM) {
+                        rp.getScope() == RoleScope.CUSTOM) {
 
                     for (CustomScopeTarget target : rp.getCustomTargets()) {
                         switch (target.getTargetType()) {
@@ -144,8 +145,8 @@ public class PermissionScopeMerger {
     ) {
         public boolean isEmpty() {
             return (employeeIds == null || employeeIds.isEmpty()) &&
-                   (departmentIds == null || departmentIds.isEmpty()) &&
-                   (locationIds == null || locationIds.isEmpty());
+                    (departmentIds == null || departmentIds.isEmpty()) &&
+                    (locationIds == null || locationIds.isEmpty());
         }
     }
 
@@ -156,5 +157,6 @@ public class PermissionScopeMerger {
             String permissionCode,
             RoleScope scope,
             MergedCustomTargets customTargets
-    ) {}
+    ) {
+    }
 }

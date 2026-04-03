@@ -31,12 +31,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProbationService {
 
+    private static final List<ProbationStatus> ACTIVE_STATUSES = Arrays.asList(
+            ProbationStatus.ACTIVE, ProbationStatus.EXTENDED, ProbationStatus.ON_HOLD);
     private final ProbationPeriodRepository probationPeriodRepository;
     private final ProbationEvaluationRepository probationEvaluationRepository;
     private final EmployeeRepository employeeRepository;
-
-    private static final List<ProbationStatus> ACTIVE_STATUSES = Arrays.asList(
-            ProbationStatus.ACTIVE, ProbationStatus.EXTENDED, ProbationStatus.ON_HOLD);
 
     // ==================== Probation Period Management ====================
 

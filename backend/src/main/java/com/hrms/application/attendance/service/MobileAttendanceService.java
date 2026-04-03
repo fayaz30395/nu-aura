@@ -493,8 +493,8 @@ public class MobileAttendanceService {
     }
 
     private void createTimeEntry(UUID attendanceRecordId, LocalDateTime checkInTime,
-                                  String source, String location, String ip,
-                                  AttendanceTimeEntry.EntryType type, String notes) {
+                                 String source, String location, String ip,
+                                 AttendanceTimeEntry.EntryType type, String notes) {
         int sequence = timeEntryRepository.getMaxSequenceNumber(attendanceRecordId) + 1;
 
         AttendanceTimeEntry entry = AttendanceTimeEntry.builder()
@@ -512,7 +512,7 @@ public class MobileAttendanceService {
     }
 
     private void closeOpenTimeEntry(UUID attendanceRecordId, LocalDateTime checkOutTime,
-                                     String source, String location, String ip) {
+                                    String source, String location, String ip) {
         timeEntryRepository.findOpenEntryByAttendanceRecordId(attendanceRecordId)
                 .ifPresent(entry -> {
                     entry.checkOut(checkOutTime, source, location, ip);

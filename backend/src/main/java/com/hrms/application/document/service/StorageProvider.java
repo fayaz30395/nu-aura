@@ -81,5 +81,6 @@ public interface StorageProvider {
     /**
      * Metadata about a stored object, used for orphan detection.
      */
-    record StoredObjectInfo(String objectName, ZonedDateTime lastModified, boolean isDirectory) {}
+    record StoredObjectInfo(String objectName, ZonedDateTime lastModified, boolean isDirectory) {
+    }
 }

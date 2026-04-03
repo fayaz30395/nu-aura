@@ -38,8 +38,8 @@ public class BlogCategoryService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogCategory category = blogCategoryRepository.findById(categoryId)
-            .filter(c -> c.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .filter(c -> c.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         category.setName(categoryData.getName());
         category.setSlug(categoryData.getSlug());
@@ -57,15 +57,15 @@ public class BlogCategoryService {
     public BlogCategory getCategoryById(UUID categoryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return blogCategoryRepository.findById(categoryId)
-            .filter(c -> c.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .filter(c -> c.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
     @Transactional(readOnly = true)
     public BlogCategory getCategoryBySlug(String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return blogCategoryRepository.findByTenantIdAndSlug(tenantId, slug)
-            .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 
     @Transactional(readOnly = true)
@@ -85,8 +85,8 @@ public class BlogCategoryService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         BlogCategory category = blogCategoryRepository.findById(categoryId)
-            .filter(c -> c.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .filter(c -> c.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         blogCategoryRepository.delete(category);
         log.info("Deleted blog category: {}", categoryId);

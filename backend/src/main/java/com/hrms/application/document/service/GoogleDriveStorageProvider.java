@@ -18,11 +18,11 @@ import java.util.Map;
 /**
  * Google Drive-based storage provider.
  * Used for production environments.
- *
+ * <p>
  * Google Drive uses fileId-based access rather than path-based.
  * The objectName parameter doubles as the fileId when using this provider:
  * - On upload, the objectName (logical path) is stored as a custom property on the Drive file,
- *   and the returned value is the Google Drive fileId.
+ * and the returned value is the Google Drive fileId.
  * - On download/delete/exists, the objectName is treated as the Google Drive fileId.
  */
 @Slf4j

@@ -39,21 +39,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeImportValidationService {
 
-    private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository departmentRepository;
-    private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
-
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
     );
-
     private static final Set<String> VALID_EMPLOYMENT_TYPES = Set.of(
             "FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"
     );
-
     private static final Set<String> VALID_GENDERS = Set.of(
             "MALE", "FEMALE", "OTHER"
     );
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
 
     /**
      * Validate all import rows and return a preview with validation results.
@@ -395,8 +392,8 @@ public class EmployeeImportValidationService {
             case CHECKBOX -> {
                 String lower = value.toLowerCase();
                 if (!lower.equals("true") && !lower.equals("false") &&
-                    !lower.equals("yes") && !lower.equals("no") &&
-                    !lower.equals("1") && !lower.equals("0")) {
+                        !lower.equals("yes") && !lower.equals("no") &&
+                        !lower.equals("1") && !lower.equals("0")) {
                     errors.add(ImportValidationError.invalidFormat(rowNum, fieldCode, value, "true/false or yes/no"));
                 }
             }

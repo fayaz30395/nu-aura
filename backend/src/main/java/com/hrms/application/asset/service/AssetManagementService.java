@@ -187,7 +187,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<AssetResponse> getAllAssets(org.springframework.data.jpa.domain.Specification<Asset> spec,
-            Pageable pageable) {
+                                            Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         org.springframework.data.jpa.domain.Specification<Asset> finalSpec = (root, query, cb) -> cb
@@ -442,7 +442,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
      * but never fails the business operation.
      */
     private void publishAssetAuditEvent(UUID userId, String action, UUID entityId,
-            UUID tenantId, String description) {
+                                        UUID tenantId, String description) {
         try {
             eventPublisher.publishAuditEvent(
                     userId, action, "Asset", entityId, tenantId,
@@ -480,9 +480,9 @@ public class AssetManagementService implements ApprovalCallbackHandler {
      * Maps an {@link Asset} to {@link AssetResponse} using a pre-fetched
      * {@code employeeNameCache} (UUID → full name) to avoid N+1 queries in list operations.
      *
-     * @param asset           the asset entity to map
+     * @param asset             the asset entity to map
      * @param employeeNameCache a map of {@code employeeId → fullName} for all assigned employees
-     *                         in the current batch; may be empty but must not be {@code null}
+     *                          in the current batch; may be empty but must not be {@code null}
      */
     private AssetResponse mapToAssetResponse(Asset asset, Map<UUID, String> employeeNameCache) {
         String assignedToName = asset.getAssignedTo() != null
@@ -518,7 +518,9 @@ public class AssetManagementService implements ApprovalCallbackHandler {
                 ));
     }
 
-    /** Shared builder logic for both mapping overloads. */
+    /**
+     * Shared builder logic for both mapping overloads.
+     */
     private AssetResponse buildAssetResponse(Asset asset, String assignedToName) {
         return AssetResponse.builder()
                 .id(asset.getId())
@@ -564,12 +566,12 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             // Send real-time WebSocket notification
             com.hrms.application.notification.dto.NotificationMessage wsNotification =
                     com.hrms.application.notification.dto.NotificationMessage.builder()
-                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
-                    .title("Asset Assignment Approved")
-                    .message(String.format("Your asset request for %s (%s) has been approved", asset.getAssetName(), asset.getAssetCode()))
-                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
-                    .actionUrl("/assets/my-assets")
-                    .build();
+                            .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                            .title("Asset Assignment Approved")
+                            .message(String.format("Your asset request for %s (%s) has been approved", asset.getAssetName(), asset.getAssetCode()))
+                            .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/assets/my-assets")
+                            .build();
 
             webSocketNotificationService.sendToUser(asset.getAssignedTo(), wsNotification);
             log.info("Notifications sent for approved asset request: {}", asset.getAssetCode());
@@ -597,12 +599,12 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             // Send real-time WebSocket notification
             com.hrms.application.notification.dto.NotificationMessage wsNotification =
                     com.hrms.application.notification.dto.NotificationMessage.builder()
-                    .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
-                    .title("Asset Assignment Rejected")
-                    .message(String.format("Your asset request for %s (%s) has been rejected: %s", asset.getAssetName(), asset.getAssetCode(), rejectionReason))
-                    .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
-                    .actionUrl("/assets/requests")
-                    .build();
+                            .type(com.hrms.application.notification.dto.NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                            .title("Asset Assignment Rejected")
+                            .message(String.format("Your asset request for %s (%s) has been rejected: %s", asset.getAssetName(), asset.getAssetCode(), rejectionReason))
+                            .priority(com.hrms.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/assets/requests")
+                            .build();
 
             webSocketNotificationService.sendToUser(assignedEmployeeId, wsNotification);
             log.info("Notifications sent for rejected asset request: {}", asset.getAssetCode());

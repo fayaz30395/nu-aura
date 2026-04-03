@@ -58,19 +58,17 @@ public class WorkflowService {
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final LeaveRequestRepository leaveRequestRepository;
-
-    /**
-     * Callback handlers indexed by entity type — built lazily on first access
-     * to break the circular dependency between WorkflowService and its callback handlers.
-     */
-    private volatile Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap;
-
     /**
      * Stored for lazy initialization. Marked @Lazy to break circular dependency
      * (handlers like RecruitmentManagementService depend on WorkflowService).
      */
     @org.springframework.lang.Nullable
     private final List<ApprovalCallbackHandler> callbackHandlers;
+    /**
+     * Callback handlers indexed by entity type — built lazily on first access
+     * to break the circular dependency between WorkflowService and its callback handlers.
+     */
+    private volatile Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> callbackHandlerMap;
 
     public WorkflowService(
             WorkflowDefinitionRepository workflowDefinitionRepository,
@@ -101,7 +99,9 @@ public class WorkflowService {
         this.callbackHandlers = callbackHandlers;
     }
 
-    /** Returns the callback handler map, building it lazily on first access. */
+    /**
+     * Returns the callback handler map, building it lazily on first access.
+     */
     private Map<WorkflowDefinition.EntityType, ApprovalCallbackHandler> getCallbackHandlerMap() {
         if (callbackHandlerMap == null) {
             synchronized (this) {
@@ -488,7 +488,7 @@ public class WorkflowService {
                     step.getStepName(), step.getApproverType(), execution.getId());
             throw new BusinessException(
                     "Unable to determine approver for step '" + step.getStepName() +
-                    "'. Please configure an approver for type: " + step.getApproverType());
+                            "'. Please configure an approver for type: " + step.getApproverType());
         }
 
         UUID finalApprover = checkDelegation(approverId, tenantId, today);
@@ -517,7 +517,7 @@ public class WorkflowService {
      * @param departmentId the department to look up
      * @param tenantId     current tenant for isolation
      * @return the employee UUID of the department head, or {@code null} if the
-     *         department doesn't exist or has no manager assigned
+     * department doesn't exist or has no manager assigned
      */
     private UUID findDepartmentHead(UUID departmentId, UUID tenantId) {
         if (departmentId == null) {
@@ -683,7 +683,7 @@ public class WorkflowService {
                         StepExecution.StepStatus.PENDING.toString(),
                         StepExecution.StepStatus.APPROVED.toString(),
                         "Step '" + currentStep.getStepName() + "' approved for " + execution.getTitle() +
-                        (request.getComments() != null ? " - Comments: " + request.getComments() : "")
+                                (request.getComments() != null ? " - Comments: " + request.getComments() : "")
                 );
                 break;
 
@@ -698,7 +698,7 @@ public class WorkflowService {
                         oldStatus.toString(),
                         WorkflowExecution.ExecutionStatus.REJECTED.toString(),
                         "Workflow rejected at step '" + currentStep.getStepName() + "' for " + execution.getTitle() +
-                        (request.getComments() != null ? " - Reason: " + request.getComments() : "")
+                                (request.getComments() != null ? " - Reason: " + request.getComments() : "")
                 );
                 break;
 
@@ -713,7 +713,7 @@ public class WorkflowService {
                         oldStatus.toString(),
                         WorkflowExecution.ExecutionStatus.RETURNED.toString(),
                         "Workflow returned for modification at step '" + currentStep.getStepName() + "' for " + execution.getTitle() +
-                        (request.getComments() != null ? " - Reason: " + request.getComments() : "")
+                                (request.getComments() != null ? " - Reason: " + request.getComments() : "")
                 );
                 break;
 
@@ -1063,7 +1063,7 @@ public class WorkflowService {
                 oldStatus.toString(),
                 WorkflowExecution.ExecutionStatus.CANCELLED.toString(),
                 "Workflow cancelled for " + execution.getTitle() +
-                (reason != null ? " - Reason: " + reason : "")
+                        (reason != null ? " - Reason: " + reason : "")
         );
 
         log.info("Cancelled workflow execution: {} by user {}", executionId, currentUser);
@@ -1163,7 +1163,7 @@ public class WorkflowService {
         // My pending requests
         long myPendingRequests = workflowExecutionRepository.findByTenantIdAndRequesterId(tenantId, currentUser).stream()
                 .filter(e -> e.getStatus() == WorkflowExecution.ExecutionStatus.PENDING ||
-                             e.getStatus() == WorkflowExecution.ExecutionStatus.IN_PROGRESS)
+                        e.getStatus() == WorkflowExecution.ExecutionStatus.IN_PROGRESS)
                 .count();
         dashboard.put("myPendingRequests", myPendingRequests);
 

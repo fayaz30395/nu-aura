@@ -34,7 +34,7 @@ public interface BiometricAdapter {
      * Returns empty list if the device does not support pull-based sync.
      *
      * @param deviceIp the IP address of the device
-     * @param port the port for communication
+     * @param port     the port for communication
      * @return list of punch requests retrieved from the device
      */
     List<BiometricPunchRequest> pullPunches(String deviceIp, int port);

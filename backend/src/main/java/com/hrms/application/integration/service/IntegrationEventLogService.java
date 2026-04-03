@@ -37,25 +37,25 @@ public class IntegrationEventLogService {
      * <p>Records that the event was successfully processed by the connector,
      * including the duration of processing.</p>
      *
-     * @param event the integration event that was processed
+     * @param event       the integration event that was processed
      * @param connectorId the ID of the connector that processed the event
-     * @param durationMs the time taken to process the event, in milliseconds
+     * @param durationMs  the time taken to process the event, in milliseconds
      */
     @Transactional
     public void logSuccess(IntegrationEvent event, String connectorId, long durationMs) {
         log.debug("Logging successful event processing: event={}, connector={}, duration={}ms",
-            event.eventType(), connectorId, durationMs);
+                event.eventType(), connectorId, durationMs);
 
         IntegrationEventLog logEntry = IntegrationEventLog.builder()
-            .tenantId(event.tenantId())
-            .connectorId(connectorId)
-            .eventType(event.eventType())
-            .entityType(event.entityType())
-            .entityId(event.entityId())
-            .status("SUCCESS")
-            .durationMs((int) durationMs)
-            .metadataJson(serializeMetadata(event.metadata()))
-            .build();
+                .tenantId(event.tenantId())
+                .connectorId(connectorId)
+                .eventType(event.eventType())
+                .entityType(event.entityType())
+                .entityId(event.entityId())
+                .status("SUCCESS")
+                .durationMs((int) durationMs)
+                .metadataJson(serializeMetadata(event.metadata()))
+                .build();
 
         repository.save(logEntry);
     }
@@ -66,27 +66,27 @@ public class IntegrationEventLogService {
      * <p>Records that the event processing failed, including the error message
      * and the duration of the failed attempt.</p>
      *
-     * @param event the integration event that failed to process
-     * @param connectorId the ID of the connector that attempted to process the event
+     * @param event        the integration event that failed to process
+     * @param connectorId  the ID of the connector that attempted to process the event
      * @param errorMessage a description of the failure
-     * @param durationMs the time taken before the failure, in milliseconds
+     * @param durationMs   the time taken before the failure, in milliseconds
      */
     @Transactional
     public void logFailure(IntegrationEvent event, String connectorId, String errorMessage, long durationMs) {
         log.warn("Logging failed event processing: event={}, connector={}, error={}",
-            event.eventType(), connectorId, errorMessage);
+                event.eventType(), connectorId, errorMessage);
 
         IntegrationEventLog logEntry = IntegrationEventLog.builder()
-            .tenantId(event.tenantId())
-            .connectorId(connectorId)
-            .eventType(event.eventType())
-            .entityType(event.entityType())
-            .entityId(event.entityId())
-            .status("FAILED")
-            .errorMessage(errorMessage)
-            .durationMs((int) durationMs)
-            .metadataJson(serializeMetadata(event.metadata()))
-            .build();
+                .tenantId(event.tenantId())
+                .connectorId(connectorId)
+                .eventType(event.eventType())
+                .entityType(event.entityType())
+                .entityId(event.entityId())
+                .status("FAILED")
+                .errorMessage(errorMessage)
+                .durationMs((int) durationMs)
+                .metadataJson(serializeMetadata(event.metadata()))
+                .build();
 
         repository.save(logEntry);
     }
@@ -97,25 +97,25 @@ public class IntegrationEventLogService {
      * <p>Records that the event was skipped (e.g., connector not subscribed,
      * connector inactive, etc.), along with the reason for skipping.</p>
      *
-     * @param event the integration event that was skipped
+     * @param event       the integration event that was skipped
      * @param connectorId the ID of the connector that skipped the event
-     * @param reason a description of why the event was skipped
+     * @param reason      a description of why the event was skipped
      */
     @Transactional
     public void logSkipped(IntegrationEvent event, String connectorId, String reason) {
         log.debug("Logging skipped event processing: event={}, connector={}, reason={}",
-            event.eventType(), connectorId, reason);
+                event.eventType(), connectorId, reason);
 
         IntegrationEventLog logEntry = IntegrationEventLog.builder()
-            .tenantId(event.tenantId())
-            .connectorId(connectorId)
-            .eventType(event.eventType())
-            .entityType(event.entityType())
-            .entityId(event.entityId())
-            .status("SKIPPED")
-            .errorMessage(reason)
-            .metadataJson(serializeMetadata(event.metadata()))
-            .build();
+                .tenantId(event.tenantId())
+                .connectorId(connectorId)
+                .eventType(event.eventType())
+                .entityType(event.entityType())
+                .entityId(event.entityId())
+                .status("SKIPPED")
+                .errorMessage(reason)
+                .metadataJson(serializeMetadata(event.metadata()))
+                .build();
 
         repository.save(logEntry);
     }
@@ -125,10 +125,10 @@ public class IntegrationEventLogService {
      *
      * <p>Optionally filters by status. Results are ordered by creation date (newest first).</p>
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId    the tenant ID (required for isolation)
      * @param connectorId the connector ID to filter by (optional; if null, all connectors are included)
-     * @param status the processing status to filter by (SUCCESS, FAILED, SKIPPED; if null, all statuses are included)
-     * @param pageable pagination information
+     * @param status      the processing status to filter by (SUCCESS, FAILED, SKIPPED; if null, all statuses are included)
+     * @param pageable    pagination information
      * @return a page of event logs matching the criteria
      */
     @Transactional(readOnly = true)

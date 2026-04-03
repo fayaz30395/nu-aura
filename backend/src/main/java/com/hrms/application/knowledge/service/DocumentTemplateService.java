@@ -50,8 +50,8 @@ public class DocumentTemplateService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         DocumentTemplate template = documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setName(templateData.getName());
         template.setSlug(templateData.getSlug());
@@ -74,15 +74,15 @@ public class DocumentTemplateService {
     public DocumentTemplate getTemplateById(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
     }
 
     @Transactional(readOnly = true)
     public DocumentTemplate getTemplateBySlug(String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return documentTemplateRepository.findByTenantIdAndSlug(tenantId, slug)
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
     }
 
     @Transactional(readOnly = true)
@@ -113,8 +113,8 @@ public class DocumentTemplateService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         DocumentTemplate template = documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setIsActive(!template.getIsActive());
         DocumentTemplate updated = documentTemplateRepository.save(template);
@@ -126,8 +126,8 @@ public class DocumentTemplateService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         DocumentTemplate template = documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setIsFeatured(!template.getIsFeatured());
         DocumentTemplate updated = documentTemplateRepository.save(template);
@@ -139,8 +139,8 @@ public class DocumentTemplateService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         DocumentTemplate template = documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setUsageCount(template.getUsageCount() + 1);
         return documentTemplateRepository.save(template);
@@ -151,8 +151,8 @@ public class DocumentTemplateService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         DocumentTemplate template = documentTemplateRepository.findById(templateId)
-            .filter(t -> t.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+                .filter(t -> t.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         documentTemplateRepository.delete(template);
         log.info("Deleted document template: {}", templateId);

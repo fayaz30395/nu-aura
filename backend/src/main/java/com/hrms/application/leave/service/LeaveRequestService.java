@@ -34,6 +34,8 @@ import java.util.UUID;
 @Slf4j
 public class LeaveRequestService implements ApprovalCallbackHandler {
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final String LEAVE_REQUEST_NOT_FOUND = "Leave request not found";
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceService leaveBalanceService;
     private final WebSocketNotificationService webSocketNotificationService;
@@ -42,7 +44,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
-
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
                                WebSocketNotificationService webSocketNotificationService,
@@ -60,9 +61,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         this.workflowService = workflowService;
         this.auditLogService = auditLogService;
     }
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-    private static final String LEAVE_REQUEST_NOT_FOUND = "Leave request not found";
 
     @Transactional
     public LeaveRequest createLeaveRequest(LeaveRequest leaveRequest) {
@@ -94,7 +92,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
-        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.CREATE, null, null, "Leave request created: " + requestNumber); } catch (Exception e) { log.warn("Audit log failed for leave request create: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.CREATE, null, null, "Leave request created: " + requestNumber);
+        } catch (Exception e) {
+            log.warn("Audit log failed for leave request create: {}", e.getMessage());
+        }
 
         // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
         // "Transaction silently rolled back because it has been marked as rollback-only".
@@ -145,7 +147,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         request.approve(approverId);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
-        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.APPROVE, null, null, "Leave request approved by " + approverId); } catch (Exception e) { log.warn("Audit log failed for leave request approve: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.APPROVE, null, null, "Leave request approved by " + approverId);
+        } catch (Exception e) {
+            log.warn("Audit log failed for leave request approve: {}", e.getMessage());
+        }
 
         leaveBalanceService.deductLeave(
                 saved.getEmployeeId(),
@@ -181,7 +187,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         request.reject(approverId, reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
-        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.REJECT, null, null, "Leave request rejected by " + approverId + ": " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request reject: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.REJECT, null, null, "Leave request rejected by " + approverId + ": " + reason);
+        } catch (Exception e) {
+            log.warn("Audit log failed for leave request reject: {}", e.getMessage());
+        }
 
         // F-07: Release pending days reserved at request creation
         try {
@@ -238,7 +248,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         request.cancel(reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
-        try { auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Leave request cancelled: " + reason); } catch (Exception e) { log.warn("Audit log failed for leave request cancel: {}", e.getMessage()); }
+        try {
+            auditLogService.logAction("LEAVE_REQUEST", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Leave request cancelled: " + reason);
+        } catch (Exception e) {
+            log.warn("Audit log failed for leave request cancel: {}", e.getMessage());
+        }
 
         // F-07: Release balance based on prior status
         if (wasApproved) {
@@ -314,7 +328,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getAllLeaveRequests(org.springframework.data.jpa.domain.Specification<LeaveRequest> spec,
-            Pageable pageable) {
+                                                  Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         org.springframework.data.jpa.domain.Specification<LeaveRequest> tenantSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);

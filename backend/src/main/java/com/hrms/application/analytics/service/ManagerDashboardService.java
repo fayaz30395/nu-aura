@@ -495,7 +495,7 @@ public class ManagerDashboardService {
         Map<UUID, Project> projectMap = projectIds.isEmpty()
                 ? Collections.emptyMap()
                 : projectRepository.findAllByTenantIdAndIdIn(tenantId, new ArrayList<>(projectIds)).stream()
-                        .collect(Collectors.toMap(Project::getId, Function.identity()));
+                  .collect(Collectors.toMap(Project::getId, Function.identity()));
 
         // Group memberships by employee
         Map<UUID, List<ProjectMember>> membershipsByEmployee = allMemberships.stream()

@@ -41,8 +41,8 @@ public class WikiSpaceService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         WikiSpace space = wikiSpaceRepository.findById(spaceId)
-            .filter(s -> s.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
+                .filter(s -> s.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setName(spaceData.getName());
         space.setDescription(spaceData.getDescription());
@@ -63,15 +63,15 @@ public class WikiSpaceService {
     public WikiSpace getSpaceById(UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiSpaceRepository.findById(spaceId)
-            .filter(s -> s.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
+                .filter(s -> s.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
     }
 
     @Transactional(readOnly = true)
     public WikiSpace getSpaceBySlug(String slug) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiSpaceRepository.findByTenantIdAndSlug(tenantId, slug)
-            .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
     }
 
     @Transactional(readOnly = true)
@@ -91,8 +91,8 @@ public class WikiSpaceService {
         UUID userId = SecurityContext.getCurrentUserId();
 
         WikiSpace space = wikiSpaceRepository.findById(spaceId)
-            .filter(s -> s.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
+                .filter(s -> s.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         space.setIsArchived(true);
         space.setArchivedAt(LocalDateTime.now());
@@ -108,8 +108,8 @@ public class WikiSpaceService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         WikiSpace space = wikiSpaceRepository.findById(spaceId)
-            .filter(s -> s.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
+                .filter(s -> s.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Wiki space not found"));
 
         wikiSpaceRepository.delete(space);
         log.info("Deleted wiki space: {}", spaceId);

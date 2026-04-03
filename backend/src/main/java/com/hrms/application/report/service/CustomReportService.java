@@ -249,12 +249,18 @@ public class CustomReportService {
             return switch (op) {
                 case "contains" -> cell.contains(v);
                 case "gt" -> {
-                    try { yield Double.parseDouble(cell) > Double.parseDouble(v); }
-                    catch (NumberFormatException e) { yield false; }
+                    try {
+                        yield Double.parseDouble(cell) > Double.parseDouble(v);
+                    } catch (NumberFormatException e) {
+                        yield false;
+                    }
                 }
                 case "lt" -> {
-                    try { yield Double.parseDouble(cell) < Double.parseDouble(v); }
-                    catch (NumberFormatException e) { yield false; }
+                    try {
+                        yield Double.parseDouble(cell) < Double.parseDouble(v);
+                    } catch (NumberFormatException e) {
+                        yield false;
+                    }
                 }
                 default -> cell.equals(v);
             };
@@ -292,9 +298,11 @@ public class CustomReportService {
     private ReportTemplateDto toDto(ReportTemplate entity) {
         try {
             List<String> columns = objectMapper.readValue(
-                    entity.getSelectedColumns(), new TypeReference<>() {});
+                    entity.getSelectedColumns(), new TypeReference<>() {
+                    });
             List<Map<String, String>> filters = StringUtils.hasText(entity.getFilters())
-                    ? objectMapper.readValue(entity.getFilters(), new TypeReference<>() {})
+                    ? objectMapper.readValue(entity.getFilters(), new TypeReference<>() {
+            })
                     : List.of();
             return ReportTemplateDto.builder()
                     .id(entity.getId())

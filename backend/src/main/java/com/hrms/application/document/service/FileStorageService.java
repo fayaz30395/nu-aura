@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,11 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class FileStorageService {
 
-    private final StorageProvider storageProvider;
-
-    @Value("${app.storage.url-expiry-hours:24}")
-    private int urlExpiryHours;
-
     // File categories
     public static final String CATEGORY_PROFILE_PHOTO = "profile-photos";
     public static final String CATEGORY_DOCUMENTS = "documents";
@@ -39,7 +35,6 @@ public class FileStorageService {
     public static final String CATEGORY_LETTERS = "letters";
     public static final String CATEGORY_ATTACHMENTS = "attachments";
     public static final String CATEGORY_REPORTS = "reports";
-
     // Allowed file types
     private static final Map<String, Long> ALLOWED_TYPES = Map.of(
             "image/jpeg", 5L * 1024 * 1024,      // 5MB
@@ -53,6 +48,18 @@ public class FileStorageService {
             "text/csv", 10L * 1024 * 1024,
             "text/plain", 5L * 1024 * 1024
     );
+    // MIME categories used for magic byte cross-checking
+    private static final Set<String> IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
+    private static final Set<String> DOCUMENT_TYPES = Set.of(
+            "application/pdf", "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/zip");
+    private static final Set<String> TEXT_TYPES = Set.of("text/csv", "text/plain");
+    private final StorageProvider storageProvider;
+    @Value("${app.storage.url-expiry-hours:24}")
+    private int urlExpiryHours;
 
     /**
      * Upload a file to storage.
@@ -101,7 +108,7 @@ public class FileStorageService {
      * Upload a file from InputStream (for generated files like reports).
      */
     public FileUploadResult uploadFile(InputStream inputStream, String filename, String contentType,
-                                        long size, String category, UUID entityId) {
+                                       long size, String category, UUID entityId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         String objectName = generateObjectName(tenantId, category, entityId, filename);
 
@@ -309,16 +316,6 @@ public class FileStorageService {
         }
         return "application/octet-stream";
     }
-
-    // MIME categories used for magic byte cross-checking
-    private static final Set<String> IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
-    private static final Set<String> DOCUMENT_TYPES = Set.of(
-            "application/pdf", "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/zip");
-    private static final Set<String> TEXT_TYPES = Set.of("text/csv", "text/plain");
 
     /**
      * Map a specific MIME type to a broad category for cross-validation.

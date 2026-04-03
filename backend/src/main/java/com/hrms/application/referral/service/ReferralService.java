@@ -158,7 +158,8 @@ public class ReferralService {
                     referral.setBonusEligibleDate(LocalDate.now().plusMonths(6));
                 }
             }
-            default -> {}
+            default -> {
+            }
         }
 
         return mapToResponse(referralRepository.save(referral));

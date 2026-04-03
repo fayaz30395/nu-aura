@@ -295,11 +295,11 @@ public class PulseSurveyService {
 
         com.hrms.domain.engagement.PulseSurveyResponse response =
                 com.hrms.domain.engagement.PulseSurveyResponse.builder()
-                .surveyId(surveyId)
-                .employeeId(survey.getIsAnonymous() ? null : employeeId)
-                .status(com.hrms.domain.engagement.PulseSurveyResponse.ResponseStatus.IN_PROGRESS)
-                .startedAt(LocalDateTime.now())
-                .build();
+                        .surveyId(surveyId)
+                        .employeeId(survey.getIsAnonymous() ? null : employeeId)
+                        .status(com.hrms.domain.engagement.PulseSurveyResponse.ResponseStatus.IN_PROGRESS)
+                        .startedAt(LocalDateTime.now())
+                        .build();
 
         response.setId(UUID.randomUUID());
         response.setTenantId(tenantId);
@@ -508,8 +508,8 @@ public class PulseSurveyService {
             qa.put("questionType", question.getQuestionType());
 
             if (question.getQuestionType() == QuestionType.RATING ||
-                question.getQuestionType() == QuestionType.LIKERT ||
-                question.getQuestionType() == QuestionType.NPS) {
+                    question.getQuestionType() == QuestionType.LIKERT ||
+                    question.getQuestionType() == QuestionType.NPS) {
                 qa.put("averageScore", answerRepository.getAverageNumericValueByQuestion(surveyId, question.getId()));
                 qa.put("minScore", answerRepository.getMinNumericValueByQuestion(surveyId, question.getId()));
                 qa.put("maxScore", answerRepository.getMaxNumericValueByQuestion(surveyId, question.getId()));
@@ -522,7 +522,7 @@ public class PulseSurveyService {
             } else if (question.getQuestionType() == QuestionType.YES_NO) {
                 qa.put("distribution", answerRepository.getBooleanDistribution(surveyId, question.getId()));
             } else if (question.getQuestionType() == QuestionType.SINGLE_CHOICE ||
-                       question.getQuestionType() == QuestionType.MULTIPLE_CHOICE) {
+                    question.getQuestionType() == QuestionType.MULTIPLE_CHOICE) {
                 qa.put("distribution", answerRepository.getTextValueDistribution(surveyId, question.getId()));
             }
 

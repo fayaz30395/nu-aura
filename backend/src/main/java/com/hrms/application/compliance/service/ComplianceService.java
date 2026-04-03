@@ -356,7 +356,7 @@ public class ComplianceService {
     // ==================== Audit Logging ====================
 
     public void logAudit(AuditLog.AuditAction action, String entityType, UUID entityId,
-                        Map<String, Object> oldValues, Map<String, Object> newValues) {
+                         Map<String, Object> oldValues, Map<String, Object> newValues) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 

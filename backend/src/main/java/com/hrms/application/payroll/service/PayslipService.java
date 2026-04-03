@@ -34,15 +34,15 @@ public class PayslipService {
     public Payslip createPayslip(Payslip payslip) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payslip.setTenantId(tenantId);
-        
+
         if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
-                tenantId, 
-                payslip.getEmployeeId(), 
-                payslip.getPayPeriodYear(), 
+                tenantId,
+                payslip.getEmployeeId(),
+                payslip.getPayPeriodYear(),
                 payslip.getPayPeriodMonth())) {
             throw new IllegalArgumentException("Payslip already exists for this employee and period");
         }
-        
+
         payslip.calculateTotals();
         return payslipRepository.save(payslip);
     }
@@ -50,11 +50,11 @@ public class PayslipService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Payslip updatePayslip(UUID id, Payslip payslipData) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        
+
         Payslip payslip = payslipRepository.findById(id)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
-        
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
+
         payslip.setPayrollRunId(payslipData.getPayrollRunId());
         payslip.setEmployeeId(payslipData.getEmployeeId());
         payslip.setPayPeriodMonth(payslipData.getPayPeriodMonth());
@@ -73,7 +73,7 @@ public class PayslipService {
         payslip.setWorkingDays(payslipData.getWorkingDays());
         payslip.setPresentDays(payslipData.getPresentDays());
         payslip.setLeaveDays(payslipData.getLeaveDays());
-        
+
         payslip.calculateTotals();
         return payslipRepository.save(payslip);
     }
@@ -82,8 +82,8 @@ public class PayslipService {
     public Payslip getPayslipById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payslipRepository.findById(id)
-            .filter(p -> p.getTenantId().equals(tenantId))
-            .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
     }
 
     @Transactional(readOnly = true)
@@ -102,8 +102,8 @@ public class PayslipService {
     public Payslip getPayslipByEmployeeAndPeriod(UUID employeeId, Integer year, Integer month) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payslipRepository.findByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
-            tenantId, employeeId, year, month)
-            .orElseThrow(() -> new IllegalArgumentException("Payslip not found for this period"));
+                        tenantId, employeeId, year, month)
+                .orElseThrow(() -> new IllegalArgumentException("Payslip not found for this period"));
     }
 
     @Transactional(readOnly = true)
@@ -138,20 +138,20 @@ public class PayslipService {
                         "period", payslip.getPayPeriodYear() + "-" + payslip.getPayPeriodMonth()),
                 null,
                 "Payslip soft-deleted for employee " + payslip.getEmployeeId() +
-                " period " + payslip.getPayPeriodYear() + "/" + payslip.getPayPeriodMonth()
+                        " period " + payslip.getPayPeriodYear() + "/" + payslip.getPayPeriodMonth()
         );
     }
 
     /**
      * BUG-002 FIX: Apply India statutory deductions to a payslip inside a single
-     * @Transactional boundary.  Previously this logic lived directly in the
-     * controller (PayrollStatutoryController) which meant:
-     *   1. No transaction: partial writes were possible if calculateTotals() threw.
-     *   2. Repository bypass: the controller held a direct PayslipRepository reference.
      *
      * @param payslipId UUID of the payslip to update
      * @param state     Indian state for professional-tax lookup (e.g. "Karnataka")
      * @return the calculated {@link StatutoryDeductions} DTO
+     * @Transactional boundary.  Previously this logic lived directly in the
+     * controller (PayrollStatutoryController) which meant:
+     * 1. No transaction: partial writes were possible if calculateTotals() threw.
+     * 2. Repository bypass: the controller held a direct PayslipRepository reference.
      */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatutoryDeductions applyStatutoryDeductions(UUID payslipId, String state) {

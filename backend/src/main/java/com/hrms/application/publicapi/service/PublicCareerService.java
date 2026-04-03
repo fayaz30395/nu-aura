@@ -70,8 +70,8 @@ public class PublicCareerService {
      */
     @Transactional(readOnly = true)
     public Map<String, Object> findPublicOpenJobs(UUID tenantId, String q, String department,
-                                                   String location, String employmentType,
-                                                   int page, int size) {
+                                                  String location, String employmentType,
+                                                  int page, int size) {
         // Cap page size to prevent abuse
         int cappedSize = Math.min(size, 50);
         Pageable pageable = PageRequest.of(page, cappedSize, Sort.by(Sort.Direction.DESC, "postedDate"));
@@ -129,10 +129,10 @@ public class PublicCareerService {
      */
     @Transactional
     public Map<String, Object> submitPublicApplication(UUID tenantId, UUID jobId,
-                                                        String firstName, String lastName,
-                                                        String email, String phone,
-                                                        String coverLetter, String expectedSalary,
-                                                        MultipartFile resume) {
+                                                       String firstName, String lastName,
+                                                       String email, String phone,
+                                                       String coverLetter, String expectedSalary,
+                                                       MultipartFile resume) {
         // 1 – Validate job
         JobOpening job = jobOpeningRepository.findByIdAndTenantId(jobId, tenantId)
                 .filter(j -> j.getStatus() == JobOpening.JobStatus.OPEN)
@@ -269,7 +269,7 @@ public class PublicCareerService {
      * All predicates are ANDed; optional filters are skipped when blank/null.
      */
     private Specification<JobOpening> buildPublicJobSpec(UUID tenantId, String q, String department,
-                                                          String location, String employmentType) {
+                                                         String location, String employmentType) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -324,8 +324,8 @@ public class PublicCareerService {
      * Uses a generated candidate code ({@code CAND-YYYYMMDD-XXXXXX}).
      */
     private Candidate createPublicCandidate(UUID tenantId, UUID jobOpeningId,
-                                             String firstName, String lastName,
-                                             String email, String phone) {
+                                            String firstName, String lastName,
+                                            String email, String phone) {
         String dateStr = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE); // e.g. 20260316
         String suffix = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         String code = "CAND-" + dateStr + "-" + suffix;

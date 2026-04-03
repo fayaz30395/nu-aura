@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmailAndTenantId(username,
-                com.hrms.common.security.TenantContext.getCurrentTenant())
+                        com.hrms.common.security.TenantContext.getCurrentTenant())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         // SEC-C01 FIX: Removed password hash details from log output to prevent

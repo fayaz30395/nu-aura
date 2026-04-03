@@ -327,8 +327,8 @@ public class ESignatureService {
 
             for (SignatureApproval prev : previousApprovals) {
                 if (prev.getSigningOrder() != null &&
-                    prev.getSigningOrder() < approval.getSigningOrder() &&
-                    prev.getStatus() != SignatureApproval.ApprovalStatus.SIGNED) {
+                        prev.getSigningOrder() < approval.getSigningOrder() &&
+                        prev.getStatus() != SignatureApproval.ApprovalStatus.SIGNED) {
                     throw new IllegalStateException("Previous signers must sign first (sequential signing enabled)");
                 }
             }
@@ -396,7 +396,7 @@ public class ESignatureService {
     public List<SignatureApprovalResponse> getPendingApprovalsBySigner(UUID signerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return signatureApprovalRepository.findByTenantIdAndSignerIdAndStatus(
-                tenantId, signerId, SignatureApproval.ApprovalStatus.SENT).stream()
+                        tenantId, signerId, SignatureApproval.ApprovalStatus.SENT).stream()
                 .map(this::mapToSignatureApprovalResponse)
                 .collect(Collectors.toList());
     }

@@ -27,11 +27,11 @@ public class FluenceNotificationService {
      * Notify all watchers of a page about an action (edit, publish, comment, etc.).
      * Excludes the actor from notifications.
      *
-     * @param tenantId   tenant context
-     * @param pageId     the wiki page that was changed
-     * @param actorId    the user who performed the action
-     * @param action     description of what happened (e.g., "updated", "published", "commented on")
-     * @param pageTitle  title of the wiki page
+     * @param tenantId  tenant context
+     * @param pageId    the wiki page that was changed
+     * @param actorId   the user who performed the action
+     * @param action    description of what happened (e.g., "updated", "published", "commented on")
+     * @param pageTitle title of the wiki page
      */
     public void notifyWatchers(UUID tenantId, UUID pageId, UUID actorId, String action, String pageTitle) {
         try {

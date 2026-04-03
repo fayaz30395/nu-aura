@@ -32,7 +32,7 @@ public class ExpenseReportService {
      */
     @Transactional(readOnly = true)
     public Map<String, Object> generateReport(LocalDate startDate, LocalDate endDate,
-                                               UUID departmentId, String category, String status) {
+                                              UUID departmentId, String category, String status) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Map<String, Object> report = new LinkedHashMap<>();
 

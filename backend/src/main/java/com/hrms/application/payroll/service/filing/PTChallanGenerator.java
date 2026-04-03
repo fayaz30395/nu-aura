@@ -53,10 +53,10 @@ public class PTChallanGenerator implements FilingFormatGenerator {
 
             if (pt.compareTo(BigDecimal.ZERO) > 0) {
                 csv.append(payslip.getEmployeeId()).append(",")
-                   .append("Employee-").append(payslip.getEmployeeId()).append(",")
-                   .append(payslip.getGrossSalary() != null ? payslip.getGrossSalary() : "0").append(",")
-                   .append(pt).append(",")
-                   .append(String.format("%02d/%d", month, year)).append("\n");
+                        .append("Employee-").append(payslip.getEmployeeId()).append(",")
+                        .append(payslip.getGrossSalary() != null ? payslip.getGrossSalary() : "0").append(",")
+                        .append(pt).append(",")
+                        .append(String.format("%02d/%d", month, year)).append("\n");
                 totalPT = totalPT.add(pt);
                 count++;
             }
