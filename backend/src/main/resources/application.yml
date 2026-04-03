@@ -71,7 +71,7 @@ spring:
     baseline-version: 18
     out-of-order: true
     validate-on-migrate: true
-    repair-on-migrate: true  # Temporarily enabled to repair V113 checksum after bugfix (V114 supersedes)
+    repair-on-migrate: false  # Reverted after V113/V115 checksums repaired
     clean-disabled: true
     mixed: true
     # Flyway uses direct (non-pooler) Neon endpoint to avoid PgBouncer transaction-mode issues
