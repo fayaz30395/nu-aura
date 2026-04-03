@@ -54,7 +54,8 @@
                 <includeMdcKeyName>requestUri</includeMdcKeyName>
                 <includeMdcKeyName>method</includeMdcKeyName>
                 <includeMdcKeyName>remoteAddr</includeMdcKeyName>
-                <customFields>{"application":"hrms-backend","environment":"${SPRING_PROFILES_ACTIVE:-production}"}</customFields>
+                <customFields>{"application":"hrms-backend","environment":"${SPRING_PROFILES_ACTIVE:-production}"}
+                </customFields>
                 <timeZone>UTC</timeZone>
                 <fieldNames>
                     <timestamp>@timestamp</timestamp>
