@@ -69,6 +69,7 @@ public final class Permission {
     public static final String REVIEW_SUBMIT = "REVIEW:SUBMIT";
     public static final String REVIEW_APPROVE = "REVIEW:APPROVE";
     public static final String GOAL_CREATE = "GOAL:CREATE";
+    public static final String GOAL_VIEW = "GOAL:VIEW";
     public static final String GOAL_UPDATE = "GOAL:UPDATE";
     public static final String GOAL_DELETE = "GOAL:DELETE";
     public static final String GOAL_APPROVE = "GOAL:APPROVE";
@@ -106,6 +107,7 @@ public final class Permission {
     public static final String OKR_VIEW = "OKR:VIEW";
     public static final String OKR_CREATE = "OKR:CREATE";
     public static final String OKR_UPDATE = "OKR:UPDATE";
+    public static final String OKR_DELETE = "OKR:DELETE";
     public static final String OKR_APPROVE = "OKR:APPROVE";
     public static final String OKR_VIEW_ALL = "OKR:VIEW_ALL";
 
@@ -225,6 +227,9 @@ public final class Permission {
 
     // Pulse Surveys / Engagement
     public static final String SURVEY_VIEW = "SURVEY:VIEW";
+    public static final String SURVEY_CREATE = "SURVEY:CREATE";
+    public static final String SURVEY_UPDATE = "SURVEY:UPDATE";
+    public static final String SURVEY_DELETE = "SURVEY:DELETE";
     public static final String SURVEY_MANAGE = "SURVEY:MANAGE";
     public static final String SURVEY_SUBMIT = "SURVEY:SUBMIT";
 

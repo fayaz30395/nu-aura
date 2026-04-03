@@ -27,7 +27,7 @@ public class SurveyManagementController {
     private final SurveyManagementService surveyService;
 
     @PostMapping
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_CREATE)
     public ResponseEntity<SurveyDto> createSurvey(@Valid @RequestBody SurveyRequest request) {
         UUID createdBy = getCurrentUserId();
         SurveyDto response = surveyService.createSurvey(request, createdBy);
@@ -35,7 +35,7 @@ public class SurveyManagementController {
     }
 
     @PutMapping("/{surveyId}")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_UPDATE)
     public ResponseEntity<SurveyDto> updateSurvey(
             @PathVariable UUID surveyId,
             @Valid @RequestBody SurveyRequest request) {
@@ -44,7 +44,7 @@ public class SurveyManagementController {
     }
 
     @PatchMapping("/{surveyId}/status")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_MANAGE)
     public ResponseEntity<SurveyDto> updateStatus(
             @PathVariable UUID surveyId,
             @RequestParam Survey.SurveyStatus status) {
@@ -53,49 +53,49 @@ public class SurveyManagementController {
     }
 
     @PostMapping("/{surveyId}/launch")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_MANAGE)
     public ResponseEntity<SurveyDto> launchSurvey(@PathVariable UUID surveyId) {
         SurveyDto response = surveyService.launchSurvey(surveyId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{surveyId}/complete")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_MANAGE)
     public ResponseEntity<SurveyDto> completeSurvey(@PathVariable UUID surveyId) {
         SurveyDto response = surveyService.completeSurvey(surveyId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{surveyId}")
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(SURVEY_VIEW)
     public ResponseEntity<SurveyDto> getSurveyById(@PathVariable UUID surveyId) {
         SurveyDto response = surveyService.getSurveyById(surveyId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(SURVEY_VIEW)
     public ResponseEntity<Page<SurveyDto>> getAllSurveys(Pageable pageable) {
         Page<SurveyDto> response = surveyService.getAllSurveys(pageable);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/status/{status}")
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(SURVEY_VIEW)
     public ResponseEntity<List<SurveyDto>> getSurveysByStatus(@PathVariable Survey.SurveyStatus status) {
         List<SurveyDto> response = surveyService.getSurveysByStatus(status);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/active")
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(SURVEY_VIEW)
     public ResponseEntity<List<SurveyDto>> getActiveSurveys() {
         List<SurveyDto> response = surveyService.getActiveSurveys();
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{surveyId}")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(SURVEY_DELETE)
     public ResponseEntity<Void> deleteSurvey(@PathVariable UUID surveyId) {
         surveyService.deleteSurvey(surveyId);
         return ResponseEntity.noContent().build();

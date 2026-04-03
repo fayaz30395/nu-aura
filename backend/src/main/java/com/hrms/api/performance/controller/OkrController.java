@@ -201,7 +201,7 @@ public class OkrController {
     }
 
     @DeleteMapping("/objectives/{id}")
-    @RequiresPermission(Permission.OKR_UPDATE)
+    @RequiresPermission(Permission.OKR_DELETE)
     public ResponseEntity<Void> deleteObjective(@PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         okrService.deleteObjective(tenantId, id);
@@ -320,7 +320,7 @@ public class OkrController {
     }
 
     @DeleteMapping("/key-results/{id}")
-    @RequiresPermission(Permission.OKR_UPDATE)
+    @RequiresPermission(Permission.OKR_DELETE)
     public ResponseEntity<Void> deleteKeyResult(@PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         okrService.deleteKeyResult(tenantId, id);

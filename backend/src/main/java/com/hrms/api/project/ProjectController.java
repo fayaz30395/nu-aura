@@ -83,7 +83,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/assign")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.PROJECT_UPDATE)
     public ResponseEntity<ProjectEmployeeResponse> assignEmployee(
             @PathVariable UUID id,
             @Valid @RequestBody AssignEmployeeRequest request) {
@@ -92,7 +92,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{projectId}/employees/{employeeId}")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.PROJECT_UPDATE)
     public ResponseEntity<Void> removeEmployeeFromProject(
             @PathVariable UUID projectId,
             @PathVariable UUID employeeId) {
@@ -119,7 +119,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/allocations/{memberId}/end")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.PROJECT_UPDATE)
     public ResponseEntity<ProjectEmployeeResponse> endAllocation(
             @PathVariable UUID id,
             @PathVariable UUID memberId) {
