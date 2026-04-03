@@ -35,7 +35,7 @@ public class GoalController {
     }
 
     @GetMapping
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<Page<GoalResponse>> getAllGoals(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -49,14 +49,14 @@ public class GoalController {
     }
 
     @GetMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<GoalResponse> getGoalById(@PathVariable UUID id) {
         GoalResponse response = goalService.getGoalById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<List<GoalResponse>> getEmployeeGoals(@PathVariable UUID employeeId) {
         List<GoalResponse> goals = goalService.getEmployeeGoals(employeeId);
         return ResponseEntity.ok(goals);
@@ -66,7 +66,7 @@ public class GoalController {
      * Paginated variant — prefer this for employees with large goal histories.
      */
     @GetMapping("/employee/{employeeId}/paged")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<Page<GoalResponse>> getEmployeeGoalsPaged(
             @PathVariable UUID employeeId,
             Pageable pageable) {
@@ -75,7 +75,7 @@ public class GoalController {
     }
 
     @GetMapping("/team/{managerId}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<List<GoalResponse>> getTeamGoals(@PathVariable UUID managerId) {
         List<GoalResponse> goals = goalService.getTeamGoals(managerId);
         return ResponseEntity.ok(goals);
@@ -85,7 +85,7 @@ public class GoalController {
      * Paginated variant — prefer this for managers with large teams.
      */
     @GetMapping("/team/{managerId}/paged")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<Page<GoalResponse>> getTeamGoalsPaged(
             @PathVariable UUID managerId,
             Pageable pageable) {
@@ -94,7 +94,7 @@ public class GoalController {
     }
 
     @GetMapping("/analytics")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.GOAL_VIEW)
     public ResponseEntity<Map<String, Object>> getGoalAnalytics() {
         Map<String, Object> analytics = goalService.getGoalAnalytics();
         return ResponseEntity.ok(analytics);
