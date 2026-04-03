@@ -205,7 +205,7 @@ public class Feedback360Controller {
 
         // Get the feedback request to get subject and cycle info
         Feedback360Request feedbackRequest = feedback360Service.getRequestById(tenantId, request.getRequestId())
-                .orElseThrow(() -> new RuntimeException("Feedback request not found"));
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Feedback request not found: " + request.getRequestId()));
 
         Feedback360Response response = Feedback360Response.builder()
                 .requestId(request.getRequestId())
@@ -244,8 +244,19 @@ public class Feedback360Controller {
     @RequiresPermission(Permission.FEEDBACK_360_VIEW)
     public ResponseEntity<Feedback360Response> getResponse(@PathVariable UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
         return feedback360Service.getResponseByRequest(tenantId, requestId)
-                .map(ResponseEntity::ok)
+                .map(response -> {
+                    boolean isReviewer = response.getReviewerId() != null
+                            && response.getReviewerId().equals(currentEmployeeId);
+                    boolean isSubject = response.getSubjectEmployeeId() != null
+                            && response.getSubjectEmployeeId().equals(currentEmployeeId);
+                    if (!isReviewer && !isSubject) {
+                        throw new org.springframework.security.access.AccessDeniedException(
+                                "Not authorized to view this feedback response");
+                    }
+                    return ResponseEntity.ok(response);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

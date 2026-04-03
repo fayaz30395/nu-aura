@@ -139,6 +139,14 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public Page<AnnouncementDto> getActiveAnnouncements(UUID employeeId, Pageable pageable) {
+        // BUG-NEW-002: Enforce that a caller can only fetch their own announcements
+        // unless they are a manager/admin who should have broader access.
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && !employeeId.equals(currentEmployeeId)) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Cannot view another employee's announcements");
+        }
+
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Get employee's department for filtering

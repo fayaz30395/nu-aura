@@ -69,7 +69,7 @@ public class ReviewCycleController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_UPDATE)
     public ResponseEntity<ReviewCycleResponse> updateCycle(
             @PathVariable UUID id,
             @Valid @RequestBody ReviewCycleRequest request
@@ -79,14 +79,14 @@ public class ReviewCycleController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_DELETE)
     public ResponseEntity<Void> deleteCycle(@PathVariable UUID id) {
         reviewCycleService.deleteCycle(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/complete")
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.REVIEW_APPROVE)
     public ResponseEntity<ReviewCycleResponse> completeCycle(@PathVariable UUID id) {
         ReviewCycleResponse response = reviewCycleService.completeCycle(id);
         return ResponseEntity.ok(response);

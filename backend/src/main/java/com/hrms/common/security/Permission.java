@@ -69,6 +69,8 @@ public final class Permission {
     public static final String REVIEW_SUBMIT = "REVIEW:SUBMIT";
     public static final String REVIEW_APPROVE = "REVIEW:APPROVE";
     public static final String GOAL_CREATE = "GOAL:CREATE";
+    public static final String GOAL_UPDATE = "GOAL:UPDATE";
+    public static final String GOAL_DELETE = "GOAL:DELETE";
     public static final String GOAL_APPROVE = "GOAL:APPROVE";
 
     // Recruitment

@@ -47,8 +47,8 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit process for employee {} in tenant {}", request.getEmployeeId(), tenantId);
 
-        // Verify employee exists
-        employeeRepository.findById(request.getEmployeeId())
+        // Verify employee exists within the current tenant (BUG-NEW-001: prevent cross-tenant lookup)
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         ExitProcess exitProcess = new ExitProcess();
