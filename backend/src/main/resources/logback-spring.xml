@@ -10,8 +10,8 @@
     <!-- Include Spring Boot defaults -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- ========== Development Profile ========== -->
-    <springProfile name="dev,local,default">
+    <!-- ========== Development / Render Profiles ========== -->
+    <springProfile name="dev,local,default,render">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>

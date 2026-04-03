@@ -78,8 +78,15 @@ public class EmployeeService {
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        // Check if employee code already exists
-        if (employeeRepository.existsByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)) {
+        // F-02: Auto-generate employee code when not provided
+        String employeeCode = request.getEmployeeCode();
+        if (employeeCode == null || employeeCode.isBlank()) {
+            long count = employeeRepository.countByTenantId(tenantId);
+            do {
+                count++;
+                employeeCode = String.format("EMP-%04d", count);
+            } while (employeeRepository.existsByEmployeeCodeAndTenantId(employeeCode, tenantId));
+        } else if (employeeRepository.existsByEmployeeCodeAndTenantId(employeeCode, tenantId)) {
             throw new DuplicateResourceException("Employee code already exists");
         }
 
@@ -102,7 +109,7 @@ public class EmployeeService {
 
         // Create employee record
         Employee employee = Employee.builder()
-                .employeeCode(request.getEmployeeCode())
+                .employeeCode(employeeCode)
                 .user(user)
                 .firstName(request.getFirstName())
                 .middleName(request.getMiddleName())

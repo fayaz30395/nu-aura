@@ -17,6 +17,13 @@ spring:
     url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
     username: ${DEV_DATABASE_USERNAME:hrms}
     password: ${DEV_DATABASE_PASSWORD}
+    hikari:
+      # Reduced for local dev — prevents OOM under macOS memory pressure
+      maximum-pool-size: 3
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 120000
+      max-lifetime: 240000
 
   data:
     redis:
@@ -55,6 +62,8 @@ spring:
     # Baseline on existing database if Flyway hasn't run before
     baseline-on-migrate: true
     baseline-version: 18
+    # Auto-repair failed migration checksums in dev (e.g. after fixing a broken migration)
+    repair-on-migrate: true
 
 app:
   jwt:

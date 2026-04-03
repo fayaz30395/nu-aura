@@ -68,7 +68,9 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public AssetResponse createAsset(AssetRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        // F-26 FIX (1/2): requireCurrentTenant() throws fast if tenant is absent,
+        // preventing a null tenantId from silently violating the DB NOT NULL constraint.
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating asset {} for tenant {}", request.getAssetCode(), tenantId);
 
         if (assetRepository.existsByTenantIdAndAssetCode(tenantId, request.getAssetCode())) {
@@ -76,7 +78,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         }
 
         Asset asset = new Asset();
-        asset.setId(UUID.randomUUID());
+        // F-26 FIX (2/2): Do NOT manually call setId() — Asset has @GeneratedValue(strategy=UUID)
+        // so a non-null ID causes JPA to issue a MERGE instead of INSERT, producing a 500.
         asset.setTenantId(tenantId);
         asset.setAssetCode(request.getAssetCode());
         asset.setAssetName(request.getAssetName());
