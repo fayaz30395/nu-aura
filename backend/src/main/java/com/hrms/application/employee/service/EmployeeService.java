@@ -359,7 +359,16 @@ public class EmployeeService {
 
         employee = employeeRepository.save(employee);
 
-        if (employee.getUser() != null) {
+        // BUG-QA2-009 FIX: Only persist the User record when fields that mirror onto
+        // the User entity actually changed (firstName / lastName). Calling
+        // userRepository.save() unconditionally triggers a Hibernate merge() on the User,
+        // which may try to initialize the lazily-loaded roles collection to check for
+        // dirty state. For a status-only update (e.g. deactivation) the User is
+        // untouched — accessing the uninitialized roles proxy in that code path causes
+        // a LazyInitializationException / NPE that surfaces as HTTP 500. Guard with an
+        // explicit check on changedFields before touching the User entity.
+        if (employee.getUser() != null
+                && (changedFields.contains("firstName") || changedFields.contains("lastName"))) {
             userRepository.save(employee.getUser());
         }
 
