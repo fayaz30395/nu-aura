@@ -62,18 +62,18 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
     List<EmployeePayrollRecord> findByTenantIdAndPayrollRun(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId);
 
     @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.employeeId = :employeeId " +
-           "ORDER BY r.payrollRun.payPeriodStart DESC")
+            "ORDER BY r.payrollRun.payPeriodStart DESC")
     List<EmployeePayrollRecord> findByEmployee(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);
 
     @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId AND r.locationCode = :locationCode")
     List<EmployeePayrollRecord> findByTenantIdAndPayrollRunAndLocation(@Param("tenantId") UUID tenantId,
-                                                                        @Param("runId") UUID payrollRunId,
-                                                                        @Param("locationCode") String locationCode);
+                                                                       @Param("runId") UUID payrollRunId,
+                                                                       @Param("locationCode") String locationCode);
 
     @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId AND r.status = :status")
     List<EmployeePayrollRecord> findByTenantIdAndPayrollRunAndStatus(@Param("tenantId") UUID tenantId,
-                                                                      @Param("runId") UUID payrollRunId,
-                                                                      @Param("status") EmployeePayrollRecord.RecordStatus status);
+                                                                     @Param("runId") UUID payrollRunId,
+                                                                     @Param("status") EmployeePayrollRecord.RecordStatus status);
 
     @Query("SELECT COUNT(r) FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId")
     int countByTenantIdAndPayrollRun(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId);
@@ -85,13 +85,13 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
     BigDecimal getTotalGrossByCurrency(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId, @Param("currency") String currency);
 
     @Query("SELECT r.localCurrency, SUM(r.grossPayBase), SUM(r.netPayBase), SUM(r.totalEmployerCostBase), COUNT(r) " +
-           "FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId " +
-           "GROUP BY r.localCurrency")
+            "FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId " +
+            "GROUP BY r.localCurrency")
     List<Object[]> getSummaryByCurrency(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId);
 
     @Query("SELECT r.locationCode, SUM(r.grossPayBase), SUM(r.netPayBase), SUM(r.totalEmployerCostBase), COUNT(r) " +
-           "FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId " +
-           "GROUP BY r.locationCode")
+            "FROM EmployeePayrollRecord r WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId " +
+            "GROUP BY r.locationCode")
     List<Object[]> getSummaryByLocation(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId);
 
     // ==================== DEPRECATED - DO NOT USE ====================
@@ -135,7 +135,7 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
     @Deprecated
     @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId AND r.locationCode = :locationCode")
     List<EmployeePayrollRecord> findByPayrollRunAndLocation(@Param("runId") UUID payrollRunId,
-                                                             @Param("locationCode") String locationCode);
+                                                            @Param("locationCode") String locationCode);
 
     /**
      * @deprecated Use {@link #findByTenantIdAndPayrollRunAndStatus(UUID, UUID, EmployeePayrollRecord.RecordStatus)} instead.
@@ -144,7 +144,7 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
     @Deprecated
     @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId AND r.status = :status")
     List<EmployeePayrollRecord> findByPayrollRunAndStatus(@Param("runId") UUID payrollRunId,
-                                                           @Param("status") EmployeePayrollRecord.RecordStatus status);
+                                                          @Param("status") EmployeePayrollRecord.RecordStatus status);
 
     /**
      * @deprecated Use {@link #countByTenantIdAndPayrollRun(UUID, UUID)} instead.

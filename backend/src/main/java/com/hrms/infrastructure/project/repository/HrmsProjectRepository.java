@@ -28,7 +28,7 @@ public interface HrmsProjectRepository extends JpaRepository<Project, UUID> {
     Page<Project> findAllByTenantIdAndPriority(UUID tenantId, Project.Priority priority, Pageable pageable);
 
     Page<Project> findAllByTenantIdAndStatusAndPriority(UUID tenantId, Project.ProjectStatus status,
-            Project.Priority priority, Pageable pageable);
+                                                        Project.Priority priority, Pageable pageable);
 
     Page<Project> findAllByTenantIdAndProjectManagerId(UUID tenantId, UUID projectManagerId, Pageable pageable);
 

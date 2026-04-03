@@ -215,7 +215,9 @@ public class FluenceIndexingService {
         }
     }
 
-    /** Recursively walk TipTap JSON and collect text node values. */
+    /**
+     * Recursively walk TipTap JSON and collect text node values.
+     */
     private void extractTextNodes(JsonNode node, StringBuilder sb) {
         if (node == null) return;
 

@@ -39,11 +39,11 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
                                        Pageable pageable);
 
     @Query("SELECT e FROM ExpenseClaim e WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
-           "AND e.claimDate BETWEEN :startDate AND :endDate")
+            "AND e.claimDate BETWEEN :startDate AND :endDate")
     List<ExpenseClaim> findByEmployeeAndDateRange(@Param("tenantId") UUID tenantId,
-                                                   @Param("employeeId") UUID employeeId,
-                                                   @Param("startDate") LocalDate startDate,
-                                                   @Param("endDate") LocalDate endDate);
+                                                  @Param("employeeId") UUID employeeId,
+                                                  @Param("startDate") LocalDate startDate,
+                                                  @Param("endDate") LocalDate endDate);
 
     @Query("SELECT e FROM ExpenseClaim e WHERE e.tenantId = :tenantId AND e.status IN :statuses")
     Page<ExpenseClaim> findByStatuses(@Param("tenantId") UUID tenantId,
@@ -51,15 +51,15 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
                                       Pageable pageable);
 
     @Query("SELECT SUM(e.amount) FROM ExpenseClaim e WHERE e.tenantId = :tenantId AND e.employeeId = :employeeId " +
-           "AND e.status = :status AND e.claimDate BETWEEN :startDate AND :endDate")
+            "AND e.status = :status AND e.claimDate BETWEEN :startDate AND :endDate")
     BigDecimal sumByEmployeeAndStatusAndDateRange(@Param("tenantId") UUID tenantId,
-                                                   @Param("employeeId") UUID employeeId,
-                                                   @Param("status") ExpenseClaim.ExpenseStatus status,
-                                                   @Param("startDate") LocalDate startDate,
-                                                   @Param("endDate") LocalDate endDate);
+                                                  @Param("employeeId") UUID employeeId,
+                                                  @Param("status") ExpenseClaim.ExpenseStatus status,
+                                                  @Param("startDate") LocalDate startDate,
+                                                  @Param("endDate") LocalDate endDate);
 
     @Query("SELECT SUM(e.amount) FROM ExpenseClaim e WHERE e.tenantId = :tenantId " +
-           "AND e.status = :status AND e.claimDate BETWEEN :startDate AND :endDate")
+            "AND e.status = :status AND e.claimDate BETWEEN :startDate AND :endDate")
     BigDecimal sumByStatusAndDateRange(@Param("tenantId") UUID tenantId,
                                        @Param("status") ExpenseClaim.ExpenseStatus status,
                                        @Param("startDate") LocalDate startDate,
@@ -69,11 +69,11 @@ public interface ExpenseClaimRepository extends JpaRepository<ExpenseClaim, UUID
     long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") ExpenseClaim.ExpenseStatus status);
 
     @Query("SELECT e.category, COUNT(e), SUM(e.amount) FROM ExpenseClaim e " +
-           "WHERE e.tenantId = :tenantId AND e.claimDate BETWEEN :startDate AND :endDate " +
-           "GROUP BY e.category")
+            "WHERE e.tenantId = :tenantId AND e.claimDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.category")
     List<Object[]> getCategoryStats(@Param("tenantId") UUID tenantId,
-                                     @Param("startDate") LocalDate startDate,
-                                     @Param("endDate") LocalDate endDate);
+                                    @Param("startDate") LocalDate startDate,
+                                    @Param("endDate") LocalDate endDate);
 
     boolean existsByClaimNumberAndTenantId(String claimNumber, UUID tenantId);
 

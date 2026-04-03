@@ -61,6 +61,6 @@ public interface ReportExecutionRepository extends JpaRepository<ReportExecution
      * Get execution statistics for a scheduled report.
      */
     @Query("SELECT COUNT(re), SUM(CASE WHEN re.status = 'COMPLETED' THEN 1 ELSE 0 END), AVG(re.executionTimeMs) " +
-           "FROM ReportExecution re WHERE re.scheduledReportId = :scheduledReportId")
+            "FROM ReportExecution re WHERE re.scheduledReportId = :scheduledReportId")
     Object[] getExecutionStatistics(@Param("scheduledReportId") UUID scheduledReportId);
 }

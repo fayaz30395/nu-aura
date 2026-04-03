@@ -22,24 +22,24 @@ public interface CompTimeBalanceRepository extends JpaRepository<CompTimeBalance
             UUID tenantId, UUID employeeId, int fiscalYear);
 
     @Query("SELECT c FROM CompTimeBalance c WHERE c.tenantId = :tenantId " +
-           "AND c.employeeId = :employeeId AND c.currentBalance > 0 " +
-           "ORDER BY c.fiscalYear DESC")
+            "AND c.employeeId = :employeeId AND c.currentBalance > 0 " +
+            "ORDER BY c.fiscalYear DESC")
     List<CompTimeBalance> findActiveBalances(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT c FROM CompTimeBalance c WHERE c.tenantId = :tenantId " +
-           "AND c.atMaxBalance = true")
+            "AND c.atMaxBalance = true")
     List<CompTimeBalance> findAtMaxBalance(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT SUM(c.currentBalance) FROM CompTimeBalance c " +
-           "WHERE c.tenantId = :tenantId AND c.employeeId = :employeeId")
+            "WHERE c.tenantId = :tenantId AND c.employeeId = :employeeId")
     BigDecimal getTotalBalance(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT c FROM CompTimeBalance c WHERE c.tenantId = :tenantId " +
-           "AND c.fiscalYear = :fiscalYear")
+            "AND c.fiscalYear = :fiscalYear")
     List<CompTimeBalance> findByFiscalYear(
             @Param("tenantId") UUID tenantId,
             @Param("fiscalYear") int fiscalYear);

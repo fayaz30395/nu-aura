@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * <p>Tracks processed event IDs in Redis with TTL to prevent duplicate processing
  * across multiple consumer instances. Uses atomic SETNX to eliminate the race
  * condition between check and mark operations.
- *
+ * <p>
  * Key design decisions:
  * - 24-hour TTL for event tracking (events older than 24h are re-processable)
  * - Redis key format: "kafka:idempotent:{eventId}"
@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class IdempotencyService {
 
-    private final StringRedisTemplate redisTemplate;
     private static final String PREFIX = "kafka:idempotent:";
     private static final long TTL_HOURS = 24;
+    private final StringRedisTemplate redisTemplate;
 
     /**
      * Atomically attempt to claim an event for processing.
@@ -41,7 +41,7 @@ public class IdempotencyService {
      *
      * @param eventId the unique event identifier
      * @return true if this caller is the first to claim the event (proceed with processing);
-     *         false if another consumer already claimed it (skip processing)
+     * false if another consumer already claimed it (skip processing)
      */
     public boolean tryProcess(String eventId) {
         try {
@@ -60,7 +60,7 @@ public class IdempotencyService {
             // This is a trade-off: allow potential duplicates over complete unavailability.
             // Application-level idempotency (DB constraints, business logic) provides a safety net.
             log.warn("Redis unavailable for idempotency check on event {}: {}. " +
-                    "Processing will continue with potential for duplicates.",
+                            "Processing will continue with potential for duplicates.",
                     eventId, e.getMessage());
             return true; // Allow processing when Redis is down
         }

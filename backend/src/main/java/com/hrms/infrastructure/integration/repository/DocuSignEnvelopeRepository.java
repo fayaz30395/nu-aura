@@ -22,7 +22,7 @@ public interface DocuSignEnvelopeRepository extends JpaRepository<DocuSignEnvelo
     /**
      * Finds an envelope by DocuSign envelope ID within a specific tenant.
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId   the tenant ID (required for isolation)
      * @param envelopeId the DocuSign envelope ID
      * @return an Optional containing the envelope, or empty if not found
      */
@@ -31,9 +31,9 @@ public interface DocuSignEnvelopeRepository extends JpaRepository<DocuSignEnvelo
     /**
      * Finds envelopes for a specific entity (e.g., leave request, offer letter) within a tenant.
      *
-     * @param tenantId the tenant ID (required for isolation)
+     * @param tenantId   the tenant ID (required for isolation)
      * @param entityType the entity type (e.g., "LeaveRequest", "OfferLetter")
-     * @param entityId the UUID of the entity
+     * @param entityId   the UUID of the entity
      * @return an Optional containing the envelope, or empty if not found
      */
     Optional<DocuSignEnvelope> findByTenantIdAndEntityTypeAndEntityId(
@@ -43,7 +43,7 @@ public interface DocuSignEnvelopeRepository extends JpaRepository<DocuSignEnvelo
      * Finds all envelopes with a specific status within a tenant, excluding soft-deleted envelopes.
      *
      * @param tenantId the tenant ID (required for isolation)
-     * @param status the envelope status (e.g., "SENT", "COMPLETED", "FAILED")
+     * @param status   the envelope status (e.g., "SENT", "COMPLETED", "FAILED")
      * @param pageable pagination information
      * @return a page of envelopes with the specified status
      */

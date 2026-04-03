@@ -31,20 +31,20 @@ public interface AppRoleRepository extends JpaRepository<AppRole, UUID> {
      * Find all roles for a tenant and application code
      */
     @Query("SELECT r FROM AppRole r JOIN r.application a WHERE r.tenantId = :tenantId AND a.code = :appCode " +
-           "ORDER BY r.level DESC")
+            "ORDER BY r.level DESC")
     List<AppRole> findByTenantIdAndApplicationCode(
-        @Param("tenantId") UUID tenantId,
-        @Param("appCode") String appCode
+            @Param("tenantId") UUID tenantId,
+            @Param("appCode") String appCode
     );
 
     /**
      * Find role with permissions
      */
     @Query("SELECT DISTINCT r FROM AppRole r LEFT JOIN FETCH r.permissions " +
-           "WHERE r.id = :roleId AND r.tenantId = :tenantId")
+            "WHERE r.id = :roleId AND r.tenantId = :tenantId")
     Optional<AppRole> findByIdAndTenantIdWithPermissions(
-        @Param("roleId") UUID roleId,
-        @Param("tenantId") UUID tenantId
+            @Param("roleId") UUID roleId,
+            @Param("tenantId") UUID tenantId
     );
 
     /**
@@ -66,6 +66,6 @@ public interface AppRoleRepository extends JpaRepository<AppRole, UUID> {
      * Check if role is assigned to any user
      */
     @Query("SELECT CASE WHEN COUNT(ua) > 0 THEN true ELSE false END " +
-           "FROM UserAppAccess ua JOIN ua.roles r WHERE r.id = :roleId")
+            "FROM UserAppAccess ua JOIN ua.roles r WHERE r.id = :roleId")
     boolean isRoleAssignedToUsers(@Param("roleId") UUID roleId);
 }

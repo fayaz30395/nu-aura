@@ -20,13 +20,13 @@ public interface WorkflowRuleRepository extends JpaRepository<WorkflowRule, UUID
     List<WorkflowRule> findByTenantIdAndIsActiveTrue(UUID tenantId);
 
     @Query("SELECT r FROM WorkflowRule r WHERE r.tenantId = :tenantId AND r.entityType = :entityType AND r.isActive = true " +
-           "AND (r.effectiveFrom IS NULL OR r.effectiveFrom <= :now) AND (r.effectiveTo IS NULL OR r.effectiveTo >= :now) " +
-           "ORDER BY r.priority DESC")
+            "AND (r.effectiveFrom IS NULL OR r.effectiveFrom <= :now) AND (r.effectiveTo IS NULL OR r.effectiveTo >= :now) " +
+            "ORDER BY r.priority DESC")
     List<WorkflowRule> findActiveRulesForEntityType(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("now") LocalDateTime now);
 
     @Query("SELECT r FROM WorkflowRule r WHERE r.tenantId = :tenantId AND r.entityType = :entityType AND r.ruleType = :ruleType AND r.isActive = true " +
-           "AND (r.effectiveFrom IS NULL OR r.effectiveFrom <= :now) AND (r.effectiveTo IS NULL OR r.effectiveTo >= :now) " +
-           "ORDER BY r.priority DESC")
+            "AND (r.effectiveFrom IS NULL OR r.effectiveFrom <= :now) AND (r.effectiveTo IS NULL OR r.effectiveTo >= :now) " +
+            "ORDER BY r.priority DESC")
     List<WorkflowRule> findActiveRulesByType(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("ruleType") WorkflowRule.RuleType ruleType, @Param("now") LocalDateTime now);
 
     @Query("SELECT r FROM WorkflowRule r WHERE r.tenantId = :tenantId AND r.ruleType = 'WORKFLOW_SELECTION' AND r.isActive = true ORDER BY r.priority DESC")

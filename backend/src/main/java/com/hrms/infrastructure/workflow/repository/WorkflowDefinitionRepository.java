@@ -32,7 +32,7 @@ public interface WorkflowDefinitionRepository extends JpaRepository<WorkflowDefi
     Optional<WorkflowDefinition> findByEntityTypeAndDepartment(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("departmentId") UUID departmentId);
 
     @Query("SELECT w FROM WorkflowDefinition w WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true " +
-           "AND (w.minAmount IS NULL OR w.minAmount <= :amount) AND (w.maxAmount IS NULL OR w.maxAmount >= :amount)")
+            "AND (w.minAmount IS NULL OR w.minAmount <= :amount) AND (w.maxAmount IS NULL OR w.maxAmount >= :amount)")
     List<WorkflowDefinition> findByEntityTypeAndAmountRange(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("amount") BigDecimal amount);
 
     @Query("SELECT w FROM WorkflowDefinition w WHERE w.tenantId = :tenantId AND w.name LIKE %:name% AND w.isActive = true")
@@ -52,18 +52,18 @@ public interface WorkflowDefinitionRepository extends JpaRepository<WorkflowDefi
      * Use this when loading workflow definitions for execution/editing.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.id = :workflowId AND w.tenantId = :tenantId " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.id = :workflowId AND w.tenantId = :tenantId " +
+            "ORDER BY w.id, w.steps ASC")
     Optional<WorkflowDefinition> findByIdWithSteps(@Param("workflowId") UUID workflowId, @Param("tenantId") UUID tenantId);
 
     /**
      * Find default workflow for entity type with ApprovalSteps eagerly fetched.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true AND w.isDefault = true " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true AND w.isDefault = true " +
+            "ORDER BY w.id, w.steps ASC")
     Optional<WorkflowDefinition> findDefaultWorkflowWithSteps(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType);
 
     /**
@@ -71,18 +71,18 @@ public interface WorkflowDefinitionRepository extends JpaRepository<WorkflowDefi
      * Prevents N+1 queries when retrieving all workflows for an entity type.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true " +
+            "ORDER BY w.id, w.steps ASC")
     List<WorkflowDefinition> findByEntityTypeWithSteps(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType);
 
     /**
      * Find workflow by entity type and department with ApprovalSteps eagerly fetched.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true AND w.departmentId = :departmentId " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true AND w.departmentId = :departmentId " +
+            "ORDER BY w.id, w.steps ASC")
     Optional<WorkflowDefinition> findByEntityTypeAndDepartmentWithSteps(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("departmentId") UUID departmentId);
 
     /**
@@ -90,10 +90,10 @@ public interface WorkflowDefinitionRepository extends JpaRepository<WorkflowDefi
      * Used for financial workflows.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true " +
-           "AND (w.minAmount IS NULL OR w.minAmount <= :amount) AND (w.maxAmount IS NULL OR w.maxAmount >= :amount) " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.tenantId = :tenantId AND w.entityType = :entityType AND w.isActive = true " +
+            "AND (w.minAmount IS NULL OR w.minAmount <= :amount) AND (w.maxAmount IS NULL OR w.maxAmount >= :amount) " +
+            "ORDER BY w.id, w.steps ASC")
     List<WorkflowDefinition> findByEntityTypeAndAmountRangeWithSteps(@Param("tenantId") UUID tenantId, @Param("entityType") WorkflowDefinition.EntityType entityType, @Param("amount") BigDecimal amount);
 
     /**
@@ -101,8 +101,8 @@ public interface WorkflowDefinitionRepository extends JpaRepository<WorkflowDefi
      * Used when loading all workflows for configuration/display.
      */
     @Query("SELECT DISTINCT w FROM WorkflowDefinition w " +
-           "LEFT JOIN FETCH w.steps " +
-           "WHERE w.tenantId = :tenantId AND w.isActive = true " +
-           "ORDER BY w.id, w.steps ASC")
+            "LEFT JOIN FETCH w.steps " +
+            "WHERE w.tenantId = :tenantId AND w.isActive = true " +
+            "ORDER BY w.id, w.steps ASC")
     List<WorkflowDefinition> findByTenantIdAndIsActiveTrueWithSteps(@Param("tenantId") UUID tenantId);
 }

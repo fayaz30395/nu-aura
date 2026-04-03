@@ -28,10 +28,10 @@ public interface BiometricPunchLogRepository extends JpaRepository<BiometricPunc
      * Check for duplicate punches: same employee, same tenant, punch within the dedup window.
      */
     @Query("SELECT COUNT(p) > 0 FROM BiometricPunchLog p " +
-           "WHERE p.tenantId = :tenantId " +
-           "AND p.employeeId = :employeeId " +
-           "AND p.punchTime BETWEEN :windowStart AND :windowEnd " +
-           "AND p.processedStatus <> 'DUPLICATE'")
+            "WHERE p.tenantId = :tenantId " +
+            "AND p.employeeId = :employeeId " +
+            "AND p.punchTime BETWEEN :windowStart AND :windowEnd " +
+            "AND p.processedStatus <> 'DUPLICATE'")
     boolean existsDuplicatePunch(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -39,9 +39,9 @@ public interface BiometricPunchLogRepository extends JpaRepository<BiometricPunc
             @Param("windowEnd") LocalDateTime windowEnd);
 
     @Query("SELECT COUNT(p) FROM BiometricPunchLog p " +
-           "WHERE p.deviceId = :deviceId AND p.tenantId = :tenantId " +
-           "AND p.processedStatus = :status " +
-           "AND p.punchTime >= :since")
+            "WHERE p.deviceId = :deviceId AND p.tenantId = :tenantId " +
+            "AND p.processedStatus = :status " +
+            "AND p.punchTime >= :since")
     long countByDeviceAndStatusSince(
             @Param("deviceId") UUID deviceId,
             @Param("tenantId") UUID tenantId,

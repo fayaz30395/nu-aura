@@ -84,6 +84,28 @@ public class DocuSignConnector implements IntegrationConnector {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Extract a string value from a map, handling null gracefully.
+     */
+    private static String getString(Map<String, Object> map, String key) {
+        if (map == null) {
+            return null;
+        }
+        Object value = map.get(key);
+        return value != null ? value.toString() : null;
+    }
+
+    /**
+     * Extract a string value from connector config settings.
+     */
+    private static String getString(ConnectorConfig config, String key) {
+        Object value = config.settings().get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("Missing required config: " + key);
+        }
+        return value.toString();
+    }
+
     @Override
     public String getConnectorId() {
         return "docusign";
@@ -187,6 +209,8 @@ public class DocuSignConnector implements IntegrationConnector {
             throw new RuntimeException("Configuration failed: " + e.getMessage(), e);
         }
     }
+
+    // ==================== Private Helper Methods ====================
 
     @Override
     public void handleEvent(IntegrationEvent event) {
@@ -293,8 +317,6 @@ public class DocuSignConnector implements IntegrationConnector {
             );
         }
     }
-
-    // ==================== Private Helper Methods ====================
 
     /**
      * Validate that all required configuration fields are present.
@@ -566,28 +588,6 @@ public class DocuSignConnector implements IntegrationConnector {
             log.error("Failed to serialize config schema: {}", e.getMessage());
             return "[]";
         }
-    }
-
-    /**
-     * Extract a string value from a map, handling null gracefully.
-     */
-    private static String getString(Map<String, Object> map, String key) {
-        if (map == null) {
-            return null;
-        }
-        Object value = map.get(key);
-        return value != null ? value.toString() : null;
-    }
-
-    /**
-     * Extract a string value from connector config settings.
-     */
-    private static String getString(ConnectorConfig config, String key) {
-        Object value = config.settings().get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing required config: " + key);
-        }
-        return value.toString();
     }
 
     /**

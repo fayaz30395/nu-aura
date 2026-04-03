@@ -26,9 +26,9 @@ public interface NotificationTemplateRepository extends JpaRepository<Notificati
     Page<NotificationTemplate> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT t FROM NotificationTemplate t WHERE t.tenantId = :tenantId AND t.isActive = true " +
-           "AND (:category IS NULL OR t.category = :category) " +
-           "AND (:search IS NULL OR LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "OR LOWER(t.code) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "AND (:category IS NULL OR t.category = :category) " +
+            "AND (:search IS NULL OR LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(t.code) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<NotificationTemplate> searchTemplates(
             @Param("tenantId") UUID tenantId,
             @Param("category") String category,

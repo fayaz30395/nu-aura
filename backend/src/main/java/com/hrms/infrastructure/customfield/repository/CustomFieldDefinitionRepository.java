@@ -81,8 +81,8 @@ public interface CustomFieldDefinitionRepository extends JpaRepository<CustomFie
      * Search field definitions by name or code
      */
     @Query("SELECT c FROM CustomFieldDefinition c WHERE c.tenantId = :tenantId AND " +
-           "(LOWER(c.fieldName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(c.fieldCode) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "(LOWER(c.fieldName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.fieldCode) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<CustomFieldDefinition> searchByNameOrCode(
             @Param("tenantId") UUID tenantId,
             @Param("search") String search,
@@ -92,15 +92,15 @@ public interface CustomFieldDefinitionRepository extends JpaRepository<CustomFie
      * Get distinct field groups for a tenant
      */
     @Query("SELECT DISTINCT c.fieldGroup FROM CustomFieldDefinition c " +
-           "WHERE c.tenantId = :tenantId AND c.fieldGroup IS NOT NULL ORDER BY c.fieldGroup")
+            "WHERE c.tenantId = :tenantId AND c.fieldGroup IS NOT NULL ORDER BY c.fieldGroup")
     List<String> findDistinctFieldGroupsByTenantId(@Param("tenantId") UUID tenantId);
 
     /**
      * Get distinct field groups for an entity type
      */
     @Query("SELECT DISTINCT c.fieldGroup FROM CustomFieldDefinition c " +
-           "WHERE c.tenantId = :tenantId AND c.entityType = :entityType AND c.fieldGroup IS NOT NULL " +
-           "ORDER BY c.fieldGroup")
+            "WHERE c.tenantId = :tenantId AND c.entityType = :entityType AND c.fieldGroup IS NOT NULL " +
+            "ORDER BY c.fieldGroup")
     List<String> findDistinctFieldGroupsByEntityType(
             @Param("tenantId") UUID tenantId,
             @Param("entityType") EntityType entityType);
@@ -119,8 +119,8 @@ public interface CustomFieldDefinitionRepository extends JpaRepository<CustomFie
      * Get max display order for a group
      */
     @Query("SELECT COALESCE(MAX(c.displayOrder), 0) FROM CustomFieldDefinition c " +
-           "WHERE c.tenantId = :tenantId AND c.entityType = :entityType AND " +
-           "(c.fieldGroup = :fieldGroup OR (:fieldGroup IS NULL AND c.fieldGroup IS NULL))")
+            "WHERE c.tenantId = :tenantId AND c.entityType = :entityType AND " +
+            "(c.fieldGroup = :fieldGroup OR (:fieldGroup IS NULL AND c.fieldGroup IS NULL))")
     Integer findMaxDisplayOrderByGroup(
             @Param("tenantId") UUID tenantId,
             @Param("entityType") EntityType entityType,

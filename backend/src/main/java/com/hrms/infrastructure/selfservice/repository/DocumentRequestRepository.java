@@ -37,7 +37,7 @@ public interface DocumentRequestRepository extends JpaRepository<DocumentRequest
                                          Pageable pageable);
 
     @Query("SELECT d FROM DocumentRequest d WHERE d.tenantId = :tenantId " +
-           "AND d.requiredByDate <= :date AND d.status IN ('PENDING', 'IN_PROGRESS') ORDER BY d.requiredByDate")
+            "AND d.requiredByDate <= :date AND d.status IN ('PENDING', 'IN_PROGRESS') ORDER BY d.requiredByDate")
     List<DocumentRequest> findUrgentRequests(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
     @Query("SELECT d FROM DocumentRequest d WHERE d.tenantId = :tenantId AND d.documentType = :type")
@@ -49,14 +49,14 @@ public interface DocumentRequestRepository extends JpaRepository<DocumentRequest
     long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") RequestStatus status);
 
     @Query("SELECT d.documentType, COUNT(d) FROM DocumentRequest d " +
-           "WHERE d.tenantId = :tenantId GROUP BY d.documentType")
+            "WHERE d.tenantId = :tenantId GROUP BY d.documentType")
     List<Object[]> countByDocumentType(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT d FROM DocumentRequest d WHERE d.employeeId = :employeeId AND d.tenantId = :tenantId " +
-           "AND d.documentType = :type AND d.status IN ('PENDING', 'IN_PROGRESS')")
+            "AND d.documentType = :type AND d.status IN ('PENDING', 'IN_PROGRESS')")
     List<DocumentRequest> findPendingByTypeAndEmployee(@Param("employeeId") UUID employeeId,
-                                                        @Param("tenantId") UUID tenantId,
-                                                        @Param("type") DocumentType type);
+                                                       @Param("tenantId") UUID tenantId,
+                                                       @Param("type") DocumentType type);
 
     @Query("SELECT d FROM DocumentRequest d WHERE d.processedBy = :processedBy AND d.tenantId = :tenantId")
     Page<DocumentRequest> findByProcessedBy(@Param("processedBy") UUID processedBy,

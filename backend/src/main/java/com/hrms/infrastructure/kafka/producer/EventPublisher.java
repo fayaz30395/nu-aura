@@ -37,16 +37,16 @@ public class EventPublisher {
     /**
      * Publish an approval event (APPROVED or REJECTED).
      *
-     * @param approvalId ID of the approval instance
-     * @param taskId ID of the approval task
+     * @param approvalId   ID of the approval instance
+     * @param taskId       ID of the approval task
      * @param approvalType Type of approval (LEAVE, EXPENSE, ASSET, WIKI_PAGE, etc.)
-     * @param status APPROVED or REJECTED
-     * @param tenantId Multi-tenant context
-     * @param approverId User who made the decision
-     * @param requesterId User who requested the approval
-     * @param comments Optional comments from approver
-     * @param isTerminal Whether the workflow is complete
-     * @param metadata Domain-specific metadata
+     * @param status       APPROVED or REJECTED
+     * @param tenantId     Multi-tenant context
+     * @param approverId   User who made the decision
+     * @param requesterId  User who requested the approval
+     * @param comments     Optional comments from approver
+     * @param isTerminal   Whether the workflow is complete
+     * @param metadata     Domain-specific metadata
      */
     public CompletableFuture<Void> publishApprovalEvent(
             UUID approvalId,
@@ -83,17 +83,17 @@ public class EventPublisher {
     /**
      * Publish a notification event.
      *
-     * @param recipientId User to notify
-     * @param channel EMAIL, PUSH, IN_APP, or SMS
-     * @param subject Email subject or notification title
-     * @param body Email body or notification content
-     * @param templateName Optional email template name
-     * @param templateData Data to render in template
-     * @param tenantId Multi-tenant context
-     * @param relatedEntityId ID of related business object
+     * @param recipientId       User to notify
+     * @param channel           EMAIL, PUSH, IN_APP, or SMS
+     * @param subject           Email subject or notification title
+     * @param body              Email body or notification content
+     * @param templateName      Optional email template name
+     * @param templateData      Data to render in template
+     * @param tenantId          Multi-tenant context
+     * @param relatedEntityId   ID of related business object
      * @param relatedEntityType Type of related entity
-     * @param actionUrl Optional URL to include
-     * @param priority HIGH, NORMAL, or LOW
+     * @param actionUrl         Optional URL to include
+     * @param priority          HIGH, NORMAL, or LOW
      */
     public CompletableFuture<Void> publishNotificationEvent(
             UUID recipientId,
@@ -134,19 +134,19 @@ public class EventPublisher {
     /**
      * Publish an audit event.
      *
-     * @param userId User who performed action
-     * @param action Action type (CREATE, UPDATE, DELETE, APPROVE, REJECT, etc.)
-     * @param entityType Resource name (Employee, LeaveRequest, ExpenseClaim, etc.)
-     * @param entityId ID of affected entity
-     * @param tenantId Multi-tenant context
-     * @param oldValue JSON representation of previous state (optional)
-     * @param newValue JSON representation of new state (optional)
-     * @param ipAddress IP address of client
-     * @param userAgent HTTP user agent
-     * @param method HTTP method
-     * @param uri Endpoint URI
-     * @param statusCode HTTP response code
-     * @param durationMs Operation duration
+     * @param userId      User who performed action
+     * @param action      Action type (CREATE, UPDATE, DELETE, APPROVE, REJECT, etc.)
+     * @param entityType  Resource name (Employee, LeaveRequest, ExpenseClaim, etc.)
+     * @param entityId    ID of affected entity
+     * @param tenantId    Multi-tenant context
+     * @param oldValue    JSON representation of previous state (optional)
+     * @param newValue    JSON representation of new state (optional)
+     * @param ipAddress   IP address of client
+     * @param userAgent   HTTP user agent
+     * @param method      HTTP method
+     * @param uri         Endpoint URI
+     * @param statusCode  HTTP response code
+     * @param durationMs  Operation duration
      * @param description Optional description/reason
      */
     public CompletableFuture<Void> publishAuditEvent(
@@ -192,18 +192,18 @@ public class EventPublisher {
     /**
      * Publish an employee lifecycle event.
      *
-     * @param employeeId Employee affected
-     * @param eventTypeEnum Event type (HIRED, ONBOARDED, PROMOTED, TRANSFERRED, OFFBOARDED)
-     * @param initiatedBy User who initiated the event
-     * @param tenantId Multi-tenant context
-     * @param email Employee email
-     * @param name Employee name
-     * @param departmentId Department assignment
-     * @param managerId Reporting manager
-     * @param jobTitle Job designation
+     * @param employeeId     Employee affected
+     * @param eventTypeEnum  Event type (HIRED, ONBOARDED, PROMOTED, TRANSFERRED, OFFBOARDED)
+     * @param initiatedBy    User who initiated the event
+     * @param tenantId       Multi-tenant context
+     * @param email          Employee email
+     * @param name           Employee name
+     * @param departmentId   Department assignment
+     * @param managerId      Reporting manager
+     * @param jobTitle       Job designation
      * @param employmentType Employment type
-     * @param metadata Event-specific details
-     * @param bulkOperation Whether part of bulk operation
+     * @param metadata       Event-specific details
+     * @param bulkOperation  Whether part of bulk operation
      */
     public CompletableFuture<Void> publishEmployeeLifecycleEvent(
             UUID employeeId,
@@ -248,9 +248,9 @@ public class EventPublisher {
      * {@code PROCESSING} status and returns HTTP 202. The consumer picks up the
      * event and executes the heavy per-employee work in batches.</p>
      *
-     * @param runId         ID of the PayrollRun to process
-     * @param tenantId      Multi-tenant context
-     * @param triggeredBy   User ID who initiated processing
+     * @param runId          ID of the PayrollRun to process
+     * @param tenantId       Multi-tenant context
+     * @param triggeredBy    User ID who initiated processing
      * @param payPeriodMonth Pay period month (1–12)
      * @param payPeriodYear  Pay period year
      */
@@ -320,7 +320,7 @@ public class EventPublisher {
      * so failures are propagated to the caller instead of being silently swallowed.</p>
      *
      * @param topic Kafka topic
-     * @param key Message key for partitioning
+     * @param key   Message key for partitioning
      * @param event Event payload
      * @return CompletableFuture that completes exceptionally if the send fails
      */

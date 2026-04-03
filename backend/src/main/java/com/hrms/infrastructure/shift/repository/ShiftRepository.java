@@ -24,12 +24,12 @@ public interface ShiftRepository extends JpaRepository<Shift, UUID> {
     Optional<Shift> findByTenantIdAndShiftCode(UUID tenantId, String shiftCode);
 
     @Query("SELECT s FROM Shift s WHERE s.tenantId = :tenantId AND s.isActive = true " +
-           "AND s.shiftType = :shiftType")
+            "AND s.shiftType = :shiftType")
     List<Shift> findActiveShiftsByType(@Param("tenantId") UUID tenantId,
                                        @Param("shiftType") Shift.ShiftType shiftType);
 
     @Query("SELECT s FROM Shift s WHERE s.tenantId = :tenantId AND s.isActive = true " +
-           "AND s.allowsOvertime = true")
+            "AND s.allowsOvertime = true")
     List<Shift> findActiveOvertimeEnabledShifts(@Param("tenantId") UUID tenantId);
 
     boolean existsByTenantIdAndShiftCode(UUID tenantId, String shiftCode);

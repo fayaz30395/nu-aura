@@ -27,41 +27,41 @@ public interface BenefitPlanEnhancedRepository extends JpaRepository<BenefitPlan
     List<BenefitPlanEnhanced> findByTenantIdAndCategory(UUID tenantId, BenefitPlanEnhanced.PlanCategory category);
 
     @Query("SELECT bp FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.isActive = true " +
-           "AND (bp.effectiveFrom IS NULL OR bp.effectiveFrom <= :date) " +
-           "AND (bp.effectiveTo IS NULL OR bp.effectiveTo >= :date)")
+            "AND bp.isActive = true " +
+            "AND (bp.effectiveFrom IS NULL OR bp.effectiveFrom <= :date) " +
+            "AND (bp.effectiveTo IS NULL OR bp.effectiveTo >= :date)")
     List<BenefitPlanEnhanced> findActivePlansForDate(
             @Param("tenantId") UUID tenantId,
             @Param("date") LocalDate date);
 
     @Query("SELECT bp FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.isActive = true AND bp.dependentsCovered = true")
+            "AND bp.isActive = true AND bp.dependentsCovered = true")
     List<BenefitPlanEnhanced> findPlansWithDependentCoverage(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT bp FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.isActive = true AND bp.isFlexible = true")
+            "AND bp.isActive = true AND bp.isFlexible = true")
     List<BenefitPlanEnhanced> findFlexibleBenefitPlans(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT bp FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.isActive = true " +
-           "AND (bp.eligibleGrades IS NULL OR bp.eligibleGrades LIKE %:grade%)")
+            "AND bp.isActive = true " +
+            "AND (bp.eligibleGrades IS NULL OR bp.eligibleGrades LIKE %:grade%)")
     List<BenefitPlanEnhanced> findEligiblePlansForGrade(
             @Param("tenantId") UUID tenantId,
             @Param("grade") String grade);
 
     @Query("SELECT bp FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.planType = :planType " +
-           "AND bp.providerCode = :providerCode")
+            "AND bp.planType = :planType " +
+            "AND bp.providerCode = :providerCode")
     List<BenefitPlanEnhanced> findByProviderAndType(
             @Param("tenantId") UUID tenantId,
             @Param("planType") BenefitPlanEnhanced.PlanType planType,
             @Param("providerCode") String providerCode);
 
     @Query("SELECT COUNT(bp) FROM BenefitPlanEnhanced bp WHERE bp.tenantId = :tenantId " +
-           "AND bp.isActive = true")
+            "AND bp.isActive = true")
     long countActivePlans(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT bp.planType, COUNT(bp) FROM BenefitPlanEnhanced bp " +
-           "WHERE bp.tenantId = :tenantId GROUP BY bp.planType")
+            "WHERE bp.tenantId = :tenantId GROUP BY bp.planType")
     List<Object[]> countPlansByType(@Param("tenantId") UUID tenantId);
 }

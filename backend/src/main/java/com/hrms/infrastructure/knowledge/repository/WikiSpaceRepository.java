@@ -25,7 +25,7 @@ public interface WikiSpaceRepository extends JpaRepository<WikiSpace, UUID>, Jpa
     List<WikiSpace> findByTenantIdAndIsArchivedFalseOrderByOrderIndex(UUID tenantId);
 
     @Query("SELECT ws FROM WikiSpace ws WHERE ws.tenantId = :tenantId AND ws.isArchived = false " +
-           "ORDER BY ws.orderIndex ASC")
+            "ORDER BY ws.orderIndex ASC")
     List<WikiSpace> findActiveSpacesByTenant(@Param("tenantId") UUID tenantId);
 
     boolean existsByTenantIdAndSlug(UUID tenantId, String slug);

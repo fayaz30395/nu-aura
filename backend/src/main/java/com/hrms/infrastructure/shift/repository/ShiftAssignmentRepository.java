@@ -25,18 +25,18 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     Page<ShiftAssignment> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT sa FROM ShiftAssignment sa WHERE sa.tenantId = :tenantId " +
-           "AND sa.employeeId = :employeeId " +
-           "AND sa.assignmentDate = :date " +
-           "AND sa.status = 'ACTIVE'")
+            "AND sa.employeeId = :employeeId " +
+            "AND sa.assignmentDate = :date " +
+            "AND sa.status = 'ACTIVE'")
     Optional<ShiftAssignment> findActiveAssignmentForEmployeeOnDate(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
             @Param("date") LocalDate date);
 
     @Query("SELECT sa FROM ShiftAssignment sa WHERE sa.tenantId = :tenantId " +
-           "AND sa.employeeId = :employeeId " +
-           "AND sa.assignmentDate BETWEEN :startDate AND :endDate " +
-           "AND sa.status = 'ACTIVE'")
+            "AND sa.employeeId = :employeeId " +
+            "AND sa.assignmentDate BETWEEN :startDate AND :endDate " +
+            "AND sa.status = 'ACTIVE'")
     List<ShiftAssignment> findAssignmentsForEmployeeBetweenDates(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -44,9 +44,9 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT sa FROM ShiftAssignment sa WHERE sa.tenantId = :tenantId " +
-           "AND sa.shiftId = :shiftId " +
-           "AND sa.assignmentDate BETWEEN :startDate AND :endDate " +
-           "AND sa.status = 'ACTIVE'")
+            "AND sa.shiftId = :shiftId " +
+            "AND sa.assignmentDate BETWEEN :startDate AND :endDate " +
+            "AND sa.status = 'ACTIVE'")
     List<ShiftAssignment> findAssignmentsForShiftBetweenDates(
             @Param("tenantId") UUID tenantId,
             @Param("shiftId") UUID shiftId,
@@ -54,16 +54,16 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT sa FROM ShiftAssignment sa WHERE sa.tenantId = :tenantId " +
-           "AND sa.assignmentDate = :date " +
-           "AND sa.status = 'ACTIVE'")
+            "AND sa.assignmentDate = :date " +
+            "AND sa.status = 'ACTIVE'")
     List<ShiftAssignment> findAllActiveAssignmentsForDate(
             @Param("tenantId") UUID tenantId,
             @Param("date") LocalDate date);
 
     @Query("SELECT sa FROM ShiftAssignment sa WHERE sa.tenantId = :tenantId " +
-           "AND sa.status = 'ACTIVE' " +
-           "AND sa.effectiveFrom <= :date " +
-           "AND (sa.effectiveTo IS NULL OR sa.effectiveTo >= :date)")
+            "AND sa.status = 'ACTIVE' " +
+            "AND sa.effectiveFrom <= :date " +
+            "AND (sa.effectiveTo IS NULL OR sa.effectiveTo >= :date)")
     List<ShiftAssignment> findActiveEffectiveAssignmentsForDate(
             @Param("tenantId") UUID tenantId,
             @Param("date") LocalDate date);

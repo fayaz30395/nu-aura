@@ -21,30 +21,28 @@ import java.util.UUID;
 @SuperBuilder
 public class FluenceContentEvent extends BaseKafkaEvent {
 
+    /**
+     * Supported action constants.
+     */
+    public static final String ACTION_CREATED = "CREATED";
+    public static final String ACTION_UPDATED = "UPDATED";
+    public static final String ACTION_PUBLISHED = "PUBLISHED";
+    public static final String ACTION_DELETED = "DELETED";
     @Serial
     private static final long serialVersionUID = 1L;
-
     /**
      * Content type: "wiki", "blog", or "template".
      */
     @JsonProperty("content_type")
     private String contentType;
-
     /**
      * UUID of the content entity (wiki page ID, blog post ID, or template ID).
      */
     @JsonProperty("content_id")
     private UUID contentId;
-
     /**
      * Action performed: CREATED, UPDATED, PUBLISHED, or DELETED.
      */
     @JsonProperty("action")
     private String action;
-
-    /** Supported action constants. */
-    public static final String ACTION_CREATED = "CREATED";
-    public static final String ACTION_UPDATED = "UPDATED";
-    public static final String ACTION_PUBLISHED = "PUBLISHED";
-    public static final String ACTION_DELETED = "DELETED";
 }

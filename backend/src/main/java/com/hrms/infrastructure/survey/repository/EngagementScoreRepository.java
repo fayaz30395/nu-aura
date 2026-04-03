@@ -19,63 +19,63 @@ public interface EngagementScoreRepository extends JpaRepository<EngagementScore
     Optional<EngagementScore> findByIdAndTenantId(UUID id, UUID tenantId);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.scoreLevel = 'ORGANIZATION' ORDER BY e.scoreDate DESC")
+            "AND e.scoreLevel = 'ORGANIZATION' ORDER BY e.scoreDate DESC")
     List<EngagementScore> findOrganizationScores(
             @Param("tenantId") UUID tenantId,
             Pageable pageable);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.scoreLevel = 'ORGANIZATION' " +
-           "AND e.scoreDate = (SELECT MAX(e2.scoreDate) FROM EngagementScore e2 " +
-           "WHERE e2.tenantId = :tenantId AND e2.scoreLevel = 'ORGANIZATION')")
+            "AND e.scoreLevel = 'ORGANIZATION' " +
+            "AND e.scoreDate = (SELECT MAX(e2.scoreDate) FROM EngagementScore e2 " +
+            "WHERE e2.tenantId = :tenantId AND e2.scoreLevel = 'ORGANIZATION')")
     Optional<EngagementScore> findLatestOrganizationScore(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.departmentId = :departmentId " +
-           "ORDER BY e.scoreDate DESC")
+            "AND e.departmentId = :departmentId " +
+            "ORDER BY e.scoreDate DESC")
     List<EngagementScore> findByDepartment(
             @Param("tenantId") UUID tenantId,
             @Param("departmentId") UUID departmentId);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.scoreDate BETWEEN :startDate AND :endDate " +
-           "ORDER BY e.scoreDate")
+            "AND e.scoreDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY e.scoreDate")
     List<EngagementScore> findByDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.survey.id = :surveyId")
+            "AND e.survey.id = :surveyId")
     List<EngagementScore> findBySurvey(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT e.scoreLevel, AVG(e.overallScore) FROM EngagementScore e " +
-           "WHERE e.tenantId = :tenantId AND e.survey.id = :surveyId " +
-           "GROUP BY e.scoreLevel")
+            "WHERE e.tenantId = :tenantId AND e.survey.id = :surveyId " +
+            "GROUP BY e.scoreLevel")
     List<Object[]> getAverageScoreByLevel(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT e.departmentId, e.overallScore FROM EngagementScore e " +
-           "WHERE e.tenantId = :tenantId AND e.scoreLevel = 'DEPARTMENT' " +
-           "AND e.scoreDate = :scoreDate " +
-           "ORDER BY e.overallScore DESC")
+            "WHERE e.tenantId = :tenantId AND e.scoreLevel = 'DEPARTMENT' " +
+            "AND e.scoreDate = :scoreDate " +
+            "ORDER BY e.overallScore DESC")
     List<Object[]> getDepartmentRanking(
             @Param("tenantId") UUID tenantId,
             @Param("scoreDate") LocalDate scoreDate);
 
     @Query("SELECT e FROM EngagementScore e WHERE e.tenantId = :tenantId " +
-           "AND e.scoreLevel = 'DEPARTMENT' " +
-           "AND e.overallScore < :threshold")
+            "AND e.scoreLevel = 'DEPARTMENT' " +
+            "AND e.overallScore < :threshold")
     List<EngagementScore> findLowEngagementDepartments(
             @Param("tenantId") UUID tenantId,
             @Param("threshold") Double threshold);
 
     @Query("SELECT AVG(e.npsScore) FROM EngagementScore e " +
-           "WHERE e.tenantId = :tenantId AND e.scoreLevel = 'ORGANIZATION' " +
-           "AND e.scoreDate BETWEEN :startDate AND :endDate")
+            "WHERE e.tenantId = :tenantId AND e.scoreLevel = 'ORGANIZATION' " +
+            "AND e.scoreDate BETWEEN :startDate AND :endDate")
     Double getAverageNpsForPeriod(
             @Param("tenantId") UUID tenantId,
             @Param("startDate") LocalDate startDate,

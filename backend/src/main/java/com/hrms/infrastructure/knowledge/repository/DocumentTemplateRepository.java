@@ -25,11 +25,11 @@ public interface DocumentTemplateRepository extends JpaRepository<DocumentTempla
     Page<DocumentTemplate> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT dt FROM KnowledgeDocumentTemplate dt WHERE dt.tenantId = :tenantId AND dt.isFeatured = true " +
-           "AND dt.isActive = true ORDER BY dt.createdAt DESC")
+            "AND dt.isActive = true ORDER BY dt.createdAt DESC")
     List<DocumentTemplate> findFeaturedTemplatesByTenant(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT dt FROM KnowledgeDocumentTemplate dt WHERE dt.tenantId = :tenantId AND dt.isActive = true " +
-           "ORDER BY dt.usageCount DESC LIMIT 10")
+            "ORDER BY dt.usageCount DESC LIMIT 10")
     List<DocumentTemplate> findPopularTemplatesByTenant(@Param("tenantId") UUID tenantId);
 
     boolean existsByTenantIdAndSlug(UUID tenantId, String slug);
@@ -37,7 +37,7 @@ public interface DocumentTemplateRepository extends JpaRepository<DocumentTempla
     long countByTenantIdAndIsActiveTrue(UUID tenantId);
 
     @Query("SELECT dt FROM KnowledgeDocumentTemplate dt WHERE dt.tenantId = :tenantId AND dt.isActive = true " +
-           "AND (LOWER(dt.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR LOWER(dt.description) LIKE LOWER(CONCAT('%', :query, '%')))")
+            "AND (LOWER(dt.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(dt.description) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<DocumentTemplate> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 }

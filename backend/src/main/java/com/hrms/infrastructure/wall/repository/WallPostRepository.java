@@ -85,9 +85,9 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Use this when you need to display author info (name, avatar) with posts.
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author a " +
-           "LEFT JOIN FETCH a.user " +
-           "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
+            "LEFT JOIN FETCH p.author a " +
+            "LEFT JOIN FETCH a.user " +
+            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
     Optional<WallPost> findByIdWithAuthor(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
     /**
@@ -95,28 +95,28 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Eliminates N+1 when accessing both author and praiseRecipient.
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author a " +
-           "LEFT JOIN FETCH a.user " +
-           "LEFT JOIN FETCH p.praiseRecipient pr " +
-           "LEFT JOIN FETCH pr.user " +
-           "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
+            "LEFT JOIN FETCH p.author a " +
+            "LEFT JOIN FETCH a.user " +
+            "LEFT JOIN FETCH p.praiseRecipient pr " +
+            "LEFT JOIN FETCH pr.user " +
+            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
     Optional<WallPost> findByIdWithAuthorAndRecipient(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
     /**
      * Batch fetch posts by IDs with authors eagerly loaded.
      * Use after paginated query to hydrate author data in single query.
-     *
+     * <p>
      * Usage pattern:
      * 1. Call findAllActiveOrderByPinnedAndCreatedAt() to get paginated post IDs
      * 2. Extract IDs from page content
      * 3. Call this method to fetch posts with authors in one query
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author a " +
-           "LEFT JOIN FETCH a.user " +
-           "LEFT JOIN FETCH p.praiseRecipient pr " +
-           "LEFT JOIN FETCH pr.user " +
-           "WHERE p.id IN :postIds AND p.tenantId = :tenantId")
+            "LEFT JOIN FETCH p.author a " +
+            "LEFT JOIN FETCH a.user " +
+            "LEFT JOIN FETCH p.praiseRecipient pr " +
+            "LEFT JOIN FETCH pr.user " +
+            "WHERE p.id IN :postIds AND p.tenantId = :tenantId")
     List<WallPost> findByIdsWithAuthors(@Param("postIds") List<UUID> postIds, @Param("tenantId") UUID tenantId);
 
     /**
@@ -124,9 +124,9 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
      * Eliminates N+1 when loading poll options for each post.
      */
     @Query("SELECT DISTINCT p FROM WallPost p " +
-           "LEFT JOIN FETCH p.author " +
-           "LEFT JOIN FETCH p.pollOptions po " +
-           "WHERE p.id IN :postIds AND p.tenantId = :tenantId AND p.type = 'POLL'")
+            "LEFT JOIN FETCH p.author " +
+            "LEFT JOIN FETCH p.pollOptions po " +
+            "WHERE p.id IN :postIds AND p.tenantId = :tenantId AND p.type = 'POLL'")
     List<WallPost> findPollPostsWithOptions(@Param("postIds") List<UUID> postIds, @Param("tenantId") UUID tenantId);
 
     // ==================== COUNT METHODS ====================

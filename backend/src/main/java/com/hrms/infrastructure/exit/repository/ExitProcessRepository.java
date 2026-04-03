@@ -11,12 +11,12 @@ import java.util.UUID;
 
 @Repository
 public interface ExitProcessRepository extends JpaRepository<ExitProcess, UUID>, JpaSpecificationExecutor<ExitProcess> {
-    
+
     Optional<ExitProcess> findByIdAndTenantId(UUID id, UUID tenantId);
-    
+
     Optional<ExitProcess> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);
-    
+
     List<ExitProcess> findByTenantIdAndStatus(UUID tenantId, ExitProcess.ExitStatus status);
-    
+
     List<ExitProcess> findByTenantIdAndExitType(UUID tenantId, ExitProcess.ExitType exitType);
 }

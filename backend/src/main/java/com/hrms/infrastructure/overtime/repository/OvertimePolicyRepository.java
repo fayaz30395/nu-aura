@@ -24,14 +24,14 @@ public interface OvertimePolicyRepository extends JpaRepository<OvertimePolicy, 
     Optional<OvertimePolicy> findByTenantIdAndPolicyCode(UUID tenantId, String policyCode);
 
     @Query("SELECT op FROM OvertimePolicy op WHERE op.tenantId = :tenantId " +
-           "AND op.isDefault = true AND op.isActive = true")
+            "AND op.isDefault = true AND op.isActive = true")
     Optional<OvertimePolicy> findDefaultPolicy(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT op FROM OvertimePolicy op WHERE op.tenantId = :tenantId " +
-           "AND op.departmentId = :departmentId " +
-           "AND op.isActive = true")
+            "AND op.departmentId = :departmentId " +
+            "AND op.isActive = true")
     Optional<OvertimePolicy> findPolicyForDepartment(@Param("tenantId") UUID tenantId,
-                                                      @Param("departmentId") UUID departmentId);
+                                                     @Param("departmentId") UUID departmentId);
 
     boolean existsByTenantIdAndPolicyCode(UUID tenantId, String policyCode);
 }

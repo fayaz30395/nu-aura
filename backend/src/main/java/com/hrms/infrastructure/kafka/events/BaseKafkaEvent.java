@@ -3,6 +3,7 @@ package com.hrms.infrastructure.kafka.events;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;

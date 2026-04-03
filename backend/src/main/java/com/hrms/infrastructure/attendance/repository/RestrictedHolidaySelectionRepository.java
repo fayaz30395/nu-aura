@@ -33,19 +33,19 @@ public interface RestrictedHolidaySelectionRepository extends JpaRepository<Rest
             UUID tenantId, UUID employeeId, UUID restrictedHolidayId);
 
     @Query("SELECT COUNT(s) FROM RestrictedHolidaySelection s " +
-           "WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
-           "AND s.status IN ('PENDING', 'APPROVED') AND s.isDeleted = false " +
-           "AND s.restrictedHoliday.year = :year")
+            "WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
+            "AND s.status IN ('PENDING', 'APPROVED') AND s.isDeleted = false " +
+            "AND s.restrictedHoliday.year = :year")
     long countActiveSelectionsByEmployeeAndYear(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
             @Param("year") Integer year);
 
     @Query("SELECT s FROM RestrictedHolidaySelection s " +
-           "JOIN FETCH s.restrictedHoliday rh " +
-           "WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
-           "AND rh.year = :year AND s.isDeleted = false " +
-           "ORDER BY rh.holidayDate ASC")
+            "JOIN FETCH s.restrictedHoliday rh " +
+            "WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
+            "AND rh.year = :year AND s.isDeleted = false " +
+            "ORDER BY rh.holidayDate ASC")
     List<RestrictedHolidaySelection> findByEmployeeAndYear(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,

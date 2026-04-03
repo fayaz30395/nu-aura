@@ -27,9 +27,9 @@ public interface RestrictedHolidayRepository extends JpaRepository<RestrictedHol
     boolean existsByTenantIdAndHolidayDateAndYear(UUID tenantId, LocalDate holidayDate, Integer year);
 
     @Query("SELECT rh FROM RestrictedHoliday rh WHERE rh.tenantId = :tenantId " +
-           "AND rh.year = :year AND rh.isActive = true AND rh.isDeleted = false " +
-           "AND rh.holidayDate >= :today " +
-           "ORDER BY rh.holidayDate ASC")
+            "AND rh.year = :year AND rh.isActive = true AND rh.isDeleted = false " +
+            "AND rh.holidayDate >= :today " +
+            "ORDER BY rh.holidayDate ASC")
     List<RestrictedHoliday> findUpcomingByTenantIdAndYear(
             @Param("tenantId") UUID tenantId,
             @Param("year") Integer year,

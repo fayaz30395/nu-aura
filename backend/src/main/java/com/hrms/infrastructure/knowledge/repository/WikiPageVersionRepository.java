@@ -20,7 +20,7 @@ public interface WikiPageVersionRepository extends JpaRepository<WikiPageVersion
     Optional<WikiPageVersion> findByTenantIdAndPageIdAndVersionNumber(UUID tenantId, UUID pageId, Integer versionNumber);
 
     @Query("SELECT wv FROM WikiPageVersion wv WHERE wv.tenantId = :tenantId AND wv.page.id = :pageId " +
-           "ORDER BY wv.versionNumber DESC")
+            "ORDER BY wv.versionNumber DESC")
     List<WikiPageVersion> findVersionHistoryByPage(@Param("tenantId") UUID tenantId, @Param("pageId") UUID pageId);
 
     long countByTenantIdAndPageId(UUID tenantId, UUID pageId);

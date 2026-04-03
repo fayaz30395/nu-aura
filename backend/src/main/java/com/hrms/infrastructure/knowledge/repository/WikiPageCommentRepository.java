@@ -23,7 +23,7 @@ public interface WikiPageCommentRepository extends JpaRepository<WikiPageComment
     List<WikiPageComment> findByTenantIdAndParentCommentId(UUID tenantId, UUID parentCommentId);
 
     @Query("SELECT wc FROM WikiPageComment wc WHERE wc.tenantId = :tenantId AND wc.page.id = :pageId " +
-           "AND wc.isPinned = true ORDER BY wc.createdAt DESC")
+            "AND wc.isPinned = true ORDER BY wc.createdAt DESC")
     List<WikiPageComment> findPinnedCommentsByPage(@Param("tenantId") UUID tenantId, @Param("pageId") UUID pageId);
 
     long countByTenantIdAndPageId(UUID tenantId, UUID pageId);

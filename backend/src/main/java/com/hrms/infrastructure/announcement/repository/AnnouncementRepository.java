@@ -24,25 +24,25 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, UUID
     Page<Announcement> findByTenantIdOrderByPublishedAtDesc(UUID tenantId, Pageable pageable);
 
     @Query("SELECT a FROM Announcement a WHERE a.tenantId = :tenantId AND a.status = 'PUBLISHED' " +
-           "AND (a.expiresAt IS NULL OR a.expiresAt > :now) ORDER BY a.publishedAt DESC")
+            "AND (a.expiresAt IS NULL OR a.expiresAt > :now) ORDER BY a.publishedAt DESC")
     Page<Announcement> findActiveAnnouncements(@Param("tenantId") UUID tenantId,
-                                                @Param("now") LocalDateTime now,
-                                                Pageable pageable);
+                                               @Param("now") LocalDateTime now,
+                                               Pageable pageable);
 
     @Query("SELECT a FROM Announcement a WHERE a.tenantId = :tenantId AND a.isPinned = true " +
-           "AND a.status = 'PUBLISHED' AND (a.expiresAt IS NULL OR a.expiresAt > :now) " +
-           "ORDER BY a.publishedAt DESC")
+            "AND a.status = 'PUBLISHED' AND (a.expiresAt IS NULL OR a.expiresAt > :now) " +
+            "ORDER BY a.publishedAt DESC")
     List<Announcement> findPinnedAnnouncements(@Param("tenantId") UUID tenantId,
-                                                @Param("now") LocalDateTime now);
+                                               @Param("now") LocalDateTime now);
 
     @Query("SELECT a FROM Announcement a WHERE a.tenantId = :tenantId AND a.status = 'PUBLISHED' " +
-           "AND a.targetAudience = 'ALL_EMPLOYEES' AND (a.expiresAt IS NULL OR a.expiresAt > :now) " +
-           "ORDER BY a.publishedAt DESC")
+            "AND a.targetAudience = 'ALL_EMPLOYEES' AND (a.expiresAt IS NULL OR a.expiresAt > :now) " +
+            "ORDER BY a.publishedAt DESC")
     Page<Announcement> findAnnouncementsForAllEmployees(@Param("tenantId") UUID tenantId,
-                                                         @Param("now") LocalDateTime now,
-                                                         Pageable pageable);
+                                                        @Param("now") LocalDateTime now,
+                                                        Pageable pageable);
 
     @Query("SELECT COUNT(a) FROM Announcement a WHERE a.tenantId = :tenantId AND a.status = 'PUBLISHED' " +
-           "AND (a.expiresAt IS NULL OR a.expiresAt > :now)")
+            "AND (a.expiresAt IS NULL OR a.expiresAt > :now)")
     long countActiveAnnouncements(@Param("tenantId") UUID tenantId, @Param("now") LocalDateTime now);
 }

@@ -28,9 +28,9 @@ public interface MileageLogRepository extends JpaRepository<MileageLog, UUID>, J
             UUID tenantId, UUID employeeId, LocalDate startDate, LocalDate endDate);
 
     @Query("SELECT COALESCE(SUM(m.distanceKm), 0) FROM MileageLog m " +
-           "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
-           "AND m.travelDate BETWEEN :startDate AND :endDate " +
-           "AND m.status <> 'REJECTED'")
+            "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
+            "AND m.travelDate BETWEEN :startDate AND :endDate " +
+            "AND m.status <> 'REJECTED'")
     BigDecimal sumDistanceByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -38,9 +38,9 @@ public interface MileageLogRepository extends JpaRepository<MileageLog, UUID>, J
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT COALESCE(SUM(m.distanceKm), 0) FROM MileageLog m " +
-           "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
-           "AND m.travelDate = :travelDate " +
-           "AND m.status <> 'REJECTED' AND m.id <> :excludeId")
+            "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
+            "AND m.travelDate = :travelDate " +
+            "AND m.status <> 'REJECTED' AND m.id <> :excludeId")
     BigDecimal sumDistanceByEmployeeAndDate(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -48,9 +48,9 @@ public interface MileageLogRepository extends JpaRepository<MileageLog, UUID>, J
             @Param("excludeId") UUID excludeId);
 
     @Query("SELECT COALESCE(SUM(m.reimbursementAmount), 0) FROM MileageLog m " +
-           "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
-           "AND m.travelDate BETWEEN :startDate AND :endDate " +
-           "AND m.status <> 'REJECTED'")
+            "WHERE m.tenantId = :tenantId AND m.employeeId = :employeeId " +
+            "AND m.travelDate BETWEEN :startDate AND :endDate " +
+            "AND m.status <> 'REJECTED'")
     BigDecimal sumReimbursementByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -59,5 +59,5 @@ public interface MileageLogRepository extends JpaRepository<MileageLog, UUID>, J
 
     @Query("SELECT COUNT(m) FROM MileageLog m WHERE m.tenantId = :tenantId AND m.status = :status")
     long countByTenantIdAndStatus(@Param("tenantId") UUID tenantId,
-                                   @Param("status") MileageLog.MileageStatus status);
+                                  @Param("status") MileageLog.MileageStatus status);
 }

@@ -11,16 +11,16 @@ import java.util.UUID;
 @Repository
 public interface AllocationApprovalRequestRepository extends JpaRepository<AllocationApprovalRequest, UUID> {
 
-        Page<AllocationApprovalRequest> findAllByTenantId(UUID tenantId, Pageable pageable);
+    Page<AllocationApprovalRequest> findAllByTenantId(UUID tenantId, Pageable pageable);
 
-        Page<AllocationApprovalRequest> findAllByTenantIdAndStatus(UUID tenantId,
-                        AllocationApprovalRequest.ApprovalStatus status, Pageable pageable);
+    Page<AllocationApprovalRequest> findAllByTenantIdAndStatus(UUID tenantId,
+                                                               AllocationApprovalRequest.ApprovalStatus status, Pageable pageable);
 
-        Page<AllocationApprovalRequest> findAllByTenantIdAndApproverIdAndStatus(UUID tenantId, UUID approverId,
-                        AllocationApprovalRequest.ApprovalStatus status, Pageable pageable);
+    Page<AllocationApprovalRequest> findAllByTenantIdAndApproverIdAndStatus(UUID tenantId, UUID approverId,
+                                                                            AllocationApprovalRequest.ApprovalStatus status, Pageable pageable);
 
-        Page<AllocationApprovalRequest> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId,
-                        Pageable pageable);
+    Page<AllocationApprovalRequest> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId,
+                                                                   Pageable pageable);
 
-        long countByTenantIdAndStatus(UUID tenantId, AllocationApprovalRequest.ApprovalStatus status);
+    long countByTenantIdAndStatus(UUID tenantId, AllocationApprovalRequest.ApprovalStatus status);
 }

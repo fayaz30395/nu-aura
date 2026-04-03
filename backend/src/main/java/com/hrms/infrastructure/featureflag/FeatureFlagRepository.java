@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * Repository for Feature Flags.
- *
+ * <p>
  * Playbook Reference: Prompt 34 - Feature flags (tenant-level)
  */
 @Repository

@@ -64,8 +64,21 @@ public class DeadLetterHandler {
     private final FailedKafkaEventRepository failedKafkaEventRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    /** Per-topic counters, lazily initialised to avoid startup registration order issues. */
+    /**
+     * Per-topic counters, lazily initialised to avoid startup registration order issues.
+     */
     private final Map<String, Counter> dltCounters = new ConcurrentHashMap<>();
+
+    private static String truncate(String text, int maxLength) {
+        if (text == null) {
+            return "<null>";
+        }
+        return text.length() <= maxLength ? text : text.substring(0, maxLength) + "…[truncated]";
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // DLT consumer
+    // ─────────────────────────────────────────────────────────────────────────
 
     @PostConstruct
     void registerMetrics() {
@@ -82,7 +95,7 @@ public class DeadLetterHandler {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // DLT consumer
+    // Persistence helper
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
@@ -136,7 +149,7 @@ public class DeadLetterHandler {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Persistence helper
+    // Replay API
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
@@ -175,10 +188,6 @@ public class DeadLetterHandler {
         log.info("[DLT] Persisted failed event: topic={} partition={} offset={} truncated={}", topic, partition, offset, truncated);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Replay API
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Replays a dead-lettered event by republishing its stored payload to the
      * configured {@link FailedKafkaEvent#getTargetTopic()}.
@@ -188,9 +197,9 @@ public class DeadLetterHandler {
      *
      * @param failedEventId UUID of the {@link FailedKafkaEvent} record to replay.
      * @param replayedBy    UUID of the admin user triggering the replay (for audit).
-     * @throws IllegalArgumentException  if the event does not exist.
-     * @throws IllegalStateException     if the event is not in {@code PENDING_REPLAY} status,
-     *                                   or if it has been replayed too many times (poison-pill guard).
+     * @throws IllegalArgumentException if the event does not exist.
+     * @throws IllegalStateException    if the event is not in {@code PENDING_REPLAY} status,
+     *                                  or if it has been replayed too many times (poison-pill guard).
      */
     @Transactional
     public void replayFailedEvent(UUID failedEventId, UUID replayedBy) {
@@ -208,7 +217,7 @@ public class DeadLetterHandler {
                     "Use ignoreFailedEvent() to dismiss it.", failedEventId, event.getReplayCount());
             throw new IllegalStateException(
                     "Event " + failedEventId + " has been replayed " + event.getReplayCount() +
-                    " times without success. Investigate before replaying again.");
+                            " times without success. Investigate before replaying again.");
         }
 
         String targetTopic = event.getTargetTopic();
@@ -229,6 +238,10 @@ public class DeadLetterHandler {
 
         log.info("[DLT] Replayed event {} to topic={} by admin={}", failedEventId, targetTopic, replayedBy);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Private helpers
+    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Marks a dead-lettered event as {@code IGNORED} without replaying it.
@@ -254,21 +267,10 @@ public class DeadLetterHandler {
         log.info("[DLT] Event {} ignored by admin={}", failedEventId, ignoredBy);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Private helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
     private Counter buildCounter(String topic) {
         return Counter.builder(METRIC_DLT_TOTAL)
                 .description("Total number of messages that landed in the Kafka dead letter topic")
                 .tags(List.of(Tag.of("topic", topic)))
                 .register(meterRegistry);
-    }
-
-    private static String truncate(String text, int maxLength) {
-        if (text == null) {
-            return "<null>";
-        }
-        return text.length() <= maxLength ? text : text.substring(0, maxLength) + "…[truncated]";
     }
 }

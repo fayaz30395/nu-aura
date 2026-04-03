@@ -67,15 +67,15 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId ORDER BY n.createdAt DESC")
     Page<Notification> findByTenantIdAndUserIdOrderByCreatedAtDesc(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        Pageable pageable
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            Pageable pageable
     );
 
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false ORDER BY n.createdAt DESC")
     List<Notification> findByTenantIdAndUserIdAndIsReadFalseOrderByCreatedAtDesc(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId
     );
 
     /**
@@ -84,22 +84,22 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
      */
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false ORDER BY n.createdAt DESC")
     Page<Notification> findUnreadNotificationsPaged(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        Pageable pageable
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            Pageable pageable
     );
 
     @Query("SELECT COUNT(n) FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false")
     Long countByTenantIdAndUserIdAndIsReadFalse(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId
     );
 
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt > :since ORDER BY n.createdAt DESC")
     List<Notification> findRecentNotifications(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        @Param("since") LocalDateTime since
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            @Param("since") LocalDateTime since
     );
 
     /**
@@ -108,10 +108,10 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
      */
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt > :since ORDER BY n.createdAt DESC")
     Page<Notification> findRecentNotificationsPaged(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        @Param("since") LocalDateTime since,
-        Pageable pageable
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            @Param("since") LocalDateTime since,
+            Pageable pageable
     );
 
     // ==================== MODIFICATION METHODS ====================
@@ -120,27 +120,27 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     @Transactional
     @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.id = :notificationId")
     void markAsRead(
-        @Param("tenantId") UUID tenantId,
-        @Param("notificationId") UUID notificationId,
-        @Param("readAt") LocalDateTime readAt
+            @Param("tenantId") UUID tenantId,
+            @Param("notificationId") UUID notificationId,
+            @Param("readAt") LocalDateTime readAt
     );
 
     @Modifying
     @Transactional
     @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false")
     void markAllAsReadForUser(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        @Param("readAt") LocalDateTime readAt
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            @Param("readAt") LocalDateTime readAt
     );
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt < :before")
     void deleteOldNotifications(
-        @Param("tenantId") UUID tenantId,
-        @Param("userId") UUID userId,
-        @Param("before") LocalDateTime before
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            @Param("before") LocalDateTime before
     );
 
     // ==================== DEPRECATED - DO NOT USE ====================

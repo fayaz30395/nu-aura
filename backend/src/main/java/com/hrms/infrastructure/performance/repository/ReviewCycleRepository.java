@@ -23,7 +23,7 @@ public interface ReviewCycleRepository extends JpaRepository<ReviewCycle, UUID> 
     List<ReviewCycle> findAllByTenantIdAndStatus(UUID tenantId, ReviewCycle.CycleStatus status);
 
     @Query("SELECT rc FROM ReviewCycle rc WHERE rc.tenantId = :tenantId " +
-           "AND rc.startDate <= :date AND rc.endDate >= :date")
+            "AND rc.startDate <= :date AND rc.endDate >= :date")
     List<ReviewCycle> findActiveCycles(@Param("tenantId") UUID tenantId,
                                        @Param("date") LocalDate date);
 }

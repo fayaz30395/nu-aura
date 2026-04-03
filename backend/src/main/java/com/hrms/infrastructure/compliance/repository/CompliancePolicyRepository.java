@@ -27,13 +27,13 @@ public interface CompliancePolicyRepository extends JpaRepository<CompliancePoli
     Page<CompliancePolicy> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.status = 'PUBLISHED' " +
-           "AND (p.effectiveDate IS NULL OR p.effectiveDate <= :today) " +
-           "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
+            "AND (p.effectiveDate IS NULL OR p.effectiveDate <= :today) " +
+            "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
     List<CompliancePolicy> findActivePolicies(@Param("tenantId") UUID tenantId, @Param("today") LocalDate today);
 
     @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.status = 'PUBLISHED' " +
-           "AND (p.effectiveDate IS NULL OR p.effectiveDate <= :today) " +
-           "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
+            "AND (p.effectiveDate IS NULL OR p.effectiveDate <= :today) " +
+            "AND (p.expiryDate IS NULL OR p.expiryDate >= :today)")
     Page<CompliancePolicy> findActivePolicies(@Param("tenantId") UUID tenantId, @Param("today") LocalDate today, Pageable pageable);
 
     @Query("SELECT p FROM CompliancePolicy p WHERE p.tenantId = :tenantId AND p.category = :category AND p.status = 'PUBLISHED'")

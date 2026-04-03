@@ -29,20 +29,20 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
     Page<WikiPage> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT wp FROM WikiPage wp WHERE wp.tenantId = :tenantId AND wp.isPinned = true " +
-           "ORDER BY wp.pinnedAt DESC")
+            "ORDER BY wp.pinnedAt DESC")
     List<WikiPage> findPinnedPagesByTenant(@Param("tenantId") UUID tenantId);
 
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
-           "WHERE wp.tenant_id = :tenantId AND " +
-           "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-           "to_tsquery('english', :query) " +
-           "ORDER BY ts_rank(to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')), " +
-           "to_tsquery('english', :query)) DESC",
-           nativeQuery = true,
-           countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
-                   "WHERE wp.tenant_id = :tenantId AND " +
-                   "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-                   "to_tsquery('english', :query)")
+            "WHERE wp.tenant_id = :tenantId AND " +
+            "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
+            "to_tsquery('english', :query) " +
+            "ORDER BY ts_rank(to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')), " +
+            "to_tsquery('english', :query)) DESC",
+            nativeQuery = true,
+            countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
+                    "WHERE wp.tenant_id = :tenantId AND " +
+                    "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
+                    "to_tsquery('english', :query)")
     Page<WikiPage> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**
@@ -50,18 +50,18 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
      * Searches title, excerpt, AND content body (JSONB cast to TEXT) for any keyword match.
      */
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
-           "WHERE wp.tenant_id = :tenantId AND (" +
-           "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
-           ") ORDER BY CASE WHEN LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 0 ELSE 1 END, " +
-           "wp.updated_at DESC",
-           nativeQuery = true,
-           countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
-                   "WHERE wp.tenant_id = :tenantId AND (" +
-                   "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-                   "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
-                   "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")
+            "WHERE wp.tenant_id = :tenantId AND (" +
+            "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
+            ") ORDER BY CASE WHEN LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 0 ELSE 1 END, " +
+            "wp.updated_at DESC",
+            nativeQuery = true,
+            countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
+                    "WHERE wp.tenant_id = :tenantId AND (" +
+                    "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                    "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                    "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<WikiPage> searchByTenantBroad(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     long countByTenantIdAndSpaceId(UUID tenantId, UUID spaceId);

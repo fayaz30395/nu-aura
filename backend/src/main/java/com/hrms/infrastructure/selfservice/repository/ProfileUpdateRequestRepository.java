@@ -37,25 +37,25 @@ public interface ProfileUpdateRequestRepository extends JpaRepository<ProfileUpd
                                               Pageable pageable);
 
     @Query("SELECT p FROM ProfileUpdateRequest p WHERE p.employeeId = :employeeId AND p.tenantId = :tenantId " +
-           "AND p.category = :category AND p.status IN ('PENDING', 'UNDER_REVIEW')")
+            "AND p.category = :category AND p.status IN ('PENDING', 'UNDER_REVIEW')")
     List<ProfileUpdateRequest> findPendingByCategoryAndEmployee(@Param("employeeId") UUID employeeId,
-                                                                 @Param("tenantId") UUID tenantId,
-                                                                 @Param("category") UpdateCategory category);
+                                                                @Param("tenantId") UUID tenantId,
+                                                                @Param("category") UpdateCategory category);
 
     @Query("SELECT COUNT(p) FROM ProfileUpdateRequest p WHERE p.tenantId = :tenantId AND p.status = :status")
     long countByStatus(@Param("tenantId") UUID tenantId, @Param("status") RequestStatus status);
 
     @Query("SELECT p FROM ProfileUpdateRequest p WHERE p.tenantId = :tenantId " +
-           "AND p.createdAt >= :startDate AND p.createdAt <= :endDate")
+            "AND p.createdAt >= :startDate AND p.createdAt <= :endDate")
     List<ProfileUpdateRequest> findByDateRange(@Param("tenantId") UUID tenantId,
-                                                @Param("startDate") LocalDateTime startDate,
-                                                @Param("endDate") LocalDateTime endDate);
+                                               @Param("startDate") LocalDateTime startDate,
+                                               @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT p.category, COUNT(p) FROM ProfileUpdateRequest p " +
-           "WHERE p.tenantId = :tenantId GROUP BY p.category")
+            "WHERE p.tenantId = :tenantId GROUP BY p.category")
     List<Object[]> countByCategory(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT p.status, COUNT(p) FROM ProfileUpdateRequest p " +
-           "WHERE p.tenantId = :tenantId GROUP BY p.status")
+            "WHERE p.tenantId = :tenantId GROUP BY p.status")
     List<Object[]> countByStatusGroup(@Param("tenantId") UUID tenantId);
 }

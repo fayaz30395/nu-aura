@@ -36,8 +36,8 @@ public interface PollVoteRepository extends JpaRepository<PollVote, UUID> {
      * Returns: [pollOptionId, count]
      */
     @Query("SELECT v.pollOption.id, COUNT(v) FROM PollVote v " +
-           "WHERE v.pollOption.post.id IN :postIds " +
-           "GROUP BY v.pollOption.id")
+            "WHERE v.pollOption.post.id IN :postIds " +
+            "GROUP BY v.pollOption.id")
     List<Object[]> countVotesByOptionForPosts(@Param("postIds") List<UUID> postIds);
 
     /**
@@ -45,6 +45,6 @@ public interface PollVoteRepository extends JpaRepository<PollVote, UUID> {
      * Returns: [postId, pollOptionId] for posts the user has voted on.
      */
     @Query("SELECT v.pollOption.post.id, v.pollOption.id FROM PollVote v " +
-           "WHERE v.pollOption.post.id IN :postIds AND v.employee.id = :employeeId")
+            "WHERE v.pollOption.post.id IN :postIds AND v.employee.id = :employeeId")
     List<Object[]> findUserVotesForPosts(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
 }

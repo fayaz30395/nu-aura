@@ -18,7 +18,7 @@ public interface TemplateInstantiationRepository extends JpaRepository<TemplateI
     Page<TemplateInstantiation> findByTenantIdAndTemplateId(UUID tenantId, UUID templateId, Pageable pageable);
 
     @Query("SELECT ti FROM TemplateInstantiation ti WHERE ti.tenantId = :tenantId AND ti.createdBy = :userId " +
-           "ORDER BY ti.createdAt DESC")
+            "ORDER BY ti.createdAt DESC")
     Page<TemplateInstantiation> findByTenantIdAndCreatedBy(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, Pageable pageable);
 
     long countByTenantIdAndTemplateId(UUID tenantId, UUID templateId);

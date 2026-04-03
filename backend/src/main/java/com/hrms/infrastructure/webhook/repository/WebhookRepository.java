@@ -20,6 +20,7 @@ public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
 
     /**
      * Find all active webhooks for a tenant.
+     *
      * @EntityGraph ensures events collection is loaded in a single JOIN to avoid
      * LazyInitializationException when subscribesTo() is called on returned webhooks.
      */

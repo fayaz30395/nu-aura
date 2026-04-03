@@ -26,11 +26,11 @@ public interface GoalRepository extends JpaRepository<Goal, UUID> {
     List<Goal> findAllByTenantIdAndParentGoalId(UUID tenantId, UUID parentGoalId);
 
     @Query("SELECT g FROM Goal g WHERE g.tenantId = :tenantId AND g.employeeId IN " +
-           "(SELECT e.id FROM Employee e WHERE e.managerId = :managerId)")
+            "(SELECT e.id FROM Employee e WHERE e.managerId = :managerId)")
     List<Goal> findTeamGoals(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId);
 
     @Query("SELECT g FROM Goal g WHERE g.tenantId = :tenantId AND g.employeeId IN " +
-           "(SELECT e.id FROM Employee e WHERE e.managerId = :managerId)")
+            "(SELECT e.id FROM Employee e WHERE e.managerId = :managerId)")
     Page<Goal> findTeamGoals(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId, Pageable pageable);
 
     @Query("SELECT g FROM Goal g WHERE g.tenantId = :tenantId AND g.status = :status")

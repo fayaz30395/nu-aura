@@ -18,14 +18,14 @@ public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, 
     List<SurveyQuestion> findBySurveyIdOrderByQuestionOrderAsc(UUID surveyId);
 
     @Query("SELECT q FROM SurveyQuestion q WHERE q.tenantId = :tenantId " +
-           "AND q.survey.id = :surveyId AND q.isRequired = true " +
-           "ORDER BY q.questionOrder")
+            "AND q.survey.id = :surveyId AND q.isRequired = true " +
+            "ORDER BY q.questionOrder")
     List<SurveyQuestion> findRequiredQuestions(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT q FROM SurveyQuestion q WHERE q.tenantId = :tenantId " +
-           "AND q.engagementCategory = :category")
+            "AND q.engagementCategory = :category")
     List<SurveyQuestion> findByEngagementCategory(
             @Param("tenantId") UUID tenantId,
             @Param("category") SurveyQuestion.EngagementCategory category);
@@ -34,7 +34,7 @@ public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, 
     int countBySurveyId(@Param("surveyId") UUID surveyId);
 
     @Query("SELECT q.engagementCategory, COUNT(q) FROM SurveyQuestion q " +
-           "WHERE q.survey.id = :surveyId AND q.engagementCategory IS NOT NULL " +
-           "GROUP BY q.engagementCategory")
+            "WHERE q.survey.id = :surveyId AND q.engagementCategory IS NOT NULL " +
+            "GROUP BY q.engagementCategory")
     List<Object[]> countByEngagementCategory(@Param("surveyId") UUID surveyId);
 }

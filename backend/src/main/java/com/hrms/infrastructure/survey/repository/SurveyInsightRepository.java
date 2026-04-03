@@ -20,60 +20,60 @@ public interface SurveyInsightRepository extends JpaRepository<SurveyInsight, UU
     Page<SurveyInsight> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.survey.id = :surveyId ORDER BY i.priority, i.generatedAt DESC")
+            "AND i.survey.id = :surveyId ORDER BY i.priority, i.generatedAt DESC")
     List<SurveyInsight> findBySurvey(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.priority IN ('CRITICAL', 'HIGH') " +
-           "AND i.actionStatus = 'NEW' " +
-           "ORDER BY i.priority, i.generatedAt DESC")
+            "AND i.priority IN ('CRITICAL', 'HIGH') " +
+            "AND i.actionStatus = 'NEW' " +
+            "ORDER BY i.priority, i.generatedAt DESC")
     List<SurveyInsight> findHighPriorityUnacknowledged(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.insightType = :insightType " +
-           "ORDER BY i.generatedAt DESC")
+            "AND i.insightType = :insightType " +
+            "ORDER BY i.generatedAt DESC")
     List<SurveyInsight> findByInsightType(
             @Param("tenantId") UUID tenantId,
             @Param("insightType") SurveyInsight.InsightType insightType);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.departmentId = :departmentId " +
-           "ORDER BY i.priority, i.generatedAt DESC")
+            "AND i.departmentId = :departmentId " +
+            "ORDER BY i.priority, i.generatedAt DESC")
     List<SurveyInsight> findByDepartment(
             @Param("tenantId") UUID tenantId,
             @Param("departmentId") UUID departmentId);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.category = :category " +
-           "ORDER BY i.impactScore DESC")
+            "AND i.category = :category " +
+            "ORDER BY i.impactScore DESC")
     List<SurveyInsight> findByCategory(
             @Param("tenantId") UUID tenantId,
             @Param("category") com.hrms.domain.survey.SurveyQuestion.EngagementCategory category);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.actionStatus = 'IN_PROGRESS' " +
-           "AND i.assignedTo = :assignedTo")
+            "AND i.actionStatus = 'IN_PROGRESS' " +
+            "AND i.assignedTo = :assignedTo")
     List<SurveyInsight> findAssignedToUser(
             @Param("tenantId") UUID tenantId,
             @Param("assignedTo") UUID assignedTo);
 
     @Query("SELECT i.insightType, COUNT(i) FROM SurveyInsight i " +
-           "WHERE i.tenantId = :tenantId AND i.survey.id = :surveyId " +
-           "GROUP BY i.insightType")
+            "WHERE i.tenantId = :tenantId AND i.survey.id = :surveyId " +
+            "GROUP BY i.insightType")
     List<Object[]> countByInsightType(
             @Param("tenantId") UUID tenantId,
             @Param("surveyId") UUID surveyId);
 
     @Query("SELECT i.priority, COUNT(i) FROM SurveyInsight i " +
-           "WHERE i.tenantId = :tenantId " +
-           "GROUP BY i.priority")
+            "WHERE i.tenantId = :tenantId " +
+            "GROUP BY i.priority")
     List<Object[]> countByPriority(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT i FROM SurveyInsight i WHERE i.tenantId = :tenantId " +
-           "AND i.insightType IN ('ENGAGEMENT_RISK', 'RETENTION_RISK') " +
-           "AND i.actionStatus <> 'COMPLETED' " +
-           "ORDER BY i.impactScore DESC")
+            "AND i.insightType IN ('ENGAGEMENT_RISK', 'RETENTION_RISK') " +
+            "AND i.actionStatus <> 'COMPLETED' " +
+            "ORDER BY i.impactScore DESC")
     List<SurveyInsight> findActiveRisks(@Param("tenantId") UUID tenantId);
 }

@@ -24,8 +24,8 @@ public interface ShiftSwapRequestRepository extends JpaRepository<ShiftSwapReque
     Page<ShiftSwapRequest> findAllByTenantIdAndTargetEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT ssr FROM ShiftSwapRequest ssr WHERE ssr.tenantId = :tenantId " +
-           "AND (ssr.requesterEmployeeId = :employeeId OR ssr.targetEmployeeId = :employeeId) " +
-           "AND ssr.status = :status")
+            "AND (ssr.requesterEmployeeId = :employeeId OR ssr.targetEmployeeId = :employeeId) " +
+            "AND ssr.status = :status")
     Page<ShiftSwapRequest> findSwapRequestsForEmployeeByStatus(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -33,23 +33,23 @@ public interface ShiftSwapRequestRepository extends JpaRepository<ShiftSwapReque
             Pageable pageable);
 
     @Query("SELECT ssr FROM ShiftSwapRequest ssr WHERE ssr.tenantId = :tenantId " +
-           "AND ssr.status IN ('PENDING', 'TARGET_ACCEPTED', 'PENDING_APPROVAL')")
+            "AND ssr.status IN ('PENDING', 'TARGET_ACCEPTED', 'PENDING_APPROVAL')")
     Page<ShiftSwapRequest> findPendingSwapRequests(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     @Query("SELECT ssr FROM ShiftSwapRequest ssr WHERE ssr.tenantId = :tenantId " +
-           "AND ssr.targetEmployeeId = :employeeId " +
-           "AND ssr.status = 'PENDING'")
+            "AND ssr.targetEmployeeId = :employeeId " +
+            "AND ssr.status = 'PENDING'")
     List<ShiftSwapRequest> findPendingRequestsForTargetEmployee(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT ssr FROM ShiftSwapRequest ssr WHERE ssr.tenantId = :tenantId " +
-           "AND ssr.status = 'PENDING_APPROVAL'")
+            "AND ssr.status = 'PENDING_APPROVAL'")
     List<ShiftSwapRequest> findRequestsPendingApproval(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT COUNT(ssr) FROM ShiftSwapRequest ssr WHERE ssr.tenantId = :tenantId " +
-           "AND ssr.requesterEmployeeId = :employeeId " +
-           "AND ssr.status = 'PENDING'")
+            "AND ssr.requesterEmployeeId = :employeeId " +
+            "AND ssr.status = 'PENDING'")
     long countPendingRequestsByEmployee(@Param("tenantId") UUID tenantId,
                                         @Param("employeeId") UUID employeeId);
 }

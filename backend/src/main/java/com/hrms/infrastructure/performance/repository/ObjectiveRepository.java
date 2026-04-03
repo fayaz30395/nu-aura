@@ -45,7 +45,7 @@ public interface ObjectiveRepository extends JpaRepository<Objective, UUID> {
 
     @Query("SELECT o FROM Objective o WHERE o.tenantId = :tenantId AND o.departmentId = :departmentId AND o.status = 'ACTIVE'")
     List<Objective> findActiveDepartmentObjectives(@Param("tenantId") UUID tenantId,
-            @Param("departmentId") UUID departmentId);
+                                                   @Param("departmentId") UUID departmentId);
 
     @Query("SELECT o FROM Objective o WHERE o.tenantId = :tenantId AND o.teamId = :teamId AND o.status = 'ACTIVE'")
     List<Objective> findActiveTeamObjectives(@Param("tenantId") UUID tenantId, @Param("teamId") UUID teamId);

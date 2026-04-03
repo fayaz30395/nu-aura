@@ -27,12 +27,12 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
     Page<OvertimeRequest> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT o FROM OvertimeRequest o WHERE o.tenantId = :tenantId " +
-           "AND o.status = 'PENDING_APPROVAL'")
+            "AND o.status = 'PENDING_APPROVAL'")
     List<OvertimeRequest> findPendingApprovals(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT o FROM OvertimeRequest o WHERE o.tenantId = :tenantId " +
-           "AND o.employeeId = :employeeId " +
-           "AND o.overtimeDate BETWEEN :startDate AND :endDate")
+            "AND o.employeeId = :employeeId " +
+            "AND o.overtimeDate BETWEEN :startDate AND :endDate")
     List<OvertimeRequest> findByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -40,14 +40,14 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT o FROM OvertimeRequest o WHERE o.tenantId = :tenantId " +
-           "AND o.status = 'APPROVED' AND o.processedInPayroll = false")
+            "AND o.status = 'APPROVED' AND o.processedInPayroll = false")
     List<OvertimeRequest> findApprovedUnprocessed(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT SUM(o.actualHours) FROM OvertimeRequest o " +
-           "WHERE o.tenantId = :tenantId AND o.employeeId = :employeeId " +
-           "AND o.status = 'APPROVED' " +
-           "AND FUNCTION('WEEK', o.overtimeDate) = :weekNumber " +
-           "AND FUNCTION('YEAR', o.overtimeDate) = :year")
+            "WHERE o.tenantId = :tenantId AND o.employeeId = :employeeId " +
+            "AND o.status = 'APPROVED' " +
+            "AND FUNCTION('WEEK', o.overtimeDate) = :weekNumber " +
+            "AND FUNCTION('YEAR', o.overtimeDate) = :year")
     java.math.BigDecimal getWeeklyApprovedHours(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -55,10 +55,10 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
             @Param("year") int year);
 
     @Query("SELECT SUM(o.actualHours) FROM OvertimeRequest o " +
-           "WHERE o.tenantId = :tenantId AND o.employeeId = :employeeId " +
-           "AND o.status = 'APPROVED' " +
-           "AND FUNCTION('MONTH', o.overtimeDate) = :month " +
-           "AND FUNCTION('YEAR', o.overtimeDate) = :year")
+            "WHERE o.tenantId = :tenantId AND o.employeeId = :employeeId " +
+            "AND o.status = 'APPROVED' " +
+            "AND FUNCTION('MONTH', o.overtimeDate) = :month " +
+            "AND FUNCTION('YEAR', o.overtimeDate) = :year")
     java.math.BigDecimal getMonthlyApprovedHours(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -66,10 +66,10 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
             @Param("year") int year);
 
     @Query("SELECT o.status, COUNT(o) FROM OvertimeRequest o " +
-           "WHERE o.tenantId = :tenantId GROUP BY o.status")
+            "WHERE o.tenantId = :tenantId GROUP BY o.status")
     List<Object[]> countByStatus(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT o FROM OvertimeRequest o WHERE o.tenantId = :tenantId " +
-           "AND o.takeAsCompTime = true AND o.status = 'APPROVED'")
+            "AND o.takeAsCompTime = true AND o.status = 'APPROVED'")
     List<OvertimeRequest> findCompTimeRequests(@Param("tenantId") UUID tenantId);
 }

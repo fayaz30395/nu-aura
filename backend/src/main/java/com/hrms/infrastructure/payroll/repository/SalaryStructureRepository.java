@@ -23,12 +23,12 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
     Page<SalaryStructureRepository> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT s FROM SalaryStructure s WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
-           "AND s.effectiveDate <= :date AND s.isActive = true " +
-           "ORDER BY s.effectiveDate DESC")
+            "AND s.effectiveDate <= :date AND s.isActive = true " +
+            "ORDER BY s.effectiveDate DESC")
     Optional<SalaryStructure> findActiveByEmployeeIdAndDate(
-        @Param("tenantId") UUID tenantId,
-        @Param("employeeId") UUID employeeId,
-        @Param("date") LocalDate date
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("date") LocalDate date
     );
 
     /**
@@ -36,10 +36,10 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
      * Used for statutory enrollment eligibility checks.
      */
     @Query("SELECT s FROM SalaryStructure s WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
-           "AND s.isActive = true ORDER BY s.effectiveDate DESC, s.createdAt DESC")
+            "AND s.isActive = true ORDER BY s.effectiveDate DESC, s.createdAt DESC")
     Optional<SalaryStructure> findLatestActiveByTenantIdAndEmployeeId(
-        @Param("tenantId") UUID tenantId,
-        @Param("employeeId") UUID employeeId
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId
     );
 
     Page<SalaryStructure> findAllByTenantIdAndIsActive(UUID tenantId, Boolean isActive, Pageable pageable);

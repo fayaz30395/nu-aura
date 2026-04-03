@@ -27,18 +27,18 @@ public interface HeadcountBudgetRepository extends JpaRepository<HeadcountBudget
 
     @Query("SELECT b FROM HeadcountBudget b WHERE b.tenantId = :tenantId AND b.status = :status")
     List<HeadcountBudget> findByStatus(@Param("tenantId") UUID tenantId,
-                                        @Param("status") HeadcountBudget.BudgetStatus status);
+                                       @Param("status") HeadcountBudget.BudgetStatus status);
 
     @Query("SELECT SUM(b.totalBudget) FROM HeadcountBudget b WHERE b.tenantId = :tenantId " +
-           "AND b.fiscalYear = :year AND b.status = 'APPROVED'")
+            "AND b.fiscalYear = :year AND b.status = 'APPROVED'")
     java.math.BigDecimal getTotalApprovedBudget(@Param("tenantId") UUID tenantId, @Param("year") Integer year);
 
     @Query("SELECT SUM(b.closingHeadcount) FROM HeadcountBudget b WHERE b.tenantId = :tenantId " +
-           "AND b.fiscalYear = :year AND b.status = 'APPROVED'")
+            "AND b.fiscalYear = :year AND b.status = 'APPROVED'")
     Integer getTotalPlannedHeadcount(@Param("tenantId") UUID tenantId, @Param("year") Integer year);
 
     @Query("SELECT b.departmentId, SUM(b.totalBudget) FROM HeadcountBudget b WHERE b.tenantId = :tenantId " +
-           "AND b.fiscalYear = :year AND b.status = 'APPROVED' " +
-           "GROUP BY b.departmentId")
+            "AND b.fiscalYear = :year AND b.status = 'APPROVED' " +
+            "GROUP BY b.departmentId")
     List<Object[]> getBudgetByDepartment(@Param("tenantId") UUID tenantId, @Param("year") Integer year);
 }

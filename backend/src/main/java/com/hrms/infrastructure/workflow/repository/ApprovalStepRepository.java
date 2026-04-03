@@ -45,8 +45,8 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, UUID
      * when steps are loaded with their workflow definitions.
      */
     @Query("SELECT DISTINCT s FROM ApprovalStep s " +
-           "LEFT JOIN FETCH s.workflowDefinition " +
-           "WHERE s.id = :stepId AND s.tenantId = :tenantId")
+            "LEFT JOIN FETCH s.workflowDefinition " +
+            "WHERE s.id = :stepId AND s.tenantId = :tenantId")
     Optional<ApprovalStep> findByIdWithWorkflow(@Param("stepId") UUID stepId, @Param("tenantId") UUID tenantId);
 
     /**
@@ -54,24 +54,24 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, UUID
      * Prevents N+1 queries when loading all steps for a workflow definition.
      */
     @Query("SELECT DISTINCT s FROM ApprovalStep s " +
-           "LEFT JOIN FETCH s.workflowDefinition " +
-           "WHERE s.workflowDefinition.id = :workflowId " +
-           "ORDER BY s.stepOrder ASC")
+            "LEFT JOIN FETCH s.workflowDefinition " +
+            "WHERE s.workflowDefinition.id = :workflowId " +
+            "ORDER BY s.stepOrder ASC")
     List<ApprovalStep> findByWorkflowDefinitionIdWithWorkflowOrderByStepOrderAsc(@Param("workflowId") UUID workflowId);
 
     /**
      * Find approval step by workflow and step order with WorkflowDefinition eagerly fetched.
      */
     @Query("SELECT DISTINCT s FROM ApprovalStep s " +
-           "LEFT JOIN FETCH s.workflowDefinition w " +
-           "WHERE w.id = :workflowId AND s.stepOrder = :stepOrder")
+            "LEFT JOIN FETCH s.workflowDefinition w " +
+            "WHERE w.id = :workflowId AND s.stepOrder = :stepOrder")
     Optional<ApprovalStep> findByWorkflowAndStepOrderWithWorkflow(@Param("workflowId") UUID workflowId, @Param("stepOrder") int stepOrder);
 
     /**
      * Find approval steps by workflow and approver type with WorkflowDefinition eagerly fetched.
      */
     @Query("SELECT DISTINCT s FROM ApprovalStep s " +
-           "LEFT JOIN FETCH s.workflowDefinition " +
-           "WHERE s.workflowDefinition.id = :workflowId AND s.approverType = :approverType")
+            "LEFT JOIN FETCH s.workflowDefinition " +
+            "WHERE s.workflowDefinition.id = :workflowId AND s.approverType = :approverType")
     List<ApprovalStep> findByWorkflowAndApproverTypeWithWorkflow(@Param("workflowId") UUID workflowId, @Param("approverType") ApprovalStep.ApproverType approverType);
 }

@@ -18,7 +18,7 @@ public interface ChallengeParticipantRepository extends JpaRepository<ChallengeP
 
     @Query("SELECT p FROM ChallengeParticipant p WHERE p.challenge.id = :challengeId AND p.employeeId = :employeeId")
     Optional<ChallengeParticipant> findByChallengeIdAndEmployeeId(@Param("challengeId") UUID challengeId,
-                                                                   @Param("employeeId") UUID employeeId);
+                                                                  @Param("employeeId") UUID employeeId);
 
     @Query("SELECT p FROM ChallengeParticipant p WHERE p.challenge.id = :challengeId")
     List<ChallengeParticipant> findByChallengeId(@Param("challengeId") UUID challengeId);
@@ -26,16 +26,16 @@ public interface ChallengeParticipantRepository extends JpaRepository<ChallengeP
     List<ChallengeParticipant> findByEmployeeId(UUID employeeId);
 
     @Query("SELECT p FROM ChallengeParticipant p WHERE p.challenge.id = :challengeId " +
-           "AND p.status = 'ACTIVE' ORDER BY p.totalProgress DESC")
+            "AND p.status = 'ACTIVE' ORDER BY p.totalProgress DESC")
     List<ChallengeParticipant> findLeaderboard(@Param("challengeId") UUID challengeId, Pageable pageable);
 
     @Query("SELECT p FROM ChallengeParticipant p WHERE p.challenge.id = :challengeId " +
-           "AND p.teamId = :teamId AND p.status = 'ACTIVE'")
+            "AND p.teamId = :teamId AND p.status = 'ACTIVE'")
     List<ChallengeParticipant> findTeamMembers(@Param("challengeId") UUID challengeId, @Param("teamId") UUID teamId);
 
     @Query("SELECT p.teamId, p.teamName, SUM(p.totalProgress) as teamProgress FROM ChallengeParticipant p " +
-           "WHERE p.challenge.id = :challengeId AND p.teamId IS NOT NULL AND p.status = 'ACTIVE' " +
-           "GROUP BY p.teamId, p.teamName ORDER BY teamProgress DESC")
+            "WHERE p.challenge.id = :challengeId AND p.teamId IS NOT NULL AND p.status = 'ACTIVE' " +
+            "GROUP BY p.teamId, p.teamName ORDER BY teamProgress DESC")
     List<Object[]> getTeamLeaderboard(@Param("challengeId") UUID challengeId);
 
     @Query("SELECT COUNT(p) FROM ChallengeParticipant p WHERE p.challenge.id = :challengeId AND p.status = 'ACTIVE'")

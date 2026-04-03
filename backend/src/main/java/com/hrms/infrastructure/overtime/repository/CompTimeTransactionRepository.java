@@ -21,15 +21,15 @@ public interface CompTimeTransactionRepository extends JpaRepository<CompTimeTra
     Page<CompTimeTransaction> findByBalanceId(UUID balanceId, Pageable pageable);
 
     @Query("SELECT t FROM CompTimeTransaction t WHERE t.balance.tenantId = :tenantId " +
-           "AND t.balance.employeeId = :employeeId " +
-           "ORDER BY t.transactionDate DESC")
+            "AND t.balance.employeeId = :employeeId " +
+            "ORDER BY t.transactionDate DESC")
     List<CompTimeTransaction> findByEmployee(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT t FROM CompTimeTransaction t WHERE t.balance.tenantId = :tenantId " +
-           "AND t.balance.employeeId = :employeeId " +
-           "AND t.transactionDate BETWEEN :startDate AND :endDate")
+            "AND t.balance.employeeId = :employeeId " +
+            "AND t.transactionDate BETWEEN :startDate AND :endDate")
     List<CompTimeTransaction> findByEmployeeAndDateRange(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
@@ -37,27 +37,27 @@ public interface CompTimeTransactionRepository extends JpaRepository<CompTimeTra
             @Param("endDate") LocalDate endDate);
 
     @Query("SELECT t.transactionType, SUM(t.hours) FROM CompTimeTransaction t " +
-           "WHERE t.balance.tenantId = :tenantId " +
-           "AND t.balance.employeeId = :employeeId " +
-           "GROUP BY t.transactionType")
+            "WHERE t.balance.tenantId = :tenantId " +
+            "AND t.balance.employeeId = :employeeId " +
+            "GROUP BY t.transactionType")
     List<Object[]> getSummaryByType(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId);
 
     @Query("SELECT t FROM CompTimeTransaction t " +
-           "WHERE t.balance.tenantId = :tenantId " +
-           "AND t.transactionType = 'ACCRUAL' " +
-           "AND t.expiryDate IS NOT NULL " +
-           "AND t.expiryDate <= :expiryDate")
+            "WHERE t.balance.tenantId = :tenantId " +
+            "AND t.transactionType = 'ACCRUAL' " +
+            "AND t.expiryDate IS NOT NULL " +
+            "AND t.expiryDate <= :expiryDate")
     List<CompTimeTransaction> findExpiringCredits(
             @Param("tenantId") UUID tenantId,
             @Param("expiryDate") LocalDate expiryDate);
 
     @Query("SELECT SUM(t.hours) FROM CompTimeTransaction t " +
-           "WHERE t.balance.tenantId = :tenantId " +
-           "AND t.balance.employeeId = :employeeId " +
-           "AND t.transactionType = :type " +
-           "AND FUNCTION('YEAR', t.transactionDate) = :year")
+            "WHERE t.balance.tenantId = :tenantId " +
+            "AND t.balance.employeeId = :employeeId " +
+            "AND t.transactionType = :type " +
+            "AND FUNCTION('YEAR', t.transactionDate) = :year")
     BigDecimal getYearlyTotalByType(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,

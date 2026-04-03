@@ -11,12 +11,12 @@ import java.util.UUID;
 
 @Repository
 public interface JobOpeningRepository extends JpaRepository<JobOpening, UUID>, JpaSpecificationExecutor<JobOpening> {
-    
+
     Optional<JobOpening> findByIdAndTenantId(UUID id, UUID tenantId);
-    
+
     List<JobOpening> findByTenantIdAndStatus(UUID tenantId, JobOpening.JobStatus status);
-    
+
     List<JobOpening> findByTenantIdAndIsActive(UUID tenantId, Boolean isActive);
-    
+
     boolean existsByTenantIdAndJobCode(UUID tenantId, String jobCode);
 }

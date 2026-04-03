@@ -33,24 +33,24 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
 
     @Query("SELECT pr FROM PerformanceReview pr WHERE pr.tenantId = :tenantId AND pr.reviewPeriodStart BETWEEN :startDate AND :endDate")
     List<PerformanceReview> findByTenantIdAndReviewDateBetween(
-        @Param("tenantId") UUID tenantId,
-        @Param("startDate") java.time.LocalDate startDate,
-        @Param("endDate") java.time.LocalDate endDate
+            @Param("tenantId") UUID tenantId,
+            @Param("startDate") java.time.LocalDate startDate,
+            @Param("endDate") java.time.LocalDate endDate
     );
 
     @Query("SELECT pr FROM PerformanceReview pr WHERE pr.tenantId = :tenantId " +
-           "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
+            "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
     List<PerformanceReview> findPendingReviews(@Param("tenantId") UUID tenantId,
-                                                @Param("reviewerId") UUID reviewerId);
+                                               @Param("reviewerId") UUID reviewerId);
 
     @Query("SELECT pr FROM PerformanceReview pr WHERE pr.tenantId = :tenantId " +
-           "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
+            "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
     Page<PerformanceReview> findPendingReviews(@Param("tenantId") UUID tenantId,
                                                @Param("reviewerId") UUID reviewerId,
                                                Pageable pageable);
 
     @Query("SELECT AVG(pr.overallRating) FROM PerformanceReview pr " +
-           "WHERE pr.tenantId = :tenantId AND pr.employeeId = :employeeId AND pr.status = 'COMPLETED'")
+            "WHERE pr.tenantId = :tenantId AND pr.employeeId = :employeeId AND pr.status = 'COMPLETED'")
     Double getAverageRating(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);
 
     long countByTenantIdAndStatus(UUID tenantId, PerformanceReview.ReviewStatus status);

@@ -27,15 +27,15 @@ public interface CandidateMatchScoreRepository extends JpaRepository<CandidateMa
     List<CandidateMatchScore> findByCandidateIdAndTenantId(UUID candidateId, UUID tenantId);
 
     @Query("SELECT cms FROM CandidateMatchScore cms WHERE cms.tenantId = :tenantId " +
-           "AND cms.jobOpeningId = :jobOpeningId AND cms.recommendation = :recommendation")
+            "AND cms.jobOpeningId = :jobOpeningId AND cms.recommendation = :recommendation")
     List<CandidateMatchScore> findByJobAndRecommendation(
             @Param("tenantId") UUID tenantId,
             @Param("jobOpeningId") UUID jobOpeningId,
             @Param("recommendation") CandidateMatchScore.Recommendation recommendation);
 
     @Query("SELECT cms FROM CandidateMatchScore cms WHERE cms.tenantId = :tenantId " +
-           "AND cms.jobOpeningId = :jobOpeningId AND cms.overallMatchScore >= :minScore " +
-           "ORDER BY cms.overallMatchScore DESC")
+            "AND cms.jobOpeningId = :jobOpeningId AND cms.overallMatchScore >= :minScore " +
+            "ORDER BY cms.overallMatchScore DESC")
     List<CandidateMatchScore> findTopCandidatesForJob(
             @Param("tenantId") UUID tenantId,
             @Param("jobOpeningId") UUID jobOpeningId,

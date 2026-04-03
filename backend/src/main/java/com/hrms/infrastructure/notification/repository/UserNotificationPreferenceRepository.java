@@ -18,15 +18,15 @@ public interface UserNotificationPreferenceRepository extends JpaRepository<User
     Optional<UserNotificationPreference> findByUserIdAndCategoryAndTenantId(UUID userId, String category, UUID tenantId);
 
     @Query("SELECT p FROM UserNotificationPreference p WHERE p.tenantId = :tenantId " +
-           "AND p.userId = :userId AND p.emailEnabled = true")
+            "AND p.userId = :userId AND p.emailEnabled = true")
     List<UserNotificationPreference> findEmailEnabledCategories(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
     @Query("SELECT p FROM UserNotificationPreference p WHERE p.tenantId = :tenantId " +
-           "AND p.userId = :userId AND p.pushEnabled = true")
+            "AND p.userId = :userId AND p.pushEnabled = true")
     List<UserNotificationPreference> findPushEnabledCategories(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId);
 
     @Query("SELECT DISTINCT p.userId FROM UserNotificationPreference p WHERE p.tenantId = :tenantId " +
-           "AND p.category = :category AND p.digestFrequency = :frequency")
+            "AND p.category = :category AND p.digestFrequency = :frequency")
     List<UUID> findUsersForDigest(@Param("tenantId") UUID tenantId, @Param("category") String category, @Param("frequency") String frequency);
 
     void deleteByUserIdAndTenantId(UUID userId, UUID tenantId);
