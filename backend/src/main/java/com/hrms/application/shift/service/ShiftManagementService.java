@@ -170,7 +170,7 @@ public class ShiftManagementService {
         log.info("Assigning shift {} to employee: {}", request.getShiftId(), request.getEmployeeId());
 
         // Validate employee and shift exist
-        employeeRepository.findById(request.getEmployeeId())
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
         shiftRepository.findByIdAndTenantId(request.getShiftId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
@@ -295,7 +295,7 @@ public class ShiftManagementService {
     }
 
     private ShiftAssignmentResponse mapToAssignmentResponse(ShiftAssignment assignment) {
-        Employee employee = employeeRepository.findById(assignment.getEmployeeId()).orElse(null);
+        Employee employee = employeeRepository.findByIdAndTenantId(assignment.getEmployeeId(), assignment.getTenantId()).orElse(null);
         Shift shift = shiftRepository.findById(assignment.getShiftId()).orElse(null);
 
         return ShiftAssignmentResponse.builder()
