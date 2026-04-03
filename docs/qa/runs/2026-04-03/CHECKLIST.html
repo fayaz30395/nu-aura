@@ -27,17 +27,17 @@
 </head>
 <body>
 <h1>NU-AURA QA Checklist — Run #5</h1>
-<div class="subtitle">2026-04-04 QA Run #5 | Full static audit across all 6 modules — 16 new bugs found</div>
-<div style="margin-bottom:12px;padding:8px 14px;background:#1c1010;border-left:3px solid var(--red);border-radius:4px;font-size:12px;color:var(--red)">
-  ❌ NO-GO — Run #5 audit found 16 new bugs: 1 CRITICAL + 7 P0 (4 tenant isolation + 3 permission) + 4 P1 + 4 P2. Fix required before release.
+<div class="subtitle">2026-04-04 QA Run #5 FINAL | Full static audit — 16 bugs found, 16 fixed | 94 total fixed | CONDITIONAL GO</div>
+<div style="margin-bottom:12px;padding:8px 14px;background:#0d1f0d;border-left:3px solid var(--green);border-radius:4px;font-size:12px;color:var(--green)">
+  ✅ CONDITIONAL GO — All 16 Run #5 bugs fixed (commits 29f58b09, 5fbf7bc8, 8ef84985, 7f231938). 13 non-blocking spec/feature gaps remain.
 </div>
 
 <div class="stats">
-  <div class="stat"><span class="stat-val green">78</span><span class="stat-label">Bugs Fixed</span></div>
-  <div class="stat"><span class="stat-val red">29</span><span class="stat-label">Open Bugs</span></div>
-  <div class="stat"><span class="stat-val" style="color:var(--purple)">16</span><span class="stat-label">New (Run #5)</span></div>
+  <div class="stat"><span class="stat-val green">94</span><span class="stat-label">Bugs Fixed</span></div>
+  <div class="stat"><span class="stat-val amber">13</span><span class="stat-label">Open Bugs</span></div>
+  <div class="stat"><span class="stat-val green">16</span><span class="stat-label">Run #5 Fixed</span></div>
   <div class="stat"><span class="stat-val blue">134</span><span class="stat-label">UCs Written</span></div>
-  <div class="stat"><span class="stat-val red">8</span><span class="stat-label">P0/Critical Open</span></div>
+  <div class="stat"><span class="stat-val green">0</span><span class="stat-label">P0/Critical Open</span></div>
 </div>
 <p style="margin:4px 0;color:var(--muted)"># NU-AURA QA &amp; Deployment Checklist — 2026-04-04 Run #5</p>
 <p style="margin:4px 0;color:var(--muted)">&gt; <strong>Last updated:</strong> 2026-04-04 | <strong>Source:</strong> Run #4 all fixes confirmed ✅ + Run #5 full 6-module static audit</p>
@@ -46,15 +46,15 @@
 <h2>Overall Status — Run #5</h2>
 <table><thead><tr><th>Category</th><th>Total</th><th>Fixed</th><th>Open</th><th>Notes</th></tr></thead><tbody>
 <tr><td>Use Cases (JUnit)</td><td>318</td><td>264</td><td>54 pending</td><td>0 failing</td></tr>
-<tr><td>All Bugs (Runs #1–#5)</td><td>107</td><td><span class="fixed">78 fixed</span></td><td><span class="fail">29 open</span></td><td>16 new from Run #5</td></tr>
-<tr><td>CRITICAL Bugs</td><td>4</td><td>3 fixed</td><td><span class="fail">1 open</span></td><td>RUN5-GROW-001: SurveyManagementController uses SYSTEM_ADMIN for CRUD</td></tr>
-<tr><td>P0 Bugs (Tenant Isolation / Permission)</td><td>15</td><td>8 fixed</td><td><span class="fail">7 open</span></td><td>4 tenant isolation (Training/Tax/Shift/Timesheet services) + 3 ProjectController permission</td></tr>
-<tr><td>P1 Bugs</td><td>22</td><td>15 fixed</td><td><span class="fail">7 open</span></td><td>GoalController REVIEW_VIEW, OKR DELETE perms, missing Permission constants + 3 spec bugs</td></tr>
-<tr><td>P2 / Spec / Feature Gaps</td><td>66</td><td>52 fixed</td><td>14 open</td><td>Travel 201, FE template params, spec corrections, feature gaps</td></tr>
+<tr><td>All Bugs (Runs #1–#5)</td><td>107</td><td><span class="fixed">94 fixed</span></td><td><span class="amber">13 open</span></td><td>Run #5: 16 found + 16 fixed</td></tr>
+<tr><td>CRITICAL Bugs</td><td>4</td><td><span class="fixed">4 fixed</span></td><td>0</td><td>RUN5-GROW-001 fixed (commit 5fbf7bc8)</td></tr>
+<tr><td>P0 Bugs (Tenant Isolation / Permission)</td><td>15</td><td><span class="fixed">15 fixed</span></td><td>0</td><td>All tenant isolation + ProjectController fixes landed (commits 29f58b09, 5fbf7bc8)</td></tr>
+<tr><td>P1 Bugs</td><td>22</td><td><span class="fixed">22 fixed</span></td><td>0</td><td>GOAL_VIEW, OKR_DELETE, SURVEY_* constants + controller fixes (commit 5fbf7bc8)</td></tr>
+<tr><td>P2 / Spec / Feature Gaps</td><td>66</td><td><span class="fixed">53 fixed</span></td><td>13 open</td><td>Travel 201 + FE template params fixed; 13 spec/feature gaps remain non-blocking</td></tr>
 <tr><td>Backend Compile</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
 <tr><td>Frontend Build</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
 <tr><td>Flyway Migrations</td><td>V0–V112</td><td><span class="fixed">✅ Applied</span></td><td>—</td><td>—</td></tr>
-<tr style="background:#1c1010"><td colspan="5" style="color:var(--red);font-weight:700">🚫 GO/NO-GO: NO-GO — 1 CRITICAL + 7 P0 open. Must fix before release.</td></tr>
+<tr style="background:#0d1f0d"><td colspan="5" style="color:var(--green);font-weight:700">✅ GO/NO-GO: CONDITIONAL GO — All P0/CRITICAL bugs fixed. 13 non-blocking spec gaps remain. Cleared for staging deployment.</td></tr>
 </tbody></table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Bug Tracker</h2>
@@ -459,17 +459,17 @@
 <tr><td>Prometheus + Grafana</td><td><span class="fixed">✅</span></td></tr>
 </tbody></table>
 <hr style="border-color:var(--border);margin:16px 0">
-<h2>Run #5 — Priority Fix Queue</h2>
-<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Fix in this order before next QA run:</p>
-<table><thead><tr><th>#</th><th>Bug</th><th>Effort</th><th>Impact</th></tr></thead><tbody>
-<tr style="background:#1c1010"><td>1</td><td>RUN5-GROW-001 — SurveyManagementController uses SYSTEM_ADMIN for all CRUD</td><td>30 min</td><td>CRITICAL — survey managers locked out</td></tr>
-<tr style="background:#1c1010"><td>2</td><td>RUN5-SEC-001–004 — 4 services: findById without tenant filter (Training, Tax, Shift, Timesheet)</td><td>1h</td><td>P0 — cross-tenant data access</td></tr>
-<tr style="background:#1c1010"><td>3</td><td>RUN5-PROJ-001–003 — ProjectController assignment/removal use PROJECT_CREATE</td><td>15 min</td><td>P0 — wrong permission model</td></tr>
-<tr><td>4</td><td>RUN5-PERM-001 — Add GOAL_VIEW, OKR_DELETE, SURVEY_CREATE/UPDATE/DELETE to Permission.java</td><td>10 min</td><td>P1 — unblocks fixes 5+6</td></tr>
-<tr><td>5</td><td>RUN5-GROW-002 — GoalController GET uses REVIEW_VIEW instead of GOAL_VIEW</td><td>10 min</td><td>P1 — wrong permission</td></tr>
-<tr><td>6</td><td>RUN5-GROW-003/004 — OkrController DELETE uses OKR_UPDATE instead of OKR_DELETE</td><td>10 min</td><td>P1 — wrong permission</td></tr>
-<tr><td>7</td><td>RUN5-TRAVEL-001 — TravelController POST returns 200 not 201</td><td>5 min</td><td>P2 — HTTP contract</td></tr>
-<tr><td>8</td><td>RUN5-FE-001/002/003 — 3 remaining template-string query params (wellness, task, utilization)</td><td>30 min</td><td>P2 — URL encoding</td></tr>
+<h2>Run #5 — Fix Queue (All Complete ✅)</h2>
+<p style="margin:0 0 10px;font-size:12px;color:var(--green)">All 16 bugs fixed. 4 commits landed: 29f58b09, 5fbf7bc8, 8ef84985, 7f231938</p>
+<table><thead><tr><th>#</th><th>Bug</th><th>Commit</th><th>Impact</th></tr></thead><tbody>
+<tr style="background:#0d1f0d"><td>1</td><td>RUN5-GROW-001 — SurveyManagementController uses SYSTEM_ADMIN for all CRUD</td><td>5fbf7bc8</td><td><span class="fixed">✅ CRITICAL fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>2</td><td>RUN5-SEC-001–004 — 4 services: findById without tenant filter (Training, Tax, Shift, Timesheet)</td><td>29f58b09 + 7f231938</td><td><span class="fixed">✅ P0 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>3</td><td>RUN5-PROJ-001–003 — ProjectController assignment/removal use PROJECT_CREATE</td><td>5fbf7bc8</td><td><span class="fixed">✅ P0 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>4</td><td>RUN5-PERM-001 — Add GOAL_VIEW, OKR_DELETE, SURVEY_CREATE/UPDATE/DELETE to Permission.java</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>5</td><td>RUN5-GROW-002 — GoalController GET uses REVIEW_VIEW instead of GOAL_VIEW</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>6</td><td>RUN5-GROW-003/004 — OkrController DELETE uses OKR_UPDATE instead of OKR_DELETE</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>7</td><td>RUN5-TRAVEL-001 — TravelController POST returns 200 not 201</td><td>8ef84985</td><td><span class="fixed">✅ P2 fixed</span></td></tr>
+<tr style="background:#0d1f0d"><td>8</td><td>RUN5-FE-001/002/003 — 3 remaining template-string query params (wellness, task, utilization)</td><td>8ef84985</td><td><span class="fixed">✅ P2 fixed</span></td></tr>
 </tbody></table>
 
 <h2>QA Run History</h2>
@@ -479,7 +479,7 @@
 <tr><td>Run #3</td><td>2026-04-03 (evening)</td><td>22 new (BUG-NEW-*)</td><td>22</td><td>NO-GO</td></tr>
 <tr><td>Run #4 audit</td><td>2026-04-03 (night)</td><td>21 new (RECHECK-*)</td><td>0 at time of report</td><td>NO-GO</td></tr>
 <tr style="background:#0d1f0d"><td>Run #4 fixes</td><td>2026-04-04</td><td>0 new</td><td><span class="fixed">21 (all RECHECK-* fixed)</span></td><td><span class="fixed">CONDITIONAL GO ✅</span></td></tr>
-<tr style="background:#1c1010"><td><strong>Run #5 (Current)</strong></td><td>2026-04-04</td><td><span class="fail">16 new (RUN5-*)</span></td><td>0 new</td><td><span class="fail">NO-GO — 1 CRITICAL + 7 P0</span></td></tr>
+<tr style="background:#0d1f0d"><td><strong>Run #5 FINAL</strong></td><td>2026-04-04</td><td>16 new (RUN5-*)</td><td><span class="fixed">16 (all RUN5-* fixed)</span></td><td><span class="fixed">CONDITIONAL GO ✅</span></td></tr>
 </tbody></table>
 
 <h3>🔴🟣 QA Run #5 — NEW Issues (2026-04-04 Full Static Audit)</h3>
@@ -487,38 +487,38 @@
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 CRITICAL — Wrong Permission Model</h4>
 <table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-GROW-001</td><td><code>SurveyManagementController.java:30–102</code></td><td>CRITICAL — All CRUD endpoints use <code>SYSTEM_ADMIN</code> instead of <code>SURVEY_CREATE</code>/<code>SURVEY_UPDATE</code>/<code>SURVEY_DELETE</code>/<code>SURVEY_VIEW</code>. Blocks all non-admin survey management.</td><td><span class="fail">❌ OPEN</span></td></tr>
+<tr><td>RUN5-GROW-001</td><td><code>SurveyManagementController.java:30–102</code></td><td>CRITICAL — All CRUD endpoints used <code>SYSTEM_ADMIN</code> instead of <code>SURVEY_CREATE/UPDATE/DELETE/VIEW</code>.</td><td><span class="fixed">✅ FIXED</span> — correct SURVEY_* permissions (commit 5fbf7bc8)</td></tr>
 </tbody></table>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — Tenant Isolation Missing</h4>
 <table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-SEC-001</td><td><code>TrainingManagementService.java:147</code></td><td>P0 — <code>employeeRepository.findById(request.getEmployeeId())</code> with no tenant filter. Cross-tenant training enrollment possible.</td><td><span class="fail">❌ OPEN — Fix: findByIdAndTenantId()</span></td></tr>
-<tr><td>RUN5-SEC-002</td><td><code>TaxDeclarationService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant tax declaration manipulation possible.</td><td><span class="fail">❌ OPEN — Fix: findByIdAndTenantId()</span></td></tr>
-<tr><td>RUN5-SEC-003</td><td><code>ShiftManagementService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant shift assignment possible.</td><td><span class="fail">❌ OPEN — Fix: findByIdAndTenantId()</span></td></tr>
-<tr><td>RUN5-SEC-004</td><td><code>ProjectTimesheetService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant timesheet member injection possible.</td><td><span class="fail">❌ OPEN — Fix: findByIdAndTenantId()</span></td></tr>
+<tr><td>RUN5-SEC-001</td><td><code>TrainingManagementService.java:147</code></td><td>P0 — <code>employeeRepository.findById(request.getEmployeeId())</code> with no tenant filter. Cross-tenant training enrollment possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09 + 7f231938 mapper)</td></tr>
+<tr><td>RUN5-SEC-002</td><td><code>TaxDeclarationService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant tax declaration manipulation possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
+<tr><td>RUN5-SEC-003</td><td><code>ShiftManagementService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant shift assignment possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
+<tr><td>RUN5-SEC-004</td><td><code>ProjectTimesheetService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant timesheet member injection possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
 </tbody></table>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — Wrong Permission on Project Mutation Endpoints</h4>
 <table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-PROJ-001</td><td><code>ProjectController.java:86</code></td><td>P0 — <code>assignEmployee()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: Permission.PROJECT_UPDATE</span></td></tr>
-<tr><td>RUN5-PROJ-002</td><td><code>ProjectController.java:95</code></td><td>P0 — <code>removeEmployeeFromProject()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: Permission.PROJECT_UPDATE</span></td></tr>
-<tr><td>RUN5-PROJ-003</td><td><code>ProjectController.java:122</code></td><td>P0 — <code>endAllocation()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fail">❌ OPEN — Fix: Permission.PROJECT_UPDATE</span></td></tr>
+<tr><td>RUN5-PROJ-001</td><td><code>ProjectController.java:86</code></td><td>P0 — <code>assignEmployee()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
+<tr><td>RUN5-PROJ-002</td><td><code>ProjectController.java:95</code></td><td>P0 — <code>removeEmployeeFromProject()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
+<tr><td>RUN5-PROJ-003</td><td><code>ProjectController.java:122</code></td><td>P0 — <code>endAllocation()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
 </tbody></table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟠 P1 — Wrong Permission Codes + Missing Constants</h4>
 <table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-GROW-002</td><td><code>GoalController.java:38–98</code></td><td>P1 — All GET endpoints use <code>REVIEW_VIEW</code> instead of <code>GOAL_VIEW</code></td><td><span class="fail">❌ OPEN — Fix: Permission.GOAL_VIEW (add to Permission.java)</span></td></tr>
-<tr><td>RUN5-GROW-003</td><td><code>OkrController.java:203</code></td><td>P1 — DELETE <code>/objectives/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fail">❌ OPEN — Fix: Permission.OKR_DELETE (add to Permission.java)</span></td></tr>
-<tr><td>RUN5-GROW-004</td><td><code>OkrController.java:322</code></td><td>P1 — DELETE <code>/key-results/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fail">❌ OPEN — Fix: Permission.OKR_DELETE</span></td></tr>
-<tr><td>RUN5-PERM-001</td><td><code>Permission.java</code></td><td>P1 — Missing constants: <code>GOAL_VIEW</code>, <code>OKR_DELETE</code>, <code>SURVEY_CREATE</code>, <code>SURVEY_UPDATE</code>, <code>SURVEY_DELETE</code></td><td><span class="fail">❌ OPEN — Fix: add 5 constants</span></td></tr>
+<tr><td>RUN5-GROW-002</td><td><code>GoalController.java:38–98</code></td><td>P1 — All GET endpoints use <code>REVIEW_VIEW</code> instead of <code>GOAL_VIEW</code></td><td><span class="fixed">✅ FIXED</span> — Permission.GOAL_VIEW (commit 5fbf7bc8)</td></tr>
+<tr><td>RUN5-GROW-003</td><td><code>OkrController.java:203</code></td><td>P1 — DELETE <code>/objectives/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td></tr>
+<tr><td>RUN5-GROW-004</td><td><code>OkrController.java:322</code></td><td>P1 — DELETE <code>/key-results/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td></tr>
+<tr><td>RUN5-PERM-001</td><td><code>Permission.java</code></td><td>P1 — Missing constants: <code>GOAL_VIEW</code>, <code>OKR_DELETE</code>, <code>SURVEY_CREATE</code>, <code>SURVEY_UPDATE</code>, <code>SURVEY_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — 5 constants added (commit 5fbf7bc8)</td></tr>
 </tbody></table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟡 P2 — HTTP Status + Frontend Params</h4>
 <table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-TRAVEL-001</td><td><code>TravelController.java:46</code></td><td>P2 — POST <code>/travel/requests</code> returns 200 instead of 201 Created</td><td><span class="fail">❌ OPEN — Fix: HttpStatus.CREATED</span></td></tr>
-<tr><td>RUN5-FE-001</td><td><code>wellness.service.ts:59</code></td><td>P2 — <code>joinChallenge()</code> still uses template-string query params with <code>params.toString()</code></td><td><span class="fail">❌ OPEN — Fix: axios params object</span></td></tr>
-<tr><td>RUN5-FE-002</td><td><code>task.service.ts:77</code></td><td>P2 — <code>getProjectTasks()</code> builds queryString then concatenates into URL template</td><td><span class="fail">❌ OPEN — Fix: axios params object</span></td></tr>
-<tr><td>RUN5-FE-003</td><td><code>utilization.service.ts:159</code></td><td>P2 — Export URL uses template-string query params with URLSearchParams.toString()</td><td><span class="fail">❌ OPEN — Fix: axios params object</span></td></tr>
+<tr><td>RUN5-TRAVEL-001</td><td><code>TravelController.java:46</code></td><td>P2 — POST <code>/travel/requests</code> returns 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED (commit 8ef84985)</td></tr>
+<tr><td>RUN5-FE-001</td><td><code>wellness.service.ts:59</code></td><td>P2 — <code>joinChallenge()</code> still uses template-string query params with <code>params.toString()</code></td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
+<tr><td>RUN5-FE-002</td><td><code>task.service.ts:77</code></td><td>P2 — <code>getProjectTasks()</code> builds queryString then concatenates into URL template</td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
+<tr><td>RUN5-FE-003</td><td><code>utilization.service.ts:159</code></td><td>P2 — Export URL uses template-string query params with URLSearchParams.toString()</td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
 </tbody></table>
 
 <h2>Remaining Open Bugs (13 — Non-blocking, Pre-Run #5)</h2>
@@ -540,5 +540,5 @@
 </tbody></table>
 
 <hr style="border-color:var(--border);margin:16px 0">
-<p style="margin:4px 0;color:var(--muted)">Run #5 complete — 2026-04-04. 16 new bugs found. Fix RUN5-GROW-001 (CRITICAL), RUN5-SEC-001–004 (P0 tenant isolation), RUN5-PROJ-001–003 (P0 permissions) before next run.</p>
+<p style="margin:4px 0;color:var(--green)">Run #5 FINAL — 2026-04-04. 16 bugs found, all 16 fixed (commits 29f58b09, 5fbf7bc8, 8ef84985, 7f231938). 94 total bugs fixed. 13 non-blocking spec/feature gaps remain. <strong>CONDITIONAL GO ✅</strong></p>
 </body></html>
