@@ -17,106 +17,122 @@
 -- ---------------------------------------------------------------------------
 
 -- job_openings → departments (SET NULL: if department deleted, opening survives)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_job_openings_department') THEN
-    ALTER TABLE job_openings
-      ADD CONSTRAINT fk_job_openings_department
-      FOREIGN KEY (department_id) REFERENCES departments(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_job_openings_department') THEN
+ALTER TABLE job_openings
+  ADD CONSTRAINT fk_job_openings_department
+    FOREIGN KEY (department_id) REFERENCES departments (id)
       ON DELETE SET NULL
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE job_openings VALIDATE CONSTRAINT fk_job_openings_department;
 
 -- job_openings → users (SET NULL: audit field — if user deleted, record stays)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_job_openings_created_by') THEN
-    ALTER TABLE job_openings
-      ADD CONSTRAINT fk_job_openings_created_by
-      FOREIGN KEY (created_by) REFERENCES users(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_job_openings_created_by') THEN
+ALTER TABLE job_openings
+  ADD CONSTRAINT fk_job_openings_created_by
+    FOREIGN KEY (created_by) REFERENCES users (id)
       ON DELETE SET NULL
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE job_openings VALIDATE CONSTRAINT fk_job_openings_created_by;
 
 -- candidates → job_openings (CASCADE: if opening deleted, candidates are removed)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_candidates_job_opening') THEN
-    ALTER TABLE candidates
-      ADD CONSTRAINT fk_candidates_job_opening
-      FOREIGN KEY (job_opening_id) REFERENCES job_openings(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_candidates_job_opening') THEN
+ALTER TABLE candidates
+  ADD CONSTRAINT fk_candidates_job_opening
+    FOREIGN KEY (job_opening_id) REFERENCES job_openings (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE candidates VALIDATE CONSTRAINT fk_candidates_job_opening;
 
 -- interviews → candidates (CASCADE: if candidate deleted, so are their interviews)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_candidate') THEN
-    ALTER TABLE interviews
-      ADD CONSTRAINT fk_interviews_candidate
-      FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_candidate') THEN
+ALTER TABLE interviews
+  ADD CONSTRAINT fk_interviews_candidate
+    FOREIGN KEY (candidate_id) REFERENCES candidates (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE interviews VALIDATE CONSTRAINT fk_interviews_candidate;
 
 -- interviews → job_openings (CASCADE: if opening deleted, its interviews are removed)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_job_opening') THEN
-    ALTER TABLE interviews
-      ADD CONSTRAINT fk_interviews_job_opening
-      FOREIGN KEY (job_opening_id) REFERENCES job_openings(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_job_opening') THEN
+ALTER TABLE interviews
+  ADD CONSTRAINT fk_interviews_job_opening
+    FOREIGN KEY (job_opening_id) REFERENCES job_openings (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE interviews VALIDATE CONSTRAINT fk_interviews_job_opening;
 
 -- interviews → employees (SET NULL: if interviewer deleted, interview record stays)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_interviewer') THEN
-    ALTER TABLE interviews
-      ADD CONSTRAINT fk_interviews_interviewer
-      FOREIGN KEY (interviewer_id) REFERENCES employees(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_interviews_interviewer') THEN
+ALTER TABLE interviews
+  ADD CONSTRAINT fk_interviews_interviewer
+    FOREIGN KEY (interviewer_id) REFERENCES employees (id)
       ON DELETE SET NULL
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE interviews VALIDATE CONSTRAINT fk_interviews_interviewer;
 
 -- applicants → candidates (CASCADE: if candidate deleted, remove their applicant records)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_applicants_candidate') THEN
-    ALTER TABLE applicants
-      ADD CONSTRAINT fk_applicants_candidate
-      FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_applicants_candidate') THEN
+ALTER TABLE applicants
+  ADD CONSTRAINT fk_applicants_candidate
+    FOREIGN KEY (candidate_id) REFERENCES candidates (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE applicants VALIDATE CONSTRAINT fk_applicants_candidate;
 
 -- applicants → job_openings (CASCADE: if opening deleted, remove applicant records)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_applicants_job_opening') THEN
-    ALTER TABLE applicants
-      ADD CONSTRAINT fk_applicants_job_opening
-      FOREIGN KEY (job_opening_id) REFERENCES job_openings(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_applicants_job_opening') THEN
+ALTER TABLE applicants
+  ADD CONSTRAINT fk_applicants_job_opening
+    FOREIGN KEY (job_opening_id) REFERENCES job_openings (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE applicants VALIDATE CONSTRAINT fk_applicants_job_opening;
 
@@ -128,15 +144,17 @@ ALTER TABLE applicants VALIDATE CONSTRAINT fk_applicants_job_opening;
 -- ---------------------------------------------------------------------------
 
 -- assets → employees (SET NULL: if employee deleted, asset becomes unassigned)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_assets_assigned_to') THEN
-    ALTER TABLE assets
-      ADD CONSTRAINT fk_assets_assigned_to
-      FOREIGN KEY (assigned_to) REFERENCES employees(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_assets_assigned_to') THEN
+ALTER TABLE assets
+  ADD CONSTRAINT fk_assets_assigned_to
+    FOREIGN KEY (assigned_to) REFERENCES employees (id)
       ON DELETE SET NULL
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE assets VALIDATE CONSTRAINT fk_assets_assigned_to;
 
@@ -155,9 +173,11 @@ ALTER TABLE assets VALIDATE CONSTRAINT fk_assets_assigned_to;
 
 -- document_versions → documents (CASCADE — add a named constraint if missing)
 -- Guard with EXECUTE to avoid parse-time error when documents table does not exist
-DO $$
+DO
+$$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'documents' AND table_schema = 'public')
+  IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'documents' AND table_schema = 'public')
      AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'document_versions' AND table_schema = 'public')
      AND NOT EXISTS (
        SELECT 1 FROM pg_constraint c
@@ -167,23 +187,27 @@ BEGIN
      )
   THEN
     EXECUTE 'ALTER TABLE document_versions ADD CONSTRAINT fk_document_versions_document FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE NOT VALID';
-  END IF;
-  IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_document_versions_document') THEN
+END IF;
+  IF
+EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_document_versions_document') THEN
     EXECUTE 'ALTER TABLE document_versions VALIDATE CONSTRAINT fk_document_versions_document';
-  END IF;
+END IF;
 END $$;
 
 -- documents.uploaded_by → users (SET NULL — guard on table + column existence)
-DO $$
+DO
+$$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'documents' AND column_name = 'uploaded_by')
+  IF
+EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'documents' AND column_name = 'uploaded_by')
      AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by')
   THEN
     EXECUTE 'ALTER TABLE documents ADD CONSTRAINT fk_documents_uploaded_by FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL NOT VALID';
-  END IF;
-  IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by') THEN
+END IF;
+  IF
+EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_documents_uploaded_by') THEN
     EXECUTE 'ALTER TABLE documents VALIDATE CONSTRAINT fk_documents_uploaded_by';
-  END IF;
+END IF;
 END $$;
 
 -- ---------------------------------------------------------------------------
@@ -192,28 +216,32 @@ END $$;
 -- ---------------------------------------------------------------------------
 
 -- expense_claims → employees (CASCADE: if employee deleted, remove their claims)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_expense_claims_employee') THEN
-    ALTER TABLE expense_claims
-      ADD CONSTRAINT fk_expense_claims_employee
-      FOREIGN KEY (employee_id) REFERENCES employees(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_expense_claims_employee') THEN
+ALTER TABLE expense_claims
+  ADD CONSTRAINT fk_expense_claims_employee
+    FOREIGN KEY (employee_id) REFERENCES employees (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE expense_claims VALIDATE CONSTRAINT fk_expense_claims_employee;
 
 -- expense_claims → users (SET NULL: audit field — if approver deleted, claim survives)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_expense_claims_approved_by') THEN
-    ALTER TABLE expense_claims
-      ADD CONSTRAINT fk_expense_claims_approved_by
-      FOREIGN KEY (approved_by) REFERENCES users(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_expense_claims_approved_by') THEN
+ALTER TABLE expense_claims
+  ADD CONSTRAINT fk_expense_claims_approved_by
+    FOREIGN KEY (approved_by) REFERENCES users (id)
       ON DELETE SET NULL
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE expense_claims VALIDATE CONSTRAINT fk_expense_claims_approved_by;
 
@@ -224,28 +252,32 @@ ALTER TABLE expense_claims VALIDATE CONSTRAINT fk_expense_claims_approved_by;
 -- ---------------------------------------------------------------------------
 
 -- training_enrollments → employees (CASCADE)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_training_enrollments_employee') THEN
-    ALTER TABLE training_enrollments
-      ADD CONSTRAINT fk_training_enrollments_employee
-      FOREIGN KEY (employee_id) REFERENCES employees(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_training_enrollments_employee') THEN
+ALTER TABLE training_enrollments
+  ADD CONSTRAINT fk_training_enrollments_employee
+    FOREIGN KEY (employee_id) REFERENCES employees (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE training_enrollments VALIDATE CONSTRAINT fk_training_enrollments_employee;
 
 -- training_enrollments → training_programs (CASCADE)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_training_enrollments_program') THEN
-    ALTER TABLE training_enrollments
-      ADD CONSTRAINT fk_training_enrollments_program
-      FOREIGN KEY (program_id) REFERENCES training_programs(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_training_enrollments_program') THEN
+ALTER TABLE training_enrollments
+  ADD CONSTRAINT fk_training_enrollments_program
+    FOREIGN KEY (program_id) REFERENCES training_programs (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE training_enrollments VALIDATE CONSTRAINT fk_training_enrollments_program;
 
@@ -261,14 +293,16 @@ ALTER TABLE training_enrollments VALIDATE CONSTRAINT fk_training_enrollments_pro
 -- ---------------------------------------------------------------------------
 
 -- onboarding_processes → employees (CASCADE: if employee deleted, remove process)
-DO $$
+DO
+$$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_onboarding_processes_employee') THEN
-    ALTER TABLE onboarding_processes
-      ADD CONSTRAINT fk_onboarding_processes_employee
-      FOREIGN KEY (employee_id) REFERENCES employees(id)
+  IF
+NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_onboarding_processes_employee') THEN
+ALTER TABLE onboarding_processes
+  ADD CONSTRAINT fk_onboarding_processes_employee
+    FOREIGN KEY (employee_id) REFERENCES employees (id)
       ON DELETE CASCADE
-      NOT VALID;
-  END IF;
+  NOT VALID;
+END IF;
 END $$;
 ALTER TABLE onboarding_processes VALIDATE CONSTRAINT fk_onboarding_processes_employee;

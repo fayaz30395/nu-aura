@@ -9,9 +9,9 @@
 
 -- Forcefully update ALL @nulogic.io users' password hashes
 UPDATE users
-SET password_hash = '$2a$10$D7mb1w2eljWfrBF3i8iZCu5A/H4mUXe8.3rHyWvgYy2j8eC3ghqD2',
+SET password_hash         = '$2a$10$D7mb1w2eljWfrBF3i8iZCu5A/H4mUXe8.3rHyWvgYy2j8eC3ghqD2',
     failed_login_attempts = 0,
-    status = 'ACTIVE'
+    status                = 'ACTIVE'
 WHERE tenant_id = '660e8400-e29b-41d4-a716-446655440001'
   AND email LIKE '%@nulogic.io';
 

@@ -25,7 +25,7 @@
 -- JPA defines: @Index(name = "idx_employee_code_tenant", columnList = "employeeCode,tenantId", unique = true)
 ALTER TABLE employees DROP CONSTRAINT IF EXISTS idx_employee_code_tenant;
 CREATE UNIQUE INDEX idx_employee_code_tenant
-    ON employees (employee_code, tenant_id) WHERE is_deleted = false;
+  ON employees (employee_code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 2. USERS — email per tenant
@@ -33,7 +33,7 @@ CREATE UNIQUE INDEX idx_employee_code_tenant
 -- JPA defines: @Index(name = "idx_user_email_tenant", columnList = "email,tenantId", unique = true)
 ALTER TABLE users DROP CONSTRAINT IF EXISTS idx_user_email_tenant;
 CREATE UNIQUE INDEX idx_user_email_tenant
-    ON users (email, tenant_id) WHERE is_deleted = false;
+  ON users (email, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 3. TENANTS — code (globally unique)
@@ -43,7 +43,7 @@ CREATE UNIQUE INDEX idx_user_email_tenant
 ALTER TABLE tenants DROP CONSTRAINT IF EXISTS idx_tenant_code;
 ALTER TABLE tenants DROP CONSTRAINT IF EXISTS tenants_code_key;
 CREATE UNIQUE INDEX idx_tenant_code
-    ON tenants (code) WHERE is_deleted = false;
+  ON tenants (code) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 4. DEPARTMENTS — code per tenant
@@ -51,7 +51,7 @@ CREATE UNIQUE INDEX idx_tenant_code
 -- JPA defines: @Index(name = "idx_department_code_tenant", columnList = "code,tenantId", unique = true)
 ALTER TABLE departments DROP CONSTRAINT IF EXISTS idx_department_code_tenant;
 CREATE UNIQUE INDEX idx_department_code_tenant
-    ON departments (code, tenant_id) WHERE is_deleted = false;
+  ON departments (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 5. ROLES — code per tenant
@@ -60,7 +60,7 @@ CREATE UNIQUE INDEX idx_department_code_tenant
 -- V0: code VARCHAR(50) NOT NULL (no inline UNIQUE on roles table, only on permissions)
 ALTER TABLE roles DROP CONSTRAINT IF EXISTS idx_role_code_tenant;
 CREATE UNIQUE INDEX idx_role_code_tenant
-    ON roles (code, tenant_id) WHERE is_deleted = false;
+  ON roles (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 6. PERMISSIONS — code (globally unique)
@@ -70,7 +70,7 @@ CREATE UNIQUE INDEX idx_role_code_tenant
 ALTER TABLE permissions DROP CONSTRAINT IF EXISTS idx_permission_code;
 ALTER TABLE permissions DROP CONSTRAINT IF EXISTS permissions_code_key;
 CREATE UNIQUE INDEX idx_permission_code
-    ON permissions (code) WHERE is_deleted = false;
+  ON permissions (code) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 7. LEAVE_TYPES — leave_code (globally unique in V0, should be per-tenant)
@@ -84,7 +84,7 @@ CREATE UNIQUE INDEX idx_permission_code
 -- V0: job_code VARCHAR(50) NOT NULL UNIQUE
 ALTER TABLE job_openings DROP CONSTRAINT IF EXISTS job_openings_job_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_job_openings_code_tenant_active
-    ON job_openings (job_code, tenant_id) WHERE is_deleted = false;
+  ON job_openings (job_code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 9. PROJECTS (PSA) — project_code
@@ -94,7 +94,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_job_openings_code_tenant_active
 ALTER TABLE projects DROP CONSTRAINT IF EXISTS idx_project_code_tenant;
 ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_project_code_key;
 CREATE UNIQUE INDEX idx_project_code_tenant
-    ON projects (project_code, tenant_id) WHERE is_deleted = false;
+  ON projects (project_code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 9b. PSA_PROJECTS — project_code
@@ -103,7 +103,7 @@ CREATE UNIQUE INDEX idx_project_code_tenant
 ALTER TABLE psa_projects DROP CONSTRAINT IF EXISTS psa_projects_project_code_key;
 -- psa_projects has no is_deleted column — use regular unique index
 CREATE UNIQUE INDEX IF NOT EXISTS idx_psa_projects_code_tenant_active
-    ON psa_projects (project_code, tenant_id);
+  ON psa_projects (project_code, tenant_id);
 
 -- ============================================================================
 -- 10. REPORT_DEFINITIONS — report_code
@@ -112,7 +112,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_psa_projects_code_tenant_active
 ALTER TABLE report_definitions DROP CONSTRAINT IF EXISTS report_definitions_report_code_key;
 -- report_definitions has no is_deleted column — use regular unique index
 CREATE UNIQUE INDEX IF NOT EXISTS idx_report_definitions_code_active
-    ON report_definitions (report_code, tenant_id);
+  ON report_definitions (report_code, tenant_id);
 
 -- ============================================================================
 -- 11. DOCUMENT_CATEGORIES — category_code
@@ -121,7 +121,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_report_definitions_code_active
 ALTER TABLE document_categories DROP CONSTRAINT IF EXISTS document_categories_category_code_key;
 -- document_categories has no is_deleted column — use regular unique index
 CREATE UNIQUE INDEX IF NOT EXISTS idx_document_categories_code_active
-    ON document_categories (category_code, tenant_id);
+  ON document_categories (category_code, tenant_id);
 
 -- ============================================================================
 -- 12. DOCUMENT_TEMPLATES — template_code
@@ -130,7 +130,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_document_categories_code_active
 ALTER TABLE document_templates DROP CONSTRAINT IF EXISTS document_templates_template_code_key;
 -- document_templates has no is_deleted column — use regular unique index
 CREATE UNIQUE INDEX IF NOT EXISTS idx_document_templates_code_active
-    ON document_templates (template_code, tenant_id);
+  ON document_templates (template_code, tenant_id);
 
 -- ============================================================================
 -- 13. LETTER_TEMPLATES — code
@@ -138,7 +138,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_document_templates_code_active
 -- V0: code VARCHAR(255) NOT NULL UNIQUE
 ALTER TABLE letter_templates DROP CONSTRAINT IF EXISTS letter_templates_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_letter_templates_code_active
-    ON letter_templates (code, tenant_id) WHERE is_deleted = false;
+  ON letter_templates (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 14. NOTIFICATION_TEMPLATES — code
@@ -146,7 +146,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_letter_templates_code_active
 -- V0: code VARCHAR(255) NOT NULL UNIQUE
 ALTER TABLE notification_templates DROP CONSTRAINT IF EXISTS notification_templates_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_notification_templates_code_active
-    ON notification_templates (code, tenant_id) WHERE is_deleted = false;
+  ON notification_templates (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 15. COMPLIANCE_POLICIES — code
@@ -154,7 +154,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_notification_templates_code_active
 -- V0: code VARCHAR(255) NOT NULL UNIQUE
 ALTER TABLE compliance_policies DROP CONSTRAINT IF EXISTS compliance_policies_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_compliance_policies_code_active
-    ON compliance_policies (code, tenant_id) WHERE is_deleted = false;
+  ON compliance_policies (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 16. POSITIONS — code
@@ -162,7 +162,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_compliance_policies_code_active
 -- V0: code VARCHAR(255) NOT NULL UNIQUE
 ALTER TABLE positions DROP CONSTRAINT IF EXISTS positions_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_positions_code_active
-    ON positions (code, tenant_id) WHERE is_deleted = false;
+  ON positions (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 17. RECOGNITION_BADGES — code
@@ -170,7 +170,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_positions_code_active
 -- V0: code VARCHAR(255) NOT NULL UNIQUE
 ALTER TABLE recognition_badges DROP CONSTRAINT IF EXISTS recognition_badges_code_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_recognition_badges_code_active
-    ON recognition_badges (code, tenant_id) WHERE is_deleted = false;
+  ON recognition_badges (code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 18. APP_PERMISSIONS — code
@@ -180,7 +180,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_recognition_badges_code_active
 ALTER TABLE app_permissions DROP CONSTRAINT IF EXISTS idx_app_perm_code;
 ALTER TABLE app_permissions DROP CONSTRAINT IF EXISTS app_permissions_code_key;
 CREATE UNIQUE INDEX idx_app_perm_code
-    ON app_permissions (code) WHERE is_deleted = false;
+  ON app_permissions (code) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 19. NU_APPLICATIONS — code
@@ -190,7 +190,7 @@ CREATE UNIQUE INDEX idx_app_perm_code
 ALTER TABLE nu_applications DROP CONSTRAINT IF EXISTS idx_nu_app_code;
 ALTER TABLE nu_applications DROP CONSTRAINT IF EXISTS nu_applications_code_key;
 CREATE UNIQUE INDEX idx_nu_app_code
-    ON nu_applications (code) WHERE is_deleted = false;
+  ON nu_applications (code) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 20. APP_ROLES — (code, tenant_id, application_id)
@@ -198,7 +198,7 @@ CREATE UNIQUE INDEX idx_nu_app_code
 -- V0: CONSTRAINT uc_app_roles_code_tenantId UNIQUE (code, tenant_id, application_id)
 ALTER TABLE app_roles DROP CONSTRAINT IF EXISTS uc_app_roles_code_tenantid;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_app_roles_code_tenant_app_active
-    ON app_roles (code, tenant_id, application_id) WHERE is_deleted = false;
+  ON app_roles (code, tenant_id, application_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 21. PSA_INVOICES — invoice_number
@@ -207,7 +207,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_app_roles_code_tenant_app_active
 ALTER TABLE psa_invoices DROP CONSTRAINT IF EXISTS psa_invoices_invoice_number_key;
 -- psa_invoices has no is_deleted column — use regular unique index
 CREATE UNIQUE INDEX IF NOT EXISTS idx_psa_invoices_number_active
-    ON psa_invoices (invoice_number, tenant_id);
+  ON psa_invoices (invoice_number, tenant_id);
 
 -- ============================================================================
 -- 22. CUSTOM_FIELD_DEFINITIONS — fieldCode per tenant
@@ -215,7 +215,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_psa_invoices_number_active
 -- JPA defines: @Index(name = "idx_cfd_code_tenant", columnList = "fieldCode,tenantId", unique = true)
 ALTER TABLE custom_field_definitions DROP CONSTRAINT IF EXISTS idx_cfd_code_tenant;
 CREATE UNIQUE INDEX idx_cfd_code_tenant
-    ON custom_field_definitions (field_code, tenant_id) WHERE is_deleted = false;
+  ON custom_field_definitions (field_code, tenant_id) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 23. WIKI_SPACES — slug per tenant (V15)
@@ -223,7 +223,7 @@ CREATE UNIQUE INDEX idx_cfd_code_tenant
 -- V15: UNIQUE(tenant_id, slug)
 ALTER TABLE wiki_spaces DROP CONSTRAINT IF EXISTS wiki_spaces_tenant_id_slug_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_wiki_spaces_slug_tenant_active
-    ON wiki_spaces (tenant_id, slug) WHERE is_deleted = false;
+  ON wiki_spaces (tenant_id, slug) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 24. BLOG_CATEGORIES — slug per tenant (V15)
@@ -231,7 +231,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_wiki_spaces_slug_tenant_active
 -- V15: UNIQUE(tenant_id, slug)
 ALTER TABLE blog_categories DROP CONSTRAINT IF EXISTS blog_categories_tenant_id_slug_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_categories_slug_tenant_active
-    ON blog_categories (tenant_id, slug) WHERE is_deleted = false;
+  ON blog_categories (tenant_id, slug) WHERE is_deleted = false;
 
 -- ============================================================================
 -- 25. BLOG_POSTS — slug per tenant (V15)
@@ -239,7 +239,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_categories_slug_tenant_active
 -- V15: UNIQUE(tenant_id, slug)
 ALTER TABLE blog_posts DROP CONSTRAINT IF EXISTS blog_posts_tenant_id_slug_key;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_posts_slug_tenant_active
-    ON blog_posts (tenant_id, slug) WHERE is_deleted = false;
+  ON blog_posts (tenant_id, slug) WHERE is_deleted = false;
 
 -- ============================================================================
 -- CONSTRAINTS INTENTIONALLY NOT CHANGED:

@@ -4,38 +4,39 @@
 -- This enables full soft-delete audit trails and future recovery workflows.
 -- Uses DO blocks to safely skip tables that may not exist yet.
 
-DO $$
+DO
+$$
 DECLARE
-    tbl TEXT;
+tbl TEXT;
 BEGIN
-    FOR tbl IN
-        SELECT unnest(ARRAY[
-            'tenants', 'users', 'departments', 'employees', 'roles', 'permissions', 'office_locations',
-            'leave_types', 'leave_requests', 'leave_balances', 'attendance_records', 'attendance_time_entries',
-            'holidays', 'shifts', 'overtime_records',
-            'salary_structures', 'payroll_runs', 'payslips', 'tax_declarations',
-            'contracts', 'contract_versions', 'contract_templates',
-            'performance_reviews', 'performance_goals', 'okr_objectives', 'okr_key_results',
-            'feedback', 'feedback_360_cycles', 'pulse_surveys', 'surveys',
-            'job_openings', 'candidates', 'interviews', 'applicants',
-            'assets', 'expense_claims', 'projects', 'project_members',
-            'training_programs', 'courses', 'course_modules', 'quizzes',
-            'wiki_spaces', 'wiki_pages', 'blog_posts', 'blog_categories', 'document_templates',
-            'onboarding_templates', 'onboarding_template_tasks', 'onboarding_processes',
-            'exit_processes', 'exit_clearances',
-            'helpdesk_tickets', 'helpdesk_ticket_comments', 'helpdesk_ticket_categories',
-            'calendar_events', 'announcements',
-            'benefit_plans', 'budget_plans', 'budget_positions', 'budget_scenarios',
-            'webhooks', 'wall_posts', 'post_comments',
-            'signature_requests', 'signature_approvals',
-            'scheduled_reports', 'report_templates',
-            'one_on_one_meetings', 'meeting_agenda_items'
-        ])
-    LOOP
-        IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = tbl) THEN
+FOR tbl IN
+SELECT unnest(ARRAY[
+                'tenants', 'users', 'departments', 'employees', 'roles', 'permissions', 'office_locations',
+              'leave_types', 'leave_requests', 'leave_balances', 'attendance_records', 'attendance_time_entries',
+              'holidays', 'shifts', 'overtime_records',
+              'salary_structures', 'payroll_runs', 'payslips', 'tax_declarations',
+              'contracts', 'contract_versions', 'contract_templates',
+              'performance_reviews', 'performance_goals', 'okr_objectives', 'okr_key_results',
+              'feedback', 'feedback_360_cycles', 'pulse_surveys', 'surveys',
+              'job_openings', 'candidates', 'interviews', 'applicants',
+              'assets', 'expense_claims', 'projects', 'project_members',
+              'training_programs', 'courses', 'course_modules', 'quizzes',
+              'wiki_spaces', 'wiki_pages', 'blog_posts', 'blog_categories', 'document_templates',
+              'onboarding_templates', 'onboarding_template_tasks', 'onboarding_processes',
+              'exit_processes', 'exit_clearances',
+              'helpdesk_tickets', 'helpdesk_ticket_comments', 'helpdesk_ticket_categories',
+              'calendar_events', 'announcements',
+              'benefit_plans', 'budget_plans', 'budget_positions', 'budget_scenarios',
+              'webhooks', 'wall_posts', 'post_comments',
+              'signature_requests', 'signature_approvals',
+              'scheduled_reports', 'report_templates',
+              'one_on_one_meetings', 'meeting_agenda_items'
+                ])
+         LOOP
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = tbl) THEN
             EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ', tbl);
-        END IF;
-    END LOOP;
+END IF;
+END LOOP;
 END $$;
 
 -- ============================================================
