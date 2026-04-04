@@ -40,19 +40,20 @@ class FluenceService {
     sortBy: string = 'updatedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<WikiPage>> {
+    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiPage>;
     try {
       const params: Record<string, unknown> = { page, size, sortBy, sortDirection };
       if (spaceId) {
         params.spaceId = spaceId;
       }
-      const response = await apiClient.get<Page<WikiPage>>('/knowledge/wiki/pages', { params });
+      const response = await apiClient.get<Page<WikiPage>>('/knowledge/wiki/pages', {
+        params,
+        validateStatus: (s: number) => s < 500,
+      });
+      if (response.status === 403 || response.status === 405) return empty;
       return response.data;
-    } catch (error: unknown) {
-      const status = (error as { response?: { status?: number } })?.response?.status;
-      if (status === 403 || status === 405) {
-        return { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiPage>;
-      }
-      throw error;
+    } catch {
+      return empty;
     }
   }
 
@@ -105,17 +106,16 @@ class FluenceService {
     sortBy: string = 'updatedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<WikiSpace>> {
+    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiSpace>;
     try {
       const response = await apiClient.get<Page<WikiSpace>>('/knowledge/wiki/spaces', {
         params: { page, size, sortBy, sortDirection },
+        validateStatus: (s: number) => s < 500,
       });
+      if (response.status === 403) return empty;
       return response.data;
-    } catch (error: unknown) {
-      const status = (error as { response?: { status?: number } })?.response?.status;
-      if (status === 403) {
-        return { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiSpace>;
-      }
-      throw error;
+    } catch {
+      return empty;
     }
   }
 

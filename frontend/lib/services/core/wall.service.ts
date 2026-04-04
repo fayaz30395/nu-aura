@@ -114,18 +114,16 @@ class WallService {
   }
 
   async getPosts(page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
+    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as PageResponse<WallPostResponse>;
     try {
       const response = await api.get<PageResponse<WallPostResponse>>('/wall/posts', {
         params: { page, size },
+        validateStatus: (s: number) => s < 500,
       });
+      if (response.status === 403) return empty;
       return response.data;
-    } catch (error: unknown) {
-      // 403 is expected for roles without wall post permissions — return empty
-      const status = (error as { response?: { status?: number } })?.response?.status;
-      if (status === 403) {
-        return { content: [], totalElements: 0, totalPages: 0, size, number: page } as PageResponse<WallPostResponse>;
-      }
-      throw error;
+    } catch {
+      return empty;
     }
   }
 
