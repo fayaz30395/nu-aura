@@ -42,6 +42,11 @@ spring:
       hibernate:
         format_sql: false
         generate_statistics: false
+        # Explicitly set dialect so Hibernate doesn't need a DB connection at startup
+        # to auto-detect it. Without this, Hibernate 6.x throws
+        # "Unable to determine Dialect without JDBC metadata" if the Neon DB
+        # connection is slow or times out during bean initialization.
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   data:
     redis:
