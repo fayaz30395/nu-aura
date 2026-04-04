@@ -71,12 +71,7 @@ class ApiClient {
       async (error) => {
         const method = error.config?.method?.toUpperCase?.() ?? 'UNKNOWN';
         const status = error.response?.status;
-        // 403 on read-only endpoints is expected for role-restricted resources — log as warn, not error
-        if (status === 403 && method === 'GET') {
-          logger.warn('[ApiClient] Forbidden:', method, error.config?.url, status);
-        } else {
-          logger.error('[ApiClient] Error:', method, error.config?.url, status, error.message);
-        }
+        logger.error('[ApiClient] Error:', method, error.config?.url, status, error.message);
         const originalRequest = error.config;
 
         // Handle 401 Unauthorized — try to refresh token.

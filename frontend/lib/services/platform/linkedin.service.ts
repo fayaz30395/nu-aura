@@ -26,22 +26,19 @@ class LinkedInService {
     page: number = 0,
     size: number = 10
   ): Promise<PagedResponse<LinkedInPost>> {
+    const empty: PagedResponse<LinkedInPost> = { content: [], totalElements: 0, totalPages: 0, size, number: page };
     try {
       const response = await apiClient.get<PagedResponse<LinkedInPost>>(
         `${BASE_URL}/active`,
         {
           params: { page, size },
+          validateStatus: (s: number) => s < 500, // treat 403 as non-error
         }
       );
+      if (response.status === 403) return empty;
       return response.data;
-    } catch (error: unknown) {
-      // 403 is expected for roles without PLATFORM:MANAGE — return empty result
-      const status = (error as { response?: { status?: number } })?.response?.status;
-      if (status === 403) {
-        return { content: [], totalElements: 0, totalPages: 0, size, number: page };
-      }
-      console.error('[LinkedInService] getActiveLinkedInPosts failed:', error);
-      throw error;
+    } catch {
+      return empty;
     }
   }
 
