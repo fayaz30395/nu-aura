@@ -7,6 +7,11 @@ spring:
 
   main:
     lazy-initialization: true
+    # Exclude Redis and Elasticsearch auto-configuration on Render — reduces startup
+    # time from 90+ seconds to under 30. Direct Redis bean usage is preserved.
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
 
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
@@ -44,6 +49,11 @@ spring:
       port: ${SPRING_REDIS_PORT:6379}
       password: ${SPRING_REDIS_PASSWORD:}
       timeout: 2000
+      repositories:
+        # CRITICAL: disable Redis repository scanning — Spring scans all 274 JPA
+        # repos as potential Redis repos, adding 60+ sec to startup and flooding logs.
+        # Direct Redis usage (TokenBlacklist, rate-limiter) is unaffected.
+        enabled: false
 
   # Elasticsearch — not provisioned on Render free plan; set short timeouts so
   # FluenceDocumentRepository doesn't block startup for 30+ seconds
