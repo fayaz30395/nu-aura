@@ -141,7 +141,7 @@ function PoliciesTab() {
   if (!policies.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconFileText size={32} color="var(--mantine-color-gray-4)" />
+        <IconFileText size={32} color="var(--text-muted)" />
         <Text c="dimmed">No active policies</Text>
       </Stack>
     </Center>
@@ -251,7 +251,7 @@ function ChecklistsTab() {
   if (!checklists.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconClipboardList size={32} color="var(--mantine-color-gray-4)" />
+        <IconClipboardList size={32} color="var(--text-muted)" />
         <Text c="dimmed">No active checklists</Text>
       </Stack>
     </Center>
@@ -344,7 +344,7 @@ function AlertsTab() {
   if (!alerts.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconBell size={32} color="var(--mantine-color-gray-4)" />
+        <IconBell size={32} color="var(--text-muted)" />
         <Text c="dimmed">No active compliance alerts</Text>
         <Text size="xs" c="dimmed">You&apos;re all clear!</Text>
       </Stack>

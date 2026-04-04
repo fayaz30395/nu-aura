@@ -94,7 +94,7 @@ export default function LeaveEncashmentPage() {
             ← Back
           </button>
 
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-2 mb-8">
             <Coins className="h-7 w-7 text-accent-600" />
             <div>
               <h1 className="text-2xl font-bold skeuo-emboss">Leave Encashment</h1>

@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/hire/recruitment';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -118,10 +118,16 @@ function isThisWeek(dateString?: string): boolean {
   return date >= startOfWeek && date <= endOfWeek;
 }
 
+const RECRUITMENT_ALLOWED_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'];
+
 export default function RecruitmentDashboard() {
   const router = useRouter();
+  const { hasAnyRole, isReady } = usePermissions();
 
-  // Fetch data using React Query hooks
+  // P0-001: Block non-recruitment roles from accessing admin hub
+  const hasAccess = hasAnyRole(...RECRUITMENT_ALLOWED_ROLES);
+
+  // All hooks MUST be called before any early return (React rules of hooks)
   const jobOpeningsQuery = useJobOpenings(0, 100);
   const candidatesQuery = useCandidates(0, 100);
   const openJobsQuery = useJobOpeningsByStatus('OPEN');
@@ -225,6 +231,25 @@ export default function RecruitmentDashboard() {
     const timer = setTimeout(() => setLoadingTimedOut(true), 15000);
     return () => clearTimeout(timer);
   }, []);
+
+  // P0-001: Block non-recruitment roles AFTER all hooks (React rules of hooks)
+  if (isReady && !hasAccess) {
+    return (
+      <AppLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <Briefcase className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
+          <p className="text-[var(--text-muted)] max-w-md mb-6">
+            You don&apos;t have permission to access the Recruitment dashboard.
+            Use the Referrals page to submit employee referrals.
+          </p>
+          <Button onClick={() => router.push('/me/dashboard')} className="skeuo-button">
+            Go to My Dashboard
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const allQueriesErrored =
     jobOpeningsQuery.isError && candidatesQuery.isError && openJobsQuery.isError && interviewsQuery.isError;

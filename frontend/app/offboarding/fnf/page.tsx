@@ -230,7 +230,7 @@ export default function FnFManagementPage() {
           ) : filtered.length === 0 ? (
             <Center h={200}>
               <Stack align="center" gap="xs">
-                <IconCash size={40} color="var(--mantine-color-gray-4)" />
+                <IconCash size={40} color="var(--text-muted)" />
                 <Text c="dimmed">No settlements found</Text>
                 {(statusFilter || search) && (
                   <Text size="xs" c="dimmed">Try clearing your filters</Text>

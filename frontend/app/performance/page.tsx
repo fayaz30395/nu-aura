@@ -27,7 +27,9 @@ import { AppLayout } from '@/components/layout';
 import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
+import { Button } from '@/components/ui/Button';
+import { useRouter } from 'next/navigation';
 
 interface DashboardStats {
   totalGoals: number;
@@ -171,7 +173,19 @@ const StatCard = ({
   </div>
 );
 
+const PERFORMANCE_ALLOWED_ROLES = [
+  'SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER',
+  'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER',
+];
+
 export default function PerformancePage() {
+  const router = useRouter();
+  const { hasAnyRole, isReady } = usePermissions();
+
+  // P0-002: Block EMPLOYEE/non-management roles from accessing admin performance hub
+  const hasAccess = hasAnyRole(...PERFORMANCE_ALLOWED_ROLES);
+
+  // All hooks MUST be called before any early return (React rules of hooks)
   const goalsQuery = useAllGoals(0, 20);
   const cyclesQuery = usePerformanceActiveCycles();
   const okrQuery = useOkrDashboardSummary();
@@ -204,6 +218,25 @@ export default function PerformancePage() {
 
   const loading = goalsQuery.isLoading || cyclesQuery.isLoading || okrQuery.isLoading || pending360Query.isLoading;
   const hasError = goalsQuery.isError || cyclesQuery.isError || okrQuery.isError || pending360Query.isError;
+
+  // P0-002: Block EMPLOYEE/non-management roles AFTER all hooks
+  if (isReady && !hasAccess) {
+    return (
+      <AppLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <TrendingUp className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
+          <p className="text-[var(--text-muted)] max-w-md mb-6">
+            You don&apos;t have permission to access the Performance Management hub.
+            View your goals and reviews from My Dashboard.
+          </p>
+          <Button onClick={() => router.push('/me/dashboard')} className="skeuo-button">
+            Go to My Dashboard
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   if (hasError) {
     return (

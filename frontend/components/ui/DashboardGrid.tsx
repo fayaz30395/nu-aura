@@ -213,7 +213,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                     >
                       {/* Widget Header with Grip Handle */}
                       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
                           {/* Grip Handle */}
                           <div
                             {...provided.dragHandleProps}
@@ -302,7 +302,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
               {widgets.map(widget => (
                 <div
                   key={widget.id}
-                  className="flex items-center gap-3 p-3 rounded-md hover:bg-[var(--bg-subtle)] transition-colors"
+                  className="flex items-center gap-2 p-2 rounded-md hover:bg-[var(--bg-subtle)] transition-colors"
                 >
                   <button
                     onClick={() => toggleWidgetVisibility(widget.id)}

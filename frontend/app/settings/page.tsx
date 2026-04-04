@@ -27,6 +27,7 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions } from '@/lib/hooks/usePermissions';
 import { useDarkMode } from '@/components/layout/DarkModeProvider';
 // authApi removed — Google SSO only, no password change endpoint needed
 import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/hooks/queries/useNotifications';
@@ -35,6 +36,7 @@ import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAdmin } = usePermissions();
   const { isDark, toggleDarkMode } = useDarkMode();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -295,8 +297,8 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* SAML SSO Configuration */}
-          <Card className="lg:col-span-2 skeuo-card">
+          {/* SAML SSO Configuration — admin only */}
+          {isAdmin && <Card className="lg:col-span-2 skeuo-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 skeuo-emboss">
                 <Shield className="h-5 w-5" />
@@ -325,7 +327,7 @@ export default function SettingsPage() {
                 </button>
               </div>
             </CardContent>
-          </Card>
+          </Card>}
 
           {/* Notification Preferences */}
           <Card className="lg:col-span-2 skeuo-card">
