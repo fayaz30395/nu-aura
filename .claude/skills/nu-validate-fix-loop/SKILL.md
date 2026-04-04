@@ -1,6 +1,6 @@
 ---
 name: nu-validate-fix-loop
-description: Use when asked to "validate and fix", "browser QA loop", "autonomous QA", "check and fix from browser", "validate use case", "visual QA loop", or when you need to autonomously validate a feature/page in the browser, fix issues found, revalidate, and iterate until clean. Orchestrates a validate→fix→recheck cycle using Playwright (or Chrome MCP when connected) with agent teams.
+description: Use when asked to "validate and fix", "browser QA loop", "autonomous QA", "RBAC sweep", "full platform QA", "validate use case", "visual QA loop", or when you need to autonomously validate features/pages in the browser across all roles, fix issues found, revalidate, and iterate until clean. Orchestrates a validate→fix→recheck cycle using Chrome DevTools MCP (preferred) or Playwright across 9 roles, all routes, 14 validation dimensions.
 ---
 
 # NU-AURA Autonomous Validate-Fix-Recheck Loop
@@ -8,537 +8,502 @@ description: Use when asked to "validate and fix", "browser QA loop", "autonomou
 ## Overview
 
 This skill orchestrates an autonomous cycle that:
-1. **Validates** a use case by inspecting the running app in the browser (Playwright or Chrome DevTools MCP)
-2. **Diagnoses** any issues found (UI bugs, console errors, broken flows, missing data)
-3. **Fixes** the issues in code
-4. **Rechecks** the same use case to confirm the fix
-5. **Logs** results and moves to the next use case
-
-This is a **self-healing loop** — it keeps iterating until the use case passes or hits a max retry limit (default: 3 per use case).
+1. **Validates** every route across all 9 roles — RBAC, render health, CRUD flows, console errors, network failures, design system, a11y, performance
+2. **Diagnoses** any issues found (P0–P3 severity)
+3. **Fixes** P0/P1/P2 issues automatically in code
+4. **Rechecks** to confirm fixes (up to 3x per issue)
+5. **Reports** full results to `qa-reports/validate-fix-loop/`
 
 ---
 
 ## When to Use
 
-- "Validate and fix the leave page"
-- "Browser QA loop for all HRMS pages"
+- "Run /nu-validate-fix-loop for all routes across all roles"
+- "Full RBAC boundary validation"
+- "Browser QA loop"
 - "Autonomous QA — check, fix, recheck"
-- "Visual QA loop for recruitment"
-- "Check the dashboard from browser and fix issues"
-- "Validate use cases and auto-fix"
-- After deploying a feature, to verify it works end-to-end in the browser
+- "Visual QA loop for [module]"
+- "Validate and fix all issues"
+- After deploying a feature, before a demo, before a release
 
 ---
 
 ## Prerequisites
 
-Before starting, verify:
-
 ```bash
-# 1. Frontend running on :3000
-curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
-# Expected: 200
+# Frontend running on :3000
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3000   # expect 200
 
-# 2. Backend running on :8080
-curl -s http://localhost:8080/actuator/health | grep -o '"status":"UP"'
-# Expected: "status":"UP"
+# Backend running on :8080
+curl -s http://localhost:8080/actuator/health | grep '"status":"UP"'
 
-# 3. Create report directory
-mkdir -p /Users/macbook/IdeaProjects/nulogic/nu-aura/qa-reports/validate-fix-loop
+# Report directory
+mkdir -p /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/qa-reports/validate-fix-loop
 ```
 
-If services are not running, start them:
+If services are not running:
 ```bash
-cd /Users/macbook/IdeaProjects/nulogic/nu-aura
+cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura
 docker-compose up -d
 cd backend && ./start-backend.sh &
 cd frontend && npm run dev &
+# Wait up to 120s for both to be healthy
 ```
 
 ---
 
-## Input Format
+## ROLES & CREDENTIALS
 
-The user provides use cases in one of these formats:
+| Role | Email | Password |
+|------|-------|----------|
+| SUPER_ADMIN | fayaz.m@nulogic.io | Welcome@123 |
+| TENANT_ADMIN | sarankarthick.maran@nulogic.io | Welcome@123 |
+| HR_ADMIN | jagadeesh@nulogic.io | Welcome@123 |
+| HR_MANAGER | jagadeesh@nulogic.io | Welcome@123 |
+| MANAGER | sumit@nulogic.io | Welcome@123 |
+| TEAM_LEAD | mani@nulogic.io | Welcome@123 |
+| EMPLOYEE | saran@nulogic.io | Welcome@123 |
+| RECRUITMENT_ADMIN | suresh@nulogic.io | Welcome@123 |
+| FINANCE_ADMIN | jagadeesh@nulogic.io | Welcome@123 |
 
-### Format 1: Single page/feature
+**Auth rate limit**: 5 req/min. Space role switches by ≥15 seconds.
+Group tests by role to minimize login switches.
+
+---
+
+## SCOPE — ALL ROUTES
+
+### MY SPACE (all 9 roles — no requiredPermission on these)
 ```
-/nu-validate-fix-loop /employees
+/me/dashboard  /me/profile    /me/leave       /me/attendance
+/me/payslips   /me/assets     /me/documents   /me/loans
+/me/expenses   /me/travel     /me/training    /me/goals
+/me/performance /me/tax       /me/letters     /me/helpdesk
 ```
 
-### Format 2: Module sweep
+### NU-HRMS Admin
 ```
-/nu-validate-fix-loop module:leave
+/dashboard         /employees        /departments      /attendance
+/leave             /payroll          /compensation     /benefits
+/expenses          /loans            /travel           /assets
+/letters           /statutory        /statutory-filings /tax
+/helpdesk          /approvals        /announcements    /org-chart
+/timesheets        /time-tracking    /projects         /resources
+/allocations       /calendar         /overtime         /probation
+/shifts            /reports          /analytics        /settings
+/admin             /admin/roles      /import-export    /integrations
+/holidays          /restricted-holidays /contracts     /exit-interview
+/workflows         /compliance       /predictive-analytics /executive
+/sign              /team-directory   /referrals        /one-on-one
+/organization-chart /payments        /lwf              /security
+/biometric-devices /letter-templates
 ```
 
-### Format 3: Explicit use case list
+### NU-Hire
 ```
-/nu-validate-fix-loop
-- Navigate to /employees, verify table loads with data
-- Open employee detail, check all tabs render
-- Submit leave request, verify approval flow
+/recruitment  /recruitment/candidates  /recruitment/pipeline
+/onboarding   /preboarding             /offboarding
+/offer-portal /careers
 ```
 
-### Format 4: Full sub-app sweep
+### NU-Grow
 ```
-/nu-validate-fix-loop app:nu-hrms
+/performance  /performance/reviews  /okr        /feedback360
+/training     /learning             /recognition /surveys
+/wellness     /goals
+```
+
+### NU-Fluence
+```
+/fluence/wiki    /fluence/blogs      /fluence/templates
+/fluence/drive   /fluence/search     /fluence/my-content
+/fluence/wall    /fluence/dashboard  /fluence/analytics
 ```
 
 ---
 
-## The Autonomous Loop
+## VALIDATION DIMENSIONS
 
-### Architecture
+Check ALL of the following per route per role:
+
+### 1. RBAC ACCESS CONTROL
+- Route renders full content for authorized roles
+- Route redirects to `/me/dashboard` (NOT 404/500) for unauthorized roles
+- Sidebar nav items shown/hidden correctly per role
+- Action buttons (Create/Edit/Delete) visible only when permitted
+- SuperAdmin sees everything — zero permission errors
+- `/me/*` routes accessible to ALL roles regardless of permissions
+
+### 2. PAGE RENDER HEALTH
+- Visible content loads (not blank white page)
+- No unhandled React errors / ErrorBoundary triggered
+- No hydration mismatch in console
+- No JS crashes (undefined is not a function, cannot read properties of null, etc.)
+- Loading skeleton/spinner shows before data (no blank flash)
+- Empty state renders when no data (no null/undefined crash)
+- Error state renders when API fails (no silent blank page)
+
+### 3. CONSOLE & NETWORK
+- Zero console ERRORs (filter: HMR, favicon, Kafka/ES infra noise expected)
+- Zero failed API requests that should succeed
+- No CORS errors
+- No 401 on permitted endpoints
+- No 403 for authorized roles
+- 403 confirmed (not silent redirect) for unauthorized API calls
+- No 500 errors from backend
+
+### 4. DATA RENDERING
+- Tables render with rows (seed data from Flyway V8)
+- Stat cards show real numbers (not NaN, "--", null, undefined)
+- Charts render (Recharts SVG has visible bars/lines, not empty)
+- Pagination controls appear when data > page size
+- Search/filter controls accept input without throwing errors
+- Dates show valid values (not "Invalid Date")
+- Currency/numbers formatted correctly
+
+### 5. INTERACTIVE CRUD FLOWS
+
+Run at least one full CRUD cycle per module per authorized role:
+
+#### Employees (HR_ADMIN, HR_MANAGER, SUPER_ADMIN)
+- Create employee → verify appears in list
+- Edit personal info → verify persisted on reload
+- View all profile tabs: Personal, Employment, Documents, Assets, Leave, Payroll
+- Search by name → correct result returned
+- Filter by department → list narrows correctly
+
+#### Leave (all roles)
+- EMPLOYEE: Apply casual leave for tomorrow → verify PENDING status shown
+- TEAM_LEAD/MANAGER: Approve a pending leave → verify APPROVED status
+- HR_MANAGER: View all-employee leave calendar
+- Leave balance cards show correct numbers (not 0/0 for seeded employees)
+- Leave type dropdown populated with types
+
+#### Attendance (all roles)
+- EMPLOYEE: Clock in → verify record created with timestamp
+- EMPLOYEE: Clock out → verify duration calculated
+- MANAGER: View team attendance for today
+- HR: Regularize an attendance entry → verify correction saved
+- Attendance calendar renders with color-coded markers
+
+#### Payroll (SUPER_ADMIN, HR_ADMIN, HR_MANAGER, FINANCE_ADMIN)
+- Payroll runs list loads with ≥1 run
+- Click a run → salary breakdown table shows components
+- Download payslip → file downloads (not 404)
+- Statutory filings list loads with filing types
+
+#### Recruitment (SUPER_ADMIN, HR_ADMIN, RECRUITMENT_ADMIN)
+- Job listings load on Kanban/list view
+- Create a job posting → appears in list
+- Move candidate between pipeline stages (drag or button)
+- Interview schedule form opens and submits without error
+
+#### Performance (SUPER_ADMIN, HR_ADMIN, HR_MANAGER, MANAGER, TEAM_LEAD)
+- Review cycles list loads
+- OKR tree renders for current quarter
+- 360 Feedback form opens, fields accept input, submits
+- Goal creation validates required fields and saves
+
+#### Training (view: all roles; create: HR_ADMIN, HR_MANAGER)
+- Training programs list loads with at least one program
+- Enroll employee in a training → enrollment confirmed
+- Mark training complete → "Generate Certificate" button appears
+
+#### Cross-Role Approval Flow
+- `saran` (EMPLOYEE) submits leave request
+- `sumit` (MANAGER) sees it in /approvals → approves
+- `saran` refreshes → status shows APPROVED
+- Approval badge count on /approvals updates correctly
+
+### 6. FORM VALIDATION
+- Required field shows inline error on empty submit
+- Email fields reject invalid format
+- Date range: end date < start date is rejected
+- Number fields reject negative where not allowed
+- Submit button disables + shows spinner during submission
+- Success toast appears after save
+- Error toast appears on API failure (not silent)
+- Form resets after successful submission (where applicable)
+
+### 7. MY SPACE SELF-SERVICE — EMPLOYEE role (saran@nulogic.io)
+- `/me/dashboard` → Quick stats: leave balance, attendance %, pending approvals — all non-zero
+- `/me/profile` → Edit phone/address → save → verify persisted on reload
+- `/me/leave` → Leave history visible, apply form submits
+- `/me/attendance` → Today's status shown, clock-in/out functional
+- `/me/payslips` → Payslip list loads, download triggers file
+- `/me/documents` → Document list loads
+- `/me/training` → Enrolled trainings visible
+
+### 8. NAVIGATION & SIDEBAR
+- Active app (HRMS / Hire / Grow / Fluence) highlighted in app switcher
+- Waffle grid shows all 4 sub-apps
+- Sidebar items expand/collapse on click
+- Active route highlighted in sidebar
+- Breadcrumbs update on navigation
+- App switcher preserves auth session when switching sub-apps
+
+### 9. DESIGN SYSTEM COMPLIANCE (spot-check 10 pages)
+- No raw `bg-white` on card components (must be `bg-[var(--bg-card)]`)
+- Buttons use `skeuo-button` with `active:translate-y-px`
+- No `shadow-sm/md/lg` (must use `shadow-[var(--shadow-card)]` etc.)
+- No banned tokens: `sky-*`, `rose-*`, `slate-*`, `gray-*`, `blue-*`, `amber-*`, `emerald-*`
+- 8px spacing grid: no `p-3`, `p-5`, `gap-3`, `gap-5`
+- Compact sizing: buttons `px-4 py-2`, table rows `px-4 py-2`
+- Icon sizes `h-4 w-4` or `h-5 w-5` in dense tables (not `h-6+`)
+- Focus rings visible on keyboard Tab navigation
+
+### 10. ACCESSIBILITY (spot-check 5 critical pages)
+- All icon-only buttons have `aria-label`
+- Form inputs have `<label>` or `aria-label`
+- Modals trap focus and close on Escape key
+- Tables have `<th scope>` attributes
+- Status badges use text + color (not color alone)
+- Images have `alt` text
+
+### 11. DARK MODE
+- Toggle dark mode (header or settings)
+- Verify 5 pages: `/dashboard`, `/employees`, `/leave`, `/recruitment`, `/performance`
+- No white backgrounds leaking through on cards
+- Text readable (sufficient contrast)
+- Charts visible in dark mode
+
+### 12. PERFORMANCE
+- Flag WARN if page load > 3000ms
+- Flag FAIL if page load > 5000ms
+- Flag WARN if any API call > 2000ms
+- Note top 10 slowest routes in report
+
+### 13. SESSION & AUTH
+- Login with each role → lands on correct page
+- Refresh page while logged in → session persists
+- Navigate to admin route as EMPLOYEE → redirect (not 500)
+- Logout as SuperAdmin → all cookies cleared → redirected to /auth/login
+- 401 is NOT returned on permitted, authenticated requests
+
+### 14. RESPONSIVE (1366px laptop viewport)
+- Sidebar collapses to icon-only at 1366px
+- Tables scroll horizontally (not broken layout)
+- Modals fit viewport (not clipped off-screen)
+- Header elements don't overflow or wrap awkwardly
+
+---
+
+## RBAC ACCESS MATRIX — EXPECTED BEHAVIOR
+
+| Route | SUPER | HR_ADM | HR_MGR | MGR | TL | EMP | REC | FIN |
+|-------|:-----:|:------:|:------:|:---:|:--:|:---:|:---:|:---:|
+| /me/* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| /employees | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| /payroll | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| /admin/roles | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| /recruitment | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| /performance | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| /settings | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| /analytics | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| /reports | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| /fluence/* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| /onboarding | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| /approvals | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+
+❌ = must redirect to `/me/dashboard` — NOT render partial content, NOT return 500.
+Any 200 response with admin data to an unauthorized role = **P0 security bug — stop and fix immediately**.
+
+---
+
+## AUTO-FIX RULES
+
+### Severity & Action
+
+| Level | Condition | Action | Max Retries |
+|-------|-----------|--------|-------------|
+| **P0** | RBAC leak, wrong tenant data, auth bypass, full page JS crash | Fix immediately, block next batch until resolved | 3 |
+| **P1** | Console ERROR from app code, 4xx on permitted endpoint, broken CRUD, form submit silent fail | Fix in current batch | 3 |
+| **P2** | Missing loading/empty/error state, design token violation, wrong redirect target, render > 3s | Fix if straightforward, continue if complex | 1 |
+| **P3** | A11y improvement, render 1–3s, dark mode edge case, visual polish | Log only — do NOT auto-fix | 0 |
+
+### Fix Protocol
+1. Read the failing file before editing — never rewrite from scratch
+2. Make the minimal targeted change — do not refactor surrounding code
+3. Verify TypeScript compiles: `cd frontend && npx tsc --noEmit 2>&1 | head -20`
+4. For backend fixes: `cd backend && mvn compile -q`
+5. Wait 3s for Next.js HMR before rechecking
+6. If a fix causes a new error → revert immediately, try alternative approach
+7. If 3 attempts all fail → mark UNRESOLVED with full diagnosis
+
+---
+
+## THE AUTONOMOUS LOOP
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   ORCHESTRATOR                       │
-│  (Main session — controls the loop)                  │
-│                                                      │
-│  for each USE_CASE:                                  │
-│    attempt = 0                                       │
-│    while attempt < MAX_RETRIES (3):                  │
-│      ┌──────────────┐                                │
-│      │  @qa AGENT   │──→ Validate in browser         │
-│      │  (Subagent)  │    via Playwright/Chrome MCP    │
-│      └──────┬───────┘                                │
-│             │                                        │
-│        PASS? ──yes──→ Log result, next use case      │
-│             │                                        │
-│            no                                        │
-│             │                                        │
-│      ┌──────▼───────┐                                │
-│      │  @dev AGENT  │──→ Fix the issue in code       │
-│      │  (Subagent)  │    (backend/frontend/both)     │
-│      └──────┬───────┘                                │
-│             │                                        │
-│        attempt++                                     │
-│        loop back to @qa AGENT (recheck)              │
-│                                                      │
-│    if MAX_RETRIES hit:                               │
-│      Log as UNRESOLVED, continue to next use case    │
-│                                                      │
-│  Generate final report                               │
-└─────────────────────────────────────────────────────┘
+ORCHESTRATOR
+  │
+  ├─ Phase 1: SuperAdmin baseline (all routes → establish render health)
+  │
+  ├─ Phase 2: Role matrix (each role → access/deny per route)
+  │    └─ 15s between login switches to avoid rate limiting
+  │
+  ├─ Phase 3: Functional CRUD (authorized roles → interactive flows)
+  │
+  └─ Phase 4: Cross-cutting (design, a11y, dark mode, performance)
+
+For each USE_CASE:
+  attempt = 0
+  while attempt < MAX_RETRIES:
+    @qa validates → PASS? → log, next use case
+                  → FAIL? → @dev fixes → attempt++ → recheck
+  if MAX_RETRIES hit → UNRESOLVED → continue
 ```
 
-### Step-by-Step Execution
+### Batch Parallelism
+- Batch size: **5 routes per parallel batch**
+- Parallelize: validations for **different routes only**
+- Never parallelize: two agents modifying the **same file**
 
-#### STEP 0: Parse Input & Build Use Case Queue
+---
 
-Convert user input into a structured queue:
+## CHROME DEVTOOLS MCP TOOL USAGE
 
-```typescript
-interface UseCase {
-  id: string;           // e.g., "UC-001"
-  route: string;        // e.g., "/employees"
-  description: string;  // e.g., "Employee list loads with data, no console errors"
-  checks: string[];     // Specific assertions
-  status: 'PENDING' | 'PASS' | 'FAIL' | 'FIXED' | 'UNRESOLVED';
-  attempts: number;
-  issues: Issue[];
-}
-```
-
-**Route-to-UseCase expansion** (when user provides a route or module):
-
-| Input | Expanded Use Cases |
-|-------|-------------------|
-| `/employees` | Table loads, search works, filters work, create modal opens, no console errors |
-| `module:leave` | Leave list loads, apply leave form works, balance shows, approval actions work, calendar view renders |
-| `app:nu-hrms` | All 35 HRMS routes — basic render + no console errors + core interaction |
-
-#### STEP 1: Validate (QA Agent)
-
-Spawn a **@qa subagent** for each use case validation:
+Prefer Chrome MCP over Playwright when connected:
 
 ```
-Spawn prompt for QA validation agent:
-
-You are a QA engineer validating NU-AURA in the browser.
-
-**Project**: NU-AURA (Next.js 14 + Spring Boot 3.4.1)
-**Frontend**: http://localhost:3000
-**Backend**: http://localhost:8080
-
-**Use Case**: {USE_CASE.description}
-**Route**: {USE_CASE.route}
-**Checks**: {USE_CASE.checks}
-
-## Your Task
-
-1. Write and execute a Playwright script to validate this use case:
-
-```javascript
-const { chromium } = require('playwright');
-
-(async () => {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  // Collect console errors
-  const consoleErrors = [];
-  page.on('console', msg => {
-    if (msg.type() === 'error') consoleErrors.push(msg.text());
-  });
-
-  // Collect network failures
-  const networkErrors = [];
-  page.on('requestfailed', req => {
-    networkErrors.push(`${req.method()} ${req.url()} - ${req.failure().errorText}`);
-  });
-
-  // Login as SuperAdmin
-  await page.goto('http://localhost:3000/login');
-  // ... login flow ...
-
-  // Navigate to route
-  await page.goto('http://localhost:3000{USE_CASE.route}');
-  await page.waitForLoadState('networkidle');
-
-  // Take screenshot
-  await page.screenshot({ path: 'qa-reports/validate-fix-loop/{USE_CASE.id}-attempt-{N}.png', fullPage: true });
-
-  // Run checks:
-  // 1. Page rendered (not blank)
-  // 2. No JS exceptions in console
-  // 3. No failed network requests (except expected 404s for optional features)
-  // 4. Key elements visible (tables have rows, forms have fields, etc.)
-  // 5. Specific assertions from USE_CASE.checks
-
-  // Report results
-  console.log(JSON.stringify({
-    status: consoleErrors.length === 0 && networkErrors.length === 0 ? 'PASS' : 'FAIL',
-    consoleErrors,
-    networkErrors,
-    screenshot: '...',
-    observations: '...'
-  }));
-
-  await browser.close();
-})();
+1. mcp__claude-in-chrome__tabs_context_mcp({})                    → get active tab
+2. mcp__claude-in-chrome__navigate({ url: "http://localhost:3000/employees" })
+3. mcp__claude-in-chrome__read_page({ tabId })                    → DOM content
+4. mcp__claude-in-chrome__read_console_messages({ tabId })        → console errors
+5. mcp__claude-in-chrome__read_network_requests({ tabId })        → failed requests
+6. mcp__claude-in-chrome__javascript_tool({ tabId, code: "..." }) → evaluate in page
+7. mcp__claude-in-chrome__find({ tabId, selector: "..." })        → locate elements
+8. mcp__claude-in-chrome__form_input({ tabId, selector, value })  → fill forms
+9. mcp__claude-in-chrome__computer({ action: "screenshot" })      → visual capture
+10. mcp__claude-in-chrome__get_page_text({ tabId })               → text content
 ```
 
-2. If Chrome DevTools MCP is available, use it INSTEAD of Playwright:
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page` to go to the route
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot` to capture state
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script` to check for errors
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages` for console output
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests` for failed requests
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__click` to interact with elements
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill` to fill form fields
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for` to wait for selectors
-   - Use `mcp__plugin_chrome-devtools-mcp_chrome-devtools__lighthouse_audit` for performance/a11y audits
+Fall back to Playwright headless if Chrome MCP is not connected.
 
-3. Report findings in this exact format:
+---
 
-**RESULT**: PASS | FAIL
-**ISSUES** (if FAIL):
-- [ISSUE-1] {severity: P0|P1|P2} {description} {element/selector} {console error if any}
-- [ISSUE-2] ...
-**SCREENSHOT**: {path}
-**OBSERVATIONS**: {anything notable even if passing}
-```
-
-#### STEP 2: Diagnose & Fix (Dev Agent)
-
-If Step 1 returns FAIL, spawn a **@dev subagent** to fix:
+## EXECUTION ORDER
 
 ```
-Spawn prompt for Dev fix agent:
+Phase 1 — Baseline (SuperAdmin)
+  Batch 1: /me/dashboard, /dashboard, /employees, /departments, /attendance
+  Batch 2: /leave, /payroll, /compensation, /benefits, /expenses
+  Batch 3: /loans, /travel, /assets, /letters, /statutory
+  ... continue in batches of 5 through all routes
 
-You are a senior full-stack developer fixing issues in NU-AURA.
+Phase 2 — Role Matrix (per non-SuperAdmin role, grouped by role)
+  Login as HR_ADMIN → test HR_ADMIN routes → logout
+  [15s pause]
+  Login as HR_MANAGER → test HR_MANAGER routes → logout
+  [15s pause]
+  ... repeat for all 9 roles
 
-**Project context**:
-- Frontend: Next.js 14 App Router at `frontend/`
-- Backend: Spring Boot 3.4.1 at `backend/src/main/java/com/hrms/`
-- Stack: Mantine UI, Tailwind, React Query, Zustand, Axios (DO NOT create new instances)
-- TypeScript strict (no `any`), React Hook Form + Zod for forms
+Phase 3 — Functional CRUD (interactive flows)
+  Leave approval chain: saran → sumit → verify
+  Payroll: open run → verify breakdown → download
+  Recruitment: create job → add candidate → move stage
+  Performance: open review cycle → submit feedback
 
-**Issue to fix**:
-Route: {USE_CASE.route}
-Issues found by QA:
-{ISSUES from Step 1}
-
-Screenshot: {path to screenshot}
-
-## Your Task
-
-1. **Diagnose**: Read the relevant source files for route `{USE_CASE.route}`:
-   - Frontend page: `frontend/app/{route}/page.tsx`
-   - Related components in `frontend/components/`
-   - API service in `frontend/lib/services/`
-   - Backend controller/service if it's a data issue
-
-2. **Root cause**: Identify why each issue occurs
-
-3. **Fix**: Make minimal, targeted changes:
-   - Fix the actual bug — do NOT refactor surrounding code
-   - Follow NU-AURA coding conventions (see CLAUDE.md)
-   - No new packages, no new Axios instances, no `any` types
-   - Preserve existing patterns
-
-4. **Verify the fix compiles**:
-   ```bash
-   cd frontend && npx tsc --noEmit --pretty 2>&1 | head -30
-   ```
-
-5. Report what you changed:
-   **FILES CHANGED**:
-   - `{file}:{line}` — {what changed and why}
-   **FIX SUMMARY**: {one-line description}
-```
-
-#### STEP 3: Recheck (Back to QA Agent)
-
-Re-run the exact same validation from Step 1 against the fixed code.
-
-- If **PASS**: Mark use case as `FIXED`, log the fix, move to next use case
-- If **FAIL again**: Increment attempt counter, go back to Step 2
-- If **MAX_RETRIES (3) reached**: Mark as `UNRESOLVED`, log all attempts, move on
-
-**Important**: After a dev fix, if the frontend needs a rebuild:
-```bash
-# Next.js hot-reloads automatically in dev mode
-# Wait 2-3 seconds for HMR to complete before rechecking
-sleep 3
-```
-
-For backend changes:
-```bash
-# Recompile and restart
-cd /Users/macbook/IdeaProjects/nulogic/nu-aura/backend
-mvn compile -q && ./start-backend.sh
+Phase 4 — Cross-cutting
+  Design system: spot-check 10 pages
+  A11y: spot-check 5 pages
+  Dark mode: toggle + 5 pages
+  Performance: measure top 10 slowest
+  Responsive: resize to 1366px + 5 pages
 ```
 
 ---
 
-## Report Generation
+## REPORT FORMAT
 
-After all use cases are processed, generate a report at:
-`qa-reports/validate-fix-loop/report-{timestamp}.md`
-
-### Report Format
+Save to: `qa-reports/validate-fix-loop/report-{YYYY-MM-DD}.md`
 
 ```markdown
-# Validate-Fix Loop Report
+# NU-AURA Full Platform QA Report
 **Date**: {date}
-**Scope**: {what was validated}
 **Duration**: {total time}
+**Scope**: {n} routes × {n} roles = {n} use cases
 
-## Summary
+## Executive Summary
 | Metric | Count |
 |--------|-------|
-| Total Use Cases | {n} |
+| Total use cases | {n} |
 | Passed (first try) | {n} |
-| Fixed (required iteration) | {n} |
+| Auto-fixed | {n} |
 | Unresolved | {n} |
-| Total Attempts | {n} |
+| P0 issues | {n} |
+| P1 issues | {n} |
+| P2 issues | {n} |
+| P3 issues (logged) | {n} |
 
-## Results
+**Verdict**: GO ✅ / NO-GO ❌ / CONDITIONAL GO ⚠️
 
-### PASSED (First Try)
-| ID | Route | Description |
-|----|-------|-------------|
-| UC-001 | /employees | Table loads with data |
+## RBAC Matrix (actual results)
+[9 role × all route table with ✅ PASS / ❌ FAIL / ⚠️ WARN per cell]
 
-### FIXED (Auto-resolved)
-| ID | Route | Issue | Fix | Attempts |
-|----|-------|-------|-----|----------|
-| UC-003 | /leave | Console error: undefined balance | Added null check in LeaveBalance.tsx:42 | 2 |
+## Issue Log
+| ID | Route | Role | Severity | Description | Root Cause | Fix | Recheck |
+|----|-------|------|----------|-------------|------------|-----|---------|
+...
 
-### UNRESOLVED (Needs Manual Attention)
-| ID | Route | Issue | Last Error | Attempts |
-|----|-------|-------|------------|----------|
-| UC-007 | /payroll | Payroll run hangs on step 3 | Timeout after 30s | 3 |
+## Performance Log (slowest 10)
+| Route | Role | Load Time | API Calls | Slowest Call |
+...
 
 ## Files Changed
-{list of all files modified during fixes, grouped by module}
+[all files modified during auto-fix, grouped by module]
 
-## Recommendations
-{any patterns observed — e.g., "5 pages had missing null checks on API responses"}
+## Unresolved Issues (needs engineering)
+[full diagnosis for each unresolved issue]
 ```
 
 ---
 
-## Parallel Execution Strategy
+## CONFIGURATION
 
-For large sweeps (full app or module), run use cases in parallel batches:
-
-```
-Batch 1 (parallel): UC-001 through UC-005 (5 independent routes)
-  → 5 @qa agents validate simultaneously
-  → Collect results
-  → Spawn @dev agents for any failures (can be parallel if different files)
-  → Recheck failed ones
-
-Batch 2: UC-006 through UC-010
-  ...
-```
-
-**Batch size**: 5 use cases per batch (to stay within token limits)
-**Parallelism rule**: Only parallelize validations for DIFFERENT routes. Never run two agents modifying the same file.
+| Setting | Default |
+|---------|---------|
+| MAX_RETRIES | 3 |
+| BATCH_SIZE | 5 |
+| RENDER_TIMEOUT | 10000ms |
+| NETWORK_IDLE_TIMEOUT | 5000ms |
+| ROLE_SWITCH_PAUSE | 15s |
+| SCREENSHOT_ON_PASS | false |
+| SCREENSHOT_ON_FAIL | true |
+| AUTO_COMMIT_FIXES | false |
 
 ---
 
-## Use Case Libraries (Pre-built)
-
-### NU-HRMS Core (35 use cases)
-| ID | Route | Description | Key Checks |
-|----|-------|-------------|------------|
-| UC-H01 | /dashboard | Dashboard renders | Stats cards load, charts render, no errors |
-| UC-H02 | /employees | Employee list | Table loads, pagination works, search filters |
-| UC-H03 | /employees/[id] | Employee detail | All tabs render (personal, employment, documents, assets) |
-| UC-H04 | /attendance | Attendance page | Calendar/list view loads, check-in button visible |
-| UC-H05 | /leave | Leave management | Balance cards, leave list, apply button |
-| UC-H06 | /leave (apply) | Apply leave flow | Form opens, date picker works, submit succeeds |
-| UC-H07 | /payroll | Payroll dashboard | Payroll runs list, summary cards |
-| UC-H08 | /expenses | Expenses list | Table loads, create expense form |
-| UC-H09 | /assets | Asset management | Asset list, assignment tracking |
-| UC-H10 | /loans | Loan management | Loan list, application form |
-| UC-H11 | /travel | Travel requests | Request list, create form |
-| UC-H12 | /benefits | Benefits | Benefits list, enrollment |
-| UC-H13 | /org-chart | Org chart | Tree renders, nodes clickable |
-| UC-H14 | /timesheets | Timesheets | Timesheet grid, submission |
-| UC-H15 | /projects | Projects | Project list, detail view |
-| UC-H16 | /reports | Reports | Report list, generation |
-| UC-H17 | /analytics | Analytics | Charts render, filters work |
-| UC-H18 | /calendar | Calendar | Events load, month/week views |
-| UC-H19 | /announcements | Announcements | List renders, create form |
-| UC-H20 | /approvals | Approvals | Pending approvals queue |
-| UC-H21 | /settings | Settings | Settings page loads, forms editable |
-| UC-H22 | /admin | Admin panel | Admin functions accessible |
-| UC-H23 | /admin/roles | Role management | Role list, permission matrix |
-| UC-H24 | /departments | Departments | Department tree/list |
-| UC-H25 | /compensation | Compensation | Pay structure, revisions |
-| UC-H26 | /statutory | Statutory compliance | Compliance settings |
-| UC-H27 | /tax | Tax declarations | Tax forms, proofs |
-| UC-H28 | /letters | Letters | Letter templates, generation |
-| UC-H29 | /helpdesk | Helpdesk | Ticket list, create ticket |
-| UC-H30 | /overtime | Overtime | OT requests, approvals |
-| UC-H31 | /probation | Probation | Probation tracking |
-| UC-H32 | /shifts | Shift management | Shift schedules |
-| UC-H33 | /resources | Resources | Resource list |
-| UC-H34 | /allocations | Allocations | Allocation board |
-| UC-H35 | /me/profile | My profile | Personal info, self-service |
-
-### NU-Hire Core (7 use cases)
-| ID | Route | Description |
-|----|-------|-------------|
-| UC-R01 | /recruitment | Job listings dashboard |
-| UC-R02 | /recruitment/candidates | Candidate pipeline |
-| UC-R03 | /recruitment/pipeline | Kanban board |
-| UC-R04 | /onboarding | Onboarding checklists |
-| UC-R05 | /preboarding | Pre-boarding portal |
-| UC-R06 | /offboarding | Offboarding flow |
-| UC-R07 | /careers | Public careers page |
-
-### NU-Grow Core (10 use cases)
-| ID | Route | Description |
-|----|-------|-------------|
-| UC-G01 | /performance | Performance dashboard |
-| UC-G02 | /performance/reviews | Review cycles |
-| UC-G03 | /okr | OKR tracking |
-| UC-G04 | /feedback360 | 360 feedback |
-| UC-G05 | /training | Training programs |
-| UC-G06 | /training/catalog | Course catalog |
-| UC-G07 | /learning | Learning paths |
-| UC-G08 | /recognition | Recognition wall |
-| UC-G09 | /surveys | Employee surveys |
-| UC-G10 | /wellness | Wellness programs |
-
----
-
-## Chrome MCP Integration (When Available)
-
-When Chrome DevTools MCP is connected, the validation agent should prefer it over Playwright for interactive debugging:
-
-```
-# Check if Chrome MCP tools are available
-If tools matching `mcp__chrome*` exist:
-  → Use Chrome MCP for navigation, screenshots, console inspection
-  → Advantage: Can inspect the ACTUAL browser the user has open
-  → Can see real session state, cookies, local storage
-
-If Chrome MCP not available:
-  → Fall back to Playwright (headless)
-  → Still fully functional, just headless
-```
-
-### Chrome MCP Tool Usage Pattern
-```
-1. mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages({})                          → find/select active tab
-2. mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page({ url: "http://localhost:3000/employees" })
-3. mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for({ selector: ".mantine-Table-tr", timeout: 10000 })
-4. mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot({})                     → inspect visually
-5. mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script({ expression: "document.querySelectorAll('.mantine-Table-tr').length" })
-6. mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages({})                → check for errors
-7. mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests({})                → check for failed requests
-8. mcp__plugin_chrome-devtools-mcp_chrome-devtools__click({ selector: "button.skeuo-button" }) → interact
-9. mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill({ selector: "input[name='search']", value: "John" })
-10. mcp__plugin_chrome-devtools-mcp_chrome-devtools__lighthouse_audit({})                   → full perf/a11y audit
-```
-
----
-
-## Configuration
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `MAX_RETRIES` | 3 | Max fix attempts per use case before marking UNRESOLVED |
-| `BATCH_SIZE` | 5 | Use cases validated in parallel per batch |
-| `RENDER_TIMEOUT` | 10000 | Max ms to wait for page render |
-| `NETWORK_IDLE_TIMEOUT` | 5000 | Max ms to wait for network idle |
-| `LOGIN_USER` | `fayaz.m@nulogic.io` | Default user for validation (SuperAdmin) |
-| `SCREENSHOT_ON_PASS` | false | Whether to screenshot passing use cases |
-| `AUTO_COMMIT_FIXES` | false | Whether to git commit after each fix |
-
----
-
-## Error Handling
+## ERROR HANDLING
 
 | Scenario | Action |
 |----------|--------|
-| Service not running | Attempt to start it, abort if fails |
-| Login fails | Abort entire loop — auth is a prerequisite |
-| Playwright not installed | Run `npx playwright install chromium` |
-| Fix causes TypeScript errors | Revert fix, try alternative approach |
-| Fix breaks other routes | Revert fix, mark as UNRESOLVED with note |
-| Network timeout | Retry once, then mark as infrastructure issue |
-| Chrome MCP disconnected mid-run | Fall back to Playwright for remaining use cases |
+| Service not running | Attempt to start, abort if fails |
+| Login fails | Abort entire loop — auth is prerequisite |
+| Rate limit 429 | Wait 60s, retry |
+| Fix causes TS errors | Revert immediately, try alternative |
+| Fix breaks other routes | Revert, mark UNRESOLVED |
+| Network timeout | Retry once, then mark infrastructure issue |
+| Chrome MCP disconnect | Fall back to Playwright for remaining cases |
+| Git lock file | Remove `.git/HEAD.lock` and retry commit |
 
 ---
 
-## Example Invocations
+## EXAMPLE INVOCATIONS
 
-### Quick single page check
 ```
-User: /nu-validate-fix-loop /employees
-→ Validates employee page, fixes any issues, rechecks
-→ ~2-5 minutes
-```
+# Full sweep — all routes, all 9 roles
+/nu-validate-fix-loop for ALL routes across ALL 9 roles — full RBAC + CRUD + design + a11y
 
-### Module sweep
-```
-User: /nu-validate-fix-loop module:leave
-→ Validates all leave-related pages (5-6 use cases)
-→ ~10-15 minutes
-```
+# Single module sweep
+/nu-validate-fix-loop module:leave — all leave routes, all roles
 
-### Full HRMS sweep
-```
-User: /nu-validate-fix-loop app:nu-hrms
-→ Validates all 35 HRMS routes in batches of 5
-→ ~45-60 minutes
-```
+# Single page
+/nu-validate-fix-loop /employees as EMPLOYEE — verify redirect
 
-### Custom use case list
-```
-User: /nu-validate-fix-loop
-- Check /dashboard loads stats correctly
-- Verify /employees search returns results
-- Test leave application with overlapping dates
-→ Runs exactly these 3 use cases
-→ ~5-10 minutes
+# RBAC only (no CRUD)
+/nu-validate-fix-loop rbac-only — just access/deny matrix, no interactive flows
+
+# Specific role
+/nu-validate-fix-loop role:EMPLOYEE — validate all self-service routes as saran@nulogic.io
 ```
