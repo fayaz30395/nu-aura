@@ -205,6 +205,18 @@ class ApiClient {
     return this.client.get<T>(this.normalizeUrl(url), config);
   }
 
+  /**
+   * GET that treats 403/404 as non-errors (returns the response instead of throwing).
+   * Use for endpoints where the current role may lack permission — callers check
+   * response.status and return a fallback instead of showing console errors.
+   */
+  getPermissive<T>(url: string, config?: AxiosRequestConfig) {
+    return this.client.get<T>(this.normalizeUrl(url), {
+      ...config,
+      validateStatus: (s: number) => s < 500,
+    });
+  }
+
   post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig) {
     return this.client.post<T>(this.normalizeUrl(url), data, config);
   }

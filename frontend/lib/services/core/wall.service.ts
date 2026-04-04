@@ -116,12 +116,10 @@ class WallService {
   async getPosts(page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
     const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as PageResponse<WallPostResponse>;
     try {
-      const response = await api.get<PageResponse<WallPostResponse>>('/wall/posts', {
+      const response = await api.getPermissive<PageResponse<WallPostResponse>>('/wall/posts', {
         params: { page, size },
-        validateStatus: (s: number) => s < 500,
       });
-      if (response.status === 403) return empty;
-      return response.data;
+      return response.status === 403 ? empty : response.data;
     } catch {
       return empty;
     }

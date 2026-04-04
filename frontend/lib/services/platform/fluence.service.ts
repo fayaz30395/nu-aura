@@ -46,12 +46,8 @@ class FluenceService {
       if (spaceId) {
         params.spaceId = spaceId;
       }
-      const response = await apiClient.get<Page<WikiPage>>('/knowledge/wiki/pages', {
-        params,
-        validateStatus: (s: number) => s < 500,
-      });
-      if (response.status === 403 || response.status === 405) return empty;
-      return response.data;
+      const response = await apiClient.getPermissive<Page<WikiPage>>('/knowledge/wiki/pages', { params });
+      return (response.status === 403 || response.status === 405) ? empty : response.data;
     } catch {
       return empty;
     }
@@ -108,12 +104,10 @@ class FluenceService {
   ): Promise<Page<WikiSpace>> {
     const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiSpace>;
     try {
-      const response = await apiClient.get<Page<WikiSpace>>('/knowledge/wiki/spaces', {
+      const response = await apiClient.getPermissive<Page<WikiSpace>>('/knowledge/wiki/spaces', {
         params: { page, size, sortBy, sortDirection },
-        validateStatus: (s: number) => s < 500,
       });
-      if (response.status === 403) return empty;
-      return response.data;
+      return response.status === 403 ? empty : response.data;
     } catch {
       return empty;
     }

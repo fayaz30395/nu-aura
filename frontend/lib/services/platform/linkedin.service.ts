@@ -28,15 +28,11 @@ class LinkedInService {
   ): Promise<PagedResponse<LinkedInPost>> {
     const empty: PagedResponse<LinkedInPost> = { content: [], totalElements: 0, totalPages: 0, size, number: page };
     try {
-      const response = await apiClient.get<PagedResponse<LinkedInPost>>(
+      const response = await apiClient.getPermissive<PagedResponse<LinkedInPost>>(
         `${BASE_URL}/active`,
-        {
-          params: { page, size },
-          validateStatus: (s: number) => s < 500, // treat 403 as non-error
-        }
+        { params: { page, size } }
       );
-      if (response.status === 403) return empty;
-      return response.data;
+      return response.status === 403 ? empty : response.data;
     } catch {
       return empty;
     }
