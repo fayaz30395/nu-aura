@@ -28,7 +28,7 @@ interface ActiveAppState {
  */
 export function useActiveApp(): ActiveAppState {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, hasHydrated } = useAuth();
   const { permissions, roles } = usePermissions();
 
   const isSuperAdmin = useMemo(
@@ -64,15 +64,17 @@ export function useActiveApp(): ActiveAppState {
       const targetApp = PLATFORM_APPS[code];
       if (!targetApp.available) return false;
 
-      // DEF-41: When user is authenticated but permissions haven't loaded yet,
-      // return false (locked) instead of true to prevent flash of unlocked apps.
-      // Only return true as fallback when user object is null (pre-auth state).
+      // DEF-41 (revised): During Zustand hydration, user may exist but
+      // usePermissions() hasn't recomputed yet (permissions = []). In that
+      // window, return true (optimistic) so the waffle grid doesn't flash
+      // "No access". Once hydrated AND permissions are still empty, lock.
       if (!user) return true; // Pre-auth: allow (auth guard will handle)
-      if (permissions.length === 0) return false; // Permissions loading: locked
+      if (!hasHydrated) return true; // Hydrating: optimistic (auth guard protects)
+      if (permissions.length === 0) return false; // Hydrated but no permissions: locked
 
       return targetApp.permissionPrefixes.some((prefix) => permissionModules.has(prefix));
     };
-  }, [isSuperAdmin, user, permissions.length, permissionModules]);
+  }, [isSuperAdmin, user, hasHydrated, permissions.length, permissionModules]);
 
   const getAppEntryRoute = useMemo(() => {
     return (code: AppCode): string => {
