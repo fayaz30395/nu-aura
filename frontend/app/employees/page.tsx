@@ -255,8 +255,8 @@ export default function EmployeesPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
-            <p className="text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
+            <p className="text-xs sm:text-sm text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
