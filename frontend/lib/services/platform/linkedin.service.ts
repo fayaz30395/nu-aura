@@ -34,7 +34,12 @@ class LinkedInService {
         }
       );
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
+      // 403 is expected for roles without PLATFORM:MANAGE — return empty result
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 403) {
+        return { content: [], totalElements: 0, totalPages: 0, size, number: page };
+      }
       console.error('[LinkedInService] getActiveLinkedInPosts failed:', error);
       throw error;
     }

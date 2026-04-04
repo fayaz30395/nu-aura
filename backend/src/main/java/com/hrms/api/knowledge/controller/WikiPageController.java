@@ -79,6 +79,15 @@ public class WikiPageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(created));
     }
 
+    @GetMapping
+    @Operation(summary = "Get all wiki pages")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<Page<WikiPageDto>> getAllPages(Pageable pageable) {
+        Page<WikiPage> pages = wikiPageService.getAllPages(pageable);
+        return ResponseEntity.ok(pages.map(this::toDto));
+    }
+
     @GetMapping("/{pageId}")
     @Operation(summary = "Get wiki page by ID")
     @ApiResponses.Success
