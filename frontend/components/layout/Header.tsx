@@ -82,13 +82,13 @@ const Header: React.FC<HeaderProps> = ({
         className
       )}
     >
-      <div className="row-between h-full px-6">
+      <div className="row-between h-full px-2 sm:px-4 md:px-6">
         {/* Left Side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Mobile hamburger */}
           {showMenuButton && (
             <button onClick={onMenuClick}
-              className="p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className="p-1.5 sm:p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 md:hidden flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
@@ -96,21 +96,21 @@ const Header: React.FC<HeaderProps> = ({
           )}
 
           {/* Logo — only visible on mobile (sidebar has logo on desktop) */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1.5 md:hidden">
             <Image
               src="/images/nulogic-logo.svg"
               alt="NULogic"
-              width={120}
-              height={35}
-              className="h-7 w-auto object-contain dark:hidden"
+              width={100}
+              height={28}
+              className="h-6 w-auto object-contain dark:hidden"
               priority
             />
             <Image
               src="/images/nulogic-logo-white.svg"
               alt="NULogic"
-              width={120}
-              height={35}
-              className="h-7 w-auto object-contain hidden dark:block"
+              width={100}
+              height={28}
+              className="h-6 w-auto object-contain hidden dark:block"
               priority
             />
           </div>
@@ -128,15 +128,15 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-1.5 sm:p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 flex items-center justify-center"
             aria-label="Search"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
 
         {/* Right Side - Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
           <button className="hidden sm:flex p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" aria-label="Help">
             <HelpCircle className="h-5 w-5" />

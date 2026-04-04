@@ -339,17 +339,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         )}
 
         {/* Content Area — scrollable, fills remaining vertical space */}
-        <main className="flex-1 overflow-auto transition-colors duration-300 bg-transparent">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent">
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
-              {/* Removed key={appCode} — it forced React to unmount/remount the entire
-                  content tree on every app switch, defeating reconciliation and causing
-                  a visible lag. The sidebar already updates per-app; content should
-                  transition smoothly via React's normal diffing. */}
               <div
                 className={cn(
-                  'p-4 sm:p-6 lg:p-8',
+                  'px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8',
                   'stagger-children',
+                  'max-w-full overflow-x-hidden',
                   // Bottom padding: mobile needs space for fixed bottom nav
                   'pb-24 md:pb-6 lg:pb-8'
                 )}

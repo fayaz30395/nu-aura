@@ -160,10 +160,10 @@ export default function MyDashboardPage() {
       breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
     >
       {/* Two independent columns — bento grid with staggered animations */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
 
         {/* ─── Left Column (5/12) ─── */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           {/* Welcome Banner — hero card, enters first */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}

@@ -34,15 +34,15 @@ export function WelcomeBanner({
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-lg px-7 py-6 flex flex-col justify-center"
+      className="relative w-full overflow-hidden rounded-lg px-4 py-4 sm:px-7 sm:py-6 flex flex-col justify-center"
       style={{
         background: 'var(--nu-gradient-dark)',
         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent), 0 2px 8px rgba(0, 0, 0, 0.15)',
       }}
     >
-      {/* Mesh gradient orbs for visual depth */}
-      <div className="absolute top-[-40%] right-[-10%] w-[300px] h-[300px] rounded-full bg-[rgba(77,138,255,0.25)] blur-[60px] pointer-events-none" />
-      <div className="absolute bottom-[-30%] left-[-5%] w-[200px] h-[200px] rounded-full bg-[rgba(0,62,203,0.30)] blur-[50px] pointer-events-none" />
+      {/* Mesh gradient orbs for visual depth — hidden on mobile to prevent overflow */}
+      <div className="absolute top-[-40%] right-[-10%] w-[150px] h-[150px] sm:w-[300px] sm:h-[300px] rounded-full bg-[rgba(77,138,255,0.25)] blur-[60px] pointer-events-none" />
+      <div className="absolute bottom-[-30%] left-[-5%] w-[100px] h-[100px] sm:w-[200px] sm:h-[200px] rounded-full bg-[rgba(0,62,203,0.30)] blur-[50px] pointer-events-none" />
       {/* Subtle noise texture */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -53,7 +53,7 @@ export function WelcomeBanner({
         <p className="text-xs font-medium uppercase tracking-[0.15em] text-accent-200/70 mb-1">
           {today}
         </p>
-        <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">
+        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight">
           {greeting}, {firstName}
         </h1>
         {(designation || department) && (
@@ -76,7 +76,7 @@ export function QuickAccessWidget({
   const hasNoPending = totalPending === 0;
 
   return (
-    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
+    <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-4 sm:p-6">
       <div className="row-between mb-4">
         <h2 className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
           Quick Access

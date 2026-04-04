@@ -351,33 +351,35 @@ export default function RecruitmentDashboard() {
         variants={containerVariants}
       >
         {/* Page Header */}
-        <motion.div variants={itemVariants} className="row-between">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Recruitment Dashboard
             </h1>
-            <p className="text-[var(--text-muted)] mt-2 skeuo-deboss">
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2 skeuo-deboss">
               Track job openings, candidates, and interviews
             </p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4">
             <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
               <Button
                 onClick={() => router.push('/recruitment/jobs')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <Plus className="h-4 w-4" />
-                Post New Job
+                <span className="hidden sm:inline">Post New Job</span>
+                <span className="sm:hidden">New Job</span>
               </Button>
             </PermissionGate>
             <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
               <Button
                 onClick={() => router.push('/recruitment/candidates')}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <Users className="h-4 w-4" />
-                Add Candidate
+                <span className="hidden sm:inline">Add Candidate</span>
+                <span className="sm:hidden">Candidate</span>
               </Button>
             </PermissionGate>
           </div>

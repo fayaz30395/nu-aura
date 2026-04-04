@@ -52,7 +52,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
-      <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans`}>
+      <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
         <Providers>{children}</Providers>
       </body>
     </html>
