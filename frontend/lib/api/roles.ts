@@ -73,8 +73,11 @@ export const rolesApi = {
 
 export const permissionsApi = {
   getAllPermissions: async (): Promise<Permission[]> => {
-    const response = await apiClient.get<Permission[]>('/permissions');
-    return response.data;
+    // Backend returns Page<Permission>; extract .content with a large page size
+    const response = await apiClient.get<{ content: Permission[]; totalElements: number }>('/permissions', {
+      params: { size: 500 },
+    });
+    return response.data.content ?? [];
   },
 
   getPermissionsByResource: async (resource: string): Promise<Permission[]> => {
