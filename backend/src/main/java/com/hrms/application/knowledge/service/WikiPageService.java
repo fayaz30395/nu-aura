@@ -119,6 +119,12 @@ public class WikiPageService {
     }
 
     @Transactional(readOnly = true)
+    public Page<WikiPage> getAllPages(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return wikiPageRepository.findByTenantId(tenantId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<WikiPage> getPagesBySpace(UUID spaceId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiPageRepository.findByTenantIdAndSpaceId(tenantId, spaceId, pageable);

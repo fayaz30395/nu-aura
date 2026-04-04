@@ -8,10 +8,16 @@ export const analyticsService = {
     return response.data;
   },
 
-  // Get dashboard analytics
-  getDashboardAnalytics: async (params?: { startDate?: string; endDate?: string }): Promise<DashboardAnalytics> => {
-    const response = await apiClient.get<DashboardAnalytics>('/analytics/dashboard', { params });
-    return response.data;
+  // Get dashboard analytics — returns null for roles without analytics permission
+  getDashboardAnalytics: async (params?: { startDate?: string; endDate?: string }): Promise<DashboardAnalytics | null> => {
+    try {
+      const response = await apiClient.get<DashboardAnalytics>('/analytics/dashboard', { params });
+      return response.data;
+    } catch (error: unknown) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 403) return null;
+      throw error;
+    }
   },
 
   // Get organization health analytics
