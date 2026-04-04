@@ -223,6 +223,8 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/performance',
     permission: Permissions.REVIEW_VIEW,
+    // P0-002 fix: EMPLOYEE has REVIEW:VIEW for self-service but must not access admin hub
+    anyRole: ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'MANAGER', 'TEAM_LEAD', 'SKIP_LEVEL_MANAGER', 'REPORTING_MANAGER'],
   },
 
   // Recruitment
@@ -233,6 +235,8 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
       Permissions.RECRUITMENT_CREATE,
       Permissions.RECRUITMENT_MANAGE,
     ],
+    // P0-001 fix: EMPLOYEE has RECRUITMENT:VIEW for referrals but must not access admin hub
+    anyRole: ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'],
   },
 
   // Training & LMS

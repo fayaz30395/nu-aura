@@ -198,12 +198,12 @@ export default function DepartmentsPage() {
             ))}
           </div>
         ) : isError ? (
-          <div className="flex items-center gap-3 p-6 skeuo-card text-danger-600">
+          <div className="flex items-center gap-2 p-6 skeuo-card text-danger-600">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <span className="text-sm">Failed to load departments. Please try again.</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="skeuo-card p-12 flex flex-col items-center gap-3 text-center">
+          <div className="skeuo-card p-12 flex flex-col items-center gap-2 text-center">
             <Building2 className="h-10 w-10 text-[var(--text-muted)]" />
             <p className="text-sm font-medium text-[var(--text-secondary)]">
               {search ? 'No departments match your search' : 'No departments yet'}
@@ -370,7 +370,7 @@ export default function DepartmentsPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
                   <Button type="submit" variant="primary" disabled={isPending}>
                     {isPending ? 'Saving…' : editTarget ? 'Save Changes' : 'Create Department'}
@@ -385,7 +385,7 @@ export default function DepartmentsPage() {
         {deleteTarget && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
             <div className="w-full max-w-sm skeuo-card p-6 shadow-[var(--shadow-elevated)]">
-              <div className="flex items-start gap-3 mb-4">
+              <div className="flex items-start gap-2 mb-4">
                 <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
                   <Trash2 className="h-5 w-5 text-danger-600" />
                 </div>
@@ -396,7 +396,7 @@ export default function DepartmentsPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-2">
                 <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button>
                 <Button
                   variant="danger"
