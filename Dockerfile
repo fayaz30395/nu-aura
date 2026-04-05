@@ -59,6 +59,6 @@ EXPOSE 8080
 # Render free tier: 512MB RAM total.
 # Breakdown: heap 192MB + metaspace 96MB + code cache 64MB + threads + JVM native ≈ 450MB
 # TieredStopAtLevel=1 disables server JIT — reduces startup memory and time.
-ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx192m -XX:MaxMetaspaceSize=96m -XX:ReservedCodeCacheSize=64m -Xss256k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx192m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=48m -Xss512k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
