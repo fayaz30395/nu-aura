@@ -57,8 +57,10 @@ spring:
         # LocalContainerEntityManagerFactoryBean.afterPropertiesSet() to read DB
         # metadata (sequences, type defaults, etc.). With dialect explicitly set
         # above, Hibernate can determine all defaults without a live connection.
-        temp:
-          use_jdbc_metadata_defaults: false
+        # Note: temp.use_jdbc_metadata_defaults is deprecated in Hibernate 6;
+        # the canonical name is hibernate.boot.allow_jdbc_metadata_access=false.
+        boot:
+          allow_jdbc_metadata_access: false
 
   data:
     jpa:
