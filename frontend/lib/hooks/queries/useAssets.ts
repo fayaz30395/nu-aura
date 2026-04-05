@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { assetService } from '@/lib/services/hrms/asset.service';
-import { CreateAssetRequest, AssetStatus, UpdateAssetRequest } from '@/lib/types/hrms/asset';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {assetService} from '@/lib/services/hrms/asset.service';
+import {AssetStatus, CreateAssetRequest, UpdateAssetRequest} from '@/lib/types/hrms/asset';
 
 // Query keys for cache management
 export const assetKeys = {
   all: ['assets'] as const,
   // All assets (paginated)
   list: () => [...assetKeys.all, 'list'] as const,
-  listPaginated: (page: number, size: number) => [...assetKeys.list(), { page, size }] as const,
+  listPaginated: (page: number, size: number) => [...assetKeys.list(), {page, size}] as const,
   // Assets by employee
   byEmployee: () => [...assetKeys.all, 'by-employee'] as const,
   employeeAssets: (employeeId: string) => [...assetKeys.byEmployee(), employeeId] as const,
@@ -71,7 +71,7 @@ export function useCreateAsset() {
   return useMutation({
     mutationFn: (data: CreateAssetRequest) => assetService.createAsset(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: assetKeys.list() });
+      queryClient.invalidateQueries({queryKey: assetKeys.list()});
     },
   });
 }
@@ -81,13 +81,13 @@ export function useUpdateAsset() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAssetRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateAssetRequest }) =>
       assetService.updateAsset(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: assetKeys.assetDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: assetKeys.list() });
+      queryClient.invalidateQueries({queryKey: assetKeys.assetDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: assetKeys.list()});
       if (data.assignedTo) {
-        queryClient.invalidateQueries({ queryKey: assetKeys.employeeAssets(data.assignedTo) });
+        queryClient.invalidateQueries({queryKey: assetKeys.employeeAssets(data.assignedTo)});
       }
     },
   });
@@ -100,7 +100,7 @@ export function useDeleteAsset() {
   return useMutation({
     mutationFn: (id: string) => assetService.deleteAsset(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: assetKeys.list() });
+      queryClient.invalidateQueries({queryKey: assetKeys.list()});
     },
   });
 }
@@ -110,15 +110,15 @@ export function useAssignAsset() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ assetId, employeeId }: { assetId: string; employeeId: string }) =>
+    mutationFn: ({assetId, employeeId}: { assetId: string; employeeId: string }) =>
       assetService.assignAsset(assetId, employeeId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: assetKeys.assetDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: assetKeys.list() });
+      queryClient.invalidateQueries({queryKey: assetKeys.assetDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: assetKeys.list()});
       if (data.assignedTo) {
-        queryClient.invalidateQueries({ queryKey: assetKeys.employeeAssets(data.assignedTo) });
+        queryClient.invalidateQueries({queryKey: assetKeys.employeeAssets(data.assignedTo)});
       }
-      queryClient.invalidateQueries({ queryKey: assetKeys.statusAssets('ASSIGNED' as AssetStatus) });
+      queryClient.invalidateQueries({queryKey: assetKeys.statusAssets('ASSIGNED' as AssetStatus)});
     },
   });
 }
@@ -130,12 +130,12 @@ export function useReturnAsset() {
   return useMutation({
     mutationFn: (assetId: string) => assetService.returnAsset(assetId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: assetKeys.assetDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: assetKeys.list() });
+      queryClient.invalidateQueries({queryKey: assetKeys.assetDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: assetKeys.list()});
       if (data.assignedTo) {
-        queryClient.invalidateQueries({ queryKey: assetKeys.employeeAssets(data.assignedTo) });
+        queryClient.invalidateQueries({queryKey: assetKeys.employeeAssets(data.assignedTo)});
       }
-      queryClient.invalidateQueries({ queryKey: assetKeys.statusAssets('AVAILABLE' as AssetStatus) });
+      queryClient.invalidateQueries({queryKey: assetKeys.statusAssets('AVAILABLE' as AssetStatus)});
     },
   });
 }

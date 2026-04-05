@@ -1,57 +1,61 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useToast } from '@/components/notifications/ToastProvider';
+import React, {useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {Card} from '@/components/ui/Card';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
-  useTickets,
-  useCreateTicket,
-  useUpdateTicketStatus,
   useActiveCategories,
+  useCreateTicket,
+  useTickets,
+  useUpdateTicketStatus,
 } from '@/lib/hooks/queries/useHelpdesk';
-import type { TicketPriority, TicketStatus, TicketResponse } from '@/lib/services/hrms/helpdesk.service';
+import type {TicketPriority, TicketResponse, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
 import {
-  Plus,
-  Search,
-  Filter,
-  Ticket,
-  Clock,
   CheckCircle2,
-  Circle,
-  Pause,
   ChevronLeft,
   ChevronRight,
-  User,
+  Circle,
+  Clock,
+  Filter,
+  Pause,
+  Plus,
+  Search,
   Tag,
+  Ticket,
+  User,
 } from 'lucide-react';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const PRIORITY_CONFIG: Record<TicketPriority, { label: string; variant: 'danger' | 'warning' | 'info' | 'default' }> = {
-  URGENT: { label: 'Urgent', variant: 'danger' },
-  HIGH: { label: 'High', variant: 'warning' },
-  MEDIUM: { label: 'Medium', variant: 'info' },
-  LOW: { label: 'Low', variant: 'default' },
+  URGENT: {label: 'Urgent', variant: 'danger'},
+  HIGH: {label: 'High', variant: 'warning'},
+  MEDIUM: {label: 'Medium', variant: 'info'},
+  LOW: {label: 'Low', variant: 'default'},
 };
 
-const STATUS_CONFIG: Record<TicketStatus, { label: string; variant: 'danger' | 'warning' | 'info' | 'success' | 'default'; icon: React.FC<{ className?: string }> }> = {
-  OPEN: { label: 'Open', variant: 'info', icon: Circle },
-  IN_PROGRESS: { label: 'In Progress', variant: 'warning', icon: Clock },
-  WAITING_FOR_RESPONSE: { label: 'Waiting', variant: 'default', icon: Pause },
-  RESOLVED: { label: 'Resolved', variant: 'success', icon: CheckCircle2 },
-  CLOSED: { label: 'Closed', variant: 'default', icon: CheckCircle2 },
+const STATUS_CONFIG: Record<TicketStatus, {
+  label: string;
+  variant: 'danger' | 'warning' | 'info' | 'success' | 'default';
+  icon: React.FC<{ className?: string }>
+}> = {
+  OPEN: {label: 'Open', variant: 'info', icon: Circle},
+  IN_PROGRESS: {label: 'In Progress', variant: 'warning', icon: Clock},
+  WAITING_FOR_RESPONSE: {label: 'Waiting', variant: 'default', icon: Pause},
+  RESOLVED: {label: 'Resolved', variant: 'success', icon: CheckCircle2},
+  CLOSED: {label: 'Closed', variant: 'default', icon: CheckCircle2},
 };
 
 const ALL_STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'WAITING_FOR_RESPONSE', 'RESOLVED', 'CLOSED'];
@@ -73,7 +77,7 @@ type CreateTicketFormData = z.infer<typeof createTicketSchema>;
 
 export default function TicketListPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const toast = useToast();
 
   // Pagination
@@ -90,8 +94,8 @@ export default function TicketListPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Queries
-  const { data: ticketsPage, isLoading } = useTickets(page, pageSize);
-  const { data: categories = [] } = useActiveCategories();
+  const {data: ticketsPage, isLoading} = useTickets(page, pageSize);
+  const {data: categories = []} = useActiveCategories();
   const createMutation = useCreateTicket();
   const statusMutation = useUpdateTicketStatus();
 
@@ -100,7 +104,7 @@ export default function TicketListPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateTicketFormData>({
     resolver: zodResolver(createTicketSchema),
     defaultValues: {
@@ -149,17 +153,21 @@ export default function TicketListPage() {
       setShowCreateModal(false);
       reset();
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create ticket';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to create ticket';
       toast.error(message);
     }
   };
 
   const handleQuickStatusChange = async (ticketId: string, newStatus: TicketStatus) => {
     try {
-      await statusMutation.mutateAsync({ id: ticketId, status: newStatus });
+      await statusMutation.mutateAsync({id: ticketId, status: newStatus});
       toast.success(`Ticket status updated to ${STATUS_CONFIG[newStatus].label}`);
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to update status';
       toast.error(message);
     }
   };
@@ -197,7 +205,7 @@ export default function TicketListPage() {
           <Button
             variant="primary"
             onClick={() => setShowCreateModal(true)}
-            leftIcon={<Plus className="h-4 w-4" />}
+            leftIcon={<Plus className="h-4 w-4"/>}
           >
             Create Ticket
           </Button>
@@ -206,7 +214,7 @@ export default function TicketListPage() {
         {/* Search & Filters Bar */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search by subject, ticket number, or requester..."
@@ -218,11 +226,12 @@ export default function TicketListPage() {
           <Button
             variant={showFilters ? 'soft' : 'outline'}
             onClick={() => setShowFilters(!showFilters)}
-            leftIcon={<Filter className="h-4 w-4" />}
+            leftIcon={<Filter className="h-4 w-4"/>}
           >
             Filters
             {hasActiveFilters && (
-              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-accent-700 text-white rounded-full">
+              <span
+                className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-accent-700 text-white rounded-full">
                 {[statusFilter, priorityFilter].filter(Boolean).length}
               </span>
             )}
@@ -273,19 +282,20 @@ export default function TicketListPage() {
           <Card className="p-0 overflow-hidden">
             <div className="space-y-0">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="flex items-center gap-4 px-6 py-4 border-b border-[var(--border-main)] last:border-0">
-                  <Skeleton className="h-5 w-24" />
-                  <Skeleton className="h-5 w-48 flex-1" />
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-5 w-24" />
+                <div key={i}
+                     className="flex items-center gap-4 px-6 py-4 border-b border-[var(--border-main)] last:border-0">
+                  <Skeleton className="h-5 w-24"/>
+                  <Skeleton className="h-5 w-48 flex-1"/>
+                  <Skeleton className="h-6 w-20"/>
+                  <Skeleton className="h-6 w-16"/>
+                  <Skeleton className="h-5 w-24"/>
                 </div>
               ))}
             </div>
           </Card>
         ) : filteredTickets.length === 0 ? (
           <Card className="p-12 text-center">
-            <Ticket className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+            <Ticket className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {hasActiveFilters ? 'No tickets match your filters' : 'No tickets yet'}
             </h3>
@@ -295,7 +305,7 @@ export default function TicketListPage() {
             {hasActiveFilters ? (
               <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
             ) : (
-              <Button variant="primary" onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="h-4 w-4" />}>
+              <Button variant="primary" onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="h-4 w-4"/>}>
                 Create Ticket
               </Button>
             )}
@@ -305,28 +315,46 @@ export default function TicketListPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Ticket</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Subject</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Requester</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Category</th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority</th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Assignee</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Created</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Actions</th>
-                  </tr>
+                <tr className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Ticket
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Subject
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Requester
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Category
+                  </th>
+                  <th
+                    className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority
+                  </th>
+                  <th
+                    className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Assignee
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Created
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Actions
+                  </th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-main)]">
-                  {filteredTickets.map((ticket) => (
-                    <TicketRow
-                      key={ticket.id}
-                      ticket={ticket}
-                      onNavigate={() => router.push(`/helpdesk/tickets/${ticket.id}`)}
-                      onStatusChange={handleQuickStatusChange}
-                      formatDate={formatDate}
-                    />
-                  ))}
+                {filteredTickets.map((ticket) => (
+                  <TicketRow
+                    key={ticket.id}
+                    ticket={ticket}
+                    onNavigate={() => router.push(`/helpdesk/tickets/${ticket.id}`)}
+                    onStatusChange={handleQuickStatusChange}
+                    formatDate={formatDate}
+                  />
+                ))}
                 </tbody>
               </table>
             </div>
@@ -343,7 +371,7 @@ export default function TicketListPage() {
                     size="sm"
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
-                    leftIcon={<ChevronLeft className="h-4 w-4" />}
+                    leftIcon={<ChevronLeft className="h-4 w-4"/>}
                   >
                     Previous
                   </Button>
@@ -352,7 +380,7 @@ export default function TicketListPage() {
                     size="sm"
                     onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                     disabled={page >= totalPages - 1}
-                    rightIcon={<ChevronRight className="h-4 w-4" />}
+                    rightIcon={<ChevronRight className="h-4 w-4"/>}
                   >
                     Next
                   </Button>
@@ -364,8 +392,14 @@ export default function TicketListPage() {
       </div>
 
       {/* Create Ticket Modal */}
-      <Modal isOpen={showCreateModal} onClose={() => { setShowCreateModal(false); reset(); }} size="lg">
-        <ModalHeader onClose={() => { setShowCreateModal(false); reset(); }}>
+      <Modal isOpen={showCreateModal} onClose={() => {
+        setShowCreateModal(false);
+        reset();
+      }} size="lg">
+        <ModalHeader onClose={() => {
+          setShowCreateModal(false);
+          reset();
+        }}>
           <div>
             <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Support Ticket</h2>
             <p className="text-body-secondary mt-1">Describe your issue and we will get back to you</p>
@@ -429,14 +463,17 @@ export default function TicketListPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" type="button" onClick={() => { setShowCreateModal(false); reset(); }}>
+            <Button variant="outline" type="button" onClick={() => {
+              setShowCreateModal(false);
+              reset();
+            }}>
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
               disabled={createMutation.isPending}
-              leftIcon={<Plus className="h-4 w-4" />}
+              leftIcon={<Plus className="h-4 w-4"/>}
             >
               {createMutation.isPending ? 'Creating...' : 'Create Ticket'}
             </Button>
@@ -456,7 +493,7 @@ interface TicketRowProps {
   formatDate: (date: string | null) => string;
 }
 
-function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRowProps) {
+function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowProps) {
   const priorityCfg = PRIORITY_CONFIG[ticket.priority] ?? PRIORITY_CONFIG.MEDIUM;
   const statusCfg = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.OPEN;
   const StatusIcon = statusCfg.icon;
@@ -467,21 +504,22 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
       onClick={onNavigate}
     >
       <td className="px-4 py-4 whitespace-nowrap">
-        <span className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
+        <span
+          className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
       </td>
       <td className="px-4 py-4">
         <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center gap-2">
-          <User className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+          <User className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
           <span className="text-body-secondary">{ticket.employeeName || '-'}</span>
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         {ticket.categoryName ? (
           <div className="flex items-center gap-1.5">
-            <Tag className="h-3 w-3 text-[var(--text-muted)]" />
+            <Tag className="h-3 w-3 text-[var(--text-muted)]"/>
             <span className="text-body-secondary">{ticket.categoryName}</span>
           </div>
         ) : (
@@ -493,7 +531,7 @@ function TicketRow({ ticket, onNavigate, onStatusChange, formatDate }: TicketRow
       </td>
       <td className="px-4 py-4 whitespace-nowrap text-center">
         <Badge variant={statusCfg.variant} size="sm">
-          <StatusIcon className="h-3 w-3" />
+          <StatusIcon className="h-3 w-3"/>
           {statusCfg.label}
         </Badge>
       </td>

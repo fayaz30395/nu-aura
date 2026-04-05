@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import {motion} from 'framer-motion';
+import {cn} from '@/lib/utils';
 
 interface EmptyStateAction {
   label: string;
@@ -24,24 +24,24 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon,
-  iconColor,
-  title,
-  description,
-  actionLabel,
-  onAction,
-  actionLoading = false,
-  action,
-}: EmptyStateProps) {
+                             icon,
+                             iconColor,
+                             title,
+                             description,
+                             actionLabel,
+                             onAction,
+                             actionLoading = false,
+                             action,
+                           }: EmptyStateProps) {
   // Support legacy 'action' prop for backward compatibility
   const finalActionLabel = actionLabel || action?.label;
   const finalOnAction = onAction || action?.onClick;
   const finalActionLoading = actionLoading || action?.loading || false;
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      initial={{opacity: 0, y: 10}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.3, ease: 'easeOut'}}
       className="w-full"
     >
       <div className="flex flex-col items-center justify-center py-16 px-6">

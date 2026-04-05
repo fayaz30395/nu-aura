@@ -1,16 +1,20 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { pipService } from '@/lib/services/grow/performance.service';
-import type { CreatePIPRequest as CreatePIPRequestService, PIPCheckInRequest as PIPCheckInRequestService, ClosePIPRequest as ClosePIPRequestService } from '@/lib/services/grow/performance.service';
-import { notifications } from '@mantine/notifications';
-import { performanceKeys } from './performanceKeys';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import type {
+  ClosePIPRequest as ClosePIPRequestService,
+  CreatePIPRequest as CreatePIPRequestService,
+  PIPCheckInRequest as PIPCheckInRequestService
+} from '@/lib/services/grow/performance.service';
+import {pipService} from '@/lib/services/grow/performance.service';
+import {notifications} from '@mantine/notifications';
+import {performanceKeys} from './performanceKeys';
 
 // ─── PIP Hooks ────────────────────────────────────────────────────────────
 
 export function usePips(employeeId?: string, managerId?: string) {
   return useQuery({
-    queryKey: [...performanceKeys.all, 'pip', { employeeId, managerId }],
+    queryKey: [...performanceKeys.all, 'pip', {employeeId, managerId}],
     queryFn: () => pipService.getAll(employeeId, managerId),
     staleTime: 5 * 60 * 1000,
   });
@@ -31,11 +35,11 @@ export function useCreatePip() {
   return useMutation({
     mutationFn: (data: CreatePIPRequestService) => pipService.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });
-      notifications.show({ title: 'Success', message: 'PIP created successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
+      notifications.show({title: 'Success', message: 'PIP created successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to create PIP', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to create PIP', color: 'red'});
     },
   });
 }
@@ -44,14 +48,14 @@ export function useRecordPipCheckIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: PIPCheckInRequestService }) =>
+    mutationFn: ({id, data}: { id: string; data: PIPCheckInRequestService }) =>
       pipService.recordCheckIn(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });
-      notifications.show({ title: 'Success', message: 'Check-in recorded successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
+      notifications.show({title: 'Success', message: 'Check-in recorded successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to record check-in', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to record check-in', color: 'red'});
     },
   });
 }
@@ -60,14 +64,14 @@ export function useClosePip() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ClosePIPRequestService }) =>
+    mutationFn: ({id, data}: { id: string; data: ClosePIPRequestService }) =>
       pipService.close(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...performanceKeys.all, 'pip'] });
-      notifications.show({ title: 'Success', message: 'PIP closed successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
+      notifications.show({title: 'Success', message: 'PIP closed successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to close PIP', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to close PIP', color: 'red'});
     },
   });
 }

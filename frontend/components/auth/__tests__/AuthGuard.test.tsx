@@ -3,9 +3,12 @@
  * Run with: npx vitest run components/auth/__tests__/AuthGuard.test.tsx
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { AuthGuard } from '../AuthGuard';
+import {render, screen, waitFor} from '@testing-library/react';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {AuthGuard} from '../AuthGuard';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {usePermissions} from '@/lib/hooks/usePermissions';
+import {findRouteConfig, isPublicRoute} from '@/lib/config/routes';
 
 // Define test constants inline to avoid module loading issues
 const Permissions = {
@@ -45,10 +48,6 @@ vi.mock('@/lib/config/routes', () => ({
   findRouteConfig: vi.fn(),
   isPublicRoute: vi.fn(),
 }));
-
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions } from '@/lib/hooks/usePermissions';
-import { findRouteConfig, isPublicRoute } from '@/lib/config/routes';
 
 const mockUseAuth = useAuth as ReturnType<typeof vi.fn>;
 const mockUsePermissions = usePermissions as ReturnType<typeof vi.fn>;

@@ -1,19 +1,13 @@
 'use client';
 
+import {keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient,} from '@tanstack/react-query';
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  useInfiniteQuery,
-  keepPreviousData,
-} from '@tanstack/react-query';
-import { wallService } from '@/lib/services/core/wall.service';
-import {
+  CreatePostRequest,
+  PageResponse,
   PostType,
   ReactionType,
   WallPostResponse,
-  CreatePostRequest,
-  PageResponse,
+  wallService
 } from '@/lib/services/core/wall.service';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -23,12 +17,12 @@ export const wallKeys = {
   // Posts
   posts: () => [...wallKeys.all, 'posts'] as const,
   postList: (type?: PostType, page?: number, size?: number) =>
-    [...wallKeys.posts(), { type, page, size }] as const,
+    [...wallKeys.posts(), {type, page, size}] as const,
   postDetail: (id: string) => [...wallKeys.posts(), 'detail', id] as const,
   // Comments
   comments: () => [...wallKeys.all, 'comments'] as const,
   commentList: (postId: string, page?: number, size?: number) =>
-    [...wallKeys.comments(), postId, { page, size }] as const,
+    [...wallKeys.comments(), postId, {page, size}] as const,
   // Praise
   praise: () => [...wallKeys.all, 'praise'] as const,
   praiseForEmployee: (empId: string) =>
@@ -57,7 +51,7 @@ export function useWallPosts(
 export function useInfiniteWallPosts(type?: PostType, size: number = 10) {
   return useInfiniteQuery({
     queryKey: wallKeys.postList(type, undefined, size),
-    queryFn: ({ pageParam = 0 }) =>
+    queryFn: ({pageParam = 0}) =>
       type
         ? wallService.getPostsByType(type, pageParam, size)
         : wallService.getPosts(pageParam, size),
@@ -125,7 +119,7 @@ export function useCreatePost() {
   return useMutation({
     mutationFn: (data: CreatePostRequest) => wallService.createPost(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -136,7 +130,7 @@ export function useDeletePost() {
   return useMutation({
     mutationFn: (postId: string) => wallService.deletePost(postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -145,10 +139,10 @@ export function usePinPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, pinned }: { postId: string; pinned: boolean }) =>
+    mutationFn: ({postId, pinned}: { postId: string; pinned: boolean }) =>
       wallService.pinPost(postId, pinned),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -159,11 +153,11 @@ export function useAddWallReaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, reactionType }: { postId: string; reactionType: ReactionType }) =>
+    mutationFn: ({postId, reactionType}: { postId: string; reactionType: ReactionType }) =>
       wallService.addReaction(postId, reactionType),
-    onSuccess: (_data, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.postDetail(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+    onSuccess: (_data, {postId}) => {
+      queryClient.invalidateQueries({queryKey: wallKeys.postDetail(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -174,8 +168,8 @@ export function useRemoveWallReaction() {
   return useMutation({
     mutationFn: (postId: string) => wallService.removeReaction(postId),
     onSuccess: (_data, postId) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.postDetail(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.postDetail(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -186,14 +180,14 @@ export function useAddComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, content, parentCommentId }: {
+    mutationFn: ({postId, content, parentCommentId}: {
       postId: string;
       content: string;
       parentCommentId?: string;
-    }) => wallService.addComment(postId, { content, parentCommentId }),
-    onSuccess: (_data, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.commentList(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+    }) => wallService.addComment(postId, {content, parentCommentId}),
+    onSuccess: (_data, {postId}) => {
+      queryClient.invalidateQueries({queryKey: wallKeys.commentList(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -202,11 +196,11 @@ export function useDeleteWallComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId }: { commentId: string; postId: string }) =>
+    mutationFn: ({commentId}: { commentId: string; postId: string }) =>
       wallService.deleteComment(commentId),
-    onSuccess: (_data, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.commentList(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+    onSuccess: (_data, {postId}) => {
+      queryClient.invalidateQueries({queryKey: wallKeys.commentList(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -217,11 +211,11 @@ export function useVote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, optionId }: { postId: string; optionId: string }) =>
+    mutationFn: ({postId, optionId}: { postId: string; optionId: string }) =>
       wallService.vote(postId, optionId),
-    onSuccess: (_data, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.postDetail(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+    onSuccess: (_data, {postId}) => {
+      queryClient.invalidateQueries({queryKey: wallKeys.postDetail(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }
@@ -232,8 +226,8 @@ export function useRemoveVote() {
   return useMutation({
     mutationFn: (postId: string) => wallService.removeVote(postId),
     onSuccess: (_data, postId) => {
-      queryClient.invalidateQueries({ queryKey: wallKeys.postDetail(postId) });
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.postDetail(postId)});
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
 }

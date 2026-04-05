@@ -2,8 +2,25 @@ export type EmploymentType = 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'TEMPORARY
 export type JobStatus = 'DRAFT' | 'OPEN' | 'ON_HOLD' | 'CLOSED' | 'CANCELLED';
 export type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
 
-export type CandidateSource = 'JOB_PORTAL' | 'REFERRAL' | 'LINKEDIN' | 'COMPANY_WEBSITE' | 'WALK_IN' | 'CAMPUS' | 'CONSULTANT' | 'OTHER';
-export type CandidateStatus = 'NEW' | 'SCREENING' | 'INTERVIEW' | 'SELECTED' | 'OFFER_EXTENDED' | 'OFFER_ACCEPTED' | 'OFFER_DECLINED' | 'REJECTED' | 'WITHDRAWN';
+export type CandidateSource =
+  'JOB_PORTAL'
+  | 'REFERRAL'
+  | 'LINKEDIN'
+  | 'COMPANY_WEBSITE'
+  | 'WALK_IN'
+  | 'CAMPUS'
+  | 'CONSULTANT'
+  | 'OTHER';
+export type CandidateStatus =
+  'NEW'
+  | 'SCREENING'
+  | 'INTERVIEW'
+  | 'SELECTED'
+  | 'OFFER_EXTENDED'
+  | 'OFFER_ACCEPTED'
+  | 'OFFER_DECLINED'
+  | 'REJECTED'
+  | 'WITHDRAWN';
 export type RecruitmentStage =
   | 'RECRUITERS_PHONE_CALL'
   | 'PANEL_REVIEW'

@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { featureFlagService } from '@/lib/services/core/feature-flag.service';
-import type { FeatureFlagRequest } from '@/lib/types/core/feature-flag';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {featureFlagService} from '@/lib/services/core/feature-flag.service';
+import type {FeatureFlagRequest} from '@/lib/types/core/feature-flag';
 
 export const featureFlagKeys = {
   all: ['featureFlags'] as const,
@@ -40,7 +40,7 @@ export function useEnabledFeatures() {
  * Uses the map endpoint for efficiency (single request for all flags).
  */
 export function useFeatureFlag(featureKey: string): { enabled: boolean; isLoading: boolean } {
-  const { data: flagMap, isLoading } = useFeatureFlagMap();
+  const {data: flagMap, isLoading} = useFeatureFlagMap();
 
   return {
     enabled: flagMap?.[featureKey] ?? false,
@@ -62,7 +62,7 @@ export function useSetFeatureFlag() {
   return useMutation({
     mutationFn: (data: FeatureFlagRequest) => featureFlagService.set(data).then(r => r.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: featureFlagKeys.all });
+      queryClient.invalidateQueries({queryKey: featureFlagKeys.all});
     },
   });
 }
@@ -72,7 +72,7 @@ export function useToggleFeatureFlag() {
   return useMutation({
     mutationFn: (featureKey: string) => featureFlagService.toggle(featureKey).then(r => r.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: featureFlagKeys.all });
+      queryClient.invalidateQueries({queryKey: featureFlagKeys.all});
     },
   });
 }

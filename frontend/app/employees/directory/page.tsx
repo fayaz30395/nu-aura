@@ -1,31 +1,31 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useQuery} from '@tanstack/react-query';
+import {AnimatePresence, motion} from 'framer-motion';
 import {
-  Search,
-  Filter,
-  Users,
-  Mail,
-  Phone,
   Building2,
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Filter,
   Grid3X3,
   List,
-  X,
-  UserCircle,
   Loader2,
+  Mail,
+  Phone,
+  Search,
+  UserCircle,
+  Users,
+  X,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { apiClient } from '@/lib/api/client';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { getInitials } from '@/lib/utils';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {apiClient} from '@/lib/api/client';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {getInitials} from '@/lib/utils';
 
 interface Employee {
   id: string;
@@ -68,43 +68,63 @@ interface Department {
 }
 
 const jobRoleOptions = [
-  { value: 'ENGINEER', label: 'Engineer' },
-  { value: 'MANAGER', label: 'Manager' },
-  { value: 'DESIGNER', label: 'Designer' },
-  { value: 'ANALYST', label: 'Analyst' },
-  { value: 'HR', label: 'HR' },
-  { value: 'SALES', label: 'Sales' },
-  { value: 'MARKETING', label: 'Marketing' },
-  { value: 'FINANCE', label: 'Finance' },
-  { value: 'OPERATIONS', label: 'Operations' },
-  { value: 'SUPPORT', label: 'Support' },
-  { value: 'OTHER', label: 'Other' },
+  {value: 'ENGINEER', label: 'Engineer'},
+  {value: 'MANAGER', label: 'Manager'},
+  {value: 'DESIGNER', label: 'Designer'},
+  {value: 'ANALYST', label: 'Analyst'},
+  {value: 'HR', label: 'HR'},
+  {value: 'SALES', label: 'Sales'},
+  {value: 'MARKETING', label: 'Marketing'},
+  {value: 'FINANCE', label: 'Finance'},
+  {value: 'OPERATIONS', label: 'Operations'},
+  {value: 'SUPPORT', label: 'Support'},
+  {value: 'OTHER', label: 'Other'},
 ];
 
 const levelOptions = [
-  { value: 'INTERN', label: 'Intern' },
-  { value: 'JUNIOR', label: 'Junior' },
-  { value: 'MID', label: 'Mid-Level' },
-  { value: 'SENIOR', label: 'Senior' },
-  { value: 'LEAD', label: 'Lead' },
-  { value: 'PRINCIPAL', label: 'Principal' },
-  { value: 'DIRECTOR', label: 'Director' },
-  { value: 'VP', label: 'VP' },
-  { value: 'C_LEVEL', label: 'C-Level' },
+  {value: 'INTERN', label: 'Intern'},
+  {value: 'JUNIOR', label: 'Junior'},
+  {value: 'MID', label: 'Mid-Level'},
+  {value: 'SENIOR', label: 'Senior'},
+  {value: 'LEAD', label: 'Lead'},
+  {value: 'PRINCIPAL', label: 'Principal'},
+  {value: 'DIRECTOR', label: 'Director'},
+  {value: 'VP', label: 'VP'},
+  {value: 'C_LEVEL', label: 'C-Level'},
 ];
 
 const statusOptions = [
-  { value: 'ACTIVE', label: 'Active', color: 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400' },
-  { value: 'INACTIVE', label: 'Inactive', color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]' },
-  { value: 'ON_LEAVE', label: 'On Leave', color: 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400' },
-  { value: 'PROBATION', label: 'Probation', color: 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400' },
-  { value: 'TERMINATED', label: 'Terminated', color: 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400' },
+  {
+    value: 'ACTIVE',
+    label: 'Active',
+    color: 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400'
+  },
+  {
+    value: 'INACTIVE',
+    label: 'Inactive',
+    color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
+  },
+  {
+    value: 'ON_LEAVE',
+    label: 'On Leave',
+    color: 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400'
+  },
+  {
+    value: 'PROBATION',
+    label: 'Probation',
+    color: 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400'
+  },
+  {
+    value: 'TERMINATED',
+    label: 'Terminated',
+    color: 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400'
+  },
 ];
 
 export default function TeamDirectory() {
   const router = useRouter();
   useAuth();
-  const { hasAnyPermission, isReady: permReady } = usePermissions();
+  const {hasAnyPermission, isReady: permReady} = usePermissions();
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   // A3: Permission gate — directory requires VIEW_ALL or VIEW_TEAM
@@ -135,11 +155,11 @@ export default function TeamDirectory() {
   });
 
   // React Query - fetch departments
-  const { data: departmentResponse } = useQuery({
+  const {data: departmentResponse} = useQuery({
     queryKey: ['departments', 'all'],
     queryFn: async () => {
       const response = await apiClient.get<{ content: Department[] }>('/departments', {
-        params: { page: 0, size: 100 },
+        params: {page: 0, size: 100},
       });
       return response.data.content || [];
     },
@@ -153,7 +173,7 @@ export default function TeamDirectory() {
   }, [deptData]);
 
   // React Query - search employees with filters
-  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 }, isPending } = useQuery({
+  const {data: employeeSearchResponse = {content: [], totalPages: 0, totalElements: 0}, isPending} = useQuery({
     queryKey: ['employees', 'directory', filters],
     queryFn: async () => {
       const response = await apiClient.post<{
@@ -179,15 +199,15 @@ export default function TeamDirectory() {
   }, [employeeSearchResponse]);
 
   const handleSearch = useCallback(() => {
-    setFilters((prev) => ({ ...prev, page: 0 }));
+    setFilters((prev) => ({...prev, page: 0}));
   }, []);
 
   const handleFilterChange = (key: keyof SearchFilters, value: string | string[] | number) => {
-    setFilters({ ...filters, [key]: value });
+    setFilters({...filters, [key]: value});
   };
 
   const handlePageChange = (newPage: number) => {
-    setFilters({ ...filters, page: newPage });
+    setFilters({...filters, page: newPage});
   };
 
   const clearFilters = () => {
@@ -206,7 +226,6 @@ export default function TeamDirectory() {
     const found = statusOptions.find((s) => s.value === status);
     return found?.color || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   };
-
 
 
   const getRandomColor = (name: string) => {
@@ -229,13 +248,13 @@ export default function TeamDirectory() {
       <div className="space-y-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: -20}}
+          animate={{opacity: 1, y: 0}}
         >
           <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Users className="w-7 h-7 text-accent-700 dark:text-accent-400" />
+                <Users className="w-7 h-7 text-accent-700 dark:text-accent-400"/>
                 Team Directory
               </h1>
               <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -247,21 +266,21 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('grid')}
                 aria-label="Grid view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'grid'
-                    ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
-                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                  }`}
+                  ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                  : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                }`}
               >
-                <Grid3X3 className="w-5 h-5" />
+                <Grid3X3 className="w-5 h-5"/>
               </button>
               <button
                 onClick={() => setViewMode('list')}
                 aria-label="List view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'list'
-                    ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
-                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                  }`}
+                  ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                  : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                }`}
               >
-                <List className="w-5 h-5" />
+                <List className="w-5 h-5"/>
               </button>
             </div>
           </div>
@@ -269,15 +288,16 @@ export default function TeamDirectory() {
 
         {/* Search and Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{opacity: 0, y: 20}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.1}}
         >
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <div className="flex gap-4 mb-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
+                  <Search
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
                   <input
                     type="text"
                     placeholder="Search by name, email, phone, or employee code..."
@@ -296,17 +316,17 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-4 py-4 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
-                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
-                      : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-                    }`}
+                    ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                    : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                  }`}
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter className="w-4 h-4"/>
                   Filters
                   {(filters.departmentIds.length > 0 ||
                     filters.jobRoles.length > 0 ||
                     filters.levels.length > 0) && (
-                      <span className="w-2 h-2 bg-accent-700 rounded-full" />
-                    )}
+                    <span className="w-2 h-2 bg-accent-700 rounded-full"/>
+                  )}
                 </button>
               </div>
 
@@ -314,9 +334,9 @@ export default function TeamDirectory() {
               <AnimatePresence>
                 {showFilters && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
+                    initial={{height: 0, opacity: 0}}
+                    animate={{height: 'auto', opacity: 1}}
+                    exit={{height: 0, opacity: 0}}
                     className="overflow-hidden"
                   >
                     <div className="pt-4 border-t border-[var(--border-main)]">
@@ -448,22 +468,22 @@ export default function TeamDirectory() {
         {/* Employee Grid/List */}
         {isPending ? (
           <div className="flex justify-center items-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-accent-700" />
+            <Loader2 className="w-8 h-8 animate-spin text-accent-700"/>
           </div>
         ) : (
           <>
             {viewMode === 'grid' ? (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
               >
                 {employees.map((employee, index) => (
                   <motion.div
                     key={employee.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: index * 0.05}}
                     onClick={() => setSelectedEmployee(employee)}
                   >
                     <Card
@@ -473,7 +493,8 @@ export default function TeamDirectory() {
                       {/* Card Header with gradient */}
                       <div className={`h-20 ${getRandomColor(employee.fullName)} relative`}>
                         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                          <div className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
+                          <div
+                            className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
                             <div
                               className={`w-full h-full rounded-full ${getRandomColor(
                                 employee.fullName
@@ -506,13 +527,14 @@ export default function TeamDirectory() {
 
                         {employee.departmentName && (
                           <div className="mt-4 flex items-center justify-center gap-1 text-body-muted">
-                            <Building2 className="w-4 h-4" />
+                            <Building2 className="w-4 h-4"/>
                             <span>{employee.departmentName}</span>
                           </div>
                         )}
 
                         {/* Quick Actions */}
-                        <div className="mt-4 flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div
+                          className="mt-4 flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {employee.personalEmail && (
                             <a
                               href={`mailto:${employee.personalEmail}`}
@@ -520,7 +542,7 @@ export default function TeamDirectory() {
                               aria-label={`Email ${employee.fullName}`}
                               className="p-2 bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                             >
-                              <Mail className="w-4 h-4" />
+                              <Mail className="w-4 h-4"/>
                             </a>
                           )}
                           {employee.phoneNumber && (
@@ -530,7 +552,7 @@ export default function TeamDirectory() {
                               aria-label={`Call ${employee.fullName}`}
                               className="p-2 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg hover:bg-success-100 dark:hover:bg-success-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2"
                             >
-                              <Phone className="w-4 h-4" />
+                              <Phone className="w-4 h-4"/>
                             </a>
                           )}
                         </div>
@@ -540,74 +562,79 @@ export default function TeamDirectory() {
                 ))}
               </motion.div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <motion.div initial={{opacity: 0}} animate={{opacity: 1}}>
                 <Card className="bg-[var(--bg-card)] overflow-hidden">
                   <table className="table-aura">
                     <thead className="skeuo-table-header">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                          Employee
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                          Department
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                          Contact
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
+                    <tr>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                        Employee
+                      </th>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                        Department
+                      </th>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                      {employees.map((employee, index) => (
-                        <motion.tr
-                          key={employee.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.03 }}
-                          onClick={() => setSelectedEmployee(employee)}
-                          className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
-                        >
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-4">
-                              <div
-                                className={`w-10 h-10 rounded-full ${getRandomColor(
-                                  employee.fullName
-                                )} flex items-center justify-center text-white font-medium`}
-                              >
-                                {getInitials(employee.fullName)}
-                              </div>
-                              <div>
-                                <p className="font-medium text-[var(--text-primary)]">
-                                  {employee.fullName}
-                                </p>
-                                <p className="text-body-muted">
-                                  {employee.employeeCode}
-                                </p>
-                              </div>
+                    {employees.map((employee, index) => (
+                      <motion.tr
+                        key={employee.id}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        transition={{delay: index * 0.03}}
+                        onClick={() => setSelectedEmployee(employee)}
+                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={`w-10 h-10 rounded-full ${getRandomColor(
+                                employee.fullName
+                              )} flex items-center justify-center text-white font-medium`}
+                            >
+                              {getInitials(employee.fullName)}
                             </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <p className="text-[var(--text-primary)]">
-                              {employee.departmentName || '-'}
-                            </p>
-                            <p className="text-body-muted">
-                              {employee.designation || employee.jobRole}
-                            </p>
-                          </td>
-                          <td className="px-6 py-4">
-                            <p className="text-[var(--text-primary)] text-sm">
-                              {employee.personalEmail || '-'}
-                            </p>
-                            <p className="text-body-muted">
-                              {employee.phoneNumber || '-'}
-                            </p>
-                          </td>
-                          <td className="px-6 py-4">
+                            <div>
+                              <p className="font-medium text-[var(--text-primary)]">
+                                {employee.fullName}
+                              </p>
+                              <p className="text-body-muted">
+                                {employee.employeeCode}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-[var(--text-primary)]">
+                            {employee.departmentName || '-'}
+                          </p>
+                          <p className="text-body-muted">
+                            {employee.designation || employee.jobRole}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-[var(--text-primary)] text-sm">
+                            {employee.personalEmail || '-'}
+                          </p>
+                          <p className="text-body-muted">
+                            {employee.phoneNumber || '-'}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4">
                             <span
                               className={`inline-block px-4 py-1 text-xs font-medium rounded-full ${getStatusColor(
                                 employee.status
@@ -615,33 +642,33 @@ export default function TeamDirectory() {
                             >
                               {employee.status}
                             </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              {employee.personalEmail && (
-                                <a
-                                  href={`mailto:${employee.personalEmail}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  aria-label={`Email ${employee.fullName}`}
-                                  className="p-2 text-[var(--text-muted)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
-                                >
-                                  <Mail className="w-4 h-4" />
-                                </a>
-                              )}
-                              {employee.phoneNumber && (
-                                <a
-                                  href={`tel:${employee.phoneNumber}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  aria-label={`Call ${employee.fullName}`}
-                                  className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2 rounded-md"
-                                >
-                                  <Phone className="w-4 h-4" />
-                                </a>
-                              )}
-                            </div>
-                          </td>
-                        </motion.tr>
-                      ))}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {employee.personalEmail && (
+                              <a
+                                href={`mailto:${employee.personalEmail}`}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Email ${employee.fullName}`}
+                                className="p-2 text-[var(--text-muted)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
+                              >
+                                <Mail className="w-4 h-4"/>
+                              </a>
+                            )}
+                            {employee.phoneNumber && (
+                              <a
+                                href={`tel:${employee.phoneNumber}`}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Call ${employee.fullName}`}
+                                className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2 rounded-md"
+                              >
+                                <Phone className="w-4 h-4"/>
+                              </a>
+                            )}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
                     </tbody>
                   </table>
                 </Card>
@@ -657,10 +684,10 @@ export default function TeamDirectory() {
                   aria-label="Previous page"
                   className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 >
-                  <ChevronLeft className="w-5 h-5 text-[var(--text-secondary)]" />
+                  <ChevronLeft className="w-5 h-5 text-[var(--text-secondary)]"/>
                 </button>
 
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                {Array.from({length: Math.min(5, totalPages)}, (_, i) => {
                   const pageNum =
                     filters.page < 3
                       ? i
@@ -673,9 +700,9 @@ export default function TeamDirectory() {
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`w-10 h-10 rounded-xl font-medium transition-colors ${filters.page === pageNum
-                          ? 'bg-accent-500 text-white'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                        }`}
+                        ? 'bg-accent-500 text-white'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                      }`}
                     >
                       {pageNum + 1}
                     </button>
@@ -688,7 +715,7 @@ export default function TeamDirectory() {
                   aria-label="Next page"
                   className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 >
-                  <ChevronRight className="w-5 h-5 text-[var(--text-secondary)]" />
+                  <ChevronRight className="w-5 h-5 text-[var(--text-secondary)]"/>
                 </button>
               </div>
             )}
@@ -696,7 +723,7 @@ export default function TeamDirectory() {
             {/* Empty State */}
             {employees.length === 0 && !isPending && (
               <div className="text-center py-12">
-                <Users className="w-16 h-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <Users className="w-16 h-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
                 <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                   No employees found
                 </h3>
@@ -712,16 +739,16 @@ export default function TeamDirectory() {
         <AnimatePresence>
           {selectedEmployee && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
               className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
               onClick={() => setSelectedEmployee(null)}
             >
               <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
+                initial={{scale: 0.95, opacity: 0}}
+                animate={{scale: 1, opacity: 1}}
+                exit={{scale: 0.95, opacity: 0}}
                 className="skeuo-card rounded-lg max-w-lg w-full overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -732,7 +759,7 @@ export default function TeamDirectory() {
                     aria-label="Close employee details"
                     className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                   >
-                    <X className="w-5 h-5 text-white" />
+                    <X className="w-5 h-5 text-white"/>
                   </button>
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                     <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
@@ -770,7 +797,7 @@ export default function TeamDirectory() {
                   <div className="space-y-4">
                     {selectedEmployee.departmentName && (
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                        <Building2 className="w-5 h-5 text-[var(--text-muted)]" />
+                        <Building2 className="w-5 h-5 text-[var(--text-muted)]"/>
                         <div>
                           <p className="text-caption">Department</p>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -782,7 +809,7 @@ export default function TeamDirectory() {
 
                     {selectedEmployee.personalEmail && (
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                        <Mail className="w-5 h-5 text-[var(--text-muted)]" />
+                        <Mail className="w-5 h-5 text-[var(--text-muted)]"/>
                         <div className="flex-1">
                           <p className="text-caption">Email</p>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -800,7 +827,7 @@ export default function TeamDirectory() {
 
                     {selectedEmployee.phoneNumber && (
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                        <Phone className="w-5 h-5 text-[var(--text-muted)]" />
+                        <Phone className="w-5 h-5 text-[var(--text-muted)]"/>
                         <div className="flex-1">
                           <p className="text-caption">Phone</p>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -818,7 +845,7 @@ export default function TeamDirectory() {
 
                     {selectedEmployee.managerName && (
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                        <UserCircle className="w-5 h-5 text-[var(--text-muted)]" />
+                        <UserCircle className="w-5 h-5 text-[var(--text-muted)]"/>
                         <div>
                           <p className="text-caption">Reports To</p>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -830,7 +857,7 @@ export default function TeamDirectory() {
 
                     {selectedEmployee.joiningDate && (
                       <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                        <Calendar className="w-5 h-5 text-[var(--text-muted)]" />
+                        <Calendar className="w-5 h-5 text-[var(--text-muted)]"/>
                         <div>
                           <p className="text-caption">Joined</p>
                           <p className="font-medium text-[var(--text-primary)]">

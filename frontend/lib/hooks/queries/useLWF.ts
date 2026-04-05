@@ -1,12 +1,12 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { lwfService } from '@/lib/services/hrms/lwf.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {lwfService} from '@/lib/services/hrms/lwf.service';
 import {
+  LWFCalculationRequest,
   LWFConfiguration,
   LWFConfigurationRequest,
   LWFDeduction,
-  LWFCalculationRequest,
   LWFRemittanceReport,
 } from '@/lib/types/hrms/lwf';
 
@@ -17,14 +17,14 @@ export const lwfKeys = {
   configurations: () => [...lwfKeys.all, 'configurations'] as const,
   deductions: () => [...lwfKeys.all, 'deductions'] as const,
   deductionsByPeriod: (month: number, year: number) =>
-    [...lwfKeys.deductions(), 'period', { month, year }] as const,
+    [...lwfKeys.deductions(), 'period', {month, year}] as const,
   deductionsByEmployee: (employeeId: string) =>
     [...lwfKeys.deductions(), 'employee', employeeId] as const,
   deductionsByEmployeeYear: (employeeId: string, year: number) =>
-    [...lwfKeys.deductions(), 'employee', employeeId, { year }] as const,
+    [...lwfKeys.deductions(), 'employee', employeeId, {year}] as const,
   report: () => [...lwfKeys.all, 'report'] as const,
   remittanceReport: (month: number, year: number) =>
-    [...lwfKeys.report(), { month, year }] as const,
+    [...lwfKeys.report(), {month, year}] as const,
 };
 
 // ─── Queries ────────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ export function useCreateOrUpdateLWFConfig() {
     mutationFn: (data: LWFConfigurationRequest) =>
       lwfService.createOrUpdateConfiguration(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: lwfKeys.configurations() });
+      queryClient.invalidateQueries({queryKey: lwfKeys.configurations()});
     },
   });
 }
@@ -113,7 +113,7 @@ export function useDeactivateLWFConfig() {
     mutationFn: (stateCode: string) =>
       lwfService.deactivateConfiguration(stateCode),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: lwfKeys.configurations() });
+      queryClient.invalidateQueries({queryKey: lwfKeys.configurations()});
     },
   });
 }
@@ -128,7 +128,7 @@ export function useCalculateLWF() {
       queryClient.invalidateQueries({
         queryKey: lwfKeys.deductionsByPeriod(variables.month, variables.year),
       });
-      queryClient.invalidateQueries({ queryKey: lwfKeys.report() });
+      queryClient.invalidateQueries({queryKey: lwfKeys.report()});
     },
   });
 }

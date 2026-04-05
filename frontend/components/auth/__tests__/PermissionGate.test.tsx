@@ -3,9 +3,10 @@
  * Run with: npx vitest run components/auth/__tests__/PermissionGate.test.tsx
  */
 
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PermissionGate, AdminGate, HRGate, ManagerGate } from '../PermissionGate';
+import {render, screen} from '@testing-library/react';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {AdminGate, HRGate, ManagerGate, PermissionGate} from '../PermissionGate';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 
 // Define test permission/role constants directly to avoid full module import issues
 const Permissions = {
@@ -35,8 +36,6 @@ const Roles = {
 vi.mock('@/lib/hooks/usePermissions', () => ({
   usePermissions: vi.fn(),
 }));
-
-import { usePermissions } from '@/lib/hooks/usePermissions';
 
 const mockUsePermissions = usePermissions as ReturnType<typeof vi.fn>;
 

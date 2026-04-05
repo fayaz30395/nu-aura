@@ -1,24 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  Stack,
-  SegmentedControl,
-  Center,
-  Loader,
-  Text,
-  Pagination,
-  Group,
-} from '@mantine/core';
-import { IconActivity } from '@tabler/icons-react';
-import { useActivityFeed } from '@/lib/hooks/queries/useFluence';
+import {useEffect, useState} from 'react';
+import {Center, Group, Loader, Pagination, SegmentedControl, Stack, Text,} from '@mantine/core';
+import {IconActivity} from '@tabler/icons-react';
+import {useActivityFeed} from '@/lib/hooks/queries/useFluence';
 import ActivityCard from './ActivityCard';
 
 const FILTER_OPTIONS = [
-  { label: 'All', value: '' },
-  { label: 'Wiki', value: 'WIKI' },
-  { label: 'Blog', value: 'BLOG' },
-  { label: 'Template', value: 'TEMPLATE' },
+  {label: 'All', value: ''},
+  {label: 'Wiki', value: 'WIKI'},
+  {label: 'Blog', value: 'BLOG'},
+  {label: 'Template', value: 'TEMPLATE'},
 ];
 
 const PAGE_SIZE = 20;
@@ -35,7 +27,7 @@ export default function ActivityFeed() {
     return () => clearTimeout(timer);
   }, [page, contentType]);
 
-  const { data, isLoading: queryLoading, isError } = useActivityFeed(
+  const {data, isLoading: queryLoading, isError} = useActivityFeed(
     page,
     PAGE_SIZE,
     contentType || undefined
@@ -59,7 +51,7 @@ export default function ActivityFeed() {
 
       {isLoading && (
         <Center py="xl">
-          <Loader size="md" />
+          <Loader size="md"/>
         </Center>
       )}
 
@@ -74,7 +66,7 @@ export default function ActivityFeed() {
       {!isLoading && activities.length === 0 && (
         <Center py="xl">
           <Stack align="center" gap="xs">
-            <IconActivity size={48} color="var(--text-muted)" />
+            <IconActivity size={48} color="var(--text-muted)"/>
             <Text c="dimmed" size="sm">
               {isError || loadingTimedOut
                 ? 'Unable to load activity feed. The service may be temporarily unavailable.'
@@ -86,7 +78,7 @@ export default function ActivityFeed() {
 
       {!isLoading &&
         activities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} />
+          <ActivityCard key={activity.id} activity={activity}/>
         ))}
 
       {totalPages > 1 && (

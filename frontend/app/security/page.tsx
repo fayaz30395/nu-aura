@@ -1,29 +1,29 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
-  Shield,
-  Lock,
-  Globe,
-  Server,
-  Database,
-  Key,
-  FileCheck,
-  Eye,
-  CloudLightning,
   Check,
+  CloudLightning,
+  Database,
   Download,
+  Eye,
+  FileCheck,
+  Globe,
+  Key,
+  Lock,
+  Server,
+  Shield,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function SecurityPage() {
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
   const router = useRouter();
 
   const hasAccess = hasPermission(Permissions.SYSTEM_ADMIN);
@@ -159,7 +159,8 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -192,7 +193,7 @@ export default function SecurityPage() {
             Bank-level encryption, SOC 2 certified, and GDPR compliant. Your data security is our top priority.
           </p>
           <Button size="lg" variant="outline" className="gap-2">
-            <Download className="h-5 w-5" />
+            <Download className="h-5 w-5"/>
             Download Security White Paper
           </Button>
         </div>
@@ -205,16 +206,16 @@ export default function SecurityPage() {
             {certifications.map((cert, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
               >
                 <Card hover padding="lg" className="text-center h-full">
                   <div
                     className={`w-16 h-16 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center mx-auto mb-4`}
                   >
-                    <cert.icon className="h-8 w-8 text-white" />
+                    <cert.icon className="h-8 w-8 text-white"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {cert.name}
@@ -243,14 +244,15 @@ export default function SecurityPage() {
             {securityFeatures.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
               >
                 <Card padding="lg" className="h-full">
-                  <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950 flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <div
+                    className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950 flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-success-600 dark:text-success-400"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {feature.title}
@@ -261,7 +263,7 @@ export default function SecurityPage() {
                   <ul className="space-y-2">
                     {feature.details.map((detail, i) => (
                       <li key={i} className="flex items-center gap-2 text-body-secondary">
-                        <Check className="h-4 w-4 text-success-500 flex-shrink-0" />
+                        <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
                         {detail}
                       </li>
                     ))}
@@ -292,7 +294,7 @@ export default function SecurityPage() {
             {complianceFeatures.map((feature, index) => (
               <Card key={index} padding="lg">
                 <div className="flex items-start gap-4">
-                  <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1" />
+                  <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1"/>
                   <div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                       {feature.title}
@@ -340,7 +342,7 @@ export default function SecurityPage() {
               },
             ].map((stat, index) => (
               <Card key={index} padding="lg" className="text-center">
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
                 <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
                   {stat.value}
                 </div>
@@ -365,7 +367,7 @@ export default function SecurityPage() {
               <Button size="lg" className="btn-primary">Contact Security Team</Button>
             </Link>
             <Button size="lg" variant="outline" className="gap-2">
-              <Download className="h-5 w-5" />
+              <Download className="h-5 w-5"/>
               Download Security Docs
             </Button>
           </div>

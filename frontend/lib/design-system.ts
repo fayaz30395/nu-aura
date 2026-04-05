@@ -96,9 +96,9 @@ export const chartColors = {
 export const motion = {
   /** Page entrance animation */
   pageEnter: {
-    initial: { opacity: 0, y: 8 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.25, ease: 'easeOut' },
+    initial: {opacity: 0, y: 8},
+    animate: {opacity: 1, y: 0},
+    transition: {duration: 0.25, ease: 'easeOut'},
   },
   /** Staggered container */
   staggerContainer: {
@@ -106,23 +106,23 @@ export const motion = {
     animate: 'visible',
     variants: {
       hidden: {},
-      visible: { transition: { staggerChildren: 0.06 } },
+      visible: {transition: {staggerChildren: 0.06}},
     },
   },
   /** Staggered child item */
   staggerItem: {
     variants: {
-      hidden: { opacity: 0, y: 8 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } },
+      hidden: {opacity: 0, y: 8},
+      visible: {opacity: 1, y: 0, transition: {duration: 0.25, ease: 'easeOut'}},
     },
   },
   /** Card hover */
   cardHover: {
-    whileHover: { y: -2, transition: { duration: 0.2 } },
+    whileHover: {y: -2, transition: {duration: 0.2}},
   },
   /** Button tap feedback */
   buttonTap: {
-    whileTap: { scale: 0.98 },
+    whileTap: {scale: 0.98},
   },
 } as const;
 

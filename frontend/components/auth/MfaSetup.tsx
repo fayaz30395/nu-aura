@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { logger } from '@/lib/utils/logger';
-import { Copy, Check, AlertCircle, Loader2, Shield, Key } from 'lucide-react';
-import { mfaApi } from '@/lib/api/mfa';
-import { Button } from '@/components/ui/Button';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import {logger} from '@/lib/utils/logger';
+import {AlertCircle, Check, Copy, Key, Loader2, Shield} from 'lucide-react';
+import {mfaApi} from '@/lib/api/mfa';
+import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 
 interface MfaSetupProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface MfaSetupProps {
 
 type SetupStep = 'loading' | 'scan' | 'verify' | 'backup' | 'complete';
 
-export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel }) => {
+export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel}) => {
   const [step, setStep] = useState<SetupStep>('loading');
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [secret, setSecret] = useState<string>('');
@@ -41,7 +41,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         setStep('scan');
       } catch (err: unknown) {
         logger.error('Failed to load MFA setup:', err);
-        const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
+        const message = typeof err === 'object' && err !== null && 'response' in err ? (err as {
+          response?: { data?: { message?: string } }
+        }).response?.data?.message : null;
         setError(message || 'Failed to load MFA setup. Please try again.');
         setStep('scan');
       }
@@ -52,7 +54,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!verificationCode || verificationCode.length !== 6) {
       setError('Please enter a valid 6-digit code');
       return;
@@ -71,7 +73,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
       setStep('backup');
     } catch (err: unknown) {
       logger.error('Failed to verify MFA code:', err);
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as {
+        response?: { data?: { message?: string } }
+      }).response?.data?.message : null;
       setError(message || 'Invalid code. Please try again.');
       setVerificationCode('');
     } finally {
@@ -112,9 +116,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
   return (
     <Modal isOpen={isOpen} onClose={handleCancel} size="lg" closeOnEscape={false} closeOnBackdrop={false}>
-      <ModalHeader onClose={step !== 'loading' && step !== 'verify' ? handleCancel : undefined} showCloseButton={step !== 'loading' && step !== 'verify'}>
+      <ModalHeader onClose={step !== 'loading' && step !== 'verify' ? handleCancel : undefined}
+                   showCloseButton={step !== 'loading' && step !== 'verify'}>
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-accent-700" />
+          <Shield className="h-5 w-5 text-accent-700"/>
           <span>Set Up Two-Factor Authentication</span>
         </div>
       </ModalHeader>
@@ -123,7 +128,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Loading State */}
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 text-accent-700 animate-spin mb-4" />
+            <Loader2 className="h-8 w-8 text-accent-700 animate-spin mb-4"/>
             <p className="text-[var(--text-secondary)]">Loading setup information...</p>
           </div>
         )}
@@ -137,9 +142,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* QR Code */}
             {qrCodeUrl && (
-              <div className="flex justify-center p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
+              <div
+                className="flex justify-center p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
                 {/* unoptimized because qrCodeUrl is a data: URI — next/image optimization doesn't apply */}
-                <Image src={qrCodeUrl} alt="QR Code for MFA" width={192} height={192} unoptimized />
+                <Image src={qrCodeUrl} alt="QR Code for MFA" width={192} height={192} unoptimized/>
               </div>
             )}
 
@@ -149,7 +155,8 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                 Or enter this code manually:
               </p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 px-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg font-mono text-sm text-[var(--text-primary)] break-all">
+                <code
+                  className="flex-1 px-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg font-mono text-sm text-[var(--text-primary)] break-all">
                   {secret}
                 </code>
                 <button
@@ -160,9 +167,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   aria-label="Copy secret"
                 >
                   {copiedSecret ? (
-                    <Check className="h-5 w-5 text-success-600" />
+                    <Check className="h-5 w-5 text-success-600"/>
                   ) : (
-                    <Copy className="h-5 w-5 text-[var(--text-muted)] hover:text-[var(--text-secondary)]" />
+                    <Copy className="h-5 w-5 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"/>
                   )}
                 </button>
               </div>
@@ -179,8 +186,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* Error Alert */}
             {error && (
-              <div className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+              <div
+                className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                 <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
               </div>
             )}
@@ -232,14 +240,16 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Backup Codes Step */}
         {step === 'backup' && (
           <div className="space-y-4">
-            <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
               <div className="flex-1">
                 <p className="text-sm font-medium text-warning-900 dark:text-warning-100">
                   Save your backup codes
                 </p>
                 <p className="text-xs text-warning-800 dark:text-warning-300 mt-1">
-                  Store these codes in a safe place. You can use them to access your account if you lose access to your authenticator.
+                  Store these codes in a safe place. You can use them to access your account if you lose access to your
+                  authenticator.
                 </p>
               </div>
             </div>
@@ -260,20 +270,23 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                       {code}
                     </code>
                     {copiedIndex === index ? (
-                      <Check className="h-4 w-4 text-success-600 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-success-600 flex-shrink-0"/>
                     ) : (
-                      <Copy className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-shrink-0" />
+                      <Copy
+                        className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-shrink-0"/>
                     )}
                   </div>
                 </button>
               ))}
             </div>
 
-            <div className="flex items-start gap-2 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-              <Key className="h-5 w-5 text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="flex items-start gap-2 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
+              <Key className="h-5 w-5 text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
               <div className="flex-1">
                 <p className="text-xs text-accent-900 dark:text-accent-100">
-                  We recommend downloading or printing these codes and storing them in a secure location separate from your authenticator.
+                  We recommend downloading or printing these codes and storing them in a secure location separate from
+                  your authenticator.
                 </p>
               </div>
             </div>
@@ -283,8 +296,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         {/* Complete Step */}
         {step === 'complete' && (
           <div className="flex flex-col items-center justify-center py-8">
-            <div className="flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-              <Check className="h-8 w-8 text-success-600 dark:text-success-400" />
+            <div
+              className="flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+              <Check className="h-8 w-8 text-success-600 dark:text-success-400"/>
             </div>
             <p className="text-lg font-semibold text-[var(--text-primary)]">
               Two-Factor Authentication Enabled

@@ -5,8 +5,14 @@
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }],
-
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     "no-restricted-syntax": [
       "warn",
       {
@@ -29,20 +35,30 @@
   },
   "overrides": [
     {
-      "files": ["*.config.js", "*.config.cjs", "*.config.mjs"],
+      "files": [
+        "*.config.js",
+        "*.config.cjs",
+        "*.config.mjs"
+      ],
       "rules": {
         "@typescript-eslint/no-require-imports": "off",
         "@typescript-eslint/no-unused-vars": "off"
       }
     },
     {
-      "files": ["e2e/**/*", "e2e/**/*.spec.ts"],
+      "files": [
+        "e2e/**/*",
+        "e2e/**/*.spec.ts"
+      ],
       "rules": {
-        "@typescript-eslint/no-unused-vars": ["warn", {
-          "argsIgnorePattern": "^_|^page$|^request$|^context$|^browser$",
-          "varsIgnorePattern": "^_",
-          "caughtErrorsIgnorePattern": "^_"
-        }]
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": "^_|^page$|^request$|^context$|^browser$",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ]
       }
     }
   ]

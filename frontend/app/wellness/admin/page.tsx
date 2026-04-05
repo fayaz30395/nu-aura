@@ -1,47 +1,34 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Calendar, Heart, Info, Plus, RefreshCw, Star, Target, Trophy, Users,} from 'lucide-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  Plus,
-  Heart,
-  Target,
-  RefreshCw,
-  Info,
-  Trash2,
-  Users,
-  Trophy,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  Star,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
   Input,
-  Badge,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalHeader,
   Select,
   Textarea,
 } from '@/components/ui';
 import {
-  useActivePrograms,
   useActiveChallenges,
-  useUpcomingChallenges,
-  useCreateWellnessProgram,
+  useActivePrograms,
   useCreateWellnessChallenge,
+  useCreateWellnessProgram,
+  useUpcomingChallenges,
 } from '@/lib/hooks/queries/useWellness';
-import type { ProgramCategory, ProgramType } from '@/lib/types/grow/wellness';
+import type {ProgramCategory, ProgramType} from '@/lib/types/grow/wellness';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -111,7 +98,19 @@ const PROGRAM_TYPE_LABELS: Record<string, string> = {
 
 // ─── Program Card ─────────────────────────────────────────────────────────────
 
-function ProgramCard({ program }: { program: { id: string; name: string; description?: string; category: string; programType: string; isActive: boolean; isFeatured: boolean; pointsReward?: number; participantCount?: number } }) {
+function ProgramCard({program}: {
+  program: {
+    id: string;
+    name: string;
+    description?: string;
+    category: string;
+    programType: string;
+    isActive: boolean;
+    isFeatured: boolean;
+    pointsReward?: number;
+    participantCount?: number
+  }
+}) {
   return (
     <Card className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow">
       <CardContent className="p-4">
@@ -123,7 +122,7 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
               </span>
               {program.isFeatured && (
                 <Badge variant="warning" className="text-xs flex items-center gap-1">
-                  <Star size={10} />
+                  <Star size={10}/>
                   Featured
                 </Badge>
               )}
@@ -137,7 +136,8 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
               </p>
             )}
             <div className="flex items-center gap-4 text-caption">
-              <span className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
+              <span
+                className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
                 {CATEGORY_LABELS[program.category] ?? program.category}
               </span>
               <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">
@@ -145,13 +145,13 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
               </span>
               {program.pointsReward != null && (
                 <span className="flex items-center gap-1">
-                  <Trophy size={10} />
+                  <Trophy size={10}/>
                   {program.pointsReward} pts
                 </span>
               )}
               {program.participantCount != null && (
                 <span className="flex items-center gap-1">
-                  <Users size={10} />
+                  <Users size={10}/>
                   {program.participantCount}
                 </span>
               )}
@@ -165,7 +165,19 @@ function ProgramCard({ program }: { program: { id: string; name: string; descrip
 
 // ─── Challenge Card ───────────────────────────────────────────────────────────
 
-function ChallengeCard({ challenge }: { challenge: { id: string; name: string; description?: string; startDate: string; endDate: string; pointsReward: number; isTeamBased: boolean; isActive: boolean; participantCount?: number } }) {
+function ChallengeCard({challenge}: {
+  challenge: {
+    id: string;
+    name: string;
+    description?: string;
+    startDate: string;
+    endDate: string;
+    pointsReward: number;
+    isTeamBased: boolean;
+    isActive: boolean;
+    participantCount?: number
+  }
+}) {
   const start = new Date(challenge.startDate);
   const end = new Date(challenge.endDate);
   return (
@@ -182,7 +194,7 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
               </Badge>
               {challenge.isTeamBased && (
                 <Badge variant="primary" className="text-xs flex items-center gap-1">
-                  <Users size={10} />
+                  <Users size={10}/>
                   Team
                 </Badge>
               )}
@@ -194,16 +206,16 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
             )}
             <div className="flex items-center gap-4 text-caption">
               <span className="flex items-center gap-1">
-                <Calendar size={10} />
+                <Calendar size={10}/>
                 {start.toLocaleDateString()} – {end.toLocaleDateString()}
               </span>
               <span className="flex items-center gap-1">
-                <Trophy size={10} />
+                <Trophy size={10}/>
                 {challenge.pointsReward} pts
               </span>
               {challenge.participantCount != null && (
                 <span className="flex items-center gap-1">
-                  <Users size={10} />
+                  <Users size={10}/>
                   {challenge.participantCount}
                 </span>
               )}
@@ -218,9 +230,9 @@ function ChallengeCard({ challenge }: { challenge: { id: string; name: string; d
 // ─── Create Program Modal ─────────────────────────────────────────────────────
 
 function CreateProgramModal({
-  isOpen,
-  onClose,
-}: {
+                              isOpen,
+                              onClose,
+                            }: {
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -231,7 +243,7 @@ function CreateProgramModal({
     handleSubmit,
     control,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ProgramFormData>({
     resolver: zodResolver(programSchema),
     defaultValues: {
@@ -274,7 +286,7 @@ function CreateProgramModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Program Name <span className="text-danger-500">*</span>
               </label>
-              <Input {...register('name')} placeholder="e.g. 30-Day Step Challenge" />
+              <Input {...register('name')} placeholder="e.g. 30-Day Step Challenge"/>
               {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
             </div>
 
@@ -282,7 +294,7 @@ function CreateProgramModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Description
               </label>
-              <Textarea {...register('description')} placeholder="Describe the program…" rows={2} />
+              <Textarea {...register('description')} placeholder="Describe the program…" rows={2}/>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -313,13 +325,13 @@ function CreateProgramModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date
                 </label>
-                <Input {...register('startDate')} type="date" />
+                <Input {...register('startDate')} type="date"/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   End Date
                 </label>
-                <Input {...register('endDate')} type="date" />
+                <Input {...register('endDate')} type="date"/>
               </div>
             </div>
 
@@ -328,13 +340,13 @@ function CreateProgramModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Points Reward
                 </label>
-                <Input {...register('pointsReward')} type="number" min={0} placeholder="0" />
+                <Input {...register('pointsReward')} type="number" min={0} placeholder="0"/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Max Participants
                 </label>
-                <Input {...register('maxParticipants')} type="number" min={1} placeholder="Unlimited" />
+                <Input {...register('maxParticipants')} type="number" min={1} placeholder="Unlimited"/>
               </div>
             </div>
 
@@ -342,7 +354,7 @@ function CreateProgramModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 External Link (Optional)
               </label>
-              <Input {...register('externalLink')} type="url" placeholder="https://…" />
+              <Input {...register('externalLink')} type="url" placeholder="https://…"/>
               {errors.externalLink && (
                 <p className="text-xs text-danger-500 mt-1">{errors.externalLink.message}</p>
               )}
@@ -352,14 +364,14 @@ function CreateProgramModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Instructions (Optional)
               </label>
-              <Textarea {...register('instructions')} placeholder="Step-by-step instructions…" rows={2} />
+              <Textarea {...register('instructions')} placeholder="Step-by-step instructions…" rows={2}/>
             </div>
 
             <div className="flex items-center gap-2">
               <Controller
                 name="isFeatured"
                 control={control}
-                render={({ field }) => (
+                render={({field}) => (
                   <input
                     type="checkbox"
                     id="isFeatured"
@@ -389,10 +401,10 @@ function CreateProgramModal({
 // ─── Create Challenge Modal ───────────────────────────────────────────────────
 
 function CreateChallengeModal({
-  isOpen,
-  onClose,
-  programs,
-}: {
+                                isOpen,
+                                onClose,
+                                programs,
+                              }: {
   isOpen: boolean;
   onClose: () => void;
   programs: Array<{ id: string; name: string }>;
@@ -404,7 +416,7 @@ function CreateChallengeModal({
     handleSubmit,
     control,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ChallengeFormData>({
     resolver: zodResolver(challengeSchema),
     defaultValues: {
@@ -451,7 +463,7 @@ function CreateChallengeModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Challenge Name <span className="text-danger-500">*</span>
               </label>
-              <Input {...register('name')} placeholder="e.g. 10,000 Steps a Day" />
+              <Input {...register('name')} placeholder="e.g. 10,000 Steps a Day"/>
               {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
             </div>
 
@@ -459,7 +471,7 @@ function CreateChallengeModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Description
               </label>
-              <Textarea {...register('description')} placeholder="What is this challenge about?" rows={2} />
+              <Textarea {...register('description')} placeholder="What is this challenge about?" rows={2}/>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -484,7 +496,7 @@ function CreateChallengeModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Points Reward
                 </label>
-                <Input {...register('pointsReward')} type="number" min={0} placeholder="0" />
+                <Input {...register('pointsReward')} type="number" min={0} placeholder="0"/>
               </div>
             </div>
 
@@ -493,7 +505,7 @@ function CreateChallengeModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date <span className="text-danger-500">*</span>
                 </label>
-                <Input {...register('startDate')} type="date" />
+                <Input {...register('startDate')} type="date"/>
                 {errors.startDate && (
                   <p className="text-xs text-danger-500 mt-1">{errors.startDate.message}</p>
                 )}
@@ -502,7 +514,7 @@ function CreateChallengeModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   End Date <span className="text-danger-500">*</span>
                 </label>
-                <Input {...register('endDate')} type="date" />
+                <Input {...register('endDate')} type="date"/>
                 {errors.endDate && (
                   <p className="text-xs text-danger-500 mt-1">{errors.endDate.message}</p>
                 )}
@@ -514,13 +526,13 @@ function CreateChallengeModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Target Value
                 </label>
-                <Input {...register('targetValue')} type="number" min={1} placeholder="e.g. 10000" />
+                <Input {...register('targetValue')} type="number" min={1} placeholder="e.g. 10000"/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Target Unit
                 </label>
-                <Input {...register('targetUnit')} placeholder="e.g. steps, minutes" />
+                <Input {...register('targetUnit')} placeholder="e.g. steps, minutes"/>
               </div>
             </div>
 
@@ -543,7 +555,7 @@ function CreateChallengeModal({
                 <Controller
                   name="isTeamBased"
                   control={control}
-                  render={({ field }) => (
+                  render={({field}) => (
                     <input
                       type="checkbox"
                       id="isTeamBased"
@@ -578,9 +590,13 @@ export default function WellnessAdminPage() {
   const [showProgramModal, setShowProgramModal] = useState(false);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
 
-  const { data: programs = [], isLoading: programsLoading, refetch: refetchPrograms } = useActivePrograms();
-  const { data: activeChallenges = [], isLoading: activeChallengesLoading, refetch: refetchChallenges } = useActiveChallenges();
-  const { data: upcomingChallenges = [], isLoading: upcomingLoading } = useUpcomingChallenges();
+  const {data: programs = [], isLoading: programsLoading, refetch: refetchPrograms} = useActivePrograms();
+  const {
+    data: activeChallenges = [],
+    isLoading: activeChallengesLoading,
+    refetch: refetchChallenges
+  } = useActiveChallenges();
+  const {data: upcomingChallenges = [], isLoading: upcomingLoading} = useUpcomingChallenges();
 
   const allChallenges = [...activeChallenges, ...upcomingChallenges].filter(
     (c, idx, arr) => arr.findIndex((x) => x.id === c.id) === idx
@@ -589,7 +605,7 @@ export default function WellnessAdminPage() {
   const isLoading = programsLoading || activeChallengesLoading || upcomingLoading;
 
   return (
-    <AppLayout breadcrumbs={[{ label: 'Wellness', href: '/wellness' }, { label: 'Admin' }]} activeMenuItem="wellness">
+    <AppLayout breadcrumbs={[{label: 'Wellness', href: '/wellness'}, {label: 'Admin'}]} activeMenuItem="wellness">
       <PermissionGate
         permission={Permissions.WELLNESS_MANAGE}
         fallback={
@@ -616,21 +632,24 @@ export default function WellnessAdminPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => { refetchPrograms(); refetchChallenges(); }}
+                onClick={() => {
+                  refetchPrograms();
+                  refetchChallenges();
+                }}
                 disabled={isLoading}
                 className="flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4" />
+                <RefreshCw className="h-4 w-4"/>
                 Refresh
               </Button>
               {activeTab === 'programs' ? (
                 <Button onClick={() => setShowProgramModal(true)} className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4"/>
                   New Program
                 </Button>
               ) : (
                 <Button onClick={() => setShowChallengeModal(true)} className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4"/>
                   New Challenge
                 </Button>
               )}
@@ -642,7 +661,7 @@ export default function WellnessAdminPage() {
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900/30">
-                  <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                  <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-caption">Active Programs</p>
@@ -653,22 +672,24 @@ export default function WellnessAdminPage() {
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900/30">
-                  <Target className="h-5 w-5 text-success-600 dark:text-success-400" />
+                  <Target className="h-5 w-5 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-caption">Active Challenges</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{activeChallenges.length}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{activeChallenges.length}</p>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900/30">
-                  <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                  <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-caption">Upcoming Challenges</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{upcomingChallenges.length}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{upcomingChallenges.length}</p>
                 </div>
               </CardContent>
             </Card>
@@ -695,20 +716,20 @@ export default function WellnessAdminPage() {
           {/* Content */}
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <RefreshCw className="h-6 w-6 animate-spin text-accent-500 mr-4" />
+              <RefreshCw className="h-6 w-6 animate-spin text-accent-500 mr-4"/>
               <span className="text-[var(--text-muted)]">Loading…</span>
             </div>
           ) : activeTab === 'programs' ? (
             programs.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4" />
+                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4"/>
                   <p className="font-medium text-[var(--text-secondary)]">No programs yet</p>
                   <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness program to get started
                   </p>
                   <Button onClick={() => setShowProgramModal(true)} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4"/>
                     Create Program
                   </Button>
                 </CardContent>
@@ -716,7 +737,7 @@ export default function WellnessAdminPage() {
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {programs.map((program) => (
-                  <ProgramCard key={program.id} program={program} />
+                  <ProgramCard key={program.id} program={program}/>
                 ))}
               </div>
             )
@@ -724,13 +745,13 @@ export default function WellnessAdminPage() {
             allChallenges.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
-                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4" />
+                  <Info className="h-10 w-10 text-[var(--text-muted)] mb-4"/>
                   <p className="font-medium text-[var(--text-secondary)]">No challenges yet</p>
                   <p className="text-body-muted mt-1 mb-4">
                     Create your first wellness challenge
                   </p>
                   <Button onClick={() => setShowChallengeModal(true)} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4"/>
                     Create Challenge
                   </Button>
                 </CardContent>
@@ -738,7 +759,7 @@ export default function WellnessAdminPage() {
             ) : (
               <div className="space-y-4">
                 {allChallenges.map((challenge) => (
-                  <ChallengeCard key={challenge.id} challenge={challenge} />
+                  <ChallengeCard key={challenge.id} challenge={challenge}/>
                 ))}
               </div>
             )
@@ -746,7 +767,7 @@ export default function WellnessAdminPage() {
         </div>
 
         {/* Modals */}
-        <CreateProgramModal isOpen={showProgramModal} onClose={() => setShowProgramModal(false)} />
+        <CreateProgramModal isOpen={showProgramModal} onClose={() => setShowProgramModal(false)}/>
         <CreateChallengeModal
           isOpen={showChallengeModal}
           onClose={() => setShowChallengeModal(false)}

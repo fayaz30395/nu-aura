@@ -1,16 +1,16 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { taxService } from '@/lib/services/hrms/tax.service';
-import { TaxDeclarationRequest, TaxDeclarationResponse } from '@/lib/types/hrms/tax';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {taxService} from '@/lib/services/hrms/tax.service';
+import {TaxDeclarationRequest, TaxDeclarationResponse} from '@/lib/types/hrms/tax';
+import {notifications} from '@mantine/notifications';
 
 // Query keys for cache management
 export const taxKeys = {
   all: ['tax'] as const,
   declarations: () => [...taxKeys.all, 'declarations'] as const,
   list: (page: number, size: number) =>
-    [...taxKeys.declarations(), { page, size }] as const,
+    [...taxKeys.declarations(), {page, size}] as const,
   detail: (id: string) => [...taxKeys.all, 'detail', id] as const,
 };
 
@@ -22,7 +22,7 @@ export function useTaxDeclarations(
   return useQuery({
     queryKey: taxKeys.list(page, size),
     queryFn: async () => {
-      const result = await taxService.getAll({ page, size });
+      const result = await taxService.getAll({page, size});
       // Defensive: ensure we always return an array regardless of backend response shape
       if (Array.isArray(result)) return result;
       if (result && typeof result === 'object' && 'content' in result && Array.isArray((result as Record<string, unknown>).content)) {
@@ -53,7 +53,7 @@ export function useCreateTaxDeclaration() {
     mutationFn: (data: TaxDeclarationRequest) => taxService.create(data),
     onSuccess: () => {
       // Invalidate all declarations lists to refresh
-      queryClient.invalidateQueries({ queryKey: taxKeys.declarations() });
+      queryClient.invalidateQueries({queryKey: taxKeys.declarations()});
       notifications.show({
         title: 'Success',
         message: 'Tax declaration created successfully',
@@ -75,10 +75,10 @@ export function useApproveTaxDeclaration() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approverId }: { id: string; approverId: string }) =>
+    mutationFn: ({id, approverId}: { id: string; approverId: string }) =>
       taxService.approve(id, approverId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: taxKeys.declarations() });
+      queryClient.invalidateQueries({queryKey: taxKeys.declarations()});
       queryClient.setQueryData(taxKeys.detail(data.id), data);
       notifications.show({
         title: 'Success',
@@ -101,10 +101,10 @@ export function useRejectTaxDeclaration() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, rejectedBy, reason }: { id: string; rejectedBy: string; reason: string }) =>
+    mutationFn: ({id, rejectedBy, reason}: { id: string; rejectedBy: string; reason: string }) =>
       taxService.reject(id, rejectedBy, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: taxKeys.declarations() });
+      queryClient.invalidateQueries({queryKey: taxKeys.declarations()});
       queryClient.setQueryData(taxKeys.detail(data.id), data);
       notifications.show({
         title: 'Success',
@@ -129,7 +129,7 @@ export function useSubmitTaxDeclaration() {
   return useMutation({
     mutationFn: (id: string) => taxService.submit(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: taxKeys.declarations() });
+      queryClient.invalidateQueries({queryKey: taxKeys.declarations()});
       queryClient.setQueryData(taxKeys.detail(data.id), data);
       notifications.show({
         title: 'Success',

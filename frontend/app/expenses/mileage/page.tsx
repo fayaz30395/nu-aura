@@ -1,47 +1,34 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
+import {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {Car, CheckCircle, Filter, MapPin, Plus, Send,} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {MileageLogEntry, MileageStatus, VehicleType,} from '@/lib/types/hrms/expense';
+import {EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {format} from 'date-fns';
+import {formatCurrency} from '@/lib/utils';
 import {
-  Plus,
-  Car,
-  MapPin,
-  CheckCircle,
-  XCircle,
-  Send,
-  Filter,
-  ChevronDown,
-} from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import {
-  VehicleType,
-  MileageStatus,
-  MileageLogEntry,
-} from '@/lib/types/hrms/expense';
-import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
-import { format } from 'date-fns';
-import { formatCurrency } from '@/lib/utils';
-import {
+  useApproveMileageLog,
+  useCreateMileageLog,
   useEmployeeMileageLogs,
+  useMileagePolicies,
   useMileageSummary,
   usePendingMileageApprovals,
-  useMileagePolicies,
-  useCreateMileageLog,
-  useSubmitMileageLog,
-  useApproveMileageLog,
   useRejectMileageLog,
+  useSubmitMileageLog,
 } from '@/lib/hooks/queries';
 
 const mileageLogSchema = z.object({
   travelDate: z.string().min(1, 'Travel date is required'),
   fromLocation: z.string().min(1, 'From location is required').max(500),
   toLocation: z.string().min(1, 'To location is required').max(500),
-  distanceKm: z.number({ coerce: true }).positive('Distance must be positive'),
+  distanceKm: z.number({coerce: true}).positive('Distance must be positive'),
   purpose: z.string().max(1000).optional().or(z.literal('')),
   vehicleType: z.enum(['CAR', 'MOTORCYCLE', 'BICYCLE', 'PUBLIC_TRANSPORT'] as const),
   notes: z.string().max(1000).optional().or(z.literal('')),
@@ -67,7 +54,7 @@ const STATUS_COLORS: Record<MileageStatus, string> = {
 };
 
 export default function MileagePage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-logs');
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -96,7 +83,7 @@ export default function MileagePage() {
     handleSubmit,
     reset: resetForm,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<MileageLogFormData>({
     resolver: zodResolver(mileageLogSchema),
     defaultValues: {
@@ -175,7 +162,7 @@ export default function MileagePage() {
   const handleRejectLog = async () => {
     if (!selectedLogId || !rejectReason.trim()) return;
     try {
-      await rejectMutation.mutateAsync({ logId: selectedLogId, reason: rejectReason });
+      await rejectMutation.mutateAsync({logId: selectedLogId, reason: rejectReason});
       setShowRejectModal(false);
       setSelectedLogId(null);
       setRejectReason('');
@@ -205,7 +192,7 @@ export default function MileagePage() {
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"/>
               Log Mileage
             </button>
           </PermissionGate>
@@ -217,7 +204,7 @@ export default function MileagePage() {
             <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                  <Car className="h-5 w-5 text-accent-700" />
+                  <Car className="h-5 w-5 text-accent-700"/>
                 </div>
                 <div>
                   <p className="text-xs text-surface-500 dark:text-surface-400">Total Distance</p>
@@ -230,7 +217,7 @@ export default function MileagePage() {
             <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-success-600" />
+                  <CheckCircle className="h-5 w-5 text-success-600"/>
                 </div>
                 <div>
                   <p className="text-xs text-surface-500 dark:text-surface-400">Reimbursement</p>
@@ -243,7 +230,7 @@ export default function MileagePage() {
             <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                  <MapPin className="h-5 w-5 text-accent-600" />
+                  <MapPin className="h-5 w-5 text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-xs text-surface-500 dark:text-surface-400">Trips This Month</p>
@@ -257,7 +244,7 @@ export default function MileagePage() {
               <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                    <Filter className="h-5 w-5 text-warning-600" />
+                    <Filter className="h-5 w-5 text-warning-600"/>
                   </div>
                   <div>
                     <p className="text-xs text-surface-500 dark:text-surface-400">Remaining Limit</p>
@@ -279,9 +266,9 @@ export default function MileagePage() {
           <nav className="flex gap-6">
             {(
               [
-                { key: 'my-logs' as TabType, label: 'My Mileage Logs' },
-                { key: 'pending' as TabType, label: 'Pending Approvals' },
-                { key: 'policies' as TabType, label: 'Policy Info' },
+                {key: 'my-logs' as TabType, label: 'My Mileage Logs'},
+                {key: 'pending' as TabType, label: 'Pending Approvals'},
+                {key: 'policies' as TabType, label: 'Policy Info'},
               ] as const
             ).map((tab) => (
               <button
@@ -333,46 +320,47 @@ export default function MileagePage() {
               <EmptyState
                 title="No mileage logs"
                 description="Start logging your travel mileage for reimbursement."
-                icon={<Car className="h-12 w-12 text-surface-400" />}
+                icon={<Car className="h-12 w-12 text-surface-400"/>}
               />
             ) : (
-              <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+              <div
+                className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-surface-50 dark:bg-surface-700/50">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Date
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Route
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Distance
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Vehicle
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Reimbursement
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                          Status
-                        </th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
-                          Actions
-                        </th>
-                      </tr>
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Date
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Route
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Distance
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Vehicle
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Reimbursement
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        Status
+                      </th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
+                        Actions
+                      </th>
+                    </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                      {filteredLogs.map((logEntry) => (
-                        <MileageLogRow
-                          key={logEntry.id}
-                          log={logEntry}
-                          onSubmit={handleSubmitLog}
-                          isSubmitting={submitMutation.isPending}
-                        />
-                      ))}
+                    {filteredLogs.map((logEntry) => (
+                      <MileageLogRow
+                        key={logEntry.id}
+                        log={logEntry}
+                        onSubmit={handleSubmitLog}
+                        isSubmitting={submitMutation.isPending}
+                      />
+                    ))}
                     </tbody>
                   </table>
                 </div>
@@ -390,74 +378,75 @@ export default function MileagePage() {
                 <EmptyState
                   title="No pending approvals"
                   description="All mileage logs have been reviewed."
-                  icon={<CheckCircle className="h-12 w-12 text-surface-400" />}
+                  icon={<CheckCircle className="h-12 w-12 text-surface-400"/>}
                 />
               ) : (
-                <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+                <div
+                  className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead className="bg-surface-50 dark:bg-surface-700/50">
-                        <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                            Employee
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                            Date
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                            Route
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                            Distance
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
-                            Amount
-                          </th>
-                          <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
-                            Actions
-                          </th>
-                        </tr>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                          Employee
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                          Date
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                          Route
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                          Distance
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                          Amount
+                        </th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
+                          Actions
+                        </th>
+                      </tr>
                       </thead>
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                        {pendingQuery.data.content.map((logEntry) => (
-                          <tr key={logEntry.id}>
-                            <td className="px-4 py-2 font-medium text-surface-900 dark:text-white">
-                              {logEntry.employeeName || 'N/A'}
-                            </td>
-                            <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
-                              {logEntry.travelDate}
-                            </td>
-                            <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
-                              {logEntry.fromLocation} &rarr; {logEntry.toLocation}
-                            </td>
-                            <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
-                              {logEntry.distanceKm} km
-                            </td>
-                            <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
-                              {formatCurrency(logEntry.reimbursementAmount)}
-                            </td>
-                            <td className="px-4 py-2 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button
-                                  onClick={() => handleApproveLog(logEntry.id)}
-                                  disabled={approveMutation.isPending}
-                                  className="px-2 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                >
-                                  Approve
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setSelectedLogId(logEntry.id);
-                                    setShowRejectModal(true);
-                                  }}
-                                  className="px-2 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                      {pendingQuery.data.content.map((logEntry) => (
+                        <tr key={logEntry.id}>
+                          <td className="px-4 py-2 font-medium text-surface-900 dark:text-white">
+                            {logEntry.employeeName || 'N/A'}
+                          </td>
+                          <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
+                            {logEntry.travelDate}
+                          </td>
+                          <td className="px-4 py-2 text-surface-600 dark:text-surface-300">
+                            {logEntry.fromLocation} &rarr; {logEntry.toLocation}
+                          </td>
+                          <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
+                            {logEntry.distanceKm} km
+                          </td>
+                          <td className="px-4 py-2 text-surface-900 dark:text-white font-medium">
+                            {formatCurrency(logEntry.reimbursementAmount)}
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleApproveLog(logEntry.id)}
+                                disabled={approveMutation.isPending}
+                                className="px-2 py-1.5 text-xs bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedLogId(logEntry.id);
+                                  setShowRejectModal(true);
+                                }}
+                                className="px-2 py-1.5 text-xs bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                       </tbody>
                     </table>
                   </div>
@@ -473,7 +462,7 @@ export default function MileagePage() {
               <EmptyState
                 title="No mileage policies"
                 description="No active mileage reimbursement policies have been configured."
-                icon={<Car className="h-12 w-12 text-surface-400" />}
+                icon={<Car className="h-12 w-12 text-surface-400"/>}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -616,7 +605,8 @@ export default function MileagePage() {
                 </div>
 
                 {estimatedReimbursement > 0 && (
-                  <div className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-2 border border-accent-200 dark:border-accent-800">
+                  <div
+                    className="bg-accent-50 dark:bg-accent-900/20 rounded-lg p-2 border border-accent-200 dark:border-accent-800">
                     <p className="text-sm text-accent-700 dark:text-accent-300">
                       Estimated reimbursement:{' '}
                       <span className="font-bold">{formatCurrency(estimatedReimbursement)}</span>
@@ -714,7 +704,7 @@ interface MileageLogRowProps {
   isSubmitting: boolean;
 }
 
-function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
+function MileageLogRow({log, onSubmit, isSubmitting}: MileageLogRowProps) {
   return (
     <tr>
       <td className="px-4 py-2 text-surface-900 dark:text-white">{log.travelDate}</td>
@@ -749,7 +739,7 @@ function MileageLogRow({ log, onSubmit, isSubmitting }: MileageLogRowProps) {
             disabled={isSubmitting}
             className="flex items-center gap-1 px-2 py-1.5 text-xs bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <Send className="h-3 w-3" />
+            <Send className="h-3 w-3"/>
             Submit
           </button>
         )}

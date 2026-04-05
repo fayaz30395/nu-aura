@@ -7,18 +7,21 @@
 ## Core Responsibilities
 
 ### 1. Product Strategy & Roadmap
+
 - Define product vision for all 4 sub-apps (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence)
 - Quarterly roadmap planning (OKRs, milestones)
 - Feature prioritization (RICE scoring: Reach × Impact × Confidence / Effort)
 - Competitive analysis (Keka, Darwinbox, GreytHR)
 
 ### 2. Requirements Management
+
 - Write user stories (As X, I want Y, so that Z)
 - Define acceptance criteria (GIVEN/WHEN/THEN)
 - Maintain backlog (P0: critical, P1: high, P2: medium, P3: low)
 - Stakeholder alignment (CEO, HR heads, customers)
 
 ### 3. Release Planning
+
 - Wave releases (Wave 1: Core HR, Wave 2: Recruitment, Wave 3: Performance)
 - Beta program management (select customers, feedback loops)
 - Go-live checklists (compliance, training, migration)
@@ -27,17 +30,20 @@
 ## Key Activities
 
 **Quarterly Planning**:
+
 - Set OKRs (3-5 objectives, 3-4 key results each)
 - Align with business goals (revenue, customer acquisition)
 - Resource allocation (eng capacity, design, QA)
 
 **Sprint Planning**:
+
 - Groom backlog (2-week sprints)
 - Prioritize stories (value vs. effort)
 - Define sprint goals
 - Demo + retrospective
 
 **Stakeholder Management**:
+
 - Weekly status updates (execs, customers)
 - Monthly business reviews (metrics, progress)
 - Customer feedback sessions (user interviews, surveys)
@@ -80,6 +86,7 @@
 **Formula**: (Reach × Impact × Confidence) / Effort
 
 Example:
+
 - Feature: Leave encashment
 - Reach: 80% employees (score: 8)
 - Impact: High value (score: 3)
@@ -113,6 +120,7 @@ Example:
 ## Escalation Path
 
 **Escalate to CEO when**:
+
 - Major pivot needed
 - Budget overrun (>20%)
 - Customer churn spike

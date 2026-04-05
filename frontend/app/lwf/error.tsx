@@ -1,13 +1,13 @@
 'use client';
 
-import { Container, Title, Text, Button, Group } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout';
+import {Button, Container, Group, Text, Title} from '@mantine/core';
+import {IconAlertTriangle} from '@tabler/icons-react';
+import {AppLayout} from '@/components/layout';
 
 export default function LWFError({
-  error,
-  reset,
-}: {
+                                   error,
+                                   reset,
+                                 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
@@ -15,7 +15,7 @@ export default function LWFError({
     <AppLayout>
       <Container size="sm" py="xl">
         <Group justify="center" mb="md">
-          <IconAlertTriangle size={48} color="var(--status-danger-text)" />
+          <IconAlertTriangle size={48} color="var(--status-danger-text)"/>
         </Group>
         <Title order={3} ta="center" mb="sm">
           Something went wrong

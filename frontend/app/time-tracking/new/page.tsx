@@ -1,24 +1,16 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { EntryType } from '@/lib/types/hrms/time-tracking';
-import { useCreateTimeEntry, useSubmitTimeEntry } from '@/lib/hooks/queries/useTimeTracking';
-import { logger } from '@/lib/utils/logger';
-import {
-  ArrowLeft,
-  Loader2,
-  AlertCircle,
-  Calendar,
-  Clock,
-  FileText,
-  DollarSign,
-} from 'lucide-react';
+import {useEffect, useRef} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {EntryType} from '@/lib/types/hrms/time-tracking';
+import {useCreateTimeEntry, useSubmitTimeEntry} from '@/lib/hooks/queries/useTimeTracking';
+import {logger} from '@/lib/utils/logger';
+import {AlertCircle, ArrowLeft, Calendar, Clock, DollarSign, FileText, Loader2,} from 'lucide-react';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -27,12 +19,12 @@ const timeEntrySchema = z.object({
   startTime: z.string().optional(),
   endTime: z.string().optional(),
   hoursWorked: z
-    .number({ coerce: true, invalid_type_error: 'Please enter valid hours worked' })
+    .number({coerce: true, invalid_type_error: 'Please enter valid hours worked'})
     .positive('Please enter valid hours worked')
     .max(24, 'Hours worked cannot exceed 24 hours'),
-  billableHours: z.number({ coerce: true }).min(0).optional(),
+  billableHours: z.number({coerce: true}).min(0).optional(),
   isBillable: z.boolean().default(true),
-  hourlyRate: z.number({ coerce: true }).min(0).optional(),
+  hourlyRate: z.number({coerce: true}).min(0).optional(),
   entryType: z.enum(['REGULAR', 'OVERTIME', 'HOLIDAY', 'WEEKEND']),
   clientName: z.string().optional(),
   description: z.string().optional(),
@@ -44,17 +36,17 @@ type TimeEntryFormData = z.infer<typeof timeEntrySchema>;
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const ENTRY_TYPES: { value: EntryType; label: string }[] = [
-  { value: 'REGULAR', label: 'Regular' },
-  { value: 'OVERTIME', label: 'Overtime' },
-  { value: 'HOLIDAY', label: 'Holiday' },
-  { value: 'WEEKEND', label: 'Weekend' },
+  {value: 'REGULAR', label: 'Regular'},
+  {value: 'OVERTIME', label: 'Overtime'},
+  {value: 'HOLIDAY', label: 'Holiday'},
+  {value: 'WEEKEND', label: 'Weekend'},
 ];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function NewTimeEntryPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.TIMESHEET_CREATE, Permissions.TIME_TRACKING_CREATE, Permissions.TIME_TRACKING_MANAGE);
 
   useEffect(() => {
@@ -72,7 +64,7 @@ export default function NewTimeEntryPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<TimeEntryFormData>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
@@ -136,7 +128,7 @@ export default function NewTimeEntryPage() {
             aria-label="Go back to previous page"
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
@@ -149,9 +141,11 @@ export default function NewTimeEntryPage() {
         </div>
 
         {(createMutation.isError || submitMutation.isError) && (
-          <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-danger-500" />
-            <p className="text-sm text-danger-700 dark:text-danger-400">Failed to create time entry. Please try again.</p>
+          <div
+            className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+            <AlertCircle className="h-5 w-5 text-danger-500"/>
+            <p className="text-sm text-danger-700 dark:text-danger-400">Failed to create time entry. Please try
+              again.</p>
           </div>
         )}
 
@@ -166,7 +160,7 @@ export default function NewTimeEntryPage() {
               Date *
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="date"
                 {...register('entryDate')}
@@ -187,7 +181,7 @@ export default function NewTimeEntryPage() {
                 Start Time
               </label>
               <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="time"
                   {...register('startTime')}
@@ -200,7 +194,7 @@ export default function NewTimeEntryPage() {
                 End Time
               </label>
               <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="time"
                   {...register('endTime')}
@@ -218,7 +212,7 @@ export default function NewTimeEntryPage() {
             <input
               type="number"
               step="0.5"
-              {...register('hoursWorked', { valueAsNumber: true })}
+              {...register('hoursWorked', {valueAsNumber: true})}
               placeholder="8"
               className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
                 errors.hoursWorked ? 'border-danger-500' : 'border-[var(--border-main)]'
@@ -261,11 +255,11 @@ export default function NewTimeEntryPage() {
 
             {watchedIsBillable && (
               <div className="flex-1 flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-[var(--text-muted)]" />
+                <DollarSign className="h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="number"
                   step="0.5"
-                  {...register('billableHours', { valueAsNumber: true })}
+                  {...register('billableHours', {valueAsNumber: true})}
                   placeholder="Billable hours"
                   className="flex-1 px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
@@ -280,11 +274,11 @@ export default function NewTimeEntryPage() {
                 Hourly Rate (optional)
               </label>
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="number"
                   step="0.01"
-                  {...register('hourlyRate', { valueAsNumber: true })}
+                  {...register('hourlyRate', {valueAsNumber: true})}
                   placeholder="0.00"
                   className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
@@ -311,7 +305,7 @@ export default function NewTimeEntryPage() {
               Description
             </label>
             <div className="relative">
-              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]" />
+              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
                 {...register('description')}
                 placeholder="What did you work on?"
@@ -346,7 +340,9 @@ export default function NewTimeEntryPage() {
             <button
               type="submit"
               disabled={isLoading}
-              onClick={() => { submitModeRef.current = 'draft'; }}
+              onClick={() => {
+                submitModeRef.current = 'draft';
+              }}
               className="flex-1 px-6 py-4 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50"
             >
               Save as Draft
@@ -354,12 +350,14 @@ export default function NewTimeEntryPage() {
             <button
               type="submit"
               disabled={isLoading}
-              onClick={() => { submitModeRef.current = 'submit'; }}
+              onClick={() => {
+                submitModeRef.current = 'submit';
+              }}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin"/>
                   Saving...
                 </>
               ) : (

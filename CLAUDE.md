@@ -134,8 +134,8 @@ When an audit tool recommends larger sizes, evaluate against this desktop densit
 - **Every User Is an Employee**: Roles are additive. MY SPACE sidebar items never have `requiredPermission`
 - **Approval Flows**: Generic engine — `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`
 - **Payroll**: SpEL formula engine, DAG evaluation order, DB transaction wrapped
-- **Flyway**: V0–V103 active. Next = V104. Legacy Liquibase in `db/changelog/` — DO NOT USE
-- **Kafka**: 5 topics (`nu-aura.approvals/notifications/audit/employee-lifecycle/fluence-content`) + 5 DLT topics
+- **Flyway**: V0–V117 active. Next = V118. Legacy Liquibase in `db/changelog/` — DO NOT USE
+- **Kafka**: 6 topics (`nu-aura.approvals/notifications/audit/employee-lifecycle/fluence-content/payroll-processing`) + 6 DLT topics
 - **Security**: Rate limiting (Bucket4j + Redis), OWASP headers (Next.js middleware + Spring Security), CSRF double-submit cookie
 - **Platform**: Bundle app with 4 sub-apps via waffle grid switcher. Routes mapped in `frontend/lib/config/apps.ts`. Sidebar is app-aware
 
@@ -145,12 +145,12 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ```
 
 ### Sub-Apps
-| App | Scope | Status (as of 2026-04-02) |
+| App | Scope | Status (as of 2026-04-05) |
 |-----|-------|--------------------------|
 | NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~96% — Production-ready |
-| NU-Hire | Jobs, candidates, pipeline, onboarding, offboarding, e-signature, career page | ~95% — Production-ready |
+| NU-Hire | Jobs, candidates, pipeline, scorecards, onboarding, offboarding, e-signature, career page, diversity tracking | ~95% — Production-ready |
 | NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~94% — Production-ready |
-| NU-Fluence | Wiki, blogs, templates, Drive, analytics, space permissions | ~65% frontend (backend done) |
+| NU-Fluence | Wiki (nested pages, tree view, export), blogs, templates, Drive, analytics, space permissions + members | ~80% — Backend complete, frontend ~75% |
 
 ---
 

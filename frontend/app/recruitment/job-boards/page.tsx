@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Globe, Plus, Pause, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AlertCircle, CheckCircle, Clock, ExternalLink, Globe, Pause, Plus, XCircle} from 'lucide-react';
+import {notifications} from '@mantine/notifications';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 const postJobBoardSchema = z.object({
   jobId: z.string().min(1, 'Select a job opening'),
@@ -45,19 +45,19 @@ interface JobOpening {
 }
 
 const boardConfig: Record<string, { color: string; logo: string }> = {
-  NAUKRI:   { color: 'bg-accent-600',   logo: '🇮🇳 Naukri' },
-  INDEED:   { color: 'bg-accent-700', logo: '🌐 Indeed' },
-  LINKEDIN: { color: 'bg-accent-600',   logo: '💼 LinkedIn' },
-  SHINE:    { color: 'bg-success-600',  logo: '✨ Shine' },
-  MONSTER:  { color: 'bg-warning-600', logo: '👾 Monster' },
+  NAUKRI: {color: 'bg-accent-600', logo: '🇮🇳 Naukri'},
+  INDEED: {color: 'bg-accent-700', logo: '🌐 Indeed'},
+  LINKEDIN: {color: 'bg-accent-600', logo: '💼 LinkedIn'},
+  SHINE: {color: 'bg-success-600', logo: '✨ Shine'},
+  MONSTER: {color: 'bg-warning-600', logo: '👾 Monster'},
 };
 
 const statusIcon: Record<string, { icon: typeof Clock; color: string }> = {
-  PENDING: { icon: Clock,         color: 'text-warning-500' },
-  ACTIVE:  { icon: CheckCircle,   color: 'text-success-600' },
-  PAUSED:  { icon: AlertCircle,   color: 'text-warning-500' },
-  EXPIRED: { icon: XCircle,       color: 'text-[var(--text-muted)]' },
-  FAILED:  { icon: XCircle,       color: 'text-danger-500' },
+  PENDING: {icon: Clock, color: 'text-warning-500'},
+  ACTIVE: {icon: CheckCircle, color: 'text-success-600'},
+  PAUSED: {icon: AlertCircle, color: 'text-warning-500'},
+  EXPIRED: {icon: XCircle, color: 'text-[var(--text-muted)]'},
+  FAILED: {icon: XCircle, color: 'text-danger-500'},
 };
 
 const ALL_BOARDS: JobBoardPosting['boardName'][] = ['NAUKRI', 'INDEED', 'LINKEDIN', 'SHINE', 'MONSTER'];
@@ -72,29 +72,31 @@ export default function JobBoardsPage() {
     handleSubmit,
     control,
     reset: resetPostForm,
-    formState: { errors: postErrors },
+    formState: {errors: postErrors},
     watch: watchPost,
   } = useForm<PostJobBoardFormData>({
     resolver: zodResolver(postJobBoardSchema),
-    defaultValues: { jobId: '', boards: ['NAUKRI'] },
+    defaultValues: {jobId: '', boards: ['NAUKRI']},
   });
 
   const selectedBoards = watchPost('boards') ?? [];
 
-  const { data: postingsData, isLoading } = useQuery<{ content: JobBoardPosting[] }>({
+  const {data: postingsData, isLoading} = useQuery<{ content: JobBoardPosting[] }>({
     queryKey: ['job-board-postings', filterStatus],
     queryFn: async (): Promise<{ content: JobBoardPosting[] }> => {
       if (filterStatus === 'ALL') {
         const response = await apiClient.get<{ content: JobBoardPosting[] }>('/recruitment/job-boards');
         return response.data;
       } else {
-        const response = await apiClient.get<{ content: JobBoardPosting[] }>(`/recruitment/job-boards/status/${filterStatus}`);
+        const response = await apiClient.get<{
+          content: JobBoardPosting[]
+        }>(`/recruitment/job-boards/status/${filterStatus}`);
         return response.data;
       }
     },
   });
 
-  const { data: openJobs } = useQuery<{ content: JobOpening[] }>({
+  const {data: openJobs} = useQuery<{ content: JobOpening[] }>({
     queryKey: ['jobs', 'open'],
     queryFn: async (): Promise<{ content: JobOpening[] }> => {
       const response = await apiClient.get<{ content: JobOpening[] }>('/recruitment/jobs?status=OPEN');
@@ -108,17 +110,17 @@ export default function JobBoardsPage() {
       boards: data.boards,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['job-board-postings'] });
+      queryClient.invalidateQueries({queryKey: ['job-board-postings']});
       setShowPostModal(false);
-      resetPostForm({ jobId: '', boards: ['NAUKRI'] });
+      resetPostForm({jobId: '', boards: ['NAUKRI']});
     },
-    onError: () => notifications.show({ title: 'Error', message: 'Failed to post job to boards', color: 'red' }),
+    onError: () => notifications.show({title: 'Error', message: 'Failed to post job to boards', color: 'red'}),
   });
 
   const pauseMutation = useMutation({
     mutationFn: (id: string) => apiClient.post(`/recruitment/job-boards/${id}/pause`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['job-board-postings'] }),
-    onError: () => notifications.show({ title: 'Error', message: 'Failed to pause job board posting', color: 'red' }),
+    onSuccess: () => queryClient.invalidateQueries({queryKey: ['job-board-postings']}),
+    onError: () => notifications.show({title: 'Error', message: 'Failed to pause job board posting', color: 'red'}),
   });
 
   const postings = postingsData?.content ?? [];
@@ -133,11 +135,12 @@ export default function JobBoardsPage() {
         <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track
+              applications</p>
           </div>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
             <Button onClick={() => setShowPostModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2"/>
               Post to Job Boards
             </Button>
           </PermissionGate>
@@ -146,10 +149,22 @@ export default function JobBoardsPage() {
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Active Postings', value: postings.filter(p => p.status === 'ACTIVE').length, color: 'text-success-600' },
-            { label: 'Total Applications', value: postings.reduce((s, p) => s + p.applicationsCount, 0), color: 'text-accent-600' },
-            { label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-accent-700' },
-            { label: 'Failed Postings', value: postings.filter(p => p.status === 'FAILED').length, color: 'text-danger-600' },
+            {
+              label: 'Active Postings',
+              value: postings.filter(p => p.status === 'ACTIVE').length,
+              color: 'text-success-600'
+            },
+            {
+              label: 'Total Applications',
+              value: postings.reduce((s, p) => s + p.applicationsCount, 0),
+              color: 'text-accent-600'
+            },
+            {label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-accent-700'},
+            {
+              label: 'Failed Postings',
+              value: postings.filter(p => p.status === 'FAILED').length,
+              color: 'text-danger-600'
+            },
           ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
               <CardContent className="pt-4">
@@ -183,7 +198,7 @@ export default function JobBoardsPage() {
         ) : postings.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-[var(--text-muted)]">
-              <Globe className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]" />
+              <Globe className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>
               <p>No job board postings found. Post a job to get started!</p>
             </CardContent>
           </Card>
@@ -203,12 +218,12 @@ export default function JobBoardsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <StatusIcon className={`w-4 h-4 ${sc.color}`} />
+                            <StatusIcon className={`w-4 h-4 ${sc.color}`}/>
                             <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
                               <a href={posting.externalUrl} target="_blank" rel="noopener noreferrer"
-                                className="text-accent-500 hover:underline">
-                                <ExternalLink className="w-3.5 h-3.5" />
+                                 className="text-accent-500 hover:underline">
+                                <ExternalLink className="w-3.5 h-3.5"/>
                               </a>
                             )}
                           </div>
@@ -233,7 +248,7 @@ export default function JobBoardsPage() {
                         {posting.status === 'ACTIVE' && (
                           <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
                             <Button size="sm" variant="outline" onClick={() => pauseMutation.mutate(posting.id)}>
-                              <Pause className="w-3.5 h-3.5 mr-1" />
+                              <Pause className="w-3.5 h-3.5 mr-1"/>
                               Pause
                             </Button>
                           </PermissionGate>
@@ -264,73 +279,74 @@ export default function JobBoardsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <form onSubmit={handleSubmit(onSubmitPost)} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening *</label>
-                <select
-                  {...register('jobId')}
-                  className="input-aura"
-                >
-                  <option value="">— Select a job —</option>
-                  {openJobs?.content?.map((job: JobOpening) => (
-                    <option key={job.id} value={job.id}>
-                      {job.jobTitle} ({job.jobCode}) — {job.location}
-                    </option>
-                  ))}
-                </select>
-                {postErrors.jobId && (
-                  <p className="text-xs text-danger-500 mt-1">{postErrors.jobId.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</label>
-                <Controller
-                  name="boards"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="grid grid-cols-2 gap-2">
-                      {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
-                        const bc = boardConfig[board];
-                        const isSelected = (field.value ?? []).includes(board);
-                        return (
-                          <button
-                            key={board}
-                            type="button"
-                            onClick={() => {
-                              const current = field.value ?? [];
-                              field.onChange(
-                                isSelected ? current.filter((b) => b !== board) : [...current, board]
-                              );
-                            }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                              isSelected ? `${bc.color} text-white border-transparent` : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
-                            }`}
-                          >
-                            <Globe className="w-4 h-4" />
-                            {board}
-                            {board === 'NAUKRI' && <span className="text-xs opacity-75">🔥</span>}
-                          </button>
-                        );
-                      })}
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening
+                    *</label>
+                  <select
+                    {...register('jobId')}
+                    className="input-aura"
+                  >
+                    <option value="">— Select a job —</option>
+                    {openJobs?.content?.map((job: JobOpening) => (
+                      <option key={job.id} value={job.id}>
+                        {job.jobTitle} ({job.jobCode}) — {job.location}
+                      </option>
+                    ))}
+                  </select>
+                  {postErrors.jobId && (
+                    <p className="text-xs text-danger-500 mt-1">{postErrors.jobId.message}</p>
                   )}
-                />
-                {postErrors.boards && (
-                  <p className="text-xs text-danger-500 mt-1">{postErrors.boards.message}</p>
-                )}
-              </div>
-              <p className="text-caption bg-[var(--bg-surface)] p-4 rounded-md">
-                <strong>Note:</strong> Naukri requires API credentials configured in settings.
-                Jobs will be posted immediately and expire after 30 days.
-              </p>
-              <div className="flex gap-4 justify-end pt-2">
-                <Button type="button" variant="outline" onClick={() => setShowPostModal(false)}>Cancel</Button>
-                <Button
-                  type="submit"
-                  disabled={postMutation.isPending}
-                >
-                  {postMutation.isPending ? 'Posting...' : `Post to ${selectedBoards.length} Board${selectedBoards.length !== 1 ? 's' : ''}`}
-                </Button>
-              </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</label>
+                  <Controller
+                    name="boards"
+                    control={control}
+                    render={({field}) => (
+                      <div className="grid grid-cols-2 gap-2">
+                        {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
+                          const bc = boardConfig[board];
+                          const isSelected = (field.value ?? []).includes(board);
+                          return (
+                            <button
+                              key={board}
+                              type="button"
+                              onClick={() => {
+                                const current = field.value ?? [];
+                                field.onChange(
+                                  isSelected ? current.filter((b) => b !== board) : [...current, board]
+                                );
+                              }}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                                isSelected ? `${bc.color} text-white border-transparent` : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
+                              }`}
+                            >
+                              <Globe className="w-4 h-4"/>
+                              {board}
+                              {board === 'NAUKRI' && <span className="text-xs opacity-75">🔥</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  />
+                  {postErrors.boards && (
+                    <p className="text-xs text-danger-500 mt-1">{postErrors.boards.message}</p>
+                  )}
+                </div>
+                <p className="text-caption bg-[var(--bg-surface)] p-4 rounded-md">
+                  <strong>Note:</strong> Naukri requires API credentials configured in settings.
+                  Jobs will be posted immediately and expire after 30 days.
+                </p>
+                <div className="flex gap-4 justify-end pt-2">
+                  <Button type="button" variant="outline" onClick={() => setShowPostModal(false)}>Cancel</Button>
+                  <Button
+                    type="submit"
+                    disabled={postMutation.isPending}
+                  >
+                    {postMutation.isPending ? 'Posting...' : `Post to ${selectedBoards.length} Board${selectedBoards.length !== 1 ? 's' : ''}`}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>

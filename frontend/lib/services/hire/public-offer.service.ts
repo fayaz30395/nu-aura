@@ -1,6 +1,6 @@
 // Public (unauthenticated) offer-acceptance endpoints — use the shared publicApiClient
 // to ensure consistent base URL, timeout, and error handling across the platform.
-import { publicApiClient } from '../../api/public-client';
+import {publicApiClient} from '../../api/public-client';
 
 export interface PublicOfferResponse {
   candidateId: string;

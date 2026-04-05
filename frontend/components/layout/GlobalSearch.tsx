@@ -1,46 +1,46 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
+import {logger} from '@/lib/utils/logger';
 import {
-  Search,
-  Command,
-  Users,
-  Calendar,
-  Clock,
-  FileText,
-  CreditCard,
-  Settings,
-  Building2,
+  ArrowRight,
   BarChart3,
-  Target,
-  MessageSquare,
   BookOpen,
   Briefcase,
-  Shield,
-  MapPin,
-  FolderKanban,
-  HelpCircle,
-  X,
-  ArrowRight,
-  User,
+  Building2,
+  Calendar,
   CalendarDays,
   ClipboardCheck,
-  UserCheck,
-  Loader2,
-  Newspaper,
-  HardDrive,
+  Clock,
+  Command,
+  CreditCard,
   FileStack,
+  FileText,
+  FolderKanban,
+  HardDrive,
+  HelpCircle,
+  Loader2,
+  MapPin,
+  MessageSquare,
+  Newspaper,
+  Search,
+  Settings,
+  Shield,
+  Target,
+  User,
+  UserCheck,
+  Users,
+  X,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {cn} from '@/lib/utils';
 import {
-  searchService,
-  SearchResult,
-  UnifiedSearchResponse,
   FluenceUnifiedSearchResponse,
+  SearchResult,
+  searchService,
+  UnifiedSearchResponse,
 } from '@/lib/services/core/search.service';
-import { getAppForRoute } from '@/lib/config/apps';
+import {getAppForRoute} from '@/lib/config/apps';
 
 interface NavigationItem {
   id: string;
@@ -56,67 +56,387 @@ interface NavigationItem {
 
 const defaultNavigationItems: NavigationItem[] = [
   // Dashboard
-  { id: 'dashboard', title: 'Dashboard', description: 'Overview and analytics', href: '/dashboard', icon: BarChart3, category: 'Pages', keywords: ['home', 'overview', 'analytics', 'stats'] },
+  {
+    id: 'dashboard',
+    title: 'Dashboard',
+    description: 'Overview and analytics',
+    href: '/dashboard',
+    icon: BarChart3,
+    category: 'Pages',
+    keywords: ['home', 'overview', 'analytics', 'stats']
+  },
 
   // Employee Management
-  { id: 'employees', title: 'Employees', description: 'View and manage employees', href: '/employees', icon: Users, category: 'Pages', keywords: ['staff', 'team', 'people', 'directory'] },
-  { id: 'employee-directory', title: 'Employee Directory', description: 'Browse employee directory', href: '/employees/directory', icon: Users, category: 'Pages', keywords: ['directory', 'list', 'staff'] },
-  { id: 'departments', title: 'Departments', description: 'Manage departments', href: '/departments', icon: Building2, category: 'Pages', keywords: ['teams', 'groups', 'units'] },
-  { id: 'org-chart', title: 'Organization Chart', description: 'View org structure', href: '/org-chart', icon: Building2, category: 'Pages', keywords: ['hierarchy', 'structure', 'reporting'] },
+  {
+    id: 'employees',
+    title: 'Employees',
+    description: 'View and manage employees',
+    href: '/employees',
+    icon: Users,
+    category: 'Pages',
+    keywords: ['staff', 'team', 'people', 'directory']
+  },
+  {
+    id: 'employee-directory',
+    title: 'Employee Directory',
+    description: 'Browse employee directory',
+    href: '/employees/directory',
+    icon: Users,
+    category: 'Pages',
+    keywords: ['directory', 'list', 'staff']
+  },
+  {
+    id: 'departments',
+    title: 'Departments',
+    description: 'Manage departments',
+    href: '/departments',
+    icon: Building2,
+    category: 'Pages',
+    keywords: ['teams', 'groups', 'units']
+  },
+  {
+    id: 'org-chart',
+    title: 'Organization Chart',
+    description: 'View org structure',
+    href: '/org-chart',
+    icon: Building2,
+    category: 'Pages',
+    keywords: ['hierarchy', 'structure', 'reporting']
+  },
 
   // Self Service
-  { id: 'my-profile', title: 'My Profile', description: 'View your profile', href: '/me/profile', icon: User, category: 'Self Service', keywords: ['profile', 'personal', 'info', 'account'] },
-  { id: 'my-attendance', title: 'My Attendance', description: 'View your attendance', href: '/me/attendance', icon: Clock, category: 'Self Service', keywords: ['attendance', 'checkin', 'checkout', 'time'] },
-  { id: 'my-leaves', title: 'My Leaves', description: 'View your leave balance', href: '/me/leaves', icon: Calendar, category: 'Self Service', keywords: ['leave', 'vacation', 'pto', 'time off'] },
-  { id: 'my-payslips', title: 'My Payslips', description: 'View your payslips', href: '/me/payslips', icon: FileText, category: 'Self Service', keywords: ['payslip', 'salary', 'paycheck', 'earnings'] },
+  {
+    id: 'my-profile',
+    title: 'My Profile',
+    description: 'View your profile',
+    href: '/me/profile',
+    icon: User,
+    category: 'Self Service',
+    keywords: ['profile', 'personal', 'info', 'account']
+  },
+  {
+    id: 'my-attendance',
+    title: 'My Attendance',
+    description: 'View your attendance',
+    href: '/me/attendance',
+    icon: Clock,
+    category: 'Self Service',
+    keywords: ['attendance', 'checkin', 'checkout', 'time']
+  },
+  {
+    id: 'my-leaves',
+    title: 'My Leaves',
+    description: 'View your leave balance',
+    href: '/me/leaves',
+    icon: Calendar,
+    category: 'Self Service',
+    keywords: ['leave', 'vacation', 'pto', 'time off']
+  },
+  {
+    id: 'my-payslips',
+    title: 'My Payslips',
+    description: 'View your payslips',
+    href: '/me/payslips',
+    icon: FileText,
+    category: 'Self Service',
+    keywords: ['payslip', 'salary', 'paycheck', 'earnings']
+  },
 
   // Attendance
-  { id: 'attendance', title: 'Attendance Management', description: 'Manage attendance', href: '/attendance', icon: Clock, category: 'Pages', keywords: ['attendance', 'time', 'tracking'] },
-  { id: 'team-attendance', title: 'Team Attendance', description: 'View team attendance', href: '/attendance/team', icon: UserCheck, category: 'Pages', keywords: ['team', 'attendance', 'members'] },
-  { id: 'regularization', title: 'Attendance Regularization', description: 'Regularize attendance', href: '/attendance/regularization', icon: ClipboardCheck, category: 'Pages', keywords: ['regularize', 'correction', 'adjust'] },
+  {
+    id: 'attendance',
+    title: 'Attendance Management',
+    description: 'Manage attendance',
+    href: '/attendance',
+    icon: Clock,
+    category: 'Pages',
+    keywords: ['attendance', 'time', 'tracking']
+  },
+  {
+    id: 'team-attendance',
+    title: 'Team Attendance',
+    description: 'View team attendance',
+    href: '/attendance/team',
+    icon: UserCheck,
+    category: 'Pages',
+    keywords: ['team', 'attendance', 'members']
+  },
+  {
+    id: 'regularization',
+    title: 'Attendance Regularization',
+    description: 'Regularize attendance',
+    href: '/attendance/regularization',
+    icon: ClipboardCheck,
+    category: 'Pages',
+    keywords: ['regularize', 'correction', 'adjust']
+  },
 
   // Leave
-  { id: 'leave', title: 'Leave Management', description: 'Manage leaves', href: '/leave', icon: Calendar, category: 'Pages', keywords: ['leave', 'vacation', 'time off'] },
-  { id: 'apply-leave', title: 'Apply for Leave', description: 'Submit leave request', href: '/leave/apply', icon: Calendar, category: 'Pages', keywords: ['apply', 'request', 'leave', 'vacation'] },
-  { id: 'leave-approvals', title: 'Leave Approvals', description: 'Approve pending leaves', href: '/leave/approvals', icon: ClipboardCheck, category: 'Pages', keywords: ['approve', 'pending', 'requests'] },
-  { id: 'leave-calendar', title: 'Leave Calendar', description: 'View leave calendar', href: '/leave/calendar', icon: CalendarDays, category: 'Pages', keywords: ['calendar', 'schedule', 'planner'] },
+  {
+    id: 'leave',
+    title: 'Leave Management',
+    description: 'Manage leaves',
+    href: '/leave',
+    icon: Calendar,
+    category: 'Pages',
+    keywords: ['leave', 'vacation', 'time off']
+  },
+  {
+    id: 'apply-leave',
+    title: 'Apply for Leave',
+    description: 'Submit leave request',
+    href: '/leave/apply',
+    icon: Calendar,
+    category: 'Pages',
+    keywords: ['apply', 'request', 'leave', 'vacation']
+  },
+  {
+    id: 'leave-approvals',
+    title: 'Leave Approvals',
+    description: 'Approve pending leaves',
+    href: '/leave/approvals',
+    icon: ClipboardCheck,
+    category: 'Pages',
+    keywords: ['approve', 'pending', 'requests']
+  },
+  {
+    id: 'leave-calendar',
+    title: 'Leave Calendar',
+    description: 'View leave calendar',
+    href: '/leave/calendar',
+    icon: CalendarDays,
+    category: 'Pages',
+    keywords: ['calendar', 'schedule', 'planner']
+  },
 
   // Payroll
-  { id: 'payroll', title: 'Payroll Management', description: 'Manage payroll', href: '/payroll', icon: CreditCard, category: 'Pages', keywords: ['payroll', 'salary', 'compensation'] },
+  {
+    id: 'payroll',
+    title: 'Payroll Management',
+    description: 'Manage payroll',
+    href: '/payroll',
+    icon: CreditCard,
+    category: 'Pages',
+    keywords: ['payroll', 'salary', 'compensation']
+  },
 
   // Performance
-  { id: 'performance-goals', title: 'Goals', description: 'Set and track goals', href: '/performance/goals', icon: Target, category: 'Pages', keywords: ['goals', 'objectives', 'targets', 'kpi'] },
-  { id: 'performance-reviews', title: 'Performance Reviews', description: 'View performance reviews', href: '/performance/reviews', icon: ClipboardCheck, category: 'Pages', keywords: ['review', 'appraisal', 'evaluation'] },
-  { id: 'performance-feedback', title: 'Feedback', description: 'Give and receive feedback', href: '/performance/feedback', icon: MessageSquare, category: 'Pages', keywords: ['feedback', 'comments', 'notes'] },
-  { id: 'performance-cycles', title: 'Review Cycles', description: 'Manage review cycles', href: '/performance/cycles', icon: Calendar, category: 'Pages', keywords: ['cycles', 'periods', 'timeline'] },
-  { id: 'okr', title: 'OKRs', description: 'Objectives and Key Results', href: '/performance/okr', icon: Target, category: 'Pages', keywords: ['okr', 'objectives', 'key results'] },
-  { id: 'feedback360', title: '360° Feedback', description: 'Multi-rater feedback', href: '/feedback360', icon: MessageSquare, category: 'Pages', keywords: ['360', 'feedback', 'peer', 'review'] },
+  {
+    id: 'performance-goals',
+    title: 'Goals',
+    description: 'Set and track goals',
+    href: '/performance/goals',
+    icon: Target,
+    category: 'Pages',
+    keywords: ['goals', 'objectives', 'targets', 'kpi']
+  },
+  {
+    id: 'performance-reviews',
+    title: 'Performance Reviews',
+    description: 'View performance reviews',
+    href: '/performance/reviews',
+    icon: ClipboardCheck,
+    category: 'Pages',
+    keywords: ['review', 'appraisal', 'evaluation']
+  },
+  {
+    id: 'performance-feedback',
+    title: 'Feedback',
+    description: 'Give and receive feedback',
+    href: '/performance/feedback',
+    icon: MessageSquare,
+    category: 'Pages',
+    keywords: ['feedback', 'comments', 'notes']
+  },
+  {
+    id: 'performance-cycles',
+    title: 'Review Cycles',
+    description: 'Manage review cycles',
+    href: '/performance/cycles',
+    icon: Calendar,
+    category: 'Pages',
+    keywords: ['cycles', 'periods', 'timeline']
+  },
+  {
+    id: 'okr',
+    title: 'OKRs',
+    description: 'Objectives and Key Results',
+    href: '/performance/okr',
+    icon: Target,
+    category: 'Pages',
+    keywords: ['okr', 'objectives', 'key results']
+  },
+  {
+    id: 'feedback360',
+    title: '360° Feedback',
+    description: 'Multi-rater feedback',
+    href: '/feedback360',
+    icon: MessageSquare,
+    category: 'Pages',
+    keywords: ['360', 'feedback', 'peer', 'review']
+  },
 
   // Other Modules
-  { id: 'expenses', title: 'Expenses', description: 'Manage expenses', href: '/expenses', icon: CreditCard, category: 'Pages', keywords: ['expenses', 'reimbursement', 'claims'] },
-  { id: 'projects', title: 'Projects', description: 'View projects', href: '/projects', icon: FolderKanban, category: 'Pages', keywords: ['projects', 'tasks', 'work'] },
-  { id: 'learning', title: 'Learning', description: 'Training and courses', href: '/learning', icon: BookOpen, category: 'Pages', keywords: ['learning', 'training', 'courses', 'education'] },
-  { id: 'reports', title: 'Reports', description: 'View reports and analytics', href: '/reports', icon: BarChart3, category: 'Pages', keywords: ['reports', 'analytics', 'data', 'insights'] },
+  {
+    id: 'expenses',
+    title: 'Expenses',
+    description: 'Manage expenses',
+    href: '/expenses',
+    icon: CreditCard,
+    category: 'Pages',
+    keywords: ['expenses', 'reimbursement', 'claims']
+  },
+  {
+    id: 'projects',
+    title: 'Projects',
+    description: 'View projects',
+    href: '/projects',
+    icon: FolderKanban,
+    category: 'Pages',
+    keywords: ['projects', 'tasks', 'work']
+  },
+  {
+    id: 'learning',
+    title: 'Learning',
+    description: 'Training and courses',
+    href: '/learning',
+    icon: BookOpen,
+    category: 'Pages',
+    keywords: ['learning', 'training', 'courses', 'education']
+  },
+  {
+    id: 'reports',
+    title: 'Reports',
+    description: 'View reports and analytics',
+    href: '/reports',
+    icon: BarChart3,
+    category: 'Pages',
+    keywords: ['reports', 'analytics', 'data', 'insights']
+  },
 
   // Admin
-  { id: 'admin-roles', title: 'Roles & Permissions', description: 'Manage user roles', href: '/admin/roles', icon: Shield, category: 'Admin', keywords: ['roles', 'permissions', 'access', 'security'] },
-  { id: 'admin-holidays', title: 'Holidays', description: 'Manage holiday calendar', href: '/admin/holidays', icon: Calendar, category: 'Admin', keywords: ['holidays', 'calendar', 'days off'] },
-  { id: 'admin-leave-types', title: 'Leave Types', description: 'Configure leave types', href: '/admin/leave-types', icon: Calendar, category: 'Admin', keywords: ['leave types', 'policies', 'categories'] },
-  { id: 'admin-shifts', title: 'Shifts', description: 'Manage work shifts', href: '/admin/shifts', icon: Clock, category: 'Admin', keywords: ['shifts', 'schedule', 'timing'] },
-  { id: 'admin-locations', title: 'Office Locations', description: 'Manage office locations', href: '/admin/office-locations', icon: MapPin, category: 'Admin', keywords: ['locations', 'offices', 'branches'] },
-  { id: 'admin-custom-fields', title: 'Custom Fields', description: 'Configure custom fields', href: '/admin/custom-fields', icon: Settings, category: 'Admin', keywords: ['custom', 'fields', 'attributes'] },
-  { id: 'settings', title: 'Settings', description: 'System settings', href: '/settings', icon: Settings, category: 'Admin', keywords: ['settings', 'configuration', 'preferences'] },
+  {
+    id: 'admin-roles',
+    title: 'Roles & Permissions',
+    description: 'Manage user roles',
+    href: '/admin/roles',
+    icon: Shield,
+    category: 'Admin',
+    keywords: ['roles', 'permissions', 'access', 'security']
+  },
+  {
+    id: 'admin-holidays',
+    title: 'Holidays',
+    description: 'Manage holiday calendar',
+    href: '/admin/holidays',
+    icon: Calendar,
+    category: 'Admin',
+    keywords: ['holidays', 'calendar', 'days off']
+  },
+  {
+    id: 'admin-leave-types',
+    title: 'Leave Types',
+    description: 'Configure leave types',
+    href: '/admin/leave-types',
+    icon: Calendar,
+    category: 'Admin',
+    keywords: ['leave types', 'policies', 'categories']
+  },
+  {
+    id: 'admin-shifts',
+    title: 'Shifts',
+    description: 'Manage work shifts',
+    href: '/admin/shifts',
+    icon: Clock,
+    category: 'Admin',
+    keywords: ['shifts', 'schedule', 'timing']
+  },
+  {
+    id: 'admin-locations',
+    title: 'Office Locations',
+    description: 'Manage office locations',
+    href: '/admin/office-locations',
+    icon: MapPin,
+    category: 'Admin',
+    keywords: ['locations', 'offices', 'branches']
+  },
+  {
+    id: 'admin-custom-fields',
+    title: 'Custom Fields',
+    description: 'Configure custom fields',
+    href: '/admin/custom-fields',
+    icon: Settings,
+    category: 'Admin',
+    keywords: ['custom', 'fields', 'attributes']
+  },
+  {
+    id: 'settings',
+    title: 'Settings',
+    description: 'System settings',
+    href: '/settings',
+    icon: Settings,
+    category: 'Admin',
+    keywords: ['settings', 'configuration', 'preferences']
+  },
 ];
 
 // ─── Fluence navigation items ───────────────────────────────────────────────
 
 const fluenceNavigationItems: NavigationItem[] = [
-  { id: 'fluence-wiki', title: 'Wiki', description: 'Browse wiki pages and spaces', href: '/fluence/wiki', icon: BookOpen, category: 'NU-Fluence', keywords: ['wiki', 'pages', 'spaces', 'knowledge', 'docs'] },
-  { id: 'fluence-blogs', title: 'Articles', description: 'Read and write blog posts', href: '/fluence/blogs', icon: Newspaper, category: 'NU-Fluence', keywords: ['articles', 'blogs', 'posts', 'writing'] },
-  { id: 'fluence-my-content', title: 'My Content', description: 'View your created content', href: '/fluence/my-content', icon: User, category: 'NU-Fluence', keywords: ['my content', 'authored', 'drafts', 'published'] },
-  { id: 'fluence-templates', title: 'Templates', description: 'Browse document templates', href: '/fluence/templates', icon: FileStack, category: 'NU-Fluence', keywords: ['templates', 'blueprints', 'formats'] },
-  { id: 'fluence-drive', title: 'Drive', description: 'File storage and management', href: '/fluence/drive', icon: HardDrive, category: 'NU-Fluence', keywords: ['drive', 'files', 'storage', 'uploads'] },
-  { id: 'fluence-search', title: 'Advanced Search', description: 'Full search with filters', href: '/fluence/search', icon: Search, category: 'NU-Fluence', keywords: ['search', 'find', 'filter', 'advanced'] },
+  {
+    id: 'fluence-wiki',
+    title: 'Wiki',
+    description: 'Browse wiki pages and spaces',
+    href: '/fluence/wiki',
+    icon: BookOpen,
+    category: 'NU-Fluence',
+    keywords: ['wiki', 'pages', 'spaces', 'knowledge', 'docs']
+  },
+  {
+    id: 'fluence-blogs',
+    title: 'Articles',
+    description: 'Read and write blog posts',
+    href: '/fluence/blogs',
+    icon: Newspaper,
+    category: 'NU-Fluence',
+    keywords: ['articles', 'blogs', 'posts', 'writing']
+  },
+  {
+    id: 'fluence-my-content',
+    title: 'My Content',
+    description: 'View your created content',
+    href: '/fluence/my-content',
+    icon: User,
+    category: 'NU-Fluence',
+    keywords: ['my content', 'authored', 'drafts', 'published']
+  },
+  {
+    id: 'fluence-templates',
+    title: 'Templates',
+    description: 'Browse document templates',
+    href: '/fluence/templates',
+    icon: FileStack,
+    category: 'NU-Fluence',
+    keywords: ['templates', 'blueprints', 'formats']
+  },
+  {
+    id: 'fluence-drive',
+    title: 'Drive',
+    description: 'File storage and management',
+    href: '/fluence/drive',
+    icon: HardDrive,
+    category: 'NU-Fluence',
+    keywords: ['drive', 'files', 'storage', 'uploads']
+  },
+  {
+    id: 'fluence-search',
+    title: 'Advanced Search',
+    description: 'Full search with filters',
+    href: '/fluence/search',
+    icon: Search,
+    category: 'NU-Fluence',
+    keywords: ['search', 'find', 'filter', 'advanced']
+  },
 ];
 
 // Icon mapping for search result types
@@ -135,7 +455,7 @@ interface GlobalSearchProps {
   autoFocus?: boolean;
 }
 
-export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect, autoFocus }) => {
+export const GlobalSearch: React.FC<GlobalSearchProps> = ({className, onSelect, autoFocus}) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(autoFocus || false);
@@ -161,14 +481,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
   const filteredNavItems = query === ''
     ? navigationItems.slice(0, 6)
     : navigationItems.filter((item) => {
-        const searchLower = query.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(searchLower) ||
-          item.description.toLowerCase().includes(searchLower) ||
-          item.category.toLowerCase().includes(searchLower) ||
-          item.keywords.some((kw) => kw.includes(searchLower))
-        );
-      }).slice(0, 5);
+      const searchLower = query.toLowerCase();
+      return (
+        item.title.toLowerCase().includes(searchLower) ||
+        item.description.toLowerCase().includes(searchLower) ||
+        item.category.toLowerCase().includes(searchLower) ||
+        item.keywords.some((kw) => kw.includes(searchLower))
+      );
+    }).slice(0, 5);
 
   // Debounced API search — switches backend based on active app
   useEffect(() => {
@@ -211,34 +531,38 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
   }, [query, isFluence]);
 
   // Build combined results for keyboard navigation (memoized to prevent useCallback deps churn)
-  const allSelectableItems = useMemo<{ type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[]>(() => {
+  const allSelectableItems = useMemo<{
+    type: 'nav' | 'api';
+    item: NavigationItem | SearchResult;
+    category: string
+  }[]>(() => {
     const items: { type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[] = [];
 
     // Add navigation items first
     filteredNavItems.forEach((item) => {
-      items.push({ type: 'nav', item, category: item.category });
+      items.push({type: 'nav', item, category: item.category});
     });
 
     // Add API results — Fluence or default
     if (isFluence && fluenceResults) {
       fluenceResults.wikiPages.forEach((item) => {
-        items.push({ type: 'api', item, category: 'Wiki Pages' });
+        items.push({type: 'api', item, category: 'Wiki Pages'});
       });
       fluenceResults.blogPosts.forEach((item) => {
-        items.push({ type: 'api', item, category: 'Blog Posts' });
+        items.push({type: 'api', item, category: 'Blog Posts'});
       });
       fluenceResults.templates.forEach((item) => {
-        items.push({ type: 'api', item, category: 'Templates' });
+        items.push({type: 'api', item, category: 'Templates'});
       });
     } else if (!isFluence && apiResults) {
       apiResults.employees.forEach((item) => {
-        items.push({ type: 'api', item, category: 'People' });
+        items.push({type: 'api', item, category: 'People'});
       });
       apiResults.projects.forEach((item) => {
-        items.push({ type: 'api', item, category: 'Projects' });
+        items.push({type: 'api', item, category: 'Projects'});
       });
       apiResults.departments.forEach((item) => {
-        items.push({ type: 'api', item, category: 'Departments' });
+        items.push({type: 'api', item, category: 'Departments'});
       });
     }
 
@@ -343,7 +667,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
             ? 'bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-400'
             : 'bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400'
         )}>
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4"/>
         </div>
         <div className="flex-1 min-w-0">
           <p className={cn(
@@ -359,7 +683,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           </p>
         </div>
         {globalIndex === selectedIndex && (
-          <ArrowRight className="h-4 w-4 text-accent-500 dark:text-accent-400" />
+          <ArrowRight className="h-4 w-4 text-accent-500 dark:text-accent-400"/>
         )}
       </button>
     );
@@ -385,7 +709,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
             ? 'bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-400'
             : 'bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400'
         )}>
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4"/>
         </div>
         <div className="flex-1 min-w-0">
           <p className={cn(
@@ -404,7 +728,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           </p>
         </div>
         {globalIndex === selectedIndex && (
-          <ArrowRight className="h-4 w-4 text-accent-500 dark:text-accent-400" />
+          <ArrowRight className="h-4 w-4 text-accent-500 dark:text-accent-400"/>
         )}
       </button>
     );
@@ -424,13 +748,13 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
     const groups: { label: string; items: SearchResult[] }[] = [];
 
     if (isFluence && fluenceResults) {
-      if (fluenceResults.wikiPages.length > 0) groups.push({ label: 'Wiki Pages', items: fluenceResults.wikiPages });
-      if (fluenceResults.blogPosts.length > 0) groups.push({ label: 'Blog Posts', items: fluenceResults.blogPosts });
-      if (fluenceResults.templates.length > 0) groups.push({ label: 'Templates', items: fluenceResults.templates });
+      if (fluenceResults.wikiPages.length > 0) groups.push({label: 'Wiki Pages', items: fluenceResults.wikiPages});
+      if (fluenceResults.blogPosts.length > 0) groups.push({label: 'Blog Posts', items: fluenceResults.blogPosts});
+      if (fluenceResults.templates.length > 0) groups.push({label: 'Templates', items: fluenceResults.templates});
     } else if (!isFluence && apiResults) {
-      if (apiResults.employees.length > 0) groups.push({ label: 'People', items: apiResults.employees });
-      if (apiResults.projects.length > 0) groups.push({ label: 'Projects', items: apiResults.projects });
-      if (apiResults.departments.length > 0) groups.push({ label: 'Departments', items: apiResults.departments });
+      if (apiResults.employees.length > 0) groups.push({label: 'People', items: apiResults.employees});
+      if (apiResults.projects.length > 0) groups.push({label: 'Projects', items: apiResults.projects});
+      if (apiResults.departments.length > 0) groups.push({label: 'Departments', items: apiResults.departments});
     }
 
     return groups;
@@ -457,7 +781,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         <Search className={cn(
           'absolute left-3 h-4 w-4 transition-colors',
           isOpen ? 'text-accent-500 dark:text-accent-400' : 'text-[var(--text-muted)]'
-        )} />
+        )}/>
         <input
           ref={inputRef}
           type="text"
@@ -472,9 +796,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
         />
         <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
-          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500" />}
-          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
-            <Command className="h-2.5 w-2.5" />
+          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500"/>}
+          <kbd
+            className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
+            <Command className="h-2.5 w-2.5"/>
             <span>K</span>
           </kbd>
         </div>
@@ -482,7 +807,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
 
       {/* Search Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 shadow-[var(--shadow-elevated)] shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
+        <div
+          className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 shadow-[var(--shadow-elevated)] shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
           {/* Header */}
           <div className="row-between px-4 py-4 border-b border-surface-100 dark:border-surface-800">
             <span className="text-xs font-medium text-surface-500 uppercase tracking-wider">
@@ -501,7 +827,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
               }}
               className="p-1 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4"/>
             </button>
           </div>
 
@@ -509,7 +835,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           <div className="py-2">
             {allSelectableItems.length === 0 && !isSearching ? (
               <div className="px-4 py-8 text-center">
-                <HelpCircle className="h-10 w-10 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
+                <HelpCircle className="h-10 w-10 text-surface-300 dark:text-surface-600 mx-auto mb-4"/>
                 <p className="text-sm text-surface-500">No results found for &quot;{query}&quot;</p>
                 <p className="text-xs text-surface-400 mt-1">Try a different search term</p>
               </div>
@@ -526,7 +852,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                   return (
                     <div key={category} className="mb-2">
                       <div className="px-4 py-1.5">
-                        <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                        <span
+                          className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                           {category}
                         </span>
                       </div>
@@ -547,7 +874,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                   return (
                     <div key={group.label} className="mb-2">
                       <div className="px-4 py-1.5">
-                        <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                        <span
+                          className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                           {group.label}
                         </span>
                       </div>
@@ -561,7 +889,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                 {/* Loading indicator */}
                 {isSearching && (
                   <div className="px-4 py-4 text-center">
-                    <Loader2 className="h-5 w-5 animate-spin text-accent-500 mx-auto" />
+                    <Loader2 className="h-5 w-5 animate-spin text-accent-500 mx-auto"/>
                     <p className="text-xs text-surface-400 mt-1">Searching...</p>
                   </div>
                 )}
@@ -570,7 +898,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2.5 border-t border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-800/50 rounded-b-xl">
+          <div
+            className="px-4 py-2.5 border-t border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-800/50 rounded-b-xl">
             <div className="flex items-center gap-4 text-xs text-surface-400">
               <span className="flex items-center gap-1">
                 <kbd className="px-1.5 py-0.5 bg-surface-200 dark:bg-surface-700 rounded text-surface-500">↑↓</kbd>

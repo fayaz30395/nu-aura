@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers } from './fixtures/testData';
-import { AuthHelper, ApiMockHelper } from './utils/helpers';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {testUsers} from './fixtures/testData';
+import {ApiMockHelper, AuthHelper} from './utils/helpers';
 
 /**
  * Authentication E2E Tests
@@ -11,13 +11,13 @@ import { AuthHelper, ApiMockHelper } from './utils/helpers';
 test.describe('Authentication Flow', () => {
   let loginPage: LoginPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
   });
 
   test.describe('Login', () => {
-    test('should display login page correctly', async ({ page }) => {
+    test('should display login page correctly', async ({page}) => {
       // Verify login page elements
       await expect(loginPage.emailInput).toBeVisible();
       await expect(loginPage.passwordInput).toBeVisible();
@@ -28,7 +28,7 @@ test.describe('Authentication Flow', () => {
       expect(heading).toContain('Sign In');
     });
 
-    test('should login successfully with valid credentials - Admin', async ({ page }) => {
+    test('should login successfully with valid credentials - Admin', async ({page}) => {
       // Login as admin
       await loginPage.login(testUsers.admin.email, testUsers.admin.password);
 
@@ -37,7 +37,7 @@ test.describe('Authentication Flow', () => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should login successfully with valid credentials - Employee', async ({ page }) => {
+    test('should login successfully with valid credentials - Employee', async ({page}) => {
       // Login as employee
       await loginPage.login(testUsers.employee.email, testUsers.employee.password);
 
@@ -46,7 +46,7 @@ test.describe('Authentication Flow', () => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should show error with invalid credentials', async ({ page }) => {
+    test('should show error with invalid credentials', async ({page}) => {
       // Try to login with invalid credentials
       await loginPage.login('invalid@email.com', 'wrongpassword');
 
@@ -57,7 +57,7 @@ test.describe('Authentication Flow', () => {
       expect(page.url()).toContain('/auth/login');
     });
 
-    test('should validate required fields', async ({ page }) => {
+    test('should validate required fields', async ({page}) => {
       // Try to submit without filling fields
       await loginPage.loginButton.click();
 
@@ -66,7 +66,7 @@ test.describe('Authentication Flow', () => {
       expect(emailValidity).toBe(false);
     });
 
-    test('should validate email format', async ({ page }) => {
+    test('should validate email format', async ({page}) => {
       // Enter invalid email format
       await loginPage.emailInput.fill('notanemail');
       await loginPage.passwordInput.fill('password');
@@ -76,7 +76,7 @@ test.describe('Authentication Flow', () => {
       expect(emailValidity).toBe(false);
     });
 
-    test('should toggle password visibility', async ({ page }) => {
+    test('should toggle password visibility', async ({page}) => {
       // Fill password
       await loginPage.passwordInput.fill('testpassword');
 
@@ -97,7 +97,7 @@ test.describe('Authentication Flow', () => {
       expect(type).toBe('password');
     });
 
-    test('should remember me checkbox work', async ({ page }) => {
+    test('should remember me checkbox work', async ({page}) => {
       // Login with remember me
       await loginPage.emailInput.fill(testUsers.employee.email);
       await loginPage.passwordInput.fill(testUsers.employee.password);
@@ -110,7 +110,7 @@ test.describe('Authentication Flow', () => {
       await page.waitForURL('**/dashboard');
     });
 
-    test('should navigate to forgot password page', async ({ page }) => {
+    test('should navigate to forgot password page', async ({page}) => {
       // Click forgot password link
       await loginPage.clickForgotPassword();
 
@@ -121,7 +121,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Demo Credentials', () => {
-    test('should login with admin demo credentials', async ({ page }) => {
+    test('should login with admin demo credentials', async ({page}) => {
       // Use demo credentials for admin
       await loginPage.loginWithDemoCredentials('Admin');
 
@@ -130,7 +130,7 @@ test.describe('Authentication Flow', () => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should login with employee demo credentials', async ({ page }) => {
+    test('should login with employee demo credentials', async ({page}) => {
       // Use demo credentials for employee
       await loginPage.loginWithDemoCredentials('Employee');
 
@@ -141,7 +141,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Rate Limiting', () => {
-    test('should lockout after multiple failed attempts', async ({ page }) => {
+    test('should lockout after multiple failed attempts', async ({page}) => {
       // Attempt login 5 times with wrong credentials
       for (let i = 0; i < 5; i++) {
         await loginPage.emailInput.fill('test@test.com');
@@ -161,7 +161,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Logout', () => {
-    test('should logout successfully', async ({ page }) => {
+    test('should logout successfully', async ({page}) => {
       // First login
       await loginPage.login(testUsers.employee.email, testUsers.employee.password);
       await page.waitForURL('**/dashboard');
@@ -176,7 +176,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Protected Routes', () => {
-    test('should redirect to login when accessing protected route without auth', async ({ page }) => {
+    test('should redirect to login when accessing protected route without auth', async ({page}) => {
       // Try to access protected route directly
       await page.goto('/employees');
 
@@ -185,7 +185,7 @@ test.describe('Authentication Flow', () => {
       expect(page.url()).toContain('/auth/login');
     });
 
-    test('should redirect back to original URL after login', async ({ page }) => {
+    test('should redirect back to original URL after login', async ({page}) => {
       // Try to access employees page without auth
       await page.goto('/employees');
 
@@ -202,7 +202,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match login page snapshot', async ({ page }) => {
+    test('should match login page snapshot', async ({page}) => {
       // Take screenshot for visual comparison
       await expect(page).toHaveScreenshot('login-page.png', {
         maxDiffPixels: 100,
@@ -212,7 +212,7 @@ test.describe('Authentication Flow', () => {
 });
 
 test.describe('Authentication with API Mocking', () => {
-  test('should handle successful login with mocked API', async ({ page }) => {
+  test('should handle successful login with mocked API', async ({page}) => {
     // Mock successful login
     await ApiMockHelper.mockLoginSuccess(page);
 
@@ -224,7 +224,7 @@ test.describe('Authentication with API Mocking', () => {
     await page.waitForURL('**/dashboard');
   });
 
-  test('should handle login failure with mocked API', async ({ page }) => {
+  test('should handle login failure with mocked API', async ({page}) => {
     // Mock login failure
     await ApiMockHelper.mockLoginFailure(page, 'Invalid credentials');
 

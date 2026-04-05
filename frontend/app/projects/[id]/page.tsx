@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { ArrowLeft, Edit2, Loader2, XCircle } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout/AppLayout';
+import React, {useEffect, useState} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {ArrowLeft, Edit2, Loader2, XCircle} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
   Badge,
   Button,
@@ -23,22 +22,17 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
+import {ProjectPriority, ProjectStatus, ProjectType, ProjectUpdateRequest,} from '@/lib/types/hrms/hrms-project';
 import {
-  ProjectStatus,
-  ProjectType,
-  ProjectPriority,
-  ProjectUpdateRequest,
-} from '@/lib/types/hrms/hrms-project';
-import {
-  useHrmsProject,
   useActivateHrmsProject,
   useCloseHrmsProject,
+  useHrmsProject,
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
-import { OverviewTab } from './_tabs/OverviewTab';
-import { TeamTab } from './_tabs/TeamTab';
-import { TimesheetsTab } from './_tabs/TimesheetsTab';
-import { InvoicesTab } from './_tabs/InvoicesTab';
+import {OverviewTab} from './_tabs/OverviewTab';
+import {TeamTab} from './_tabs/TeamTab';
+import {TimesheetsTab} from './_tabs/TimesheetsTab';
+import {InvoicesTab} from './_tabs/InvoicesTab';
 
 // Edit form schema
 const editProjectSchema = z.object({
@@ -60,39 +54,42 @@ type EditFormData = z.infer<typeof editProjectSchema>;
 
 type ActiveTab = 'overview' | 'team' | 'timesheets' | 'invoices';
 
-const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  PLANNED: { label: 'Planned', variant: 'secondary' },
-  IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
-  ON_HOLD: { label: 'On Hold', variant: 'warning' },
-  COMPLETED: { label: 'Completed', variant: 'success' },
-  CANCELLED: { label: 'Cancelled', variant: 'danger' },
+const STATUS_BADGE: Record<ProjectStatus, {
+  label: string;
+  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
+}> = {
+  DRAFT: {label: 'Draft', variant: 'secondary'},
+  PLANNED: {label: 'Planned', variant: 'secondary'},
+  IN_PROGRESS: {label: 'In Progress', variant: 'primary'},
+  ON_HOLD: {label: 'On Hold', variant: 'warning'},
+  COMPLETED: {label: 'Completed', variant: 'success'},
+  CANCELLED: {label: 'Cancelled', variant: 'danger'},
 };
 
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
-  CLIENT: { label: 'Client', variant: 'primary' },
-  INTERNAL: { label: 'Internal', variant: 'outline' },
+  CLIENT: {label: 'Client', variant: 'primary'},
+  INTERNAL: {label: 'Internal', variant: 'outline'},
 };
 
 const getStatusBadge = (status?: ProjectStatus | null) => {
   if (status && STATUS_BADGE[status]) {
     return STATUS_BADGE[status];
   }
-  return { label: status ?? 'Unknown', variant: 'secondary' as const };
+  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
 const getTypeBadge = (type?: ProjectType | null) => {
   if (type && TYPE_BADGE[type]) {
     return TYPE_BADGE[type];
   }
-  return { label: type ?? 'Unknown', variant: 'outline' as const };
+  return {label: type ?? 'Unknown', variant: 'outline' as const};
 };
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {
@@ -108,7 +105,7 @@ export default function ProjectDetailPage() {
   const [editError, setEditError] = useState<string | null>(null);
 
   // Queries
-  const { data: project, isLoading, error, refetch: refetchProject } = useHrmsProject(projectId, !!projectId);
+  const {data: project, isLoading, error, refetch: refetchProject} = useHrmsProject(projectId, !!projectId);
 
   // Mutations
   const activateMutation = useActivateHrmsProject();
@@ -121,7 +118,7 @@ export default function ProjectDetailPage() {
     handleSubmit: editHandleSubmit,
     reset: editReset,
     watch: editWatch,
-    formState: { errors: editErrors, isSubmitting: editIsSubmitting },
+    formState: {errors: editErrors, isSubmitting: editIsSubmitting},
   } = useForm<EditFormData>({
     resolver: zodResolver(editProjectSchema),
   });
@@ -143,7 +140,7 @@ export default function ProjectDetailPage() {
 
   const handleClose = async () => {
     try {
-      await closeMutation.mutateAsync({ id: projectId });
+      await closeMutation.mutateAsync({id: projectId});
       setShowCloseDialog(false);
       await refetchProject();
     } catch (_err) {
@@ -186,7 +183,7 @@ export default function ProjectDetailPage() {
     };
 
     try {
-      await updateMutation.mutateAsync({ id: projectId, data: payload });
+      await updateMutation.mutateAsync({id: projectId, data: payload});
       setShowEditModal(false);
       await refetchProject();
     } catch (err) {
@@ -201,9 +198,9 @@ export default function ProjectDetailPage() {
 
   if (loading && !project) {
     return (
-      <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: 'Project' }]}>
+      <AppLayout breadcrumbs={[{label: 'Projects', href: '/projects'}, {label: 'Project'}]}>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
           <span className="ml-2 text-body-muted">Loading project...</span>
         </div>
       </AppLayout>
@@ -214,19 +211,20 @@ export default function ProjectDetailPage() {
 
   // Determine which tabs to show
   const tabs = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'team', label: 'Team' },
-    { id: 'timesheets', label: 'Timesheets' },
-    ...(project?.isBillable ? [{ id: 'invoices', label: 'Invoices' }] : []),
+    {id: 'overview', label: 'Overview'},
+    {id: 'team', label: 'Team'},
+    {id: 'timesheets', label: 'Timesheets'},
+    ...(project?.isBillable ? [{id: 'invoices', label: 'Invoices'}] : []),
   ] as Array<{ id: ActiveTab; label: string }>;
 
   return (
-    <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: project?.name || 'Project' }]}>
+    <AppLayout breadcrumbs={[{label: 'Projects', href: '/projects'}, {label: project?.name || 'Project'}]}>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
-            <Button variant="outline" size="sm" onClick={() => router.back()} leftIcon={<ArrowLeft className="h-4 w-4" />}>
+            <Button variant="outline" size="sm" onClick={() => router.back()}
+                    leftIcon={<ArrowLeft className="h-4 w-4"/>}>
               Back
             </Button>
             <div>
@@ -256,7 +254,7 @@ export default function ProjectDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={handleOpenEdit} leftIcon={<Edit2 className="h-4 w-4" />}>
+            <Button variant="outline" onClick={handleOpenEdit} leftIcon={<Edit2 className="h-4 w-4"/>}>
               Edit
             </Button>
             {project?.status === 'PLANNED' && (
@@ -275,7 +273,7 @@ export default function ProjectDetailPage() {
         {projectError && (
           <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-danger-700 dark:text-danger-400" />
+              <XCircle className="h-4 w-4 text-danger-700 dark:text-danger-400"/>
               <p className="text-sm text-danger-700 dark:text-danger-400">{projectError}</p>
             </CardContent>
           </Card>
@@ -300,10 +298,10 @@ export default function ProjectDetailPage() {
 
         {/* Tab Content */}
         <div>
-          {activeTab === 'overview' && project && <OverviewTab project={project} />}
-          {activeTab === 'team' && <TeamTab projectId={projectId} />}
-          {activeTab === 'timesheets' && <TimesheetsTab projectId={projectId} />}
-          {activeTab === 'invoices' && project?.isBillable && <InvoicesTab projectId={projectId} />}
+          {activeTab === 'overview' && project && <OverviewTab project={project}/>}
+          {activeTab === 'team' && <TeamTab projectId={projectId}/>}
+          {activeTab === 'timesheets' && <TimesheetsTab projectId={projectId}/>}
+          {activeTab === 'invoices' && project?.isBillable && <InvoicesTab projectId={projectId}/>}
         </div>
       </div>
 
@@ -338,7 +336,8 @@ export default function ProjectDetailPage() {
         <form onSubmit={editHandleSubmit(handleEditProject)}>
           <ModalBody className="space-y-4">
             {editError && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div
+                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 {editError}
               </div>
             )}
@@ -348,7 +347,8 @@ export default function ProjectDetailPage() {
                 <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                   Project code
                 </label>
-                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
+                <div
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
                   {project?.projectCode}
                 </div>
               </div>
@@ -421,7 +421,8 @@ export default function ProjectDetailPage() {
                     </Select>
                   </div>
                   <div>
-                    <Input label="Billing rate (per hour)" type="number" min={0} placeholder="e.g. 150" {...editRegister('billingRate')} />
+                    <Input label="Billing rate (per hour)" type="number" min={0}
+                           placeholder="e.g. 150" {...editRegister('billingRate')} />
                   </div>
                 </div>
               )}

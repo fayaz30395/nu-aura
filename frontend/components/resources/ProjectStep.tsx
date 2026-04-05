@@ -1,18 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Input } from '@/components/ui/Input';
-import {
-  User,
-  Users,
-  Briefcase,
-  Calendar,
-  Plus,
-  DollarSign,
-  Building2,
-} from 'lucide-react';
-import { Employee } from '@/lib/types/hrms/employee';
-import { Project, CreateProjectRequest } from '@/lib/types/hrms/project';
+import {Input} from '@/components/ui/Input';
+import {Briefcase, Building2, Calendar, DollarSign, Plus, User, Users,} from 'lucide-react';
+import {Employee} from '@/lib/types/hrms/employee';
+import {CreateProjectRequest, Project} from '@/lib/types/hrms/project';
 
 // ─── Props ────────────────────────────────────────────────────────────
 export interface ProjectStepProps {
@@ -43,17 +35,17 @@ export interface ProjectStepProps {
  * All state lives in the parent (CreateAllocationModal); this component is purely presentational.
  */
 export function ProjectStep({
-  useExistingProject,
-  onUseExistingProjectChange,
-  projects,
-  selectedProjectId,
-  onSelectedProjectIdChange,
-  projectData,
-  onProjectDataChange,
-  resourcesNeeded,
-  onResourcesNeededChange,
-  employees,
-}: ProjectStepProps) {
+                              useExistingProject,
+                              onUseExistingProjectChange,
+                              projects,
+                              selectedProjectId,
+                              onSelectedProjectIdChange,
+                              projectData,
+                              onProjectDataChange,
+                              resourcesNeeded,
+                              onResourcesNeededChange,
+                              employees,
+                            }: ProjectStepProps) {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   return (
@@ -69,7 +61,7 @@ export function ProjectStep({
               : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           }`}
         >
-          <Plus className="inline-block h-4 w-4 mr-2" />
+          <Plus className="inline-block h-4 w-4 mr-2"/>
           Create New Project
         </button>
         <button
@@ -81,7 +73,7 @@ export function ProjectStep({
               : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
           }`}
         >
-          <Briefcase className="inline-block h-4 w-4 mr-2" />
+          <Briefcase className="inline-block h-4 w-4 mr-2"/>
           Select Existing Project
         </button>
       </div>
@@ -108,7 +100,8 @@ export function ProjectStep({
           </div>
 
           {selectedProject && (
-            <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div
+              className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
               <h4 className="font-medium text-surface-800 dark:text-surface-200 mb-2">{selectedProject.name}</h4>
               <div className="grid grid-cols-2 gap-2 text-sm text-surface-600 dark:text-surface-400">
                 <div>Code: {selectedProject.projectCode}</div>
@@ -134,7 +127,7 @@ export function ProjectStep({
                 type="text"
                 placeholder="e.g., Website Redesign"
                 value={projectData.name}
-                onChange={(e) => onProjectDataChange({ ...projectData, name: e.target.value })}
+                onChange={(e) => onProjectDataChange({...projectData, name: e.target.value})}
                 required
               />
             </div>
@@ -146,7 +139,7 @@ export function ProjectStep({
                 type="text"
                 placeholder="e.g., PRJ-001"
                 value={projectData.projectCode}
-                onChange={(e) => onProjectDataChange({ ...projectData, projectCode: e.target.value.toUpperCase() })}
+                onChange={(e) => onProjectDataChange({...projectData, projectCode: e.target.value.toUpperCase()})}
                 required
               />
             </div>
@@ -156,25 +149,25 @@ export function ProjectStep({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Calendar className="inline-block h-4 w-4 mr-1" />
+                <Calendar className="inline-block h-4 w-4 mr-1"/>
                 Start Date *
               </label>
               <Input
                 type="date"
                 value={projectData.startDate}
-                onChange={(e) => onProjectDataChange({ ...projectData, startDate: e.target.value })}
+                onChange={(e) => onProjectDataChange({...projectData, startDate: e.target.value})}
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Calendar className="inline-block h-4 w-4 mr-1" />
+                <Calendar className="inline-block h-4 w-4 mr-1"/>
                 End Date
               </label>
               <Input
                 type="date"
                 value={projectData.expectedEndDate}
-                onChange={(e) => onProjectDataChange({ ...projectData, expectedEndDate: e.target.value })}
+                onChange={(e) => onProjectDataChange({...projectData, expectedEndDate: e.target.value})}
                 min={projectData.startDate}
               />
             </div>
@@ -184,7 +177,7 @@ export function ProjectStep({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <Users className="inline-block h-4 w-4 mr-1" />
+                <Users className="inline-block h-4 w-4 mr-1"/>
                 Resources Needed *
               </label>
               <Input
@@ -202,12 +195,12 @@ export function ProjectStep({
             </div>
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <User className="inline-block h-4 w-4 mr-1" />
+                <User className="inline-block h-4 w-4 mr-1"/>
                 Project Manager
               </label>
               <select
                 value={projectData.projectManagerId}
-                onChange={(e) => onProjectDataChange({ ...projectData, projectManagerId: e.target.value })}
+                onChange={(e) => onProjectDataChange({...projectData, projectManagerId: e.target.value})}
                 className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
               >
                 <option value="">Select Manager</option>
@@ -224,7 +217,7 @@ export function ProjectStep({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                <DollarSign className="inline-block h-4 w-4 mr-1" />
+                <DollarSign className="inline-block h-4 w-4 mr-1"/>
                 Budget
               </label>
               <div className="flex gap-2">
@@ -232,12 +225,15 @@ export function ProjectStep({
                   type="number"
                   placeholder="0.00"
                   value={projectData.budget || ''}
-                  onChange={(e) => onProjectDataChange({ ...projectData, budget: parseFloat(e.target.value) || undefined })}
+                  onChange={(e) => onProjectDataChange({
+                    ...projectData,
+                    budget: parseFloat(e.target.value) || undefined
+                  })}
                   className="flex-1"
                 />
                 <select
                   value={projectData.currency}
-                  onChange={(e) => onProjectDataChange({ ...projectData, currency: e.target.value })}
+                  onChange={(e) => onProjectDataChange({...projectData, currency: e.target.value})}
                   className="w-24 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-2"
                 >
                   <option value="USD">USD</option>
@@ -252,7 +248,7 @@ export function ProjectStep({
           {/* Client Information Section */}
           <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
             <h4 className="text-sm font-medium text-surface-800 dark:text-surface-200 mb-4 flex items-center">
-              <Building2 className="h-4 w-4 mr-2" />
+              <Building2 className="h-4 w-4 mr-2"/>
               Client Information
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -264,7 +260,7 @@ export function ProjectStep({
                   type="text"
                   placeholder="e.g., Acme Corp"
                   value={projectData.clientName}
-                  onChange={(e) => onProjectDataChange({ ...projectData, clientName: e.target.value })}
+                  onChange={(e) => onProjectDataChange({...projectData, clientName: e.target.value})}
                 />
               </div>
               <div>
@@ -275,7 +271,7 @@ export function ProjectStep({
                   type="text"
                   placeholder="e.g., john@acme.com"
                   value={projectData.clientContact}
-                  onChange={(e) => onProjectDataChange({ ...projectData, clientContact: e.target.value })}
+                  onChange={(e) => onProjectDataChange({...projectData, clientContact: e.target.value})}
                 />
               </div>
             </div>
@@ -286,7 +282,7 @@ export function ProjectStep({
               <textarea
                 placeholder="Any additional notes about the client or project requirements..."
                 value={projectData.clientNotes}
-                onChange={(e) => onProjectDataChange({ ...projectData, clientNotes: e.target.value })}
+                onChange={(e) => onProjectDataChange({...projectData, clientNotes: e.target.value})}
                 className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px]"
               />
             </div>

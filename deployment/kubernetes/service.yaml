@@ -77,8 +77,8 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerSourceRanges:
-    # Restrict to specific IP ranges for security
-    # - "0.0.0.0/0"  # Allow all (not recommended for production)
+  # Restrict to specific IP ranges for security
+  # - "0.0.0.0/0"  # Allow all (not recommended for production)
   selector:
     app: hrms-backend
     tier: backend

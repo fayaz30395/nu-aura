@@ -123,89 +123,139 @@ Client-side cleanup:
 ### HIGH RISK
 
 1. **Stale Zustand rehydration vs. expired cookies (login page, lines 277-288)**
-   - The login page has a `useEffect` that clears stale auth state when `hasHydrated` turns true but `didFreshLogin` is false. This is a workaround for Zustand rehydrating `isAuthenticated=true` from sessionStorage while the httpOnly cookie is expired. If the timing of `hasHydrated` changes or the `setUser(null)` call races with the redirect effect, users could see a flash or loop.
+
+- The login page has a `useEffect` that clears stale auth state when `hasHydrated` turns true but
+  `didFreshLogin` is false. This is a workaround for Zustand rehydrating `isAuthenticated=true`
+  from sessionStorage while the httpOnly cookie is expired. If the timing of `hasHydrated` changes
+  or the `setUser(null)` call races with the redirect effect, users could see a flash or loop.
 
 2. **AuthGuard session restore race condition (AuthGuard.tsx, lines 95-141)**
-   - `restoreAttemptedRef` prevents double-restore, but the `isRestoringSession` state is excluded from the useEffect dependency array (intentionally, to avoid infinite loop). If `pathname` changes during restore, the effect re-runs with stale `isRestoringSession=true` and skips the else-if branch, potentially leaving the user stuck on the loader.
+
+- `restoreAttemptedRef` prevents double-restore, but the `isRestoringSession` state is excluded
+  from the useEffect dependency array (intentionally, to avoid infinite loop). If `pathname`
+  changes during restore, the effect re-runs with stale `isRestoringSession=true` and skips the
+  else-if branch, potentially leaving the user stuck on the loader.
 
 3. **Middleware does NOT redirect authenticated users away from /auth/login**
-   - Comment at middleware line 293-298 explains this is intentional to avoid infinite loops. But it means a user with a valid cookie who somehow lands on `/auth/login` will see the login page. The login page's stale-auth cleanup (point 1) will clear their Zustand state, essentially logging them out client-side even though their cookie is still valid.
+
+- Comment at middleware line 293-298 explains this is intentional to avoid infinite loops. But it
+  means a user with a valid cookie who somehow lands on `/auth/login` will see the login page. The
+  login page's stale-auth cleanup (point 1) will clear their Zustand state, essentially logging
+  them out client-side even though their cookie is still valid.
 
 4. **CSRF token availability on first request after login**
-   - The XSRF-TOKEN cookie is set by Spring Security's `CookieCsrfTokenRepository`. After login, the first mutating request may not have the CSRF cookie yet if it fires before the browser processes the Set-Cookie from the login response. The client reads `document.cookie` synchronously, so this is usually fine, but could fail in edge cases (rapid POST after login).
+
+- The XSRF-TOKEN cookie is set by Spring Security's `CookieCsrfTokenRepository`. After login, the
+  first mutating request may not have the CSRF cookie yet if it fires before the browser processes
+  the Set-Cookie from the login response. The client reads `document.cookie` synchronously, so
+  this is usually fine, but could fail in edge cases (rapid POST after login).
 
 ### MEDIUM RISK
 
 5. **Demo login does not check MFA**
-   - `handleDemoLogin` calls `login()` directly and then immediately does `router.push()`. If the backend returns an MFA-required response, the demo login silently fails or succeeds without MFA verification. The MFA check (`mfaRequired` state) is only set in the regular form login flow, which demo mode bypasses.
+
+- `handleDemoLogin` calls `login()` directly and then immediately does `router.push()`. If the
+  backend returns an MFA-required response, the demo login silently fails or succeeds without MFA
+  verification. The MFA check (`mfaRequired` state) is only set in the regular form login flow,
+  which demo mode bypasses.
 
 6. **Token refresh revokes before validating**
-   - `AuthController.refresh()` at line 122 calls `tokenProvider.revokeToken(refreshToken)` BEFORE `authService.refresh(refreshToken)`. If `authService.refresh()` throws, the old token is already revoked and the user has no valid refresh token. This creates a forced logout on any transient error during refresh.
+
+- `AuthController.refresh()` at line 122 calls `tokenProvider.revokeToken(refreshToken)` BEFORE
+  `authService.refresh(refreshToken)`. If `authService.refresh()` throws, the old token is already
+  revoked and the user has no valid refresh token. This creates a forced logout on any transient
+  error during refresh.
 
 7. **returnUrl sanitization edge cases**
-   - `sanitizeReturnUrl` uses a regex allowlist `^\/[\w\-./~?#&=%@]*$` which permits `#` and `?`. A returnUrl like `/auth/login?returnUrl=/auth/login?returnUrl=...` could create nested redirect chains. Not a security issue (open redirect is blocked), but a UX concern.
+
+- `sanitizeReturnUrl` uses a regex allowlist `^\/[\w\-./~?#&=%@]*$` which permits `#` and `?`. A
+  returnUrl like `/auth/login?returnUrl=/auth/login?returnUrl=...` could create nested redirect
+  chains. Not a security issue (open redirect is blocked), but a UX concern.
 
 8. **SameSite=Strict on cookies**
-   - Access token cookie uses `SameSite=Strict`. This means the cookie is NOT sent on cross-site navigations (e.g., clicking a link to the app from an email or external site). Users arriving from external links will appear unauthenticated and be redirected to login, even if they have a valid session. `SameSite=Lax` would be more appropriate for the access token.
+
+- Access token cookie uses `SameSite=Strict`. This means the cookie is NOT sent on cross-site
+  navigations (e.g., clicking a link to the app from an email or external site). Users arriving
+  from external links will appear unauthenticated and be redirected to login, even if they have a
+  valid session. `SameSite=Lax` would be more appropriate for the access token.
 
 ### LOW RISK
 
 9. **Middleware JWT decode without signature verification (CRIT-007)**
-   - Documented and intentional. A forged JWT passes middleware but fails at the backend. Acceptable tradeoff since middleware only makes routing decisions, not data access decisions.
+
+- Documented and intentional. A forged JWT passes middleware but fails at the backend. Acceptable
+  tradeoff since middleware only makes routing decisions, not data access decisions.
 
 10. **sessionStorage for auth persistence**
-    - Auth state is persisted to sessionStorage, not localStorage. This means opening a new tab loses auth state (requires restoreSession). This is by design for security, but could cause confusion in multi-tab workflows.
+
+- Auth state is persisted to sessionStorage, not localStorage. This means opening a new tab loses
+  auth state (requires restoreSession). This is by design for security, but could cause confusion
+  in multi-tab workflows.
 
 ---
 
 ## 3. Files Likely Needing Modification for Auth Fixes
 
 ### Frontend
-| File | Reason |
-|------|--------|
-| `frontend/app/auth/login/page.tsx` | Login form, SSO, demo login, MFA flow, stale session cleanup |
-| `frontend/lib/hooks/useAuth.ts` | Zustand auth store, login/logout/restore actions |
-| `frontend/lib/api/client.ts` | Axios interceptors, 401 handling, CSRF, redirect logic |
-| `frontend/components/auth/AuthGuard.tsx` | Route protection, session restore, permission checks |
-| `frontend/middleware.ts` | Edge middleware, route lists, cookie inspection |
-| `frontend/lib/api/auth.ts` | Auth API calls (login, logout, refresh, google) |
-| `frontend/lib/config/routes.ts` | Route permission config (if route-level RBAC issues) |
-| `frontend/lib/hooks/usePermissions.ts` | Permission/role checking hooks |
+
+| File                                     | Reason                                                       |
+|------------------------------------------|--------------------------------------------------------------|
+| `frontend/app/auth/login/page.tsx`       | Login form, SSO, demo login, MFA flow, stale session cleanup |
+| `frontend/lib/hooks/useAuth.ts`          | Zustand auth store, login/logout/restore actions             |
+| `frontend/lib/api/client.ts`             | Axios interceptors, 401 handling, CSRF, redirect logic       |
+| `frontend/components/auth/AuthGuard.tsx` | Route protection, session restore, permission checks         |
+| `frontend/middleware.ts`                 | Edge middleware, route lists, cookie inspection              |
+| `frontend/lib/api/auth.ts`               | Auth API calls (login, logout, refresh, google)              |
+| `frontend/lib/config/routes.ts`          | Route permission config (if route-level RBAC issues)         |
+| `frontend/lib/hooks/usePermissions.ts`   | Permission/role checking hooks                               |
 
 ### Backend
-| File | Reason |
-|------|--------|
-| `backend/.../auth/controller/AuthController.java` | Auth endpoints, cookie setting, MFA login |
+
+| File                                                       | Reason                                              |
+|------------------------------------------------------------|-----------------------------------------------------|
+| `backend/.../auth/controller/AuthController.java`          | Auth endpoints, cookie setting, MFA login           |
 | `backend/.../common/security/JwtAuthenticationFilter.java` | JWT validation, permission loading, SecurityContext |
-| `backend/.../common/config/SecurityConfig.java` | Filter chain, CORS, CSRF, public endpoints |
-| `backend/.../common/config/CookieConfig.java` | Cookie attributes (SameSite, Secure, Path, MaxAge) |
-| `backend/.../common/security/JwtTokenProvider.java` | Token generation, validation, claim extraction |
-| `backend/.../application/auth/service/AuthService.java` | Login logic, token issuance, refresh logic |
-| `backend/.../common/security/SecurityService.java` | Permission caching, role-to-permission resolution |
+| `backend/.../common/config/SecurityConfig.java`            | Filter chain, CORS, CSRF, public endpoints          |
+| `backend/.../common/config/CookieConfig.java`              | Cookie attributes (SameSite, Secure, Path, MaxAge)  |
+| `backend/.../common/security/JwtTokenProvider.java`        | Token generation, validation, claim extraction      |
+| `backend/.../application/auth/service/AuthService.java`    | Login logic, token issuance, refresh logic          |
+| `backend/.../common/security/SecurityService.java`         | Permission caching, role-to-permission resolution   |
 
 ---
 
 ## 4. Code Smells and Observations
 
-1. **Duplicated user construction logic** in `useAuth.ts` — the `login`, `googleLogin`, and `restoreSession` methods all have identical User object construction (lines 100-112, 140-152, 205-217). This should be a shared helper to prevent drift.
+1. **Duplicated user construction logic** in `useAuth.ts` — the `login`, `googleLogin`, and
+   `restoreSession` methods all have identical User object construction (lines 100-112, 140-152,
+   205-217). This should be a shared helper to prevent drift.
 
-2. **`decodeJwt` exists in two places** — `useAuth.ts` (line 19) and `middleware.ts` (line 145). Different implementations with different purposes, but the duplication increases maintenance risk.
+2. **`decodeJwt` exists in two places** — `useAuth.ts` (line 19) and `middleware.ts` (line 145).
+   Different implementations with different purposes, but the duplication increases maintenance
+   risk.
 
-3. **Login page mixes concerns** — The 672-line `page.tsx` handles login form, Google SSO, MFA, demo accounts, animations, stale session cleanup, and lockout. A refactor into smaller components would reduce bug surface area.
+3. **Login page mixes concerns** — The 672-line `page.tsx` handles login form, Google SSO, MFA, demo
+   accounts, animations, stale session cleanup, and lockout. A refactor into smaller components
+   would reduce bug surface area.
 
-4. **`isRedirecting` module-level mutable state in client.ts** — The redirect debounce uses a module-level boolean + timer. This works in SPA but could behave unexpectedly if the module is hot-reloaded during development.
+4. **`isRedirecting` module-level mutable state in client.ts** — The redirect debounce uses a
+   module-level boolean + timer. This works in SPA but could behave unexpectedly if the module is
+   hot-reloaded during development.
 
-5. **Refresh token revoke-before-validate** in `AuthController.refresh()` — As noted in fragile point 6, the old refresh token is revoked before the new one is issued. A transient DB or service error during `authService.refresh()` would leave the user with no valid tokens.
+5. **Refresh token revoke-before-validate** in `AuthController.refresh()` — As noted in fragile
+   point 6, the old refresh token is revoked before the new one is issued. A transient DB or service
+   error during `authService.refresh()` would leave the user with no valid tokens.
 
 ---
 
 ## 5. Readiness Assessment
 
-The auth stack is well-structured with defense-in-depth (middleware -> AuthGuard -> API interceptor -> backend filter chain). The most likely defects from QA will fall into:
+The auth stack is well-structured with defense-in-depth (middleware -> AuthGuard -> API
+interceptor -> backend filter chain). The most likely defects from QA will fall into:
 
 - **Session state inconsistencies** (Zustand vs. cookie state mismatch)
 - **Route protection gaps** (routes missing from middleware's AUTHENTICATED_ROUTES list)
-- **Permission check failures** (format mismatch between DB `module.action` and code `MODULE:ACTION`)
+- **Permission check failures** (format mismatch between DB `module.action` and code
+  `MODULE:ACTION`)
 - **MFA flow edge cases** (demo login bypassing MFA, MFA cancel state)
 - **CSRF issues** on first mutating request after login
 

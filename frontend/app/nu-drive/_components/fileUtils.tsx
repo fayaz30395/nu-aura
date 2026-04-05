@@ -1,27 +1,21 @@
 // Shared file utility functions and icons for nu-drive
 
 import React from 'react';
-import {
-  Folder,
-  File,
-  FileText,
-  Image as ImageIcon,
-  Film,
-  Music,
-  FileSpreadsheet,
-  Presentation,
-} from 'lucide-react';
-import { DriveFile } from './types';
+import {File, FileSpreadsheet, FileText, Film, Folder, Image as ImageIcon, Music, Presentation,} from 'lucide-react';
+import {DriveFile} from './types';
 
 export function getFileIcon(mimeType: string) {
-  if (mimeType === 'application/vnd.google-apps.folder') return <Folder className="h-8 w-8 text-warning-500" />;
-  if (mimeType.startsWith('image/')) return <ImageIcon className="h-8 w-8 text-success-500" />;
-  if (mimeType.startsWith('video/')) return <Film className="h-8 w-8 text-accent-700" />;
-  if (mimeType.startsWith('audio/')) return <Music className="h-8 w-8 text-accent-700" />;
-  if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return <FileSpreadsheet className="h-8 w-8 text-success-600" />;
-  if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return <Presentation className="h-8 w-8 text-warning-500" />;
-  if (mimeType.includes('document') || mimeType.includes('word')) return <FileText className="h-8 w-8 text-accent-500" />;
-  return <File className="h-8 w-8 text-[var(--text-muted)]" />;
+  if (mimeType === 'application/vnd.google-apps.folder') return <Folder className="h-8 w-8 text-warning-500"/>;
+  if (mimeType.startsWith('image/')) return <ImageIcon className="h-8 w-8 text-success-500"/>;
+  if (mimeType.startsWith('video/')) return <Film className="h-8 w-8 text-accent-700"/>;
+  if (mimeType.startsWith('audio/')) return <Music className="h-8 w-8 text-accent-700"/>;
+  if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return <FileSpreadsheet
+    className="h-8 w-8 text-success-600"/>;
+  if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return <Presentation
+    className="h-8 w-8 text-warning-500"/>;
+  if (mimeType.includes('document') || mimeType.includes('word')) return <FileText
+    className="h-8 w-8 text-accent-500"/>;
+  return <File className="h-8 w-8 text-[var(--text-muted)]"/>;
 }
 
 export function formatBytes(bytes: number) {

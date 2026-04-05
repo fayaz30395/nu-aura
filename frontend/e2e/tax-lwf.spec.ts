@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { demoUsers } from './fixtures/testData';
-import { loginAs, navigateTo } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {demoUsers} from './fixtures/testData';
+import {loginAs, navigateTo} from './fixtures/helpers';
 
 /**
  * Tax & LWF E2E Tests
@@ -15,18 +15,18 @@ import { loginAs, navigateTo } from './fixtures/helpers';
 // ─── TAX OVERVIEW ─────────────────────────────────────────────────────────────
 
 test.describe('Tax — Overview Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/tax');
   });
 
-  test('should display Tax Overview heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').filter({ hasText: /Tax/i }).first()).toBeVisible({
+  test('should display Tax Overview heading', async ({page}) => {
+    await expect(page.locator('h1, h2').filter({hasText: /Tax/i}).first()).toBeVisible({
       timeout: 10000,
     });
   });
 
-  test('should display stats cards: Total Declarations, Approved, Pending', async ({ page }) => {
+  test('should display stats cards: Total Declarations, Approved, Pending', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasTotal = await page.locator('text=Total Declarations').first().isVisible().catch(() => false);
     const hasApproved = await page.locator('text=Approved').first().isVisible().catch(() => false);
@@ -34,7 +34,7 @@ test.describe('Tax — Overview Page', () => {
     expect(hasTotal || hasApproved || hasPending).toBe(true);
   });
 
-  test('should display declarations table or empty state', async ({ page }) => {
+  test('should display declarations table or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasTable = await page.locator('table').isVisible().catch(() => false);
     const hasEmpty = await page
@@ -45,7 +45,7 @@ test.describe('Tax — Overview Page', () => {
     expect(hasTable || hasEmpty || true).toBe(true);
   });
 
-  test('should display Navigate to Declarations button or link', async ({ page }) => {
+  test('should display Navigate to Declarations button or link', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasLink = await page
       .locator('a[href*="/tax/declarations"], button:has-text("Declarations"), button:has-text("View All")')
@@ -55,7 +55,7 @@ test.describe('Tax — Overview Page', () => {
     expect(hasLink || true).toBe(true);
   });
 
-  test('Refresh button triggers data reload', async ({ page }) => {
+  test('Refresh button triggers data reload', async ({page}) => {
     await page.waitForTimeout(1000);
     const refreshBtn = page.locator('button:has-text("Refresh"), button[aria-label*="refresh" i]').first();
     const hasRefresh = await refreshBtn.isVisible().catch(() => false);
@@ -66,7 +66,7 @@ test.describe('Tax — Overview Page', () => {
     expect(page.url()).toContain('/tax');
   });
 
-  test('should have no critical console errors', async ({ page }) => {
+  test('should have no critical console errors', async ({page}) => {
     const errors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -87,16 +87,16 @@ test.describe('Tax — Overview Page', () => {
 // ─── TAX DECLARATIONS ─────────────────────────────────────────────────────────
 
 test.describe('Tax Declarations — Page Load', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/tax/declarations');
   });
 
-  test('should display Tax Declarations heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display Tax Declarations heading', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should display declarations table or empty state', async ({ page }) => {
+  test('should display declarations table or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasTable = await page.locator('table').isVisible().catch(() => false);
     const hasEmpty = await page
@@ -107,7 +107,7 @@ test.describe('Tax Declarations — Page Load', () => {
     expect(hasTable || hasEmpty || true).toBe(true);
   });
 
-  test('should display New Declaration button', async ({ page }) => {
+  test('should display New Declaration button', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration"), [aria-label*="plus" i]')
       .first();
@@ -117,13 +117,13 @@ test.describe('Tax Declarations — Page Load', () => {
 });
 
 test.describe('Tax Declarations — Create Declaration', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/tax/declarations');
     await page.waitForTimeout(1000);
   });
 
-  test('Create Declaration modal opens', async ({ page }) => {
+  test('Create Declaration modal opens', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration")')
       .first();
@@ -135,7 +135,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     expect(hasModal).toBe(true);
   });
 
-  test('Financial Year field is present', async ({ page }) => {
+  test('Financial Year field is present', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration")')
       .first();
@@ -151,7 +151,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     expect(hasYear || true).toBe(true);
   });
 
-  test('Tax Regime selector has OLD_REGIME and NEW_REGIME options', async ({ page }) => {
+  test('Tax Regime selector has OLD_REGIME and NEW_REGIME options', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration")')
       .first();
@@ -165,7 +165,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     expect(hasRegime || true).toBe(true);
   });
 
-  test('Section 80C numeric input is present', async ({ page }) => {
+  test('Section 80C numeric input is present', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration")')
       .first();
@@ -181,7 +181,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     expect(has80C || true).toBe(true);
   });
 
-  test('HRA Exemption numeric field is present', async ({ page }) => {
+  test('HRA Exemption numeric field is present', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration")')
       .first();
@@ -197,7 +197,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     expect(hasHra || true).toBe(true);
   });
 
-  test('declaration status badges are visible in list', async ({ page }) => {
+  test('declaration status badges are visible in list', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasStatus = await page
       .locator('text=/Draft|Submitted|Approved|Rejected/i')
@@ -209,7 +209,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
 });
 
 test.describe('Tax Declarations — RBAC', () => {
-  test('Employee can access their own tax declarations', async ({ page }) => {
+  test('Employee can access their own tax declarations', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/tax/declarations');
     await page.waitForTimeout(3000);
@@ -218,28 +218,28 @@ test.describe('Tax Declarations — RBAC', () => {
     expect(url.includes('/tax/declarations') || url.includes('/dashboard')).toBe(true);
   });
 
-  test('Super Admin has full access to tax declarations', async ({ page }) => {
+  test('Super Admin has full access to tax declarations', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/tax/declarations');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 });
 
 // ─── LWF ──────────────────────────────────────────────────────────────────────
 
 test.describe('LWF — Page Load', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/lwf');
   });
 
-  test('should display LWF heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').filter({ hasText: /LWF|Labour Welfare/i }).first()).toBeVisible({
+  test('should display LWF heading', async ({page}) => {
+    await expect(page.locator('h1, h2').filter({hasText: /LWF|Labour Welfare/i}).first()).toBeVisible({
       timeout: 10000,
     });
   });
 
-  test('should display Configurations tab or section', async ({ page }) => {
+  test('should display Configurations tab or section', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasConfig = await page
       .locator('text=/Configurations|Configure|LWF Config/i')
@@ -249,7 +249,7 @@ test.describe('LWF — Page Load', () => {
     expect(hasConfig || true).toBe(true);
   });
 
-  test('should display Deductions tab or section', async ({ page }) => {
+  test('should display Deductions tab or section', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasDeductions = await page
       .locator('[role="tab"]:has-text("Deductions"), text=/Deductions/i')
@@ -259,7 +259,7 @@ test.describe('LWF — Page Load', () => {
     expect(hasDeductions || true).toBe(true);
   });
 
-  test('should have no critical console errors', async ({ page }) => {
+  test('should have no critical console errors', async ({page}) => {
     const errors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -278,13 +278,13 @@ test.describe('LWF — Page Load', () => {
 });
 
 test.describe('LWF — Configurations', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/lwf');
     await page.waitForTimeout(1500);
   });
 
-  test('configuration table or empty state is displayed', async ({ page }) => {
+  test('configuration table or empty state is displayed', async ({page}) => {
     const hasTable = await page.locator('table').isVisible().catch(() => false);
     const hasEmpty = await page
       .locator('text=/No.*config|empty|Add.*LWF/i')
@@ -294,7 +294,7 @@ test.describe('LWF — Configurations', () => {
     expect(hasTable || hasEmpty || true).toBe(true);
   });
 
-  test('Add Configuration button is visible', async ({ page }) => {
+  test('Add Configuration button is visible', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add"), button:has-text("Configure"), button:has-text("New Config")')
       .first();
@@ -302,7 +302,7 @@ test.describe('LWF — Configurations', () => {
     expect(hasAdd || true).toBe(true);
   });
 
-  test('Create Config form has State field', async ({ page }) => {
+  test('Create Config form has State field', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add"), button:has-text("Configure")')
       .first();
@@ -318,7 +318,7 @@ test.describe('LWF — Configurations', () => {
     expect(hasState || true).toBe(true);
   });
 
-  test('Frequency dropdown has Monthly, Half-Yearly, Yearly options', async ({ page }) => {
+  test('Frequency dropdown has Monthly, Half-Yearly, Yearly options', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add"), button:has-text("Configure")')
       .first();
@@ -332,7 +332,7 @@ test.describe('LWF — Configurations', () => {
     expect(hasSelect).toBe(true);
   });
 
-  test('Employee and Employer contribution fields are present', async ({ page }) => {
+  test('Employee and Employer contribution fields are present', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add"), button:has-text("Configure")')
       .first();
@@ -350,13 +350,13 @@ test.describe('LWF — Configurations', () => {
 });
 
 test.describe('LWF — Deductions Report', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/lwf');
     await page.waitForTimeout(1000);
   });
 
-  test('Deductions tab shows report or empty state', async ({ page }) => {
+  test('Deductions tab shows report or empty state', async ({page}) => {
     const deductionsTab = page
       .locator('[role="tab"]:has-text("Deductions"), button:has-text("Deductions")')
       .first();
@@ -372,7 +372,7 @@ test.describe('LWF — Deductions Report', () => {
     expect(hasContent || true).toBe(true);
   });
 
-  test('Month/Year filter is available for deductions report', async ({ page }) => {
+  test('Month/Year filter is available for deductions report', async ({page}) => {
     const deductionsTab = page
       .locator('[role="tab"]:has-text("Deductions"), button:has-text("Deductions")')
       .first();
@@ -390,7 +390,7 @@ test.describe('LWF — Deductions Report', () => {
 });
 
 test.describe('LWF — RBAC', () => {
-  test('Employee cannot access LWF configuration', async ({ page }) => {
+  test('Employee cannot access LWF configuration', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/lwf');
     await page.waitForTimeout(3000);
@@ -399,13 +399,13 @@ test.describe('LWF — RBAC', () => {
     expect(url).not.toContain('/lwf');
   });
 
-  test('Super Admin has full LWF access', async ({ page }) => {
+  test('Super Admin has full LWF access', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/lwf');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('HR Manager may access LWF if STATUTORY_VIEW granted', async ({ page }) => {
+  test('HR Manager may access LWF if STATUTORY_VIEW granted', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await page.goto('/lwf');
     await page.waitForTimeout(3000);
@@ -417,30 +417,30 @@ test.describe('LWF — RBAC', () => {
 // ─── RESTRICTED HOLIDAYS ──────────────────────────────────────────────────────
 
 test.describe('Restricted Holidays — Page Load', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/restricted-holidays');
   });
 
-  test('should display Restricted Holidays heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').filter({ hasText: /Holiday|Restricted/i }).first()).toBeVisible({
+  test('should display Restricted Holidays heading', async ({page}) => {
+    await expect(page.locator('h1, h2').filter({hasText: /Holiday|Restricted/i}).first()).toBeVisible({
       timeout: 10000,
     });
   });
 
-  test('should display Browse tab', async ({ page }) => {
+  test('should display Browse tab', async ({page}) => {
     await expect(
       page.locator('button:has-text("Browse"), [role="tab"]:has-text("Browse")').first()
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({timeout: 10000});
   });
 
-  test('should display My Selections tab', async ({ page }) => {
+  test('should display My Selections tab', async ({page}) => {
     await expect(
       page.locator('button:has-text("My Selections"), [role="tab"]:has-text("My Selections")').first()
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({timeout: 10000});
   });
 
-  test('should have no critical console errors', async ({ page }) => {
+  test('should have no critical console errors', async ({page}) => {
     const errors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -459,13 +459,13 @@ test.describe('Restricted Holidays — Page Load', () => {
 });
 
 test.describe('Restricted Holidays — Browse & Select', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/restricted-holidays');
     await page.waitForTimeout(1000);
   });
 
-  test('Browse tab shows available holidays or empty state', async ({ page }) => {
+  test('Browse tab shows available holidays or empty state', async ({page}) => {
     await page.locator('button:has-text("Browse"), [role="tab"]:has-text("Browse")').first().click();
     await page.waitForTimeout(1000);
     const hasContent = await page
@@ -476,7 +476,7 @@ test.describe('Restricted Holidays — Browse & Select', () => {
     expect(hasContent || true).toBe(true);
   });
 
-  test('My Selections tab shows employee selections or empty state', async ({ page }) => {
+  test('My Selections tab shows employee selections or empty state', async ({page}) => {
     await page.locator('button:has-text("My Selections"), [role="tab"]:has-text("My Selections")').first().click();
     await page.waitForTimeout(1000);
     const hasContent = await page
@@ -489,13 +489,13 @@ test.describe('Restricted Holidays — Browse & Select', () => {
 });
 
 test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/restricted-holidays');
     await page.waitForTimeout(1000);
   });
 
-  test('Manage tab is visible for Admin', async ({ page }) => {
+  test('Manage tab is visible for Admin', async ({page}) => {
     const manageTab = page
       .locator('button:has-text("Manage"), [role="tab"]:has-text("Manage")')
       .first();
@@ -503,7 +503,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
     expect(hasManage || true).toBe(true);
   });
 
-  test('Policy tab is visible for Admin', async ({ page }) => {
+  test('Policy tab is visible for Admin', async ({page}) => {
     const policyTab = page
       .locator('button:has-text("Policy"), [role="tab"]:has-text("Policy")')
       .first();
@@ -511,7 +511,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
     expect(hasPolicy || true).toBe(true);
   });
 
-  test('Add Holiday button opens creation form', async ({ page }) => {
+  test('Add Holiday button opens creation form', async ({page}) => {
     const manageTab = page
       .locator('button:has-text("Manage"), [role="tab"]:has-text("Manage")')
       .first();
@@ -534,7 +534,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
     expect(hasForm).toBe(true);
   });
 
-  test('Holiday form has Name, Date, Category fields', async ({ page }) => {
+  test('Holiday form has Name, Date, Category fields', async ({page}) => {
     const manageTab = page
       .locator('button:has-text("Manage"), [role="tab"]:has-text("Manage")')
       .first();
@@ -555,7 +555,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
     expect(hasName || true).toBe(true);
   });
 
-  test('Policy tab shows maxSelectionsPerYear field', async ({ page }) => {
+  test('Policy tab shows maxSelectionsPerYear field', async ({page}) => {
     const policyTab = page
       .locator('button:has-text("Policy"), [role="tab"]:has-text("Policy")')
       .first();
@@ -573,15 +573,15 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
 });
 
 test.describe('Restricted Holidays — RBAC', () => {
-  test('Employee can access their restricted holiday selections', async ({ page }) => {
+  test('Employee can access their restricted holiday selections', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/restricted-holidays');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('Super Admin can manage restricted holidays', async ({ page }) => {
+  test('Super Admin can manage restricted holidays', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/restricted-holidays');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 });

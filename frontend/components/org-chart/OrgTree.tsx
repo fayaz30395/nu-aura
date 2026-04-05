@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
-import { OrgChartNode } from '@/lib/services/hrms/orgChart.service';
-import { OrgNode } from './OrgNode';
-import { cn } from '@/lib/utils';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Maximize2, ZoomIn, ZoomOut} from 'lucide-react';
+import {OrgChartNode} from '@/lib/services/hrms/orgChart.service';
+import {OrgNode} from './OrgNode';
+import {cn} from '@/lib/utils';
 
 interface OrgTreeProps {
   tree: OrgChartNode[];
@@ -19,15 +19,15 @@ const ZOOM_STEP = 0.15;
  * Pannable, zoomable container for the tree view.
  * Uses CSS transforms (no external packages).
  */
-export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
+export function OrgTree({tree, highlightedId}: OrgTreeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [zoom, setZoom] = useState(0.75);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [pan, setPan] = useState({x: 0, y: 0});
   const [isPanning, setIsPanning] = useState(false);
-  const panStart = useRef({ x: 0, y: 0 });
-  const panOrigin = useRef({ x: 0, y: 0 });
+  const panStart = useRef({x: 0, y: 0});
+  const panOrigin = useRef({x: 0, y: 0});
 
   // ── Zoom controls ─────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
 
   const resetView = useCallback(() => {
     setZoom(0.75);
-    setPan({ x: 0, y: 0 });
+    setPan({x: 0, y: 0});
   }, []);
 
   // ── Mouse wheel zoom ──────────────────────────────────────────
@@ -58,7 +58,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
       }
     };
 
-    el.addEventListener('wheel', handleWheel, { passive: false });
+    el.addEventListener('wheel', handleWheel, {passive: false});
     return () => el.removeEventListener('wheel', handleWheel);
   }, []);
 
@@ -69,8 +69,8 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
     if (e.button === 1 || (e.target === containerRef.current || e.target === contentRef.current)) {
       e.preventDefault();
       setIsPanning(true);
-      panStart.current = { x: e.clientX, y: e.clientY };
-      panOrigin.current = { ...pan };
+      panStart.current = {x: e.clientX, y: e.clientY};
+      panOrigin.current = {...pan};
     }
   }, [pan]);
 
@@ -78,7 +78,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
     if (!isPanning) return;
     const dx = e.clientX - panStart.current.x;
     const dy = e.clientY - panStart.current.y;
-    setPan({ x: panOrigin.current.x + dx, y: panOrigin.current.y + dy });
+    setPan({x: panOrigin.current.x + dx, y: panOrigin.current.y + dy});
   }, [isPanning]);
 
   const handleMouseUp = useCallback(() => {
@@ -94,7 +94,7 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
     const timer = setTimeout(() => {
       const highlightedEl = containerRef.current?.querySelector(`[data-employee-id="${highlightedId}"]`);
       if (highlightedEl) {
-        highlightedEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        highlightedEl.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'});
       }
     }, 200);
 
@@ -115,14 +115,15 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
   return (
     <div className="relative">
       {/* Zoom controls */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-card)] p-1">
+      <div
+        className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-card)] p-1">
         <button
           onClick={zoomOut}
           disabled={zoom <= MIN_ZOOM}
           className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Zoom out"
         >
-          <ZoomOut className="h-4 w-4 text-[var(--text-secondary)]" />
+          <ZoomOut className="h-4 w-4 text-[var(--text-secondary)]"/>
         </button>
         <span className="text-xs font-medium text-[var(--text-secondary)] w-12 text-center">
           {Math.round(zoom * 100)}%
@@ -133,15 +134,15 @@ export function OrgTree({ tree, highlightedId }: OrgTreeProps) {
           className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Zoom in"
         >
-          <ZoomIn className="h-4 w-4 text-[var(--text-secondary)]" />
+          <ZoomIn className="h-4 w-4 text-[var(--text-secondary)]"/>
         </button>
-        <div className="w-px h-5 bg-[var(--border-main)]" />
+        <div className="w-px h-5 bg-[var(--border-main)]"/>
         <button
           onClick={resetView}
           className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           aria-label="Reset view"
         >
-          <Maximize2 className="h-4 w-4 text-[var(--text-secondary)]" />
+          <Maximize2 className="h-4 w-4 text-[var(--text-secondary)]"/>
         </button>
       </div>
 

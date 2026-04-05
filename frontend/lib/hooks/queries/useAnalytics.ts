@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { analyticsService } from '@/lib/services/core/analytics.service';
-import type { AnalyticsSummary, OrganizationHealth } from '@/lib/types/core/analytics';
+import {useQuery} from '@tanstack/react-query';
+import {analyticsService} from '@/lib/services/core/analytics.service';
+import type {AnalyticsSummary, OrganizationHealth} from '@/lib/types/core/analytics';
 
 // Query keys for cache management
 export const analyticsKeys = {

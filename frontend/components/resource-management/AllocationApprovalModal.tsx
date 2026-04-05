@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import React, {useState} from 'react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Button} from '@/components/ui/Button';
 import {
-  EmployeeCapacity,
   AllocationValidationResult,
+  EmployeeCapacity,
   formatAllocationPercentage,
 } from '@/lib/types/hrms/resource-management';
-import { AlertTriangle, ArrowRight, Briefcase, Clock, CheckCircle } from 'lucide-react';
+import {AlertTriangle, ArrowRight, Briefcase, CheckCircle, Clock} from 'lucide-react';
 
 interface AllocationApprovalModalProps {
   isOpen: boolean;
@@ -30,19 +30,19 @@ interface AllocationApprovalModalProps {
  * Allows user to submit for manager approval
  */
 export function AllocationApprovalModal({
-  isOpen,
-  onClose,
-  employeeCapacity,
-  projectName,
-  projectCode,
-  proposedAllocation,
-  role,
-  validationResult,
-  onSubmitForApproval,
-  onProceedAnyway,
-  isAdmin = false,
-  isSubmitting = false,
-}: AllocationApprovalModalProps) {
+                                          isOpen,
+                                          onClose,
+                                          employeeCapacity,
+                                          projectName,
+                                          projectCode,
+                                          proposedAllocation,
+                                          role,
+                                          validationResult,
+                                          onSubmitForApproval,
+                                          onProceedAnyway,
+                                          isAdmin = false,
+                                          isSubmitting = false,
+                                        }: AllocationApprovalModalProps) {
   const [reason, setReason] = useState('');
   const [showReasonInput, setShowReasonInput] = useState(false);
 
@@ -61,16 +61,17 @@ export function AllocationApprovalModal({
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
         <div className="flex items-center gap-2 text-warning-600 dark:text-warning-400">
-          <AlertTriangle className="h-5 w-5" />
+          <AlertTriangle className="h-5 w-5"/>
           <span>Over-Allocation Warning</span>
         </div>
       </ModalHeader>
 
       <ModalBody className="space-y-6">
         {/* Warning message */}
-        <div className="rounded-lg border border-warning-200 bg-warning-50 p-4 dark:border-warning-800 dark:bg-warning-900/20">
+        <div
+          className="rounded-lg border border-warning-200 bg-warning-50 p-4 dark:border-warning-800 dark:bg-warning-900/20">
           <div className="flex gap-2">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning-600 dark:text-warning-400" />
+            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning-600 dark:text-warning-400"/>
             <div className="space-y-1">
               <p className="font-medium text-warning-800 dark:text-warning-200">
                 This assignment will result in over-allocation
@@ -92,7 +93,8 @@ export function AllocationApprovalModal({
 
           <div className="row-between gap-4">
             {/* Current allocation */}
-            <div className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            <div
+              className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
               <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
                 Current Allocation
               </p>
@@ -102,10 +104,11 @@ export function AllocationApprovalModal({
             </div>
 
             {/* Arrow */}
-            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400" />
+            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400"/>
 
             {/* New allocation */}
-            <div className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            <div
+              className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
               <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
                 Proposed Addition
               </p>
@@ -115,10 +118,11 @@ export function AllocationApprovalModal({
             </div>
 
             {/* Arrow */}
-            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400" />
+            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400"/>
 
             {/* Resulting allocation */}
-            <div className="flex-1 rounded-lg border border-danger-200 bg-danger-50 p-4 dark:border-danger-800 dark:bg-danger-900/20">
+            <div
+              className="flex-1 rounded-lg border border-danger-200 bg-danger-50 p-4 dark:border-danger-800 dark:bg-danger-900/20">
               <p className="text-xs uppercase tracking-wide text-danger-600 dark:text-danger-400">
                 Resulting Total
               </p>
@@ -133,7 +137,7 @@ export function AllocationApprovalModal({
         <div className="rounded-lg border border-surface-200 p-4 dark:border-surface-700">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900">
-              <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+              <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
             </div>
             <div>
               <p className="font-medium text-surface-900 dark:text-surface-50">
@@ -159,7 +163,7 @@ export function AllocationApprovalModal({
                   className="row-between rounded-lg border border-surface-200 p-4 dark:border-surface-700"
                 >
                   <div className="flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-surface-400" />
+                    <Briefcase className="h-4 w-4 text-surface-400"/>
                     <div>
                       <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
                         {allocation.projectName}
@@ -207,7 +211,7 @@ export function AllocationApprovalModal({
 
         {/* Approval flow info */}
         <div className="flex items-start gap-2 rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
-          <Clock className="h-5 w-5 flex-shrink-0 text-surface-400" />
+          <Clock className="h-5 w-5 flex-shrink-0 text-surface-400"/>
           <div className="text-sm text-surface-600 dark:text-surface-400">
             <p className="font-medium text-surface-900 dark:text-surface-50">
               What happens next?
@@ -245,12 +249,12 @@ export function AllocationApprovalModal({
         >
           {isSubmitting ? (
             <>
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"/>
               Submitting...
             </>
           ) : (
             <>
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="h-4 w-4"/>
               Submit for Approval
             </>
           )}

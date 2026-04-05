@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { spotlightService } from '@/lib/services/platform/spotlight.service';
-import type { Spotlight } from '@/lib/types/platform/spotlight';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
+import {useQuery} from '@tanstack/react-query';
+import {spotlightService} from '@/lib/services/platform/spotlight.service';
+import type {Spotlight} from '@/lib/types/platform/spotlight';
 
 function getDemoSpotlights(): Spotlight[] {
   return [
@@ -46,7 +46,7 @@ export function CompanySpotlight() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const { data: spotlights = [], isLoading } = useQuery<Spotlight[]>({
+  const {data: spotlights = [], isLoading} = useQuery<Spotlight[]>({
     queryKey: ['spotlights', 'active'],
     queryFn: async () => {
       const data = await spotlightService.getActiveSpotlights();
@@ -65,7 +65,7 @@ export function CompanySpotlight() {
   }, [isAutoPlaying, spotlights.length, isLoading]);
 
   if (isLoading) {
-    return <div className="w-full h-28 rounded-xl bg-[var(--bg-surface)] animate-pulse" />;
+    return <div className="w-full h-28 rounded-xl bg-[var(--bg-surface)] animate-pulse"/>;
   }
 
   if (!spotlights || spotlights.length === 0) return null;
@@ -103,7 +103,7 @@ export function CompanySpotlight() {
         </div>
         {current.imageUrl && (
           <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden relative">
-            <Image src={current.imageUrl} alt={current.title} fill className="object-cover" sizes="96px" />
+            <Image src={current.imageUrl} alt={current.title} fill className="object-cover" sizes="96px"/>
           </div>
         )}
       </div>
@@ -112,18 +112,24 @@ export function CompanySpotlight() {
       {hasMultiple && (
         <>
           <button
-            onClick={() => { setCurrentIndex((prev) => (prev - 1 + spotlights.length) % spotlights.length); setIsAutoPlaying(false); }}
+            onClick={() => {
+              setCurrentIndex((prev) => (prev - 1 + spotlights.length) % spotlights.length);
+              setIsAutoPlaying(false);
+            }}
             className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
             aria-label="Previous spotlight"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4"/>
           </button>
           <button
-            onClick={() => { setCurrentIndex((prev) => (prev + 1) % spotlights.length); setIsAutoPlaying(false); }}
+            onClick={() => {
+              setCurrentIndex((prev) => (prev + 1) % spotlights.length);
+              setIsAutoPlaying(false);
+            }}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
             aria-label="Next spotlight"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4"/>
           </button>
         </>
       )}
@@ -134,7 +140,10 @@ export function CompanySpotlight() {
           {spotlights.map((_, index) => (
             <button
               key={index}
-              onClick={() => { setCurrentIndex(index); setIsAutoPlaying(false); }}
+              onClick={() => {
+                setCurrentIndex(index);
+                setIsAutoPlaying(false);
+              }}
               className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 ${
                 index === currentIndex ? 'bg-[var(--bg-card)] w-4' : 'bg-white/40 w-1.5 hover:bg-white/60'
               }`}

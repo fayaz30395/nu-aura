@@ -1,6 +1,7 @@
 # NU-AURA Autonomous Agent Team
 
-> Single source of truth for continuous multi-agent exploration, validation, bug fixing, RBAC auditing, and UI/UX improvement across the NU-AURA platform.
+> Single source of truth for continuous multi-agent exploration, validation, bug fixing, RBAC
+> auditing, and UI/UX improvement across the NU-AURA platform.
 
 ---
 
@@ -42,9 +43,9 @@ This keeps the team reviewable, safe, and operationally useful.
 ## Prerequisites
 
 1. Run from the NU-AURA project root:
-   - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`
+  - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`
 2. Read repo instructions first:
-   - `AGENTS.md`
+  - `AGENTS.md`
 3. Prefer existing repo tooling before adding anything new.
 4. If using an agent-team capable client, enable the relevant team / delegation mode there.
 
@@ -54,20 +55,20 @@ This keeps the team reviewable, safe, and operationally useful.
 
 Use as many of these as the environment supports.
 
-| Category | Preferred Tool / Plugin | Purpose |
-|---|---|---|
-| Browser automation | Playwright | Traverse screens, click flows, form submission, screenshot capture |
-| API inspection | OpenAPI / Swagger docs | Verify contracts and compare UI vs API behavior |
-| Network validation | Browser network inspector / Playwright request hooks | Catch failed requests, auth issues, missing payload fields |
-| Accessibility | axe-core or Playwright accessibility snapshots | Detect contrast, labels, focus, keyboard issues |
-| Visual regression | Screenshot diff tooling | Catch layout drift and broken states |
-| Code search | `rg` | Discover routes, permission gates, service usage, dead paths |
-| Frontend quality | `npm run lint`, `npx tsc --noEmit`, Vitest | Prevent regressions |
-| E2E quality | `npx playwright test` | Validate critical flows |
-| Backend quality | `./mvnw test` | Validate server behavior and permissions |
-| API replay | curl / Postman / REST client | Reproduce backend issues outside UI |
-| Database validation | psql / SQL client / Neon console | Confirm tenant isolation, soft deletes, and data effects |
-| Observability | logs, Grafana, Prometheus, app console | Root-cause failing flows |
+| Category            | Preferred Tool / Plugin                              | Purpose                                                            |
+|---------------------|------------------------------------------------------|--------------------------------------------------------------------|
+| Browser automation  | Playwright                                           | Traverse screens, click flows, form submission, screenshot capture |
+| API inspection      | OpenAPI / Swagger docs                               | Verify contracts and compare UI vs API behavior                    |
+| Network validation  | Browser network inspector / Playwright request hooks | Catch failed requests, auth issues, missing payload fields         |
+| Accessibility       | axe-core or Playwright accessibility snapshots       | Detect contrast, labels, focus, keyboard issues                    |
+| Visual regression   | Screenshot diff tooling                              | Catch layout drift and broken states                               |
+| Code search         | `rg`                                                 | Discover routes, permission gates, service usage, dead paths       |
+| Frontend quality    | `npm run lint`, `npx tsc --noEmit`, Vitest           | Prevent regressions                                                |
+| E2E quality         | `npx playwright test`                                | Validate critical flows                                            |
+| Backend quality     | `./mvnw test`                                        | Validate server behavior and permissions                           |
+| API replay          | curl / Postman / REST client                         | Reproduce backend issues outside UI                                |
+| Database validation | psql / SQL client / Neon console                     | Confirm tenant isolation, soft deletes, and data effects           |
+| Observability       | logs, Grafana, Prometheus, app console               | Root-cause failing flows                                           |
 
 Do not add new libraries if the repo already has the needed capability.
 
@@ -136,9 +137,11 @@ Owns:
 
 Responsibilities:
 
-- validate forms, tables, filters, modals, drawers, empty states, pagination, and destructive actions
+- validate forms, tables, filters, modals, drawers, empty states, pagination, and destructive
+  actions
 - test happy path, failure path, empty state, validation errors, and loading state
-- confirm role-level access behavior for ESS, MSS, HR Admin, Payroll Admin, Recruiter, SuperAdmin, and restricted users
+- confirm role-level access behavior for ESS, MSS, HR Admin, Payroll Admin, Recruiter, SuperAdmin,
+  and restricted users
 
 ### 4. UX/UI Reviewer Agent
 
@@ -151,7 +154,8 @@ Owns:
 
 Responsibilities:
 
-- review typography, spacing, alignment, color usage, button hierarchy, card patterns, tables, and form density
+- review typography, spacing, alignment, color usage, button hierarchy, card patterns, tables, and
+  form density
 - flag inconsistent Mantine usage or repeated custom styling drift
 - review mobile and desktop layouts
 - capture screenshots for before/after comparisons when useful
@@ -186,7 +190,8 @@ At minimum, test these personas if the environment allows:
 - SuperAdmin
 - unauthorized or low-permission user
 
-If seeded accounts do not exist, create or seed realistic test users and record which ones were used.
+If seeded accounts do not exist, create or seed realistic test users and record which ones were
+used.
 
 ---
 
@@ -199,14 +204,14 @@ If seeded accounts do not exist, create or seed realistic test users and record 
 5. Every code fix must be followed by validation.
 6. Every validation must update the living report.
 7. If a blocker is found, document:
-   - impact
-   - exact failing area
-   - suspected cause
-   - required dependency or environment gap
+  - impact
+  - exact failing area
+  - suspected cause
+  - required dependency or environment gap
 8. Require lead review before changes to:
-   - `SecurityConfig.java`
-   - `frontend/middleware.ts`
-   - any Flyway migration
+  - `SecurityConfig.java`
+  - `frontend/middleware.ts`
+  - any Flyway migration
 
 ---
 
@@ -224,7 +229,8 @@ Run the following loop repeatedly.
 ### 2. Execute
 
 - perform real user actions
-- click buttons, submit forms, navigate, filter, search, paginate, open modals, cancel flows, retry failures
+- click buttons, submit forms, navigate, filter, search, paginate, open modals, cancel flows, retry
+  failures
 - test both valid and invalid inputs
 
 ### 3. QA
@@ -345,7 +351,8 @@ Before marking a fix complete, run the relevant checks.
 - confirm role access is correct
 - confirm no cross-tenant leakage
 
-Do not run the full suite after every tiny change if targeted checks are enough, but run enough to defend the fix.
+Do not run the full suite after every tiny change if targeted checks are enough, but run enough to
+defend the fix.
 
 ---
 
@@ -465,8 +472,10 @@ Start by:
 
 - If the lead starts doing all the work directly, redirect it back to delegation and validation.
 - If two agents need the same file, they must coordinate ownership before editing.
-- If a path is blocked by missing data or credentials, log it and continue with the next highest-value reachable path.
-- Keep the report current enough that a new lead can resume from the latest loop without re-discovery.
+- If a path is blocked by missing data or credentials, log it and continue with the next
+  highest-value reachable path.
+- Keep the report current enough that a new lead can resume from the latest loop without
+  re-discovery.
 
 ---
 

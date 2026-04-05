@@ -1,5 +1,5 @@
-import { Page, expect, TestInfo } from '@playwright/test';
-import { testUsers, allDemoUsers, DEMO_PASSWORD } from '../fixtures/testData';
+import {expect, Page, TestInfo} from '@playwright/test';
+import {allDemoUsers, testUsers} from '../fixtures/testData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
@@ -20,7 +20,7 @@ export class AuthHelper {
    */
   static async login(page: Page, email: string, password: string) {
     const response = await page.request.post(`${API_BASE}/auth/login`, {
-      data: { email, password },
+      data: {email, password},
       failOnStatusCode: false,
     });
 
@@ -46,11 +46,11 @@ export class AuthHelper {
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');
 
-    const demoButton = page.locator('button').filter({ hasText: user.name });
-    await expect(demoButton).toBeVisible({ timeout: 10000 });
+    const demoButton = page.locator('button').filter({hasText: user.name});
+    await expect(demoButton).toBeVisible({timeout: 10000});
     await demoButton.click();
 
-    await page.waitForURL('**/dashboard', { timeout: 45000 });
+    await page.waitForURL('**/dashboard', {timeout: 45000});
     await page.waitForLoadState('networkidle');
   }
 
@@ -129,7 +129,7 @@ export class ApiMockHelper {
             email: 'test@company.com',
             firstName: 'Test',
             lastName: 'User',
-            roles: [{ code: 'EMPLOYEE', name: 'Employee' }],
+            roles: [{code: 'EMPLOYEE', name: 'Employee'}],
           },
         }),
       });
@@ -230,7 +230,7 @@ export class WaitHelper {
    */
   static async waitForElementStable(page: Page, selector: string, timeout: number = 5000) {
     const element = page.locator(selector);
-    await element.waitFor({ state: 'visible', timeout });
+    await element.waitFor({state: 'visible', timeout});
     await page.waitForTimeout(300); // Wait for animations
   }
 }

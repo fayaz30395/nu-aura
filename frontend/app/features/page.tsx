@@ -1,35 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import {
-  Users,
-  Clock,
-  Calendar,
-  DollarSign,
-  TrendingUp,
-  Target,
-  UserPlus,
-  BookOpen,
+  ArrowRight,
   Award,
-  Heart,
-  Briefcase,
-  FileText,
-  Package,
-  MessageSquare,
   BarChart3,
-  Settings,
-  Shield,
-  Zap,
-  Globe,
+  BookOpen,
+  Briefcase,
+  Calendar,
   Check,
   CheckCircle2,
-  ArrowRight,
+  Clock,
+  DollarSign,
+  FileText,
+  Globe,
+  Heart,
+  MessageSquare,
+  Package,
+  Settings,
+  Shield,
+  Target,
+  TrendingUp,
+  UserPlus,
+  Users,
+  Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
 
 export default function FeaturesPage() {
   const [activeTab, setActiveTab] = useState('core');
@@ -367,10 +367,10 @@ export default function FeaturesPage() {
   ];
 
   const integrations = [
-    { name: 'Google Workspace', icon: Globe },
-    { name: 'Microsoft Teams', icon: MessageSquare },
-    { name: 'Slack', icon: Zap },
-    { name: 'Zoom', icon: Users },
+    {name: 'Google Workspace', icon: Globe},
+    {name: 'Microsoft Teams', icon: MessageSquare},
+    {name: 'Slack', icon: Zap},
+    {name: 'Zoom', icon: Users},
   ];
 
   const selectedModule = modules.find((m) => m.id === activeTab);
@@ -378,7 +378,8 @@ export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -428,7 +429,7 @@ export default function FeaturesPage() {
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >
-                <module.icon className="h-4 w-4" />
+                <module.icon className="h-4 w-4"/>
                 {module.name}
               </button>
             ))}
@@ -438,9 +439,9 @@ export default function FeaturesPage() {
           {selectedModule && (
             <motion.div
               key={selectedModule.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{opacity: 0, y: 20}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.3}}
             >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {selectedModule.features.map((feature, index) => (
@@ -448,7 +449,7 @@ export default function FeaturesPage() {
                     <div
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedModule.color} flex items-center justify-center mb-4`}
                     >
-                      <feature.icon className="h-6 w-6 text-white" />
+                      <feature.icon className="h-6 w-6 text-white"/>
                     </div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       {feature.title}
@@ -459,7 +460,7 @@ export default function FeaturesPage() {
                     <ul className="space-y-2">
                       {feature.benefits.map((benefit, i) => (
                         <li key={i} className="flex items-center gap-2 text-body-secondary">
-                          <Check className="h-4 w-4 text-success-500 flex-shrink-0" />
+                          <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
                           {benefit}
                         </li>
                       ))}
@@ -491,8 +492,10 @@ export default function FeaturesPage() {
                 key={index}
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
-                  <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent-500 transition-colors" />
+                <div
+                  className="w-16 h-16 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
+                  <integration.icon
+                    className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent-500 transition-colors"/>
                 </div>
                 <span className="text-sm font-medium text-[var(--text-muted)]">
                   {integration.name}
@@ -505,7 +508,7 @@ export default function FeaturesPage() {
             <Link href="/integrations">
               <Button variant="outline" size="lg" className="gap-2">
                 View All Integrations
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4"/>
               </Button>
             </Link>
           </div>
@@ -525,7 +528,7 @@ export default function FeaturesPage() {
             <Link href="/auth/login">
               <Button size="lg" className="btn-primary gap-2">
                 Start Free Trial
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5"/>
               </Button>
             </Link>
             <Link href="/pricing">

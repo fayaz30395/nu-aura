@@ -1,41 +1,31 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {Briefcase, CheckCircle, Clock, RefreshCw, User, XCircle,} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {EmployeeCapacityDisplay} from '@/components/resource-management';
+import {AllocationApprovalRequest, formatAllocationPercentage,} from '@/lib/types/hrms/resource-management';
 import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  User,
-  Briefcase,
-  RefreshCw,
-} from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { EmployeeCapacityDisplay } from '@/components/resource-management';
-import {
-  AllocationApprovalRequest,
-  formatAllocationPercentage,
-} from '@/lib/types/hrms/resource-management';
-import {
-  useMyPendingApprovals,
-  useEmployeeCapacity,
   useApproveAllocationRequest,
+  useEmployeeCapacity,
+  useMyPendingApprovals,
   useRejectAllocationRequest,
 } from '@/lib/hooks/queries/useResources';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { format, parseISO } from 'date-fns';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {format, parseISO} from 'date-fns';
 
 type TabKey = 'pending' | 'approved' | 'rejected';
 
 export default function ApprovalsPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_APPROVE, Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -54,8 +44,8 @@ export default function ApprovalsPage() {
   const toast = useToast();
 
   // React Query hooks
-  const { data: pendingData, isLoading, refetch: refetchRequests } = useMyPendingApprovals(0, 50);
-  const { data: employeeCapacity } = useEmployeeCapacity(selectedRequest?.employeeId ?? '');
+  const {data: pendingData, isLoading, refetch: refetchRequests} = useMyPendingApprovals(0, 50);
+  const {data: employeeCapacity} = useEmployeeCapacity(selectedRequest?.employeeId ?? '');
   const approveMutation = useApproveAllocationRequest();
   const rejectMutation = useRejectAllocationRequest();
 
@@ -94,7 +84,7 @@ export default function ApprovalsPage() {
     rejectMutation.mutate(
       {
         requestId: selectedRequest.id,
-        data: { reason: rejectReason },
+        data: {reason: rejectReason},
       },
       {
         onSuccess: () => {
@@ -138,7 +128,7 @@ export default function ApprovalsPage() {
             </p>
           </div>
           <Button variant="ghost" onClick={() => refetchRequests()} disabled={isLoading}>
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
           </Button>
         </div>
 
@@ -146,9 +136,9 @@ export default function ApprovalsPage() {
         <div className="border-b border-[var(--border-main)]">
           <nav className="-mb-px flex gap-6">
             {[
-              { key: 'pending', label: 'Pending', count: pendingRequests.length },
-              { key: 'approved', label: 'Approved', count: approvedRequests.length },
-              { key: 'rejected', label: 'Rejected', count: rejectedRequests.length },
+              {key: 'pending', label: 'Pending', count: pendingRequests.length},
+              {key: 'approved', label: 'Approved', count: approvedRequests.length},
+              {key: 'rejected', label: 'Rejected', count: rejectedRequests.length},
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -182,7 +172,7 @@ export default function ApprovalsPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-32 rounded-xl" />
+              <Skeleton key={i} className="h-32 rounded-xl"/>
             ))}
           </div>
         ) : displayedRequests.length === 0 ? (
@@ -193,7 +183,7 @@ export default function ApprovalsPage() {
                 ? 'All allocation requests have been processed'
                 : `No ${activeTab} requests to display`
             }
-            icon={<Clock className="h-12 w-12" />}
+            icon={<Clock className="h-12 w-12"/>}
           />
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
@@ -226,9 +216,9 @@ export default function ApprovalsPage() {
                 <CardContent className="space-y-6">
                   {/* Employee capacity */}
                   {employeeCapacity ? (
-                    <EmployeeCapacityDisplay capacity={employeeCapacity} showBreakdown />
+                    <EmployeeCapacityDisplay capacity={employeeCapacity} showBreakdown/>
                   ) : (
-                    <Skeleton className="h-48" />
+                    <Skeleton className="h-48"/>
                   )}
 
                   {/* Request info */}
@@ -238,7 +228,7 @@ export default function ApprovalsPage() {
                     </h4>
                     <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
                       <div className="flex items-center gap-4">
-                        <Briefcase className="h-5 w-5 text-[var(--text-muted)]" />
+                        <Briefcase className="h-5 w-5 text-[var(--text-muted)]"/>
                         <div>
                           <p className="font-medium text-[var(--text-primary)]">
                             {selectedRequest.projectName}
@@ -289,7 +279,7 @@ export default function ApprovalsPage() {
                         className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400"
                         onClick={() => setShowRejectModal(true)}
                       >
-                        <XCircle className="mr-2 h-4 w-4" />
+                        <XCircle className="mr-2 h-4 w-4"/>
                         Reject
                       </Button>
                       <Button
@@ -297,7 +287,7 @@ export default function ApprovalsPage() {
                         className="flex-1"
                         onClick={() => setShowApproveModal(true)}
                       >
-                        <CheckCircle className="mr-2 h-4 w-4" />
+                        <CheckCircle className="mr-2 h-4 w-4"/>
                         Approve
                       </Button>
                     </div>
@@ -313,7 +303,7 @@ export default function ApprovalsPage() {
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
           <div className="flex items-center gap-2 text-success-600 dark:text-success-400">
-            <CheckCircle className="h-5 w-5" />
+            <CheckCircle className="h-5 w-5"/>
             Approve Over-Allocation
           </div>
         </ModalHeader>
@@ -356,7 +346,7 @@ export default function ApprovalsPage() {
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
           <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-            <XCircle className="h-5 w-5" />
+            <XCircle className="h-5 w-5"/>
             Reject Over-Allocation
           </div>
         </ModalHeader>
@@ -398,12 +388,12 @@ export default function ApprovalsPage() {
 }
 
 function RequestCard({
-  request,
-  isSelected,
-  onClick,
-  onApprove,
-  onReject,
-}: {
+                       request,
+                       isSelected,
+                       onClick,
+                       onApprove,
+                       onReject,
+                     }: {
   request: AllocationApprovalRequest;
   isSelected: boolean;
   onClick: () => void;
@@ -426,8 +416,9 @@ function RequestCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
-              <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
+              <User className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
             </div>
             <div>
               <p className="font-medium text-[var(--text-primary)]">
@@ -438,7 +429,7 @@ function RequestCard({
               </p>
             </div>
           </div>
-          <StatusBadge status={request.status} />
+          <StatusBadge status={request.status}/>
         </div>
 
         <div className="mt-4 row-between text-sm">
@@ -468,7 +459,7 @@ function RequestCard({
   );
 }
 
-function StatusBadge({ status }: { status: AllocationApprovalRequest['status'] }) {
+function StatusBadge({status}: { status: AllocationApprovalRequest['status'] }) {
   const styles = {
     PENDING: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
     APPROVED: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400',
@@ -485,7 +476,7 @@ function StatusBadge({ status }: { status: AllocationApprovalRequest['status'] }
 
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${styles[status]}`}>
-      <Icon className="h-3 w-3" />
+      <Icon className="h-3 w-3"/>
       {status.charAt(0) + status.slice(1).toLowerCase()}
     </span>
   );

@@ -24,7 +24,7 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 10s
     static_configs:
-      - targets: ['hrms-backend:8080']
+      - targets: [ 'hrms-backend:8080' ]
         labels:
           application: 'hrms-backend'
           environment: 'production'
@@ -32,23 +32,23 @@ scrape_configs:
   # Prometheus itself
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: [ 'localhost:9090' ]
 
   # PostgreSQL Exporter (if enabled)
   - job_name: 'postgres'
     static_configs:
-      - targets: ['postgres-exporter:9187']
+      - targets: [ 'postgres-exporter:9187' ]
         labels:
           database: 'hrms'
 
   # Redis Exporter (if enabled)
   - job_name: 'redis'
     static_configs:
-      - targets: ['redis-exporter:9121']
+      - targets: [ 'redis-exporter:9121' ]
         labels:
           cache: 'redis'
 
   # Node Exporter for system metrics (if enabled)
   - job_name: 'node'
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: [ 'node-exporter:9100' ]

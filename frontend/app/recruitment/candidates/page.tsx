@@ -1,41 +1,46 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { notifications } from '@mantine/notifications';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Candidate, CandidateStatus, CandidateSource, CandidateStage, CreateCandidateRequest } from '@/lib/types/hire/recruitment';
-import { Users, Plus, Sparkles } from 'lucide-react';
-
-import { CreateOfferRequest } from '@/lib/types/hire/recruitment';
-import { recruitmentService } from '@/lib/services/hire/recruitment.service';
+import React, {Suspense, useCallback, useMemo, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {notifications} from '@mantine/notifications';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
 import {
+  Candidate,
+  CandidateSource,
+  CandidateStage,
+  CandidateStatus,
+  CreateCandidateRequest,
+  CreateOfferRequest
+} from '@/lib/types/hire/recruitment';
+import {Plus, Sparkles, Users} from 'lucide-react';
+import {recruitmentService} from '@/lib/services/hire/recruitment.service';
+import {
+  useCalculateMatchScore,
   useCandidates,
-  useJobOpenings,
   useCreateCandidate,
-  useUpdateCandidate,
-  useDeleteCandidate,
   useCreateOffer,
+  useDeleteCandidate,
+  useGenerateScreeningSummary,
+  useJobOpenings,
   useParseResume,
   useParseResumeFromUpload,
-  useCalculateMatchScore,
-  useGenerateScreeningSummary,
   useSynthesizeFeedback,
+  useUpdateCandidate,
 } from '@/lib/hooks/queries/useRecruitment';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { useActiveLetterTemplates } from '@/lib/hooks/queries/useLetter';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {useActiveLetterTemplates} from '@/lib/hooks/queries/useLetter';
 import {
-  createCandidateSchema,
-  createOfferSchema,
-  resumeParseRequestSchema,
   CreateCandidateFormData,
+  createCandidateSchema,
   CreateOfferFormData,
+  createOfferSchema,
   ResumeParseFormData,
+  resumeParseRequestSchema,
 } from '@/lib/validations/recruitment';
 import {
   CandidateMatchResponse,
@@ -43,28 +48,28 @@ import {
   FeedbackSynthesisResponse,
   ResumeParseResponse,
 } from '@/lib/types/hire/ai-recruitment';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // Extracted sub-components (Loop 3 refactor — FE-016)
-import { CandidateStats } from './CandidateStats';
-import { CandidateFilters } from './CandidateFilters';
-import { CandidateTableRow } from './CandidateTableRow';
-import { computeStats, filterCandidates } from './utils';
+import {CandidateStats} from './CandidateStats';
+import {CandidateFilters} from './CandidateFilters';
+import {CandidateTableRow} from './CandidateTableRow';
+import {computeStats, filterCandidates} from './utils';
 
 // Co-located modal components
 import {
-  ParseResumeModal,
+  AcceptOfferModal,
   CandidateFormModal,
-  ViewCandidateModal,
+  CreateOfferModal,
+  DeclineOfferModal,
   DeleteCandidateModal,
-  ScreeningSummaryModal,
   FeedbackSynthesisModal,
   InterviewScorecardModal,
-  CreateOfferModal,
-  AcceptOfferModal,
-  DeclineOfferModal,
   OfferESignModal,
+  ParseResumeModal,
+  ScreeningSummaryModal,
+  ViewCandidateModal,
 } from './_components';
 
 // ==================== Loading Fallback ====================
@@ -73,8 +78,8 @@ function CandidatesPageLoading() {
   return (
     <AppLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded w-1/4" />
-        <div className="h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded" />
+        <div className="h-8 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded w-1/4"/>
+        <div className="h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded"/>
       </div>
     </AppLayout>
   );
@@ -82,8 +87,8 @@ function CandidatesPageLoading() {
 
 export default function CandidatesPageWrapper() {
   return (
-    <Suspense fallback={<CandidatesPageLoading />}>
-      <CandidatesPage />
+    <Suspense fallback={<CandidatesPageLoading/>}>
+      <CandidatesPage/>
     </Suspense>
   );
 }
@@ -131,8 +136,8 @@ function CandidatesPage() {
 
   // ==================== Queries & Mutations ====================
 
-  const { data: candidatesData, isLoading: candidatesLoading, refetch: refetchCandidates } = useCandidates(0, 100);
-  const { data: jobOpeningsData } = useJobOpenings(0, 100);
+  const {data: candidatesData, isLoading: candidatesLoading, refetch: refetchCandidates} = useCandidates(0, 100);
+  const {data: jobOpeningsData} = useJobOpenings(0, 100);
   const createCandidateMutation = useCreateCandidate();
   const updateCandidateMutation = useUpdateCandidate();
   const deleteCandidateMutation = useDeleteCandidate();
@@ -144,7 +149,7 @@ function CandidatesPage() {
   const synthesizeFeedbackMutation = useSynthesizeFeedback();
 
   // Load initial data
-  const { data: employeesData } = useEmployees(0, 100);
+  const {data: employeesData} = useEmployees(0, 100);
   useActiveLetterTemplates(true);
 
   const candidates = useMemo(() => candidatesData?.content || [], [candidatesData?.content]);
@@ -250,7 +255,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save candidate',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to save candidate',
         color: 'red',
       });
     }
@@ -298,7 +305,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete candidate',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to delete candidate',
         color: 'red',
       });
     }
@@ -332,7 +341,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create offer',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to create offer',
         color: 'red',
       });
     }
@@ -356,7 +367,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to accept offer',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to accept offer',
         color: 'red',
       });
     }
@@ -380,7 +393,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to decline offer',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to decline offer',
         color: 'red',
       });
     }
@@ -401,7 +416,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to parse resume',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to parse resume',
         color: 'red',
       });
     } finally {
@@ -414,11 +431,13 @@ function CandidatesPage() {
     try {
       const result = await parseResumeFromUploadMutation.mutateAsync(file);
       setParsedResume(result);
-      notifications.show({ title: 'Success', message: 'Resume parsed successfully', color: 'green' });
+      notifications.show({title: 'Success', message: 'Resume parsed successfully', color: 'green'});
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to parse resume',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to parse resume',
         color: 'red',
       });
     } finally {
@@ -472,7 +491,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to calculate match score',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to calculate match score',
         color: 'red',
       });
     } finally {
@@ -505,7 +526,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate screening summary',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to generate screening summary',
         color: 'red',
       });
     } finally {
@@ -538,7 +561,9 @@ function CandidatesPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to synthesize feedback',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to synthesize feedback',
         color: 'red',
       });
     } finally {
@@ -567,19 +592,34 @@ function CandidatesPage() {
 
   // ==================== Stable Callbacks for Memoized Children ====================
 
-  const handleView = useCallback((c: Candidate) => { setSelectedCandidate(c); setShowViewModal(true); }, []);
+  const handleView = useCallback((c: Candidate) => {
+    setSelectedCandidate(c);
+    setShowViewModal(true);
+  }, []);
   const handleStartEdit = useCallback((c: Candidate) => handleEditCandidate(c), [handleEditCandidate]);
-  const handleStartDelete = useCallback((c: Candidate) => { setCandidateToDelete(c); setShowDeleteModal(true); }, []);
-  const handleStartOffer = useCallback((c: Candidate) => { setCandidateForOffer(c); setShowOfferModal(true); }, []);
-  const handleStartAccept = useCallback((c: Candidate) => { setCandidateForOffer(c); setShowAcceptModal(true); }, []);
-  const handleStartDecline = useCallback((c: Candidate) => { setCandidateForOffer(c); setShowDeclineModal(true); }, []);
+  const handleStartDelete = useCallback((c: Candidate) => {
+    setCandidateToDelete(c);
+    setShowDeleteModal(true);
+  }, []);
+  const handleStartOffer = useCallback((c: Candidate) => {
+    setCandidateForOffer(c);
+    setShowOfferModal(true);
+  }, []);
+  const handleStartAccept = useCallback((c: Candidate) => {
+    setCandidateForOffer(c);
+    setShowAcceptModal(true);
+  }, []);
+  const handleStartDecline = useCallback((c: Candidate) => {
+    setCandidateForOffer(c);
+    setShowDeclineModal(true);
+  }, []);
 
   return (
     <AppLayout activeMenuItem="recruitment">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="p-6 space-y-6"
       >
         {/* Header */}
@@ -599,7 +639,7 @@ function CandidatesPage() {
                 }}
                 className="flex items-center gap-2"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-4 w-4"/>
                 Add Candidate
               </Button>
             </PermissionGate>
@@ -609,7 +649,7 @@ function CandidatesPage() {
                 variant="outline"
                 className="flex items-center gap-2"
               >
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-4 w-4"/>
                 Parse Resume
               </Button>
             </PermissionGate>
@@ -642,9 +682,13 @@ function CandidatesPage() {
               <div className="text-center py-12 text-[var(--text-muted)]">Loading candidates...</div>
             ) : filteredCandidates.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
                 <p className="text-[var(--text-muted)]">No candidates found</p>
-                <Button onClick={() => { setEditingCandidate(null); candidateForm.reset(); setShowAddModal(true); }} className="mt-4">
+                <Button onClick={() => {
+                  setEditingCandidate(null);
+                  candidateForm.reset();
+                  setShowAddModal(true);
+                }} className="mt-4">
                   Add First Candidate
                 </Button>
               </div>
@@ -652,36 +696,50 @@ function CandidatesPage() {
               <div className="overflow-x-auto">
                 <table className="w-full table-aura">
                   <thead className="skeuo-table-header">
-                    <tr>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Experience</th>
-                      <th className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Stage</th>
-                      <th className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Source</th>
-                      <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
-                    </tr>
+                  <tr>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Experience
+                    </th>
+                    <th
+                      className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Stage
+                    </th>
+                    <th
+                      className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Source
+                    </th>
+                    <th
+                      className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {filteredCandidates.map((candidate) => (
-                      <CandidateTableRow
-                        key={candidate.id}
-                        candidate={candidate}
-                        matchScore={matchScores.get(candidate.id)}
-                        aiLoadingState={aiLoadingState}
-                        onView={handleView}
-                        onEdit={handleStartEdit}
-                        onDelete={handleStartDelete}
-                        onOffer={handleStartOffer}
-                        onAccept={handleStartAccept}
-                        onDecline={handleStartDecline}
-                        onCalculateMatch={handleCalculateMatchScore}
-                        onScreeningSummary={handleGenerateScreeningSummary}
-                        onSynthesizeFeedback={handleSynthesizeFeedback}
-                        onViewScorecard={handleViewScorecard}
-                        onESign={handleStartESign}
-                      />
-                    ))}
+                  {filteredCandidates.map((candidate) => (
+                    <CandidateTableRow
+                      key={candidate.id}
+                      candidate={candidate}
+                      matchScore={matchScores.get(candidate.id)}
+                      aiLoadingState={aiLoadingState}
+                      onView={handleView}
+                      onEdit={handleStartEdit}
+                      onDelete={handleStartDelete}
+                      onOffer={handleStartOffer}
+                      onAccept={handleStartAccept}
+                      onDecline={handleStartDecline}
+                      onCalculateMatch={handleCalculateMatchScore}
+                      onScreeningSummary={handleGenerateScreeningSummary}
+                      onSynthesizeFeedback={handleSynthesizeFeedback}
+                      onViewScorecard={handleViewScorecard}
+                      onESign={handleStartESign}
+                    />
+                  ))}
                   </tbody>
                 </table>
               </div>
@@ -699,7 +757,11 @@ function CandidatesPage() {
           onSubmit={handleParseResume}
           onFileUpload={handleParseResumeFile}
           onApply={applyParsedResume}
-          onClose={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }}
+          onClose={() => {
+            setShowParseResumeModal(false);
+            setParsedResume(null);
+            resumeParseForm.reset();
+          }}
         />
 
         <CandidateFormModal
@@ -710,7 +772,11 @@ function CandidatesPage() {
           recruiters={recruiters}
           isSubmitting={createCandidateMutation.isPending || updateCandidateMutation.isPending}
           onSubmit={handleCandidateSubmit}
-          onClose={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }}
+          onClose={() => {
+            setShowAddModal(false);
+            setEditingCandidate(null);
+            candidateForm.reset();
+          }}
         />
 
         <ViewCandidateModal
@@ -726,19 +792,28 @@ function CandidatesPage() {
           candidate={candidateToDelete}
           isDeleting={deleteCandidateMutation.isPending}
           onConfirm={handleDeleteCandidate}
-          onClose={() => { setShowDeleteModal(false); setCandidateToDelete(null); }}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setCandidateToDelete(null);
+          }}
         />
 
         <ScreeningSummaryModal
           open={showScreeningSummaryModal}
           screeningSummary={screeningSummary}
-          onClose={() => { setShowScreeningSummaryModal(false); setScreeningSummary(null); }}
+          onClose={() => {
+            setShowScreeningSummaryModal(false);
+            setScreeningSummary(null);
+          }}
         />
 
         <FeedbackSynthesisModal
           open={showFeedbackSynthesisModal}
           feedbackSynthesis={feedbackSynthesis}
-          onClose={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }}
+          onClose={() => {
+            setShowFeedbackSynthesisModal(false);
+            setFeedbackSynthesis(null);
+          }}
         />
 
         <InterviewScorecardModal
@@ -749,7 +824,10 @@ function CandidatesPage() {
             setShowScorecardModal(false);
             if (scorecardCandidate) handleSynthesizeFeedback(scorecardCandidate);
           }}
-          onClose={() => { setShowScorecardModal(false); setScorecardCandidate(null); }}
+          onClose={() => {
+            setShowScorecardModal(false);
+            setScorecardCandidate(null);
+          }}
         />
 
         <CreateOfferModal
@@ -767,7 +845,10 @@ function CandidatesPage() {
           confirmedJoiningDate={confirmedJoiningDate}
           onJoiningDateChange={setConfirmedJoiningDate}
           onConfirm={handleAcceptOffer}
-          onClose={() => { setShowAcceptModal(false); setCandidateForOffer(null); }}
+          onClose={() => {
+            setShowAcceptModal(false);
+            setCandidateForOffer(null);
+          }}
         />
 
         <DeclineOfferModal
@@ -776,12 +857,18 @@ function CandidatesPage() {
           declineReason={declineReason}
           onDeclineReasonChange={setDeclineReason}
           onConfirm={handleDeclineOffer}
-          onClose={() => { setShowDeclineModal(false); setCandidateForOffer(null); }}
+          onClose={() => {
+            setShowDeclineModal(false);
+            setCandidateForOffer(null);
+          }}
         />
         <OfferESignModal
           open={showESignModal}
           candidate={eSignCandidate}
-          onClose={() => { setShowESignModal(false); setESignCandidate(null); }}
+          onClose={() => {
+            setShowESignModal(false);
+            setESignCandidate(null);
+          }}
         />
       </motion.div>
     </AppLayout>

@@ -1,4 +1,5 @@
 skill:
   display_name: Run E2E QA Loop
   short_description: Analyze, validate in Google Chrome UI, fix, retest, and loop through full QA for NU-AURA.
-  default_prompt: Run a complete QA loop for this feature: analyze scope, execute targeted backend tests and Google Chrome-based UI validation, inspect browser console/network/visual issues, fix defects in scope, rerun targeted checks, then run broader regression and summarize residual risk.
+  default_prompt:
+    Run a complete QA loop for this feature: analyze scope, execute targeted backend tests and Google Chrome-based UI validation, inspect browser console/network/visual issues, fix defects in scope, rerun targeted checks, then run broader regression and summarize residual risk.

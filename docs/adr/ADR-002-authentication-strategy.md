@@ -1,10 +1,13 @@
 # ADR-002: JWT-based Authentication with HTTP-only Cookies
 
 ## Status
+
 Accepted
 
 ## Context
+
 The HRMS platform needs secure authentication supporting:
+
 - Traditional email/password login
 - Google SSO integration
 - Mobile app compatibility (future)
@@ -17,21 +20,25 @@ The HRMS platform needs secure authentication supporting:
 3. **JWT in HTTP-only Cookies** - Stateless JWT with secure cookie storage
 
 ## Decision
+
 We chose **Option 3: JWT in HTTP-only Cookies** with refresh token rotation.
 
 ## Rationale
 
 ### Security Benefits
+
 - **XSS Protection**: HTTP-only cookies cannot be accessed by JavaScript
 - **CSRF Protection**: Implemented with SameSite cookie attribute + CSRF tokens
 - **Token Theft Mitigation**: Refresh token rotation invalidates stolen tokens
 
 ### Architecture Benefits
+
 - **Stateless Backend**: No server-side session storage required
 - **Horizontal Scaling**: Any server can validate tokens
 - **Multi-tenant**: Tenant ID embedded in JWT claims
 
 ### Trade-offs
+
 - **Token Size**: JWT cookies larger than session IDs
 - **Revocation Complexity**: Requires token blacklist for immediate revocation
 - **Clock Skew**: Token expiry requires synchronized clocks
@@ -39,6 +46,7 @@ We chose **Option 3: JWT in HTTP-only Cookies** with refresh token rotation.
 ## Implementation
 
 ### Token Structure
+
 ```json
 {
   "sub": "user-uuid",
@@ -51,12 +59,14 @@ We chose **Option 3: JWT in HTTP-only Cookies** with refresh token rotation.
 ```
 
 ### Token Lifetimes
-| Token Type | Lifetime | Storage |
-|------------|----------|---------|
-| Access Token | 1 hour | HTTP-only cookie |
+
+| Token Type    | Lifetime | Storage          |
+|---------------|----------|------------------|
+| Access Token  | 1 hour   | HTTP-only cookie |
 | Refresh Token | 24 hours | HTTP-only cookie |
 
 ### Cookie Configuration
+
 ```java
 ResponseCookie.from("access_token", jwt)
     .httpOnly(true)
@@ -68,6 +78,7 @@ ResponseCookie.from("access_token", jwt)
 ```
 
 ### Refresh Flow
+
 1. Client sends request with expired access token
 2. Server returns 401 with `X-Token-Expired: true` header
 3. Client calls `/auth/refresh` with refresh token cookie
@@ -75,6 +86,7 @@ ResponseCookie.from("access_token", jwt)
 5. Client retries original request
 
 ### Google SSO Integration
+
 ```
 1. Frontend redirects to Google OAuth
 2. User authenticates with Google
@@ -87,6 +99,7 @@ ResponseCookie.from("access_token", jwt)
 ## Security Considerations
 
 ### Implemented
+
 - [x] HTTP-only cookies prevent XSS token theft
 - [x] Secure flag enforces HTTPS
 - [x] SameSite=Strict prevents CSRF
@@ -94,6 +107,7 @@ ResponseCookie.from("access_token", jwt)
 - [x] Short access token lifetime
 
 ### Future Enhancements
+
 - [ ] Token blacklist for logout/revocation
 - [ ] Device fingerprinting
 - [ ] Anomaly detection for unusual login patterns
@@ -101,15 +115,18 @@ ResponseCookie.from("access_token", jwt)
 ## Consequences
 
 ### Positive
+
 - Industry-standard security practices
 - Scalable stateless architecture
 - Clean separation of auth concerns
 
 ### Negative
+
 - Slightly more complex than session-based auth
 - Requires HTTPS in production
 - Cookie size increases with claims
 
 ## Related Decisions
+
 - ADR-001: Multi-Tenant Architecture
 - ADR-005: Rate Limiting Strategy

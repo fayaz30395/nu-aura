@@ -23,15 +23,16 @@ const AdminLayoutInner = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-screen items-center justify-center bg-[var(--bg-page)]">
-        <div className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin" />
+        <div
+          className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin"/>
       </div>
     ),
   }
 );
 
 export default function AdminLayout({
-  children,
-}: {
+                                      children,
+                                    }: {
   children: React.ReactNode;
 }) {
   return <AdminLayoutInner>{children}</AdminLayoutInner>;

@@ -1,5 +1,5 @@
-import { apiClient } from './client';
-import { LoginRequest, AuthResponse, ChangePasswordRequest, GoogleLoginRequest } from '../types/core/auth';
+import {apiClient} from './client';
+import {AuthResponse, ChangePasswordRequest, GoogleLoginRequest, LoginRequest} from '../types/core/auth';
 
 /**
  * Authentication API service.

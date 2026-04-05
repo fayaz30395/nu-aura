@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge } from '@mantine/core';
-import type { RecruitmentStage } from '@/lib/types/hire/recruitment';
+import {Badge} from '@mantine/core';
+import type {RecruitmentStage} from '@/lib/types/hire/recruitment';
 
 interface StageBadgeProps {
   stage: RecruitmentStage;
@@ -39,7 +39,7 @@ const STAGE_LABEL: Record<RecruitmentStage, string> = {
   OFFER_NDA_TO_BE_RELEASED: 'Offer / NDA',
 };
 
-export function StageBadge({ stage }: StageBadgeProps) {
+export function StageBadge({stage}: StageBadgeProps) {
   return (
     <Badge color={STAGE_COLOR[stage] ?? 'gray'} variant="light" size="sm">
       {STAGE_LABEL[stage] ?? stage}

@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, switchUser } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, switchUser} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Timesheet E2E Tests
@@ -12,23 +12,23 @@ import { demoUsers } from './fixtures/testData';
  */
 
 test.describe('Timesheets Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display timesheets page with heading', async ({ page }) => {
+  test('should display timesheets page with heading', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
   });
 
-  test('should display timesheet grid or table', async ({ page }) => {
+  test('should display timesheet grid or table', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasTable = await page
@@ -45,7 +45,7 @@ test.describe('Timesheets Page', () => {
     expect(hasTable || hasCards).toBe(true);
   });
 
-  test('should show week navigation or date picker', async ({ page }) => {
+  test('should show week navigation or date picker', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasDatePicker = await page
@@ -71,7 +71,7 @@ test.describe('Timesheets Page', () => {
 });
 
 test.describe('Timesheets - Log Daily Hours', () => {
-  test('should log daily hours against a project as employee', async ({ page }) => {
+  test('should log daily hours against a project as employee', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
@@ -107,7 +107,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
     }
   });
 
-  test('should show project selection for time entries', async ({ page }) => {
+  test('should show project selection for time entries', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
@@ -129,7 +129,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
     expect(hasProjectSelector || hasProjectRows || true).toBe(true);
   });
 
-  test('should add a new time entry row', async ({ page }) => {
+  test('should add a new time entry row', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
@@ -156,7 +156,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
 });
 
 test.describe('Timesheets - Submit Weekly Timesheet', () => {
-  test('should submit weekly timesheet as employee', async ({ page }) => {
+  test('should submit weekly timesheet as employee', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
@@ -188,7 +188,7 @@ test.describe('Timesheets - Submit Weekly Timesheet', () => {
     }
   });
 
-  test('should show total hours per day', async ({ page }) => {
+  test('should show total hours per day', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
 
     await page.goto('/timesheets');
@@ -212,7 +212,7 @@ test.describe('Timesheets - Submit Weekly Timesheet', () => {
 });
 
 test.describe('Timesheets - PM Approval', () => {
-  test('should show pending timesheets for PM to approve', async ({ page }) => {
+  test('should show pending timesheets for PM to approve', async ({page}) => {
     // Log in as PM (Sumit Kumar — Engineering Manager)
     await loginAs(page, demoUsers.managerEng.email);
 
@@ -236,7 +236,7 @@ test.describe('Timesheets - PM Approval', () => {
     ).not.toBeVisible();
   });
 
-  test('should display approve/reject actions for submitted timesheets', async ({ page }) => {
+  test('should display approve/reject actions for submitted timesheets', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/timesheets');
@@ -261,7 +261,7 @@ test.describe('Timesheets - PM Approval', () => {
     expect(hasApprove || hasReject || true).toBe(true);
   });
 
-  test('should approve a timesheet and reflect in dashboard', async ({ page }) => {
+  test('should approve a timesheet and reflect in dashboard', async ({page}) => {
     // Step 1: Check as PM
     await loginAs(page, demoUsers.managerEng.email);
 
@@ -306,12 +306,12 @@ test.describe('Timesheets - PM Approval', () => {
 });
 
 test.describe('Timesheets - Status Tracking', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display timesheet status badges', async ({ page }) => {
+  test('should display timesheet status badges', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const statuses = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'PENDING'];
@@ -326,7 +326,7 @@ test.describe('Timesheets - Status Tracking', () => {
     expect(hasStatus || true).toBe(true);
   });
 
-  test('should show timesheet history', async ({ page }) => {
+  test('should show timesheet history', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for history or past timesheets
@@ -341,28 +341,28 @@ test.describe('Timesheets - Status Tracking', () => {
 });
 
 test.describe('Timesheets - Visual Elements', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/timesheets');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should have proper layout with main content area', async ({ page }) => {
+  test('should have proper layout with main content area', async ({page}) => {
     const main = page.locator('main, [role="main"]').first();
     await expect(main).toBeVisible();
   });
 
-  test('should display icons', async ({ page }) => {
+  test('should display icons', async ({page}) => {
     const icons = page.locator('svg');
     const count = await icons.count();
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should be responsive', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
+  test('should be responsive', async ({page}) => {
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     await expect(page.getByRole('heading').first()).toBeVisible();
 
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });

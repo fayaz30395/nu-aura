@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Upload, X, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
-import { Progress } from '@mantine/core';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {AlertCircle, Upload, X} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {cn} from '@/lib/utils';
+import {Progress} from '@mantine/core';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
@@ -14,7 +14,7 @@ interface FileUploaderProps {
   className?: string;
 }
 
-export function FileUploader({ onUpload, isUploading = false, className }: FileUploaderProps) {
+export function FileUploader({onUpload, isUploading = false, className}: FileUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -144,7 +144,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
 
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-            <Upload className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+            <Upload className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
           </div>
 
           {selectedFile ? (
@@ -155,7 +155,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
               <p className="text-caption">
                 {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
               </p>
-              <Progress value={uploadProgress} size="sm" color="violet" />
+              <Progress value={uploadProgress} size="sm" color="violet"/>
             </div>
           ) : (
             <>
@@ -173,8 +173,9 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-          <AlertCircle className="h-4 w-4 text-danger-600 dark:text-danger-400 flex-shrink-0" />
+        <div
+          className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+          <AlertCircle className="h-4 w-4 text-danger-600 dark:text-danger-400 flex-shrink-0"/>
           <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
           <Button
             variant="ghost"
@@ -185,7 +186,7 @@ export function FileUploader({ onUpload, isUploading = false, className }: FileU
               setError(null);
             }}
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4"/>
           </Button>
         </div>
       )}

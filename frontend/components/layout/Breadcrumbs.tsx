@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {ChevronRight, Home} from 'lucide-react';
+import {cn} from '@/lib/utils';
 
 export interface BreadcrumbItem {
   label: string;
@@ -18,10 +18,10 @@ interface BreadcrumbsProps {
 }
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
-  items,
-  className,
-  separator = <ChevronRight className="h-4 w-4" />,
-}) => {
+                                                   items,
+                                                   className,
+                                                   separator = <ChevronRight className="h-4 w-4"/>,
+                                                 }) => {
   return (
     <nav
       className={cn(
@@ -29,7 +29,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         className
       )}
       aria-label="breadcrumb"
-      style={{ color: 'var(--text-secondary)' }}
+      style={{color: 'var(--text-secondary)'}}
     >
       <div className="flex items-center gap-2">
         {items.length > 0 && (
@@ -47,10 +47,10 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                 (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
               }}
             >
-              <Home className="h-4 w-4" />
+              <Home className="h-4 w-4"/>
               <span className="hidden sm:inline">Home</span>
             </Link>
-            <span style={{ color: 'var(--text-muted)' }}>{separator}</span>
+            <span style={{color: 'var(--text-muted)'}}>{separator}</span>
           </>
         )}
       </div>
@@ -62,7 +62,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
             className="flex items-center gap-2"
           >
             {index > 0 && (
-              <span style={{ color: 'var(--text-muted)' }}>{separator}</span>
+              <span style={{color: 'var(--text-muted)'}}>{separator}</span>
             )}
 
             {item.href ? (
@@ -85,7 +85,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
             ) : (
               <span
                 className="flex items-center gap-1.5 px-2 py-1 font-medium"
-                style={{ color: 'var(--text-primary)' }}
+                style={{color: 'var(--text-primary)'}}
               >
                 {item.icon && <span className="flex items-center">{item.icon}</span>}
                 {item.label}
@@ -98,4 +98,4 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   );
 };
 
-export { Breadcrumbs };
+export {Breadcrumbs};

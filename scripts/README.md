@@ -4,7 +4,8 @@ Database migration and utility scripts for the NU-AURA platform.
 
 ## Database Migration Scripts
 
-Tools for migrating PostgreSQL data between environments (e.g., Neon cloud to local, or between tenants).
+Tools for migrating PostgreSQL data between environments (e.g., Neon cloud to local, or between
+tenants).
 
 ### Prerequisites
 
@@ -14,11 +15,11 @@ Tools for migrating PostgreSQL data between environments (e.g., Neon cloud to lo
 
 ### Available Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `export-db.sh` | Export database to SQL dump |
-| `import-db.sh` | Import SQL dump to target database |
-| `migrate-db.sh` | Full migration (export + import) |
+| Script          | Purpose                            |
+|-----------------|------------------------------------|
+| `export-db.sh`  | Export database to SQL dump        |
+| `import-db.sh`  | Import SQL dump to target database |
+| `migrate-db.sh` | Full migration (export + import)   |
 
 ### Usage
 

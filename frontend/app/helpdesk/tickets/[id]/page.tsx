@@ -1,63 +1,67 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { ConfirmDialog } from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useToast } from '@/components/notifications/ToastProvider';
+import React, {useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {Card} from '@/components/ui/Card';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {ConfirmDialog} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
-  useTicketDetail,
-  useTicketComments,
-  useUpdateTicketStatus,
-  useAssignTicket,
   useAddComment,
+  useAssignTicket,
   useDeleteComment,
   useDeleteTicket,
+  useTicketComments,
+  useTicketDetail,
+  useUpdateTicketStatus,
 } from '@/lib/hooks/queries/useHelpdesk';
-import { useTicketMetrics, useTicketEscalations } from '@/lib/hooks/queries/useHelpdeskSla';
-import type { TicketPriority, TicketStatus, TicketCommentResponse } from '@/lib/services/hrms/helpdesk.service';
+import {useTicketEscalations, useTicketMetrics} from '@/lib/hooks/queries/useHelpdeskSla';
+import type {TicketCommentResponse, TicketPriority, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
 import {
+  Activity,
+  AlertTriangle,
   ArrowLeft,
-  Clock,
+  Calendar,
   CheckCircle2,
   Circle,
-  Pause,
-  User,
-  Tag,
-  Send,
-  Trash2,
+  Clock,
   Lock,
   MessageSquare,
-  AlertTriangle,
-  Calendar,
-  Activity,
+  Pause,
+  Send,
+  Tag,
+  Trash2,
+  User,
 } from 'lucide-react';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const PRIORITY_CONFIG: Record<TicketPriority, { label: string; variant: 'danger' | 'warning' | 'info' | 'default' }> = {
-  URGENT: { label: 'Urgent', variant: 'danger' },
-  HIGH: { label: 'High', variant: 'warning' },
-  MEDIUM: { label: 'Medium', variant: 'info' },
-  LOW: { label: 'Low', variant: 'default' },
+  URGENT: {label: 'Urgent', variant: 'danger'},
+  HIGH: {label: 'High', variant: 'warning'},
+  MEDIUM: {label: 'Medium', variant: 'info'},
+  LOW: {label: 'Low', variant: 'default'},
 };
 
-const STATUS_CONFIG: Record<TicketStatus, { label: string; variant: 'danger' | 'warning' | 'info' | 'success' | 'default'; icon: React.FC<{ className?: string }> }> = {
-  OPEN: { label: 'Open', variant: 'info', icon: Circle },
-  IN_PROGRESS: { label: 'In Progress', variant: 'warning', icon: Clock },
-  WAITING_FOR_RESPONSE: { label: 'Waiting', variant: 'default', icon: Pause },
-  RESOLVED: { label: 'Resolved', variant: 'success', icon: CheckCircle2 },
-  CLOSED: { label: 'Closed', variant: 'default', icon: CheckCircle2 },
+const STATUS_CONFIG: Record<TicketStatus, {
+  label: string;
+  variant: 'danger' | 'warning' | 'info' | 'success' | 'default';
+  icon: React.FC<{ className?: string }>
+}> = {
+  OPEN: {label: 'Open', variant: 'info', icon: Circle},
+  IN_PROGRESS: {label: 'In Progress', variant: 'warning', icon: Clock},
+  WAITING_FOR_RESPONSE: {label: 'Waiting', variant: 'default', icon: Pause},
+  RESOLVED: {label: 'Resolved', variant: 'success', icon: CheckCircle2},
+  CLOSED: {label: 'Closed', variant: 'default', icon: CheckCircle2},
 };
 
 const ALL_STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'WAITING_FOR_RESPONSE', 'RESOLVED', 'CLOSED'];
@@ -76,7 +80,7 @@ type CommentFormData = z.infer<typeof commentSchema>;
 export default function TicketDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const toast = useToast();
   const ticketId = params.id as string;
 
@@ -84,10 +88,10 @@ export default function TicketDetailPage() {
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 
   // Queries
-  const { data: ticket, isLoading: ticketLoading } = useTicketDetail(ticketId);
-  const { data: comments = [], isLoading: commentsLoading } = useTicketComments(ticketId);
-  const { data: metrics } = useTicketMetrics(ticketId, !!ticketId);
-  const { data: escalations = [] } = useTicketEscalations(ticketId, !!ticketId);
+  const {data: ticket, isLoading: ticketLoading} = useTicketDetail(ticketId);
+  const {data: comments = [], isLoading: commentsLoading} = useTicketComments(ticketId);
+  const {data: metrics} = useTicketMetrics(ticketId, !!ticketId);
+  const {data: escalations = []} = useTicketEscalations(ticketId, !!ticketId);
 
   // Mutations
   const statusMutation = useUpdateTicketStatus();
@@ -102,20 +106,22 @@ export default function TicketDetailPage() {
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CommentFormData>({
     resolver: zodResolver(commentSchema),
-    defaultValues: { comment: '', isInternal: false },
+    defaultValues: {comment: '', isInternal: false},
   });
 
   const isInternal = watch('isInternal');
 
   const handleStatusChange = async (status: TicketStatus) => {
     try {
-      await statusMutation.mutateAsync({ id: ticketId, status });
+      await statusMutation.mutateAsync({id: ticketId, status});
       toast.success(`Status updated to ${STATUS_CONFIG[status].label}`);
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to update status';
       toast.error(message);
     }
   };
@@ -123,10 +129,12 @@ export default function TicketDetailPage() {
   const handleAssignToMe = async () => {
     if (!user?.employeeId) return;
     try {
-      await assignMutation.mutateAsync({ id: ticketId, assigneeId: user.employeeId });
+      await assignMutation.mutateAsync({id: ticketId, assigneeId: user.employeeId});
       toast.success('Ticket assigned to you');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign ticket';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to assign ticket';
       toast.error(message);
     }
   };
@@ -142,7 +150,9 @@ export default function TicketDetailPage() {
       });
       reset();
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add comment';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to add comment';
       toast.error(message);
     }
   };
@@ -150,11 +160,13 @@ export default function TicketDetailPage() {
   const handleDeleteComment = async () => {
     if (!commentToDelete) return;
     try {
-      await deleteCommentMutation.mutateAsync({ commentId: commentToDelete, ticketId });
+      await deleteCommentMutation.mutateAsync({commentId: commentToDelete, ticketId});
       setCommentToDelete(null);
       toast.success('Comment deleted');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete comment';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete comment';
       toast.error(message);
     }
   };
@@ -165,7 +177,9 @@ export default function TicketDetailPage() {
       toast.success('Ticket deleted');
       router.push('/helpdesk/tickets');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete ticket';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete ticket';
       toast.error(message);
     }
   };
@@ -193,9 +207,9 @@ export default function TicketDetailPage() {
     return (
       <AppLayout activeMenuItem="helpdesk">
         <div className="space-y-6">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-8 w-48"/>
+          <Skeleton className="h-64 w-full"/>
+          <Skeleton className="h-48 w-full"/>
         </div>
       </AppLayout>
     );
@@ -205,10 +219,11 @@ export default function TicketDetailPage() {
     return (
       <AppLayout activeMenuItem="helpdesk">
         <div className="flex flex-col items-center justify-center py-20">
-          <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mb-4" />
+          <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">Ticket not found</h2>
           <p className="text-body-muted mt-1 mb-4">The ticket you are looking for does not exist</p>
-          <Button variant="outline" onClick={() => router.push('/helpdesk/tickets')} leftIcon={<ArrowLeft className="h-4 w-4" />}>
+          <Button variant="outline" onClick={() => router.push('/helpdesk/tickets')}
+                  leftIcon={<ArrowLeft className="h-4 w-4"/>}>
             Back to Tickets
           </Button>
         </div>
@@ -247,7 +262,8 @@ export default function TicketDetailPage() {
       <div className="space-y-6">
         {/* Back Navigation */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => router.push('/helpdesk/tickets')} leftIcon={<ArrowLeft className="h-4 w-4" />}>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/helpdesk/tickets')}
+                  leftIcon={<ArrowLeft className="h-4 w-4"/>}>
             Back to Tickets
           </Button>
         </div>
@@ -260,7 +276,7 @@ export default function TicketDetailPage() {
                 {ticket.ticketNumber || ticket.id.slice(0, 8)}
               </span>
               <Badge variant={statusCfg.variant} size="sm">
-                <StatusIcon className="h-3 w-3" />
+                <StatusIcon className="h-3 w-3"/>
                 {statusCfg.label}
               </Badge>
               <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
@@ -287,7 +303,8 @@ export default function TicketDetailPage() {
               </select>
             </PermissionGate>
             <PermissionGate permission={Permissions.SYSTEM_ADMIN}>
-              <Button variant="soft-danger" size="sm" onClick={() => setShowDeleteConfirm(true)} leftIcon={<Trash2 className="h-4 w-4" />}>
+              <Button variant="soft-danger" size="sm" onClick={() => setShowDeleteConfirm(true)}
+                      leftIcon={<Trash2 className="h-4 w-4"/>}>
                 Delete
               </Button>
             </PermissionGate>
@@ -300,13 +317,14 @@ export default function TicketDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Description */}
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Description</h3>
+              <h3
+                className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Description</h3>
               <div className="text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
                 {ticket.description}
               </div>
               {ticket.tags && (
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[var(--border-main)]">
-                  <Tag className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                  <Tag className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                   <div className="flex gap-1.5 flex-wrap">
                     {ticket.tags.split(',').map((tag: string) => (
                       <Badge key={tag.trim()} variant="outline" size="sm">{tag.trim()}</Badge>
@@ -320,7 +338,7 @@ export default function TicketDetailPage() {
             {escalations.length > 0 && (
               <Card className="p-6 border-warning-200 dark:border-warning-800 bg-warning-50/50 dark:bg-warning-950/10">
                 <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="h-4 w-4 text-warning-600" />
+                  <AlertTriangle className="h-4 w-4 text-warning-600"/>
                   <h3 className="text-sm font-semibold text-warning-800 dark:text-warning-300">
                     Escalations ({escalations.length})
                   </h3>
@@ -347,7 +365,7 @@ export default function TicketDetailPage() {
             <Card className="p-6">
               <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
+                  <MessageSquare className="h-4 w-4"/>
                   Comments ({comments.length})
                 </div>
               </h3>
@@ -356,10 +374,10 @@ export default function TicketDetailPage() {
                 <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="flex gap-4">
-                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-8 w-8 rounded-full"/>
                       <div className="flex-1 space-y-2">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-4 w-32"/>
+                        <Skeleton className="h-12 w-full"/>
                       </div>
                     </div>
                   ))}
@@ -397,8 +415,8 @@ export default function TicketDetailPage() {
                     <div className="row-between">
                       <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
                         <label className="flex items-center gap-2 text-body-secondary">
-                          <input type="checkbox" {...register('isInternal')} className="rounded" />
-                          <Lock className="h-3.5 w-3.5" />
+                          <input type="checkbox" {...register('isInternal')} className="rounded"/>
+                          <Lock className="h-3.5 w-3.5"/>
                           Internal note (not visible to requester)
                         </label>
                       </PermissionGate>
@@ -407,7 +425,7 @@ export default function TicketDetailPage() {
                         variant={isInternal ? 'warning' : 'primary'}
                         size="sm"
                         disabled={addCommentMutation.isPending}
-                        leftIcon={<Send className="h-3.5 w-3.5" />}
+                        leftIcon={<Send className="h-3.5 w-3.5"/>}
                       >
                         {addCommentMutation.isPending ? 'Sending...' : isInternal ? 'Add Internal Note' : 'Send Reply'}
                       </Button>
@@ -422,7 +440,8 @@ export default function TicketDetailPage() {
           <div className="space-y-6">
             {/* Ticket Details */}
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Details</h3>
+              <h3
+                className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Details</h3>
               <div className="space-y-4">
                 <DetailRow label="Requester" icon={User}>
                   <span className="text-sm font-medium text-[var(--text-primary)]">{ticket.employeeName || '-'}</span>
@@ -462,7 +481,7 @@ export default function TicketDetailPage() {
               <Card className="p-6">
                 <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">
                   <div className="flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
+                    <Activity className="h-4 w-4"/>
                     SLA Metrics
                   </div>
                 </h3>
@@ -518,7 +537,9 @@ export default function TicketDetailPage() {
             {/* Resolution Notes */}
             {ticket.resolutionNotes && (
               <Card className="p-6">
-                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Resolution Notes</h3>
+                <h3
+                  className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Resolution
+                  Notes</h3>
                 <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{ticket.resolutionNotes}</p>
               </Card>
             )}
@@ -537,10 +558,10 @@ interface DetailRowProps {
   children: React.ReactNode;
 }
 
-function DetailRow({ label, icon: Icon, children }: DetailRowProps) {
+function DetailRow({label, icon: Icon, children}: DetailRowProps) {
   return (
     <div className="flex items-start gap-4">
-      <Icon className="h-4 w-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0" />
+      <Icon className="h-4 w-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0"/>
       <div className="flex-1 min-w-0">
         <p className="text-caption mb-0.5">{label}</p>
         {children}
@@ -556,13 +577,15 @@ interface CommentItemProps {
   formatDate: (date: string | null | undefined) => string;
 }
 
-function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentItemProps) {
+function CommentItem({comment, currentUserId, onDelete, formatDate}: CommentItemProps) {
   const isOwn = currentUserId === comment.commenterId;
 
   return (
-    <div className={`flex gap-4 ${comment.isInternal ? 'bg-warning-50/50 dark:bg-warning-950/10 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50 dark:border-warning-800/30' : ''}`}>
-      <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
-        <User className="h-4 w-4 text-accent-700 dark:text-accent-400" />
+    <div
+      className={`flex gap-4 ${comment.isInternal ? 'bg-warning-50/50 dark:bg-warning-950/10 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50 dark:border-warning-800/30' : ''}`}>
+      <div
+        className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
+        <User className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
@@ -570,7 +593,7 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
           <span className="text-caption">{formatDate(comment.createdAt)}</span>
           {comment.isInternal && (
             <Badge variant="warning" size="sm">
-              <Lock className="h-3 w-3" />
+              <Lock className="h-3 w-3"/>
               Internal
             </Badge>
           )}
@@ -582,7 +605,7 @@ function CommentItem({ comment, currentUserId, onDelete, formatDate }: CommentIt
             className="text-caption hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Delete comment"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-3 w-3"/>
             Delete
           </button>
         )}

@@ -1,15 +1,15 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ResumeParseRequest,
-  ResumeParseResponse,
   CandidateMatchResponse,
   CandidateScreeningSummaryRequest,
   CandidateScreeningSummaryResponse,
-  JobDescriptionRequest,
-  JobDescriptionResponse,
-  InterviewQuestionsResponse,
   FeedbackSynthesisRequest,
   FeedbackSynthesisResponse,
+  InterviewQuestionsResponse,
+  JobDescriptionRequest,
+  JobDescriptionResponse,
+  ResumeParseRequest,
+  ResumeParseResponse,
 } from '../../types/hire/ai-recruitment';
 
 class AIRecruitmentService {
@@ -33,7 +33,7 @@ class AIRecruitmentService {
     const response = await apiClient.post<ResumeParseResponse>(
       '/recruitment/ai/parse-resume/upload',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      {headers: {'Content-Type': 'multipart/form-data'}}
     );
     return response.data;
   }
@@ -47,7 +47,7 @@ class AIRecruitmentService {
     const response = await apiClient.post<CandidateMatchResponse>(
       '/recruitment/ai/match-score',
       null,
-      { params: { candidateId, jobOpeningId } }
+      {params: {candidateId, jobOpeningId}}
     );
     return response.data;
   }
@@ -95,7 +95,7 @@ class AIRecruitmentService {
     }
     const response = await apiClient.get<InterviewQuestionsResponse>(
       `/recruitment/ai/interview-questions/${jobOpeningId}`,
-      { params }
+      {params}
     );
     return response.data;
   }

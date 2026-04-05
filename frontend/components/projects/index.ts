@@ -1,2 +1,2 @@
-export { TaskDetailsModal } from './TaskDetailsModal';
-export { CalendarView } from './CalendarView';
+export {TaskDetailsModal} from './TaskDetailsModal';
+export {CalendarView} from './CalendarView';

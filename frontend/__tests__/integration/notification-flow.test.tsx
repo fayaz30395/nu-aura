@@ -4,10 +4,11 @@
  * Uses mocked notification API for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {notificationsApi} from '@/lib/api/notifications';
 
 // Mock types for notifications
 interface Notification {
@@ -33,8 +34,6 @@ vi.mock('@/lib/api/notifications', () => ({
   },
 }));
 
-import { notificationsApi } from '@/lib/api/notifications';
-
 const mockedNotificationsApi = vi.mocked(notificationsApi);
 
 // Mock Notification Bell Component
@@ -42,7 +41,7 @@ interface NotificationBellProps {
   onBellClick?: () => void;
 }
 
-const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) => {
+const MockNotificationBell: React.FC<NotificationBellProps> = ({onBellClick}) => {
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
@@ -82,7 +81,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
     try {
       await notificationsApi.markAsRead(id);
       setNotifications(
-        notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+        notifications.map((n) => (n.id === id ? {...n, isRead: true} : n))
       );
       setUnreadCount(Math.max(0, unreadCount - 1));
     } catch (_err) {
@@ -93,7 +92,7 @@ const MockNotificationBell: React.FC<NotificationBellProps> = ({ onBellClick }) 
   const handleMarkAllAsRead = async () => {
     try {
       await notificationsApi.markAllAsRead();
-      setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
+      setNotifications(notifications.map((n) => ({...n, isRead: true})));
       setUnreadCount(0);
     } catch (_err) {
       console.error('Failed to mark all as read');
@@ -237,7 +236,7 @@ describe('Notification Flow Integration Tests', () => {
     it('should render notification bell button', () => {
       mockedNotificationsApi.getUnreadCount.mockResolvedValueOnce(0);
 
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       expect(screen.getByTestId('notification-bell-button')).toBeInTheDocument();
     });
@@ -245,7 +244,7 @@ describe('Notification Flow Integration Tests', () => {
     it('should display unread badge with count', async () => {
       mockedNotificationsApi.getUnreadCount.mockResolvedValueOnce(3);
 
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await waitFor(() => {
         const badge = screen.getByText('3');
@@ -257,7 +256,7 @@ describe('Notification Flow Integration Tests', () => {
     it('should not show badge when unread count is 0', async () => {
       mockedNotificationsApi.getUnreadCount.mockResolvedValueOnce(0);
 
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await waitFor(() => {
         expect(screen.queryByTestId('unread-badge')).not.toBeInTheDocument();
@@ -267,7 +266,7 @@ describe('Notification Flow Integration Tests', () => {
     it('should fetch unread count on mount', () => {
       mockedNotificationsApi.getUnreadCount.mockResolvedValueOnce(5);
 
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       expect(mockedNotificationsApi.getUnreadCount).toHaveBeenCalled();
     });
@@ -281,7 +280,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       const bellButton = screen.getByTestId('notification-bell-button');
       await user.click(bellButton);
@@ -298,7 +297,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       const bellButton = screen.getByTestId('notification-bell-button');
       await user.click(bellButton);
@@ -314,14 +313,14 @@ describe('Notification Flow Integration Tests', () => {
         () =>
           new Promise((resolve) =>
             setTimeout(
-              () => resolve({ content: mockNotifications }),
+              () => resolve({content: mockNotifications}),
               100
             )
           )
       );
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       const bellButton = screen.getByTestId('notification-bell-button');
       await user.click(bellButton);
@@ -336,7 +335,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       const bellButton = screen.getByTestId('notification-bell-button');
 
@@ -360,7 +359,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       const bellButton = screen.getByTestId('notification-bell-button');
       await user.click(bellButton);
@@ -379,7 +378,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -399,7 +398,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -416,7 +415,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -438,7 +437,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -457,7 +456,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.markAsRead.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -486,7 +485,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.markAsRead.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -515,7 +514,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.markAsRead.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await waitFor(() => {
         const badge = screen.getByText('1');
@@ -549,7 +548,7 @@ describe('Notification Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -566,7 +565,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.markAllAsRead.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -587,7 +586,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.markAllAsRead.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -613,7 +612,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.deleteNotification.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -640,7 +639,7 @@ describe('Notification Flow Integration Tests', () => {
       mockedNotificationsApi.deleteNotification.mockResolvedValueOnce(undefined);
 
       const user = userEvent.setup();
-      render(<MockNotificationBell />);
+      render(<MockNotificationBell/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -671,7 +670,7 @@ describe('Notification Flow Integration Tests', () => {
 
       const onBellClick = vi.fn();
       const user = userEvent.setup();
-      render(<MockNotificationBell onBellClick={onBellClick} />);
+      render(<MockNotificationBell onBellClick={onBellClick}/>);
 
       await user.click(screen.getByTestId('notification-bell-button'));
 

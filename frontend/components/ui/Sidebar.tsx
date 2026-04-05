@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {ChevronDown, ChevronRight, PanelLeft, PanelLeftClose, Sparkles, X} from 'lucide-react';
 
 const STORAGE_KEY_COLLAPSED_SECTIONS = 'sidebar-collapsed-sections';
 
@@ -65,7 +65,7 @@ const ChildrenFlyover: React.FC<{
   onItemClick?: (item: SidebarItem) => void;
   activeId?: string;
   triggerRect: DOMRect | null;
-}> = ({ item, isOpen, onClose, onItemClick, activeId, triggerRect }) => {
+}> = ({item, isOpen, onClose, onItemClick, activeId, triggerRect}) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -136,7 +136,8 @@ const ChildrenFlyover: React.FC<{
               {item.label}
             </span>
             {item.badge && (
-              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-accent-500 text-white">
+              <span
+                className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium bg-accent-500 text-white">
                 {item.badge}
               </span>
             )}
@@ -146,7 +147,7 @@ const ChildrenFlyover: React.FC<{
             className="p-1 rounded-md text-secondary hover:text-primary hover:bg-accent-500/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Close"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4"/>
           </button>
         </div>
 
@@ -199,7 +200,7 @@ const ChildrenFlyover: React.FC<{
                       }, 3000);
                       // Clear timeout if navigation succeeds (page unmounts)
                       const cleanup = () => clearTimeout(timeout);
-                      window.addEventListener('beforeunload', cleanup, { once: true });
+                      window.addEventListener('beforeunload', cleanup, {once: true});
                       // Also clear on popstate (successful SPA navigation changes URL)
                       const checkNav = () => {
                         if (window.location.pathname === fallbackHref || window.location.pathname.startsWith(fallbackHref)) {
@@ -253,7 +254,7 @@ const SidebarMenuItem: React.FC<{
   activeId?: string;
   openFlyoverId: string | null;
   onToggleFlyover: (itemId: string, rect: DOMRect | null) => void;
-}> = memo(({ item, isActive, isCollapsed, onItemClick, activeId: _activeId, openFlyoverId, onToggleFlyover }) => {
+}> = memo(({item, isActive, isCollapsed, onItemClick, activeId: _activeId, openFlyoverId, onToggleFlyover}) => {
   const elementRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const hasChildren = item.children && item.children.length > 0;
   const isFlyoverOpen = openFlyoverId === item.id;
@@ -349,7 +350,7 @@ const SidebarMenuItem: React.FC<{
                   'h-4 w-4 transition-all duration-200',
                   isFlyoverOpen && 'translate-x-0.5'
                 )}
-                style={{ color: isFlyoverOpen ? 'var(--sidebar-text-active)' : 'var(--sidebar-text-muted)' }}
+                style={{color: isFlyoverOpen ? 'var(--sidebar-text-active)' : 'var(--sidebar-text-muted)'}}
               />
             )}
           </div>
@@ -358,7 +359,8 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transition-all duration-150">
+        <div
+          className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)] pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-accent-500 rounded-full text-xs text-white">
@@ -414,11 +416,11 @@ const SectionDivider: React.FC<{
   isCollapsed: boolean;
   isSectionExpanded: boolean;
   onToggleSection: (sectionId: string) => void;
-}> = ({ label, sectionId, isCollapsed, isSectionExpanded, onToggleSection }) => {
+}> = ({label, sectionId, isCollapsed, isSectionExpanded, onToggleSection}) => {
   if (isCollapsed) {
     return (
       <div className="px-4 py-4 text-center">
-        <div className="w-full h-px mx-auto" style={{ borderTop: '1px solid var(--sidebar-border)' }} />
+        <div className="w-full h-px mx-auto" style={{borderTop: '1px solid var(--sidebar-border)'}}/>
       </div>
     );
   }
@@ -431,7 +433,7 @@ const SectionDivider: React.FC<{
     >
       <span
         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
-        style={{ color: 'var(--sidebar-section-text)' }}
+        style={{color: 'var(--sidebar-section-text)'}}
         suppressHydrationWarning
       >
         {label}
@@ -441,7 +443,7 @@ const SectionDivider: React.FC<{
           'h-3 w-3 transition-transform duration-300 ease-out',
           !isSectionExpanded && '-rotate-90'
         )}
-        style={{ color: 'var(--sidebar-text-muted)' }}
+        style={{color: 'var(--sidebar-text-muted)'}}
       />
     </button>
   );
@@ -562,7 +564,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
       return Object.entries(groups)
         .filter(([, sectionItems]) => sectionItems.length > 0)
-        .map(([label, sectionItems]) => ({ id: label.toLowerCase().replace(/\s+/g, '-'), label, items: sectionItems }));
+        .map(([label, sectionItems]) => ({id: label.toLowerCase().replace(/\s+/g, '-'), label, items: sectionItems}));
     }, [items, sections]);
 
     // Find the item with open flyover
@@ -605,7 +607,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               'flex items-center h-16 px-4 transition-all duration-300',
               isCollapsed ? 'justify-center' : 'justify-between'
             )}
-            style={{ borderBottom: '1px solid var(--sidebar-border)' }}
+            style={{borderBottom: '1px solid var(--sidebar-border)'}}
           >
             {!isCollapsed ? (
               <div className="flex items-center gap-2">
@@ -639,7 +641,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 'px-4 py-2.5 transition-all duration-300',
                 isCollapsed ? 'flex justify-center' : ''
               )}
-              style={{ borderBottom: '1px solid var(--sidebar-border)' }}
+              style={{borderBottom: '1px solid var(--sidebar-border)'}}
             >
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
@@ -654,12 +656,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
               >
                 {isCollapsed ? (
-                  <PanelLeft className="h-5 w-5 transition-transform duration-300" />
+                  <PanelLeft className="h-5 w-5 transition-transform duration-300"/>
                 ) : (
                   <>
-                    <PanelLeftClose className="h-5 w-5 transition-transform duration-300" />
+                    <PanelLeftClose className="h-5 w-5 transition-transform duration-300"/>
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
-                    <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded transition-colors duration-200" style={{ color: 'var(--sidebar-text-muted)', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
+                    <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded transition-colors duration-200"
+                         style={{
+                           color: 'var(--sidebar-text-muted)',
+                           backgroundColor: 'rgba(255,255,255,0.06)',
+                           border: '1px solid var(--sidebar-border)'
+                         }}>
                       ⌘B
                     </kbd>
                   </>
@@ -693,7 +700,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     >
                       <span
                         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
-                        style={{ color: 'var(--sidebar-section-text)' }}
+                        style={{color: 'var(--sidebar-section-text)'}}
                         suppressHydrationWarning
                       >
                         {section.label}
@@ -703,7 +710,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                           'h-3 w-3 transition-transform duration-300 ease-out',
                           !isSectionExpanded && '-rotate-90'
                         )}
-                        style={{ color: 'var(--sidebar-text-muted)' }}
+                        style={{color: 'var(--sidebar-text-muted)'}}
                       />
                     </button>
                   )}
@@ -711,7 +718,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {/* Collapsible items container — CSS-only, no Framer Motion overhead */}
                   <div
                     className="space-y-0.5 overflow-hidden transition-all duration-150 ease-out"
-                    style={isSectionExpanded ? {} : { height: 0, opacity: 0, pointerEvents: 'none' }}
+                    style={isSectionExpanded ? {} : {height: 0, opacity: 0, pointerEvents: 'none'}}
                   >
                     {section.items.map((item) => (
                       <SidebarMenuItem
@@ -737,26 +744,34 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               'p-4 transition-all duration-300',
               isCollapsed && 'flex justify-center'
             )}
-            style={{ borderTop: '1px solid var(--sidebar-border)' }}
+            style={{borderTop: '1px solid var(--sidebar-border)'}}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl transition-all duration-200" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.12) 0%, rgba(96, 165, 250, 0.08) 100%)', border: '1px solid rgba(58, 95, 217, 0.20)', boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)' }}>
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))' }}>
-                  <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200" />
+              <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl transition-all duration-200" style={{
+                background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.12) 0%, rgba(96, 165, 250, 0.08) 100%)',
+                border: '1px solid rgba(58, 95, 217, 0.20)',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)'
+              }}>
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200"
+                     style={{background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))'}}>
+                  <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200"/>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate" style={{ color: 'var(--sidebar-text-active)' }}>
+                  <p className="text-xs font-semibold truncate" style={{color: 'var(--sidebar-text-active)'}}>
                     Pro Features
                   </p>
-                  <p className="text-2xs" style={{ color: 'var(--sidebar-text-muted)' }}>
+                  <p className="text-2xs" style={{color: 'var(--sidebar-text-muted)'}}>
                     All modules active
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center group relative transition-all duration-200 hover:scale-105" style={{ background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))' }}>
-                <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center group relative transition-all duration-200 hover:scale-105"
+                style={{background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))'}}>
+                <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200"/>
+                <div
+                  className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
                   Pro Features Active
                 </div>
               </div>
@@ -789,4 +804,4 @@ Sidebar.displayName = 'Sidebar';
 const MemoizedSidebar = memo(Sidebar);
 MemoizedSidebar.displayName = 'Sidebar';
 
-export { MemoizedSidebar as Sidebar };
+export {MemoizedSidebar as Sidebar};

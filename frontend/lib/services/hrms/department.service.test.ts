@@ -1,4 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {departmentService} from './department.service';
+import {apiClient} from '@/lib/api/client';
+import type {Department, DepartmentRequest, Page} from '@/lib/types/hrms/employee';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,10 +12,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { departmentService } from './department.service';
-import { apiClient } from '@/lib/api/client';
-import type { Department, DepartmentRequest, Page } from '@/lib/types/hrms/employee';
 
 const mockApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -46,12 +45,12 @@ describe('departmentService', () => {
         number: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockDepartments });
+      mockApiClient.get.mockResolvedValueOnce({data: mockDepartments});
 
       const result = await departmentService.getAllDepartments();
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/departments', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockDepartments);
     });
@@ -65,12 +64,12 @@ describe('departmentService', () => {
         number: 1,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockDepartments });
+      mockApiClient.get.mockResolvedValueOnce({data: mockDepartments});
 
       const result = await departmentService.getAllDepartments(1, 10);
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/departments', {
-        params: { page: 1, size: 10 },
+        params: {page: 1, size: 10},
       });
       expect(result).toEqual(mockDepartments);
     });
@@ -106,7 +105,7 @@ describe('departmentService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockDepartments });
+      mockApiClient.get.mockResolvedValueOnce({data: mockDepartments});
 
       const result = await departmentService.getActiveDepartments();
 
@@ -149,7 +148,7 @@ describe('departmentService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockHierarchy });
+      mockApiClient.get.mockResolvedValueOnce({data: mockHierarchy});
 
       const result = await departmentService.getDepartmentHierarchy();
 
@@ -183,7 +182,7 @@ describe('departmentService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockDepartment });
+      mockApiClient.get.mockResolvedValueOnce({data: mockDepartment});
 
       const result = await departmentService.getDepartment('1');
 
@@ -221,12 +220,12 @@ describe('departmentService', () => {
         number: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockResults });
+      mockApiClient.get.mockResolvedValueOnce({data: mockResults});
 
       const result = await departmentService.searchDepartments('eng');
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/departments/search', {
-        params: { query: 'eng', page: 0, size: 20 },
+        params: {query: 'eng', page: 0, size: 20},
       });
       expect(result).toEqual(mockResults);
     });
@@ -257,7 +256,7 @@ describe('departmentService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockDepartment });
+      mockApiClient.post.mockResolvedValueOnce({data: mockDepartment});
 
       const result = await departmentService.createDepartment(createRequest);
 
@@ -300,7 +299,7 @@ describe('departmentService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.put.mockResolvedValueOnce({ data: mockDepartment });
+      mockApiClient.put.mockResolvedValueOnce({data: mockDepartment});
 
       const result = await departmentService.updateDepartment('1', updateRequest);
 
@@ -337,7 +336,7 @@ describe('departmentService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.patch.mockResolvedValueOnce({ data: mockDepartment });
+      mockApiClient.patch.mockResolvedValueOnce({data: mockDepartment});
 
       const result = await departmentService.activateDepartment('1');
 
@@ -368,7 +367,7 @@ describe('departmentService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.patch.mockResolvedValueOnce({ data: mockDepartment });
+      mockApiClient.patch.mockResolvedValueOnce({data: mockDepartment});
 
       const result = await departmentService.deactivateDepartment('1');
 

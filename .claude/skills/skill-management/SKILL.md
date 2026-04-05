@@ -20,6 +20,7 @@ cat .claude/skills/nu-aura-team-roles/01-engineering-manager-tech-lead.md
 ### 2. Write New Skill
 
 **Structure**:
+
 ```markdown
 # Skill Name
 
@@ -48,6 +49,7 @@ cat .claude/skills/nu-aura-team-roles/01-engineering-manager-tech-lead.md
 ```
 
 **Create Skill**:
+
 ```bash
 mkdir -p .claude/skills/<skill-name>
 cat > .claude/skills/<skill-name>/SKILL.md << 'ENDSKILL'
@@ -71,6 +73,7 @@ rm -rf .claude/skills/<skill-name>
 ## Skill Categories
 
 **NU-AURA Team Roles** (`nu-aura-team-roles/`):
+
 - 01-engineering-manager-tech-lead.md
 - 02-product-manager.md
 - 03-senior-backend-core-platform.md
@@ -86,6 +89,7 @@ rm -rf .claude/skills/<skill-name>
 - 13-hr-domain-expert.md
 
 **Essential Skills**:
+
 - `ralphloop-manager/` - Loop task management
 - `skill-management/` - This skill (meta-skill)
 - `superpowers-essential/` - Critical superpowers
@@ -93,17 +97,20 @@ rm -rf .claude/skills/<skill-name>
 ## Best Practices
 
 **Creating Skills**:
+
 - Keep focused (single responsibility)
 - Use clear examples
 - Define success criteria
 - Keep under 200 lines if possible
 
 **Organizing Skills**:
+
 - Group related skills in subdirectories
 - Use descriptive names
 - Include SKILL.md in each directory
 
 **Maintaining Skills**:
+
 - Update when patterns change
 - Remove obsolete skills
 - Keep examples current

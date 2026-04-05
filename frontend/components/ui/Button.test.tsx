@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@/lib/test-utils';
-import { Button } from './Button';
-import { Mail } from 'lucide-react';
+import {describe, expect, it, vi} from 'vitest';
+import {render, screen} from '@/lib/test-utils';
+import {Button} from './Button';
+import {Mail} from 'lucide-react';
 
 describe('Button', () => {
   describe('rendering', () => {
     it('renders with default props', () => {
       render(<Button>Click me</Button>);
-      expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: /click me/i})).toBeInTheDocument();
     });
 
     it('renders with custom className', () => {
@@ -115,7 +115,7 @@ describe('Button', () => {
   describe('icons', () => {
     it('renders left icon', () => {
       render(
-        <Button leftIcon={<Mail data-testid="left-icon" />}>
+        <Button leftIcon={<Mail data-testid="left-icon"/>}>
           Email
         </Button>
       );
@@ -124,7 +124,7 @@ describe('Button', () => {
 
     it('renders right icon', () => {
       render(
-        <Button rightIcon={<Mail data-testid="right-icon" />}>
+        <Button rightIcon={<Mail data-testid="right-icon"/>}>
           Send
         </Button>
       );
@@ -134,8 +134,8 @@ describe('Button', () => {
     it('renders both icons', () => {
       render(
         <Button
-          leftIcon={<Mail data-testid="left-icon" />}
-          rightIcon={<Mail data-testid="right-icon" />}
+          leftIcon={<Mail data-testid="left-icon"/>}
+          rightIcon={<Mail data-testid="right-icon"/>}
         >
           Email
         </Button>
@@ -148,7 +148,7 @@ describe('Button', () => {
   describe('interactions', () => {
     it('calls onClick handler when clicked', async () => {
       const handleClick = vi.fn();
-      const { user } = render(<Button onClick={handleClick}>Click me</Button>);
+      const {user} = render(<Button onClick={handleClick}>Click me</Button>);
 
       await user.click(screen.getByRole('button'));
       expect(handleClick).toHaveBeenCalledTimes(1);
@@ -156,7 +156,7 @@ describe('Button', () => {
 
     it('does not call onClick when disabled', async () => {
       const handleClick = vi.fn();
-      const { user } = render(<Button onClick={handleClick} disabled>Click me</Button>);
+      const {user} = render(<Button onClick={handleClick} disabled>Click me</Button>);
 
       await user.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('Button', () => {
 
     it('does not call onClick when loading', async () => {
       const handleClick = vi.fn();
-      const { user } = render(<Button onClick={handleClick} isLoading>Click me</Button>);
+      const {user} = render(<Button onClick={handleClick} isLoading>Click me</Button>);
 
       await user.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();

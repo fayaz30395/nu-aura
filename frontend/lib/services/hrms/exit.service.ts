@@ -1,26 +1,26 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ExitProcess,
+  AssetRecovery,
+  ConductExitInterviewRequest,
+  CreateAssetRecoveryRequest,
+  CreateExitClearanceRequest,
+  CreateExitInterviewRequest,
   CreateExitProcessRequest,
-  UpdateExitProcessRequest,
+  CreateFnFSettlementRequest,
+  ExitClearance,
+  ExitDashboard,
+  ExitInterview,
+  ExitInterviewsResponse,
+  ExitProcess,
   ExitProcessesResponse,
   ExitStatus,
-  ExitDashboard,
-  ExitClearance,
-  CreateExitClearanceRequest,
-  UpdateExitClearanceRequest,
-  FullAndFinalSettlement,
-  CreateFnFSettlementRequest,
-  UpdateFnFSettlementRequest,
   FnFSettlementsResponse,
+  FullAndFinalSettlement,
   PaymentMode,
-  ExitInterview,
-  CreateExitInterviewRequest,
-  ConductExitInterviewRequest,
-  ExitInterviewsResponse,
-  AssetRecovery,
-  CreateAssetRecoveryRequest,
   RecordAssetReturnRequest,
+  UpdateExitClearanceRequest,
+  UpdateExitProcessRequest,
+  UpdateFnFSettlementRequest,
 } from '../../types/hrms/exit';
 
 const BASE_URL = '/exit';
@@ -30,7 +30,7 @@ export const exitService = {
 
   getAllExitProcesses: async (page = 0, size = 20): Promise<ExitProcessesResponse> => {
     const response = await apiClient.get<ExitProcessesResponse>(`${BASE_URL}/processes`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -62,7 +62,7 @@ export const exitService = {
 
   updateExitStatus: async (id: string, status: ExitStatus): Promise<ExitProcess> => {
     const response = await apiClient.patch<ExitProcess>(`${BASE_URL}/processes/${id}/status`, null, {
-      params: { status },
+      params: {status},
     });
     return response.data;
   },
@@ -130,7 +130,7 @@ export const exitService = {
     paymentReference: string
   ): Promise<FullAndFinalSettlement> => {
     const response = await apiClient.post<FullAndFinalSettlement>(`${BASE_URL}/settlements/${id}/pay`, null, {
-      params: { paymentMode, paymentReference },
+      params: {paymentMode, paymentReference},
     });
     return response.data;
   },
@@ -147,7 +147,7 @@ export const exitService = {
 
   getAllSettlements: async (page = 0, size = 20): Promise<FnFSettlementsResponse> => {
     const response = await apiClient.get<FnFSettlementsResponse>(`${BASE_URL}/settlements`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -171,7 +171,7 @@ export const exitService = {
 
   rescheduleInterview: async (id: string, newDate: string): Promise<ExitInterview> => {
     const response = await apiClient.patch<ExitInterview>(`${BASE_URL}/interviews/${id}/reschedule`, null, {
-      params: { newDate },
+      params: {newDate},
     });
     return response.data;
   },
@@ -183,7 +183,7 @@ export const exitService = {
 
   getAllExitInterviews: async (page = 0, size = 20): Promise<ExitInterviewsResponse> => {
     const response = await apiClient.get<ExitInterviewsResponse>(`${BASE_URL}/interviews`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -212,14 +212,14 @@ export const exitService = {
 
   markAssetAsLost: async (id: string, deductionAmount?: number, remarks?: string): Promise<AssetRecovery> => {
     const response = await apiClient.patch<AssetRecovery>(`${BASE_URL}/assets/${id}/lost`, null, {
-      params: { deductionAmount, remarks },
+      params: {deductionAmount, remarks},
     });
     return response.data;
   },
 
   waiveAssetRecovery: async (id: string, waiverReason: string): Promise<AssetRecovery> => {
     const response = await apiClient.patch<AssetRecovery>(`${BASE_URL}/assets/${id}/waive`, null, {
-      params: { waiverReason },
+      params: {waiverReason},
     });
     return response.data;
   },

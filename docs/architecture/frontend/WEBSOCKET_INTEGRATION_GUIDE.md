@@ -2,7 +2,8 @@
 
 ## Quick Start
 
-The WebSocket notification system is already integrated into the application. No changes are needed to existing code. The reconnection logic works transparently in the background.
+The WebSocket notification system is already integrated into the application. No changes are needed
+to existing code. The reconnection logic works transparently in the background.
 
 ### How It Works (Automatic)
 
@@ -17,7 +18,8 @@ The WebSocket notification system is already integrated into the application. No
 
 ### 1. Application Root (Already Wrapped)
 
-The WebSocketProvider should wrap your application (typically in `app/layout.tsx` or `app/providers.tsx`):
+The WebSocketProvider should wrap your application (typically in `app/layout.tsx` or
+`app/providers.tsx`):
 
 ```typescript
 import { WebSocketProvider } from '@/components/notifications/WebSocketProvider';
@@ -338,22 +340,26 @@ Look for `[WebSocket]` prefixed logs:
 ## Performance Considerations
 
 ### CPU Usage
+
 - Negligible - event-driven, no polling
 - Single timer active during reconnection
 - No busy-waiting or loops
 
 ### Memory Usage
+
 - ~2KB for configuration and state
 - No memory leaks on disconnect
 - Handlers properly cleaned up
 
 ### Network Impact
+
 - Jitter prevents thundering herd
 - Exponential backoff reduces attempts during outages
 - Max 30s delay limits retry frequency
 - Heartbeats (10s) detect stale connections early
 
 ### Battery Impact (Mobile)
+
 - Minimal - long delays reduce wake-ups
 - No constant polling
 - Efficient event-based model
@@ -365,19 +371,24 @@ Look for `[WebSocket]` prefixed logs:
 **Symptom**: Reconnection succeeds (toast shows) but notifications still don't arrive
 
 **Check**:
+
 1. Are you subscribed to the right topics?
-   - `/topic/broadcast` - All users
-   - `/topic/user/{userId}` - Individual user
-   - `/topic/tenant/{tenantId}` - Tenant-wide
+
+- `/topic/broadcast` - All users
+- `/topic/user/{userId}` - Individual user
+- `/topic/tenant/{tenantId}` - Tenant-wide
 
 2. Is the backend sending notifications?
-   - Check backend logs for message publishing
+
+- Check backend logs for message publishing
 
 3. Are notifications arriving before disconnect?
-   - If yes, it's a subscription issue
-   - If no, it's a backend issue
 
-**Solution**: The service automatically resubscribes on successful reconnect (line 135 in websocket.ts: `subscribeToNotifications()`)
+- If yes, it's a subscription issue
+- If no, it's a backend issue
+
+**Solution**: The service automatically resubscribes on successful reconnect (line 135 in
+websocket.ts: `subscribeToNotifications()`)
 
 ### Reconnection attempts stop after failure
 
@@ -386,6 +397,7 @@ Look for `[WebSocket]` prefixed logs:
 **Reason**: After 10 failed attempts, service stops retrying to save resources
 
 **Solution**:
+
 1. User can switch tabs/return to page (resets counter)
 2. User can refresh page
 3. Wait for browser/app update that resets connection
@@ -395,6 +407,7 @@ Look for `[WebSocket]` prefixed logs:
 **Symptom**: Reconnecting too often, high network load
 
 **Solution**: Adjust reconnectConfig in websocket.ts:
+
 ```typescript
 private readonly reconnectConfig: ReconnectConfig = {
   initialDelay: 2000,      // Increase from 1000
@@ -409,12 +422,14 @@ private readonly reconnectConfig: ReconnectConfig = {
 **Symptom**: Connection drops, no reconnection attempts
 
 **Check**:
+
 1. Is WebSocketProvider in component tree?
 2. Are userId and tenantId provided?
 3. Check console for errors
 4. Check Network tab - see if connection drops?
 
 **Solution**:
+
 ```typescript
 // Enable reconnection manually
 webSocketService.connect(userId, tenantId, token)
@@ -543,6 +558,7 @@ export function DedupedNotificationHandler() {
 ## Summary
 
 The WebSocket reconnection system is:
+
 - ✓ Automatic - no manual intervention needed
 - ✓ Transparent - works in background
 - ✓ Intelligent - exponential backoff with jitter
@@ -550,4 +566,5 @@ The WebSocket reconnection system is:
 - ✓ Robust - handles all edge cases
 - ✓ Efficient - minimal CPU, memory, network usage
 
-Users will experience seamless real-time notifications with automatic recovery from connection drops.
+Users will experience seamless real-time notifications with automatic recovery from connection
+drops.

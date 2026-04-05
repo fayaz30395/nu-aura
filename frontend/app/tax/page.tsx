@@ -1,37 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import {
-  Title,
-  Text,
-  Card,
-  Table,
-  Badge,
-  Container,
-  Group,
-  SimpleGrid,
-  Button,
-} from '@mantine/core';
-import {
-  FileSpreadsheet,
-  FileCheck,
-  Clock,
-  AlertCircle,
-  RefreshCw,
-  ChevronRight,
-} from 'lucide-react';
-import { useTaxDeclarations } from '@/lib/hooks/queries/useTax';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import type { DeclarationStatus, TaxDeclarationResponse } from '@/lib/types/hrms/tax';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {Badge, Button, Card, Container, Group, SimpleGrid, Table, Text, Title,} from '@mantine/core';
+import {AlertCircle, ChevronRight, Clock, FileCheck, FileSpreadsheet, RefreshCw,} from 'lucide-react';
+import {useTaxDeclarations} from '@/lib/hooks/queries/useTax';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import type {DeclarationStatus, TaxDeclarationResponse} from '@/lib/types/hrms/tax';
 
 export default function TaxOverviewPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // BUG-L6-003: Page-level permission gate for tax overview
   useEffect(() => {
@@ -45,7 +28,7 @@ export default function TaxOverviewPage() {
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
-  const { data: rawDeclarations, isLoading, isError, error, refetch } = useTaxDeclarations(0, 100);
+  const {data: rawDeclarations, isLoading, isError, error, refetch} = useTaxDeclarations(0, 100);
 
   // Safely extract declarations array — handles paginated objects, null, undefined
   const safeDeclarations: TaxDeclarationResponse[] = (() => {
@@ -86,11 +69,16 @@ export default function TaxOverviewPage() {
 
   const statusColor = (status: string) => {
     switch (status) {
-      case 'APPROVED': return 'green';
-      case 'REJECTED': return 'red';
-      case 'SUBMITTED': return 'blue';
-      case 'DRAFT': return 'gray';
-      default: return 'gray';
+      case 'APPROVED':
+        return 'green';
+      case 'REJECTED':
+        return 'red';
+      case 'SUBMITTED':
+        return 'blue';
+      case 'DRAFT':
+        return 'gray';
+      default:
+        return 'gray';
     }
   };
 
@@ -105,8 +93,8 @@ export default function TaxOverviewPage() {
     <AppLayout
       activeMenuItem="finance"
       breadcrumbs={[
-        { label: 'Pay & Finance', href: '/payroll' },
-        { label: 'Tax', href: '/tax' },
+        {label: 'Pay & Finance', href: '/payroll'},
+        {label: 'Tax', href: '/tax'},
       ]}
     >
       <Container size="xl" py="lg">
@@ -118,7 +106,7 @@ export default function TaxOverviewPage() {
           <PermissionGate permission={Permissions.TAX_VIEW}>
             <Button
               onClick={() => router.push('/tax/declarations')}
-              rightSection={<ChevronRight className="h-4 w-4" />}
+              rightSection={<ChevronRight className="h-4 w-4"/>}
               className="btn-primary"
             >
               View Declarations
@@ -128,15 +116,17 @@ export default function TaxOverviewPage() {
 
         {/* Error State */}
         {isError && (
-          <Card withBorder radius="md" p="md" mb="lg" className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+          <Card withBorder radius="md" p="md" mb="lg"
+                className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
             <Group justify="space-between">
               <Group gap="sm">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
                 <Text size="sm" c="red">
                   {error instanceof Error ? error.message : 'Failed to load tax data'}
                 </Text>
               </Group>
-              <Button variant="light" size="xs" onClick={() => refetch()} leftSection={<RefreshCw className="w-3.5 h-3.5" />}>
+              <Button variant="light" size="xs" onClick={() => refetch()}
+                      leftSection={<RefreshCw className="w-3.5 h-3.5"/>}>
                 Retry
               </Button>
             </Group>
@@ -144,12 +134,12 @@ export default function TaxOverviewPage() {
         )}
 
         {/* Stats */}
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg" mb="xl">
+        <SimpleGrid cols={{base: 1, sm: 3}} spacing="lg" mb="xl">
           {stats.map((stat) => (
             <Card key={stat.label} withBorder radius="md" p="lg" className="skeuo-card">
               <Group gap="lg">
                 <div className={`w-12 h-12 rounded-xl ${stat.bg} flex items-center justify-center`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  <stat.icon className={`h-6 w-6 ${stat.color}`}/>
                 </div>
                 <div>
                   <Text size="sm" fw={500} c="dimmed">{stat.label}</Text>
@@ -163,7 +153,7 @@ export default function TaxOverviewPage() {
         </SimpleGrid>
 
         {/* Quick Links */}
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg" mb="xl">
+        <SimpleGrid cols={{base: 1, sm: 2}} spacing="lg" mb="xl">
           <Card
             withBorder radius="md" p="lg"
             className="skeuo-card cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-shadow"
@@ -171,15 +161,16 @@ export default function TaxOverviewPage() {
           >
             <Group justify="space-between">
               <Group gap="md">
-                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                  <FileSpreadsheet className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <div
+                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
+                  <FileSpreadsheet className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <Text fw={600}>Tax Declarations</Text>
                   <Text size="sm" c="dimmed">View and manage all tax declarations</Text>
                 </div>
               </Group>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)]"/>
             </Group>
           </Card>
         </SimpleGrid>

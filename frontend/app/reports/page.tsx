@@ -1,27 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
 import {
-  Download,
-  FileText,
-  Calendar,
-  Users,
-  DollarSign,
-  TrendingUp,
   BarChart3,
-  FileSpreadsheet,
-  X,
+  Calendar,
   Check,
-  Loader2,
+  DollarSign,
+  Download,
+  FileSpreadsheet,
+  FileText,
   Filter,
+  Loader2,
+  TrendingUp,
+  Users,
+  X,
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { ReportRequest, ReportType } from '@/lib/services/core/report.service';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useReportDownload } from '@/lib/hooks/queries/useReportDownload';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {ReportRequest, ReportType} from '@/lib/services/core/report.service';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useReportDownload} from '@/lib/hooks/queries/useReportDownload';
 
 interface ReportConfig {
   id: string;
@@ -117,7 +117,7 @@ interface DownloadModalProps {
   isPending: boolean;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownload, isPending }) => {
+const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownload, isPending}) => {
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -142,16 +142,16 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] max-w-md w-full overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -159,7 +159,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
         <div className="px-6 py-4 border-b border-[var(--border-main)] row-between">
           <div className="flex items-center gap-4">
             <div className={`p-2 rounded-lg ${report.bgColor}`}>
-              <report.icon className={`h-5 w-5 ${report.color}`} />
+              <report.icon className={`h-5 w-5 ${report.color}`}/>
             </div>
             <div>
               <h3 className="font-semibold text-[var(--text-primary)]">{report.title}</h3>
@@ -170,7 +170,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
             onClick={onClose}
             className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5 text-[var(--text-muted)]" />
+            <X className="h-5 w-5 text-[var(--text-muted)]"/>
           </button>
         </div>
 
@@ -194,12 +194,13 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   className={`h-6 w-6 ${format === 'EXCEL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p
+                    className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
                     Excel
                   </p>
                   <p className="text-caption">.xlsx</p>
                 </div>
-                {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2" />}
+                {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2"/>}
               </button>
 
               <button
@@ -210,14 +211,15 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`} />
+                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}/>
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p
+                    className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
                     PDF
                   </p>
                   <p className="text-caption">.pdf</p>
                 </div>
-                {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2" />}
+                {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2"/>}
               </button>
 
               <button
@@ -232,12 +234,13 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                   className={`h-6 w-6 ${format === 'CSV' ? 'text-accent-600' : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
-                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
+                  <p
+                    className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
                     CSV
                   </p>
                   <p className="text-caption">.csv</p>
                 </div>
-                {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2" />}
+                {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2"/>}
               </button>
             </div>
           </div>
@@ -273,7 +276,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 
           {/* Error */}
           {error && (
-            <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+            <div
+              className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
               {error}
             </div>
           )}
@@ -294,12 +298,12 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
           >
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin"/>
                 Generating...
               </>
             ) : (
               <>
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4"/>
                 Download
               </>
             )}
@@ -312,7 +316,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 
 export default function ReportsPage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -342,7 +346,7 @@ export default function ReportsPage() {
     if (!selectedReport) return;
 
     downloadMutation.mutate(
-      { type, request },
+      {type, request},
       {
         onSuccess: () => {
           setSuccessMessage(`${selectedReport.title} downloaded successfully!`);
@@ -357,118 +361,120 @@ export default function ReportsPage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="row-between"
-      >
-        <div>
-          <h1 className="text-2xl font-bold skeuo-emboss">Reports</h1>
-          <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
-            Generate and download various HR reports in Excel or PDF format
-          </p>
-        </div>
-      </motion.div>
+          initial={{opacity: 0, y: -20}}
+          animate={{opacity: 1, y: 0}}
+          className="row-between"
+        >
+          <div>
+            <h1 className="text-2xl font-bold skeuo-emboss">Reports</h1>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
+              Generate and download various HR reports in Excel or PDF format
+            </p>
+          </div>
+        </motion.div>
 
-      {/* Success Message */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg flex items-center gap-4"
-          >
-            <Check className="h-5 w-5 text-success-600" />
-            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Reports Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reports.map((report, index) => {
-          const IconComponent = report.icon;
-          return (
+        {/* Success Message */}
+        <AnimatePresence>
+          {successMessage && (
             <motion.div
-              key={report.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              initial={{opacity: 0, y: -10}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -10}}
+              className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg flex items-center gap-4"
             >
-              <Card className="hover:shadow-[var(--shadow-dropdown)] transition-shadow duration-200 h-full flex flex-col">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className={`p-4 rounded-lg ${report.bgColor}`}>
-                      <IconComponent className={`h-6 w-6 ${report.color}`} />
-                    </div>
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
+              <Check className="h-5 w-5 text-success-600"/>
+              <span className="text-success-700 dark:text-success-400">{successMessage}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Reports Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {reports.map((report, index) => {
+            const IconComponent = report.icon;
+            return (
+              <motion.div
+                key={report.id}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: index * 0.1}}
+              >
+                <Card
+                  className="hover:shadow-[var(--shadow-dropdown)] transition-shadow duration-200 h-full flex flex-col">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className={`p-4 rounded-lg ${report.bgColor}`}>
+                        <IconComponent className={`h-6 w-6 ${report.color}`}/>
+                      </div>
+                      <span
+                        className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                       {report.category}
                     </span>
-                  </div>
-                  <CardTitle className="mt-4">{report.title}</CardTitle>
-                  <CardDescription>{report.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="mt-auto">
-                  <div className="flex flex-col gap-4">
-                    {report.requiresDateRange && (
-                      <div className="flex items-center gap-1 text-caption">
-                        <Calendar className="h-3 w-3" />
-                        <span>Requires date range</span>
-                      </div>
-                    )}
-                    {report.filters && report.filters.length > 0 && (
-                      <div className="flex items-center gap-1 text-caption">
-                        <Filter className="h-3 w-3" />
-                        <span>Filters available</span>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => setSelectedReport(report)}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
-                    >
-                      <Download className="h-4 w-4" />
-                      <span className="text-sm font-medium">Download Report</span>
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </div>
+                    </div>
+                    <CardTitle className="mt-4">{report.title}</CardTitle>
+                    <CardDescription>{report.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="mt-auto">
+                    <div className="flex flex-col gap-4">
+                      {report.requiresDateRange && (
+                        <div className="flex items-center gap-1 text-caption">
+                          <Calendar className="h-3 w-3"/>
+                          <span>Requires date range</span>
+                        </div>
+                      )}
+                      {report.filters && report.filters.length > 0 && (
+                        <div className="flex items-center gap-1 text-caption">
+                          <Filter className="h-3 w-3"/>
+                          <span>Filters available</span>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => setSelectedReport(report)}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
+                      >
+                        <Download className="h-4 w-4"/>
+                        <span className="text-sm font-medium">Download Report</span>
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
 
-      {/* Info Card */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-        <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h3>
-                <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
-                  <li>• Excel format is recommended for data analysis and further processing</li>
-                  <li>• PDF format is ideal for printing and sharing official documents</li>
-                  <li>• CSV format provides raw data compatible with all spreadsheet applications</li>
-                  <li>• Use date filters to generate reports for specific time periods</li>
-                  <li>• Reports include all active employees unless filtered by department</li>
-                </ul>
+        {/* Info Card */}
+        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.6}}>
+          <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5"/>
+                <div>
+                  <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h3>
+                  <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
+                    <li>• Excel format is recommended for data analysis and further processing</li>
+                    <li>• PDF format is ideal for printing and sharing official documents</li>
+                    <li>• CSV format provides raw data compatible with all spreadsheet applications</li>
+                    <li>• Use date filters to generate reports for specific time periods</li>
+                    <li>• Reports include all active employees unless filtered by department</li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      {/* Download Modal */}
-      <AnimatePresence>
-        {selectedReport && (
-          <DownloadModal
-            report={selectedReport}
-            onClose={() => setSelectedReport(null)}
-            onDownload={handleDownload}
-            isPending={downloadMutation.isPending}
-          />
-        )}
-      </AnimatePresence>
+        {/* Download Modal */}
+        <AnimatePresence>
+          {selectedReport && (
+            <DownloadModal
+              report={selectedReport}
+              onClose={() => setSelectedReport(null)}
+              onDownload={handleDownload}
+              isPending={downloadMutation.isPending}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </AppLayout>
   );

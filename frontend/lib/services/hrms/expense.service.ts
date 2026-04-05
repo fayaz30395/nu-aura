@@ -1,18 +1,18 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ExpenseClaim,
-  CreateExpenseClaimRequest,
-  Page,
-  ExpenseCategoryEntity,
-  CreateExpenseCategoryRequest,
-  ExpensePolicyEntity,
-  CreateExpensePolicyRequest,
-  ExpenseItemEntity,
-  CreateExpenseItemRequest,
-  ExpenseAdvanceEntity,
   CreateExpenseAdvanceRequest,
+  CreateExpenseCategoryRequest,
+  CreateExpenseClaimRequest,
+  CreateExpenseItemRequest,
+  CreateExpensePolicyRequest,
+  ExpenseAdvanceEntity,
+  ExpenseCategoryEntity,
+  ExpenseClaim,
+  ExpenseItemEntity,
+  ExpensePolicyEntity,
   ExpenseReportData,
   OcrResult,
+  Page,
 } from '../../types/hrms/expense';
 
 class ExpenseService {
@@ -30,7 +30,7 @@ class ExpenseService {
 
   async getAllClaims(page: number = 0, size: number = 20): Promise<Page<ExpenseClaim>> {
     const response = await apiClient.get<Page<ExpenseClaim>>('/expenses', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -41,14 +41,14 @@ class ExpenseService {
     size: number = 50
   ): Promise<Page<ExpenseClaim>> {
     const response = await apiClient.get<Page<ExpenseClaim>>(`/expenses/employees/${employeeId}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getPendingClaims(page: number = 0, size: number = 50): Promise<Page<ExpenseClaim>> {
     const response = await apiClient.get<Page<ExpenseClaim>>('/expenses/pending-approvals', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -59,7 +59,7 @@ class ExpenseService {
     size: number = 20
   ): Promise<Page<ExpenseClaim>> {
     const response = await apiClient.get<Page<ExpenseClaim>>(`/expenses/status/${status}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -78,7 +78,7 @@ class ExpenseService {
     const response = await apiClient.post<ExpenseClaim>(
       `/expenses/${claimId}/reject`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   }
@@ -96,7 +96,7 @@ class ExpenseService {
     const response = await apiClient.post<ExpenseClaim>(
       `/expenses/${claimId}/pay`,
       null,
-      { params: { paymentReference } }
+      {params: {paymentReference}}
     );
     return response.data;
   }
@@ -105,7 +105,7 @@ class ExpenseService {
     const response = await apiClient.post<ExpenseClaim>(
       `/expenses/${claimId}/reimburse`,
       null,
-      { params: { reimbursementRef } }
+      {params: {reimbursementRef}}
     );
     return response.data;
   }
@@ -116,14 +116,14 @@ class ExpenseService {
   ): Promise<ExpenseStatistics> {
     const response = await apiClient.get<ExpenseStatistics>(
       `/expenses/statistics/${employeeId}`,
-      { params: year ? { year } : {} }
+      {params: year ? {year} : {}}
     );
     return response.data;
   }
 
   async validatePolicy(employeeId: string, amount: number): Promise<string[]> {
     const response = await apiClient.get<string[]>('/expenses/validate-policy', {
-      params: { employeeId, amount },
+      params: {employeeId, amount},
     });
     return response.data;
   }
@@ -137,7 +137,7 @@ class ExpenseService {
 
   async getAllCategories(page: number = 0, size: number = 50): Promise<Page<ExpenseCategoryEntity>> {
     const response = await apiClient.get<Page<ExpenseCategoryEntity>>('/expenses/categories', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -154,7 +154,7 @@ class ExpenseService {
 
   async toggleCategory(categoryId: string, active: boolean): Promise<void> {
     await apiClient.patch(`/expenses/categories/${categoryId}/toggle`, null, {
-      params: { active },
+      params: {active},
     });
   }
 
@@ -171,7 +171,7 @@ class ExpenseService {
 
   async getAllPolicies(page: number = 0, size: number = 50): Promise<Page<ExpensePolicyEntity>> {
     const response = await apiClient.get<Page<ExpensePolicyEntity>>('/expenses/policies', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -188,7 +188,7 @@ class ExpenseService {
 
   async togglePolicy(policyId: string, active: boolean): Promise<void> {
     await apiClient.patch(`/expenses/policies/${policyId}/toggle`, null, {
-      params: { active },
+      params: {active},
     });
   }
 
@@ -226,14 +226,14 @@ class ExpenseService {
 
   async getMyAdvances(employeeId: string, page: number = 0, size: number = 20): Promise<Page<ExpenseAdvanceEntity>> {
     const response = await apiClient.get<Page<ExpenseAdvanceEntity>>(`/expenses/advances/employees/${employeeId}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getAllAdvances(page: number = 0, size: number = 20): Promise<Page<ExpenseAdvanceEntity>> {
     const response = await apiClient.get<Page<ExpenseAdvanceEntity>>('/expenses/advances', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -250,7 +250,7 @@ class ExpenseService {
 
   async settleAdvance(advanceId: string, claimId: string): Promise<ExpenseAdvanceEntity> {
     const response = await apiClient.post<ExpenseAdvanceEntity>(`/expenses/advances/${advanceId}/settle`, null, {
-      params: { claimId },
+      params: {claimId},
     });
     return response.data;
   }
@@ -265,7 +265,7 @@ class ExpenseService {
     const formData = new FormData();
     formData.append('file', file);
     const response = await apiClient.post<OcrResult>('/expenses/receipts/scan', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {'Content-Type': 'multipart/form-data'},
       timeout: 60000, // OCR can take longer
     });
     return response.data;
@@ -281,7 +281,7 @@ class ExpenseService {
     status?: string
   ): Promise<ExpenseReportData> {
     const response = await apiClient.get<ExpenseReportData>('/expenses/reports', {
-      params: { startDate, endDate, departmentId, category, status },
+      params: {startDate, endDate, departmentId, category, status},
     });
     return response.data;
   }

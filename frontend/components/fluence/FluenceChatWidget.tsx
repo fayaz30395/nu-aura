@@ -1,18 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X,
-  Send,
-  Trash2,
-  Sparkles,
-  Square,
-  ChevronDown,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useFluenceChat } from '@/lib/hooks/useFluenceChat';
-import { ChatMessage } from './ChatMessage';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ChevronDown, Send, Sparkles, Square, Trash2, X,} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {useFluenceChat} from '@/lib/hooks/useFluenceChat';
+import {ChatMessage} from './ChatMessage';
 
 const SUGGESTED_QUESTIONS = [
   'What are the company policies?',
@@ -29,12 +22,12 @@ export const FluenceChatWidget: React.FC = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
-  const { messages, isStreaming, sendMessage, abort, clearChat } = useFluenceChat();
+  const {messages, isStreaming, sendMessage, abort, clearChat} = useFluenceChat();
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [messages]);
 
@@ -54,7 +47,7 @@ export const FluenceChatWidget: React.FC = () => {
   }, []);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
   }, []);
 
   const handleSend = useCallback(() => {
@@ -86,10 +79,10 @@ export const FluenceChatWidget: React.FC = () => {
       <AnimatePresence>
         {!isOpen && (
           <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            initial={{scale: 0, opacity: 0}}
+            animate={{scale: 1, opacity: 1}}
+            exit={{scale: 0, opacity: 0}}
+            transition={{type: 'spring', stiffness: 300, damping: 25}}
             onClick={() => setIsOpen(true)}
             className={cn(
               'fixed bottom-6 right-6 z-50 flex items-center justify-center',
@@ -102,7 +95,7 @@ export const FluenceChatWidget: React.FC = () => {
             )}
             aria-label="Open AI Chat"
           >
-            <Sparkles className="h-6 w-6" />
+            <Sparkles className="h-6 w-6"/>
           </motion.button>
         )}
       </AnimatePresence>
@@ -111,10 +104,10 @@ export const FluenceChatWidget: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{opacity: 0, y: 20, scale: 0.95}}
+            animate={{opacity: 1, y: 0, scale: 1}}
+            exit={{opacity: 0, y: 20, scale: 0.95}}
+            transition={{duration: 0.2, ease: 'easeOut'}}
             className={cn(
               'fixed z-50 flex flex-col',
               'bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-elevated)]',
@@ -129,8 +122,9 @@ export const FluenceChatWidget: React.FC = () => {
             {/* Header */}
             <div className="row-between px-4 py-4 divider-b bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/50">
-                  <Sparkles className="h-4 w-4 text-accent-700 dark:text-accent-400" />
+                <div
+                  className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/50">
+                  <Sparkles className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -149,7 +143,7 @@ export const FluenceChatWidget: React.FC = () => {
                     aria-label="Clear chat"
                     title="Clear chat"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4"/>
                   </button>
                 )}
                 <button
@@ -158,7 +152,7 @@ export const FluenceChatWidget: React.FC = () => {
                   aria-label="Close chat"
                   title="Close"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4"/>
                 </button>
               </div>
             </div>
@@ -172,8 +166,9 @@ export const FluenceChatWidget: React.FC = () => {
               {messages.length === 0 ? (
                 /* Empty state with suggested questions */
                 <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                  <div className="w-12 h-12 rounded-lg bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center mb-4">
-                    <Sparkles className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <div
+                    className="w-12 h-12 rounded-lg bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center mb-4">
+                    <Sparkles className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                   </div>
                   <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                     Ask NU-Fluence AI
@@ -204,9 +199,9 @@ export const FluenceChatWidget: React.FC = () => {
                 /* Message list */
                 <>
                   {messages.map((msg) => (
-                    <ChatMessage key={msg.id} message={msg} />
+                    <ChatMessage key={msg.id} message={msg}/>
                   ))}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef}/>
                 </>
               )}
             </div>
@@ -215,14 +210,14 @@ export const FluenceChatWidget: React.FC = () => {
             <AnimatePresence>
               {showScrollDown && messages.length > 0 && (
                 <motion.button
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
+                  initial={{opacity: 0, y: 4}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, y: 4}}
                   onClick={scrollToBottom}
                   aria-label="Scroll to new messages"
                   className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-4 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-elevated)] text-caption hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <ChevronDown className="h-3 w-3" />
+                  <ChevronDown className="h-3 w-3"/>
                   New messages
                 </motion.button>
               )}
@@ -257,7 +252,7 @@ export const FluenceChatWidget: React.FC = () => {
                     aria-label="Stop generating"
                     title="Stop generating"
                   >
-                    <Square className="h-3.5 w-3.5" />
+                    <Square className="h-3.5 w-3.5"/>
                   </button>
                 ) : (
                   <button
@@ -273,7 +268,7 @@ export const FluenceChatWidget: React.FC = () => {
                     aria-label="Send message"
                     title="Send"
                   >
-                    <Send className="h-3.5 w-3.5" />
+                    <Send className="h-3.5 w-3.5"/>
                   </button>
                 )}
               </div>

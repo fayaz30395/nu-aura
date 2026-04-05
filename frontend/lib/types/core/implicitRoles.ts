@@ -1,4 +1,4 @@
-import { RoleScope } from './roles';
+import {RoleScope} from './roles';
 
 export type ImplicitRoleCondition =
   | 'IS_REPORTING_MANAGER'

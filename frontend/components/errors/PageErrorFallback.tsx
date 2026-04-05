@@ -7,10 +7,10 @@ interface PageErrorFallbackProps {
 }
 
 export function PageErrorFallback({
-  error,
-  title = 'Failed to load page',
-  onReset,
-}: PageErrorFallbackProps) {
+                                    error,
+                                    title = 'Failed to load page',
+                                    onReset,
+                                  }: PageErrorFallbackProps) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 p-12 text-center">
       <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center mb-4">

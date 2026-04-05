@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Projects Page Object Model
@@ -54,9 +54,9 @@ export class ProjectsPage extends BasePage {
     super(page);
 
     // Page elements
-    this.pageHeading = page.locator('h1').filter({ hasText: /Projects|Project Management/i });
+    this.pageHeading = page.locator('h1').filter({hasText: /Projects|Project Management/i});
     this.createProjectButton = page.locator('button:has-text("Create Project")');
-    this.projectsGrid = page.locator('[class*="grid"]').filter({ has: page.locator('[class*="project-card"]') });
+    this.projectsGrid = page.locator('[class*="grid"]').filter({has: page.locator('[class*="project-card"]')});
     this.projectCards = page.locator('[class*="project-card"]');
     this.projectTable = page.locator('table');
     this.tableRows = page.locator('tbody tr');
@@ -66,7 +66,7 @@ export class ProjectsPage extends BasePage {
     this.listViewButton = page.locator('button[aria-label*="List View"]');
 
     // Create/Edit modal
-    this.projectModal = page.locator('div.fixed.inset-0').filter({ hasText: /Create Project|Edit Project/i });
+    this.projectModal = page.locator('div.fixed.inset-0').filter({hasText: /Create Project|Edit Project/i});
     this.projectNameInput = page.locator('label:has-text("Project Name")').locator('..').locator('input');
     this.projectCodeInput = page.locator('label:has-text("Project Code")').locator('..').locator('input');
     this.projectDescriptionInput = page.locator('textarea[placeholder*="description"]');
@@ -82,18 +82,18 @@ export class ProjectsPage extends BasePage {
     this.cancelProjectButton = page.locator('button:has-text("Cancel")');
 
     // Filters
-    this.statusFilter = page.locator('select').filter({ hasText: /Status|All Projects/ });
+    this.statusFilter = page.locator('select').filter({hasText: /Status|All Projects/});
     this.searchInput = page.locator('input[placeholder*="Search projects"]');
     this.searchButton = page.locator('button:has-text("Search")');
 
     // Project details
-    this.projectDetailsModal = page.locator('div.fixed.inset-0').filter({ hasText: /Project Details/i });
+    this.projectDetailsModal = page.locator('div.fixed.inset-0').filter({hasText: /Project Details/i});
     this.editProjectButton = page.locator('button:has-text("Edit Project")');
     this.deleteProjectButton = page.locator('button:has-text("Delete Project")');
     this.addTaskButton = page.locator('button:has-text("Add Task")');
 
     // Delete confirmation
-    this.deleteModal = page.locator('div.fixed.inset-0').filter({ hasText: 'Delete Project' });
+    this.deleteModal = page.locator('div.fixed.inset-0').filter({hasText: 'Delete Project'});
     this.confirmDeleteButton = page.locator('button:has-text("Delete")').last();
     this.cancelDeleteButton = this.deleteModal.locator('button:has-text("Cancel")');
   }
@@ -111,7 +111,7 @@ export class ProjectsPage extends BasePage {
    */
   async clickCreateProject() {
     await this.createProjectButton.click();
-    await this.projectModal.waitFor({ state: 'visible' });
+    await this.projectModal.waitFor({state: 'visible'});
   }
 
   /**
@@ -238,7 +238,7 @@ export class ProjectsPage extends BasePage {
     budget: string;
   }>) {
     await this.editProjectButton.click();
-    await this.projectModal.waitFor({ state: 'visible' });
+    await this.projectModal.waitFor({state: 'visible'});
 
     if (data.name) await this.projectNameInput.fill(data.name);
     if (data.description) await this.projectDescriptionInput.fill(data.description);
@@ -255,7 +255,7 @@ export class ProjectsPage extends BasePage {
    */
   async deleteProject() {
     await this.deleteProjectButton.click();
-    await this.deleteModal.waitFor({ state: 'visible' });
+    await this.deleteModal.waitFor({state: 'visible'});
     await this.confirmDeleteButton.click();
     await this.wait(1000);
   }

@@ -1,9 +1,9 @@
-import { apiClient } from './client';
+import {apiClient} from './client';
 import {
-  Notification,
   CreateNotificationRequest,
-  PagedNotificationResponse,
+  Notification,
   NotificationPreferences,
+  PagedNotificationResponse,
 } from '../types/core/notifications';
 
 export const notificationsApi = {

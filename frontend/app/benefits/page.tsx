@@ -1,58 +1,44 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
+  AlertCircle,
+  Building,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  FileText,
   Gift,
   Heart,
+  Loader2,
+  Plus,
+  Receipt,
   Shield,
   Stethoscope,
-  Building,
-  DollarSign,
-  Users,
-  CheckCircle,
-  XCircle,
-  FileText,
-  Plus,
-  AlertCircle,
-  Loader2,
-  CreditCard,
-  Receipt,
-  Calendar,
   User,
   UserPlus,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import {
-  Card,
-  CardContent,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  EmptyState,
-  ConfirmDialog,
-} from '@/components/ui';
-import {
-  BenefitEnrollment,
-  BenefitClaim,
-  CoverageLevel,
-  ClaimRequest,
-} from '@/lib/types/hrms/benefits';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Button, Card, CardContent, ConfirmDialog, EmptyState, Modal, ModalBody, ModalHeader,} from '@/components/ui';
+import {BenefitClaim, BenefitEnrollment, ClaimRequest, CoverageLevel,} from '@/lib/types/hrms/benefits';
 import {
   useActiveBenefitPlans,
   useActiveEnrollments,
   useEmployeeBenefitEnrollments,
   useEnrollEmployee,
-  useTerminateEnrollment,
   useSubmitBenefitClaim,
+  useTerminateEnrollment,
 } from '@/lib/hooks/queries';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('BenefitsPage');
 
@@ -65,7 +51,7 @@ const enrollmentFormSchema = z.object({
 const claimFormSchema = z.object({
   enrollmentId: z.string().min(1, 'Enrollment required'),
   claimType: z.string().min(1, 'Claim type required'),
-  claimAmount: z.number({ coerce: true }).positive('Amount must be positive'),
+  claimAmount: z.number({coerce: true}).positive('Amount must be positive'),
   serviceDate: z.string().min(1, 'Service date required'),
   serviceProvider: z.string().min(1, 'Service provider required'),
   description: z.string().optional().or(z.literal('')),
@@ -110,20 +96,20 @@ const mapPlanTypeToDisplay = (planType: string): string => {
 const getBenefitIcon = (type: string) => {
   switch (type) {
     case 'HEALTH':
-      return <Stethoscope className="h-6 w-6" />;
+      return <Stethoscope className="h-6 w-6"/>;
     case 'DENTAL':
-      return <Heart className="h-6 w-6" />;
+      return <Heart className="h-6 w-6"/>;
     case 'LIFE':
-      return <Shield className="h-6 w-6" />;
+      return <Shield className="h-6 w-6"/>;
     case 'RETIREMENT':
-      return <Building className="h-6 w-6" />;
+      return <Building className="h-6 w-6"/>;
     case 'FSA':
     case 'HSA':
-      return <DollarSign className="h-6 w-6" />;
+      return <DollarSign className="h-6 w-6"/>;
     case 'VISION':
-      return <Users className="h-6 w-6" />;
+      return <Users className="h-6 w-6"/>;
     default:
-      return <Gift className="h-6 w-6" />;
+      return <Gift className="h-6 w-6"/>;
   }
 };
 
@@ -164,7 +150,7 @@ const _claimStatusColors: Record<string, string> = {
 };
 
 export default function BenefitsPage() {
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('plans');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -187,7 +173,7 @@ export default function BenefitsPage() {
     register: registerEnrollment,
     handleSubmit: handleSubmitEnrollment,
     reset: resetEnrollmentForm,
-    formState: { errors: enrollmentErrors, isSubmitting: isEnrollingForm },
+    formState: {errors: enrollmentErrors, isSubmitting: isEnrollingForm},
   } = useForm<EnrollmentFormData>({
     resolver: zodResolver(enrollmentFormSchema),
     defaultValues: {
@@ -202,7 +188,7 @@ export default function BenefitsPage() {
     register: registerClaim,
     handleSubmit: handleSubmitClaim,
     reset: resetClaimForm,
-    formState: { errors: claimErrors, isSubmitting: isSubmittingClaim },
+    formState: {errors: claimErrors, isSubmitting: isSubmittingClaim},
   } = useForm<ClaimFormData>({
     resolver: zodResolver(claimFormSchema),
     defaultValues: {
@@ -296,7 +282,9 @@ export default function BenefitsPage() {
       showNotification(`Successfully enrolled in ${selectedBenefit.name}!`, 'success');
     } catch (err: unknown) {
       log.error('Error enrolling:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to enroll', 'error');
     }
   };
 
@@ -309,13 +297,18 @@ export default function BenefitsPage() {
     if (!selectedEnrollmentForTerminate) return;
 
     try {
-      await terminateMutation.mutateAsync({ enrollmentId: selectedEnrollmentForTerminate, reason: 'Employee requested termination' });
+      await terminateMutation.mutateAsync({
+        enrollmentId: selectedEnrollmentForTerminate,
+        reason: 'Employee requested termination'
+      });
       showNotification('Enrollment terminated successfully', 'success');
       setShowTerminateConfirm(false);
       setSelectedEnrollmentForTerminate(null);
     } catch (err: unknown) {
       log.error('Error terminating:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
     }
   };
 
@@ -357,20 +350,22 @@ export default function BenefitsPage() {
       setActiveTab('claims');
     } catch (err: unknown) {
       log.error('Error submitting claim:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit claim', 'error');
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to submit claim', 'error');
     }
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Benefits' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Benefits'},
   ];
 
   if (!hasHydrated || (plansQuery.isLoading && user?.employeeId)) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading benefits...</span>
         </div>
       </AppLayout>
@@ -382,7 +377,7 @@ export default function BenefitsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <EmptyState
-          icon={<Gift className="h-12 w-12" />}
+          icon={<Gift className="h-12 w-12"/>}
           title="Benefits Management"
           description="As an administrator, you don't have personal benefits. Select an employee to view their benefits enrollment."
         />
@@ -395,8 +390,9 @@ export default function BenefitsPage() {
       <div className="space-y-6">
         {/* Notifications */}
         {error && (
-          <div className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5" />
+          <div
+            className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            <AlertCircle className="w-5 h-5"/>
             {error}
             <Button size="sm" variant="outline" onClick={() => plansQuery.refetch()} className="ml-auto">
               Retry
@@ -404,8 +400,9 @@ export default function BenefitsPage() {
           </div>
         )}
         {success && (
-          <div className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5" />
+          <div
+            className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            <CheckCircle className="w-5 h-5"/>
             {success}
           </div>
         )}
@@ -422,7 +419,7 @@ export default function BenefitsPage() {
           </div>
           <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
             <Button onClick={handleOpenClaimModal}>
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4 mr-1"/>
               Submit Claim
             </Button>
           </PermissionGate>
@@ -434,7 +431,7 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Enrolled Plans</p>
@@ -447,11 +444,12 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">${stats.monthlyPremium.toLocaleString()}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">${stats.monthlyPremium.toLocaleString()}</p>
                 </div>
               </div>
             </CardContent>
@@ -460,7 +458,7 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600" />
+                  <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Available Plans</p>
@@ -473,7 +471,7 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Coverage</p>
@@ -488,7 +486,7 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Flex Credits</p>
@@ -507,31 +505,31 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('plans')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
+                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
+              }`}
             >
-              <Gift className="h-4 w-4 inline-block mr-2" />
+              <Gift className="h-4 w-4 inline-block mr-2"/>
               Benefit Plans
             </button>
             <button
               onClick={() => setActiveTab('enrollments')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
+                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
+              }`}
             >
-              <CheckCircle className="h-4 w-4 inline-block mr-2" />
+              <CheckCircle className="h-4 w-4 inline-block mr-2"/>
               My Enrollments
             </button>
             <button
               onClick={() => setActiveTab('claims')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                }`}
+                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
+              }`}
             >
-              <Receipt className="h-4 w-4 inline-block mr-2" />
+              <Receipt className="h-4 w-4 inline-block mr-2"/>
               Claims
             </button>
           </div>
@@ -566,12 +564,12 @@ export default function BenefitsPage() {
                             </p>
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4" />
+                                <DollarSign className="h-4 w-4"/>
                                 ${benefit.monthlyPremium}/mo
                               </span>
                               {benefit.enrollment && (
                                 <span className="flex items-center gap-1">
-                                  <Users className="h-4 w-4" />
+                                  <Users className="h-4 w-4"/>
                                   {coverageLevelLabels[benefit.enrollment.coverageLevel]}
                                 </span>
                               )}
@@ -611,11 +609,11 @@ export default function BenefitsPage() {
                             </p>
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4" />
+                                <DollarSign className="h-4 w-4"/>
                                 ${benefit.monthlyPremium}/mo
                               </span>
                               <span className="flex items-center gap-1">
-                                <Building className="h-4 w-4" />
+                                <Building className="h-4 w-4"/>
                                 {benefit.provider}
                               </span>
                             </div>
@@ -625,7 +623,7 @@ export default function BenefitsPage() {
                                 className="mt-4"
                                 onClick={() => handleOpenEnrollModal(benefit)}
                               >
-                                <Plus className="h-4 w-4 mr-1" />
+                                <Plus className="h-4 w-4 mr-1"/>
                                 Enroll
                               </Button>
                             </PermissionGate>
@@ -641,7 +639,7 @@ export default function BenefitsPage() {
             {benefits.length === 0 && (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Gift className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                  <Gift className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Benefit Plans Available
                   </h3>
@@ -659,7 +657,7 @@ export default function BenefitsPage() {
             {enrollments.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                  <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Enrollments Yet
                   </h3>
@@ -679,7 +677,8 @@ export default function BenefitsPage() {
                       <div>
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{enrollment.benefitPlanName}</h3>
-                          <span className={`badge-status ${enrollment.status === 'ACTIVE' ? 'status-success' : 'status-neutral'}`}>
+                          <span
+                            className={`badge-status ${enrollment.status === 'ACTIVE' ? 'status-success' : 'status-neutral'}`}>
                             {enrollment.status}
                           </span>
                         </div>
@@ -703,7 +702,7 @@ export default function BenefitsPage() {
                         </div>
                         {enrollment.dependentCount > 0 && (
                           <div className="mt-2 flex items-center gap-2 text-body-secondary">
-                            <UserPlus className="h-4 w-4" />
+                            <UserPlus className="h-4 w-4"/>
                             {enrollment.dependentCount} dependent(s) covered
                           </div>
                         )}
@@ -716,7 +715,7 @@ export default function BenefitsPage() {
                             className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                             onClick={() => handleTerminateStart(enrollment.id)}
                           >
-                            <XCircle className="h-4 w-4 mr-1" />
+                            <XCircle className="h-4 w-4 mr-1"/>
                             Terminate
                           </Button>
                         </PermissionGate>
@@ -734,7 +733,7 @@ export default function BenefitsPage() {
             {claims.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Receipt className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                  <Receipt className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     No Claims Yet
                   </h3>
@@ -742,7 +741,7 @@ export default function BenefitsPage() {
                     You haven&apos;t submitted any benefit claims yet.
                   </p>
                   <Button className="mt-4" onClick={handleOpenClaimModal}>
-                    <Plus className="h-4 w-4 mr-1" />
+                    <Plus className="h-4 w-4 mr-1"/>
                     Submit Claim
                   </Button>
                 </CardContent>
@@ -755,7 +754,8 @@ export default function BenefitsPage() {
                       <div>
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                          <span className={`badge-status ${claim.status === 'APPROVED' || claim.status === 'PAID' ? 'status-success' : claim.status === 'REJECTED' ? 'status-danger' : claim.status === 'UNDER_REVIEW' || claim.status === 'APPEALED' ? 'status-warning' : 'status-info'}`}>
+                          <span
+                            className={`badge-status ${claim.status === 'APPROVED' || claim.status === 'PAID' ? 'status-success' : claim.status === 'REJECTED' ? 'status-danger' : claim.status === 'UNDER_REVIEW' || claim.status === 'APPEALED' ? 'status-warning' : 'status-info'}`}>
                             {claim.status}
                           </span>
                         </div>
@@ -817,7 +817,10 @@ export default function BenefitsPage() {
         </Card>
 
         {/* Enrollment Modal */}
-        <Modal isOpen={isEnrollModalOpen} onClose={() => { setIsEnrollModalOpen(false); resetEnrollmentForm(); }} size="lg">
+        <Modal isOpen={isEnrollModalOpen} onClose={() => {
+          setIsEnrollModalOpen(false);
+          resetEnrollmentForm();
+        }} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
               {selectedBenefit && (
@@ -861,7 +864,7 @@ export default function BenefitsPage() {
                   <div className="border-t border-[var(--border-main)] pt-4 space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        <User className="h-4 w-4 inline-block mr-1" />
+                        <User className="h-4 w-4 inline-block mr-1"/>
                         Coverage Level
                       </label>
                       <select
@@ -873,12 +876,13 @@ export default function BenefitsPage() {
                         <option value="EMPLOYEE_CHILDREN">Employee + Children</option>
                         <option value="FAMILY">Family</option>
                       </select>
-                      {enrollmentErrors.coverageLevel && <span className="text-danger-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
+                      {enrollmentErrors.coverageLevel &&
+                        <span className="text-danger-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        <Calendar className="h-4 w-4 inline-block mr-1" />
+                        <Calendar className="h-4 w-4 inline-block mr-1"/>
                         Effective Date
                       </label>
                       <input
@@ -886,7 +890,8 @@ export default function BenefitsPage() {
                         className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('effectiveDate')}
                       />
-                      {enrollmentErrors.effectiveDate && <span className="text-danger-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
+                      {enrollmentErrors.effectiveDate &&
+                        <span className="text-danger-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
                     </div>
 
                     {stats.flexCredits > 0 && (
@@ -904,13 +909,16 @@ export default function BenefitsPage() {
                     )}
                   </div>
                   <div className="mt-6 flex justify-end gap-2 border-t border-[var(--border-main)] pt-4">
-                    <Button type="button" variant="outline" onClick={() => { setIsEnrollModalOpen(false); resetEnrollmentForm(); }}>
+                    <Button type="button" variant="outline" onClick={() => {
+                      setIsEnrollModalOpen(false);
+                      resetEnrollmentForm();
+                    }}>
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isEnrollingForm}>
                       {isEnrollingForm ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin"/>
                           Enrolling...
                         </>
                       ) : (
@@ -925,7 +933,10 @@ export default function BenefitsPage() {
         </Modal>
 
         {/* Claim Modal */}
-        <Modal isOpen={isClaimModalOpen} onClose={() => { setIsClaimModalOpen(false); resetClaimForm(); }} size="lg">
+        <Modal isOpen={isClaimModalOpen} onClose={() => {
+          setIsClaimModalOpen(false);
+          resetClaimForm();
+        }} size="lg">
           <ModalHeader>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Submit Benefit Claim
@@ -948,7 +959,8 @@ export default function BenefitsPage() {
                     </option>
                   ))}
                 </select>
-                {claimErrors.enrollmentId && <span className="text-danger-500 text-sm">{claimErrors.enrollmentId.message}</span>}
+                {claimErrors.enrollmentId &&
+                  <span className="text-danger-500 text-sm">{claimErrors.enrollmentId.message}</span>}
               </div>
 
               <div>
@@ -965,7 +977,8 @@ export default function BenefitsPage() {
                   <option value="PRESCRIPTION">Prescription</option>
                   <option value="OTHER">Other</option>
                 </select>
-                {claimErrors.claimType && <span className="text-danger-500 text-sm">{claimErrors.claimType.message}</span>}
+                {claimErrors.claimType &&
+                  <span className="text-danger-500 text-sm">{claimErrors.claimType.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -978,7 +991,8 @@ export default function BenefitsPage() {
                     className="w-full input-aura rounded-lg p-2"
                     {...registerClaim('serviceDate')}
                   />
-                  {claimErrors.serviceDate && <span className="text-danger-500 text-sm">{claimErrors.serviceDate.message}</span>}
+                  {claimErrors.serviceDate &&
+                    <span className="text-danger-500 text-sm">{claimErrors.serviceDate.message}</span>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -992,7 +1006,8 @@ export default function BenefitsPage() {
                     placeholder="0.00"
                     {...registerClaim('claimAmount')}
                   />
-                  {claimErrors.claimAmount && <span className="text-danger-500 text-sm">{claimErrors.claimAmount.message}</span>}
+                  {claimErrors.claimAmount &&
+                    <span className="text-danger-500 text-sm">{claimErrors.claimAmount.message}</span>}
                 </div>
               </div>
 
@@ -1006,7 +1021,8 @@ export default function BenefitsPage() {
                   placeholder="Doctor/Hospital name"
                   {...registerClaim('serviceProvider')}
                 />
-                {claimErrors.serviceProvider && <span className="text-danger-500 text-sm">{claimErrors.serviceProvider.message}</span>}
+                {claimErrors.serviceProvider &&
+                  <span className="text-danger-500 text-sm">{claimErrors.serviceProvider.message}</span>}
               </div>
 
               <div>
@@ -1034,13 +1050,16 @@ export default function BenefitsPage() {
               </div>
 
               <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
-                <Button type="button" variant="outline" onClick={() => { setIsClaimModalOpen(false); resetClaimForm(); }}>
+                <Button type="button" variant="outline" onClick={() => {
+                  setIsClaimModalOpen(false);
+                  resetClaimForm();
+                }}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSubmittingClaim}>
                   {isSubmittingClaim ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin"/>
                       Submitting...
                     </>
                   ) : (

@@ -1,5 +1,10 @@
-import { apiClient } from '../../api/client';
-import { ExecutiveDashboardData, EmployeeDashboardData, ManagerDashboardResponse, ManagerTeamProjectsResponse } from '../../types/core/dashboard';
+import {apiClient} from '../../api/client';
+import {
+  EmployeeDashboardData,
+  ExecutiveDashboardData,
+  ManagerDashboardResponse,
+  ManagerTeamProjectsResponse
+} from '../../types/core/dashboard';
 
 class DashboardService {
   /**
@@ -19,7 +24,7 @@ class DashboardService {
     endDate: string
   ): Promise<ExecutiveDashboardData> {
     const response = await apiClient.get<ExecutiveDashboardData>('/dashboards/executive', {
-      params: { startDate, endDate },
+      params: {startDate, endDate},
     });
     return response.data;
   }

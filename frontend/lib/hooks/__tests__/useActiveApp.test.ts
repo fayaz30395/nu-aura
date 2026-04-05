@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
-import { useActiveApp } from '../useActiveApp';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {renderHook} from '@testing-library/react';
+import {useActiveApp} from '../useActiveApp';
 import * as useAuthModule from '../useAuth';
 import * as usePermissionsModule from '../usePermissions';
 
@@ -15,7 +15,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('../useAuth', () => ({
   useAuth: vi.fn(() => ({
-    user: { id: 'user-1', tenantId: 'tenant-1' },
+    user: {id: 'user-1', tenantId: 'tenant-1'},
     isAuthenticated: true,
   })),
 }));
@@ -81,25 +81,25 @@ describe('useActiveApp', () => {
   });
 
   it('returns current app code based on pathname', () => {
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.appCode).toBeDefined();
     expect(result.current.app).toBeDefined();
   });
 
   it('returns app configuration', () => {
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.app.code).toBeDefined();
     expect(result.current.app.name).toBeDefined();
     expect(result.current.app.available).toBeDefined();
   });
 
   it('has hasAppAccess function', () => {
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(typeof result.current.hasAppAccess).toBe('function');
   });
 
   it('has getAppEntryRoute function', () => {
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(typeof result.current.getAppEntryRoute).toBe('function');
   });
 
@@ -109,7 +109,7 @@ describe('useActiveApp', () => {
       roles: ['SUPER_ADMIN'],
     });
 
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.hasAppAccess('HRMS')).toBe(true);
     expect(result.current.hasAppAccess('HIRE')).toBe(true);
     expect(result.current.hasAppAccess('GROW')).toBe(true);
@@ -117,7 +117,7 @@ describe('useActiveApp', () => {
   });
 
   it('returns correct entry route for apps', () => {
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.getAppEntryRoute('HRMS')).toBe('/app/hrms');
     expect(result.current.getAppEntryRoute('HIRE')).toBe('/app/hire');
     expect(result.current.getAppEntryRoute('GROW')).toBe('/app/grow');
@@ -130,7 +130,7 @@ describe('useActiveApp', () => {
       roles: ['EMPLOYEE'],
     });
 
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.hasAppAccess('HRMS')).toBe(true);
     expect(result.current.hasAppAccess('HIRE')).toBe(false);
   });
@@ -141,7 +141,7 @@ describe('useActiveApp', () => {
       roles: ['EMPLOYEE'],
     });
 
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.hasAppAccess('FLUENCE')).toBe(false);
   });
 
@@ -156,7 +156,7 @@ describe('useActiveApp', () => {
       isAuthenticated: false,
     });
 
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.hasAppAccess('HRMS')).toBe(true);
   });
 
@@ -166,7 +166,7 @@ describe('useActiveApp', () => {
       roles: ['EMPLOYEE'],
     });
 
-    const { result } = renderHook(() => useActiveApp());
+    const {result} = renderHook(() => useActiveApp());
     expect(result.current.hasAppAccess('HRMS')).toBe(true);
   });
 });

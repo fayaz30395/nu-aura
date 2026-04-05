@@ -1,20 +1,20 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  Goal,
-  GoalRequest,
-  GoalAnalytics,
-  PerformanceReview,
-  ReviewRequest,
-  ReviewCompetency,
+  ActivateCycleRequest,
+  ActivateCycleResponse,
   CompetencyRequest,
   Feedback,
   FeedbackRequest,
+  Goal,
+  GoalAnalytics,
+  GoalRequest,
+  OKRGraphResponse,
+  PerformanceReview,
+  PerformanceSpiderResponse,
+  ReviewCompetency,
   ReviewCycle,
   ReviewCycleRequest,
-  OKRGraphResponse,
-  PerformanceSpiderResponse,
-  ActivateCycleRequest,
-  ActivateCycleResponse,
+  ReviewRequest,
 } from '../../types/grow/performance';
 
 interface PaginatedResponse<T> {
@@ -58,7 +58,7 @@ export const goalService = {
   // Get all goals with pagination
   getAllGoals: async (page = 0, size = 20): Promise<PaginatedResponse<Goal>> => {
     const response = await apiClient.get<PaginatedResponse<Goal>>('/goals', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -83,7 +83,7 @@ export const goalService = {
   // Update goal progress
   updateProgress: async (id: string, progress: number): Promise<Goal> => {
     const response = await apiClient.put<Goal>(`/goals/${id}/progress`, null, {
-      params: { progressPercentage: progress },
+      params: {progressPercentage: progress},
     });
     return response.data;
   },
@@ -91,7 +91,7 @@ export const goalService = {
   // Approve a goal
   approveGoal: async (id: string, approverId: string): Promise<Goal> => {
     const response = await apiClient.put<Goal>(`/goals/${id}/approve`, null, {
-      params: { approverId },
+      params: {approverId},
     });
     return response.data;
   },
@@ -145,7 +145,7 @@ export const reviewService = {
   // Get all reviews with pagination
   getAllReviews: async (page = 0, size = 20): Promise<PaginatedResponse<PerformanceReview>> => {
     const response = await apiClient.get<PaginatedResponse<PerformanceReview>>('/reviews', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -301,14 +301,14 @@ export const reviewCycleService = {
   // Get all review cycles with pagination
   getAllCycles: async (page = 0, size = 20): Promise<PaginatedResponse<ReviewCycle>> => {
     const response = await apiClient.get<PaginatedResponse<ReviewCycle>>('/review-cycles', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
   // Alias for getAllCycles
   getAll: async (page = 0, size = 20): Promise<PaginatedResponse<ReviewCycle>> => {
     const response = await apiClient.get<PaginatedResponse<ReviewCycle>>('/review-cycles', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -410,7 +410,7 @@ export const pipService = {
     const params: Record<string, string> = {};
     if (employeeId) params.employeeId = employeeId;
     if (managerId) params.managerId = managerId;
-    const response = await apiClient.get<PIP[]>('/performance/pip', { params });
+    const response = await apiClient.get<PIP[]>('/performance/pip', {params});
     return response.data;
   },
 

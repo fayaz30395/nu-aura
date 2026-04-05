@@ -8,35 +8,6 @@ import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth
 import { clearGoogleToken } from '../utils/googleToken';
 import { getQueryClient } from '../queryClient';
 
-/**
- * Decode JWT token to extract roles and permissions.
- *
- * Note: With httpOnly cookies, we can't access the token directly.
- * The backend now returns roles/permissions in the AuthResponse body
- * for the frontend to use. This function is kept for backward compatibility
- * with tokens still in the response body during migration.
- */
-function decodeJwt(token: string): { roles: string[]; permissions: string[] } {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    const payload = JSON.parse(jsonPayload);
-    return {
-      roles: payload.roles || [],
-      permissions: payload.permissions || [],
-    };
-  } catch (e) {
-    console.error('Failed to decode JWT:', e);
-    return { roles: [], permissions: [] };
-  }
-}
-
 // Convert string roles to Role objects
 function convertRolesToObjects(roleStrings: string[], permissionStrings: string[]): Role[] {
   return roleStrings.map((roleCode) => ({
@@ -93,9 +64,12 @@ export const useAuth = create<AuthState>()(
           apiClient.setTenantId(response.tenantId);
           apiClient.resetRedirectFlag(); // Reset 401 redirect flag after fresh login
 
-          // CRIT-001: Read roles/permissions from response body (preferred) or fall back to JWT decode
-          const roleStrings = response.roles?.length ? response.roles : decodeJwt(response.accessToken).roles;
-          const permissionStrings = response.permissions?.length ? response.permissions : decodeJwt(response.accessToken).permissions;
+          // CRIT-001: Require roles/permissions in auth response — no JWT fallback decode
+          if (!response.roles?.length) {
+            throw new Error('Authentication response missing roles. Please contact support.');
+          }
+          const roleStrings = response.roles;
+          const permissionStrings = response.permissions || [];
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
           const user: User = {
@@ -110,11 +84,6 @@ export const useAuth = create<AuthState>()(
             roles: roles,
             profilePictureUrl: response.profilePictureUrl,
           };
-
-          // Store user data in localStorage for backward compatibility with pages that access it directly
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('user', JSON.stringify(user));
-          }
 
           set({ user, isAuthenticated: true, isLoading: false });
         } catch (error) {
@@ -132,9 +101,12 @@ export const useAuth = create<AuthState>()(
           apiClient.setTenantId(response.tenantId);
           apiClient.resetRedirectFlag(); // Reset 401 redirect flag after fresh login
 
-          // CRIT-001: Read roles/permissions from response body (preferred) or fall back to JWT decode
-          const roleStrings = response.roles?.length ? response.roles : decodeJwt(response.accessToken).roles;
-          const permissionStrings = response.permissions?.length ? response.permissions : decodeJwt(response.accessToken).permissions;
+          // CRIT-001: Require roles/permissions in auth response — no JWT fallback decode
+          if (!response.roles?.length) {
+            throw new Error('Authentication response missing roles. Please contact support.');
+          }
+          const roleStrings = response.roles;
+          const permissionStrings = response.permissions || [];
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
           const user: User = {
@@ -149,11 +121,6 @@ export const useAuth = create<AuthState>()(
             roles: roles,
             profilePictureUrl: response.profilePictureUrl,
           };
-
-          // Store user data in localStorage for backward compatibility with pages that access it directly
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('user', JSON.stringify(user));
-          }
 
           set({ user, isAuthenticated: true, isLoading: false });
         } catch (error) {
@@ -173,7 +140,6 @@ export const useAuth = create<AuthState>()(
         apiClient.clearTokens();
         clearGoogleToken();
         if (typeof window !== 'undefined') {
-          sessionStorage.removeItem('user');
           sessionStorage.removeItem('auth-storage');
         }
         // Notify server best-effort — don't block redirect on network failure
@@ -192,9 +158,12 @@ export const useAuth = create<AuthState>()(
           apiClient.setTenantId(response.tenantId);
           apiClient.resetRedirectFlag();
 
-          // CRIT-001: Read roles/permissions from response body (preferred) or fall back to JWT decode
-          const roleStrings = response.roles?.length ? response.roles : decodeJwt(response.accessToken).roles;
-          const permissionStrings = response.permissions?.length ? response.permissions : decodeJwt(response.accessToken).permissions;
+          // CRIT-001: Require roles in auth response — no JWT fallback decode
+          if (!response.roles?.length) {
+            throw new Error('Session restore failed: missing roles in response.');
+          }
+          const roleStrings = response.roles;
+          const permissionStrings = response.permissions || [];
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
           const user: User = {
@@ -210,10 +179,6 @@ export const useAuth = create<AuthState>()(
             profilePictureUrl: response.profilePictureUrl,
           };
 
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('user', JSON.stringify(user));
-          }
-
           set({ user, isAuthenticated: true, isLoading: false });
           return true;
         } catch {
@@ -225,10 +190,10 @@ export const useAuth = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
+      // HIGH-3: Only persist auth flag — no PII (user object) in sessionStorage.
+      // Full user state is restored via restoreSession() on page load.
       partialize: (state) => ({
-        user: state.user,
         isAuthenticated: state.isAuthenticated,
-        // Exclude hasHydrated from persistence - it should always start as false
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);

@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { AlertCircle, Shield, HelpCircle } from 'lucide-react';
-import { mfaApi } from '@/lib/api/mfa';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { logger } from '@/lib/utils/logger';
+import React, {useEffect, useRef, useState} from 'react';
+import {AlertCircle, HelpCircle, Shield} from 'lucide-react';
+import {mfaApi} from '@/lib/api/mfa';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {logger} from '@/lib/utils/logger';
 
 interface MfaVerificationProps {
   userId: string;
@@ -13,7 +13,7 @@ interface MfaVerificationProps {
   onCancel: () => void;
 }
 
-export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSuccess, onCancel }) => {
+export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSuccess, onCancel}) => {
   const [code, setCode] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
     const digits = pastedText.replace(/\D/g, '');
     const trimmed = digits.slice(0, useBackupCode ? 12 : 6);
     setCode(trimmed);
-    
+
     // Auto-submit if we have the right length
     if ((useBackupCode && trimmed.length === 12) || (!useBackupCode && trimmed.length === 6)) {
       handleVerify(trimmed);
@@ -65,7 +65,9 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
       onSuccess(result.accessToken);
     } catch (err: unknown) {
       logger.error('Failed to verify MFA code:', err);
-      const message = err instanceof Error ? err.message : (typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null) || 'Invalid code. Please try again.';
+      const message = err instanceof Error ? err.message : (typeof err === 'object' && err !== null && 'response' in err ? (err as {
+        response?: { data?: { message?: string } }
+      }).response?.data?.message : null) || 'Invalid code. Please try again.';
       setError(message);
       setCode('');
       inputRef.current?.focus();
@@ -83,7 +85,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
     <Card className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-soft-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
+          <Shield className="h-5 w-5"/>
           Two-Factor Authentication
         </CardTitle>
         <CardDescription>
@@ -96,8 +98,9 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Error Alert */}
           {error && (
-            <div className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
-              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
+              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
               <div className="flex-1">
                 <p className="text-sm font-medium text-danger-800 dark:text-danger-400">
                   Verification Failed
@@ -158,7 +161,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
               }}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <HelpCircle className="h-4 w-4" />
+              <HelpCircle className="h-4 w-4"/>
               <span>Use a backup code instead</span>
             </button>
           )}
@@ -191,9 +194,11 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         </form>
 
         {/* Help Text */}
-        <div className="mt-6 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
+        <div
+          className="mt-6 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
           <p className="text-xs text-accent-900 dark:text-accent-100 leading-relaxed">
-            Enter the code from your authenticator app. If you can&apos;t access your app, use one of your backup codes instead.
+            Enter the code from your authenticator app. If you can&apos;t access your app, use one of your backup codes
+            instead.
           </p>
         </div>
       </CardContent>

@@ -7,38 +7,46 @@ description: Use when asked to perform comprehensive, granular, or full QA testi
 
 ## Platform Map
 
-| Sub-App | Routes | Status |
-|---|---|---|
-| **NU-HRMS** | /me · /dashboard · /employees · /departments · /attendance · /leave · /payroll · /compensation · /benefits · /expenses · /loans · /travel · /assets · /letters · /statutory · /tax · /helpdesk · /approvals · /announcements · /org-chart · /timesheets · /time-tracking · /projects · /resources · /allocations · /calendar · /nu-calendar · /nu-drive · /nu-mail · /reports · /analytics · /settings · /admin · /overtime · /probation · /referrals · /shifts | ~95% built |
-| **NU-Hire** | /recruitment · /onboarding · /preboarding · /offboarding · /offer-portal · /careers | ~92% built |
-| **NU-Grow** | /performance · /okr · /feedback360 · /training · /learning · /recognition · /surveys · /wellness | ~90% built |
-| **NU-Fluence** | /fluence/wiki · /fluence/blogs · /fluence/templates · /fluence/drive · /fluence/search · /fluence/my-content · /fluence/wall · /fluence/dashboard | Phase 2 — routes defined, UI not started |
+| Sub-App        | Routes                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Status                                   |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|
+| **NU-HRMS**    | /me · /dashboard · /employees · /departments · /attendance · /leave · /payroll · /compensation · /benefits · /expenses · /loans · /travel · /assets · /letters · /statutory · /tax · /helpdesk · /approvals · /announcements · /org-chart · /timesheets · /time-tracking · /projects · /resources · /allocations · /calendar · /nu-calendar · /nu-drive · /nu-mail · /reports · /analytics · /settings · /admin · /overtime · /probation · /referrals · /shifts | ~95% built                               |
+| **NU-Hire**    | /recruitment · /onboarding · /preboarding · /offboarding · /offer-portal · /careers                                                                                                                                                                                                                                                                                                                                                                             | ~92% built                               |
+| **NU-Grow**    | /performance · /okr · /feedback360 · /training · /learning · /recognition · /surveys · /wellness                                                                                                                                                                                                                                                                                                                                                                | ~90% built                               |
+| **NU-Fluence** | /fluence/wiki · /fluence/blogs · /fluence/templates · /fluence/drive · /fluence/search · /fluence/my-content · /fluence/wall · /fluence/dashboard                                                                                                                                                                                                                                                                                                               | Phase 2 — routes defined, UI not started |
 
 **Routes source of truth:** `frontend/lib/config/apps.ts` → `PLATFORM_APPS → routePrefixes`
 **Total page routes:** 249 `page.tsx` files across 4 sub-apps
 
 ## Role Matrix
 
-| Code | Role | Default Scope |
-|---|---|---|
-| ESS | Employee Self-Service | Own data only |
-| MGR | Reporting Manager | Own team |
-| HRA | HR Admin | All employees |
-| REC | Recruiter | Hire module only |
-| PAY | Payroll Admin | Payroll/compensation |
-| FIN | Finance Approver | Approval flows |
-| ITA | IT / Asset Admin | Asset module |
-| SYS | SuperAdmin | Full platform — bypasses ALL RBAC + feature flags |
-| UNA | No session | Blocked everywhere → /auth/login |
+| Code | Role                  | Default Scope                                     |
+|------|-----------------------|---------------------------------------------------|
+| ESS  | Employee Self-Service | Own data only                                     |
+| MGR  | Reporting Manager     | Own team                                          |
+| HRA  | HR Admin              | All employees                                     |
+| REC  | Recruiter             | Hire module only                                  |
+| PAY  | Payroll Admin         | Payroll/compensation                              |
+| FIN  | Finance Approver      | Approval flows                                    |
+| ITA  | IT / Asset Admin      | Asset module                                      |
+| SYS  | SuperAdmin            | Full platform — bypasses ALL RBAC + feature flags |
+| UNA  | No session            | Blocked everywhere → /auth/login                  |
 
 **Critical rules:**
 
-- SYS bypasses ALL 4 layers: `@RequiresPermission` (PermissionAspect.java), `@RequiresFeature` (FeatureFlagAspect.java), frontend `usePermissions`, and `middleware.ts` — never block them anywhere
-- Every user is also an employee — MY SPACE sidebar items (`/me/*`) have no `requiredPermission` and must always be accessible to all authenticated users
-- Roles are additive, not exclusive — HR Managers, CEOs, Team Leads all see MY SPACE pages plus their admin pages
-- **Permission normalization:** DB stores `employee.read`, code uses `EMPLOYEE:READ` — normalized in `JwtAuthenticationFilter`. When checking permission behavior, treat both formats as the same permission
-- **Permission hierarchy:** `MODULE:MANAGE` implies all sub-permissions; `VIEW_ALL` > `VIEW_TEAM` > `VIEW_SELF`. Test that higher grants are not accidentally blocked
-- **JWT contains roles only** (not permissions) — permissions loaded from Redis cache via `SecurityService.getCachedPermissions()`. A Redis flush may cause permission reload latency
+- SYS bypasses ALL 4 layers: `@RequiresPermission` (PermissionAspect.java), `@RequiresFeature` (
+  FeatureFlagAspect.java), frontend `usePermissions`, and `middleware.ts` — never block them
+  anywhere
+- Every user is also an employee — MY SPACE sidebar items (`/me/*`) have no `requiredPermission` and
+  must always be accessible to all authenticated users
+- Roles are additive, not exclusive — HR Managers, CEOs, Team Leads all see MY SPACE pages plus
+  their admin pages
+- **Permission normalization:** DB stores `employee.read`, code uses `EMPLOYEE:READ` — normalized in
+  `JwtAuthenticationFilter`. When checking permission behavior, treat both formats as the same
+  permission
+- **Permission hierarchy:** `MODULE:MANAGE` implies all sub-permissions; `VIEW_ALL` > `VIEW_TEAM` >
+  `VIEW_SELF`. Test that higher grants are not accidentally blocked
+- **JWT contains roles only** (not permissions) — permissions loaded from Redis cache via
+  `SecurityService.getCachedPermissions()`. A Redis flush may cause permission reload latency
 
 ---
 
@@ -61,9 +69,14 @@ cd frontend && npm run dev &
 # Poll max 60s until healthy
 ```
 
-**Auth rate limiting:** `/api/v1/auth/**` is capped at 5 req/min. Space out role-switching tests by 15s or use a single SYS session for initial smoke tests before cycling roles.
+**Auth rate limiting:** `/api/v1/auth/**` is capped at 5 req/min. Space out role-switching tests by
+15s or use a single SYS session for initial smoke tests before cycling roles.
 
-**Demo tenant:** `tenant_id = 660e8400-e29b-41d4-a716-446655440001`. Feature flags `enable_payroll`, `enable_performance`, `enable_documents`, `enable_helpdesk`, `enable_lms`, `enable_wellness`, `enable_projects`, `enable_timesheets`, `enable_fluence`, `enable_google_drive`, `enable_payments`, `enable_ai_recruitment` are all seeded as enabled. A 403 from a feature-flag check on any of these flags = bug.
+**Demo tenant:** `tenant_id = 660e8400-e29b-41d4-a716-446655440001`. Feature flags `enable_payroll`,
+`enable_performance`, `enable_documents`, `enable_helpdesk`, `enable_lms`, `enable_wellness`,
+`enable_projects`, `enable_timesheets`, `enable_fluence`, `enable_google_drive`, `enable_payments`,
+`enable_ai_recruitment` are all seeded as enabled. A 403 from a feature-flag check on any of these
+flags = bug.
 
 **Login sequence (per role):**
 
@@ -80,6 +93,7 @@ assert    → dashboard loads, user name/role shown in header
 > Run these for every page tested. Do not skip.
 
 ### A. State Checks
+
 ```
 LOADING:      SkeletonTable / SkeletonCard / SkeletonStatCard shown (never plain spinner or "Loading..." text)
               assert → skeleton matches final layout shape (not generic rectangle)
@@ -101,6 +115,7 @@ STALE:        navigate away and back → data refreshes (React Query staleTime r
 ```
 
 ### B. UI / Visual Validation
+
 ```
 DARK MODE:    toggle .dark → all text readable, no white-on-white, no hardcoded bg
               assert → no hardcoded hex colors (grep for #fff, #000, #333, rgb() in rendered styles)
@@ -148,6 +163,7 @@ ICONS:        assert → consistent icon library (Lucide React + Tabler Icons)
 ```
 
 ### C. Accessibility (Deep)
+
 ```
 A11Y:         axe.run() → 0 critical violations; Tab order logical; labels on inputs; focus rings visible
               assert → all images have meaningful alt text (not "image" or "photo")
@@ -179,6 +195,7 @@ SCREEN-READ:  assert → heading structure creates meaningful outline (check wit
 ```
 
 ### D. Console & Network
+
 ```
 CONSOLE:      0 unresolved JS errors after every action
               assert → no React key warnings ("Each child in a list should have a unique key")
@@ -205,6 +222,7 @@ DOUBLE-CLICK: rapid double-submit on any create/submit button → exactly 1 reco
 ```
 
 ### E. Data Integrity
+
 ```
 DATA FORMAT:  assert → dates never shown as raw ISO (2026-04-02T00:00:00Z) — always formatted
               assert → currency amounts have comma separators and ₹/$ symbol
@@ -235,6 +253,7 @@ SEARCH:       assert → debounced search (not firing on every keystroke — che
 ```
 
 ### F. Performance Checks
+
 ```
 PERF:         assert → First Contentful Paint < 2s on page load
               assert → Largest Contentful Paint < 4s
@@ -580,7 +599,8 @@ screenshot → auth-login-ui-deep.png
 
 ## MODULE 2 — MY SPACE SELF-SERVICE (/me/*)
 
-**Rule:** ALL /me/* routes must be accessible to every authenticated user regardless of role. Never gate these. File Critical bug if any role is blocked.
+**Rule:** ALL /me/* routes must be accessible to every authenticated user regardless of role. Never
+gate these. File Critical bug if any role is blocked.
 
 ### 2.1 My Profile (/me/profile or /me)
 
@@ -753,7 +773,8 @@ screenshot → feed-[type]-crud.png
 
 ### 3.10 Feed Filter Tabs
 
-For each: All | Announcements | Birthdays | Anniversaries | New Joiners | Recognition | LinkedIn | Posts:
+For each: All | Announcements | Birthdays | Anniversaries | New Joiners | Recognition | LinkedIn |
+Posts:
 
 ```
 click     → tab
@@ -3265,12 +3286,12 @@ After creating: `python scripts/recalc.py qa-reports/qa-report-[timestamp].xlsx`
 
 ## SEVERITY DEFINITIONS
 
-| Level | Criteria | Examples |
-|---|---|---|
-| **Critical** | Security / RBAC bypass / data loss / crash | ESS sees another user's payslip; cross-tenant leak; white screen; 500 on auth; CORS allowing evil origin |
-| **High** | Core flow broken / data not persisting / compliance broken | Leave submit silently fails; payroll calc wrong; approval not routing; Kafka DLQ has stuck events |
-| **Medium** | Non-critical functional bug / visual regression / wrong data format | Search not filtering; ISO date shown raw; empty state missing; WebSocket not reconnecting |
-| **Low** | Cosmetic / spacing / dark mode edge case / copy error | 4px padding off; tooltip typo; icon misaligned |
+| Level        | Criteria                                                            | Examples                                                                                                 |
+|--------------|---------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| **Critical** | Security / RBAC bypass / data loss / crash                          | ESS sees another user's payslip; cross-tenant leak; white screen; 500 on auth; CORS allowing evil origin |
+| **High**     | Core flow broken / data not persisting / compliance broken          | Leave submit silently fails; payroll calc wrong; approval not routing; Kafka DLQ has stuck events        |
+| **Medium**   | Non-critical functional bug / visual regression / wrong data format | Search not filtering; ISO date shown raw; empty state missing; WebSocket not reconnecting                |
+| **Low**      | Cosmetic / spacing / dark mode edge case / copy error               | 4px padding off; tooltip typo; icon misaligned                                                           |
 
 ---
 
@@ -4750,16 +4771,35 @@ After every loop: run accessibility + responsive pass → generate partial Excel
 
 ## IMPORTANT NOTES
 
-- Tools: `navigate`, `find`, `computer`, `form_input`, `read_page`, `read_console_messages`, `read_network_requests`, `javascript_tool`, `gif_creator`, `resize_window` (Claude in Chrome MCP)
+- Tools: `navigate`, `find`, `computer`, `form_input`, `read_page`, `read_console_messages`,
+  `read_network_requests`, `javascript_tool`, `gif_creator`, `resize_window` (Claude in Chrome MCP)
 - **Always screenshot every bug.** GIF every Critical/High bug.
 - Clear console + network buffers between pages.
 - Skip gracefully if module has no test data — note as "Skipped — no data" in coverage sheet.
-- Excel report is the primary deliverable — produce even if testing is cut short (add Infrastructure sheet).
-- **Design system rules:** loading states use `NuAuraLoader` / `SkeletonTable` / `SkeletonStatCard` / `SkeletonCard` (never plain spinner); empty states use `<EmptyState>` component (never blank page); spacing uses 8px grid (banned: `gap-3 p-3 p-5`); no hardcoded hex colors (use CSS variables).
-- **MY SPACE routes** (`/me/*`) must always be accessible to all authenticated users — never gate them. File Critical bug if any role is blocked from their own self-service pages.
-- **Feature flags** (12 flags: `enable_payroll`, `enable_performance`, `enable_documents`, `enable_helpdesk`, `enable_lms`, `enable_wellness`, `enable_projects`, `enable_timesheets`, `enable_fluence`, `enable_google_drive`, `enable_payments`, `enable_ai_recruitment`) are all seeded on the demo tenant. Note: `enable_google_drive` and `enable_ai_recruitment` default to **disabled** — others default to enabled. A 403 with feature flag message on an enabled flag = bug.
-- **Rate limiting:** Auth endpoint = 5 req/min (wait ~15s between role-cycling). Export endpoint = 5 per 5min. API general = 100/min. Social = 30/min. A 429 on any unlisted endpoint = unexpected throttle bug.
-- **Flyway:** V0–V103 active (100 migrations). Notable features: LWF (V82), letter templates (V83), SAML IdP (V84), restricted holidays (V85), biometric devices (V86), statutory filing (V87), expense extensions (V88), shift management (V89), RLS corrections (V90), ShedLock (V91), V92–V103 (payroll processing, AI recruitment, training/skill mappings, etc.). All must be tested.
-- **WebSocket:** Dashboard and notifications use STOMP over SockJS at `/ws`. Always verify connection active before testing real-time features.
-- **ShedLock (V91):** Distributed job locking prevents duplicate scheduled job runs. Verify no ERROR logs from ShedLock timeouts.
-- **Tiptap (rich text):** Used in wiki, blogs, letters, announcements. Test bold/italic/heading/table/code block/link in any Tiptap editor. Verify content renders correctly after save.
+- Excel report is the primary deliverable — produce even if testing is cut short (add Infrastructure
+  sheet).
+- **Design system rules:** loading states use `NuAuraLoader` / `SkeletonTable` /
+  `SkeletonStatCard` / `SkeletonCard` (never plain spinner); empty states use `<EmptyState>`
+  component (never blank page); spacing uses 8px grid (banned: `gap-3 p-3 p-5`); no hardcoded hex
+  colors (use CSS variables).
+- **MY SPACE routes** (`/me/*`) must always be accessible to all authenticated users — never gate
+  them. File Critical bug if any role is blocked from their own self-service pages.
+- **Feature flags** (12 flags: `enable_payroll`, `enable_performance`, `enable_documents`,
+  `enable_helpdesk`, `enable_lms`, `enable_wellness`, `enable_projects`, `enable_timesheets`,
+  `enable_fluence`, `enable_google_drive`, `enable_payments`, `enable_ai_recruitment`) are all
+  seeded on the demo tenant. Note: `enable_google_drive` and `enable_ai_recruitment` default to *
+  *disabled** — others default to enabled. A 403 with feature flag message on an enabled flag = bug.
+- **Rate limiting:** Auth endpoint = 5 req/min (wait ~15s between role-cycling). Export endpoint = 5
+  per 5min. API general = 100/min. Social = 30/min. A 429 on any unlisted endpoint = unexpected
+  throttle bug.
+- **Flyway:** V0–V103 active (100 migrations). Notable features: LWF (V82), letter templates (V83),
+  SAML IdP (V84), restricted holidays (V85), biometric devices (V86), statutory filing (V87),
+  expense extensions (V88), shift management (V89), RLS corrections (V90), ShedLock (V91),
+  V92–V103 (payroll processing, AI recruitment, training/skill mappings, etc.). All must be tested.
+- **WebSocket:** Dashboard and notifications use STOMP over SockJS at `/ws`. Always verify
+  connection active before testing real-time features.
+- **ShedLock (V91):** Distributed job locking prevents duplicate scheduled job runs. Verify no ERROR
+  logs from ShedLock timeouts.
+- **Tiptap (rich text):** Used in wiki, blogs, letters, announcements. Test
+  bold/italic/heading/table/code block/link in any Tiptap editor. Verify content renders correctly
+  after save.

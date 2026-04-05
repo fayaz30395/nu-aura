@@ -1,41 +1,52 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/hrms/expense';
-import { Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
-import { ExpenseAnalytics } from '@/components/expenses';
-import { safeWindowOpen } from '@/lib/utils/url';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { formatCurrency } from '@/lib/utils';
+import {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
 import {
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  DollarSign,
+  FileText,
+  Filter,
+  Plus,
+  Receipt,
+  Search,
+  XCircle
+} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {CreateExpenseClaimRequest, CurrencyCode, ExpenseCategory} from '@/lib/types/hrms/expense';
+import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {ExpenseAnalytics} from '@/components/expenses';
+import {safeWindowOpen} from '@/lib/utils/url';
+import {endOfMonth, format, startOfMonth} from 'date-fns';
+import {formatCurrency} from '@/lib/utils';
+import {
+  useAllExpenseClaims,
+  useApproveExpenseClaim,
+  useCreateExpenseClaim,
+  useDeleteExpenseClaim,
   useMyExpenseClaims,
   usePendingExpenseClaims,
-  useAllExpenseClaims,
-  useCreateExpenseClaim,
-  useSubmitExpenseClaim,
-  useApproveExpenseClaim,
   useRejectExpenseClaim,
-  useDeleteExpenseClaim,
+  useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
+import {createLogger} from '@/lib/utils/logger';
 
 const expenseClaimSchema = z.object({
   claimDate: z.string().min(1, 'Claim date required'),
   category: z.string().min(1, 'Category required'),
   description: z.string().min(1, 'Description required'),
-  amount: z.number({ coerce: true }).positive('Amount must be positive'),
+  amount: z.number({coerce: true}).positive('Amount must be positive'),
   currency: z.string().length(3, 'Invalid currency code'),
   receiptUrl: z.string().url().optional().or(z.literal('')),
   notes: z.string().optional().or(z.literal('')),
 });
-import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('ExpensesPage');
 
@@ -53,7 +64,7 @@ interface Filters {
 }
 
 export default function ExpenseClaims() {
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-claims');
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +108,7 @@ export default function ExpenseClaims() {
     register,
     handleSubmit,
     reset: resetForm,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ExpenseClaimFormData>({
     resolver: zodResolver(expenseClaimSchema),
     defaultValues: {
@@ -224,7 +235,7 @@ export default function ExpenseClaims() {
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        rejectMutation.mutateAsync({ claimId, reason: bulkRejectReason })
+        rejectMutation.mutateAsync({claimId, reason: bulkRejectReason})
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
@@ -268,7 +279,7 @@ export default function ExpenseClaims() {
         notes: data.notes || undefined,
       };
 
-      await createMutation.mutateAsync({ employeeId: user.employeeId, data: request });
+      await createMutation.mutateAsync({employeeId: user.employeeId, data: request});
 
       resetForm();
       setShowForm(false);
@@ -311,7 +322,7 @@ export default function ExpenseClaims() {
     if (!user?.employeeId || !selectedClaimForAction || !rejectReason.trim()) return;
 
     try {
-      await rejectMutation.mutateAsync({ claimId: selectedClaimForAction, reason: rejectReason });
+      await rejectMutation.mutateAsync({claimId: selectedClaimForAction, reason: rejectReason});
       showNotification('Expense claim rejected', 'success');
       setShowRejectConfirm(false);
       setSelectedClaimForAction(null);
@@ -367,7 +378,7 @@ export default function ExpenseClaims() {
     return (
       <AppLayout activeMenuItem="expenses">
         <EmptyState
-          icon={<DollarSign className="h-12 w-12" />}
+          icon={<DollarSign className="h-12 w-12"/>}
           title="No Employee Profile Linked"
           description="Expense management requires an employee profile. Use the admin panels to manage employee expenses."
         />
@@ -380,14 +391,16 @@ export default function ExpenseClaims() {
       <div className="max-w-7xl mx-auto">
         {/* Notifications */}
         {error && (
-          <div className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5" />
+          <div
+            className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            <AlertCircle className="w-5 h-5"/>
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-4 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5" />
+          <div
+            className="mb-4 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            <CheckCircle className="w-5 h-5"/>
             {success}
           </div>
         )}
@@ -395,8 +408,9 @@ export default function ExpenseClaims() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
-              <DollarSign className="w-7 h-7 sm:w-8 sm:h-8" />
+            <h1
+              className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              <DollarSign className="w-7 h-7 sm:w-8 sm:h-8"/>
               Expense Claims
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Submit and manage your expense claims</p>
@@ -405,7 +419,7 @@ export default function ExpenseClaims() {
             onClick={() => setShowForm(!showForm)}
             className="px-4 sm:px-6 py-2.5 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-5 h-5"/>
             New Claim
           </button>
         </div>
@@ -415,7 +429,7 @@ export default function ExpenseClaims() {
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
-                <AlertCircle className="w-5 h-5" />
+                <AlertCircle className="w-5 h-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
@@ -426,7 +440,7 @@ export default function ExpenseClaims() {
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
-                <CheckCircle className="w-5 h-5" />
+                <CheckCircle className="w-5 h-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
@@ -437,10 +451,11 @@ export default function ExpenseClaims() {
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
-                <DollarSign className="w-5 h-5" />
+                <DollarSign className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
+                <p
+                  className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-body-muted">Pending Amount</p>
               </div>
             </div>
@@ -448,7 +463,7 @@ export default function ExpenseClaims() {
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
-                <FileText className="w-5 h-5" />
+                <FileText className="w-5 h-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
@@ -463,12 +478,12 @@ export default function ExpenseClaims() {
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search claims..."
                 value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                onChange={(e) => setFilters({...filters, search: e.target.value})}
                 className="input-aura pl-10"
               />
             </div>
@@ -482,9 +497,9 @@ export default function ExpenseClaims() {
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
-              <Filter className="w-4 h-4" />
+              <Filter className="w-4 h-4"/>
               Filters
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}/>
             </button>
 
             {/* Clear Filters */}
@@ -500,12 +515,13 @@ export default function ExpenseClaims() {
 
           {/* Expanded Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Category</label>
                 <select
                   value={filters.category}
-                  onChange={(e) => setFilters({ ...filters, category: e.target.value as ExpenseCategory | 'ALL' })}
+                  onChange={(e) => setFilters({...filters, category: e.target.value as ExpenseCategory | 'ALL'})}
                   className="input-aura"
                 >
                   <option value="ALL">All Categories</option>
@@ -524,7 +540,7 @@ export default function ExpenseClaims() {
                 <input
                   type="date"
                   value={filters.dateFrom}
-                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+                  onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
                   className="input-aura"
                 />
               </div>
@@ -533,7 +549,7 @@ export default function ExpenseClaims() {
                 <input
                   type="date"
                   value={filters.dateTo}
-                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+                  onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
                   className="input-aura"
                 />
               </div>
@@ -544,7 +560,7 @@ export default function ExpenseClaims() {
                     type="number"
                     placeholder="0"
                     value={filters.amountMin}
-                    onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
+                    onChange={(e) => setFilters({...filters, amountMin: e.target.value})}
                     className="input-aura"
                   />
                 </div>
@@ -554,7 +570,7 @@ export default function ExpenseClaims() {
                     type="number"
                     placeholder="0"
                     value={filters.amountMax}
-                    onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
+                    onChange={(e) => setFilters({...filters, amountMax: e.target.value})}
                     className="input-aura"
                   />
                 </div>
@@ -638,7 +654,8 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL (Optional)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL
+                  (Optional)</label>
                 <input
                   type="url"
                   className="input-aura"
@@ -682,7 +699,8 @@ export default function ExpenseClaims() {
 
         {/* Bulk Action Toolbar */}
         {selectedClaims.size > 0 && activeTab === 'pending' && (
-          <div className="bg-accent-50 dark:bg-accent-900/30 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div
+            className="bg-accent-50 dark:bg-accent-900/30 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <input
                 type="checkbox"
@@ -701,7 +719,7 @@ export default function ExpenseClaims() {
                   disabled={bulkProcessing}
                   className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4"/>
                   {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
                 </button>
               </PermissionGate>
@@ -711,7 +729,7 @@ export default function ExpenseClaims() {
                   disabled={bulkProcessing}
                   className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
                 >
-                  <XCircle className="w-4 h-4" />
+                  <XCircle className="w-4 h-4"/>
                   Reject {selectedClaims.size}
                 </button>
               </PermissionGate>
@@ -729,7 +747,10 @@ export default function ExpenseClaims() {
         <div className="skeuo-card !rounded-b-none">
           <div className="flex border-b border-[var(--border-main)]">
             <button
-              onClick={() => { setActiveTab('my-claims'); setSelectedClaims(new Set()); }}
+              onClick={() => {
+                setActiveTab('my-claims');
+                setSelectedClaims(new Set());
+              }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'my-claims'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
@@ -739,7 +760,10 @@ export default function ExpenseClaims() {
               My Claims
             </button>
             <button
-              onClick={() => { setActiveTab('pending'); setSelectedClaims(new Set()); }}
+              onClick={() => {
+                setActiveTab('pending');
+                setSelectedClaims(new Set());
+              }}
               className={`px-6 py-4 font-medium transition-colors relative ${
                 activeTab === 'pending'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
@@ -748,13 +772,17 @@ export default function ExpenseClaims() {
             >
               Pending Approval
               {statistics.pendingCount > 0 && (
-                <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
+                <span
+                  className="ml-2 px-2 py-0.5 text-xs rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
                   {statistics.pendingCount}
                 </span>
               )}
             </button>
             <button
-              onClick={() => { setActiveTab('all'); setSelectedClaims(new Set()); }}
+              onClick={() => {
+                setActiveTab('all');
+                setSelectedClaims(new Set());
+              }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
@@ -764,7 +792,10 @@ export default function ExpenseClaims() {
               All Claims
             </button>
             <button
-              onClick={() => { setActiveTab('analytics'); setSelectedClaims(new Set()); }}
+              onClick={() => {
+                setActiveTab('analytics');
+                setSelectedClaims(new Set());
+              }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'analytics'
                   ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
@@ -779,183 +810,184 @@ export default function ExpenseClaims() {
         {/* Content Area */}
         {activeTab === 'analytics' ? (
           <div className="skeuo-card !rounded-t-none p-4">
-            <ExpenseAnalytics claims={currentClaimsData} />
+            <ExpenseAnalytics claims={currentClaimsData}/>
           </div>
         ) : (
-        <div className="skeuo-card !rounded-t-none p-4">
-          {/* Select All Header for Pending Tab */}
-          {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
-            <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">
-              <input
-                type="checkbox"
-                checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
-                onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
-              />
-              <span className="text-body-secondary">
+          <div className="skeuo-card !rounded-t-none p-4">
+            {/* Select All Header for Pending Tab */}
+            {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
+              <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)]">
+                <input
+                  type="checkbox"
+                  checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
+                  onChange={handleSelectAll}
+                  className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                />
+                <span className="text-body-secondary">
                 Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
               </span>
-            </div>
-          )}
+              </div>
+            )}
 
-          {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
-            </div>
-          ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
-            <div className="flex flex-col items-center justify-center h-64">
-              <AlertCircle className="h-12 w-12 text-danger-500 mb-4" />
-              <p className="text-center text-[var(--text-secondary)] max-w-md">
-                {myClaimsQuery.error?.message || pendingClaimsQuery.error?.message || allClaimsQuery.error?.message || 'Failed to load expense claims. Please try again.'}
-              </p>
-              <button
-                onClick={() => {
-                  if (activeTab === 'my-claims') myClaimsQuery.refetch();
-                  else if (activeTab === 'pending') pendingClaimsQuery.refetch();
-                  else if (activeTab === 'all') allClaimsQuery.refetch();
-                }}
-                className="mt-4 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          ) : filteredClaims.length === 0 ? (
-            <EmptyState
-              icon={<Receipt className="h-12 w-12" />}
-              title="No Expense Claims"
-              description="Submit your first expense claim"
-              action={{ label: 'New Claim', onClick: () => setShowForm(true) }}
-            />
-          ) : (
-            <div className="space-y-4">
-              {filteredClaims.map((claim) => (
-                <div
-                  key={claim.id}
-                  className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
-                    selectedClaims.has(claim.id)
-                      ? 'border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
-                      : 'border-[var(--border-main)]'
-                  }`}
+            {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+              </div>
+            ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
+              <div className="flex flex-col items-center justify-center h-64">
+                <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
+                <p className="text-center text-[var(--text-secondary)] max-w-md">
+                  {myClaimsQuery.error?.message || pendingClaimsQuery.error?.message || allClaimsQuery.error?.message || 'Failed to load expense claims. Please try again.'}
+                </p>
+                <button
+                  onClick={() => {
+                    if (activeTab === 'my-claims') myClaimsQuery.refetch();
+                    else if (activeTab === 'pending') pendingClaimsQuery.refetch();
+                    else if (activeTab === 'all') allClaimsQuery.refetch();
+                  }}
+                  className="mt-4 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors"
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-start gap-4">
-                      {/* Checkbox for pending claims */}
-                      {activeTab === 'pending' && claim.status === 'SUBMITTED' && (
-                        <input
-                          type="checkbox"
-                          checked={selectedClaims.has(claim.id)}
-                          onChange={() => handleSelectClaim(claim.id)}
-                          className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
-                        />
-                      )}
-                      <div>
-                        <div className="flex items-center gap-4 mb-2">
-                          <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
-                          <span className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
+                  Retry
+                </button>
+              </div>
+            ) : filteredClaims.length === 0 ? (
+              <EmptyState
+                icon={<Receipt className="h-12 w-12"/>}
+                title="No Expense Claims"
+                description="Submit your first expense claim"
+                action={{label: 'New Claim', onClick: () => setShowForm(true)}}
+              />
+            ) : (
+              <div className="space-y-4">
+                {filteredClaims.map((claim) => (
+                  <div
+                    key={claim.id}
+                    className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
+                      selectedClaims.has(claim.id)
+                        ? 'border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
+                        : 'border-[var(--border-main)]'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-start gap-4">
+                        {/* Checkbox for pending claims */}
+                        {activeTab === 'pending' && claim.status === 'SUBMITTED' && (
+                          <input
+                            type="checkbox"
+                            checked={selectedClaims.has(claim.id)}
+                            onChange={() => handleSelectClaim(claim.id)}
+                            className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                          />
+                        )}
+                        <div>
+                          <div className="flex items-center gap-4 mb-2">
+                            <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
+                            <span
+                              className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusBadge(claim.status)}`}>
                             {claim.status}
                           </span>
+                          </div>
+                          <p className="text-[var(--text-secondary)]">{claim.description}</p>
+                          {claim.employeeName && (
+                            <p className="text-body-secondary mt-1">
+                              By: {claim.employeeName} ({claim.employeeCode})
+                            </p>
+                          )}
                         </div>
-                        <p className="text-[var(--text-secondary)]">{claim.description}</p>
-                        {claim.employeeName && (
-                          <p className="text-body-secondary mt-1">
-                            By: {claim.employeeName} ({claim.employeeCode})
-                          </p>
-                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-[var(--text-primary)]">
+                          {formatCurrency(claim.amount, claim.currency)}
+                        </div>
+                        <div className="text-body-secondary">{claim.category.replace('_', ' ')}</div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-[var(--text-primary)]">
-                        {formatCurrency(claim.amount, claim.currency)}
-                      </div>
-                      <div className="text-body-secondary">{claim.category.replace('_', ' ')}</div>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                    <div>
-                      <span className="text-[var(--text-secondary)]">Claim Date:</span>
-                      <p className="font-medium">{new Date(claim.claimDate).toLocaleDateString()}</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
+                      <div>
+                        <span className="text-[var(--text-secondary)]">Claim Date:</span>
+                        <p className="font-medium">{new Date(claim.claimDate).toLocaleDateString()}</p>
+                      </div>
+                      {claim.submittedAt && (
+                        <div>
+                          <span className="text-[var(--text-secondary)]">Submitted:</span>
+                          <p className="font-medium">{new Date(claim.submittedAt).toLocaleDateString()}</p>
+                        </div>
+                      )}
+                      {claim.approvedAt && (
+                        <div>
+                          <span className="text-[var(--text-secondary)]">Approved By:</span>
+                          <p className="font-medium">{claim.approvedByName}</p>
+                        </div>
+                      )}
+                      {claim.rejectionReason && (
+                        <div className="col-span-2">
+                          <span className="text-[var(--text-secondary)]">Rejection Reason:</span>
+                          <p className="font-medium text-danger-600">{claim.rejectionReason}</p>
+                        </div>
+                      )}
                     </div>
-                    {claim.submittedAt && (
-                      <div>
-                        <span className="text-[var(--text-secondary)]">Submitted:</span>
-                        <p className="font-medium">{new Date(claim.submittedAt).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                    {claim.approvedAt && (
-                      <div>
-                        <span className="text-[var(--text-secondary)]">Approved By:</span>
-                        <p className="font-medium">{claim.approvedByName}</p>
-                      </div>
-                    )}
-                    {claim.rejectionReason && (
-                      <div className="col-span-2">
-                        <span className="text-[var(--text-secondary)]">Rejection Reason:</span>
-                        <p className="font-medium text-danger-600">{claim.rejectionReason}</p>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Actions */}
-                  <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--border-main)]">
-                    {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
-                      <>
-                        <PermissionGate permission={Permissions.EXPENSE_CREATE}>
-                          <button
-                            onClick={() => handleSubmitClaim(claim.id)}
-                            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 text-sm transition-colors"
-                          >
-                            Submit for Approval
-                          </button>
-                        </PermissionGate>
-                        <PermissionGate permission={Permissions.EXPENSE_CREATE}>
-                          <button
-                            onClick={() => handleDeleteStart(claim.id)}
-                            className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
-                          >
-                            <XCircle className="w-4 h-4" />
-                            Delete
-                          </button>
-                        </PermissionGate>
-                      </>
-                    )}
-                    {claim.status === 'SUBMITTED' && activeTab === 'pending' && (
-                      <>
-                        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                          <button
-                            onClick={() => handleApprove(claim.id)}
-                            className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm transition-colors flex items-center gap-2"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                            Approve
-                          </button>
-                        </PermissionGate>
-                        <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
-                          <button
-                            onClick={() => handleRejectStart(claim.id)}
-                            className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
-                          >
-                            <XCircle className="w-4 h-4" />
-                            Reject
-                          </button>
-                        </PermissionGate>
-                      </>
-                    )}
-                    {claim.receiptUrl && (
-                      <button
-                        onClick={() => safeWindowOpen(claim.receiptUrl, '_blank')}
-                        className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-sm transition-colors flex items-center gap-2"
-                      >
-                        <Receipt className="w-4 h-4" />
-                        View Receipt
-                      </button>
-                    )}
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--border-main)]">
+                      {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
+                        <>
+                          <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                            <button
+                              onClick={() => handleSubmitClaim(claim.id)}
+                              className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 text-sm transition-colors"
+                            >
+                              Submit for Approval
+                            </button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.EXPENSE_CREATE}>
+                            <button
+                              onClick={() => handleDeleteStart(claim.id)}
+                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
+                            >
+                              <XCircle className="w-4 h-4"/>
+                              Delete
+                            </button>
+                          </PermissionGate>
+                        </>
+                      )}
+                      {claim.status === 'SUBMITTED' && activeTab === 'pending' && (
+                        <>
+                          <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                            <button
+                              onClick={() => handleApprove(claim.id)}
+                              className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm transition-colors flex items-center gap-2"
+                            >
+                              <CheckCircle className="w-4 h-4"/>
+                              Approve
+                            </button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
+                            <button
+                              onClick={() => handleRejectStart(claim.id)}
+                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
+                            >
+                              <XCircle className="w-4 h-4"/>
+                              Reject
+                            </button>
+                          </PermissionGate>
+                        </>
+                      )}
+                      {claim.receiptUrl && (
+                        <button
+                          onClick={() => safeWindowOpen(claim.receiptUrl, '_blank')}
+                          className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-sm transition-colors flex items-center gap-2"
+                        >
+                          <Receipt className="w-4 h-4"/>
+                          View Receipt
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {/* Bulk Reject Modal */}
@@ -993,7 +1025,7 @@ export default function ExpenseClaims() {
               disabled={!bulkRejectReason.trim() || bulkProcessing}
               className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <XCircle className="w-4 h-4" />
+              <XCircle className="w-4 h-4"/>
               {bulkProcessing ? 'Rejecting...' : `Reject ${selectedClaims.size} Claims`}
             </button>
           </ModalFooter>
@@ -1065,7 +1097,7 @@ export default function ExpenseClaims() {
               disabled={!rejectReason.trim() || rejectMutation.isPending}
               className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <XCircle className="w-4 h-4" />
+              <XCircle className="w-4 h-4"/>
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>
           </ModalFooter>

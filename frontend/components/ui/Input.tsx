@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {AlertCircle, CheckCircle, Eye, EyeOff} from 'lucide-react';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -144,19 +144,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 disabled={disabled}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <EyeOff className="h-4 w-4"/>
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Eye className="h-4 w-4"/>
                 )}
               </button>
             )}
 
             {error && (
-              <AlertCircle className="h-4 w-4 text-danger-500" />
+              <AlertCircle className="h-4 w-4 text-danger-500"/>
             )}
 
             {success && !error && (
-              <CheckCircle className="h-4 w-4 text-success-500" />
+              <CheckCircle className="h-4 w-4 text-success-500"/>
             )}
           </div>
         </div>
@@ -180,4 +180,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export { Input };
+export {Input};

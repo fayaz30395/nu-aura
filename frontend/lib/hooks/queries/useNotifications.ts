@@ -1,16 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notificationsApi } from '@/lib/api/notifications';
-import type { Notification, PagedNotificationResponse } from '@/lib/types/core/notifications';
-
-import type { NotificationPreferences } from '@/lib/types/core/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notificationsApi} from '@/lib/api/notifications';
+import type {Notification, NotificationPreferences, PagedNotificationResponse} from '@/lib/types/core/notifications';
 
 // Query keys for cache management
 export const notificationKeys = {
   all: ['notifications'] as const,
   inbox: (limit: number, status?: string) =>
-    [...notificationKeys.all, 'inbox', { limit, status }] as const,
+    [...notificationKeys.all, 'inbox', {limit, status}] as const,
   unread: () => [...notificationKeys.all, 'unread'] as const,
   unreadCount: () => [...notificationKeys.all, 'unreadCount'] as const,
   recent: (hours: number) => [...notificationKeys.all, 'recent', hours] as const,
@@ -67,8 +65,8 @@ export function useMarkNotificationAsRead() {
   return useMutation({
     mutationFn: (id: string) => notificationsApi.markAsRead(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
+      queryClient.invalidateQueries({queryKey: notificationKeys.unread()});
+      queryClient.invalidateQueries({queryKey: notificationKeys.unreadCount()});
     },
   });
 }
@@ -82,8 +80,8 @@ export function useMarkAllNotificationsAsRead() {
   return useMutation({
     mutationFn: () => notificationsApi.markAllAsRead(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
+      queryClient.invalidateQueries({queryKey: notificationKeys.unread()});
+      queryClient.invalidateQueries({queryKey: notificationKeys.unreadCount()});
     },
   });
 }
@@ -111,7 +109,7 @@ export function useUpdateNotificationPreferences() {
     mutationFn: (preferences: Partial<NotificationPreferences>) =>
       notificationsApi.updatePreferences(preferences),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.preferences() });
+      queryClient.invalidateQueries({queryKey: notificationKeys.preferences()});
     },
   });
 }

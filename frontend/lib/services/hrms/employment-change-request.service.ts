@@ -1,9 +1,9 @@
-import { apiClient } from '../../api/client';
-import { Page } from '../../types/hrms/employee';
+import {apiClient} from '../../api/client';
+import {Page} from '../../types/hrms/employee';
 import {
-  EmploymentChangeRequest,
-  CreateEmploymentChangeRequest,
   ApproveRejectChangeRequest,
+  CreateEmploymentChangeRequest,
+  EmploymentChangeRequest,
 } from '../../types/hrms/employment-change-request';
 
 class EmploymentChangeRequestService {
@@ -24,7 +24,7 @@ class EmploymentChangeRequestService {
     const response = await apiClient.get<Page<EmploymentChangeRequest>>(
       '/employment-change-requests',
       {
-        params: { page, size, sortBy, sortDirection },
+        params: {page, size, sortBy, sortDirection},
       }
     );
     return response.data;
@@ -37,7 +37,7 @@ class EmploymentChangeRequestService {
     const response = await apiClient.get<Page<EmploymentChangeRequest>>(
       '/employment-change-requests/pending',
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -56,7 +56,7 @@ class EmploymentChangeRequestService {
     const response = await apiClient.get<Page<EmploymentChangeRequest>>(
       `/employment-change-requests/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;

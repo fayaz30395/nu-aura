@@ -1,7 +1,7 @@
 'use client';
 
-import { Alert, Button } from '@mantine/core';
-import { Lock } from 'lucide-react';
+import {Alert, Button} from '@mantine/core';
+import {Lock} from 'lucide-react';
 
 interface EditLockWarningProps {
   lockedByName: string;
@@ -12,10 +12,10 @@ interface EditLockWarningProps {
  * Warning banner displayed when another user holds an edit lock on the content.
  * Offers a "Edit Anyway" button to force-acquire the lock.
  */
-export default function EditLockWarning({ lockedByName, onForceEdit }: EditLockWarningProps) {
+export default function EditLockWarning({lockedByName, onForceEdit}: EditLockWarningProps) {
   return (
     <Alert
-      icon={<Lock className="w-5 h-5" />}
+      icon={<Lock className="w-5 h-5"/>}
       title="Content is being edited"
       color="yellow"
       variant="light"

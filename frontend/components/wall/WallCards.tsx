@@ -1,29 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import {
-  Pin,
-  Trash2,
-  MoreHorizontal,
-  Award,
-  Globe,
-  Users,
-  Building2,
-} from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Card, CardContent } from '@/components/ui/Card';
-import { cn } from '@/lib/utils';
+import {motion} from 'framer-motion';
+import {Award, Building2, Globe, MoreHorizontal, Pin, Trash2, Users,} from 'lucide-react';
+import {formatDistanceToNow} from 'date-fns';
+import {Card, CardContent} from '@/components/ui/Card';
+import {cn} from '@/lib/utils';
 import type {
-  WallPostResponse,
-  ReactionType,
-  CommentResponse,
   AuthorInfo,
+  CommentResponse,
   PollOptionResponse,
+  ReactionType,
+  WallPostResponse,
 } from '@/lib/services/core/wall.service';
-import { ReactionBar } from './ReactionBar';
-import { CommentThread } from './CommentThread';
+import {ReactionBar} from './ReactionBar';
+import {CommentThread} from './CommentThread';
 
 // ==================== Base Props ====================
 
@@ -59,15 +51,15 @@ interface CardHeaderProps {
 }
 
 function CardHeader({
-  author,
-  createdAt,
-  visibility,
-  pinned,
-  postId,
-  currentUserId,
-  onDelete,
-  onPin,
-}: CardHeaderProps): JSX.Element {
+                      author,
+                      createdAt,
+                      visibility,
+                      pinned,
+                      postId,
+                      currentUserId,
+                      onDelete,
+                      onPin,
+                    }: CardHeaderProps): JSX.Element {
   const [showMenu, setShowMenu] = useState(false);
   const isAuthor = currentUserId === author.id;
 
@@ -91,7 +83,8 @@ function CardHeader({
     <div className="flex items-start justify-between">
       <div className="flex gap-4">
         {/* Avatar */}
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+        <div
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
           {initials}
         </div>
 
@@ -101,7 +94,7 @@ function CardHeader({
             <h4 className="font-medium text-[var(--text-primary)]">
               {author.fullName}
             </h4>
-            {pinned && <Pin className="h-4 w-4 text-warning-600 dark:text-warning-400" />}
+            {pinned && <Pin className="h-4 w-4 text-warning-600 dark:text-warning-400"/>}
           </div>
 
           <div className="mt-1 flex items-center gap-2 text-caption">
@@ -111,8 +104,8 @@ function CardHeader({
           </div>
 
           <div className="mt-1 flex items-center gap-2 text-caption">
-            <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>
-            <VisibilityIcon className="h-3.5 w-3.5" />
+            <span>{formatDistanceToNow(new Date(createdAt), {addSuffix: true})}</span>
+            <VisibilityIcon className="h-3.5 w-3.5"/>
           </div>
         </div>
       </div>
@@ -125,15 +118,15 @@ function CardHeader({
             aria-label="More options"
             className="rounded-lg p-1.5 hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)]" />
+            <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)]"/>
           </button>
 
           {showMenu && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: -8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: -8 }}
-              transition={{ duration: 0.15 }}
+              initial={{opacity: 0, scale: 0.9, y: -8}}
+              animate={{opacity: 1, scale: 1, y: 0}}
+              exit={{opacity: 0, scale: 0.9, y: -8}}
+              transition={{duration: 0.15}}
               className="absolute right-0 top-full z-50 mt-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]"
             >
               {onPin && (
@@ -144,7 +137,7 @@ function CardHeader({
                   }}
                   className="flex w-full items-center gap-2 px-4 py-2 text-body-secondary hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Pin className="h-4 w-4" />
+                  <Pin className="h-4 w-4"/>
                   {pinned ? 'Unpin' : 'Pin to top'}
                 </button>
               )}
@@ -157,7 +150,7 @@ function CardHeader({
                   }}
                   className="flex w-full items-center gap-2 border-t border-[var(--border-subtle)] px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4"/>
                   Delete
                 </button>
               )}
@@ -174,29 +167,29 @@ function CardHeader({
 type PostCardProps = BaseCardProps;
 
 export function PostCard({
-  post,
-  currentUserId,
-  comments,
-  commentsLoading,
-  commentsHasMore,
-  showComments,
-  commentSubmitting,
-  onReact,
-  onRemoveReact,
-  onToggleComments,
-  onAddComment,
-  onDeleteComment,
-  onLoadMoreComments,
-  onDelete,
-  onPin,
-}: PostCardProps): JSX.Element {
+                           post,
+                           currentUserId,
+                           comments,
+                           commentsLoading,
+                           commentsHasMore,
+                           showComments,
+                           commentSubmitting,
+                           onReact,
+                           onRemoveReact,
+                           onToggleComments,
+                           onAddComment,
+                           onDeleteComment,
+                           onLoadMoreComments,
+                           onDelete,
+                           onPin,
+                         }: PostCardProps): JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      initial={{opacity: 0, y: 8}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.25, ease: 'easeOut'}}
     >
       <Card variant="default" className="overflow-hidden">
         <CardContent className="space-y-4">
@@ -227,7 +220,7 @@ export function PostCard({
                   width={800}
                   height={450}
                   className="h-auto w-full object-cover"
-                  style={{ width: '100%', height: 'auto' }}
+                  style={{width: '100%', height: 'auto'}}
                   unoptimized
                 />
               </div>
@@ -251,10 +244,10 @@ export function PostCard({
           {/* Comments Thread */}
           {showComments && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, height: 0}}
+              animate={{opacity: 1, height: 'auto'}}
+              exit={{opacity: 0, height: 0}}
+              transition={{duration: 0.2}}
               className="border-t border-[var(--border-subtle)] pt-4"
             >
               <CommentThread
@@ -282,31 +275,31 @@ interface PollCardProps extends BaseCardProps {
 }
 
 export function PollCard({
-  post,
-  currentUserId,
-  comments,
-  commentsLoading,
-  commentsHasMore,
-  showComments,
-  commentSubmitting,
-  onReact,
-  onRemoveReact,
-  onToggleComments,
-  onAddComment,
-  onDeleteComment,
-  onLoadMoreComments,
-  onDelete,
-  onPin,
-  onVote,
-}: PollCardProps): JSX.Element {
+                           post,
+                           currentUserId,
+                           comments,
+                           commentsLoading,
+                           commentsHasMore,
+                           showComments,
+                           commentSubmitting,
+                           onReact,
+                           onRemoveReact,
+                           onToggleComments,
+                           onAddComment,
+                           onDeleteComment,
+                           onLoadMoreComments,
+                           onDelete,
+                           onPin,
+                           onVote,
+                         }: PollCardProps): JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
   const totalVotes = (post.pollOptions || []).reduce((sum, opt) => sum + opt.voteCount, 0);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      initial={{opacity: 0, y: 8}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.25, ease: 'easeOut'}}
     >
       <Card variant="default" className="overflow-hidden">
         <CardContent className="space-y-4">
@@ -367,10 +360,10 @@ export function PollCard({
           {/* Comments Thread */}
           {showComments && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, height: 0}}
+              animate={{opacity: 1, height: 'auto'}}
+              exit={{opacity: 0, height: 0}}
+              transition={{duration: 0.2}}
               className="border-t border-[var(--border-subtle)] pt-4"
             >
               <CommentThread
@@ -402,12 +395,12 @@ interface PollOptionProps {
 }
 
 function PollOption({
-  option,
-  hasVoted,
-  userVotedOptionId,
-  totalVotes: _totalVotes,
-  onVote,
-}: PollOptionProps): JSX.Element {
+                      option,
+                      hasVoted,
+                      userVotedOptionId,
+                      totalVotes: _totalVotes,
+                      onVote,
+                    }: PollOptionProps): JSX.Element {
   const isSelected = userVotedOptionId === option.id;
 
   if (hasVoted) {
@@ -428,9 +421,9 @@ function PollOption({
 
         <div className="overflow-hidden rounded-full bg-[var(--bg-secondary)]">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${option.votePercentage}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            initial={{width: 0}}
+            animate={{width: `${option.votePercentage}%`}}
+            transition={{duration: 0.5, ease: 'easeOut'}}
             className={cn(
               'h-2 rounded-full transition-colors',
               isSelected
@@ -447,8 +440,8 @@ function PollOption({
   return (
     <motion.button
       key={option.id}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{scale: 1.01}}
+      whileTap={{scale: 0.99}}
       onClick={onVote}
       className="w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
     >
@@ -462,22 +455,22 @@ function PollOption({
 type PraiseCardProps = BaseCardProps;
 
 export function PraiseCard({
-  post,
-  currentUserId,
-  comments,
-  commentsLoading,
-  commentsHasMore,
-  showComments,
-  commentSubmitting,
-  onReact,
-  onRemoveReact,
-  onToggleComments,
-  onAddComment,
-  onDeleteComment,
-  onLoadMoreComments,
-  onDelete,
-  onPin,
-}: PraiseCardProps): JSX.Element {
+                             post,
+                             currentUserId,
+                             comments,
+                             commentsLoading,
+                             commentsHasMore,
+                             showComments,
+                             commentSubmitting,
+                             onReact,
+                             onRemoveReact,
+                             onToggleComments,
+                             onAddComment,
+                             onDeleteComment,
+                             onLoadMoreComments,
+                             onDelete,
+                             onPin,
+                           }: PraiseCardProps): JSX.Element {
   const totalReactions = Object.values(post.reactionCounts).reduce((a, b) => a + b, 0);
   const recipient = post.praiseRecipient;
 
@@ -494,9 +487,9 @@ export function PraiseCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      initial={{opacity: 0, y: 8}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.25, ease: 'easeOut'}}
     >
       <Card
         variant="default"
@@ -520,7 +513,7 @@ export function PraiseCard({
 
           {/* Praise Title */}
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-card)] px-4 py-4">
-            <Award className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+            <Award className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
             <span className="text-sm font-semibold text-warning-900 dark:text-warning-200">
               Praised <span className="text-accent-700 dark:text-accent-300">{recipient.fullName}</span>
             </span>
@@ -536,7 +529,8 @@ export function PraiseCard({
           {/* Recipient Info Box */}
           <div className="rounded-lg border-2 border-warning-200 bg-[var(--bg-card)] px-4 py-4 dark:border-warning-800">
             <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-warning-100 text-sm font-semibold text-warning-700 dark:bg-warning-900 dark:text-warning-300">
+              <div
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-warning-100 text-sm font-semibold text-warning-700 dark:bg-warning-900 dark:text-warning-300">
                 {recipientInitials}
               </div>
 
@@ -571,10 +565,10 @@ export function PraiseCard({
           {/* Comments Thread */}
           {showComments && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, height: 0}}
+              animate={{opacity: 1, height: 'auto'}}
+              exit={{opacity: 0, height: 0}}
+              transition={{duration: 0.2}}
               className="border-t border-warning-200 pt-4 dark:border-warning-800"
             >
               <CommentThread
@@ -602,23 +596,23 @@ interface WallCardProps extends BaseCardProps {
 }
 
 export function WallCard({
-  post,
-  currentUserId,
-  comments,
-  commentsLoading,
-  commentsHasMore,
-  showComments,
-  commentSubmitting,
-  onReact,
-  onRemoveReact,
-  onToggleComments,
-  onAddComment,
-  onDeleteComment,
-  onLoadMoreComments,
-  onDelete,
-  onPin,
-  onVote,
-}: WallCardProps): JSX.Element {
+                           post,
+                           currentUserId,
+                           comments,
+                           commentsLoading,
+                           commentsHasMore,
+                           showComments,
+                           commentSubmitting,
+                           onReact,
+                           onRemoveReact,
+                           onToggleComments,
+                           onAddComment,
+                           onDeleteComment,
+                           onLoadMoreComments,
+                           onDelete,
+                           onPin,
+                           onVote,
+                         }: WallCardProps): JSX.Element {
   const baseProps = {
     post,
     currentUserId,
@@ -642,7 +636,8 @@ export function WallCard({
       return (
         <PollCard
           {...baseProps}
-          onVote={onVote || (() => {})}
+          onVote={onVote || (() => {
+          })}
         />
       );
     case 'PRAISE':

@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { Loader2, Plus } from 'lucide-react';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  EmptyState,
-  ResponsiveTable,
-} from '@/components/ui';
-import { StatCard } from '@/components/ui/StatCard';
-import { usePsaProjectInvoices } from '@/lib/hooks/queries/usePsa';
-import { PSAInvoice } from '@/lib/types/hrms/psa';
-import { formatCurrency } from '@/lib/utils';
+import React, {useMemo} from 'react';
+import {Loader2, Plus} from 'lucide-react';
+import {Badge, Button, Card, CardContent, EmptyState, ResponsiveTable,} from '@/components/ui';
+import {StatCard} from '@/components/ui/StatCard';
+import {usePsaProjectInvoices} from '@/lib/hooks/queries/usePsa';
+import {PSAInvoice} from '@/lib/types/hrms/psa';
+import {formatCurrency} from '@/lib/utils';
 
 interface InvoicesTabProps {
   projectId: string;
@@ -23,27 +16,30 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
 
-const STATUS_BADGE: Record<string, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  SENT: { label: 'Sent', variant: 'primary' },
-  PARTIALLY_PAID: { label: 'Partially Paid', variant: 'warning' },
-  PAID: { label: 'Paid', variant: 'success' },
-  OVERDUE: { label: 'Overdue', variant: 'danger' },
-  CANCELLED: { label: 'Cancelled', variant: 'secondary' },
+const STATUS_BADGE: Record<string, {
+  label: string;
+  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
+}> = {
+  DRAFT: {label: 'Draft', variant: 'secondary'},
+  SENT: {label: 'Sent', variant: 'primary'},
+  PARTIALLY_PAID: {label: 'Partially Paid', variant: 'warning'},
+  PAID: {label: 'Paid', variant: 'success'},
+  OVERDUE: {label: 'Overdue', variant: 'danger'},
+  CANCELLED: {label: 'Cancelled', variant: 'secondary'},
 };
 
 const getStatusBadge = (status?: string | null) => {
   if (status && STATUS_BADGE[status]) {
     return STATUS_BADGE[status];
   }
-  return { label: status ?? 'Unknown', variant: 'secondary' as const };
+  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
-export function InvoicesTab({ projectId }: InvoicesTabProps) {
+export function InvoicesTab({projectId}: InvoicesTabProps) {
   const {
     data: invoices = [],
     isLoading: invoicesLoading,
@@ -114,7 +110,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
       },
       mobilePriority: 'secondary' as const,
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 
   const invoicesErrorMessage = invoicesError ? (invoicesError instanceof Error ? invoicesError.message : String(invoicesError)) : null;
@@ -123,7 +119,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
         </CardContent>
       </Card>
     );
@@ -138,7 +134,7 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
             description="Create an invoice for this project."
           />
           <Button
-            leftIcon={<Plus className="h-4 w-4" />}
+            leftIcon={<Plus className="h-4 w-4"/>}
           >
             Create Invoice
           </Button>
@@ -178,14 +174,15 @@ export function InvoicesTab({ projectId }: InvoicesTabProps) {
               <p className="text-body-muted">Billing invoices for this project.</p>
             </div>
             <Button
-              leftIcon={<Plus className="h-4 w-4" />}
+              leftIcon={<Plus className="h-4 w-4"/>}
             >
               Create Invoice
             </Button>
           </div>
 
           {invoicesErrorMessage && (
-            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <div
+              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
               {invoicesErrorMessage}
             </div>
           )}

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Star, TrendingUp, AlertTriangle, Users, GripVertical } from 'lucide-react';
-import { EmployeeCalibration } from '@/lib/types/grow/performance-360';
+import {useCallback, useState} from 'react';
+import {AlertTriangle, GripVertical, Star, TrendingUp, Users} from 'lucide-react';
+import {EmployeeCalibration} from '@/lib/types/grow/performance-360';
 
 interface CalibrationMatrixProps {
   employees: EmployeeCalibration[];
@@ -61,12 +61,12 @@ const matrixLabels: Record<string, { title: string; description: string; color: 
 };
 
 function EmployeeCard({
-  employee,
-  onClick,
-  onDragStart,
-  isDragging,
-  readOnly,
-}: {
+                        employee,
+                        onClick,
+                        onDragStart,
+                        isDragging,
+                        readOnly,
+                      }: {
   employee: EmployeeCalibration;
   onClick?: () => void;
   onDragStart: (e: React.DragEvent) => void;
@@ -87,20 +87,20 @@ function EmployeeCard({
           <p className="font-medium text-[var(--text-primary)] truncate">{employee.employeeName}</p>
           <p className="text-[var(--text-muted)] truncate text-xs">{employee.designation}</p>
         </div>
-        {!readOnly && <GripVertical className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0" />}
+        {!readOnly && <GripVertical className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0"/>}
       </div>
       {employee.retentionRisk && (
         <div className="mt-1 flex items-center gap-1">
           {employee.retentionRisk === 'HIGH' && (
-            <AlertTriangle className="h-3 w-3 text-danger-500" />
+            <AlertTriangle className="h-3 w-3 text-danger-500"/>
           )}
           <span
             className={`text-xs ${
               employee.retentionRisk === 'HIGH'
                 ? 'text-danger-600'
                 : employee.retentionRisk === 'MEDIUM'
-                ? 'text-warning-600'
-                : 'text-success-600'
+                  ? 'text-warning-600'
+                  : 'text-success-600'
             }`}
           >
             {employee.retentionRisk === 'HIGH' ? 'Flight Risk' : ''}
@@ -112,14 +112,14 @@ function EmployeeCard({
 }
 
 function MatrixCell({
-  performance,
-  potential,
-  employees,
-  onDrop,
-  onEmployeeClick,
-  onEmployeeDragStart,
-  readOnly,
-}: {
+                      performance,
+                      potential,
+                      employees,
+                      onDrop,
+                      onEmployeeClick,
+                      onEmployeeDragStart,
+                      readOnly,
+                    }: {
   performance: number;
   potential: number;
   employees: EmployeeCalibration[];
@@ -165,7 +165,7 @@ function MatrixCell({
         <p className="text-xs text-[var(--text-secondary)] mt-0.5 leading-tight">{cellInfo.description}</p>
         <div className="row-between mt-1">
           <span className="inline-flex items-center gap-1 text-caption">
-            <Users className="h-3 w-3" />
+            <Users className="h-3 w-3"/>
             {employees.length}
           </span>
         </div>
@@ -187,11 +187,11 @@ function MatrixCell({
 }
 
 export default function CalibrationMatrix({
-  employees,
-  onEmployeeMove,
-  onEmployeeClick,
-  readOnly = false,
-}: CalibrationMatrixProps) {
+                                            employees,
+                                            onEmployeeMove,
+                                            onEmployeeClick,
+                                            readOnly = false,
+                                          }: CalibrationMatrixProps) {
   const [draggedEmployee, setDraggedEmployee] = useState<EmployeeCalibration | null>(null);
 
   const getEmployeesForCell = useCallback(
@@ -263,13 +263,13 @@ export default function CalibrationMatrix({
             <div className="w-32 flex items-center justify-center">
               <div className="transform -rotate-90 whitespace-nowrap">
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Potential</span>
-                <TrendingUp className="inline h-4 w-4 ml-1" />
+                <TrendingUp className="inline h-4 w-4 ml-1"/>
               </div>
             </div>
             <div className="flex-1 text-center">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Performance</span>
-                <Star className="h-4 w-4" />
+                <Star className="h-4 w-4"/>
               </div>
             </div>
           </div>

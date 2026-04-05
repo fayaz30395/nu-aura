@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 
 interface UseUnsavedChangesWarningOptions {
   isDirty: boolean;
@@ -28,9 +28,9 @@ interface UseUnsavedChangesWarningOptions {
  * ```
  */
 export function useUnsavedChangesWarning({
-  isDirty,
-  message = 'You have unsaved changes. Are you sure you want to leave?',
-}: UseUnsavedChangesWarningOptions): void {
+                                           isDirty,
+                                           message = 'You have unsaved changes. Are you sure you want to leave?',
+                                         }: UseUnsavedChangesWarningOptions): void {
   // Browser tab close / refresh
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

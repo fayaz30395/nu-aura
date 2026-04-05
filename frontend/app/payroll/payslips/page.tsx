@@ -1,19 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { AppLayout } from '@/components/layout';
-import { Payslip } from '@/lib/types/hrms/payroll';
-import { PayslipCard } from '@/components/payroll/PayslipCard';
-import { Button } from '@/components/ui/Button';
-import { Download, Search } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { usePayslips } from '@/lib/hooks/queries/usePayroll';
-import { payrollService } from '@/lib/services/hrms/payroll.service';
+import {useState} from 'react';
+import {AppLayout} from '@/components/layout';
+import {Payslip} from '@/lib/types/hrms/payroll';
+import {PayslipCard} from '@/components/payroll/PayslipCard';
+import {Button} from '@/components/ui/Button';
+import {Download, Search} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {usePayslips} from '@/lib/hooks/queries/usePayroll';
+import {payrollService} from '@/lib/services/hrms/payroll.service';
 
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 
 export default function PayslipsPage() {
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // Filters
   const [selectedMonth, setSelectedMonth] = useState<string>(
@@ -32,7 +32,7 @@ export default function PayslipsPage() {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadLoading, setDownloadLoading] = useState(false);
 
-  const { data: response, isLoading: loading, error: fetchError } = usePayslips(currentPage, pageSize);
+  const {data: response, isLoading: loading, error: fetchError} = usePayslips(currentPage, pageSize);
 
   // RBAC guard — all hooks declared above; safe to return null after them
   if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
@@ -55,7 +55,9 @@ export default function PayslipsPage() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err: unknown) {
-      setDownloadError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip');
+      setDownloadError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to download payslip');
     } finally {
       setDownloadLoading(false);
     }
@@ -96,8 +98,8 @@ export default function PayslipsPage() {
     for (let i = 0; i < 12; i++) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const value = date.toISOString().substring(0, 7);
-      const label = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      options.push({ value, label });
+      const label = date.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+      options.push({value, label});
     }
     return options;
   };
@@ -120,7 +122,7 @@ export default function PayslipsPage() {
               <div className="flex gap-4">
                 <Button
                   variant="outline"
-                  leftIcon={<Download className="h-4 w-4" />}
+                  leftIcon={<Download className="h-4 w-4"/>}
                   onClick={handleBulkDownload}
                   disabled={loading || downloadLoading || filteredPayslips.length === 0}
                 >
@@ -153,7 +155,8 @@ export default function PayslipsPage() {
                   Search
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                   <input
                     type="text"
                     value={searchQuery}
@@ -268,7 +271,7 @@ export default function PayslipsPage() {
                 Previous
               </Button>
               <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i).map((page) => (
+                {Array.from({length: totalPages}, (_, i) => i).map((page) => (
                   <Button
                     key={page}
                     variant={currentPage === page ? 'primary' : 'outline'}

@@ -1,25 +1,17 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useEmployees, useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import type { Employee } from '@/lib/types/hrms/employee';
-import {
-  Search,
-  Users,
-  Mail,
-  Phone,
-  Building2,
-  Grid3x3,
-  List,
-} from 'lucide-react';
+import {useCallback, useMemo, useState} from 'react';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {useEmployees, useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import type {Employee} from '@/lib/types/hrms/employee';
+import {Building2, Grid3x3, List, Mail, Phone, Search, Users,} from 'lucide-react';
 
 const PAGE_SIZE = 20;
 
@@ -30,11 +22,11 @@ interface ViewMode {
 }
 
 const VIEW_MODES: ViewMode[] = [
-  { key: 'grid', label: 'Grid', icon: <Grid3x3 className="h-4 w-4" /> },
-  { key: 'list', label: 'List', icon: <List className="h-4 w-4" /> },
+  {key: 'grid', label: 'Grid', icon: <Grid3x3 className="h-4 w-4"/>},
+  {key: 'list', label: 'List', icon: <List className="h-4 w-4"/>},
 ];
 
-function EmployeeCard({ employee, viewMode, onClick }: {
+function EmployeeCard({employee, viewMode, onClick}: {
   employee: Employee;
   viewMode: 'grid' | 'list';
   onClick: (id: string) => void;
@@ -42,9 +34,9 @@ function EmployeeCard({ employee, viewMode, onClick }: {
   if (viewMode === 'list') {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
+        initial={{opacity: 0, y: 4}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.2}}
       >
         <Card
           className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer"
@@ -54,7 +46,8 @@ function EmployeeCard({ employee, viewMode, onClick }: {
             <div className="flex items-center gap-4">
               {/* Avatar */}
               <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-semibold">
+                <div
+                  className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-semibold">
                   {employee.firstName?.[0]}{employee.lastName?.[0]}
                 </div>
               </div>
@@ -72,12 +65,14 @@ function EmployeeCard({ employee, viewMode, onClick }: {
               {/* Details */}
               <div className="flex-1 min-w-0 hidden md:grid grid-cols-2 gap-4 text-xs">
                 <div className="flex items-center gap-1.5 text-[var(--text-secondary)] truncate">
-                  <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+                  <Building2 className="h-3.5 w-3.5 flex-shrink-0"/>
                   <span className="truncate">{employee.departmentName || '—'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[var(--text-secondary)] truncate">
-                  <Mail className="h-3.5 w-3.5 flex-shrink-0" />
-                  <a href={`mailto:${employee.workEmail}`} className="text-accent-700 dark:text-accent-400 hover:underline truncate" onClick={e => e.stopPropagation()}>
+                  <Mail className="h-3.5 w-3.5 flex-shrink-0"/>
+                  <a href={`mailto:${employee.workEmail}`}
+                     className="text-accent-700 dark:text-accent-400 hover:underline truncate"
+                     onClick={e => e.stopPropagation()}>
                     {employee.workEmail}
                   </a>
                 </div>
@@ -92,9 +87,9 @@ function EmployeeCard({ employee, viewMode, onClick }: {
   // Grid view
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+      initial={{opacity: 0, scale: 0.95}}
+      animate={{opacity: 1, scale: 1}}
+      transition={{duration: 0.2}}
     >
       <Card
         className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer h-full flex flex-col"
@@ -103,7 +98,8 @@ function EmployeeCard({ employee, viewMode, onClick }: {
         <CardContent className="p-4 flex flex-col h-full">
           {/* Avatar */}
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white text-2xl font-semibold">
+            <div
+              className="h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white text-2xl font-semibold">
               {employee.firstName?.[0]}{employee.lastName?.[0]}
             </div>
           </div>
@@ -120,8 +116,9 @@ function EmployeeCard({ employee, viewMode, onClick }: {
 
           {/* Department & Level Badge */}
           {employee.departmentName && (
-            <div className="flex items-center justify-center gap-1.5 px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs mb-4 text-[var(--text-secondary)] truncate">
-              <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+            <div
+              className="flex items-center justify-center gap-1.5 px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs mb-4 text-[var(--text-secondary)] truncate">
+              <Building2 className="h-3.5 w-3.5 flex-shrink-0"/>
               <span className="truncate">{employee.departmentName}</span>
             </div>
           )}
@@ -130,7 +127,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
           <div className="space-y-2 text-xs border-t border-[var(--border-main)] pt-4">
             {employee.workEmail && (
               <div className="flex items-center gap-2 text-[var(--text-secondary)] truncate">
-                <Mail className="h-3.5 w-3.5 flex-shrink-0" />
+                <Mail className="h-3.5 w-3.5 flex-shrink-0"/>
                 <a
                   href={`mailto:${employee.workEmail}`}
                   className="text-accent-700 dark:text-accent-400 hover:underline truncate"
@@ -142,7 +139,7 @@ function EmployeeCard({ employee, viewMode, onClick }: {
             )}
             {employee.phoneNumber && (
               <div className="flex items-center gap-2 text-[var(--text-secondary)] truncate">
-                <Phone className="h-3.5 w-3.5 flex-shrink-0" />
+                <Phone className="h-3.5 w-3.5 flex-shrink-0"/>
                 <a
                   href={`tel:${employee.phoneNumber}`}
                   className="text-accent-700 dark:text-accent-400 hover:underline"
@@ -167,17 +164,17 @@ export default function TeamDirectoryPage() {
   const [page, setPage] = useState(0);
 
   // Fetch departments
-  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
+  const {data: departments = [], isLoading: departmentsLoading} = useActiveDepartments();
 
   // Fetch employees or search
   const isSearching = search.trim().length > 0;
-  const { data: allEmployeesResponse, isLoading: allLoading } = useEmployees(
+  const {data: allEmployeesResponse, isLoading: allLoading} = useEmployees(
     page,
     PAGE_SIZE,
     'firstName',
     'ASC'
   );
-  const { data: searchResponse, isLoading: searchLoading } = useEmployeeSearch(
+  const {data: searchResponse, isLoading: searchLoading} = useEmployeeSearch(
     search,
     page,
     PAGE_SIZE,
@@ -202,7 +199,7 @@ export default function TeamDirectoryPage() {
 
   // Calculate department counts
   const deptCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: totalElements };
+    const counts: Record<string, number> = {all: totalElements};
     employees.forEach(emp => {
       if (emp.departmentId) {
         counts[emp.departmentId] = (counts[emp.departmentId] || 0) + 1;
@@ -215,9 +212,9 @@ export default function TeamDirectoryPage() {
     <AppLayout activeMenuItem="team-directory">
       <motion.div
         className="space-y-6 p-4 md:p-6 lg:p-8 max-w-[1400px] mx-auto"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.3}}
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -225,7 +222,8 @@ export default function TeamDirectoryPage() {
             <h1 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Browse and connect with team members</p>
           </div>
-          <div className="flex items-center gap-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] p-1">
+          <div
+            className="flex items-center gap-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] p-1">
             {VIEW_MODES.map(mode => (
               <button
                 key={mode.key}
@@ -246,7 +244,7 @@ export default function TeamDirectoryPage() {
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
           <input
             type="text"
             placeholder="Search by name or email..."
@@ -266,7 +264,7 @@ export default function TeamDirectoryPage() {
               Department
             </label>
             {departmentsLoading ? (
-              <Skeleton className="h-10 rounded-lg" />
+              <Skeleton className="h-10 rounded-lg"/>
             ) : (
               <select
                 value={selectedDepartment}
@@ -291,9 +289,10 @@ export default function TeamDirectoryPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
+          <div
+            className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <Skeleton key={i} className={`rounded-lg ${viewMode === 'grid' ? 'h-64' : 'h-24'}`} />
+              <Skeleton key={i} className={`rounded-lg ${viewMode === 'grid' ? 'h-64' : 'h-24'}`}/>
             ))}
           </div>
         )}
@@ -301,7 +300,7 @@ export default function TeamDirectoryPage() {
         {/* Empty State */}
         {!isLoading && filtered.length === 0 && (
           <EmptyState
-            icon={<Users className="h-12 w-12" />}
+            icon={<Users className="h-12 w-12"/>}
             title={search ? 'No Results Found' : 'No Team Members'}
             description={search
               ? `No team members match "${search}". Try a different search term.`
@@ -313,7 +312,8 @@ export default function TeamDirectoryPage() {
         {/* Employees Grid/List */}
         {!isLoading && filtered.length > 0 && (
           <>
-            <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
+            <div
+              className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'space-y-4'}`}>
               {filtered.map(employee => (
                 <EmployeeCard
                   key={employee.id}

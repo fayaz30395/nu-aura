@@ -1,14 +1,23 @@
 # NU-AURA Platform Readiness: RBAC Lockdown + Feature Completion
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (
+> recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make NU-AURA production-ready with complete RBAC gating across all 240+ permissions, full asset lifecycle, standard survey module, and compensation pipeline — with 85% backend / 70% frontend test coverage.
+**Goal:** Make NU-AURA production-ready with complete RBAC gating across all 240+ permissions, full
+asset lifecycle, standard survey module, and compensation pipeline — with 85% backend / 70% frontend
+test coverage.
 
-**Architecture:** Three parallel streams — Stream A locks down RBAC (HR_ADMIN role, V94 permission re-seed, ungated page fixes, annotation tests), Stream B completes features (assets approval workflow + maintenance, survey consolidation + UI, offer-to-salary pipeline), Stream C pushes test coverage after A+B reach 80%.
+**Architecture:** Three parallel streams — Stream A locks down RBAC (HR_ADMIN role, V94 permission
+re-seed, ungated page fixes, annotation tests), Stream B completes features (assets approval
+workflow + maintenance, survey consolidation + UI, offer-to-salary pipeline), Stream C pushes test
+coverage after A+B reach 80%.
 
-**Tech Stack:** Spring Boot 3.4 (Java 17), Next.js 14 App Router, TypeScript strict, Mantine UI, React Query v5, Zustand, React Hook Form + Zod, Flyway, Playwright, JaCoCo, Vitest
+**Tech Stack:** Spring Boot 3.4 (Java 17), Next.js 14 App Router, TypeScript strict, Mantine UI,
+React Query v5, Zustand, React Hook Form + Zod, Flyway, Playwright, JaCoCo, Vitest
 
-**Decision Register:** 30 architectural decisions locked via grill-me session (see `docs/superpowers/plans/decision-register.md`).
+**Decision Register:** 30 architectural decisions locked via grill-me session (see
+`docs/superpowers/plans/decision-register.md`).
 
 ---
 
@@ -16,33 +25,43 @@
 
 ### Stream A: RBAC Lockdown
 
-| Action | File | Responsibility |
-|--------|------|---------------|
-| Create | `backend/src/main/resources/db/migration/V94__canonical_permission_reseed.sql` | Nuke + re-seed all permissions from Permission.java |
-| Modify | `backend/src/main/java/com/hrms/common/security/RoleHierarchy.java` | Add HR_ADMIN role (rank 85) |
-| Modify | `backend/src/main/java/com/hrms/common/security/Permission.java` | Add any missing constants |
-| Create | `backend/src/test/java/com/hrms/common/security/RbacAnnotationCoverageTest.java` | Verify all controllers have @RequiresPermission |
-| Modify | `frontend/lib/hooks/usePermissions.ts` | Fix HR_ADMIN mapping, align constants |
-| Modify | 8 frontend pages (see Task A3) | Add missing permission gates |
+| Action | File                                                                             | Responsibility                                      |
+|--------|----------------------------------------------------------------------------------|-----------------------------------------------------|
+| Create | `backend/src/main/resources/db/migration/V94__canonical_permission_reseed.sql`   | Nuke + re-seed all permissions from Permission.java |
+| Modify | `backend/src/main/java/com/hrms/common/security/RoleHierarchy.java`              | Add HR_ADMIN role (rank 85)                         |
+| Modify | `backend/src/main/java/com/hrms/common/security/Permission.java`                 | Add any missing constants                           |
+| Create | `backend/src/test/java/com/hrms/common/security/RbacAnnotationCoverageTest.java` | Verify all controllers have @RequiresPermission     |
+| Modify | `frontend/lib/hooks/usePermissions.ts`                                           | Fix HR_ADMIN mapping, align constants               |
+| Modify | 8 frontend pages (see Task A3)                                                   | Add missing permission gates                        |
 
 ### Stream B: Feature Completion
 
 **Assets:**
 | Action | File | Responsibility |
 |--------|------|---------------|
-| Create | `backend/src/main/java/com/hrms/domain/asset/AssetMaintenanceRequest.java` | Maintenance request entity |
-| Create | `backend/src/main/java/com/hrms/infrastructure/asset/repository/AssetMaintenanceRequestRepository.java` | JPA repository |
-| Create | `backend/src/main/resources/db/migration/V95__asset_maintenance_requests.sql` | Schema for maintenance |
-| Modify | `backend/src/main/java/com/hrms/api/asset/controller/AssetManagementController.java` | Add request endpoint + wire approval |
-| Modify | `backend/src/main/java/com/hrms/application/asset/service/AssetManagementService.java` | Maintenance logic + approval wiring |
-| Create | `backend/src/test/java/com/hrms/application/asset/service/AssetManagementServiceTest.java` | Service tests |
+| Create | `backend/src/main/java/com/hrms/domain/asset/AssetMaintenanceRequest.java` | Maintenance
+request entity |
+| Create |
+`backend/src/main/java/com/hrms/infrastructure/asset/repository/AssetMaintenanceRequestRepository.java` |
+JPA repository |
+| Create | `backend/src/main/resources/db/migration/V95__asset_maintenance_requests.sql` | Schema
+for maintenance |
+| Modify | `backend/src/main/java/com/hrms/api/asset/controller/AssetManagementController.java` |
+Add request endpoint + wire approval |
+| Modify | `backend/src/main/java/com/hrms/application/asset/service/AssetManagementService.java` |
+Maintenance logic + approval wiring |
+| Create |
+`backend/src/test/java/com/hrms/application/asset/service/AssetManagementServiceTest.java` | Service
+tests |
 | Modify | `frontend/app/assets/page.tsx` | Maintenance UI + audit trail tab |
 
 **Surveys:**
 | Action | File | Responsibility |
 |--------|------|---------------|
-| Modify | `backend/src/main/java/com/hrms/api/engagement/controller/PulseSurveyController.java` | Template endpoints |
-| Modify | `backend/src/main/java/com/hrms/application/engagement/service/PulseSurveyService.java` | Template cloning + analytics |
+| Modify | `backend/src/main/java/com/hrms/api/engagement/controller/PulseSurveyController.java` |
+Template endpoints |
+| Modify | `backend/src/main/java/com/hrms/application/engagement/service/PulseSurveyService.java` |
+Template cloning + analytics |
 | Create | `backend/src/main/resources/db/migration/V96__survey_templates.sql` | Template table |
 | Create | `frontend/app/surveys/[id]/page.tsx` | Question builder + response UI |
 | Create | `frontend/app/surveys/[id]/analytics/page.tsx` | Analytics dashboard |
@@ -52,25 +71,27 @@
 **Compensation:**
 | Action | File | Responsibility |
 |--------|------|---------------|
-| Modify | `backend/src/main/java/com/hrms/application/recruitment/listener/CandidateHiredEventListener.java` | Create SalaryStructure on hire |
+| Modify |
+`backend/src/main/java/com/hrms/application/recruitment/listener/CandidateHiredEventListener.java` |
+Create SalaryStructure on hire |
 | Create | `frontend/app/employees/[id]/compensation/page.tsx` | Salary history tab |
 | Create | `frontend/lib/hooks/queries/useCompensationHistory.ts` | React Query hook |
 
 ### Stream C: Testing
 
-| Action | File | Responsibility |
-|--------|------|---------------|
-| Create | `frontend/e2e/auth-flow.spec.ts` | Login/logout/session E2E |
-| Create | `frontend/e2e/employee-crud.spec.ts` | Employee lifecycle E2E |
-| Create | `frontend/e2e/leave-flow.spec.ts` | Leave apply/approve E2E |
-| Create | `frontend/e2e/payroll-run.spec.ts` | Payroll processing E2E |
-| Create | `frontend/e2e/recruitment-pipeline.spec.ts` | Recruitment E2E |
-| Create | `frontend/e2e/performance-review.spec.ts` | Performance review E2E |
-| Create | `frontend/e2e/attendance-flow.spec.ts` | Attendance E2E |
-| Create | `frontend/e2e/expense-flow.spec.ts` | Expense submit/approve E2E |
-| Create | `frontend/e2e/asset-flow.spec.ts` | Asset assign/return E2E |
-| Create | `frontend/e2e/admin-roles.spec.ts` | RBAC role management E2E |
-| Create | `frontend/e2e/fixtures/test-tenant-seed.ts` | Test data fixtures |
+| Action | File                                        | Responsibility             |
+|--------|---------------------------------------------|----------------------------|
+| Create | `frontend/e2e/auth-flow.spec.ts`            | Login/logout/session E2E   |
+| Create | `frontend/e2e/employee-crud.spec.ts`        | Employee lifecycle E2E     |
+| Create | `frontend/e2e/leave-flow.spec.ts`           | Leave apply/approve E2E    |
+| Create | `frontend/e2e/payroll-run.spec.ts`          | Payroll processing E2E     |
+| Create | `frontend/e2e/recruitment-pipeline.spec.ts` | Recruitment E2E            |
+| Create | `frontend/e2e/performance-review.spec.ts`   | Performance review E2E     |
+| Create | `frontend/e2e/attendance-flow.spec.ts`      | Attendance E2E             |
+| Create | `frontend/e2e/expense-flow.spec.ts`         | Expense submit/approve E2E |
+| Create | `frontend/e2e/asset-flow.spec.ts`           | Asset assign/return E2E    |
+| Create | `frontend/e2e/admin-roles.spec.ts`          | RBAC role management E2E   |
+| Create | `frontend/e2e/fixtures/test-tenant-seed.ts` | Test data fixtures         |
 
 ---
 
@@ -79,6 +100,7 @@
 ### Task A1: Create HR_ADMIN Backend Role
 
 **Files:**
+
 - Modify: `backend/src/main/java/com/hrms/common/security/RoleHierarchy.java`
 - Create: `backend/src/test/java/com/hrms/common/security/HrAdminRoleTest.java`
 
@@ -161,17 +183,20 @@ class HrAdminRoleTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd backend && ./mvnw test -pl . -Dtest=HrAdminRoleTest -Dsurefire.failIfNoSpecifiedTests=false`
+Run:
+`cd backend && ./mvnw test -pl . -Dtest=HrAdminRoleTest -Dsurefire.failIfNoSpecifiedTests=false`
 Expected: FAIL — "HR_ADMIN" not found in ALL_EXPLICIT_ROLES
 
 - [ ] **Step 3: Add HR_ADMIN to RoleHierarchy.java**
 
 Add after line 19 (`HR_MANAGER`):
+
 ```java
 public static final String HR_ADMIN = "HR_ADMIN";
 ```
 
 Add `HR_ADMIN` to `ALL_EXPLICIT_ROLES` list (line 49):
+
 ```java
 public static final List<String> ALL_EXPLICIT_ROLES = List.of(
         SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN, HR_EXECUTIVE,
@@ -182,21 +207,25 @@ public static final List<String> ALL_EXPLICIT_ROLES = List.of(
 ```
 
 Add to `getDefaultPermissions` switch (after TENANT_ADMIN case):
+
 ```java
 case HR_ADMIN -> getHRAdminPermissions();
 ```
 
 Add rank 85 to `getRoleRank` (after TENANT_ADMIN):
+
 ```java
 case HR_ADMIN -> 85;
 ```
 
 Add description to `getRoleDescription`:
+
 ```java
 case HR_ADMIN -> "Senior HR leadership with elevated HR operations and role management";
 ```
 
 Add the permission set method:
+
 ```java
 private static Set<String> getHRAdminPermissions() {
     // Start with all HR_MANAGER permissions
@@ -246,9 +275,11 @@ git commit -m "feat(rbac): add HR_ADMIN role at rank 85 with elevated permission
 ### Task A2: V94 Canonical Permission Re-Seed
 
 **Files:**
+
 - Create: `backend/src/main/resources/db/migration/V94__canonical_permission_reseed.sql`
 
-This migration nukes all existing permission rows and re-seeds from the authoritative `Permission.java` constants. Safe because we're dev-only — no production data.
+This migration nukes all existing permission rows and re-seeds from the authoritative
+`Permission.java` constants. Safe because we're dev-only — no production data.
 
 - [ ] **Step 1: Create the migration file**
 
@@ -834,6 +865,7 @@ git commit -m "feat(rbac): V94 canonical permission re-seed — 246 permissions 
 ### Task A3: Fix 8 Ungated Frontend Pages
 
 **Files to modify (8 pages):**
+
 1. `frontend/app/admin/mobile-api/page.tsx` — needs `SYSTEM_ADMIN` or `TENANT_ADMIN`
 2. `frontend/app/attendance/my-attendance/page.tsx` — needs `ATTENDANCE:VIEW_SELF`
 3. `frontend/app/dashboards/employee/page.tsx` — needs `DASHBOARD:EMPLOYEE`
@@ -864,7 +896,8 @@ const { hasPermission } = usePermissions();
 // This is auth-gated by middleware, adding explicit permission for defense-in-depth
 ```
 
-Note: After review, `/me/attendance` is the canonical self-service route. If `attendance/my-attendance` is a duplicate, redirect to `/me/attendance` instead.
+Note: After review, `/me/attendance` is the canonical self-service route. If
+`attendance/my-attendance` is a duplicate, redirect to `/me/attendance` instead.
 
 - [ ] **Step 3: Add permission gates to remaining 6 pages**
 
@@ -910,6 +943,7 @@ git commit -m "fix(rbac): add permission gates to 8 ungated pages"
 ### Task A4: Fix Frontend HR_ADMIN Mapping
 
 **Files:**
+
 - Modify: `frontend/lib/hooks/usePermissions.ts`
 
 - [ ] **Step 1: Update HR_ADMIN role comment and mapping**
@@ -945,6 +979,7 @@ git commit -m "fix(rbac): update HR_ADMIN to real backend role — remove M-3 wo
 ### Task A5: RBAC Annotation Coverage Test
 
 **Files:**
+
 - Create: `backend/src/test/java/com/hrms/common/security/RbacAnnotationCoverageTest.java`
 
 - [ ] **Step 1: Write the annotation coverage test**
@@ -1036,8 +1071,10 @@ git commit -m "test(rbac): add annotation coverage test — all 161 controllers 
 ### Task B1: Asset Maintenance Entity + Migration
 
 **Files:**
+
 - Create: `backend/src/main/java/com/hrms/domain/asset/AssetMaintenanceRequest.java`
-- Create: `backend/src/main/java/com/hrms/infrastructure/asset/repository/AssetMaintenanceRequestRepository.java`
+- Create:
+  `backend/src/main/java/com/hrms/infrastructure/asset/repository/AssetMaintenanceRequestRepository.java`
 - Create: `backend/src/main/resources/db/migration/V95__asset_maintenance_requests.sql`
 - Create: `backend/src/test/java/com/hrms/domain/asset/AssetMaintenanceRequestTest.java`
 
@@ -1210,6 +1247,7 @@ git commit -m "feat(assets): add AssetMaintenanceRequest entity + V95 migration"
 ### Task B2: Wire Asset Approval Workflow + Dual Mode Endpoints
 
 **Files:**
+
 - Modify: `backend/src/main/java/com/hrms/api/asset/controller/AssetManagementController.java`
 - Modify: `backend/src/main/java/com/hrms/application/asset/service/AssetManagementService.java`
 
@@ -1332,6 +1370,7 @@ git commit -m "feat(assets): dual-mode assignment (direct + approval) + maintena
 ### Task B3: Consolidate Surveys into Pulse Module
 
 **Files:**
+
 - Modify: `backend/src/main/java/com/hrms/api/engagement/controller/PulseSurveyController.java`
 - Modify: `backend/src/main/java/com/hrms/application/engagement/service/PulseSurveyService.java`
 - Create: `backend/src/main/resources/db/migration/V96__survey_templates.sql`
@@ -1490,6 +1529,7 @@ git commit -m "feat(surveys): template support + analytics + consolidate into pu
 ### Task B4: Survey Frontend — Question Builder + Response UI + Analytics
 
 **Files:**
+
 - Create: `frontend/app/surveys/[id]/page.tsx` — Question builder
 - Create: `frontend/app/surveys/[id]/respond/page.tsx` — Employee response form
 - Create: `frontend/app/surveys/[id]/analytics/page.tsx` — Analytics dashboard
@@ -1571,17 +1611,21 @@ export function useCloneSurvey() {
 - [ ] **Step 2: Create question builder page**
 
 Create `frontend/app/surveys/[id]/page.tsx` with:
+
 - List of questions with drag-to-reorder
 - Add question modal (type selector: Text, Single Choice, Multiple Choice, Likert, NPS, Rating)
 - Edit/delete question actions
 - Survey settings panel (anonymous, dates, target audience)
 - Publish button
 
-Implementation should use Mantine components (`Card`, `Select`, `TextInput`, `Switch`, `ActionIcon`), React Hook Form + Zod for the question form, and the existing `@hello-pangea/dnd` for drag-drop.
+Implementation should use Mantine components (`Card`, `Select`, `TextInput`, `Switch`,
+`ActionIcon`), React Hook Form + Zod for the question form, and the existing `@hello-pangea/dnd` for
+drag-drop.
 
 - [ ] **Step 3: Create employee response page**
 
 Create `frontend/app/surveys/[id]/respond/page.tsx` with:
+
 - Read-only survey title and description
 - Sequential question rendering by type
 - Progress bar
@@ -1591,6 +1635,7 @@ Create `frontend/app/surveys/[id]/respond/page.tsx` with:
 - [ ] **Step 4: Create analytics dashboard page**
 
 Create `frontend/app/surveys/[id]/analytics/page.tsx` with:
+
 - Response rate card (total invited vs completed)
 - Per-question charts (Recharts — bar chart for ratings, pie for choices)
 - NPS score display (promoters/passives/detractors)
@@ -1612,7 +1657,9 @@ git commit -m "feat(surveys): question builder + response form + analytics dashb
 ### Task B5: Offer-to-Salary Pipeline
 
 **Files:**
-- Modify: `backend/src/main/java/com/hrms/application/recruitment/listener/CandidateHiredEventListener.java`
+
+- Modify:
+  `backend/src/main/java/com/hrms/application/recruitment/listener/CandidateHiredEventListener.java`
 - Create: `frontend/app/employees/[id]/compensation/page.tsx`
 - Create: `frontend/lib/hooks/queries/useCompensationHistory.ts`
 
@@ -1672,6 +1719,7 @@ export function useCompensationHistory(employeeId: string) {
 - [ ] **Step 3: Create salary history tab on employee profile**
 
 Create `frontend/app/employees/[id]/compensation/page.tsx` showing:
+
 - Timeline of salary revisions (effective date, old CTC, new CTC, % change, type, status)
 - Current active salary structure
 - Revision approval chain (proposed by, reviewed by, approved by)
@@ -1696,6 +1744,7 @@ git commit -m "feat(compensation): offer-to-salary pipeline + salary history tab
 ### Task C1: E2E Test Infrastructure Setup
 
 **Files:**
+
 - Create: `frontend/e2e/fixtures/test-tenant-seed.ts`
 - Create: `frontend/e2e/fixtures/auth.ts`
 
@@ -1770,6 +1819,7 @@ git commit -m "test(e2e): add auth fixture + test tenant seed for Playwright"
 **Files:** 10 spec files in `frontend/e2e/`
 
 Each E2E test follows this pattern:
+
 1. Authenticate as the appropriate role
 2. Navigate to the route
 3. Execute the happy path
@@ -1810,7 +1860,9 @@ test.describe('Authentication', () => {
 
 - [ ] **Step 2: Create remaining 9 E2E specs**
 
-Create skeleton specs for: employee-crud, leave-flow, payroll-run, recruitment-pipeline, performance-review, attendance-flow, expense-flow, asset-flow, admin-roles. Each follows the auth + navigate + act + assert pattern.
+Create skeleton specs for: employee-crud, leave-flow, payroll-run, recruitment-pipeline,
+performance-review, attendance-flow, expense-flow, asset-flow, admin-roles. Each follows the auth +
+navigate + act + assert pattern.
 
 - [ ] **Step 3: Run E2E suite**
 
@@ -1841,6 +1893,7 @@ Look at JaCoCo report for classes with < 80% coverage in `application/*/service/
 - [ ] **Step 3: Write tests for uncovered services**
 
 Priority order:
+
 1. Controllers with < 50% coverage
 2. Services with business logic < 70% coverage
 3. Security-related code (filters, aspects)
@@ -1869,6 +1922,7 @@ Note current coverage.
 - [ ] **Step 2: Write tests for critical components**
 
 Priority:
+
 1. `PermissionGate.tsx` — all permission scenarios
 2. `AuthGuard.tsx` — auth state handling
 3. Form components with Zod validation
@@ -1891,12 +1945,12 @@ git commit -m "test(frontend): push component coverage to 70%"
 
 ## Execution Summary
 
-| Stream | Tasks | Est. Days | Dependencies |
-|--------|-------|-----------|-------------|
-| **A: RBAC** | A1-A5 | 9 | None |
-| **B: Features** | B1-B5 | 15 | None |
-| **C: Testing** | C1-C4 | 14 | A+B at 80% |
-| **Total** | 14 tasks | ~4 weeks (A+B parallel) | — |
+| Stream          | Tasks    | Est. Days               | Dependencies |
+|-----------------|----------|-------------------------|--------------|
+| **A: RBAC**     | A1-A5    | 9                       | None         |
+| **B: Features** | B1-B5    | 15                      | None         |
+| **C: Testing**  | C1-C4    | 14                      | A+B at 80%   |
+| **Total**       | 14 tasks | ~4 weeks (A+B parallel) | —            |
 
 ### Verification Checklist
 

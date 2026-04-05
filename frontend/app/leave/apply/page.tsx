@@ -1,17 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useActiveLeaveTypes, useEmployeeBalancesForYear, useCreateLeaveRequest } from '@/lib/hooks/queries/useLeaves';
-import { HalfDayPeriod } from '@/lib/types/hrms/leave';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useActiveLeaveTypes, useCreateLeaveRequest, useEmployeeBalancesForYear} from '@/lib/hooks/queries/useLeaves';
+import {HalfDayPeriod} from '@/lib/types/hrms/leave';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -28,14 +28,14 @@ type LeaveFormData = z.infer<typeof leaveFormSchema>;
 export default function ApplyLeavePage() {
   const toast = useToast();
   const router = useRouter();
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const year = new Date().getFullYear();
 
-  const { data: leaveTypes = [] } = useActiveLeaveTypes();
-  const { data: balances = [] } = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
+  const {data: leaveTypes = []} = useActiveLeaveTypes();
+  const {data: balances = []} = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
   const createLeaveRequest = useCreateLeaveRequest();
 
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting }, reset } = useForm<LeaveFormData>({
+  const {register, handleSubmit, watch, formState: {errors, isSubmitting}, reset} = useForm<LeaveFormData>({
     resolver: zodResolver(leaveFormSchema),
     defaultValues: {
       leaveTypeId: '',
@@ -92,7 +92,9 @@ export default function ApplyLeavePage() {
       reset();
       router.push('/leave');
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to submit leave request');
     }
   };
 
@@ -102,9 +104,9 @@ export default function ApplyLeavePage() {
   return (
     <AppLayout activeMenuItem="leave">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 12}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="max-w-4xl mx-auto"
       >
         <div className="mb-6">

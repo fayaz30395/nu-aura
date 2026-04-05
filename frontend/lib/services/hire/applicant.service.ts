@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   Applicant,
   ApplicantRequest,
@@ -44,7 +44,7 @@ class ApplicantService {
 
   async rateApplicant(id: string, rating: number): Promise<Applicant> {
     const response = await apiClient.put<Applicant>(`/recruitment/applicants/${id}/rating`, null, {
-      params: { rating },
+      params: {rating},
     });
     return response.data;
   }

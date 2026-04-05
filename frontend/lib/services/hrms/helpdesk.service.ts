@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
@@ -111,14 +111,14 @@ class HelpdeskService {
 
   async updateTicketStatus(id: string, status: TicketStatus): Promise<TicketResponse> {
     const response = await apiClient.patch<TicketResponse>(`/helpdesk/tickets/${id}/status`, null, {
-      params: { status },
+      params: {status},
     });
     return response.data;
   }
 
   async assignTicket(id: string, assigneeId: string): Promise<TicketResponse> {
     const response = await apiClient.patch<TicketResponse>(`/helpdesk/tickets/${id}/assign`, null, {
-      params: { assigneeId },
+      params: {assigneeId},
     });
     return response.data;
   }
@@ -135,7 +135,7 @@ class HelpdeskService {
 
   async getAllTickets(page: number = 0, size: number = 20): Promise<PageResponse<TicketResponse>> {
     const response = await apiClient.get<PageResponse<TicketResponse>>('/helpdesk/tickets', {
-      params: { page, size, sort: 'createdAt,desc' },
+      params: {page, size, sort: 'createdAt,desc'},
     });
     return response.data;
   }

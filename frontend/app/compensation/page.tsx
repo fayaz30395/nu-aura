@@ -1,54 +1,55 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
+  AlertCircle,
+  ArrowUpRight,
+  CheckCircle,
+  ChevronRight,
+  Clock,
   DollarSign,
+  Eye,
+  FileText,
+  Filter,
+  PieChart,
+  Play,
+  Plus,
+  Search,
   TrendingUp,
   Users,
-  CheckCircle,
-  Clock,
-  Plus,
-  Eye,
-  Play,
-  ChevronRight,
-  Search,
-  Filter,
-  FileText,
-  ArrowUpRight,
-  PieChart,
-  AlertCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
-  Badge,
+  Input,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
+  ModalHeader,
   Select,
   Textarea,
 } from '@/components/ui';
 import {
   useApproveRevision,
-  useRejectRevision,
-  useCompensationRevisions,
   useCompensationCycles,
+  useCompensationRevisions,
+  useRejectRevision,
 } from '@/lib/hooks/queries/useCompensation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
 import type {
   CompensationReviewCycle,
-  SalaryRevision,
-  CycleType,
   CycleStatus,
-  RevisionType,
+  CycleType,
   RevisionStatus,
+  RevisionType,
+  SalaryRevision,
 } from '@/lib/types/hrms/compensation';
+import {createLogger} from '@/lib/utils/logger';
 
 const cycleTypeLabels: Record<CycleType, string> = {
   ANNUAL: 'Annual',
@@ -57,7 +58,6 @@ const cycleTypeLabels: Record<CycleType, string> = {
   SPECIAL: 'Special',
   AD_HOC: 'Ad Hoc',
 };
-import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('CompensationPage');
 
@@ -126,7 +126,7 @@ const getRevisionStatusColor = (status: RevisionStatus) => {
 export default function CompensationPage() {
 
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function CompensationPage() {
     isLoading: isCyclesLoading,
     error: cyclesError,
   } = useCompensationCycles(0, 100);
-  const { data: revisionsData, isLoading: isRevisionsLoading } = useCompensationRevisions(0, 100);
+  const {data: revisionsData, isLoading: isRevisionsLoading} = useCompensationRevisions(0, 100);
   const approveRevisionMutation = useApproveRevision();
   const rejectRevisionMutation = useRejectRevision();
 
@@ -198,12 +198,12 @@ export default function CompensationPage() {
 
   const handleApproveRevision = async (revisionId: string) => {
     try {
-      await approveRevisionMutation.mutateAsync({ revisionId });
+      await approveRevisionMutation.mutateAsync({revisionId});
       setIsRevisionModalOpen(false);
       // Update local selected revision with new status
       const updated = revisions.find((r) => r.id === revisionId);
       if (updated) {
-        setSelectedRevision({ ...updated, status: 'APPROVED' as RevisionStatus });
+        setSelectedRevision({...updated, status: 'APPROVED' as RevisionStatus});
       }
     } catch (err) {
       log.error('Failed to approve revision:', err);
@@ -217,14 +217,14 @@ export default function CompensationPage() {
     }
 
     try {
-      await rejectRevisionMutation.mutateAsync({ revisionId, reason: rejectionReason });
+      await rejectRevisionMutation.mutateAsync({revisionId, reason: rejectionReason});
       setIsRevisionModalOpen(false);
       setRejectionReason('');
       setShowRejectionReasonInput(false);
       // Update local selected revision with new status
       const updated = revisions.find((r) => r.id === revisionId);
       if (updated) {
-        setSelectedRevision({ ...updated, status: 'REJECTED' as RevisionStatus });
+        setSelectedRevision({...updated, status: 'REJECTED' as RevisionStatus});
       }
     } catch (err) {
       log.error('Failed to reject revision:', err);
@@ -242,8 +242,8 @@ export default function CompensationPage() {
   );
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Compensation' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Compensation'},
   ];
 
   return (
@@ -260,7 +260,7 @@ export default function CompensationPage() {
             </p>
           </div>
           <Button onClick={() => setIsCreateCycleModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-2"/>
             New Review Cycle
           </Button>
         </div>
@@ -269,7 +269,7 @@ export default function CompensationPage() {
         {loading && (
           <Card>
             <CardContent className="p-12 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500 mx-auto mb-4" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500 mx-auto mb-4"/>
               <p className="text-[var(--text-secondary)]">Loading compensation data...</p>
             </CardContent>
           </Card>
@@ -280,8 +280,10 @@ export default function CompensationPage() {
           <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                <p className="text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error}</p>
+                <AlertCircle
+                  className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                <p
+                  className="text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error}</p>
               </div>
             </CardContent>
           </Card>
@@ -289,123 +291,127 @@ export default function CompensationPage() {
 
         {/* Stats Cards */}
         {!loading && !error && (
-        <>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <DollarSign className="h-6 w-6 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Budget</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
-                    ${(stats.totalBudget / 1000000).toFixed(1)}M
-                  </p>
-                  <p className="text-caption">
-                    {stats.budgetUtilization}% utilized
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                </div>
-                <div>
-                  <p className="text-body-secondary">Total Revisions</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
-                    {stats.totalRevisions}
-                  </p>
-                  <p className="text-caption">
-                    {stats.approvedRevisions} approved
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                </div>
-                <div>
-                  <p className="text-body-secondary">Pending Approvals</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
-                    {stats.pendingApprovals}
-                  </p>
-                  <p className="text-caption">
-                    Awaiting review
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                </div>
-                <div>
-                  <p className="text-body-secondary">Avg. Increment</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
-                    {stats.avgIncrement}%
-                  </p>
-                  <p className="text-caption">
-                    Target: {activeCycle?.averageIncrementTarget || 8}%
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
+                      <DollarSign
+                        className="h-6 w-6 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    </div>
+                    <div>
+                      <p className="text-body-secondary">Total Budget</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                        ${(stats.totalBudget / 1000000).toFixed(1)}M
+                      </p>
+                      <p className="text-caption">
+                        {stats.budgetUtilization}% utilized
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                      <FileText
+                        className="h-6 w-6 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    </div>
+                    <div>
+                      <p className="text-body-secondary">Total Revisions</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                        {stats.totalRevisions}
+                      </p>
+                      <p className="text-caption">
+                        {stats.approvedRevisions} approved
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
+                      <Clock
+                        className="h-6 w-6 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    </div>
+                    <div>
+                      <p className="text-body-secondary">Pending Approvals</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                        {stats.pendingApprovals}
+                      </p>
+                      <p className="text-caption">
+                        Awaiting review
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
+                      <TrendingUp
+                        className="h-6 w-6 text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    </div>
+                    <div>
+                      <p className="text-body-secondary">Avg. Increment</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                        {stats.avgIncrement}%
+                      </p>
+                      <p className="text-caption">
+                        Target: {activeCycle?.averageIncrementTarget || 8}%
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Tabs */}
-        <div className="border-b border-[var(--border-main)]">
-          <nav className="flex gap-4">
-            <button
-              onClick={() => setActiveTab('cycles')}
-              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'cycles'
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
-              }`}
-            >
-              Review Cycles
-            </button>
-            <button
-              onClick={() => setActiveTab('revisions')}
-              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'revisions'
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
-              }`}
-            >
-              All Revisions
-            </button>
-            <button
-              onClick={() => setActiveTab('pending')}
-              className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
-                activeTab === 'pending'
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
-              }`}
-            >
-              Pending Approvals
-              {pendingRevisions.length > 0 && (
-                <span className="bg-warning-500 text-white text-xs px-2 py-0.5 rounded-full">
+            {/* Tabs */}
+            <div className="border-b border-[var(--border-main)]">
+              <nav className="flex gap-4">
+                <button
+                  onClick={() => setActiveTab('cycles')}
+                  className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'cycles'
+                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                  }`}
+                >
+                  Review Cycles
+                </button>
+                <button
+                  onClick={() => setActiveTab('revisions')}
+                  className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'revisions'
+                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                  }`}
+                >
+                  All Revisions
+                </button>
+                <button
+                  onClick={() => setActiveTab('pending')}
+                  className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
+                    activeTab === 'pending'
+                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                  }`}
+                >
+                  Pending Approvals
+                  {pendingRevisions.length > 0 && (
+                    <span className="bg-warning-500 text-white text-xs px-2 py-0.5 rounded-full">
                   {pendingRevisions.length}
                 </span>
-              )}
-            </button>
-          </nav>
-        </div>
-        </>
+                  )}
+                </button>
+              </nav>
+            </div>
+          </>
         )}
 
         {/* Content */}
@@ -458,7 +464,8 @@ export default function CompensationPage() {
                           {cycleTypeLabels[cycle.cycleType]} - FY{cycle.fiscalYear}
                         </p>
                       </div>
-                      <Badge variant={getCycleStatusColor(cycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
+                      <Badge
+                        variant={getCycleStatusColor(cycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
                         {cycleStatusLabels[cycle.status]}
                       </Badge>
                     </div>
@@ -480,7 +487,7 @@ export default function CompensationPage() {
                         <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                           <div
                             className="bg-accent-500 h-2 rounded-full"
-                            style={{ width: `${Math.min((cycle.utilizedAmount / cycle.budgetAmount) * 100, 100)}%` }}
+                            style={{width: `${Math.min((cycle.utilizedAmount / cycle.budgetAmount) * 100, 100)}%`}}
                           />
                         </div>
                       )}
@@ -503,12 +510,12 @@ export default function CompensationPage() {
                         className="flex-1"
                         onClick={() => handleViewCycle(cycle)}
                       >
-                        <Eye className="h-4 w-4 mr-1" />
+                        <Eye className="h-4 w-4 mr-1"/>
                         Details
                       </Button>
                       {cycle.status === 'DRAFT' && (
                         <Button size="sm" className="flex-1">
-                          <Play className="h-4 w-4 mr-1" />
+                          <Play className="h-4 w-4 mr-1"/>
                           Start
                         </Button>
                       )}
@@ -525,7 +532,7 @@ export default function CompensationPage() {
             {/* Search */}
             <div className="flex gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                 <Input
                   placeholder="Search by name, code, or department..."
                   value={searchTerm}
@@ -534,7 +541,7 @@ export default function CompensationPage() {
                 />
               </div>
               <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
+                <Filter className="h-4 w-4 mr-2"/>
                 Filter
               </Button>
             </div>
@@ -544,85 +551,88 @@ export default function CompensationPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[var(--border-main)]">
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Employee
-                      </th>
-                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Type
-                      </th>
-                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Current Salary
-                      </th>
-                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        New Salary
-                      </th>
-                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Increment
-                      </th>
-                      <th className="text-center p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Status
-                      </th>
-                      <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
-                        Actions
-                      </th>
-                    </tr>
+                  <tr className="border-b border-[var(--border-main)]">
+                    <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Employee
+                    </th>
+                    <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Type
+                    </th>
+                    <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Current Salary
+                    </th>
+                    <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      New Salary
+                    </th>
+                    <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Increment
+                    </th>
+                    <th className="text-center p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Status
+                    </th>
+                    <th className="text-right p-4 text-sm font-medium text-[var(--text-secondary)]">
+                      Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody>
-                    {filteredRevisions.map((revision) => (
-                      <tr
-                        key={revision.id}
-                        className="h-11 border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
-                      >
-                        <td className="p-4">
-                          <div>
-                            <p className="font-medium text-[var(--text-primary)]">
-                              {revision.employeeName}
-                            </p>
-                            <p className="text-body-muted">
-                              {revision.employeeCode} - {revision.department}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="p-4">
+                  {filteredRevisions.map((revision) => (
+                    <tr
+                      key={revision.id}
+                      className="h-11 border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    >
+                      <td className="p-4">
+                        <div>
+                          <p className="font-medium text-[var(--text-primary)]">
+                            {revision.employeeName}
+                          </p>
+                          <p className="text-body-muted">
+                            {revision.employeeCode} - {revision.department}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="p-4">
                           <span className="text-body-secondary">
                             {revisionTypeLabels[revision.revisionType]}
                           </span>
-                        </td>
-                        <td className="p-4 text-right">
+                      </td>
+                      <td className="p-4 text-right">
                           <span className="text-[var(--text-primary)]">
                             ${revision.previousSalary.toLocaleString()}
                           </span>
-                        </td>
-                        <td className="p-4 text-right">
+                      </td>
+                      <td className="p-4 text-right">
                           <span className="font-medium text-[var(--text-primary)]">
                             ${revision.newSalary.toLocaleString()}
                           </span>
-                        </td>
-                        <td className="p-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <ArrowUpRight className="h-4 w-4 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                            <span className="text-success-600 dark:text-success-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <ArrowUpRight
+                            className="h-4 w-4 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                          <span
+                            className="text-success-600 dark:text-success-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               {revision.incrementPercentage?.toFixed(1)}%
                             </span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-center">
-                          <Badge variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
-                            {revisionStatusLabels[revision.status]}
-                          </Badge>
-                        </td>
-                        <td className="p-4 text-right">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleViewRevision(revision)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                        </div>
+                      </td>
+                      <td className="p-4 text-center">
+                        <Badge
+                          variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
+                          {revisionStatusLabels[revision.status]}
+                        </Badge>
+                      </td>
+                      <td className="p-4 text-right">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleViewRevision(revision)}
+                        >
+                          <Eye className="h-4 w-4"/>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
                   </tbody>
                 </table>
               </div>
@@ -635,7 +645,8 @@ export default function CompensationPage() {
             {pendingRevisions.length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
-                  <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                  <CheckCircle
+                    className="h-12 w-12 text-success-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
                   <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                     All Caught Up!
                   </h3>
@@ -652,14 +663,16 @@ export default function CompensationPage() {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className="bg-warning-100 dark:bg-warning-900 rounded-full p-4">
-                            <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                            <AlertCircle
+                              className="h-5 w-5 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <h3 className="font-semibold text-[var(--text-primary)]">
                                 {revision.employeeName}
                               </h3>
-                              <Badge variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
+                              <Badge
+                                variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
                                 {revisionStatusLabels[revision.status]}
                               </Badge>
                             </div>
@@ -678,16 +691,18 @@ export default function CompensationPage() {
                               ${revision.previousSalary.toLocaleString()}
                             </p>
                           </div>
-                          <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
+                          <ChevronRight className="h-5 w-5 text-[var(--text-muted)]"/>
                           <div className="text-center">
                             <p className="text-body-muted">Proposed</p>
-                            <p className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                            <p
+                              className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               ${revision.newSalary.toLocaleString()}
                             </p>
                           </div>
                           <div className="text-center">
                             <p className="text-body-muted">Increment</p>
-                            <p className="text-lg font-medium text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                            <p
+                              className="text-lg font-medium text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               +{revision.incrementPercentage?.toFixed(1)}%
                             </p>
                           </div>
@@ -725,7 +740,8 @@ export default function CompensationPage() {
               {selectedCycle && (
                 <>
                   <div className="rounded-lg bg-accent-100 dark:bg-accent-900 p-2">
-                    <PieChart className="h-5 w-5 text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                    <PieChart
+                      className="h-5 w-5 text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -743,7 +759,8 @@ export default function CompensationPage() {
             {selectedCycle && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2">
-                  <Badge variant={getCycleStatusColor(selectedCycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
+                  <Badge
+                    variant={getCycleStatusColor(selectedCycle.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
                     {cycleStatusLabels[selectedCycle.status]}
                   </Badge>
                 </div>
@@ -793,7 +810,8 @@ export default function CompensationPage() {
                       <p className="text-body-muted">Minimum</p>
                     </div>
                     <div className="text-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
-                      <p className="text-2xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <p
+                        className="text-2xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
                       <p className="text-body-muted">Target Avg</p>
@@ -819,19 +837,22 @@ export default function CompensationPage() {
                       <p className="text-body-muted">Total</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <p
+                        className="text-2xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsDrafted}
                       </p>
                       <p className="text-body-muted">Drafted</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <p
+                        className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApproved}
                       </p>
                       <p className="text-body-muted">Approved</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <p
+                        className="text-2xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApplied}
                       </p>
                       <p className="text-body-muted">Applied</p>
@@ -863,7 +884,7 @@ export default function CompensationPage() {
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="bg-[var(--bg-secondary)] rounded-full h-14 w-14 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-[var(--text-secondary)]" />
+                    <Users className="h-6 w-6 text-[var(--text-secondary)]"/>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -893,7 +914,8 @@ export default function CompensationPage() {
                   </div>
                   <div>
                     <p className="text-body-muted mb-1">Proposed Salary</p>
-                    <p className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <p
+                      className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       ${selectedRevision.newSalary.toLocaleString()}
                     </p>
                   </div>
@@ -902,19 +924,22 @@ export default function CompensationPage() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
                     <p className="text-body-muted">Increment Amount</p>
-                    <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <p
+                      className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +${selectedRevision.incrementAmount?.toLocaleString()}
                     </p>
                   </div>
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
                     <p className="text-body-muted">Increment %</p>
-                    <p className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <p
+                      className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       +{selectedRevision.incrementPercentage?.toFixed(2)}%
                     </p>
                   </div>
                   <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-center">
                     <p className="text-body-muted">Performance</p>
-                    <p className="text-xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <p
+                      className="text-xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {selectedRevision.performanceRating?.toFixed(1) || 'N/A'}
                     </p>
                   </div>
@@ -960,7 +985,8 @@ export default function CompensationPage() {
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
               <div className="w-full space-y-4 border-t border-[var(--border-main)] pt-4">
                 <label className="block text-sm font-medium text-[var(--text-secondary)]">
-                  Rejection Reason <span className="text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+                  Rejection Reason <span
+                  className="text-danger-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
                 </label>
                 <Textarea
                   placeholder="Please provide a reason for rejecting this revision..."
@@ -1037,7 +1063,7 @@ export default function CompensationPage() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Cycle Name
                 </label>
-                <Input placeholder="e.g., Annual Review 2025" />
+                <Input placeholder="e.g., Annual Review 2025"/>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1067,45 +1093,45 @@ export default function CompensationPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date
                   </label>
-                  <Input type="date" />
+                  <Input type="date"/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
-                  <Input type="date" />
+                  <Input type="date"/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Effective Date
                   </label>
-                  <Input type="date" />
+                  <Input type="date"/>
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Budget Amount
                 </label>
-                <Input type="number" placeholder="Enter budget amount" />
+                <Input type="number" placeholder="Enter budget amount"/>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Increment %
                   </label>
-                  <Input type="number" placeholder="0" />
+                  <Input type="number" placeholder="0"/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Target Avg %
                   </label>
-                  <Input type="number" placeholder="8" />
+                  <Input type="number" placeholder="8"/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Increment %
                   </label>
-                  <Input type="number" placeholder="25" />
+                  <Input type="number" placeholder="25"/>
                 </div>
               </div>
               <div>

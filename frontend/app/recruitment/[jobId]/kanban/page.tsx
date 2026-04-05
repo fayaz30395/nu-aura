@@ -1,51 +1,46 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useCallback, useMemo, useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {
-  Title,
-  Text,
-  Stack,
-  Group,
-  Paper,
-  Loader,
-  Center,
-  Alert,
-  ScrollArea,
   ActionIcon,
-  Tooltip,
+  Alert,
   Badge,
+  Center,
+  Group,
+  Loader,
+  Paper,
+  ScrollArea,
+  Stack,
   Switch,
+  Text,
+  Title,
+  Tooltip,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconArrowLeft,
   IconArrowRight,
-  IconX,
+  IconGripVertical,
   IconSend,
   IconSparkles,
-  IconGripVertical,
+  IconX,
 } from '@tabler/icons-react';
 // FUTURE: NUAURA-002 — Code-split the DnD library: move CandidateCard, KanbanColumn,
 // and the DragDropContext wrapper into a separate KanbanBoard.tsx file and dynamic-import
 // that file instead of importing DragDropContext/Droppable/Draggable directly here.
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  type DropResult,
-} from '@hello-pangea/dnd';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { StageBadge } from '@/components/recruitment/StageBadge';
-import { OfferModal } from './OfferModal';
-import { recruitmentService } from '@/lib/services/hire/recruitment.service';
-import { useRankedCandidates } from '@/lib/hooks/queries/useRecruitment';
-import type { Candidate, RecruitmentStage } from '@/lib/types/hire/recruitment';
-import type { CandidateMatchResponse } from '@/lib/types/hire/ai-recruitment';
+import {DragDropContext, Draggable, Droppable, type DropResult,} from '@hello-pangea/dnd';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {StageBadge} from '@/components/recruitment/StageBadge';
+import {OfferModal} from './OfferModal';
+import {recruitmentService} from '@/lib/services/hire/recruitment.service';
+import {useRankedCandidates} from '@/lib/hooks/queries/useRecruitment';
+import type {Candidate, RecruitmentStage} from '@/lib/types/hire/recruitment';
+import type {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 
 // ── 13-stage NU-Hire pipeline ──────────────────────────────────────────
 // Terminal / rejection stages are excluded from the main board columns.
@@ -95,11 +90,11 @@ function prevStage(stage: RecruitmentStage): RecruitmentStage | null {
 }
 
 // ── Score badge helper ─────────────────────────────────────────────────
-function ScoreBadge({ score }: { score: number }) {
+function ScoreBadge({score}: { score: number }) {
   const color = score >= 70 ? 'green' : score >= 50 ? 'yellow' : 'red';
   return (
     <Tooltip label={`AI Match Score: ${score}%`}>
-      <Badge size="xs" color={color} variant="light" leftSection={<IconSparkles size={10} />}>
+      <Badge size="xs" color={color} variant="light" leftSection={<IconSparkles size={10}/>}>
         {score}%
       </Badge>
     </Tooltip>
@@ -121,17 +116,17 @@ interface CandidateCardProps {
 }
 
 function CandidateCard({
-  candidate,
-  index,
-  stage,
-  onMoveForward,
-  onMoveBackward,
-  onReject,
-  onOpenOffer,
-  isPending,
-  pendingCandidateId,
-  score,
-}: CandidateCardProps) {
+                         candidate,
+                         index,
+                         stage,
+                         onMoveForward,
+                         onMoveBackward,
+                         onReject,
+                         onOpenOffer,
+                         isPending,
+                         pendingCandidateId,
+                         score,
+                       }: CandidateCardProps) {
   const isOfferStage = stage === 'OFFER_NDA_TO_BE_RELEASED';
   const isTerminal = isOfferStage;
   const next = nextStage(stage);
@@ -160,18 +155,18 @@ function CandidateCard({
         >
           <Stack gap={6}>
             <Group justify="space-between" align="center" gap={4}>
-              <Group gap={4} style={{ flex: 1, minWidth: 0 }}>
+              <Group gap={4} style={{flex: 1, minWidth: 0}}>
                 <div
                   {...provided.dragHandleProps}
-                  style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}
+                  style={{cursor: 'grab', display: 'flex', alignItems: 'center'}}
                 >
-                  <IconGripVertical size={14} color="var(--text-muted)" />
+                  <IconGripVertical size={14} color="var(--text-muted)"/>
                 </div>
-                <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1 }}>
+                <Text fw={600} size="sm" lineClamp={1} style={{flex: 1}}>
                   {candidate.fullName}
                 </Text>
               </Group>
-              {score !== undefined && <ScoreBadge score={score} />}
+              {score !== undefined && <ScoreBadge score={score}/>}
             </Group>
             {candidate.currentDesignation && (
               <Text size="xs" c="dimmed" lineClamp={1}>
@@ -196,7 +191,7 @@ function CandidateCard({
                     onClick={() => onMoveBackward(candidate)}
                     aria-label="Move backward"
                   >
-                    <IconArrowLeft size={14} />
+                    <IconArrowLeft size={14}/>
                   </ActionIcon>
                 </Tooltip>
               )}
@@ -210,7 +205,7 @@ function CandidateCard({
                     onClick={() => onMoveForward(candidate)}
                     aria-label="Move forward"
                   >
-                    <IconArrowRight size={14} />
+                    <IconArrowRight size={14}/>
                   </ActionIcon>
                 </Tooltip>
               )}
@@ -224,7 +219,7 @@ function CandidateCard({
                     onClick={() => onOpenOffer(candidate)}
                     aria-label="Generate offer"
                   >
-                    <IconSend size={14} />
+                    <IconSend size={14}/>
                   </ActionIcon>
                 </Tooltip>
               )}
@@ -237,7 +232,7 @@ function CandidateCard({
                   onClick={() => onReject(candidate)}
                   aria-label="Reject candidate"
                 >
-                  <IconX size={14} />
+                  <IconX size={14}/>
                 </ActionIcon>
               </Tooltip>
             </Group>
@@ -262,16 +257,16 @@ interface KanbanColumnProps {
 }
 
 function KanbanColumn({
-  stage,
-  candidates,
-  onMoveForward,
-  onMoveBackward,
-  onReject,
-  onOpenOffer,
-  isPending,
-  pendingCandidateId,
-  scoreMap,
-}: KanbanColumnProps) {
+                        stage,
+                        candidates,
+                        onMoveForward,
+                        onMoveBackward,
+                        onReject,
+                        onOpenOffer,
+                        isPending,
+                        pendingCandidateId,
+                        scoreMap,
+                      }: KanbanColumnProps) {
   return (
     <Stack
       style={{
@@ -284,7 +279,7 @@ function KanbanColumn({
     >
       {/* Column header */}
       <Group justify="space-between" align="center" mb={4}>
-        <StageBadge stage={stage} />
+        <StageBadge stage={stage}/>
         <Badge variant="outline" color="gray" size="xs" radius="sm">
           {candidates.length}
         </Badge>
@@ -343,7 +338,7 @@ function KanbanColumn({
 
 // ── Main page component ────────────────────────────────────────────────
 export default function KanbanPage() {
-  const { jobId } = useParams<{ jobId: string }>();
+  const {jobId} = useParams<{ jobId: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -363,7 +358,7 @@ export default function KanbanPage() {
   });
 
   // ── Fetch AI ranked scores (non-blocking) ──────────────────────────────
-  const { data: rankedCandidates } = useRankedCandidates(jobId, !!jobId);
+  const {data: rankedCandidates} = useRankedCandidates(jobId, !!jobId);
 
   // Build a map of candidateId → overallScore for quick lookup
   const scoreMap = useMemo(() => {
@@ -378,18 +373,18 @@ export default function KanbanPage() {
 
   // ── Move stage mutation ────────────────────────────────────────────────
   const stageMutation = useMutation({
-    mutationFn: ({ candidateId, stage }: { candidateId: string; stage: RecruitmentStage }) =>
-      recruitmentService.moveCandidateStage(candidateId, { stage }),
-    onMutate: ({ candidateId }) => {
+    mutationFn: ({candidateId, stage}: { candidateId: string; stage: RecruitmentStage }) =>
+      recruitmentService.moveCandidateStage(candidateId, {stage}),
+    onMutate: ({candidateId}) => {
       setPendingCandidateId(candidateId);
     },
-    onSuccess: (_, { stage }) => {
+    onSuccess: (_, {stage}) => {
       notifications.show({
         title: 'Stage updated',
         message: `Candidate moved to ${STAGE_SHORT_LABEL[stage] ?? stage}`,
         color: 'green',
       });
-      queryClient.invalidateQueries({ queryKey: ['kanban-candidates', jobId] });
+      queryClient.invalidateQueries({queryKey: ['kanban-candidates', jobId]});
     },
     onError: (err: Error & { response?: { data?: { message?: string } } }) => {
       notifications.show({
@@ -406,7 +401,7 @@ export default function KanbanPage() {
   // ── Drag-and-drop handler ──────────────────────────────────────────────
   const handleDragEnd = useCallback(
     (result: DropResult) => {
-      const { draggableId, destination, source } = result;
+      const {draggableId, destination, source} = result;
 
       // Dropped outside a valid droppable or back in the same column
       if (!destination) return;
@@ -415,7 +410,7 @@ export default function KanbanPage() {
       const targetStage = destination.droppableId as RecruitmentStage;
 
       // Fire mutation
-      stageMutation.mutate({ candidateId: draggableId, stage: targetStage });
+      stageMutation.mutate({candidateId: draggableId, stage: targetStage});
     },
     [stageMutation]
   );
@@ -425,18 +420,18 @@ export default function KanbanPage() {
     const current = (candidate.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
     const target = nextStage(current);
     if (!target) return;
-    stageMutation.mutate({ candidateId: candidate.id, stage: target });
+    stageMutation.mutate({candidateId: candidate.id, stage: target});
   }
 
   function handleMoveBackward(candidate: Candidate) {
     const current = (candidate.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
     const target = prevStage(current);
     if (!target) return;
-    stageMutation.mutate({ candidateId: candidate.id, stage: target });
+    stageMutation.mutate({candidateId: candidate.id, stage: target});
   }
 
   function handleReject(candidate: Candidate) {
-    stageMutation.mutate({ candidateId: candidate.id, stage: 'CANDIDATE_REJECTED' });
+    stageMutation.mutate({candidateId: candidate.id, stage: 'CANDIDATE_REJECTED'});
   }
 
   // ── Group candidates by stage ──────────────────────────────────────────
@@ -466,8 +461,8 @@ export default function KanbanPage() {
   if (isLoading) {
     return (
       <AppLayout activeMenuItem="recruitment">
-        <Center style={{ height: '60vh' }}>
-          <Loader size="lg" />
+        <Center style={{height: '60vh'}}>
+          <Loader size="lg"/>
         </Center>
       </AppLayout>
     );
@@ -476,8 +471,10 @@ export default function KanbanPage() {
   if (error) {
     return (
       <AppLayout activeMenuItem="recruitment">
-        <Alert icon={<IconAlertCircle size={16} />} color="red" title="Failed to load candidates" m="md">
-          {(error as Error & { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'An unexpected error occurred.'}
+        <Alert icon={<IconAlertCircle size={16}/>} color="red" title="Failed to load candidates" m="md">
+          {(error as Error & {
+            response?: { data?: { message?: string } }
+          })?.response?.data?.message ?? 'An unexpected error occurred.'}
         </Alert>
       </AppLayout>
     );
@@ -489,120 +486,120 @@ export default function KanbanPage() {
       <PermissionGate
         anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.CANDIDATE_VIEW]}
         fallback={
-          <Center style={{ height: '60vh' }}>
-            <Alert icon={<IconAlertCircle size={16} />} color="orange" title="Access Denied">
+          <Center style={{height: '60vh'}}>
+            <Alert icon={<IconAlertCircle size={16}/>} color="orange" title="Access Denied">
               You do not have permission to view the recruitment pipeline.
             </Alert>
           </Center>
         }
       >
-      <Stack gap="md" p="md">
-        {/* Page header */}
-        <Group justify="space-between" align="center">
-          <Group gap="sm" align="center">
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => router.push('/recruitment/jobs')}
-              aria-label="Back to job openings"
-            >
-              <IconArrowLeft size={18} />
-            </ActionIcon>
-            <div>
-              <Title order={3} className="skeuo-emboss">Recruitment Pipeline</Title>
-              <Text size="sm" c="dimmed">
-                Drag candidates between stages or use arrows to move forward / backward
-              </Text>
-            </div>
-          </Group>
-          <Group gap="sm">
-            {scoreMap.size > 0 && (
-              <Tooltip label="Sort candidates within each column by AI match score">
-                <Switch
-                  label="Rank by AI Score"
-                  size="xs"
-                  checked={sortByScore}
-                  onChange={(e) => setSortByScore(e.currentTarget.checked)}
-                />
-              </Tooltip>
-            )}
-            <Badge variant="outline" color="red" size="sm" className="badge-status">
-              Rejected: {rejectedCandidates.length}
-            </Badge>
-            <Badge variant="outline" color="gray" size="sm" className="badge-status">
-              Total: {candidates.length}
-            </Badge>
-          </Group>
-        </Group>
-
-        {/* Kanban board — drag-and-drop enabled, horizontally scrollable */}
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <ScrollArea type="scroll" scrollbarSize={8}>
-            <Group
-              align="flex-start"
-              gap="md"
-              wrap="nowrap"
-              style={{ paddingBottom: 16 }}
-            >
-              {PIPELINE_STAGES.map((stage) => (
-                <KanbanColumn
-                  key={stage}
-                  stage={stage}
-                  candidates={candidatesForStage(stage)}
-                  onMoveForward={handleMoveForward}
-                  onMoveBackward={handleMoveBackward}
-                  onReject={handleReject}
-                  onOpenOffer={(c) => setOfferCandidate(c)}
-                  isPending={stageMutation.isPending}
-                  pendingCandidateId={pendingCandidateId}
-                  scoreMap={scoreMap}
-                />
-              ))}
+        <Stack gap="md" p="md">
+          {/* Page header */}
+          <Group justify="space-between" align="center">
+            <Group gap="sm" align="center">
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                onClick={() => router.push('/recruitment/jobs')}
+                aria-label="Back to job openings"
+              >
+                <IconArrowLeft size={18}/>
+              </ActionIcon>
+              <div>
+                <Title order={3} className="skeuo-emboss">Recruitment Pipeline</Title>
+                <Text size="sm" c="dimmed">
+                  Drag candidates between stages or use arrows to move forward / backward
+                </Text>
+              </div>
             </Group>
-          </ScrollArea>
-        </DragDropContext>
-
-        {/* Rejected section (collapsed at bottom) */}
-        {rejectedCandidates.length > 0 && (
-          <Paper withBorder p="md" radius="md" mt="xs">
-            <Group mb="sm" gap="xs">
-              <Badge color="red" variant="light">
-                Rejected
+            <Group gap="sm">
+              {scoreMap.size > 0 && (
+                <Tooltip label="Sort candidates within each column by AI match score">
+                  <Switch
+                    label="Rank by AI Score"
+                    size="xs"
+                    checked={sortByScore}
+                    onChange={(e) => setSortByScore(e.currentTarget.checked)}
+                  />
+                </Tooltip>
+              )}
+              <Badge variant="outline" color="red" size="sm" className="badge-status">
+                Rejected: {rejectedCandidates.length}
               </Badge>
-              <Text size="sm" c="dimmed">
-                {rejectedCandidates.length} candidate{rejectedCandidates.length > 1 ? 's' : ''}
-              </Text>
+              <Badge variant="outline" color="gray" size="sm" className="badge-status">
+                Total: {candidates.length}
+              </Badge>
             </Group>
-            <Group gap="sm" wrap="wrap">
-              {rejectedCandidates.map((c) => (
-                <Paper key={c.id} withBorder p="xs" radius="sm" style={{ minWidth: 160 }}>
-                  <Text size="sm" fw={500} lineClamp={1}>
-                    {c.fullName}
-                  </Text>
-                  <Text size="xs" c="dimmed">
-                    {(c.currentStage as RecruitmentStage) === 'PANEL_REJECT' ? 'Panel Reject' : 'Rejected'}
-                  </Text>
-                  {c.appliedDate && (
-                    <Text size="xs" c="dimmed">
-                      {new Date(c.appliedDate).toLocaleDateString()}
-                    </Text>
-                  )}
-                </Paper>
-              ))}
-            </Group>
-          </Paper>
-        )}
-      </Stack>
+          </Group>
 
-      {/* Offer Letter Modal */}
-      {offerCandidate && (
-        <OfferModal
-          opened={!!offerCandidate}
-          onClose={() => setOfferCandidate(null)}
-          candidate={offerCandidate}
-          jobId={jobId}
-        />
-      )}
+          {/* Kanban board — drag-and-drop enabled, horizontally scrollable */}
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <ScrollArea type="scroll" scrollbarSize={8}>
+              <Group
+                align="flex-start"
+                gap="md"
+                wrap="nowrap"
+                style={{paddingBottom: 16}}
+              >
+                {PIPELINE_STAGES.map((stage) => (
+                  <KanbanColumn
+                    key={stage}
+                    stage={stage}
+                    candidates={candidatesForStage(stage)}
+                    onMoveForward={handleMoveForward}
+                    onMoveBackward={handleMoveBackward}
+                    onReject={handleReject}
+                    onOpenOffer={(c) => setOfferCandidate(c)}
+                    isPending={stageMutation.isPending}
+                    pendingCandidateId={pendingCandidateId}
+                    scoreMap={scoreMap}
+                  />
+                ))}
+              </Group>
+            </ScrollArea>
+          </DragDropContext>
+
+          {/* Rejected section (collapsed at bottom) */}
+          {rejectedCandidates.length > 0 && (
+            <Paper withBorder p="md" radius="md" mt="xs">
+              <Group mb="sm" gap="xs">
+                <Badge color="red" variant="light">
+                  Rejected
+                </Badge>
+                <Text size="sm" c="dimmed">
+                  {rejectedCandidates.length} candidate{rejectedCandidates.length > 1 ? 's' : ''}
+                </Text>
+              </Group>
+              <Group gap="sm" wrap="wrap">
+                {rejectedCandidates.map((c) => (
+                  <Paper key={c.id} withBorder p="xs" radius="sm" style={{minWidth: 160}}>
+                    <Text size="sm" fw={500} lineClamp={1}>
+                      {c.fullName}
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      {(c.currentStage as RecruitmentStage) === 'PANEL_REJECT' ? 'Panel Reject' : 'Rejected'}
+                    </Text>
+                    {c.appliedDate && (
+                      <Text size="xs" c="dimmed">
+                        {new Date(c.appliedDate).toLocaleDateString()}
+                      </Text>
+                    )}
+                  </Paper>
+                ))}
+              </Group>
+            </Paper>
+          )}
+        </Stack>
+
+        {/* Offer Letter Modal */}
+        {offerCandidate && (
+          <OfferModal
+            opened={!!offerCandidate}
+            onClose={() => setOfferCandidate(null)}
+            candidate={offerCandidate}
+            jobId={jobId}
+          />
+        )}
       </PermissionGate>
     </AppLayout>
   );

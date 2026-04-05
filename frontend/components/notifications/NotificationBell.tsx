@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { Bell, Check, CheckCheck, Trash2, X, ExternalLink } from 'lucide-react';
-import { notificationsApi } from '@/lib/api/notifications';
-import { Notification, NotificationType } from '@/lib/types/core/notifications';
-import { formatDistanceToNow } from 'date-fns';
-import { useWebSocket } from '@/lib/contexts/WebSocketContext';
-import { logger } from '@/lib/utils/logger';
+import React, {useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Bell, Check, CheckCheck, ExternalLink, Trash2, X} from 'lucide-react';
+import {notificationsApi} from '@/lib/api/notifications';
+import {Notification, NotificationType} from '@/lib/types/core/notifications';
+import {formatDistanceToNow} from 'date-fns';
+import {useWebSocket} from '@/lib/contexts/WebSocketContext';
+import {logger} from '@/lib/utils/logger';
 
 // Map notification types to their navigation routes
 const getNotificationRoute = (notification: Notification): string | null => {
-  const { type, relatedEntityId, actionUrl } = notification;
+  const {type, relatedEntityId, actionUrl} = notification;
 
   // If actionUrl is provided, use it
   if (actionUrl) {
@@ -60,7 +60,7 @@ export const NotificationBell: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { notifications: wsNotifications } = useWebSocket();
+  const {notifications: wsNotifications} = useWebSocket();
 
   useEffect(() => {
     loadUnreadCount();
@@ -72,8 +72,8 @@ export const NotificationBell: React.FC = () => {
       const latest = wsNotifications[0];
       // Avoid duplication if already in list (though unlikely with timestamps)
       setNotifications(prev => {
-        const exists = prev.some(n => 
-          n.title === latest.title && 
+        const exists = prev.some(n =>
+          n.title === latest.title &&
           Math.abs(new Date(n.createdAt).getTime() - (latest.timestamp || 0)) < 1000
         );
         if (exists) return prev;
@@ -92,7 +92,7 @@ export const NotificationBell: React.FC = () => {
           userId: (latest.metadata?.userId as string | undefined) || '',
           priority: latest.priority || 'NORMAL'
         };
-        
+
         setUnreadCount(c => c + 1);
         return [mapped, ...prev];
       });
@@ -140,7 +140,7 @@ export const NotificationBell: React.FC = () => {
     try {
       await notificationsApi.markAsRead(id);
       setNotifications(prev =>
-        prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
+        prev.map(n => (n.id === id ? {...n, isRead: true} : n))
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
@@ -151,7 +151,7 @@ export const NotificationBell: React.FC = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await notificationsApi.markAllAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      setNotifications(prev => prev.map(n => ({...n, isRead: true})));
       setUnreadCount(0);
     } catch (error) {
       logger.error('Failed to mark all as read:', error);
@@ -188,26 +188,29 @@ export const NotificationBell: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]  transition-colors"
       >
-        <Bell className="h-6 w-6" />
+        <Bell className="h-6 w-6"/>
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-danger-600 rounded-full">
+          <span
+            className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-danger-600 rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div
+          className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="row-between p-4 border-b">
             <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button onClick={handleMarkAllAsRead} className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
-                  <CheckCheck className="h-4 w-4" />
+                <button onClick={handleMarkAllAsRead}
+                        className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
+                  <CheckCheck className="h-4 w-4"/>
                 </button>
               )}
               <button onClick={() => setIsOpen(false)}>
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5"/>
               </button>
             </div>
           </div>
@@ -237,14 +240,14 @@ export const NotificationBell: React.FC = () => {
                             {notification.title}
                           </p>
                           {hasRoute && (
-                            <ExternalLink className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0" />
+                            <ExternalLink className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0"/>
                           )}
                         </div>
                         <p className="text-body-secondary mt-1 line-clamp-2">
                           {notification.message}
                         </p>
                         <p className="text-caption mt-1">
-                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(notification.createdAt), {addSuffix: true})}
                         </p>
                       </div>
                       <div className="flex gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -254,7 +257,7 @@ export const NotificationBell: React.FC = () => {
                             className="p-1 text-accent-600 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
                             title="Mark as read"
                           >
-                            <Check className="h-4 w-4" />
+                            <Check className="h-4 w-4"/>
                           </button>
                         )}
                         <button
@@ -262,7 +265,7 @@ export const NotificationBell: React.FC = () => {
                           className="p-1 text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-300"
                           title="Delete"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4"/>
                         </button>
                       </div>
                     </div>

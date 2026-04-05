@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // ============ SHARED FIELD SCHEMAS ============
 
@@ -35,7 +35,7 @@ const currencySchema = positiveNumberSchema.refine(
 
 export const payrollRunStatusSchema = z.enum(
   ['DRAFT', 'PROCESSING', 'PROCESSED', 'APPROVED', 'LOCKED'],
-  { errorMap: () => ({ message: 'Please select a valid status' }) }
+  {errorMap: () => ({message: 'Please select a valid status'})}
 );
 
 export const payrollRunSchema = z.object({
@@ -69,7 +69,7 @@ export type PayrollRunFormData = z.infer<typeof payrollRunSchema>;
 
 export const payslipStatusSchema = z.enum(
   ['DRAFT', 'FINALIZED', 'PAID', 'PENDING'],
-  { errorMap: () => ({ message: 'Please select a valid status' }) }
+  {errorMap: () => ({message: 'Please select a valid status'})}
 );
 
 export const payslipSchema = z.object({
@@ -127,7 +127,7 @@ export type SalaryComponent = z.infer<typeof salaryComponentSchema>;
 
 export const salaryStructureStatusSchema = z.enum(
   ['ACTIVE', 'INACTIVE', 'PENDING'],
-  { errorMap: () => ({ message: 'Please select a valid status' }) }
+  {errorMap: () => ({message: 'Please select a valid status'})}
 );
 
 export const salaryStructureSchema = z.object({

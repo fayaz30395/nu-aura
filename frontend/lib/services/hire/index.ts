@@ -6,3 +6,4 @@ export * from './onboarding.service';
 export * from './public-offer.service';
 export * from './recruitment.service';
 export * from './referral.service';
+export * from './scorecard.service';

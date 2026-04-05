@@ -1,13 +1,13 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import type {BiometricDeviceRequest} from '@/lib/services/hrms/biometricService';
 import {
+  biometricApiKeyService,
   biometricDeviceService,
   biometricPunchService,
-  biometricApiKeyService,
 } from '@/lib/services/hrms/biometricService';
-import type { BiometricDeviceRequest } from '@/lib/services/hrms/biometricService';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────
 
@@ -55,7 +55,7 @@ export function useRegisterDevice() {
     mutationFn: (data: BiometricDeviceRequest) =>
       biometricDeviceService.register(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.devices() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.devices()});
       notifications.show({
         title: 'Device Registered',
         message: 'Biometric device has been registered successfully.',
@@ -79,8 +79,8 @@ export function useUpdateDevice(id: string) {
     mutationFn: (data: BiometricDeviceRequest) =>
       biometricDeviceService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.devices() });
-      queryClient.invalidateQueries({ queryKey: biometricKeys.device(id) });
+      queryClient.invalidateQueries({queryKey: biometricKeys.devices()});
+      queryClient.invalidateQueries({queryKey: biometricKeys.device(id)});
       notifications.show({
         title: 'Device Updated',
         message: 'Device configuration has been updated.',
@@ -103,7 +103,7 @@ export function useDeactivateDevice() {
   return useMutation({
     mutationFn: (id: string) => biometricDeviceService.deactivate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.devices() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.devices()});
       notifications.show({
         title: 'Device Deactivated',
         message: 'The biometric device has been deactivated.',
@@ -126,7 +126,7 @@ export function useSyncDevice() {
   return useMutation({
     mutationFn: (id: string) => biometricDeviceService.sync(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.devices() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.devices()});
       notifications.show({
         title: 'Sync Initiated',
         message: 'Device sync has been triggered.',
@@ -169,7 +169,7 @@ export function useReprocessPunches() {
   return useMutation({
     mutationFn: () => biometricPunchService.reprocessFailed(),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.punches() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.punches()});
       notifications.show({
         title: 'Reprocessing Started',
         message: `${data.count} failed punches have been queued for reprocessing.`,
@@ -200,10 +200,10 @@ export function useGenerateApiKey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ keyName, deviceId }: { keyName: string; deviceId?: string }) =>
+    mutationFn: ({keyName, deviceId}: { keyName: string; deviceId?: string }) =>
       biometricApiKeyService.generate(keyName, deviceId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.apiKeys() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.apiKeys()});
       notifications.show({
         title: 'API Key Generated',
         message: 'Copy the key now - it will not be shown again.',
@@ -226,7 +226,7 @@ export function useRevokeApiKey() {
   return useMutation({
     mutationFn: (id: string) => biometricApiKeyService.revoke(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: biometricKeys.apiKeys() });
+      queryClient.invalidateQueries({queryKey: biometricKeys.apiKeys()});
       notifications.show({
         title: 'API Key Revoked',
         message: 'The API key has been revoked and can no longer be used.',

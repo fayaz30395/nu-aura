@@ -1,25 +1,22 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { customFieldsApi } from '@/lib/api/custom-fields';
-import {
-  CustomFieldDefinitionRequest,
-  EntityType,
-} from '@/lib/types/core/custom-fields';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {customFieldsApi} from '@/lib/api/custom-fields';
+import {CustomFieldDefinitionRequest, EntityType,} from '@/lib/types/core/custom-fields';
 
 // Query key factory
 const customFieldKeys = {
   all: ['customFields'] as const,
   definitions: () => [...customFieldKeys.all, 'definitions'] as const,
   definitionsList: (page: number, size: number) =>
-    [...customFieldKeys.definitions(), 'list', { page, size }] as const,
+    [...customFieldKeys.definitions(), 'list', {page, size}] as const,
   definitionDetail: (id: string) =>
     [...customFieldKeys.definitions(), 'detail', id] as const,
   definitionByCode: (code: string) =>
     [...customFieldKeys.definitions(), 'code', code] as const,
   byEntityType: (entityType: EntityType, activeOnly: boolean) =>
-    [...customFieldKeys.definitions(), 'entityType', entityType, { activeOnly }] as const,
+    [...customFieldKeys.definitions(), 'entityType', entityType, {activeOnly}] as const,
   grouped: (entityType: EntityType) =>
     [...customFieldKeys.definitions(), 'grouped', entityType] as const,
   listView: (entityType: EntityType) =>
@@ -27,7 +24,7 @@ const customFieldKeys = {
   fieldGroups: (entityType: EntityType) =>
     [...customFieldKeys.definitions(), 'groups', entityType] as const,
   search: (query: string, page: number, size: number) =>
-    [...customFieldKeys.definitions(), 'search', query, { page, size }] as const,
+    [...customFieldKeys.definitions(), 'search', query, {page, size}] as const,
 };
 
 // ========== Queries ==========
@@ -156,7 +153,7 @@ export function useCreateCustomFieldDefinition() {
     mutationFn: (data: CustomFieldDefinitionRequest) =>
       customFieldsApi.createDefinition(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: customFieldKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: customFieldKeys.definitions()});
       notifications.show({
         title: 'Success',
         message: 'Custom field created successfully',
@@ -183,7 +180,7 @@ export function useUpdateCustomFieldDefinition(definitionId: string) {
     mutationFn: (data: CustomFieldDefinitionRequest) =>
       customFieldsApi.updateDefinition(definitionId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: customFieldKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: customFieldKeys.definitions()});
       queryClient.invalidateQueries({
         queryKey: customFieldKeys.definitionDetail(definitionId),
       });
@@ -213,7 +210,7 @@ export function useDeleteCustomFieldDefinition() {
     mutationFn: (definitionId: string) =>
       customFieldsApi.deleteDefinition(definitionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: customFieldKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: customFieldKeys.definitions()});
       notifications.show({
         title: 'Success',
         message: 'Custom field deleted successfully',
@@ -240,7 +237,7 @@ export function useActivateCustomFieldDefinition() {
     mutationFn: (definitionId: string) =>
       customFieldsApi.activateDefinition(definitionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: customFieldKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: customFieldKeys.definitions()});
       notifications.show({
         title: 'Success',
         message: 'Custom field activated successfully',
@@ -267,7 +264,7 @@ export function useDeactivateCustomFieldDefinition() {
     mutationFn: (definitionId: string) =>
       customFieldsApi.deactivateDefinition(definitionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: customFieldKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: customFieldKeys.definitions()});
       notifications.show({
         title: 'Success',
         message: 'Custom field deactivated successfully',

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import {cn} from '@/lib/utils';
 
 export interface AdminPageContentProps {
   children: React.ReactNode;
@@ -18,9 +18,9 @@ export interface AdminPageContentProps {
  * This wrapper just provides styling and structure for the page content.
  */
 const AdminPageContent: React.FC<AdminPageContentProps> = ({
-  children,
-  className,
-}) => {
+                                                             children,
+                                                             className,
+                                                           }) => {
   return (
     <div className={cn(
       'w-full h-full',
@@ -31,4 +31,4 @@ const AdminPageContent: React.FC<AdminPageContentProps> = ({
   );
 };
 
-export { AdminPageContent };
+export {AdminPageContent};

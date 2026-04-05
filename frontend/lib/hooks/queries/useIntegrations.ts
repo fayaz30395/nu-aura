@@ -1,12 +1,8 @@
 'use client';
 
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { integrationService } from '@/lib/services/core/integration.service';
-import {
-  SmsTestRequest,
-  SmsSendRequest,
-  PaymentRequest,
-} from '@/lib/types/core/integration';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {integrationService} from '@/lib/services/core/integration.service';
+import {PaymentRequest, SmsSendRequest, SmsTestRequest,} from '@/lib/types/core/integration';
 
 export const integrationKeys = {
   all: ['integrations'] as const,

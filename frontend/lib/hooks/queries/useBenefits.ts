@@ -1,19 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { benefitsService } from '@/lib/services/hrms/benefits.service';
-import {
-  EnrollmentRequest,
-  ClaimRequest,
-  BenefitPlanRequest,
-} from '@/lib/types/hrms/benefits';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {benefitsService} from '@/lib/services/hrms/benefits.service';
+import {BenefitPlanRequest, ClaimRequest, EnrollmentRequest,} from '@/lib/types/hrms/benefits';
 
 // Query keys for cache management
 export const benefitKeys = {
   all: ['benefits'] as const,
   // Plans
   plans: () => [...benefitKeys.all, 'plans'] as const,
-  plansList: (page: number, size: number) => [...benefitKeys.plans(), 'list', { page, size }] as const,
+  plansList: (page: number, size: number) => [...benefitKeys.plans(), 'list', {page, size}] as const,
   plansActive: () => [...benefitKeys.plans(), 'active'] as const,
   plansByType: (type: string) => [...benefitKeys.plans(), 'type', type] as const,
   planDetail: (id: string) => [...benefitKeys.plans(), 'detail', id] as const,
@@ -98,8 +94,8 @@ export function useEnrollEmployee() {
   return useMutation({
     mutationFn: (data: EnrollmentRequest) => benefitsService.enrollEmployee(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId) });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.pendingEnrollments() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.pendingEnrollments()});
     },
   });
 }
@@ -109,11 +105,11 @@ export function useApproveEnrollment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ enrollmentId, comments }: { enrollmentId: string; comments?: string }) =>
+    mutationFn: ({enrollmentId, comments}: { enrollmentId: string; comments?: string }) =>
       benefitsService.approveEnrollment(enrollmentId, comments),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId) });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.pendingEnrollments() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.pendingEnrollments()});
     },
   });
 }
@@ -123,11 +119,11 @@ export function useTerminateEnrollment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ enrollmentId, reason }: { enrollmentId: string; reason: string }) =>
+    mutationFn: ({enrollmentId, reason}: { enrollmentId: string; reason: string }) =>
       benefitsService.terminateEnrollment(enrollmentId, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId) });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.activeEnrollments(data.employeeId) });
+      queryClient.invalidateQueries({queryKey: benefitKeys.enrollmentsByEmployee(data.employeeId)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.activeEnrollments(data.employeeId)});
     },
   });
 }
@@ -139,8 +135,8 @@ export function useSubmitBenefitClaim() {
   return useMutation({
     mutationFn: (data: ClaimRequest) => benefitsService.submitClaim(data),
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.pendingClaims() });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.claims() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.pendingClaims()});
+      queryClient.invalidateQueries({queryKey: benefitKeys.claims()});
     },
   });
 }
@@ -151,17 +147,17 @@ export function useProcessBenefitClaim() {
 
   return useMutation({
     mutationFn: ({
-      claimId,
-      approvedAmount,
-      comments,
-    }: {
+                   claimId,
+                   approvedAmount,
+                   comments,
+                 }: {
       claimId: string;
       approvedAmount: number;
       comments?: string;
     }) => benefitsService.processClaim(claimId, approvedAmount, comments),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.pendingClaims() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.pendingClaims()});
     },
   });
 }
@@ -173,8 +169,8 @@ export function useCreateBenefitPlan() {
   return useMutation({
     mutationFn: (data: BenefitPlanRequest) => benefitsService.createPlan(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.plans() });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.plansActive() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.plans()});
+      queryClient.invalidateQueries({queryKey: benefitKeys.plansActive()});
     },
   });
 }
@@ -184,11 +180,11 @@ export function useUpdateBenefitPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ planId, data }: { planId: string; data: BenefitPlanRequest }) =>
+    mutationFn: ({planId, data}: { planId: string; data: BenefitPlanRequest }) =>
       benefitsService.updatePlan(planId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: benefitKeys.planDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: benefitKeys.plans() });
+      queryClient.invalidateQueries({queryKey: benefitKeys.planDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.plans()});
     },
   });
 }

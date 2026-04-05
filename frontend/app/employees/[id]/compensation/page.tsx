@@ -1,40 +1,31 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import {
-  ChevronLeft,
-  TrendingUp,
-  TrendingDown,
-  ArrowRight,
-  Calendar,
-  DollarSign,
-  Award,
-  Briefcase,
-} from 'lucide-react';
-import { Skeleton } from '@mantine/core';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { EmptyState } from '@/components/ui';
-import { useEmployee } from '@/lib/hooks/queries/useEmployees';
-import { useEmployeeRevisionHistory } from '@/lib/hooks/queries/useCompensation';
-import type { SalaryRevision } from '@/lib/types/hrms/compensation';
-import { RevisionStatus, RevisionType } from '@/lib/types/hrms/compensation';
+import {useParams, useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {ArrowRight, Award, Briefcase, Calendar, ChevronLeft, DollarSign, TrendingDown, TrendingUp,} from 'lucide-react';
+import {Skeleton} from '@mantine/core';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui';
+import {useEmployee} from '@/lib/hooks/queries/useEmployees';
+import {useEmployeeRevisionHistory} from '@/lib/hooks/queries/useCompensation';
+import type {SalaryRevision} from '@/lib/types/hrms/compensation';
+import {RevisionStatus, RevisionType} from '@/lib/types/hrms/compensation';
 
 // ─── Animation variants ─────────────────────────────────────────────
 const pageEnter = {
-  hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+  hidden: {opacity: 0, y: 8},
+  visible: {opacity: 1, y: 0, transition: {duration: 0.25}},
 };
 
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.06 } },
+  visible: {transition: {staggerChildren: 0.06}},
 };
 
 const staggerItem = {
-  hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+  hidden: {opacity: 0, y: 8},
+  visible: {opacity: 1, y: 0, transition: {duration: 0.25}},
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────
@@ -125,18 +116,18 @@ function CompensationSkeleton() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Skeleton height={20} width={100} />
-        <Skeleton height={28} width={300} />
+        <Skeleton height={20} width={100}/>
+        <Skeleton height={28} width={300}/>
       </div>
-      {Array.from({ length: 4 }).map((_, i) => (
+      {Array.from({length: 4}).map((_, i) => (
         <div key={i} className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-6">
           <div className="flex items-center gap-4">
-            <Skeleton height={40} width={40} radius="xl" />
+            <Skeleton height={40} width={40} radius="xl"/>
             <div className="flex-1 space-y-2">
-              <Skeleton height={18} width="40%" />
-              <Skeleton height={14} width="60%" />
+              <Skeleton height={18} width="40%"/>
+              <Skeleton height={14} width="60%"/>
             </div>
-            <Skeleton height={24} width={80} />
+            <Skeleton height={24} width={80}/>
           </div>
         </div>
       ))}
@@ -145,7 +136,7 @@ function CompensationSkeleton() {
 }
 
 // ─── Revision Card ───────────────────────────────────────────────────
-function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst: boolean }) {
+function RevisionCard({revision, isFirst}: { revision: SalaryRevision; isFirst: boolean }) {
   const Icon = getRevisionIcon(revision.revisionType);
   const isPositive = (revision.incrementAmount ?? 0) >= 0;
 
@@ -172,7 +163,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
                   }
                 />
               </div>
-              <div className="flex-1 w-px bg-[var(--border-main)] mt-2" />
+              <div className="flex-1 w-px bg-[var(--border-main)] mt-2"/>
             </div>
 
             {/* Content */}
@@ -184,7 +175,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
                     {formatRevisionType(revision.revisionType)}
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <Calendar size={14} className="text-[var(--text-muted)]" />
+                    <Calendar size={14} className="text-[var(--text-muted)]"/>
                     <span className="text-caption">
                       Effective {formatDate(revision.effectiveDate)}
                     </span>
@@ -209,7 +200,7 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
                     {formatCurrency(revision.previousSalary, revision.currency)}
                   </p>
                 </div>
-                <ArrowRight size={16} className="text-[var(--text-muted)]" />
+                <ArrowRight size={16} className="text-[var(--text-muted)]"/>
                 <div className="text-center">
                   <p className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-1">
                     New CTC
@@ -221,9 +212,9 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
                 {revision.incrementPercentage != null && (
                   <div className="flex items-center gap-1 ml-2">
                     {isPositive ? (
-                      <TrendingUp size={14} className="text-success-600 dark:text-success-400" />
+                      <TrendingUp size={14} className="text-success-600 dark:text-success-400"/>
                     ) : (
-                      <TrendingDown size={14} className="text-danger-600 dark:text-danger-400" />
+                      <TrendingDown size={14} className="text-danger-600 dark:text-danger-400"/>
                     )}
                     <span
                       className={`text-sm font-semibold ${
@@ -241,15 +232,15 @@ function RevisionCard({ revision, isFirst }: { revision: SalaryRevision; isFirst
               {/* Designation change */}
               {revision.newDesignation && revision.previousDesignation &&
                 revision.newDesignation !== revision.previousDesignation && (
-                <div className="flex items-center gap-2 mb-4 text-caption">
-                  <Briefcase size={12} />
-                  <span>{revision.previousDesignation}</span>
-                  <ArrowRight size={12} />
-                  <span className="font-medium text-[var(--text-primary)]">
+                  <div className="flex items-center gap-2 mb-4 text-caption">
+                    <Briefcase size={12}/>
+                    <span>{revision.previousDesignation}</span>
+                    <ArrowRight size={12}/>
+                    <span className="font-medium text-[var(--text-primary)]">
                     {revision.newDesignation}
                   </span>
-                </div>
-              )}
+                  </div>
+                )}
 
               {/* Justification */}
               {revision.justification && (
@@ -273,8 +264,8 @@ export default function EmployeeCompensationPage() {
   const router = useRouter();
   const employeeId = params.id as string;
 
-  const { data: employee, isLoading: employeeLoading } = useEmployee(employeeId);
-  const { data: revisions, isLoading: revisionsLoading, isError } = useEmployeeRevisionHistory(
+  const {data: employee, isLoading: employeeLoading} = useEmployee(employeeId);
+  const {data: revisions, isLoading: revisionsLoading, isError} = useEmployeeRevisionHistory(
     employeeId,
     !!employeeId
   );
@@ -307,7 +298,7 @@ export default function EmployeeCompensationPage() {
           className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-md"
           aria-label="Back to employee profile"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16}/>
           Back to Profile
         </button>
 
@@ -324,7 +315,7 @@ export default function EmployeeCompensationPage() {
         </div>
 
         {isLoading ? (
-          <CompensationSkeleton />
+          <CompensationSkeleton/>
         ) : isError ? (
           <Card>
             <CardContent className="p-8 text-center">
@@ -335,7 +326,7 @@ export default function EmployeeCompensationPage() {
           </Card>
         ) : sortedRevisions.length === 0 ? (
           <EmptyState
-            icon={<DollarSign size={40} className="text-[var(--text-muted)]" />}
+            icon={<DollarSign size={40} className="text-[var(--text-muted)]"/>}
             title="No compensation records"
             description="No salary revisions have been recorded for this employee yet."
           />

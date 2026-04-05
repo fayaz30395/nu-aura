@@ -1,22 +1,19 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { loanService } from '@/lib/services/hrms/loan.service';
-import {
-  CreateLoanRequest,
-  LoanFilters,
-} from '@/lib/types/hrms/loan';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {loanService} from '@/lib/services/hrms/loan.service';
+import {CreateLoanRequest, LoanFilters,} from '@/lib/types/hrms/loan';
 
 // Query keys for cache management
 export const loanKeys = {
   all: ['loans'] as const,
   myLoans: (page: number, size: number) =>
-    [...loanKeys.all, 'my', { page, size }] as const,
+    [...loanKeys.all, 'my', {page, size}] as const,
   allLoans: (page: number, size: number, filters?: LoanFilters) =>
-    [...loanKeys.all, 'all', { page, size, filters }] as const,
+    [...loanKeys.all, 'all', {page, size, filters}] as const,
   detail: (id: string) => [...loanKeys.all, 'detail', id] as const,
   pending: (page: number, size: number) =>
-    [...loanKeys.all, 'pending', { page, size }] as const,
+    [...loanKeys.all, 'pending', {page, size}] as const,
   summary: () => [...loanKeys.all, 'summary'] as const,
 };
 
@@ -98,7 +95,7 @@ export function useCreateLoan() {
     mutationFn: (data: CreateLoanRequest) => loanService.createLoan(data),
     onSuccess: () => {
       // BUG-FIX: Use broader key prefix to invalidate all paginated loan lists
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -110,10 +107,10 @@ export function useUpdateLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateLoanRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateLoanRequest }) =>
       loanService.updateLoan(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -127,7 +124,7 @@ export function useDeleteLoan() {
   return useMutation({
     mutationFn: (id: string) => loanService.deleteLoan(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -141,7 +138,7 @@ export function useSubmitLoan() {
   return useMutation({
     mutationFn: (id: string) => loanService.submitLoan(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -153,10 +150,10 @@ export function useApproveLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approvedAmount }: { id: string; approvedAmount?: number }) =>
+    mutationFn: ({id, approvedAmount}: { id: string; approvedAmount?: number }) =>
       loanService.approveLoan(id, approvedAmount),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -168,10 +165,10 @@ export function useRejectLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       loanService.rejectLoan(id, reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -185,7 +182,7 @@ export function useDisburseLoan() {
   return useMutation({
     mutationFn: (id: string) => loanService.disburseLoan(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -197,10 +194,10 @@ export function useRecordLoanPayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, amount }: { id: string; amount: number }) =>
+    mutationFn: ({id, amount}: { id: string; amount: number }) =>
       loanService.recordPayment(id, amount),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }
@@ -214,7 +211,7 @@ export function useCloseLoan() {
   return useMutation({
     mutationFn: (id: string) => loanService.closeLoan(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({queryKey: loanKeys.all});
     },
   });
 }

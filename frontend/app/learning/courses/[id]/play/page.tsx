@@ -1,29 +1,27 @@
 'use client';
 
-import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import DOMPurify from 'dompurify';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { notFound } from 'next/navigation';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import Link from 'next/link';
-import { AppLayout } from '@/components/layout';
+import {AppLayout} from '@/components/layout';
 import {
+  Award,
+  BookOpen,
+  Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
-  Check,
   Circle,
-  Play,
-  FileText,
-  BookOpen,
-  HelpCircle,
   ExternalLink,
-  Award,
-  X,
+  FileText,
+  HelpCircle,
   Menu,
+  Play,
+  X,
 } from 'lucide-react';
-import { useCourseDetail, useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
+import {useCourseDetail, useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -52,10 +50,10 @@ const CONTENT_TYPE_LABEL = {
 };
 
 export default function CoursePlayerPage() {
-  const { id } = useParams<{ id: string }>();
+  const {id} = useParams<{ id: string }>();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.TRAINING_VIEW,
@@ -78,8 +76,8 @@ export default function CoursePlayerPage() {
   const videoProgressRef = useRef<number>(0);
 
   // Queries
-  const { data: course, isLoading } = useCourseDetail(id);
-  const { data: allEnrollments } = useMyEnrollments();
+  const {data: course, isLoading} = useCourseDetail(id);
+  const {data: allEnrollments} = useMyEnrollments();
   const updateProgressMutation = useUpdateCourseProgress();
 
   // Find current enrollment
@@ -114,14 +112,17 @@ export default function CoursePlayerPage() {
   }
 
   const markComplete = useCallback(async (contentId: string) => {
-    setContentStatus(prev => ({ ...prev, [contentId]: 'completed' }));
+    setContentStatus(prev => ({...prev, [contentId]: 'completed'}));
 
     // Update enrollment progress via API
     if (enrollment) {
-      const newCompleted = Object.values({ ...contentStatus, [contentId]: 'completed' }).filter(s => s === 'completed').length;
+      const newCompleted = Object.values({
+        ...contentStatus,
+        [contentId]: 'completed'
+      }).filter(s => s === 'completed').length;
       const pct = totalContents > 0 ? Math.round((newCompleted / totalContents) * 100) : 0;
       try {
-        await updateProgressMutation.mutateAsync({ enrollmentId: enrollment.id, progressPercent: pct });
+        await updateProgressMutation.mutateAsync({enrollmentId: enrollment.id, progressPercent: pct});
         if (pct === 100) setShowCompletion(true);
       } catch {
         // Progress save failed silently — local state still updated
@@ -134,10 +135,10 @@ export default function CoursePlayerPage() {
   const navigateTo = (contentId: string) => {
     setActiveContentId(contentId);
     if (contentStatus[contentId] !== 'completed') {
-      setContentStatus(prev => ({ ...prev, [contentId]: 'in_progress' }));
+      setContentStatus(prev => ({...prev, [contentId]: 'in_progress'}));
     }
     // Scroll to top on mobile
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
   };
 
   const goNext = () => {
@@ -172,7 +173,7 @@ export default function CoursePlayerPage() {
     if (!activeContent) {
       return (
         <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)]">
-          <BookOpen className="h-16 w-16 mb-4" />
+          <BookOpen className="h-16 w-16 mb-4"/>
           <p className="text-lg">Select content from the sidebar to begin</p>
         </div>
       );
@@ -194,7 +195,7 @@ export default function CoursePlayerPage() {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
-                  <Play className="h-16 w-16 opacity-30" />
+                  <Play className="h-16 w-16 opacity-30"/>
                   <span className="ml-4">Video not available</span>
                 </div>
               )}
@@ -209,7 +210,8 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check
+                  className="h-4 w-4"/> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -220,7 +222,7 @@ export default function CoursePlayerPage() {
           <div className="flex flex-col gap-4">
             <div className="prose max-w-none skeuo-card p-6">
               {sanitizedTextContent ? (
-                <div dangerouslySetInnerHTML={{ __html: sanitizedTextContent }} />
+                <div dangerouslySetInnerHTML={{__html: sanitizedTextContent}}/>
               ) : (
                 <p className="text-[var(--text-muted)] italic">No content available</p>
               )}
@@ -235,7 +237,8 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check
+                  className="h-4 w-4"/> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -254,7 +257,7 @@ export default function CoursePlayerPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-800"
                   >
-                    <ExternalLink className="h-3 w-3" />
+                    <ExternalLink className="h-3 w-3"/>
                     Open in new tab
                   </a>
                 </div>
@@ -265,8 +268,9 @@ export default function CoursePlayerPage() {
                 />
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] text-[var(--text-muted)]">
-                <FileText className="h-12 w-12 mb-2 opacity-30" />
+              <div
+                className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] text-[var(--text-muted)]">
+                <FileText className="h-12 w-12 mb-2 opacity-30"/>
                 <span>Document not available</span>
               </div>
             )}
@@ -280,7 +284,8 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check
+                  className="h-4 w-4"/> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -288,8 +293,9 @@ export default function CoursePlayerPage() {
 
       case 'QUIZ':
         return (
-          <div className="flex flex-col items-center justify-center h-64 bg-accent-250 rounded-lg border border-accent-400 gap-4">
-            <HelpCircle className="h-12 w-12 text-accent-600" />
+          <div
+            className="flex flex-col items-center justify-center h-64 bg-accent-250 rounded-lg border border-accent-400 gap-4">
+            <HelpCircle className="h-12 w-12 text-accent-600"/>
             <div className="text-center">
               <p className="font-semibold text-accent-900">Quiz: {activeContent.title}</p>
               <p className="text-sm text-accent-800 mt-1">
@@ -305,7 +311,8 @@ export default function CoursePlayerPage() {
                   : 'bg-accent-800 text-white hover:bg-accent-900'
               }`}
             >
-              {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Take Quiz'}
+              {contentStatus[activeContent.id] === 'completed' ? <><Check
+                className="h-4 w-4"/> Completed</> : 'Take Quiz'}
             </button>
           </div>
         );
@@ -313,8 +320,9 @@ export default function CoursePlayerPage() {
       case 'EXTERNAL_LINK':
         return (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] gap-4">
-              <ExternalLink className="h-12 w-12 text-[var(--text-muted)]" />
+            <div
+              className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] gap-4">
+              <ExternalLink className="h-12 w-12 text-[var(--text-muted)]"/>
               <p className="text-[var(--text-secondary)]">External resource</p>
               <a
                 href={activeContent.videoUrl || '#'}
@@ -335,7 +343,8 @@ export default function CoursePlayerPage() {
                     : 'bg-accent-600 text-white hover:bg-accent-700'
                 }`}
               >
-                {contentStatus[activeContent.id] === 'completed' ? <><Check className="h-4 w-4" /> Completed</> : 'Mark as Complete'}
+                {contentStatus[activeContent.id] === 'completed' ? <><Check
+                  className="h-4 w-4"/> Completed</> : 'Mark as Complete'}
               </button>
             </div>
           </div>
@@ -354,7 +363,8 @@ export default function CoursePlayerPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4" />
+          <div
+            className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
           <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>
@@ -381,205 +391,208 @@ export default function CoursePlayerPage() {
   return (
     <AppLayout>
       <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
-      {/* Top bar */}
-      <div className="row-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
-        <div className="flex items-center gap-4">
-          <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
-            <X className="h-5 w-5" />
-          </Link>
-          <button
-            onClick={() => setSidebarOpen(o => !o)}
-            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-          <div className="hidden md:block">
-            <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-xs">{course.title}</p>
-            {activeContent && (
-              <p className="text-caption">{activeContent.title}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          {updateProgressMutation.isPending && (
-            <span className="text-caption animate-pulse">Saving...</span>
-          )}
-          {/* Progress bar */}
-          <div className="hidden sm:flex items-center gap-2">
-            <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-accent-600 rounded-full transition-all duration-500"
-                style={{ width: `${overallProgress}%` }}
-              />
-            </div>
-            <span className="text-caption font-medium">{overallProgress}%</span>
-          </div>
-          <div className="flex items-center gap-1">
+        {/* Top bar */}
+        <div className="row-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">
+          <div className="flex items-center gap-4">
+            <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+              <X className="h-5 w-5"/>
+            </Link>
             <button
-              onClick={goPrev}
-              disabled={activeContentIdx <= 0}
-              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              title="Previous"
+              onClick={() => setSidebarOpen(o => !o)}
+              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <Menu className="h-5 w-5"/>
             </button>
-            <button
-              onClick={goNext}
-              disabled={activeContentIdx >= allContents.length - 1}
-              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Next"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        {sidebarOpen && (
-          <aside className="w-72 bg-[var(--bg-card)] border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
-            <div className="p-4 divider-b">
-              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Course Content</p>
-              <p className="text-caption mt-0.5">
-                {completedCount} / {totalContents} completed
-              </p>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {course.modules?.map((mod, modIdx) => (
-                <div key={mod.id}>
-                  <div className="px-4 py-2 bg-[var(--bg-surface)] divider-b">
-                    <p className="text-xs font-semibold text-[var(--text-secondary)]">
-                      {modIdx + 1}. {mod.title}
-                    </p>
-                  </div>
-                  {mod.contents?.map((content, contentIdx) => {
-                    const status = contentStatus[content.id] ?? 'not_started';
-                    const isActive = content.id === activeContentId;
-                    const Icon = CONTENT_TYPE_ICON[content.contentType] ?? FileText;
-                    return (
-                      <button
-                        key={content.id}
-                        onClick={() => navigateTo(content.id)}
-                        className={`w-full flex items-start gap-4 px-4 py-4 text-left transition-colors border-b border-[var(--border-main)] ${
-                          isActive
-                            ? 'bg-accent-50 border-l-2 border-l-accent-600'
-                            : 'hover:bg-[var(--bg-surface)]'
-                        }`}
-                      >
-                        <div className="shrink-0 mt-0.5">
-                          {status === 'completed' ? (
-                            <CheckCircle2 className="h-4 w-4 text-success-500" />
-                          ) : status === 'in_progress' ? (
-                            <div className="h-4 w-4 rounded-full border-2 border-accent-500 bg-accent-100" />
-                          ) : (
-                            <Circle className="h-4 w-4 text-[var(--text-muted)]" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-xs font-medium truncate ${isActive ? 'text-accent-700' : 'text-[var(--text-primary)]'}`}>
-                            {contentIdx + 1}. {content.title}
-                          </p>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <Icon className="h-3 w-3 text-[var(--text-muted)]" />
-                            <span className="text-caption">
-                              {CONTENT_TYPE_LABEL[content.contentType]}
-                              {content.durationMinutes ? ` · ${content.durationMinutes}m` : ''}
-                            </span>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </aside>
-        )}
-
-        {/* Main content area */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {activeContent ? (
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-4">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{activeContent.title}</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  {(() => {
-                    const Icon = CONTENT_TYPE_ICON[activeContent.contentType] ?? FileText;
-                    return <Icon className="h-4 w-4 text-[var(--text-muted)]" />;
-                  })()}
-                  <span className="text-body-muted">
-                    {CONTENT_TYPE_LABEL[activeContent.contentType]}
-                    {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
-                  </span>
-                  {contentStatus[activeContent.id] === 'completed' && (
-                    <span className="flex items-center gap-1 text-xs text-success-600 font-medium ml-2">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> Completed
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {renderContent()}
-
-              {/* Navigation buttons */}
-              <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border-main)]">
-                <button
-                  onClick={goPrev}
-                  disabled={activeContentIdx <= 0}
-                  className="flex items-center gap-1 px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <ChevronLeft className="h-4 w-4" /> Previous
-                </button>
-                <button
-                  onClick={goNext}
-                  disabled={activeContentIdx >= allContents.length - 1}
-                  className="flex items-center gap-1 px-4 py-2 bg-accent-600 text-white text-sm rounded-md hover:bg-accent-700 disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  Next <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] gap-4">
-              <BookOpen className="h-16 w-16 opacity-20" />
-              <p>Select content to begin learning</p>
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* Completion overlay */}
-      {showCompletion && (
-        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-          <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-success-100 rounded-full">
-                <Award className="h-12 w-12 text-success-600" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
-            <p className="text-[var(--text-muted)] text-sm mb-6">
-              You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
-              {enrollment?.certificateId && ' Your certificate has been issued.'}
-            </p>
-            <div className="flex flex-col gap-2">
-              {enrollment?.certificateId && (
-                <button className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                  Download Certificate
-                </button>
+            <div className="hidden md:block">
+              <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-xs">{course.title}</p>
+              {activeContent && (
+                <p className="text-caption">{activeContent.title}</p>
               )}
-              <Link
-                href="/learning"
-                className="block w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md font-medium hover:bg-[var(--bg-surface)] text-center"
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {updateProgressMutation.isPending && (
+              <span className="text-caption animate-pulse">Saving...</span>
+            )}
+            {/* Progress bar */}
+            <div className="hidden sm:flex items-center gap-2">
+              <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-accent-600 rounded-full transition-all duration-500"
+                  style={{width: `${overallProgress}%`}}
+                />
+              </div>
+              <span className="text-caption font-medium">{overallProgress}%</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={goPrev}
+                disabled={activeContentIdx <= 0}
+                className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                title="Previous"
               >
-                Back to Learning
-              </Link>
+                <ChevronLeft className="h-4 w-4"/>
+              </button>
+              <button
+                onClick={goNext}
+                disabled={activeContentIdx >= allContents.length - 1}
+                className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Next"
+              >
+                <ChevronRight className="h-4 w-4"/>
+              </button>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar */}
+          {sidebarOpen && (
+            <aside
+              className="w-72 bg-[var(--bg-card)] border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
+              <div className="p-4 divider-b">
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Course Content</p>
+                <p className="text-caption mt-0.5">
+                  {completedCount} / {totalContents} completed
+                </p>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                {course.modules?.map((mod, modIdx) => (
+                  <div key={mod.id}>
+                    <div className="px-4 py-2 bg-[var(--bg-surface)] divider-b">
+                      <p className="text-xs font-semibold text-[var(--text-secondary)]">
+                        {modIdx + 1}. {mod.title}
+                      </p>
+                    </div>
+                    {mod.contents?.map((content, contentIdx) => {
+                      const status = contentStatus[content.id] ?? 'not_started';
+                      const isActive = content.id === activeContentId;
+                      const Icon = CONTENT_TYPE_ICON[content.contentType] ?? FileText;
+                      return (
+                        <button
+                          key={content.id}
+                          onClick={() => navigateTo(content.id)}
+                          className={`w-full flex items-start gap-4 px-4 py-4 text-left transition-colors border-b border-[var(--border-main)] ${
+                            isActive
+                              ? 'bg-accent-50 border-l-2 border-l-accent-600'
+                              : 'hover:bg-[var(--bg-surface)]'
+                          }`}
+                        >
+                          <div className="shrink-0 mt-0.5">
+                            {status === 'completed' ? (
+                              <CheckCircle2 className="h-4 w-4 text-success-500"/>
+                            ) : status === 'in_progress' ? (
+                              <div className="h-4 w-4 rounded-full border-2 border-accent-500 bg-accent-100"/>
+                            ) : (
+                              <Circle className="h-4 w-4 text-[var(--text-muted)]"/>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className={`text-xs font-medium truncate ${isActive ? 'text-accent-700' : 'text-[var(--text-primary)]'}`}>
+                              {contentIdx + 1}. {content.title}
+                            </p>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <Icon className="h-3 w-3 text-[var(--text-muted)]"/>
+                              <span className="text-caption">
+                              {CONTENT_TYPE_LABEL[content.contentType]}
+                                {content.durationMinutes ? ` · ${content.durationMinutes}m` : ''}
+                            </span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </aside>
+          )}
+
+          {/* Main content area */}
+          <main className="flex-1 overflow-y-auto p-6">
+            {activeContent ? (
+              <div className="max-w-4xl mx-auto">
+                <div className="mb-4">
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)]">{activeContent.title}</h2>
+                  <div className="flex items-center gap-2 mt-1">
+                    {(() => {
+                      const Icon = CONTENT_TYPE_ICON[activeContent.contentType] ?? FileText;
+                      return <Icon className="h-4 w-4 text-[var(--text-muted)]"/>;
+                    })()}
+                    <span className="text-body-muted">
+                    {CONTENT_TYPE_LABEL[activeContent.contentType]}
+                      {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
+                  </span>
+                    {contentStatus[activeContent.id] === 'completed' && (
+                      <span className="flex items-center gap-1 text-xs text-success-600 font-medium ml-2">
+                      <CheckCircle2 className="h-3.5 w-3.5"/> Completed
+                    </span>
+                    )}
+                  </div>
+                </div>
+
+                {renderContent()}
+
+                {/* Navigation buttons */}
+                <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border-main)]">
+                  <button
+                    onClick={goPrev}
+                    disabled={activeContentIdx <= 0}
+                    className="flex items-center gap-1 px-4 py-2 text-body-secondary hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    <ChevronLeft className="h-4 w-4"/> Previous
+                  </button>
+                  <button
+                    onClick={goNext}
+                    disabled={activeContentIdx >= allContents.length - 1}
+                    className="flex items-center gap-1 px-4 py-2 bg-accent-600 text-white text-sm rounded-md hover:bg-accent-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    Next <ChevronRight className="h-4 w-4"/>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] gap-4">
+                <BookOpen className="h-16 w-16 opacity-20"/>
+                <p>Select content to begin learning</p>
+              </div>
+            )}
+          </main>
+        </div>
+
+        {/* Completion overlay */}
+        {showCompletion && (
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
+            <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="p-4 bg-success-100 rounded-full">
+                  <Award className="h-12 w-12 text-success-600"/>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
+              <p className="text-[var(--text-muted)] text-sm mb-6">
+                You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
+                {enrollment?.certificateId && ' Your certificate has been issued.'}
+              </p>
+              <div className="flex flex-col gap-2">
+                {enrollment?.certificateId && (
+                  <button
+                    className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    Download Certificate
+                  </button>
+                )}
+                <Link
+                  href="/learning"
+                  className="block w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md font-medium hover:bg-[var(--bg-surface)] text-center"
+                >
+                  Back to Learning
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AppLayout>
   );

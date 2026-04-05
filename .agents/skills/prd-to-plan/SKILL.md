@@ -5,17 +5,20 @@ description: Turn a PRD into a multi-phase implementation plan using tracer-bull
 
 # PRD to Plan
 
-Break a PRD into a phased implementation plan using vertical slices (tracer bullets). Output is a Markdown file in `./plans/`.
+Break a PRD into a phased implementation plan using vertical slices (tracer bullets). Output is a
+Markdown file in `./plans/`.
 
 ## Process
 
 ### 1. Confirm the PRD is in context
 
-The PRD should already be in the conversation. If it isn't, ask the user to paste it or point you to the file.
+The PRD should already be in the conversation. If it isn't, ask the user to paste it or point you to
+the file.
 
 ### 2. Explore the codebase
 
-If you have not already explored the codebase, do so to understand the current architecture, existing patterns, and integration layers.
+If you have not already explored the codebase, do so to understand the current architecture,
+existing patterns, and integration layers.
 
 ### 3. Identify durable architectural decisions
 
@@ -31,7 +34,8 @@ These go in the plan header so every phase can reference them.
 
 ### 4. Draft vertical slices
 
-Break the PRD into **tracer bullet** phases. Each phase is a thin vertical slice that cuts through ALL integration layers end-to-end, NOT a horizontal slice of one layer.
+Break the PRD into **tracer bullet** phases. Each phase is a thin vertical slice that cuts through
+ALL integration layers end-to-end, NOT a horizontal slice of one layer.
 
 <vertical-slice-rules>
 - Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
@@ -57,7 +61,8 @@ Iterate until the user approves the breakdown.
 
 ### 6. Write the plan file
 
-Create `./plans/` if it doesn't exist. Write the plan as a Markdown file named after the feature (e.g. `./plans/user-onboarding.md`). Use the template below.
+Create `./plans/` if it doesn't exist. Write the plan as a Markdown file named after the feature (
+e.g. `./plans/user-onboarding.md`). Use the template below.
 
 <plan-template>
 # Plan: <Feature Name>
@@ -81,7 +86,8 @@ Durable decisions that apply across all phases:
 
 ### What to build
 
-A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer implementation.
+A concise description of this vertical slice. Describe the end-to-end behavior, not layer-by-layer
+implementation.
 
 ### Acceptance criteria
 

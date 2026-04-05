@@ -1,21 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { LeaveType, LeaveTypeRequest, AccrualType, GenderSpecific } from '@/lib/types/hrms/leave';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AccrualType, GenderSpecific, LeaveType, LeaveTypeRequest} from '@/lib/types/hrms/leave';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui';
 import {
-  useLeaveTypes,
-  useCreateLeaveType,
-  useUpdateLeaveType,
-  useDeleteLeaveType,
   useActivateLeaveType,
+  useCreateLeaveType,
   useDeactivateLeaveType,
+  useDeleteLeaveType,
+  useLeaveTypes,
+  useUpdateLeaveType,
 } from '@/lib/hooks/queries/useLeaves';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -26,17 +26,17 @@ const leaveTypeFormSchema = z.object({
   description: z.string().optional().or(z.literal('')),
   isPaid: z.boolean().default(true),
   colorCode: z.string().default('#3B82F6'),
-  annualQuota: z.number({ coerce: true }).min(0).default(0),
-  maxConsecutiveDays: z.number({ coerce: true }).optional(),
-  minDaysNotice: z.number({ coerce: true }).min(0).default(0),
-  maxDaysPerRequest: z.number({ coerce: true }).optional(),
+  annualQuota: z.number({coerce: true}).min(0).default(0),
+  maxConsecutiveDays: z.number({coerce: true}).optional(),
+  minDaysNotice: z.number({coerce: true}).min(0).default(0),
+  maxDaysPerRequest: z.number({coerce: true}).optional(),
   isCarryForwardAllowed: z.boolean().default(false),
-  maxCarryForwardDays: z.number({ coerce: true }).optional(),
+  maxCarryForwardDays: z.number({coerce: true}).optional(),
   isEncashable: z.boolean().default(false),
   requiresDocument: z.boolean().default(false),
-  applicableAfterDays: z.number({ coerce: true }).min(0).default(0),
+  applicableAfterDays: z.number({coerce: true}).min(0).default(0),
   accrualType: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY', 'NO_ACCRUAL']).optional(),
-  accrualRate: z.number({ coerce: true }).optional(),
+  accrualRate: z.number({coerce: true}).optional(),
   genderSpecific: z.enum(['ALL', 'MALE', 'FEMALE']).default('ALL'),
 });
 
@@ -44,8 +44,8 @@ type LeaveTypeFormData = z.infer<typeof leaveTypeFormSchema>;
 
 export default function LeaveTypesManagementPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
   const [showModal, setShowModal] = useState(false);
   const [editingLeaveType, setEditingLeaveType] = useState<LeaveType | null>(null);
   const [uiError, setUiError] = useState<string | null>(null);
@@ -53,7 +53,7 @@ export default function LeaveTypesManagementPage() {
   const [leaveTypeToDelete, setLeaveTypeToDelete] = useState<LeaveType | null>(null);
 
   // React Query hooks
-  const { data: page, isLoading, error: queryError } = useLeaveTypes(0, 100);
+  const {data: page, isLoading, error: queryError} = useLeaveTypes(0, 100);
   const createMutation = useCreateLeaveType();
   const updateMutation = useUpdateLeaveType();
   const deleteMutation = useDeleteLeaveType();
@@ -124,7 +124,7 @@ export default function LeaveTypesManagementPage() {
 
     if (editingLeaveType) {
       updateMutation.mutate(
-        { id: editingLeaveType.id, data: submitData },
+        {id: editingLeaveType.id, data: submitData},
         {
           onSuccess: () => {
             resetForm();
@@ -291,113 +291,121 @@ export default function LeaveTypesManagementPage() {
         <div className="skeuo-card overflow-hidden">
           <table className="table-aura">
             <thead className="skeuo-table-header">
-              <tr>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Code & Name
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Annual Quota
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Properties
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
+            <tr>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Code & Name
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Annual Quota
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Properties
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Status
+              </th>
+              <th
+                className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
             </thead>
             <tbody className="bg-[var(--bg-card)] divide-y divide-[var(--border-main)]">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
-                    Loading leave types...
-                  </td>
-                </tr>
-              ) : leaveTypes.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
-                    <div className="flex flex-col items-center">
-                      <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
-                      <p className="text-[var(--text-secondary)]">No leave types configured</p>
-                      <p className="text-body-muted mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
+                  Loading leave types...
+                </td>
+              </tr>
+            ) : leaveTypes.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
+                  <div className="flex flex-col items-center">
+                    <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    <p className="text-[var(--text-secondary)]">No leave types configured</p>
+                    <p className="text-body-muted mt-1">Click &quot;Add Leave Type&quot; to create your first leave
+                      type</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              leaveTypes.map((leaveType) => (
+                <tr key={leaveType.id}
+                    className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div
+                        className="h-8 w-8 rounded-full mr-4"
+                        style={{backgroundColor: leaveType.colorCode || '#3B82F6'}}
+                      />
+                      <div>
+                        <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>
+                        <div className="text-body-muted">{leaveType.leaveCode}</div>
+                      </div>
                     </div>
                   </td>
-                </tr>
-              ) : (
-                leaveTypes.map((leaveType) => (
-                  <tr key={leaveType.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div
-                          className="h-8 w-8 rounded-full mr-4"
-                          style={{ backgroundColor: leaveType.colorCode || '#3B82F6' }}
-                        />
-                        <div>
-                          <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>
-                          <div className="text-body-muted">{leaveType.leaveCode}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'}`}>
                         {leaveType.isPaid ? 'Paid' : 'Unpaid'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
-                      {leaveType.annualQuota ? `${leaveType.annualQuota} days` : '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {leaveType.isCarryForwardAllowed && (
-                          <span className="px-2 py-1 text-xs bg-accent-100 text-accent-800 rounded">Carry Forward</span>
-                        )}
-                        {leaveType.isEncashable && (
-                          <span className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">Encashable</span>
-                        )}
-                        {leaveType.requiresDocument && (
-                          <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 rounded">Requires Doc</span>
-                        )}
-                        {leaveType.genderSpecific && leaveType.genderSpecific !== 'ALL' && (
-                          <span className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">{leaveType.genderSpecific}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isActive ? 'bg-success-100 text-success-800' : 'bg-danger-100 text-danger-800'}`}>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
+                    {leaveType.annualQuota ? `${leaveType.annualQuota} days` : '-'}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {leaveType.isCarryForwardAllowed && (
+                        <span className="px-2 py-1 text-xs bg-accent-100 text-accent-800 rounded">Carry Forward</span>
+                      )}
+                      {leaveType.isEncashable && (
+                        <span className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">Encashable</span>
+                      )}
+                      {leaveType.requiresDocument && (
+                        <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 rounded">Requires Doc</span>
+                      )}
+                      {leaveType.genderSpecific && leaveType.genderSpecific !== 'ALL' && (
+                        <span
+                          className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">{leaveType.genderSpecific}</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isActive ? 'bg-success-100 text-success-800' : 'bg-danger-100 text-danger-800'}`}>
                         {leaveType.isActive ? 'Active' : 'Inactive'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleEdit(leaveType)}
-                        className="text-accent-700 hover:text-accent-900 mr-4"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleToggleActive(leaveType)}
-                        className="text-warning-600 hover:text-warning-900 mr-4"
-                      >
-                        {leaveType.isActive ? 'Deactivate' : 'Activate'}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(leaveType)}
-                        className="text-danger-600 hover:text-danger-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleEdit(leaveType)}
+                      className="text-accent-700 hover:text-accent-900 mr-4"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleToggleActive(leaveType)}
+                      className="text-warning-600 hover:text-warning-900 mr-4"
+                    >
+                      {leaveType.isActive ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(leaveType)}
+                      className="text-danger-600 hover:text-danger-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
             </tbody>
           </table>
         </div>
@@ -687,7 +695,8 @@ export default function LeaveTypesManagementPage() {
                       disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
                       className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
-                      {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave Type
+                      {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave
+                      Type
                     </button>
                   </div>
                 </form>

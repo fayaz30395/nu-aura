@@ -1,47 +1,40 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
   BookOpen,
-  Plus,
-  Trash2,
+  Brain,
   ChevronDown,
   ChevronRight,
-  Star,
-  Search,
-  RefreshCw,
   Info,
+  Plus,
+  RefreshCw,
+  Search,
   Shield,
-  TrendingUp,
+  Star,
   Target,
-  Brain,
+  Trash2,
+  TrendingUp,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import {
-  useAllReviews,
-  useDeleteCompetency,
-  usePerformanceAllCycles,
-} from '@/lib/hooks/queries/usePerformance';
-import {
-  useReviewCompetencies,
-  useAddCompetency,
-} from '@/lib/hooks/useCompetency';
-import type { ReviewCompetency, CompetencyCategory } from '@/lib/types/grow/performance';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {useAllReviews, useDeleteCompetency, usePerformanceAllCycles,} from '@/lib/hooks/queries/usePerformance';
+import {useAddCompetency, useReviewCompetencies,} from '@/lib/hooks/useCompetency';
+import type {CompetencyCategory, ReviewCompetency} from '@/lib/types/grow/performance';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const CATEGORY_OPTIONS: { value: CompetencyCategory; label: string; icon: React.ReactNode }[] = [
-  { value: 'TECHNICAL', label: 'Technical', icon: <Target size={14} /> },
-  { value: 'BEHAVIORAL', label: 'Behavioral', icon: <Brain size={14} /> },
-  { value: 'LEADERSHIP', label: 'Leadership', icon: <TrendingUp size={14} /> },
-  { value: 'DOMAIN', label: 'Domain', icon: <BookOpen size={14} /> },
-  { value: 'PROBLEM_SOLVING', label: 'Problem Solving', icon: <Shield size={14} /> },
+  {value: 'TECHNICAL', label: 'Technical', icon: <Target size={14}/>},
+  {value: 'BEHAVIORAL', label: 'Behavioral', icon: <Brain size={14}/>},
+  {value: 'LEADERSHIP', label: 'Leadership', icon: <TrendingUp size={14}/>},
+  {value: 'DOMAIN', label: 'Domain', icon: <BookOpen size={14}/>},
+  {value: 'PROBLEM_SOLVING', label: 'Problem Solving', icon: <Shield size={14}/>},
 ];
 
 const CATEGORY_COLORS: Record<CompetencyCategory, string> = {
@@ -66,7 +59,7 @@ type CompetencyFormData = z.infer<typeof competencySchema>;
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function RatingStars({ value }: { value: number }) {
+function RatingStars({value}: { value: number }) {
   return (
     <span className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -85,7 +78,7 @@ function RatingStars({ value }: { value: number }) {
   );
 }
 
-function CategoryBadge({ category }: { category: CompetencyCategory }) {
+function CategoryBadge({category}: { category: CompetencyCategory }) {
   const label = CATEGORY_OPTIONS.find((o) => o.value === category)?.label ?? category;
   return (
     <span
@@ -99,16 +92,16 @@ function CategoryBadge({ category }: { category: CompetencyCategory }) {
 // ─── Review Competency Panel ───────────────────────────────────────────────────
 
 function ReviewCompetencyPanel({
-  reviewId,
-  employeeName,
-  onAddClick,
-}: {
+                                 reviewId,
+                                 employeeName,
+                                 onAddClick,
+                               }: {
   reviewId: string;
   employeeName: string;
   onAddClick: (reviewId: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const { data: competencies = [], isLoading, refetch } = useReviewCompetencies(reviewId, expanded);
+  const {data: competencies = [], isLoading, refetch} = useReviewCompetencies(reviewId, expanded);
   const deleteCompetencyMutation = useDeleteCompetency();
   const [deleteTarget, setDeleteTarget] = useState<ReviewCompetency | null>(null);
 
@@ -128,7 +121,7 @@ function ReviewCompetencyPanel({
 
   const handleDelete = () => {
     if (!deleteTarget) return;
-    deleteCompetencyMutation.mutate({ id: deleteTarget.id, reviewId });
+    deleteCompetencyMutation.mutate({id: deleteTarget.id, reviewId});
     setDeleteTarget(null);
   };
 
@@ -141,9 +134,9 @@ function ReviewCompetencyPanel({
       >
         <div className="flex items-center gap-4">
           {expanded ? (
-            <ChevronDown size={16} className="text-[var(--text-muted)]" />
+            <ChevronDown size={16} className="text-[var(--text-muted)]"/>
           ) : (
-            <ChevronRight size={16} className="text-[var(--text-muted)]" />
+            <ChevronRight size={16} className="text-[var(--text-muted)]"/>
           )}
           <span className="font-medium text-[var(--text-primary)]">{employeeName}</span>
           <span className="text-caption">
@@ -164,7 +157,7 @@ function ReviewCompetencyPanel({
               }}
               className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent-700 text-white text-xs font-medium hover:bg-accent-800 transition-colors cursor-pointer"
             >
-              <Plus size={12} />
+              <Plus size={12}/>
               Add
             </button>
           </PermissionGate>
@@ -176,12 +169,12 @@ function ReviewCompetencyPanel({
         <div className="bg-[var(--bg-surface)] px-6 py-4">
           {isLoading ? (
             <div className="flex items-center gap-2 py-4 text-[var(--text-muted)]">
-              <RefreshCw size={14} className="animate-spin" />
+              <RefreshCw size={14} className="animate-spin"/>
               <span className="text-sm">Loading competencies…</span>
             </div>
           ) : competencies.length === 0 ? (
             <div className="flex items-center gap-2 py-6 text-[var(--text-muted)]">
-              <Info size={16} />
+              <Info size={16}/>
               <span className="text-sm">No competencies added yet.</span>
               <button
                 onClick={() => refetch()}
@@ -208,7 +201,7 @@ function ReviewCompetencyPanel({
                             <span className="font-medium text-sm text-[var(--text-primary)]">
                               {comp.competencyName}
                             </span>
-                            <CategoryBadge category={comp.category} />
+                            <CategoryBadge category={comp.category}/>
                           </div>
                           {comp.comments && (
                             <p className="text-caption mt-1 line-clamp-2">
@@ -216,7 +209,7 @@ function ReviewCompetencyPanel({
                             </p>
                           )}
                           <div className="mt-2">
-                            <RatingStars value={comp.rating} />
+                            <RatingStars value={comp.rating}/>
                           </div>
                         </div>
                         <PermissionGate permission={Permissions.REVIEW_DELETE}>
@@ -224,7 +217,7 @@ function ReviewCompetencyPanel({
                             onClick={() => setDeleteTarget(comp)}
                             className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={14}/>
                           </button>
                         </PermissionGate>
                       </div>
@@ -253,10 +246,10 @@ function ReviewCompetencyPanel({
 // ─── Add Competency Modal ─────────────────────────────────────────────────────
 
 function AddCompetencyModal({
-  reviewId,
-  isOpen,
-  onClose,
-}: {
+                              reviewId,
+                              isOpen,
+                              onClose,
+                            }: {
   reviewId: string | null;
   isOpen: boolean;
   onClose: () => void;
@@ -267,7 +260,7 @@ function AddCompetencyModal({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CompetencyFormData>({
     resolver: zodResolver(competencySchema),
     defaultValues: {
@@ -308,7 +301,7 @@ function AddCompetencyModal({
 
         <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
           {/* Hidden reviewId */}
-          <input type="hidden" {...register('reviewId')} value={reviewId ?? ''} />
+          <input type="hidden" {...register('reviewId')} value={reviewId ?? ''}/>
 
           {/* Competency Name */}
           <div>
@@ -401,11 +394,11 @@ function AddCompetencyModal({
 
 // ─── Category Summary Bar ─────────────────────────────────────────────────────
 
-function CategorySummaryBar({ competencies }: { competencies: ReviewCompetency[] }) {
+function CategorySummaryBar({competencies}: { competencies: ReviewCompetency[] }) {
   const byCategory = useMemo(() => {
     const map: Record<string, { count: number; avgRating: number }> = {};
     for (const c of competencies) {
-      if (!map[c.category]) map[c.category] = { count: 0, avgRating: 0 };
+      if (!map[c.category]) map[c.category] = {count: 0, avgRating: 0};
       map[c.category].count++;
       map[c.category].avgRating += c.rating;
     }
@@ -506,7 +499,7 @@ export default function CompetencyFrameworkPage() {
                   disabled={filteredReviews.length === 0}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-40 transition-colors cursor-pointer"
                 >
-                  <Plus size={16} />
+                  <Plus size={16}/>
                   Add Competency
                 </button>
               </PermissionGate>
@@ -545,7 +538,7 @@ export default function CompetencyFrameworkPage() {
                     Review Cycle
                   </label>
                   {cyclesQuery.isLoading ? (
-                    <div className="h-10 bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
+                    <div className="h-10 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                   ) : (
                     <select
                       value={selectedCycleId}
@@ -604,8 +597,9 @@ export default function CompetencyFrameworkPage() {
 
             {/* Review List */}
             {!selectedCycleId ? (
-              <div className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-4" />
+              <div
+                className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
                 <p className="text-[var(--text-secondary)] font-medium">Select a review cycle</p>
                 <p className="text-[var(--text-muted)] text-sm mt-1">
                   Choose a cycle above to manage competencies for its reviews
@@ -613,12 +607,13 @@ export default function CompetencyFrameworkPage() {
               </div>
             ) : allReviewsQuery.isLoading ? (
               <div className="flex items-center justify-center py-16">
-                <RefreshCw size={20} className="animate-spin text-accent-500 mr-4" />
+                <RefreshCw size={20} className="animate-spin text-accent-500 mr-4"/>
                 <span className="text-[var(--text-muted)]">Loading reviews…</span>
               </div>
             ) : filteredReviews.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-                <Info size={32} className="text-[var(--text-muted)] mb-4" />
+              <div
+                className="flex flex-col items-center justify-center py-20 bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
                 <p className="text-[var(--text-secondary)] font-medium">No reviews found</p>
                 <p className="text-[var(--text-muted)] text-sm mt-1">
                   {searchQuery ? 'Try a different search term' : 'No reviews exist for this cycle yet'}
@@ -627,7 +622,8 @@ export default function CompetencyFrameworkPage() {
             ) : (
               <div className="space-y-4">
                 <p className="text-caption font-medium uppercase tracking-wide">
-                  {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''} — click to expand & manage competencies
+                  {filteredReviews.length} Review{filteredReviews.length !== 1 ? 's' : ''} — click to expand & manage
+                  competencies
                 </p>
                 {filteredReviews.map((review) => (
                   <ReviewCompetencyPanel

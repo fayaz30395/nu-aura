@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import {useCallback, useEffect, useRef} from 'react';
+import {usePathname} from 'next/navigation';
 
 /**
  * Hook that warns users when navigating away from a page with unsaved form changes.

@@ -1,20 +1,30 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, LayoutList, ArrowLeft, Loader2, AlertCircle, Flag, List } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, Button } from '@/components/ui';
-import { TaskListItem } from '@/lib/types/core/task';
-import { CalendarEvent, GanttTask, STATUS_COLORS, PRIORITY_COLORS } from '@/lib/types/hrms/project-calendar';
-import { CalendarGridView } from '@/components/projects/CalendarGridView';
-import { TaskDetailsModal } from '@/components/projects/TaskDetailsModal';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { hasPermission } from '@/lib/utils';
-import { toPriority } from '@/lib/utils/type-guards';
-import { useProjects } from '@/lib/hooks/queries/useProjects';
-import { useQuery } from '@tanstack/react-query';
-import { createLogger } from '@/lib/utils/logger';
+import React, {useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Flag,
+  LayoutList,
+  List,
+  Loader2
+} from 'lucide-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button, Card, CardContent} from '@/components/ui';
+import {TaskListItem} from '@/lib/types/core/task';
+import {CalendarEvent, GanttTask, PRIORITY_COLORS, STATUS_COLORS} from '@/lib/types/hrms/project-calendar';
+import {CalendarGridView} from '@/components/projects/CalendarGridView';
+import {TaskDetailsModal} from '@/components/projects/TaskDetailsModal';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {hasPermission} from '@/lib/utils';
+import {toPriority} from '@/lib/utils/type-guards';
+import {useProjects} from '@/lib/hooks/queries/useProjects';
+import {useQuery} from '@tanstack/react-query';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('ProjectCalendarPage');
 
@@ -45,7 +55,7 @@ interface GanttItem {
 
 export default function ProjectCalendarPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   // Permission Check
   const canEditTasks = useMemo(() => {
@@ -70,7 +80,7 @@ export default function ProjectCalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch data with React Query
-  const { data: projectsData, isLoading, error, refetch } = useProjects(
+  const {data: projectsData, isLoading, error, refetch} = useProjects(
     0,
     100,
     statusFilter || undefined,
@@ -239,7 +249,7 @@ export default function ProjectCalendarPage() {
         break;
     }
 
-    return { start: startOfView, end: endOfView };
+    return {start: startOfView, end: endOfView};
   }, [currentDate, zoomLevel]);
 
   // Generate timeline columns
@@ -255,23 +265,23 @@ export default function ProjectCalendarPage() {
 
       switch (zoomLevel) {
         case 'day':
-          label = current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          columns.push({ date: new Date(current), label, isToday });
+          label = current.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+          columns.push({date: new Date(current), label, isToday});
           current.setDate(current.getDate() + 1);
           break;
         case 'week':
           label = `W${getWeekNumber(current)}`;
-          columns.push({ date: new Date(current), label, isToday: false });
+          columns.push({date: new Date(current), label, isToday: false});
           current.setDate(current.getDate() + 7);
           break;
         case 'month':
-          label = current.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-          columns.push({ date: new Date(current), label, isToday: false });
+          label = current.toLocaleDateString('en-US', {month: 'short', year: '2-digit'});
+          columns.push({date: new Date(current), label, isToday: false});
           current.setMonth(current.getMonth() + 1);
           break;
         case 'quarter':
           label = `Q${Math.floor(current.getMonth() / 3) + 1} ${current.getFullYear()}`;
-          columns.push({ date: new Date(current), label, isToday: false });
+          columns.push({date: new Date(current), label, isToday: false});
           current.setMonth(current.getMonth() + 3);
           break;
       }
@@ -296,7 +306,7 @@ export default function ProjectCalendarPage() {
     const left = ((itemStart - timelineRange.start.getTime()) / totalDuration) * 100;
     const width = ((itemEnd - itemStart) / totalDuration) * 100;
 
-    return { left: `${Math.max(0, left)}%`, width: `${Math.max(0.5, width)}%` };
+    return {left: `${Math.max(0, left)}%`, width: `${Math.max(0.5, width)}%`};
   };
 
   const toggleProjectExpansion = (projectId: string) => {
@@ -315,10 +325,18 @@ export default function ProjectCalendarPage() {
       newDate.setMonth(newDate.getMonth() - 1);
     } else {
       switch (zoomLevel) {
-        case 'day': newDate.setDate(newDate.getDate() - 7); break;
-        case 'week': newDate.setDate(newDate.getDate() - 28); break;
-        case 'month': newDate.setMonth(newDate.getMonth() - 3); break;
-        case 'quarter': newDate.setMonth(newDate.getMonth() - 6); break;
+        case 'day':
+          newDate.setDate(newDate.getDate() - 7);
+          break;
+        case 'week':
+          newDate.setDate(newDate.getDate() - 28);
+          break;
+        case 'month':
+          newDate.setMonth(newDate.getMonth() - 3);
+          break;
+        case 'quarter':
+          newDate.setMonth(newDate.getMonth() - 6);
+          break;
       }
     }
     setCurrentDate(newDate);
@@ -330,10 +348,18 @@ export default function ProjectCalendarPage() {
       newDate.setMonth(newDate.getMonth() + 1);
     } else {
       switch (zoomLevel) {
-        case 'day': newDate.setDate(newDate.getDate() + 7); break;
-        case 'week': newDate.setDate(newDate.getDate() + 28); break;
-        case 'month': newDate.setMonth(newDate.getMonth() + 3); break;
-        case 'quarter': newDate.setMonth(newDate.getMonth() + 6); break;
+        case 'day':
+          newDate.setDate(newDate.getDate() + 7);
+          break;
+        case 'week':
+          newDate.setDate(newDate.getDate() + 28);
+          break;
+        case 'month':
+          newDate.setMonth(newDate.getMonth() + 3);
+          break;
+        case 'quarter':
+          newDate.setMonth(newDate.getMonth() + 6);
+          break;
       }
     }
     setCurrentDate(newDate);
@@ -371,16 +397,16 @@ export default function ProjectCalendarPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Projects', href: '/projects' },
-    { label: 'Calendar View' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Projects', href: '/projects'},
+    {label: 'Calendar View'},
   ];
 
   if (loading && projects.length === 0) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="projects">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading calendar...</span>
         </div>
       </AppLayout>
@@ -398,7 +424,7 @@ export default function ProjectCalendarPage() {
               className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               aria-label="Back to projects"
             >
-              <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+              <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
@@ -416,9 +442,9 @@ export default function ProjectCalendarPage() {
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
                   ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
+                }`}
               >
-                <LayoutList className="h-4 w-4" />
+                <LayoutList className="h-4 w-4"/>
                 Timeline
               </button>
               <button
@@ -426,15 +452,15 @@ export default function ProjectCalendarPage() {
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
                   ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
+                }`}
               >
-                <CalendarIcon className="h-4 w-4" />
+                <CalendarIcon className="h-4 w-4"/>
                 Calendar
               </button>
             </div>
 
             <Button variant="outline" onClick={() => router.push('/projects')}>
-              <List className="h-4 w-4 mr-2" />
+              <List className="h-4 w-4 mr-2"/>
               List View
             </Button>
           </div>
@@ -445,7 +471,7 @@ export default function ProjectCalendarPage() {
           <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{queryError instanceof Error ? queryError.message : 'Failed to load data'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">
                   Retry
@@ -517,7 +543,7 @@ export default function ProjectCalendarPage() {
                         className={`px-4 py-1.5 text-sm rounded capitalize ${zoomLevel === level
                           ? 'bg-[var(--bg-surface)] shadow text-accent-700 dark:text-accent-400'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                          }`}
+                        }`}
                       >
                         {level}
                       </button>
@@ -531,20 +557,23 @@ export default function ProjectCalendarPage() {
                     className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     aria-label="Previous period"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4"/>
                   </button>
                   <button
                     onClick={() => setCurrentDate(new Date())}
                     className="px-4 py-2 text-sm rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] font-medium"
                   >
-                    {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric'
+                    })}
                   </button>
                   <button
                     onClick={handleNext}
                     className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                     aria-label="Next period"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4"/>
                   </button>
                 </div>
               </div>
@@ -559,8 +588,10 @@ export default function ProjectCalendarPage() {
               <div className="overflow-x-auto">
                 <div className="min-w-[1200px]">
                   {/* Header */}
-                  <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50 sticky top-0 z-10">
-                    <div className="w-80 p-4 border-r border-[var(--border-main)] font-medium text-[var(--text-secondary)]">
+                  <div
+                    className="flex border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50 sticky top-0 z-10">
+                    <div
+                      className="w-80 p-4 border-r border-[var(--border-main)] font-medium text-[var(--text-secondary)]">
                       Project / Task
                     </div>
                     <div className="flex-1 flex">
@@ -568,7 +599,7 @@ export default function ProjectCalendarPage() {
                         <div
                           key={idx}
                           className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'
-                            }`}
+                          }`}
                         >
                           {col.label}
                         </div>
@@ -588,7 +619,7 @@ export default function ProjectCalendarPage() {
                         <div
                           key={item.id}
                           className={`flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 ${isProject ? 'bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]' : ''
-                            }`}
+                          }`}
                         >
                           {/* Name Column */}
                           <div className="w-80 p-4 border-r border-[var(--border-main)]">
@@ -600,27 +631,31 @@ export default function ProjectCalendarPage() {
                                 >
                                   <ChevronRight
                                     className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''
-                                      }`}
+                                    }`}
                                   />
                                 </button>
                               )}
                               <div className="flex-1 min-w-0">
-                                <div className={`truncate ${isProject ? 'font-medium text-[var(--text-primary)]' : 'text-body-secondary'}`}>
+                                <div
+                                  className={`truncate ${isProject ? 'font-medium text-[var(--text-primary)]' : 'text-body-secondary'}`}>
                                   {item.name}
                                 </div>
                                 <div className="flex items-center gap-2 mt-1">
                                   {item.priority && (
                                     <span
                                       className="px-1.5 py-0.5 text-xs rounded"
-                                      style={{ backgroundColor: PRIORITY_COLORS[item.priority] + '20', color: PRIORITY_COLORS[item.priority] }}
+                                      style={{
+                                        backgroundColor: PRIORITY_COLORS[item.priority] + '20',
+                                        color: PRIORITY_COLORS[item.priority]
+                                      }}
                                     >
                                       {item.priority}
                                     </span>
                                   )}
                                   <span className="text-caption">
-                                    {item.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    {item.startDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
                                     {' → '}
-                                    {item.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    {item.endDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
                                   </span>
                                 </div>
                               </div>
@@ -638,7 +673,12 @@ export default function ProjectCalendarPage() {
                                 }}
                                 title={`${item.name} - ${item.startDate.toLocaleDateString()}`}
                                 onClick={() => handleEventClick(item)}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleEventClick(item); } }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleEventClick(item);
+                                  }
+                                }}
                                 role="button"
                                 tabIndex={0}
                                 aria-label={`Milestone: ${item.name}`}
@@ -651,8 +691,23 @@ export default function ProjectCalendarPage() {
                                   width: position.width,
                                   backgroundColor: item.color + 'E6',
                                 }}
-                                onClick={() => { if (isProject) { void router.push(`/projects/${item.id}`); } else { handleEventClick(item); } }}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (isProject) { void router.push(`/projects/${item.id}`); } else { handleEventClick(item); } } }}
+                                onClick={() => {
+                                  if (isProject) {
+                                    void router.push(`/projects/${item.id}`);
+                                  } else {
+                                    handleEventClick(item);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    if (isProject) {
+                                      void router.push(`/projects/${item.id}`);
+                                    } else {
+                                      handleEventClick(item);
+                                    }
+                                  }
+                                }}
                                 role="button"
                                 tabIndex={0}
                                 title={`${item.name} - ${item.progress}%`}
@@ -661,10 +716,11 @@ export default function ProjectCalendarPage() {
                                 {/* Progress bar */}
                                 <div
                                   className="h-full rounded bg-white/30"
-                                  style={{ width: `${item.progress}%` }}
+                                  style={{width: `${item.progress}%`}}
                                 />
                                 {/* Label */}
-                                <span className="absolute inset-0 flex items-center px-2 text-xs font-medium text-white truncate">
+                                <span
+                                  className="absolute inset-0 flex items-center px-2 text-xs font-medium text-white truncate">
                                   {item.progress}%
                                 </span>
                               </div>
@@ -683,9 +739,10 @@ export default function ProjectCalendarPage() {
                         return (
                           <div
                             className="absolute top-0 bottom-0 w-0.5 bg-accent-500 pointer-events-none z-20"
-                            style={{ left: position.left }}
+                            style={{left: position.left}}
                           >
-                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent-500 rounded-full" />
+                            <div
+                              className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent-500 rounded-full"/>
                           </div>
                         );
                       }
@@ -696,7 +753,7 @@ export default function ProjectCalendarPage() {
                   {/* Empty State */}
                   {ganttItems.length === 0 && !loading && (
                     <div className="p-12 text-center">
-                      <CalendarIcon className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                      <CalendarIcon className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                       <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Projects Found
                       </h3>
@@ -743,7 +800,7 @@ export default function ProjectCalendarPage() {
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(STATUS_COLORS).map(([status, color]) => (
                     <div key={status} className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: color }} />
+                      <div className="w-4 h-4 rounded" style={{backgroundColor: color}}/>
                       <span className="text-xs text-[var(--text-secondary)]">
                         {status.replace('_', ' ')}
                       </span>
@@ -758,7 +815,7 @@ export default function ProjectCalendarPage() {
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(PRIORITY_COLORS).map(([priority, color]) => (
                     <div key={priority} className="flex items-center gap-2">
-                      <Flag className="h-4 w-4" style={{ color }} />
+                      <Flag className="h-4 w-4" style={{color}}/>
                       <span className="text-xs text-[var(--text-secondary)]">
                         {priority}
                       </span>

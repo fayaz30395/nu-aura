@@ -1,13 +1,13 @@
-import { apiClient } from '../../api/client';
-import { Page } from '../../types/hrms/employee';
+import {apiClient} from '../../api/client';
+import {Page} from '../../types/hrms/employee';
 import {
   DocumentRequestDto,
   DocumentRequestResponse,
+  DocumentType,
+  ProfileUpdateCategory,
   ProfileUpdateRequestDto,
   ProfileUpdateResponse,
   SelfServiceDashboard,
-  DocumentType,
-  ProfileUpdateCategory,
 } from '../../types/hrms/selfservice';
 
 class SelfServiceService {
@@ -15,7 +15,7 @@ class SelfServiceService {
 
   async getDashboard(employeeId: string): Promise<SelfServiceDashboard> {
     const response = await apiClient.get<SelfServiceDashboard>('/self-service/dashboard', {
-      params: { employeeId },
+      params: {employeeId},
     });
     return response.data;
   }
@@ -29,7 +29,7 @@ class SelfServiceService {
     const response = await apiClient.post<DocumentRequestResponse>(
       '/self-service/document-requests',
       data,
-      { params: { employeeId } }
+      {params: {employeeId}}
     );
     return response.data;
   }
@@ -48,7 +48,7 @@ class SelfServiceService {
   ): Promise<Page<DocumentRequestResponse>> {
     const response = await apiClient.get<Page<DocumentRequestResponse>>(
       '/self-service/document-requests/my-requests',
-      { params: { employeeId, page, size } }
+      {params: {employeeId, page, size}}
     );
     return response.data;
   }
@@ -59,7 +59,7 @@ class SelfServiceService {
   ): Promise<Page<DocumentRequestResponse>> {
     const response = await apiClient.get<Page<DocumentRequestResponse>>(
       '/self-service/document-requests/pending',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -78,7 +78,7 @@ class SelfServiceService {
     const response = await apiClient.post<DocumentRequestResponse>(
       `/self-service/document-requests/${requestId}/start-processing`,
       null,
-      { params: { processedById } }
+      {params: {processedById}}
     );
     return response.data;
   }
@@ -90,7 +90,7 @@ class SelfServiceService {
     const response = await apiClient.post<DocumentRequestResponse>(
       `/self-service/document-requests/${requestId}/complete`,
       null,
-      { params: { documentUrl } }
+      {params: {documentUrl}}
     );
     return response.data;
   }
@@ -110,7 +110,7 @@ class SelfServiceService {
     const response = await apiClient.post<DocumentRequestResponse>(
       `/self-service/document-requests/${requestId}/reject`,
       null,
-      { params: { rejectedBy, reason } }
+      {params: {rejectedBy, reason}}
     );
     return response.data;
   }
@@ -124,7 +124,7 @@ class SelfServiceService {
     const response = await apiClient.post<ProfileUpdateResponse>(
       '/self-service/profile-updates',
       data,
-      { params: { employeeId } }
+      {params: {employeeId}}
     );
     return response.data;
   }
@@ -143,7 +143,7 @@ class SelfServiceService {
   ): Promise<Page<ProfileUpdateResponse>> {
     const response = await apiClient.get<Page<ProfileUpdateResponse>>(
       '/self-service/profile-updates/my-requests',
-      { params: { employeeId, page, size } }
+      {params: {employeeId, page, size}}
     );
     return response.data;
   }
@@ -154,7 +154,7 @@ class SelfServiceService {
   ): Promise<Page<ProfileUpdateResponse>> {
     const response = await apiClient.get<Page<ProfileUpdateResponse>>(
       '/self-service/profile-updates/pending',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -165,7 +165,7 @@ class SelfServiceService {
   ): Promise<Page<ProfileUpdateResponse>> {
     const response = await apiClient.get<Page<ProfileUpdateResponse>>(
       '/self-service/profile-updates',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -178,7 +178,7 @@ class SelfServiceService {
     const response = await apiClient.post<ProfileUpdateResponse>(
       `/self-service/profile-updates/${requestId}/approve`,
       null,
-      { params: { reviewerId, comments } }
+      {params: {reviewerId, comments}}
     );
     return response.data;
   }
@@ -191,7 +191,7 @@ class SelfServiceService {
     const response = await apiClient.post<ProfileUpdateResponse>(
       `/self-service/profile-updates/${requestId}/reject`,
       null,
-      { params: { reviewerId, reason } }
+      {params: {reviewerId, reason}}
     );
     return response.data;
   }
@@ -201,7 +201,7 @@ class SelfServiceService {
     employeeId: string
   ): Promise<void> {
     await apiClient.post(`/self-service/profile-updates/${requestId}/cancel`, null, {
-      params: { employeeId },
+      params: {employeeId},
     });
   }
 

@@ -1,26 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useRouter } from 'next/navigation';
-import {
-  ArrowLeft,
-  Check,
-  Copy,
-  ExternalLink,
-  Hash,
-  Key,
-  MessageSquare,
-  RefreshCw,
-  Shield,
-  Zap,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { apiClient } from '@/lib/api/client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useRouter} from 'next/navigation';
+import {ArrowLeft, Check, Copy, ExternalLink, Hash, Key, MessageSquare, RefreshCw, Shield, Zap,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {apiClient} from '@/lib/api/client';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,8 +34,8 @@ const slackConfigSchema = z.object({
   slackSigningSecret: z.string().optional().or(z.literal('')),
   slackDefaultChannel: z.string().min(1, 'Default channel is required').regex(/^#/, 'Channel must start with #'),
   isEnabled: z.boolean(),
-  rateLimitPerMinute: z.number({ coerce: true }).min(0).nullable().optional(),
-  rateLimitPerHour: z.number({ coerce: true }).min(0).nullable().optional(),
+  rateLimitPerMinute: z.number({coerce: true}).min(0).nullable().optional(),
+  rateLimitPerHour: z.number({coerce: true}).min(0).nullable().optional(),
 });
 
 type SlackConfigFormData = z.infer<typeof slackConfigSchema>;
@@ -56,7 +45,7 @@ type SlackConfigFormData = z.infer<typeof slackConfigSchema>;
 export default function SlackIntegrationPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
   const [copied, setCopied] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
 
@@ -90,12 +79,12 @@ export default function SlackIntegrationPage() {
         rateLimitPerMinute: data.rateLimitPerMinute || null,
         rateLimitPerHour: data.rateLimitPerHour || null,
         // Bot token and signing secret are sent but masked in response
-        ...(data.slackBotToken ? { slackBotToken: data.slackBotToken } : {}),
+        ...(data.slackBotToken ? {slackBotToken: data.slackBotToken} : {}),
       };
       return apiClient.post('/api/v1/notifications/channels/config', payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['slack-config'] });
+      queryClient.invalidateQueries({queryKey: ['slack-config']});
     },
   });
 
@@ -104,7 +93,7 @@ export default function SlackIntegrationPage() {
     handleSubmit,
     reset,
     watch,
-    formState: { errors, isSubmitting, isDirty },
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<SlackConfigFormData>({
     resolver: zodResolver(slackConfigSchema),
     defaultValues: {
@@ -176,11 +165,11 @@ export default function SlackIntegrationPage() {
             onClick={() => router.push('/integrations')}
             className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div className="flex items-center gap-2">
             <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
-              <Zap className="h-6 w-6 text-white" />
+              <Zap className="h-6 w-6 text-white"/>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
@@ -205,29 +194,37 @@ export default function SlackIntegrationPage() {
         {/* Setup Guide */}
         <div className="skeuo-card p-6 mb-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Shield className="h-5 w-5 text-accent-700" />
+            <Shield className="h-5 w-5 text-accent-700"/>
             Setup Guide
           </h2>
           <ol className="space-y-2 text-body-secondary">
             <li className="flex gap-2">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
+              <span
+                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
               <span>
                 Create a Slack App at{' '}
-                <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer" className="text-accent-700 hover:underline inline-flex items-center gap-1">
-                  api.slack.com/apps <ExternalLink className="h-3 w-3" />
+                <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer"
+                   className="text-accent-700 hover:underline inline-flex items-center gap-1">
+                  api.slack.com/apps <ExternalLink className="h-3 w-3"/>
                 </a>
               </span>
             </li>
             <li className="flex gap-2">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">2</span>
-              <span>Add Bot Token Scopes: <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">chat:write</code>, <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">users:read.email</code>, <code className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">commands</code></span>
+              <span
+                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">2</span>
+              <span>Add Bot Token Scopes: <code
+                className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">chat:write</code>, <code
+                className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">users:read.email</code>, <code
+                className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">commands</code></span>
             </li>
             <li className="flex gap-2">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">3</span>
+              <span
+                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">3</span>
               <span>Install the app to your workspace and copy the Bot Token below</span>
             </li>
             <li className="flex gap-2">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">4</span>
+              <span
+                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">4</span>
               <span>Configure Slash Commands using the webhook URLs below</span>
             </li>
           </ol>
@@ -236,7 +233,7 @@ export default function SlackIntegrationPage() {
         {/* Webhook URLs */}
         <div className="skeuo-card p-6 mb-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-accent-700" />
+            <MessageSquare className="h-5 w-5 text-accent-700"/>
             Webhook URLs
           </h2>
           <p className="text-body-muted mb-4">
@@ -244,10 +241,10 @@ export default function SlackIntegrationPage() {
           </p>
           <div className="space-y-2">
             {[
-              { label: 'Slash Commands', url: `${webhookBaseUrl}/api/v1/integrations/slack/commands` },
-              { label: 'Interactive Components', url: `${webhookBaseUrl}/api/v1/integrations/slack/interactions` },
-              { label: 'Event Subscriptions', url: `${webhookBaseUrl}/api/v1/integrations/slack/events` },
-            ].map(({ label, url }) => (
+              {label: 'Slash Commands', url: `${webhookBaseUrl}/api/v1/integrations/slack/commands`},
+              {label: 'Interactive Components', url: `${webhookBaseUrl}/api/v1/integrations/slack/interactions`},
+              {label: 'Event Subscriptions', url: `${webhookBaseUrl}/api/v1/integrations/slack/events`},
+            ].map(({label, url}) => (
               <div key={label} className="row-between p-2 bg-[var(--bg-secondary)] rounded-lg">
                 <div>
                   <div className="text-xs font-medium text-[var(--text-muted)]">{label}</div>
@@ -258,9 +255,9 @@ export default function SlackIntegrationPage() {
                   className="p-2 hover:bg-[var(--bg-surface)] rounded transition-colors"
                 >
                   {copied === label ? (
-                    <Check className="h-4 w-4 text-success-500" />
+                    <Check className="h-4 w-4 text-success-500"/>
                   ) : (
-                    <Copy className="h-4 w-4 text-[var(--text-muted)]" />
+                    <Copy className="h-4 w-4 text-[var(--text-muted)]"/>
                   )}
                 </button>
               </div>
@@ -268,7 +265,8 @@ export default function SlackIntegrationPage() {
           </div>
           <div className="mt-4 p-2 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
             <p className="text-xs text-accent-800 dark:text-accent-400">
-              <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code> — both pointing to the Slash Commands URL above.
+              <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code> — both
+              pointing to the Slash Commands URL above.
             </p>
           </div>
         </div>
@@ -277,7 +275,7 @@ export default function SlackIntegrationPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="skeuo-card p-6 mb-6">
             <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Key className="h-5 w-5 text-accent-700" />
+              <Key className="h-5 w-5 text-accent-700"/>
               Configuration
             </h2>
             <div className="space-y-4">
@@ -288,8 +286,9 @@ export default function SlackIntegrationPage() {
                   <div className="text-body-muted">Send notifications and receive commands from Slack</div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" {...register('isEnabled')} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
+                  <input type="checkbox" {...register('isEnabled')} className="sr-only peer"/>
+                  <div
+                    className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
                 </label>
               </div>
 
@@ -312,8 +311,9 @@ export default function SlackIntegrationPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-1">
-                    <Hash className="h-3.5 w-3.5" />
+                  <label
+                    className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-1">
+                    <Hash className="h-3.5 w-3.5"/>
                     Default Channel *
                   </label>
                   <input
@@ -393,16 +393,16 @@ export default function SlackIntegrationPage() {
           {/* Actions */}
           <div className="row-between">
             <button type="button"
-              onClick={handleTestConnection}
-              disabled={!isEnabled || testResult === 'testing'}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handleTestConnection}
+                    disabled={!isEnabled || testResult === 'testing'}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <RefreshCw className={`h-4 w-4 ${testResult === 'testing' ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${testResult === 'testing' ? 'animate-spin' : ''}`}/>
               {testResult === 'testing' ? 'Testing...' : testResult === 'success' ? 'Connected!' : testResult === 'error' ? 'Failed' : 'Test Connection'}
             </button>
             <button type="submit"
-              disabled={isSubmitting || !isDirty}
-              className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    disabled={isSubmitting || !isDirty}
+                    className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {isSubmitting ? 'Saving...' : 'Save Configuration'}
             </button>
@@ -416,14 +416,14 @@ export default function SlackIntegrationPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: '/leave command', desc: 'Employees request leave from Slack', status: 'active' },
-              { title: '/balance command', desc: 'Check remaining leave balance', status: 'active' },
-              { title: 'Leave notifications', desc: 'Auto-notify on leave requests and approvals', status: 'active' },
-              { title: 'Attendance summary', desc: 'Daily attendance summary in channel', status: 'active' },
-              { title: 'Payslip alerts', desc: 'Notify when payslips are generated', status: 'active' },
-              { title: 'Birthday & anniversary', desc: 'Celebrate milestones in channel', status: 'active' },
-              { title: 'New joinee welcome', desc: 'Welcome new team members', status: 'active' },
-              { title: 'Approval buttons', desc: 'Approve/reject directly from Slack', status: 'coming' },
+              {title: '/leave command', desc: 'Employees request leave from Slack', status: 'active'},
+              {title: '/balance command', desc: 'Check remaining leave balance', status: 'active'},
+              {title: 'Leave notifications', desc: 'Auto-notify on leave requests and approvals', status: 'active'},
+              {title: 'Attendance summary', desc: 'Daily attendance summary in channel', status: 'active'},
+              {title: 'Payslip alerts', desc: 'Notify when payslips are generated', status: 'active'},
+              {title: 'Birthday & anniversary', desc: 'Celebrate milestones in channel', status: 'active'},
+              {title: 'New joinee welcome', desc: 'Welcome new team members', status: 'active'},
+              {title: 'Approval buttons', desc: 'Approve/reject directly from Slack', status: 'coming'},
             ].map((feature) => (
               <div key={feature.title} className="flex items-start gap-2 p-2 rounded-lg bg-[var(--bg-secondary)]">
                 <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
@@ -432,7 +432,7 @@ export default function SlackIntegrationPage() {
                     : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
                 }`}>
                   {feature.status === 'active' ? (
-                    <Check className="h-3 w-3" />
+                    <Check className="h-3 w-3"/>
                   ) : (
                     <span className="text-2xs font-bold">S</span>
                   )}

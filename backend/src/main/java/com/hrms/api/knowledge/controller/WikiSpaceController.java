@@ -1,8 +1,13 @@
 package com.hrms.api.knowledge.controller;
 
+import com.hrms.api.knowledge.dto.AddSpaceMemberRequest;
 import com.hrms.api.knowledge.dto.CreateWikiSpaceRequest;
+import com.hrms.api.knowledge.dto.SpaceMemberDto;
+import com.hrms.api.knowledge.dto.UpdateSpaceMemberRequest;
 import com.hrms.api.knowledge.dto.WikiSpaceDto;
+import com.hrms.application.knowledge.service.SpacePermissionService;
 import com.hrms.application.knowledge.service.WikiSpaceService;
+import com.hrms.domain.knowledge.SpaceMember;
 import com.hrms.common.api.ApiResponses;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -29,6 +34,7 @@ import jakarta.validation.Valid;
 public class WikiSpaceController {
 
     private final WikiSpaceService wikiSpaceService;
+    private final SpacePermissionService spacePermissionService;
 
     @PostMapping
     @Operation(summary = "Create wiki space")
@@ -120,6 +126,57 @@ public class WikiSpaceController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_DELETE)
     public ResponseEntity<Void> deleteSpace(@PathVariable UUID spaceId) {
         wikiSpaceService.deleteSpace(spaceId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ==================== Space Member Endpoints ====================
+
+    @GetMapping("/{spaceId}/members")
+    @Operation(summary = "Get all members of a space")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<List<SpaceMemberDto>> getSpaceMembers(@PathVariable UUID spaceId) {
+        List<SpaceMember> members = spacePermissionService.getMembers(spaceId);
+        return ResponseEntity.ok(
+                members.stream()
+                        .map(SpaceMemberDto::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @PostMapping("/{spaceId}/members")
+    @Operation(summary = "Add a member to a space")
+    @ApiResponses.Created
+    @RequiresPermission(Permission.KNOWLEDGE_SPACE_MANAGE)
+    public ResponseEntity<SpaceMemberDto> addSpaceMember(
+            @PathVariable UUID spaceId,
+            @Valid @RequestBody AddSpaceMemberRequest request) {
+        SpaceMember.Role role = SpaceMember.Role.valueOf(request.getRole());
+        SpaceMember member = spacePermissionService.addMember(spaceId, request.getUserId(), role);
+        return ResponseEntity.status(HttpStatus.CREATED).body(SpaceMemberDto.fromEntity(member));
+    }
+
+    @PatchMapping("/{spaceId}/members/{userId}")
+    @Operation(summary = "Update a member's role in a space")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_SPACE_MANAGE)
+    public ResponseEntity<SpaceMemberDto> updateSpaceMember(
+            @PathVariable UUID spaceId,
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpdateSpaceMemberRequest request) {
+        SpaceMember.Role newRole = SpaceMember.Role.valueOf(request.getRole());
+        SpaceMember updated = spacePermissionService.updateMemberRole(spaceId, userId, newRole);
+        return ResponseEntity.ok(SpaceMemberDto.fromEntity(updated));
+    }
+
+    @DeleteMapping("/{spaceId}/members/{userId}")
+    @Operation(summary = "Remove a member from a space")
+    @ApiResponses.NoContent
+    @RequiresPermission(Permission.KNOWLEDGE_SPACE_MANAGE)
+    public ResponseEntity<Void> removeSpaceMember(
+            @PathVariable UUID spaceId,
+            @PathVariable UUID userId) {
+        spacePermissionService.removeMember(spaceId, userId);
         return ResponseEntity.noContent().build();
     }
 }

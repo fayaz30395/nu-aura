@@ -6,12 +6,15 @@ description: Use when asked to run end-to-end lifecycle tests, integration tests
 # NU-AURA End-to-End Lifecycle Test Suite
 
 > **Purpose:** Test connected journeys where data flows between modules and roles.
-> The module QA skill tests breadth (every page). This tests **depth** (real workflows, start to finish).
-> Run this AFTER the module QA skill passes — it catches bugs that only appear when modules talk to each other.
+> The module QA skill tests breadth (every page). This tests **depth** (real workflows, start to
+> finish).
+> Run this AFTER the module QA skill passes — it catches bugs that only appear when modules talk to
+> each other.
 
 ## Execution Rules
 
-1. **Stateful execution** — each step depends on the previous one. Carry IDs, names, dates between steps.
+1. **Stateful execution** — each step depends on the previous one. Carry IDs, names, dates between
+   steps.
 2. **Role-switching** — login/logout between roles as instructed. Verify session isolation.
 3. **Rate limiting** — wait 15s between login switches (5 req/min on auth endpoint).
 4. **After every step:** screenshot + `read_console_messages` + `read_network_requests`.
@@ -28,6 +31,7 @@ curl -s http://localhost:8080/actuator/health       # {"status":"UP"}
 ## Test Data Naming Convention
 
 All test data uses prefix `E2E-` + scenario number + timestamp to avoid collisions:
+
 - Employee: `E2E-S1-John-[timestamp]`
 - Job posting: `E2E-S2-QA-Engineer-[timestamp]`
 - Project: `E2E-S5-Alpha-[timestamp]`
@@ -36,7 +40,8 @@ All test data uses prefix `E2E-` + scenario number + timestamp to avoid collisio
 
 # SCENARIO 1 — HIRE-TO-RETIRE (Full Employee Lifecycle)
 
-> Tests: Recruitment → Onboarding → Employee Creation → Profile → Project Mapping → Promotion → Leave → Payroll → Resignation → Offboarding
+> Tests: Recruitment → Onboarding → Employee Creation → Profile → Project Mapping → Promotion →
+> Leave → Payroll → Resignation → Offboarding
 
 ### S1.1 — RECRUIT (Login as REC or HRA)
 
@@ -790,9 +795,11 @@ Bug ID | Scenario | Step | Severity | Title | Steps to Repro | Expected | Actual
 ## Integration Gap Log
 
 Track where data failed to flow between modules:
+
 ```
 | Source Module | Target Module | Data Expected | Data Found | Bug? |
 ```
+
 Example: Payroll should show loan EMI deduction, but shows ₹0 → integration bug.
 
 ---
@@ -821,8 +828,12 @@ S10 runs last because it tests isolation and may invalidate sessions.
 
 ## IMPORTANT NOTES
 
-- **State carries between steps** — employee IDs, leave request IDs, asset IDs, loan IDs created in earlier steps are used in later steps.
+- **State carries between steps** — employee IDs, leave request IDs, asset IDs, loan IDs created in
+  earlier steps are used in later steps.
 - **Screenshot every step result**, not just failures.
-- **If a step blocks the entire scenario** (e.g., employee creation fails), log the bug and skip remaining steps in that scenario. Move to the next scenario.
-- **This complements the module QA skill** — don't duplicate module-level checks here. Focus on data flowing correctly between modules.
-- **Clock the total time** for each scenario. If any scenario takes >15 min of wall time, flag as a performance concern.
+- **If a step blocks the entire scenario** (e.g., employee creation fails), log the bug and skip
+  remaining steps in that scenario. Move to the next scenario.
+- **This complements the module QA skill** — don't duplicate module-level checks here. Focus on data
+  flowing correctly between modules.
+- **Clock the total time** for each scenario. If any scenario takes >15 min of wall time, flag as a
+  performance concern.

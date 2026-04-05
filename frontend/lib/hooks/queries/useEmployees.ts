@@ -1,17 +1,17 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { CreateEmployeeRequest, UpdateEmployeeRequest, Employee } from '@/lib/types/hrms/employee';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {CreateEmployeeRequest, Employee, UpdateEmployeeRequest} from '@/lib/types/hrms/employee';
 
 // Query keys for cache management
 export const employeeKeys = {
   all: ['employees'] as const,
   lists: () => [...employeeKeys.all, 'list'] as const,
   list: (page: number, size: number, sortBy: string, sortDirection: string, search?: string, status?: string) =>
-    [...employeeKeys.lists(), { page, size, sortBy, sortDirection, search, status }] as const,
+    [...employeeKeys.lists(), {page, size, sortBy, sortDirection, search, status}] as const,
   search: (query: string, page: number, size: number) =>
-    [...employeeKeys.all, 'search', { query, page, size }] as const,
+    [...employeeKeys.all, 'search', {query, page, size}] as const,
   details: () => [...employeeKeys.all, 'detail'] as const,
   detail: (id: string) => [...employeeKeys.details(), id] as const,
   hierarchy: (id: string) => [...employeeKeys.all, 'hierarchy', id] as const,
@@ -125,7 +125,7 @@ export function useCreateEmployee() {
     mutationFn: (data: CreateEmployeeRequest) => employeeService.createEmployee(data),
     onSuccess: () => {
       // Invalidate all employee lists to refresh
-      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
+      queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
     },
   });
 }
@@ -135,11 +135,11 @@ export function useUpdateEmployee() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateEmployeeRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateEmployeeRequest }) =>
       employeeService.updateEmployee(id, data),
-    onMutate: async ({ id, data }) => {
+    onMutate: async ({id, data}) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: employeeKeys.detail(id) });
+      await queryClient.cancelQueries({queryKey: employeeKeys.detail(id)});
 
       // Snapshot the previous value
       const previousEmployee = queryClient.getQueryData<Employee>(employeeKeys.detail(id));
@@ -152,18 +152,18 @@ export function useUpdateEmployee() {
         });
       }
 
-      return { previousEmployee };
+      return {previousEmployee};
     },
-    onError: (_err, { id }, context) => {
+    onError: (_err, {id}, context) => {
       // Rollback on error
       if (context?.previousEmployee) {
         queryClient.setQueryData(employeeKeys.detail(id), context.previousEmployee);
       }
     },
-    onSettled: (_, _error, { id }) => {
+    onSettled: (_, _error, {id}) => {
       // Always refetch after mutation settles
-      queryClient.invalidateQueries({ queryKey: employeeKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
+      queryClient.invalidateQueries({queryKey: employeeKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
     },
   });
 }
@@ -177,7 +177,7 @@ export function useUpdateMyProfile() {
       employeeService.updateMyProfile(data),
     onSettled: () => {
       // Refetch the self-service profile after mutation settles
-      queryClient.invalidateQueries({ queryKey: [...employeeKeys.all, 'me'] });
+      queryClient.invalidateQueries({queryKey: [...employeeKeys.all, 'me']});
     },
   });
 }
@@ -189,7 +189,7 @@ export function useDeleteEmployee() {
   return useMutation({
     mutationFn: (id: string) => employeeService.deleteEmployee(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
+      queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
     },
   });
 }

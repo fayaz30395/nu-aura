@@ -1,15 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Holiday, HolidayRequest, HolidayType } from '@/lib/types/hrms/attendance';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui';
-import { useHolidaysByYear, useCreateHoliday, useUpdateHoliday, useDeleteHoliday } from '@/lib/hooks/queries/useAttendance';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui';
+import {
+  useCreateHoliday,
+  useDeleteHoliday,
+  useHolidaysByYear,
+  useUpdateHoliday
+} from '@/lib/hooks/queries/useAttendance';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -28,8 +33,8 @@ type HolidayFormData = z.infer<typeof holidayFormSchema>;
 
 export default function HolidayCalendarManagementPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
   const currentYear = new Date().getFullYear();
 
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -40,7 +45,7 @@ export default function HolidayCalendarManagementPage() {
   const [holidayToDelete, setHolidayToDelete] = useState<Holiday | null>(null);
 
   // React Query hooks
-  const { data: holidays = [], isLoading, error: queryError } = useHolidaysByYear(selectedYear);
+  const {data: holidays = [], isLoading, error: queryError} = useHolidaysByYear(selectedYear);
   const createMutation = useCreateHoliday();
   const updateMutation = useUpdateHoliday();
   const deleteMutation = useDeleteHoliday();
@@ -90,7 +95,7 @@ export default function HolidayCalendarManagementPage() {
 
     if (editingHoliday) {
       updateMutation.mutate(
-        { id: editingHoliday.id, data: submitData },
+        {id: editingHoliday.id, data: submitData},
         {
           onSuccess: () => {
             resetForm();
@@ -188,7 +193,7 @@ export default function HolidayCalendarManagementPage() {
   };
 
   const getMonthName = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', { month: 'long' });
+    return new Date(date).toLocaleDateString('en-US', {month: 'long'});
   };
 
   // Group holidays by month
@@ -235,7 +240,7 @@ export default function HolidayCalendarManagementPage() {
             <button
               onClick={() => {
                 resetForm();
-                form.reset({ ...form.getValues(), holidayDate: `${selectedYear}-01-01` });
+                form.reset({...form.getValues(), holidayDate: `${selectedYear}-01-01`});
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
@@ -248,7 +253,8 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Error Message */}
         {(uiError || queryError) && (
-          <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded relative">
+          <div
+            className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded relative">
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
@@ -295,8 +301,10 @@ export default function HolidayCalendarManagementPage() {
           ) : holidays.length === 0 ? (
             <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               <div className="flex flex-col items-center">
-                <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
                 <p className="text-[var(--text-secondary)]">No holidays configured for {selectedYear}</p>
                 <p className="text-body-muted mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
@@ -320,7 +328,7 @@ export default function HolidayCalendarManagementPage() {
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
                               <div className="text-caption uppercase">
-                                {new Date(holiday.holidayDate).toLocaleDateString('en-US', { weekday: 'short' })}
+                                {new Date(holiday.holidayDate).toLocaleDateString('en-US', {weekday: 'short'})}
                               </div>
                             </div>
                             <div className="flex-1">
@@ -329,21 +337,25 @@ export default function HolidayCalendarManagementPage() {
                                 <div className="text-body-secondary mt-1">{holiday.description}</div>
                               )}
                               <div className="flex flex-wrap gap-2 mt-2">
-                                <span className={`px-2 py-1 text-xs font-semibold rounded ${getHolidayTypeColor(holiday.holidayType)}`}>
+                                <span
+                                  className={`px-2 py-1 text-xs font-semibold rounded ${getHolidayTypeColor(holiday.holidayType)}`}>
                                   {holiday.holidayType.replace('_', ' ')}
                                 </span>
                                 {holiday.isOptional && (
-                                  <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
+                                  <span
+                                    className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
                                     Optional
                                   </span>
                                 )}
                                 {holiday.isRestricted && (
-                                  <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
+                                  <span
+                                    className="px-2 py-1 text-xs bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300 font-semibold rounded">
                                     Restricted
                                   </span>
                                 )}
                                 {holiday.applicableLocations && (
-                                  <span className="px-2 py-1 text-xs bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded">
+                                  <span
+                                    className="px-2 py-1 text-xs bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded">
                                     {holiday.applicableLocations}
                                   </span>
                                 )}

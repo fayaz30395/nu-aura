@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useTemplates, useDeleteTemplate } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/hrms/contract.service';
-import { Button, Card, Input, Badge } from '@mantine/core';
-import { Plus, Search, Trash2, Loader2 } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {useDeleteTemplate, useTemplates} from '@/lib/hooks/queries/useContracts';
+import {contractService} from '@/lib/services/hrms/contract.service';
+import {Badge, Button, Card, Input} from '@mantine/core';
+import {Loader2, Plus, Search, Trash2} from 'lucide-react';
+import {notifications} from '@mantine/notifications';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function ContractTemplatesPage() {
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
 
@@ -27,7 +27,7 @@ export default function ContractTemplatesPage() {
   const [search, setSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
-  const { data: templatesData, isLoading, isError } = useTemplates({ page, size: 20 });
+  const {data: templatesData, isLoading, isError} = useTemplates({page, size: 20});
   const deleteMutation = useDeleteTemplate();
 
   if (!isReady || !hasAccess) return null;
@@ -35,9 +35,9 @@ export default function ContractTemplatesPage() {
   const templates = templatesData?.content || [];
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Contracts', href: '/contracts' },
-    { label: 'Templates', href: '/contracts/templates' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Contracts', href: '/contracts'},
+    {label: 'Templates', href: '/contracts/templates'},
   ];
 
   const handleDelete = (id: string) => {
@@ -49,10 +49,10 @@ export default function ContractTemplatesPage() {
     if (templateToDelete) {
       deleteMutation.mutate(templateToDelete, {
         onSuccess: () => {
-          notifications.show({ title: 'Deleted', message: 'Template deleted successfully', color: 'green' });
+          notifications.show({title: 'Deleted', message: 'Template deleted successfully', color: 'green'});
         },
         onError: () => {
-          notifications.show({ title: 'Error', message: 'Failed to delete template. Please try again.', color: 'red' });
+          notifications.show({title: 'Error', message: 'Failed to delete template. Please try again.', color: 'red'});
         },
       });
       setDeleteConfirmOpen(false);
@@ -71,7 +71,7 @@ export default function ContractTemplatesPage() {
           </div>
           <Button
             onClick={() => router.push('/contracts/templates/new')}
-            leftSection={<Plus className="w-4 h-4" />}
+            leftSection={<Plus className="w-4 h-4"/>}
             size="md"
           >
             New Template
@@ -81,7 +81,7 @@ export default function ContractTemplatesPage() {
         {/* Search */}
         <Input
           placeholder="Search templates..."
-          leftSection={<Search className="w-4 h-4" />}
+          leftSection={<Search className="w-4 h-4"/>}
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
         />
@@ -89,7 +89,7 @@ export default function ContractTemplatesPage() {
         {/* Templates Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center p-16">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           </div>
         ) : isError ? (
           <div className="text-center p-8 text-danger-500">
@@ -137,7 +137,7 @@ export default function ContractTemplatesPage() {
                     variant="light"
                     color="red"
                     size="xs"
-                    leftSection={<Trash2 className="w-3 h-3" />}
+                    leftSection={<Trash2 className="w-3 h-3"/>}
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       handleDelete(template.id);

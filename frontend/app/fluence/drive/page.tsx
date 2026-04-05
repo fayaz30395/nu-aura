@@ -1,31 +1,19 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  HardDrive,
-  Upload,
-  FileText,
-  FileImage,
-  FileSpreadsheet,
-  File,
-  Search,
-} from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { cn } from '@/lib/utils';
-import { createLogger } from '@/lib/utils/logger';
-import { FileUploader } from '@/components/fluence/FileUploader';
-import { FileList } from '@/components/fluence/FileList';
-import {
-  useRecentAttachments,
-  useUploadAttachment,
-  useDeleteAttachment,
-} from '@/lib/hooks/queries/useFluence';
-import { FluenceAttachment } from '@/lib/types/platform/fluence';
-import { TextInput } from '@mantine/core';
+import React, {useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {File, FileImage, FileSpreadsheet, FileText, HardDrive, Search, Upload,} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {cn} from '@/lib/utils';
+import {createLogger} from '@/lib/utils/logger';
+import {FileUploader} from '@/components/fluence/FileUploader';
+import {FileList} from '@/components/fluence/FileList';
+import {useDeleteAttachment, useRecentAttachments, useUploadAttachment,} from '@/lib/hooks/queries/useFluence';
+import {FluenceAttachment} from '@/lib/types/platform/fluence';
+import {TextInput} from '@mantine/core';
 
 const _log = createLogger('FluenceDrivePage');
 
@@ -54,13 +42,13 @@ function categorizeFile(contentType: string): FileCategory {
 
 function FluenceDriveContent() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission} = usePermissions();
   const canManageDrive = hasPermission(Permissions.DOCUMENT_UPLOAD) || hasPermission(Permissions.DOCUMENT_DELETE);
   const [activeCategory, setActiveCategory] = useState<FileCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: attachments = [], isLoading } = useRecentAttachments();
+  const {data: attachments = [], isLoading} = useRecentAttachments();
   const uploadMutation = useUploadAttachment();
   const deleteMutation = useDeleteAttachment();
 
@@ -114,9 +102,10 @@ function FluenceDriveContent() {
 
   if (!hasHydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
+      <div
+        className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
         </div>
       </div>
@@ -129,23 +118,24 @@ function FluenceDriveContent() {
   }
 
   const categories: { id: FileCategory; label: string; icon: React.ElementType }[] = [
-    { id: 'all', label: 'All Files', icon: File },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'images', label: 'Images', icon: FileImage },
-    { id: 'spreadsheets', label: 'Spreadsheets', icon: FileSpreadsheet },
-    { id: 'other', label: 'Other', icon: File },
+    {id: 'all', label: 'All Files', icon: File},
+    {id: 'documents', label: 'Documents', icon: FileText},
+    {id: 'images', label: 'Images', icon: FileImage},
+    {id: 'spreadsheets', label: 'Spreadsheets', icon: FileSpreadsheet},
+    {id: 'other', label: 'Other', icon: File},
   ];
 
   return (
     <AppLayout
       activeMenuItem="fluence-drive"
-      breadcrumbs={[{ label: 'Drive', href: '/fluence/drive' }]}
+      breadcrumbs={[{label: 'Drive', href: '/fluence/drive'}]}
     >
       <div className="space-y-6">
         {/* Hero Section */}
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
-            <HardDrive className="h-8 w-8 text-white" />
+          <div
+            className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
+            <HardDrive className="h-8 w-8 text-white"/>
           </div>
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">
@@ -169,7 +159,7 @@ function FluenceDriveContent() {
         <div className="flex flex-col sm:flex-row gap-4">
           <TextInput
             placeholder="Search files..."
-            leftSection={<Search className="h-4 w-4" />}
+            leftSection={<Search className="h-4 w-4"/>}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.currentTarget.value)}
             className="flex-1"
@@ -191,7 +181,7 @@ function FluenceDriveContent() {
                     : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
                 )}
               >
-                <CatIcon className="h-4 w-4" />
+                <CatIcon className="h-4 w-4"/>
                 {cat.label}
                 <span className="text-xs bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">
                   {categoryCounts[cat.id]}
@@ -206,7 +196,7 @@ function FluenceDriveContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+                <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
                 <p className="text-[var(--text-muted)]">Loading files...</p>
               </div>
             </CardContent>
@@ -224,7 +214,7 @@ function FluenceDriveContent() {
           <Card className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
-                <Upload className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <Upload className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 Getting Started
               </h3>
               <p className="text-body-secondary">
@@ -241,5 +231,5 @@ function FluenceDriveContent() {
 }
 
 export default function FluenceDrivePage() {
-  return <FluenceDriveContent />;
+  return <FluenceDriveContent/>;
 }

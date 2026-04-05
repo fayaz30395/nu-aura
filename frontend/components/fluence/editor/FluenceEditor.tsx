@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { Table } from '@tiptap/extension-table';
+import {Table} from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -17,15 +17,15 @@ import TaskItem from '@tiptap/extension-task-item';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Color from '@tiptap/extension-color';
-import { TextStyle } from '@tiptap/extension-text-style';
-import { createLowlight, common } from 'lowlight';
-import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import {TextStyle} from '@tiptap/extension-text-style';
+import {common, createLowlight} from 'lowlight';
+import {Extension} from '@tiptap/core';
+import {Plugin, PluginKey} from '@tiptap/pm/state';
 
+import type {SlashMenuHandle} from './SlashMenu';
 import SlashMenu from './SlashMenu';
 import FloatingBar from './FloatingBar';
-import { CalloutNode } from './extensions/CalloutNode';
-import type { SlashMenuHandle } from './SlashMenu';
+import {CalloutNode} from './extensions/CalloutNode';
 
 const lowlight = createLowlight(common);
 
@@ -54,28 +54,28 @@ const createSlashCommandExtension = (
         new Plugin({
           key: slashPluginKey,
           state: {
-            init: (): SlashState => ({ active: false, query: '', from: 0 }),
+            init: (): SlashState => ({active: false, query: '', from: 0}),
             apply(tr, prev, _oldState, newState): SlashState {
               const meta = tr.getMeta(slashPluginKey) as SlashState | undefined;
               if (meta) return meta;
 
               // If active, update query based on current text
               if (prev.active) {
-                const { from } = prev;
+                const {from} = prev;
                 const cursorPos = newState.selection.from;
 
                 // If cursor moved before the "/" position, deactivate
                 if (cursorPos <= from) {
-                  return { active: false, query: '', from: 0 };
+                  return {active: false, query: '', from: 0};
                 }
 
                 // Extract text from "/" to cursor
                 const text = newState.doc.textBetween(from, cursorPos, '');
                 if (text.includes('\n') || text.includes(' ')) {
-                  return { active: false, query: '', from: 0 };
+                  return {active: false, query: '', from: 0};
                 }
 
-                return { active: true, query: text, from };
+                return {active: true, query: text, from};
               }
 
               return prev;
@@ -160,7 +160,7 @@ const createSlashCommandExtension = (
       const cursorPos = this.editor.state.selection.from;
       if (cursorPos <= state.from) {
         const tr = this.editor.state.tr;
-        tr.setMeta(slashPluginKey, { active: false, query: '', from: 0 });
+        tr.setMeta(slashPluginKey, {active: false, query: '', from: 0});
         this.editor.view.dispatch(tr);
         onDeactivate();
       }
@@ -178,14 +178,14 @@ interface FluenceEditorProps {
 }
 
 export default function FluenceEditor({
-  content,
-  onChange,
-  placeholder = 'Type "/" for commands, or just start writing...',
-  editable = true,
-  className = '',
-}: FluenceEditorProps) {
+                                        content,
+                                        onChange,
+                                        placeholder = 'Type "/" for commands, or just start writing...',
+                                        editable = true,
+                                        className = '',
+                                      }: FluenceEditorProps) {
   const [slashOpen, setSlashOpen] = useState(false);
-  const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
+  const [slashPos, setSlashPos] = useState({top: 0, left: 0});
   const [slashQuery, setSlashQuery] = useState('');
   const slashFromRef = useRef<number>(0);
   const menuRef = useRef<SlashMenuHandle | null>(null);
@@ -262,7 +262,7 @@ export default function FluenceEditor({
     content: content as Record<string, unknown>,
     editable,
     immediatelyRender: false,
-    onUpdate: ({ editor: e }) => {
+    onUpdate: ({editor: e}) => {
       onChange(e.getJSON());
     },
     editorProps: {
@@ -278,10 +278,10 @@ export default function FluenceEditor({
     const from = slashFromRef.current;
     const to = editor.state.selection.from;
     // Delete from "/" to cursor
-    editor.chain().focus().deleteRange({ from, to }).run();
+    editor.chain().focus().deleteRange({from, to}).run();
     // Deactivate slash menu
     const tr = editor.state.tr;
-    tr.setMeta(slashPluginKey, { active: false, query: '', from: 0 });
+    tr.setMeta(slashPluginKey, {active: false, query: '', from: 0});
     editor.view.dispatch(tr);
     setSlashOpen(false);
     setSlashQuery('');
@@ -303,9 +303,9 @@ export default function FluenceEditor({
       <div className="fluence-editor-wrapper">
         <div className="fluence-editor-loading">
           <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4" />
-            <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2" />
-            <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6" />
+            <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4"/>
+            <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2"/>
+            <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6"/>
           </div>
         </div>
       </div>
@@ -315,11 +315,11 @@ export default function FluenceEditor({
   return (
     <div ref={editorWrapperRef} className={`fluence-editor-wrapper ${className}`}>
       {/* Floating format bar (appears on text selection) */}
-      {editable && <FloatingBar editor={editor} />}
+      {editable && <FloatingBar editor={editor}/>}
 
       {/* Editor canvas */}
       <div className="fluence-editor-canvas relative">
-        <EditorContent editor={editor} />
+        <EditorContent editor={editor}/>
 
         {/* Slash command menu */}
         {slashOpen && editable && (

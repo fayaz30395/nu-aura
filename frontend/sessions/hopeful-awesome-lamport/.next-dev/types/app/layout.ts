@@ -1,6 +1,6 @@
 // File: /sessions/hopeful-awesome-lamport/mnt/nu-aura/frontend/app/layout.tsx
 import * as entry from '../../../../../app/layout.js'
-import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
+import type {ResolvingMetadata, ResolvingViewport} from 'next/dist/lib/metadata/types/metadata-interface.js'
 
 type TEntry = typeof import('../../../../../app/layout.js')
 
@@ -16,12 +16,12 @@ checkFields<Diff<{
   preferredRegion?: 'auto' | 'global' | 'home' | string | string[]
   runtime?: 'nodejs' | 'experimental-edge' | 'edge'
   maxDuration?: number
-  
+
   metadata?: any
   generateMetadata?: Function
   viewport?: any
   generateViewport?: Function
-  
+
 }, TEntry, ''>>()
 
 // Check the prop type of the entry function
@@ -41,15 +41,22 @@ if ('generateViewport' in entry) {
 
 // Check the arguments and return type of the generateStaticParams function
 if ('generateStaticParams' in entry) {
-  checkFields<Diff<{ params: PageParams }, FirstArg<MaybeField<TEntry, 'generateStaticParams'>>, 'generateStaticParams'>>()
-  checkFields<Diff<{ __tag__: 'generateStaticParams', __return_type__: any[] | Promise<any[]> }, { __tag__: 'generateStaticParams', __return_type__: ReturnType<MaybeField<TEntry, 'generateStaticParams'>> }>>()
+  checkFields<Diff<{
+    params: PageParams
+  }, FirstArg<MaybeField<TEntry, 'generateStaticParams'>>, 'generateStaticParams'>>()
+  checkFields<Diff<{ __tag__: 'generateStaticParams', __return_type__: any[] | Promise<any[]> }, {
+    __tag__: 'generateStaticParams',
+    __return_type__: ReturnType<MaybeField<TEntry, 'generateStaticParams'>>
+  }>>()
 }
 
 type PageParams = any
+
 export interface PageProps {
   params?: any
   searchParams?: any
 }
+
 export interface LayoutProps {
   children?: React.ReactNode
 
@@ -69,8 +76,8 @@ type SecondArg<T extends Function> = T extends (...args: [any, infer T]) => any 
 type MaybeField<T, K extends string> = T extends { [k in K]: infer G } ? G extends Function ? G : never : never
 
 
-
-function checkFields<_ extends { [k in keyof any]: never }>() {}
+function checkFields<_ extends { [k in keyof any]: never }>() {
+}
 
 // https://github.com/sindresorhus/type-fest
 type Numeric = number | bigint

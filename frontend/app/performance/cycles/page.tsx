@@ -1,12 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/grow/performance';
-import { Play, Users, CheckCircle, Building2, MapPin } from 'lucide-react';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {
+  ActivateCycleRequest,
+  ActivateCycleResponse,
+  CycleStatus,
+  CycleType,
+  ReviewCycle,
+  ReviewCycleRequest
+} from '@/lib/types/grow/performance';
+import {Building2, CheckCircle, MapPin, Play, Users} from 'lucide-react';
+import {
+  useActivatePerformanceCycle,
+  useCreatePerformanceCycle,
+  useDeletePerformanceCycle,
+  usePerformanceAllCycles,
+  useUpdatePerformanceCycle,
+} from '@/lib/hooks/queries/usePerformance';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import {useActiveOfficeLocations} from '@/lib/hooks/queries/useOfficeLocations';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -25,23 +43,12 @@ const cycleFormSchema = z.object({
 });
 
 type CycleFormData = z.infer<typeof cycleFormSchema>;
-import {
-  usePerformanceAllCycles,
-  useCreatePerformanceCycle,
-  useUpdatePerformanceCycle,
-  useDeletePerformanceCycle,
-  useActivatePerformanceCycle,
-} from '@/lib/hooks/queries/usePerformance';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { useActiveOfficeLocations } from '@/lib/hooks/queries/useOfficeLocations';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
 
 export default function ReviewCyclesPage() {
   // React Query hooks
-  const { data: cyclesResponse, isLoading: cyclesLoading } = usePerformanceAllCycles();
-  const { data: departmentsData = [] } = useActiveDepartments();
-  const { data: locationsData = [] } = useActiveOfficeLocations();
+  const {data: cyclesResponse, isLoading: cyclesLoading} = usePerformanceAllCycles();
+  const {data: departmentsData = []} = useActiveDepartments();
+  const {data: locationsData = []} = useActiveOfficeLocations();
   const createMutation = useCreatePerformanceCycle();
   const updateMutation = useUpdatePerformanceCycle();
   const deleteMutation = useDeletePerformanceCycle();
@@ -71,7 +78,7 @@ export default function ReviewCyclesPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CycleFormData>({
     resolver: zodResolver(cycleFormSchema),
     defaultValues: {
@@ -94,7 +101,7 @@ export default function ReviewCyclesPage() {
     };
 
     if (selectedCycle) {
-      updateMutation.mutate({ id: selectedCycle.id, data: cycleData as ReviewCycleRequest });
+      updateMutation.mutate({id: selectedCycle.id, data: cycleData as ReviewCycleRequest});
     } else {
       createMutation.mutate(cycleData as ReviewCycleRequest);
     }
@@ -148,7 +155,7 @@ export default function ReviewCyclesPage() {
   const handleActivate = () => {
     if (!selectedCycle) return;
     activateMutation.mutate(
-      { id: selectedCycle.id, data: activateFormData },
+      {id: selectedCycle.id, data: activateFormData},
       {
         onSuccess: (result) => {
           setActivationResult(result);
@@ -193,24 +200,37 @@ export default function ReviewCyclesPage() {
 
   const getStatusColor = (status: CycleStatus) => {
     switch (status) {
-      case 'PLANNING': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800';
-      case 'COMPLETED': return 'bg-success-100 text-success-800';
-      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'PLANNING':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'ACTIVE':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'IN_PROGRESS':
+        return 'bg-warning-100 text-warning-800';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-800';
+      case 'CANCELLED':
+        return 'bg-danger-100 text-danger-800';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getTypeColor = (type: CycleType) => {
     switch (type) {
-      case 'ANNUAL': return 'bg-accent-300 text-accent-900';
-      case 'SEMI_ANNUAL': return 'bg-accent-100 text-accent-800';
-      case 'QUARTERLY': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'MONTHLY': return 'bg-success-100 text-success-800';
-      case 'PROBATION': return 'bg-warning-100 text-warning-800';
-      case 'PROJECT_END': return 'bg-accent-300 text-accent-900';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'ANNUAL':
+        return 'bg-accent-300 text-accent-900';
+      case 'SEMI_ANNUAL':
+        return 'bg-accent-100 text-accent-800';
+      case 'QUARTERLY':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'MONTHLY':
+        return 'bg-success-100 text-success-800';
+      case 'PROBATION':
+        return 'bg-warning-100 text-warning-800';
+      case 'PROJECT_END':
+        return 'bg-accent-300 text-accent-900';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -251,7 +271,8 @@ export default function ReviewCyclesPage() {
           </PermissionGate>
         </div>
 
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
+        <div
+          className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -296,7 +317,8 @@ export default function ReviewCyclesPage() {
             <div className="text-[var(--text-secondary)]">Loading review cycles...</div>
           </div>
         ) : filteredCycles.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
+          <div
+            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
             <PermissionGate permission={Permissions.REVIEW_CREATE}>
               <button
@@ -342,7 +364,8 @@ export default function ReviewCyclesPage() {
 
                   <div className="text-sm">
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
-                    <div className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
+                    <div
+                      className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
                       {cycle.reviewDeadline ? new Date(cycle.reviewDeadline).toLocaleDateString() : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
                       {isDeadlineNear(cycle.reviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline) && ' (Soon)'}
@@ -352,7 +375,8 @@ export default function ReviewCyclesPage() {
                   {cycle.selfReviewDeadline && (
                     <div className="text-sm">
                       <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
-                      <div className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
+                      <div
+                        className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
                         {new Date(cycle.selfReviewDeadline).toLocaleDateString()}
                         {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
                         {isDeadlineNear(cycle.selfReviewDeadline) && !isDeadlinePassed(cycle.selfReviewDeadline) && ' (Soon)'}
@@ -368,7 +392,7 @@ export default function ReviewCyclesPage() {
                         onClick={() => openActivateModal(cycle)}
                         className="flex-1 px-4 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
                       >
-                        <Play className="h-4 w-4" />
+                        <Play className="h-4 w-4"/>
                         Activate
                       </button>
                     </PermissionGate>
@@ -397,7 +421,8 @@ export default function ReviewCyclesPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
@@ -596,11 +621,12 @@ export default function ReviewCyclesPage() {
         {/* Activate Modal */}
         {showActivateModal && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                    <Play className="h-6 w-6 text-success-600 dark:text-success-400" />
+                    <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Activate Review Cycle</h2>
@@ -617,43 +643,62 @@ export default function ReviewCyclesPage() {
                     <div className="grid grid-cols-3 gap-4">
                       <button
                         type="button"
-                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'ALL', departmentIds: [], locationIds: [] })}
+                        onClick={() => setActivateFormData({
+                          ...activateFormData,
+                          scopeType: 'ALL',
+                          departmentIds: [],
+                          locationIds: []
+                        })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'ALL'
                             ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                        <Users
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                        <span
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           All Employees
                         </span>
                       </button>
                       <button
                         type="button"
-                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'DEPARTMENT', locationIds: [] })}
+                        onClick={() => setActivateFormData({
+                          ...activateFormData,
+                          scopeType: 'DEPARTMENT',
+                          locationIds: []
+                        })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'DEPARTMENT'
                             ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                        <Building2
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                        <span
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           By Department
                         </span>
                       </button>
                       <button
                         type="button"
-                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'LOCATION', departmentIds: [] })}
+                        onClick={() => setActivateFormData({
+                          ...activateFormData,
+                          scopeType: 'LOCATION',
+                          departmentIds: []
+                        })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'LOCATION'
                             ? 'border-success-500 tint-success'
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-success-600' : 'text-[var(--text-muted)]'}`} />
-                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                        <MapPin
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                        <span
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-success-700 dark:text-success-400' : ''}`}>
                           By Location
                         </span>
                       </button>
@@ -666,7 +711,8 @@ export default function ReviewCyclesPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Departments
                       </label>
-                      <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
+                      <div
+                        className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {departments.length === 0 ? (
                           <p className="p-4 text-body-muted">No departments available</p>
                         ) : (
@@ -700,7 +746,8 @@ export default function ReviewCyclesPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Locations
                       </label>
-                      <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
+                      <div
+                        className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {locations.length === 0 ? (
                           <p className="p-4 text-body-muted">No locations available</p>
                         ) : (
@@ -741,7 +788,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="checkbox"
                           checked={activateFormData.createSelfReviews}
-                          onChange={(e) => setActivateFormData({ ...activateFormData, createSelfReviews: e.target.checked })}
+                          onChange={(e) => setActivateFormData({
+                            ...activateFormData,
+                            createSelfReviews: e.target.checked
+                          })}
                           className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                         />
                         <div>
@@ -753,7 +803,10 @@ export default function ReviewCyclesPage() {
                         <input
                           type="checkbox"
                           checked={activateFormData.createManagerReviews}
-                          onChange={(e) => setActivateFormData({ ...activateFormData, createManagerReviews: e.target.checked })}
+                          onChange={(e) => setActivateFormData({
+                            ...activateFormData,
+                            createManagerReviews: e.target.checked
+                          })}
                           className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
                         />
                         <div>
@@ -784,12 +837,13 @@ export default function ReviewCyclesPage() {
                   >
                     {loading ? (
                       <>
-                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        <span
+                          className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                         Activating...
                       </>
                     ) : (
                       <>
-                        <Play className="h-4 w-4" />
+                        <Play className="h-4 w-4"/>
                         Activate Cycle
                       </>
                     )}
@@ -806,7 +860,7 @@ export default function ReviewCyclesPage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                  <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400" />
+                  <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400"/>
                 </div>
                 <h2 className="text-xl font-bold mb-2">Cycle Activated!</h2>
                 <p className="text-[var(--text-secondary)] mb-6">

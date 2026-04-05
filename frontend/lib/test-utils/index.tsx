@@ -1,8 +1,8 @@
 'use client';
 
-import React, { ReactElement, ReactNode } from 'react';
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React, {ReactElement, ReactNode} from 'react';
+import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
 // Create a test query client with disabled retries
@@ -25,7 +25,7 @@ interface TestProviderProps {
   children: ReactNode;
 }
 
-function TestProviders({ children }: TestProviderProps) {
+function TestProviders({children}: TestProviderProps) {
   const queryClient = createTestQueryClient();
 
   return (
@@ -44,7 +44,7 @@ function customRender(
 
   return {
     user,
-    ...render(ui, { wrapper: TestProviders, ...options }),
+    ...render(ui, {wrapper: TestProviders, ...options}),
   };
 }
 
@@ -52,10 +52,10 @@ function customRender(
 export * from '@testing-library/react';
 
 // Override render with our custom render
-export { customRender as render };
+export {customRender as render};
 
 // Export userEvent for convenience
-export { userEvent };
+export {userEvent};
 
 // Export QueryClient for tests that need to interact with it
-export { createTestQueryClient };
+export {createTestQueryClient};

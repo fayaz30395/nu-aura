@@ -1,32 +1,43 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useRouter } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useRouter} from 'next/navigation';
 import {
-  Calendar as CalendarIcon,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertTriangle,
+  Calendar as CalendarIcon,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  Coffee,
+  FileText,
+  Home,
   LogIn,
   LogOut,
-  FileText,
-  Coffee,
-  Home,
   Sun,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useAttendanceByDateRange, useMyTimeEntries, useCheckIn, useCheckOut, useRequestRegularization } from '@/lib/hooks/queries/useAttendance';
-import { AttendanceRecord, AttendanceStatus } from '@/lib/types/hrms/attendance';
-import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
-import { createLogger } from '@/lib/utils/logger';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {
+  useAttendanceByDateRange,
+  useCheckIn,
+  useCheckOut,
+  useMyTimeEntries,
+  useRequestRegularization
+} from '@/lib/hooks/queries/useAttendance';
+import {AttendanceRecord, AttendanceStatus} from '@/lib/types/hrms/attendance';
+import {
+  getLocalDateString,
+  getLocalDateTimeString,
+  getMonthEndString,
+  getMonthStartString
+} from '@/lib/utils/dateUtils';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('AttendancePage');
 
@@ -39,7 +50,7 @@ type RegularizationFormData = z.infer<typeof regularizationSchema>;
 
 export default function MyAttendancePage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -52,18 +63,24 @@ export default function MyAttendancePage() {
     handleSubmit: handleRegularizationSubmit,
     reset: resetRegularization,
     watch: watchRegularization,
-    formState: { errors: regularizationErrors },
+    formState: {errors: regularizationErrors},
   } = useForm<RegularizationFormData>({
     resolver: zodResolver(regularizationSchema),
-    defaultValues: { reason: '' },
+    defaultValues: {reason: ''},
   });
 
   const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
   const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
 
-  const { data: attendance = [], isLoading: isLoadingAttendance } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
+  const {
+    data: attendance = [],
+    isLoading: isLoadingAttendance
+  } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
   const todayDateStr = getLocalDateString();
-  const { data: selectedDateTimeEntries = [], isLoading: isLoadingTimeEntries } = useMyTimeEntries(selectedDate ? getLocalDateString(selectedDate) : todayDateStr, Boolean(selectedDate));
+  const {
+    data: selectedDateTimeEntries = [],
+    isLoading: isLoadingTimeEntries
+  } = useMyTimeEntries(selectedDate ? getLocalDateString(selectedDate) : todayDateStr, Boolean(selectedDate));
 
   const checkIn = useCheckIn();
   const checkOut = useCheckOut();
@@ -109,7 +126,9 @@ export default function MyAttendancePage() {
       });
     } catch (err: unknown) {
       log.error('Failed to check in:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to check in');
     }
   };
 
@@ -128,7 +147,9 @@ export default function MyAttendancePage() {
       });
     } catch (err: unknown) {
       log.error('Failed to check out:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to check out');
     }
   };
 
@@ -149,7 +170,9 @@ export default function MyAttendancePage() {
       setRegularizingRecord(null);
     } catch (err: unknown) {
       log.error('Failed to request regularization:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to request regularization');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to request regularization');
     }
   };
 
@@ -199,19 +222,19 @@ export default function MyAttendancePage() {
   const getStatusIcon = (status: AttendanceStatus) => {
     switch (status) {
       case 'PRESENT':
-        return <CheckCircle className="h-3 w-3" />;
+        return <CheckCircle className="h-3 w-3"/>;
       case 'ABSENT':
-        return <XCircle className="h-3 w-3" />;
+        return <XCircle className="h-3 w-3"/>;
       case 'ON_LEAVE':
-        return <Coffee className="h-3 w-3" />;
+        return <Coffee className="h-3 w-3"/>;
       case 'WEEKLY_OFF':
-        return <Home className="h-3 w-3" />;
+        return <Home className="h-3 w-3"/>;
       case 'HOLIDAY':
-        return <Sun className="h-3 w-3" />;
+        return <Sun className="h-3 w-3"/>;
       case 'PENDING_REGULARIZATION':
-        return <AlertTriangle className="h-3 w-3" />;
+        return <AlertTriangle className="h-3 w-3"/>;
       default:
-        return <Clock className="h-3 w-3" />;
+        return <Clock className="h-3 w-3"/>;
     }
   };
 
@@ -272,7 +295,7 @@ export default function MyAttendancePage() {
     return (
       <AppLayout activeMenuItem="my-attendance">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -282,7 +305,7 @@ export default function MyAttendancePage() {
     return (
       <AppLayout activeMenuItem="my-attendance">
         <div className="text-center py-12">
-          <Clock className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <Clock className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Attendance tracking requires an employee profile. Use the admin panels to manage team attendance.
@@ -334,7 +357,8 @@ export default function MyAttendancePage() {
                     </p>
                     {todayAttendance.workDurationMinutes !== undefined && (
                       <p className="text-body-secondary">
-                        Work Duration: <span className="font-medium">{formatDuration(todayAttendance.workDurationMinutes)}</span>
+                        Work Duration: <span
+                        className="font-medium">{formatDuration(todayAttendance.workDurationMinutes)}</span>
                       </p>
                     )}
                     {todayAttendance.isLate && (
@@ -355,7 +379,7 @@ export default function MyAttendancePage() {
                     disabled={checkIn.isPending || checkOut.isPending}
                     className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <LogIn className="h-5 w-5" />
+                    <LogIn className="h-5 w-5"/>
                     {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In'}
                   </button>
                 )}
@@ -365,13 +389,14 @@ export default function MyAttendancePage() {
                     disabled={checkIn.isPending || checkOut.isPending}
                     className="flex items-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <LogOut className="h-5 w-5" />
+                    <LogOut className="h-5 w-5"/>
                     {checkIn.isPending || checkOut.isPending ? 'Checking Out...' : 'Check Out'}
                   </button>
                 )}
                 {attendanceComplete && (
-                  <div className="flex items-center gap-2 px-6 py-4 rounded-lg border border-success-600/30 bg-success-600/10">
-                    <CheckCircle className="h-5 w-5 text-success-500" />
+                  <div
+                    className="flex items-center gap-2 px-6 py-4 rounded-lg border border-success-600/30 bg-success-600/10">
+                    <CheckCircle className="h-5 w-5 text-success-500"/>
                     <span className="text-sm font-semibold text-success-400">Attendance Completed</span>
                   </div>
                 )}
@@ -390,7 +415,7 @@ export default function MyAttendancePage() {
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600" />
+                  <CheckCircle className="h-6 w-6 text-success-600"/>
                 </div>
               </div>
             </CardContent>
@@ -404,7 +429,7 @@ export default function MyAttendancePage() {
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
-                  <XCircle className="h-6 w-6 text-danger-600" />
+                  <XCircle className="h-6 w-6 text-danger-600"/>
                 </div>
               </div>
             </CardContent>
@@ -418,7 +443,7 @@ export default function MyAttendancePage() {
                   <p className="text-2xl font-bold skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
-                  <Coffee className="h-6 w-6 text-accent-600" />
+                  <Coffee className="h-6 w-6 text-accent-600"/>
                 </div>
               </div>
             </CardContent>
@@ -434,7 +459,7 @@ export default function MyAttendancePage() {
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-accent-300 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-800" />
+                  <Clock className="h-6 w-6 text-accent-800"/>
                 </div>
               </div>
             </CardContent>
@@ -447,7 +472,7 @@ export default function MyAttendancePage() {
             <CardHeader>
               <div className="row-between">
                 <CardTitle className="flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
+                  <CalendarIcon className="h-5 w-5"/>
                   Attendance Calendar
                 </CardTitle>
                 <div className="flex items-center gap-2">
@@ -455,7 +480,7 @@ export default function MyAttendancePage() {
                     onClick={previousMonth}
                     className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-5 w-5"/>
                   </button>
                   <span className="font-semibold text-lg min-w-[150px] text-center">
                     {currentDate.toLocaleDateString('en-US', {
@@ -467,7 +492,7 @@ export default function MyAttendancePage() {
                     onClick={nextMonth}
                     className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="h-5 w-5"/>
                   </button>
                 </div>
               </div>
@@ -481,7 +506,7 @@ export default function MyAttendancePage() {
                 ))}
                 {getDaysInMonth().map((day, index) => {
                   if (!day) {
-                    return <div key={`empty-${index}`} className="aspect-square" />;
+                    return <div key={`empty-${index}`} className="aspect-square"/>;
                   }
 
                   const attendanceRecord = getAttendanceForDate(day);
@@ -507,7 +532,8 @@ export default function MyAttendancePage() {
                           {day.getDate()}
                         </span>
                         {attendanceRecord && (
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center ${getStatusColor(attendanceRecord.status)}`}>
+                          <div
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${getStatusColor(attendanceRecord.status)}`}>
                             {getStatusIcon(attendanceRecord.status)}
                           </div>
                         )}
@@ -523,7 +549,7 @@ export default function MyAttendancePage() {
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+                <FileText className="h-5 w-5"/>
                 Details
               </CardTitle>
             </CardHeader>
@@ -545,7 +571,8 @@ export default function MyAttendancePage() {
                     <>
                       <div>
                         <p className="text-body-secondary">Status</p>
-                        <span className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
+                        <span
+                          className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
                           {getStatusIcon(selectedAttendance.status)}
                           {selectedAttendance.status.replace(/_/g, ' ')}
                         </span>
@@ -586,16 +613,17 @@ export default function MyAttendancePage() {
                       {selectedDateTimeEntries.length > 0 && (
                         <span className="text-sm font-bold text-accent-700">
                           Total: {formatDuration(
-                            selectedDateTimeEntries
-                              .filter(e => e.entryType === 'REGULAR')
-                              .reduce((sum, e) => sum + (e.durationMinutes || 0), 0)
-                          )}
+                          selectedDateTimeEntries
+                            .filter(e => e.entryType === 'REGULAR')
+                            .reduce((sum, e) => sum + (e.durationMinutes || 0), 0)
+                        )}
                         </span>
                       )}
                     </div>
                     {isLoadingTimeEntries ? (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-6 h-6 border-2 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
+                        <div
+                          className="w-6 h-6 border-2 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
                       </div>
                     ) : selectedDateTimeEntries.length === 0 ? (
                       <p className="text-body-muted py-2">No sessions recorded</p>
@@ -612,19 +640,20 @@ export default function MyAttendancePage() {
                           >
                             <div className="row-between">
                               <div className="flex items-center gap-2">
-                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
-                                }`}>
+                                <span
+                                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                    entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
+                                  }`}>
                                   {entry.sequenceNumber}
                                 </span>
                                 <div>
                                   <div className="flex items-center gap-1">
-                                    <LogIn className="h-3 w-3 text-success-600" />
+                                    <LogIn className="h-3 w-3 text-success-600"/>
                                     <span>{formatTime(entry.checkInTime)}</span>
                                     {entry.checkOutTime ? (
                                       <>
                                         <span className="text-[var(--text-muted)] mx-1">-</span>
-                                        <LogOut className="h-3 w-3 text-accent-600" />
+                                        <LogOut className="h-3 w-3 text-accent-600"/>
                                         <span>{formatTime(entry.checkOutTime)}</span>
                                       </>
                                     ) : (
@@ -669,12 +698,14 @@ export default function MyAttendancePage() {
       {showRegularizationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-elevated)] rounded-lg p-6 w-full max-w-md card-aura">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
+            <h3
+              className="text-xl font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4 skeuo-emboss">
               Request Regularization
             </h3>
             <form onSubmit={handleRegularizationSubmit(handleRequestRegularization)}>
               <div className="mb-4">
-                <label htmlFor="regularization-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="regularization-reason"
+                       className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Reason
                 </label>
                 <textarea

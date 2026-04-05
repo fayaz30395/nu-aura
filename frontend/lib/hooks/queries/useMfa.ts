@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { mfaApi } from '@/lib/api/mfa';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {mfaApi} from '@/lib/api/mfa';
 
 // Query keys for cache management
 export const mfaKeys = {
@@ -48,7 +48,7 @@ export function useEnableMfa() {
   return useMutation({
     mutationFn: (code: string) => mfaApi.verify(code),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mfaKeys.all });
+      queryClient.invalidateQueries({queryKey: mfaKeys.all});
       notifications.show({
         title: 'MFA Enabled',
         message: 'Two-factor authentication is now active',
@@ -76,7 +76,7 @@ export function useDisableMfa() {
   return useMutation({
     mutationFn: (code: string) => mfaApi.disable(code),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mfaKeys.all });
+      queryClient.invalidateQueries({queryKey: mfaKeys.all});
       notifications.show({
         title: 'MFA Disabled',
         message: 'Two-factor authentication has been disabled',

@@ -1,13 +1,13 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fnfService, FnFAdjustmentPayload } from '@/lib/services/hrms/fnf.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {FnFAdjustmentPayload, fnfService} from '@/lib/services/hrms/fnf.service';
 
 // ─── Query Key Factory ────────────────────────────────────────────────────────
 
 export const fnfKeys = {
   all: ['fnf'] as const,
-  list: (page: number, size: number) => [...fnfKeys.all, 'list', { page, size }] as const,
+  list: (page: number, size: number) => [...fnfKeys.all, 'list', {page, size}] as const,
   detail: (exitProcessId: string) => [...fnfKeys.all, 'detail', exitProcessId] as const,
 };
 
@@ -42,11 +42,11 @@ export function useFnFDetail(exitProcessId: string, enabled = true) {
 export function useFnFAdjust() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ exitProcessId, data }: { exitProcessId: string; data: FnFAdjustmentPayload }) =>
+    mutationFn: ({exitProcessId, data}: { exitProcessId: string; data: FnFAdjustmentPayload }) =>
       fnfService.adjust(exitProcessId, data),
-    onSuccess: (_, { exitProcessId }) => {
-      qc.invalidateQueries({ queryKey: fnfKeys.detail(exitProcessId) });
-      qc.invalidateQueries({ queryKey: fnfKeys.all });
+    onSuccess: (_, {exitProcessId}) => {
+      qc.invalidateQueries({queryKey: fnfKeys.detail(exitProcessId)});
+      qc.invalidateQueries({queryKey: fnfKeys.all});
     },
   });
 }
@@ -59,8 +59,8 @@ export function useFnFApprove() {
   return useMutation({
     mutationFn: (exitProcessId: string) => fnfService.approve(exitProcessId),
     onSuccess: (_, exitProcessId) => {
-      qc.invalidateQueries({ queryKey: fnfKeys.detail(exitProcessId) });
-      qc.invalidateQueries({ queryKey: fnfKeys.all });
+      qc.invalidateQueries({queryKey: fnfKeys.detail(exitProcessId)});
+      qc.invalidateQueries({queryKey: fnfKeys.all});
     },
   });
 }

@@ -3,7 +3,9 @@
  * Run with: npx vitest run lib/services/exit.service.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {exitService} from './exit.service';
+import {apiClient} from '@/lib/api/client';
 
 // Mock the API client
 vi.mock('@/lib/api/client', () => ({
@@ -15,9 +17,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { exitService } from './exit.service';
-import { apiClient } from '@/lib/api/client';
 
 // Minimal inline mock types
 interface MockExitProcess {
@@ -144,12 +143,12 @@ describe('ExitService', () => {
         number: 0,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockResponse });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockResponse});
 
       const result = await exitService.getAllExitProcesses();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result.content).toHaveLength(1);
       expect(result.totalElements).toBe(5);
@@ -164,12 +163,12 @@ describe('ExitService', () => {
         number: 2,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockResponse });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockResponse});
 
       const result = await exitService.getAllExitProcesses(2, 15);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/exit/processes', {
-        params: { page: 2, size: 15 },
+        params: {page: 2, size: 15},
       });
       expect(result.number).toBe(2);
       expect(result.size).toBe(15);
@@ -201,7 +200,7 @@ describe('ExitService', () => {
         updatedAt: '2024-03-18T10:00:00',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockProcess });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockProcess});
 
       const result = await exitService.getExitProcess('exit-1');
 
@@ -211,7 +210,7 @@ describe('ExitService', () => {
     });
 
     it('should handle 404 when exit process not found', async () => {
-      const error = { response: { status: 404, data: { message: 'Exit process not found' } } };
+      const error = {response: {status: 404, data: {message: 'Exit process not found'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(exitService.getExitProcess('non-existent')).rejects.toEqual(error);
@@ -231,7 +230,7 @@ describe('ExitService', () => {
         updatedAt: '2024-03-18T10:00:00',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockProcess });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockProcess});
 
       const result = await exitService.getExitProcessByEmployee('emp-1');
 
@@ -241,7 +240,7 @@ describe('ExitService', () => {
     });
 
     it('should handle error when employee exit process not found', async () => {
-      const error = { response: { status: 404, data: { message: 'No exit process for employee' } } };
+      const error = {response: {status: 404, data: {message: 'No exit process for employee'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(exitService.getExitProcessByEmployee('emp-999')).rejects.toEqual(error);
@@ -271,7 +270,7 @@ describe('ExitService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockProcesses });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockProcesses});
 
       const result = await exitService.getExitProcessesByStatus('INITIATED');
 
@@ -281,7 +280,7 @@ describe('ExitService', () => {
     });
 
     it('should handle empty exit processes list for status', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await exitService.getExitProcessesByStatus('COMPLETED');
 
@@ -318,7 +317,7 @@ describe('ExitService', () => {
         updatedAt: '2024-03-18T10:00:00',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockProcess });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockProcess});
 
       const result = await exitService.createExitProcess(createData);
 
@@ -328,7 +327,7 @@ describe('ExitService', () => {
     });
 
     it('should handle validation error when creating exit process', async () => {
-      const error = { response: { status: 400, data: { message: 'Employee already has active exit' } } };
+      const error = {response: {status: 400, data: {message: 'Employee already has active exit'}}};
       mockedApiClient.post.mockRejectedValueOnce(error);
 
       await expect(exitService.createExitProcess({} as MockCreateExitProcessRequest)).rejects.toEqual(error);
@@ -354,7 +353,7 @@ describe('ExitService', () => {
         updatedAt: '2024-03-18T15:00:00',
       };
 
-      mockedApiClient.put.mockResolvedValueOnce({ data: mockUpdated });
+      mockedApiClient.put.mockResolvedValueOnce({data: mockUpdated});
 
       const result = await exitService.updateExitProcess('exit-1', updateData);
 
@@ -364,7 +363,7 @@ describe('ExitService', () => {
     });
 
     it('should handle error when updating exit process', async () => {
-      const error = { response: { status: 404, data: { message: 'Exit process not found' } } };
+      const error = {response: {status: 404, data: {message: 'Exit process not found'}}};
       mockedApiClient.put.mockRejectedValueOnce(error);
 
       await expect(exitService.updateExitProcess('non-existent', {})).rejects.toEqual(error);
@@ -385,18 +384,18 @@ describe('ExitService', () => {
         updatedAt: '2024-04-20T15:00:00',
       };
 
-      mockedApiClient.patch.mockResolvedValueOnce({ data: mockUpdated });
+      mockedApiClient.patch.mockResolvedValueOnce({data: mockUpdated});
 
       const result = await exitService.updateExitStatus('exit-1', 'COMPLETED');
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith('/exit/processes/exit-1/status', null, {
-        params: { status: 'COMPLETED' },
+        params: {status: 'COMPLETED'},
       });
       expect(result.status).toBe('COMPLETED');
     });
 
     it('should handle error when updating status', async () => {
-      const error = { response: { status: 400, data: { message: 'Invalid status transition' } } };
+      const error = {response: {status: 400, data: {message: 'Invalid status transition'}}};
       mockedApiClient.patch.mockRejectedValueOnce(error);
 
       await expect(exitService.updateExitStatus('exit-1', 'INVALID_STATUS')).rejects.toEqual(error);
@@ -413,14 +412,14 @@ describe('ExitService', () => {
     });
 
     it('should handle error when deleting exit process', async () => {
-      const error = { response: { status: 404, data: { message: 'Exit process not found' } } };
+      const error = {response: {status: 404, data: {message: 'Exit process not found'}}};
       mockedApiClient.delete.mockRejectedValueOnce(error);
 
       await expect(exitService.deleteExitProcess('non-existent')).rejects.toEqual(error);
     });
 
     it('should handle authorization error when deleting', async () => {
-      const error = { response: { status: 403, data: { message: 'Not authorized to delete' } } };
+      const error = {response: {status: 403, data: {message: 'Not authorized to delete'}}};
       mockedApiClient.delete.mockRejectedValueOnce(error);
 
       await expect(exitService.deleteExitProcess('exit-1')).rejects.toEqual(error);
@@ -436,18 +435,18 @@ describe('ExitService', () => {
         clearancePending: 5,
         completed: 2,
         monthlyTrend: [
-          { month: 'Jan', count: 3 },
-          { month: 'Feb', count: 5 },
-          { month: 'Mar', count: 8 },
+          {month: 'Jan', count: 3},
+          {month: 'Feb', count: 5},
+          {month: 'Mar', count: 8},
         ],
         exitTypeBreakdown: [
-          { type: 'RESIGNATION', count: 15 },
-          { type: 'TERMINATION', count: 7 },
-          { type: 'RETIREMENT', count: 3 },
+          {type: 'RESIGNATION', count: 15},
+          {type: 'TERMINATION', count: 7},
+          {type: 'RETIREMENT', count: 3},
         ],
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await exitService.getDashboard();
 
@@ -467,21 +466,21 @@ describe('ExitService', () => {
 
   describe('Error Handling', () => {
     it('should handle 401 unauthorized error', async () => {
-      const error = { response: { status: 401, data: { message: 'Unauthorized' } } };
+      const error = {response: {status: 401, data: {message: 'Unauthorized'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(exitService.getExitProcess('exit-1')).rejects.toEqual(error);
     });
 
     it('should handle 500 server error', async () => {
-      const error = { response: { status: 500, data: { message: 'Internal Server Error' } } };
+      const error = {response: {status: 500, data: {message: 'Internal Server Error'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(exitService.getAllExitProcesses()).rejects.toEqual(error);
     });
 
     it('should handle network timeout', async () => {
-      const error = { code: 'ECONNABORTED', message: 'timeout of 5000ms exceeded' };
+      const error = {code: 'ECONNABORTED', message: 'timeout of 5000ms exceeded'};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(exitService.getDashboard()).rejects.toEqual(error);

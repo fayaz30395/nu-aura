@@ -3,5 +3,5 @@
 export * from './announcement.service';
 export * from './fluence-chat.service';
 export * from './fluence.service';
-export { linkedinService } from './linkedin.service';
+export {linkedinService} from './linkedin.service';
 export * from './spotlight.service';

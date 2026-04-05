@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Training & Enrollment E2E Tests
@@ -13,7 +13,7 @@ import { testUsers } from './fixtures/testData';
  */
 
 test.describe('Training — Enrollment Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -21,12 +21,12 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('Page Structure', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/training');
       await page.waitForLoadState('networkidle');
     });
 
-    test('training page displays all primary tabs', async ({ page }) => {
+    test('training page displays all primary tabs', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const tabs = ['My Trainings', 'Course Catalog'];
@@ -37,7 +37,7 @@ test.describe('Training — Enrollment Flow', () => {
       }
     });
 
-    test('stats cards show enrollment summary', async ({ page }) => {
+    test('stats cards show enrollment summary', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const statLabels = ['My Enrollments', 'In Progress', 'Completed'];
@@ -53,19 +53,19 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('Course Catalog — Enrollment Action', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/training');
       await page.waitForLoadState('networkidle');
       await page.locator('text=Course Catalog').first().click();
       await page.waitForTimeout(500);
     });
 
-    test('course catalog tab activates without error', async ({ page }) => {
+    test('course catalog tab activates without error', async ({page}) => {
       await page.waitForTimeout(500);
       await expect(page.locator('body')).not.toContainText('Application error');
     });
 
-    test('course cards display key metadata', async ({ page }) => {
+    test('course cards display key metadata', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -79,7 +79,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasCards || true).toBe(true);
     });
 
-    test('enroll button triggers an enroll action or shows confirmation', async ({ page }) => {
+    test('enroll button triggers an enroll action or shows confirmation', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const enrollBtn = page.locator('button:has-text("Enroll")').first();
@@ -100,7 +100,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasEnroll || true).toBe(true);
     });
 
-    test('view details action opens program details', async ({ page }) => {
+    test('view details action opens program details', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const viewBtn = page.locator('button:has-text("View"), button:has-text("Details"), a:has-text("View")').first();
@@ -120,14 +120,14 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('My Trainings — In Progress', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/training');
       await page.waitForLoadState('networkidle');
       await page.locator('text=My Trainings').first().click();
       await page.waitForTimeout(500);
     });
 
-    test('my trainings tab shows enrolled courses or empty state', async ({ page }) => {
+    test('my trainings tab shows enrolled courses or empty state', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const hasContent = await page.locator('[class*="card"], table tbody tr').first().isVisible().catch(() => false);
@@ -136,7 +136,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasContent || hasEmpty || true).toBe(true);
     });
 
-    test('continue button is present for in-progress courses', async ({ page }) => {
+    test('continue button is present for in-progress courses', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const continueBtn = page.locator('button:has-text("Continue"), button:has-text("Resume")').first();
@@ -146,7 +146,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasBtn || true).toBe(true);
     });
 
-    test('completed courses show certificate download option', async ({ page }) => {
+    test('completed courses show certificate download option', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const certBtn = page.locator(
@@ -159,13 +159,13 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('Manage Programs — Admin', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/training');
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(500);
     });
 
-    test('manage programs tab is visible for admin user', async ({ page }) => {
+    test('manage programs tab is visible for admin user', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const manageTab = page.locator('text=Manage Programs, text=Manage').first();
@@ -174,7 +174,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasTab || true).toBe(true);
     });
 
-    test('clicking manage programs shows program list and create button', async ({ page }) => {
+    test('clicking manage programs shows program list and create button', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const manageTab = page.locator('button:has-text("Manage Programs"), button:has-text("Manage")').first();
@@ -194,7 +194,7 @@ test.describe('Training — Enrollment Flow', () => {
       expect(hasTab || true).toBe(true);
     });
 
-    test('create program modal opens with form fields', async ({ page }) => {
+    test('create program modal opens with form fields', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const manageTab = page.locator('button:has-text("Manage Programs"), button:has-text("Manage")').first();
@@ -222,7 +222,7 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('Learning Module', () => {
-    test('learning page is accessible', async ({ page }) => {
+    test('learning page is accessible', async ({page}) => {
       await page.goto('/learning');
       await page.waitForLoadState('networkidle');
 
@@ -230,7 +230,7 @@ test.describe('Training — Enrollment Flow', () => {
       await expect(page.locator('body')).not.toContainText('Application error');
     });
 
-    test('learning page shows heading', async ({ page }) => {
+    test('learning page shows heading', async ({page}) => {
       await page.goto('/learning');
       await page.waitForLoadState('networkidle');
 
@@ -239,7 +239,7 @@ test.describe('Training — Enrollment Flow', () => {
   });
 
   test.describe('Access Control', () => {
-    test('employee can access training page', async ({ page }) => {
+    test('employee can access training page', async ({page}) => {
       const loginPage = new LoginPage(page);
       await loginPage.navigate();
       await loginPage.login(testUsers.employee.email, testUsers.employee.password);
@@ -253,7 +253,7 @@ test.describe('Training — Enrollment Flow', () => {
       await expect(page.locator('h1').first()).toBeVisible();
     });
 
-    test('employee sees their own enrollments on My Trainings tab', async ({ page }) => {
+    test('employee sees their own enrollments on My Trainings tab', async ({page}) => {
       const loginPage = new LoginPage(page);
       await loginPage.navigate();
       await loginPage.login(testUsers.employee.email, testUsers.employee.password);

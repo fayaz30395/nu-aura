@@ -1,12 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { wellnessService } from '@/lib/services/grow/wellness.service';
-import {
-  HealthLog,
-  WellnessProgram,
-  WellnessChallenge,
-} from '@/lib/types/grow/wellness';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {wellnessService} from '@/lib/services/grow/wellness.service';
+import {HealthLog, WellnessChallenge, WellnessProgram,} from '@/lib/types/grow/wellness';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -22,13 +18,13 @@ export const wellnessKeys = {
   challengeDetail: (id: string) => [...wellnessKeys.challenges(), 'detail', id] as const,
   // Leaderboard
   leaderboard: () => [...wellnessKeys.all, 'leaderboard'] as const,
-  leaderboardTop: (limit: number) => [...wellnessKeys.leaderboard(), { limit }] as const,
+  leaderboardTop: (limit: number) => [...wellnessKeys.leaderboard(), {limit}] as const,
   // My Points
   myPoints: () => [...wellnessKeys.all, 'myPoints'] as const,
   // Health Logs
   healthLogs: () => [...wellnessKeys.all, 'healthLogs'] as const,
   myHealthLogs: (page?: number, size?: number) =>
-    [...wellnessKeys.healthLogs(), 'my', { page, size }] as const,
+    [...wellnessKeys.healthLogs(), 'my', {page, size}] as const,
 };
 
 // ─── Program Queries ───────────────────────────────────────────────────────
@@ -120,9 +116,9 @@ export function useLogHealth() {
     mutationFn: (data: HealthLog) => wellnessService.logHealth(data),
     onSuccess: () => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.myHealthLogs() });
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.myPoints() });
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.leaderboard() });
+      queryClient.invalidateQueries({queryKey: wellnessKeys.myHealthLogs()});
+      queryClient.invalidateQueries({queryKey: wellnessKeys.myPoints()});
+      queryClient.invalidateQueries({queryKey: wellnessKeys.leaderboard()});
     },
   });
 }
@@ -133,8 +129,8 @@ export function useJoinChallenge() {
   return useMutation({
     mutationFn: (challengeId: string) => wellnessService.joinChallenge(challengeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.activeChallenges() });
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.myPoints() });
+      queryClient.invalidateQueries({queryKey: wellnessKeys.activeChallenges()});
+      queryClient.invalidateQueries({queryKey: wellnessKeys.myPoints()});
     },
   });
 }
@@ -145,8 +141,8 @@ export function useLeaveChallenge() {
   return useMutation({
     mutationFn: (challengeId: string) => wellnessService.leaveChallenge(challengeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.activeChallenges() });
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.myPoints() });
+      queryClient.invalidateQueries({queryKey: wellnessKeys.activeChallenges()});
+      queryClient.invalidateQueries({queryKey: wellnessKeys.myPoints()});
     },
   });
 }
@@ -159,7 +155,7 @@ export function useCreateWellnessProgram() {
   return useMutation({
     mutationFn: (data: Partial<WellnessProgram>) => wellnessService.createProgram(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.programs() });
+      queryClient.invalidateQueries({queryKey: wellnessKeys.programs()});
     },
   });
 }
@@ -169,14 +165,14 @@ export function useCreateWellnessChallenge() {
 
   return useMutation({
     mutationFn: ({
-      programId,
-      data,
-    }: {
+                   programId,
+                   data,
+                 }: {
       programId: string | null;
       data: Partial<WellnessChallenge>;
     }) => wellnessService.createChallenge(programId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: wellnessKeys.challenges() });
+      queryClient.invalidateQueries({queryKey: wellnessKeys.challenges()});
     },
   });
 }

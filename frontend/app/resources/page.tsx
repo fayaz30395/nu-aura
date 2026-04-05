@@ -1,32 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
 import Link from 'next/link';
 import {
-  Users,
-  Calendar,
-  BarChart3,
-  Clock,
   AlertTriangle,
   ArrowRight,
-  TrendingUp,
-  Settings,
-  RefreshCw,
+  BarChart3,
+  Calendar,
+  Clock,
   Plus,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { ResourceManagementApiError } from '@/lib/services/hrms/resource-management.service';
-import { useWorkloadDashboard, useMyPendingApprovals } from '@/lib/hooks/queries/useResources';
-import { CreateAllocationModal } from '@/components/resources/CreateAllocationModal';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {ResourceManagementApiError} from '@/lib/services/hrms/resource-management.service';
+import {useMyPendingApprovals, useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
+import {CreateAllocationModal} from '@/components/resources/CreateAllocationModal';
 
 export default function ResourcesPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -37,8 +37,13 @@ export default function ResourcesPage() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError, refetch: refetchDashboard } = useWorkloadDashboard({});
-  const { data: pendingData, isLoading: pendingLoading, error: pendingError } = useMyPendingApprovals(0, 5);
+  const {
+    data: dashboardData,
+    isLoading: dashboardLoading,
+    error: dashboardError,
+    refetch: refetchDashboard
+  } = useWorkloadDashboard({});
+  const {data: pendingData, isLoading: pendingLoading, error: pendingError} = useMyPendingApprovals(0, 5);
 
   const isApiNotAvailable = (dashboardError instanceof Error &&
     (dashboardError as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
@@ -115,7 +120,7 @@ export default function ResourcesPage() {
           <Card className="border-warning-200 dark:border-warning-800">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-4 rounded-full bg-warning-50 p-4 dark:bg-warning-900/30">
-                <Settings className="h-8 w-8 text-warning-600 dark:text-warning-400" />
+                <Settings className="h-8 w-8 text-warning-600 dark:text-warning-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Resource Management API Not Available
@@ -127,7 +132,7 @@ export default function ResourcesPage() {
               </p>
               <div className="mt-6 flex gap-4">
                 <Button variant="outline" onClick={() => refetchDashboard()}>
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <RefreshCw className="mr-2 h-4 w-4"/>
                   Retry Connection
                 </Button>
                 <Link href="/dashboard">
@@ -154,7 +159,7 @@ export default function ResourcesPage() {
                       className="flex items-start gap-4 rounded-lg border border-[var(--border-main)] p-4 dark:border-[var(--border-main)]"
                     >
                       <div className={`rounded-lg p-2 ${card.color}`}>
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5"/>
                       </div>
                       <div>
                         <h3 className="font-medium text-[var(--text-primary)]">
@@ -189,7 +194,7 @@ export default function ResourcesPage() {
             </p>
           </div>
           <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4"/>
             Create Allocation
           </Button>
         </div>
@@ -207,7 +212,7 @@ export default function ResourcesPage() {
         {error && !isApiNotAvailable && (
           <Card className="border-danger-200 dark:border-danger-800">
             <CardContent className="flex items-center gap-4 p-4">
-              <AlertTriangle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
+              <AlertTriangle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
               <div className="flex-1">
                 <p className="font-medium text-danger-600 dark:text-danger-400">Error Loading Data</p>
                 <p className="text-body-secondary">
@@ -215,7 +220,7 @@ export default function ResourcesPage() {
                 </p>
               </div>
               <Button variant="outline" size="sm" onClick={() => refetchDashboard()}>
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4"/>
                 Retry
               </Button>
             </CardContent>
@@ -226,7 +231,7 @@ export default function ResourcesPage() {
         {isLoading ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24 rounded-xl" />
+              <Skeleton key={i} className="h-24 rounded-xl"/>
             ))}
           </div>
         ) : summary ? (
@@ -270,10 +275,11 @@ export default function ResourcesPage() {
                   <CardContent className="flex h-full flex-col p-6">
                     <div className="flex items-start justify-between">
                       <div className={`rounded-lg p-2.5 ${card.color}`}>
-                        <Icon className="h-6 w-6" />
+                        <Icon className="h-6 w-6"/>
                       </div>
                       {card.badge && (
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-danger-500 text-xs font-bold text-white">
+                        <span
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-danger-500 text-xs font-bold text-white">
                           {card.badge}
                         </span>
                       )}
@@ -288,7 +294,7 @@ export default function ResourcesPage() {
                     </div>
                     <div className="mt-4 flex items-center text-sm font-medium text-accent-700 dark:text-accent-400">
                       View
-                      <ArrowRight className="ml-1 h-4 w-4" />
+                      <ArrowRight className="ml-1 h-4 w-4"/>
                     </div>
                   </CardContent>
                 </Card>
@@ -302,13 +308,13 @@ export default function ResourcesPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                 Pending Allocation Approvals
               </CardTitle>
               <Link href="/resources/approvals">
                 <Button variant="ghost" size="sm">
                   View All
-                  <ArrowRight className="ml-1 h-4 w-4" />
+                  <ArrowRight className="ml-1 h-4 w-4"/>
                 </Button>
               </Link>
             </CardHeader>
@@ -320,8 +326,9 @@ export default function ResourcesPage() {
                     className="row-between rounded-lg border border-[var(--border-main)] p-4 dark:border-[var(--border-main)]"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-900/30">
-                        <Users className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-900/30">
+                        <Users className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                       </div>
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">
@@ -352,7 +359,7 @@ export default function ResourcesPage() {
           <Card className="border-danger-200 dark:border-danger-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertTriangle className="h-5 w-5" />
+                <AlertTriangle className="h-5 w-5"/>
                 Attention Required
               </CardTitle>
             </CardHeader>
@@ -365,7 +372,7 @@ export default function ResourcesPage() {
               <Link href="/resources/workload?status=OVER_ALLOCATED">
                 <Button variant="outline" className="mt-4" size="sm">
                   View Over-Allocated Employees
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4"/>
                 </Button>
               </Link>
             </CardContent>
@@ -377,12 +384,12 @@ export default function ResourcesPage() {
 }
 
 function QuickStatCard({
-  label,
-  value,
-  icon: Icon,
-  color,
-  highlight = false,
-}: {
+                         label,
+                         value,
+                         icon: Icon,
+                         color,
+                         highlight = false,
+                       }: {
   label: string;
   value: string | number;
   icon: React.ElementType;
@@ -393,7 +400,7 @@ function QuickStatCard({
     <Card className={highlight ? 'border-danger-200 dark:border-danger-800' : ''}>
       <CardContent className="flex items-center gap-4 p-4">
         <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5"/>
         </div>
         <div>
           <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>

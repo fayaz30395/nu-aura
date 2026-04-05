@@ -1,5 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { testUsers } from './fixtures/testData';
+import {expect, Page, test} from '@playwright/test';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Critical Path Smoke Tests
@@ -39,19 +39,19 @@ async function loginAndWaitForDashboard(
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(password);
   await page.locator('button[type="submit"]').click();
-  await page.waitForURL('**/dashboard', { timeout: 45_000 });
+  await page.waitForURL('**/dashboard', {timeout: 45_000});
   await page.waitForLoadState('networkidle');
 }
 
 // ─── suite ───────────────────────────────────────────────────────────────────
 
 // Serial mode: tests run in order; a failure stops the suite early.
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({mode: 'serial'});
 
 test.describe('Smoke Tests — Critical Path', () => {
 
   // ── SM-01 ────────────────────────────────────────────────────────────────
-  test('SM-01: login with valid credentials lands on dashboard', async ({ page }) => {
+  test('SM-01: login with valid credentials lands on dashboard', async ({page}) => {
     await loginAndWaitForDashboard(
       page,
       testUsers.admin.email,
@@ -62,14 +62,14 @@ test.describe('Smoke Tests — Critical Path', () => {
     const heading = page
       .locator('h1, h2, [data-testid="dashboard-heading"]')
       .first();
-    await expect(heading).toBeVisible({ timeout: 15_000 });
+    await expect(heading).toBeVisible({timeout: 15_000});
 
     // URL must contain /dashboard (not /auth/login)
     expect(page.url()).not.toContain('/auth/login');
   });
 
   // ── SM-02 ────────────────────────────────────────────────────────────────
-  test('SM-02: employees list loads and "Add Employee" is reachable', async ({ page }) => {
+  test('SM-02: employees list loads and "Add Employee" is reachable', async ({page}) => {
     await loginAndWaitForDashboard(
       page,
       testUsers.admin.email,
@@ -81,14 +81,14 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     // Page heading
     await expect(
-      page.locator('h1').filter({ hasText: /employee/i })
-    ).toBeVisible({ timeout: 15_000 });
+      page.locator('h1').filter({hasText: /employee/i})
+    ).toBeVisible({timeout: 15_000});
 
     // Add / New employee button must be present (exact label may vary)
     const addBtn = page.locator(
       'button:has-text("Add Employee"), button:has-text("New Employee"), button:has-text("Add")'
     ).first();
-    await expect(addBtn).toBeVisible({ timeout: 10_000 });
+    await expect(addBtn).toBeVisible({timeout: 10_000});
 
     // At least the table or empty state is rendered (no blank page)
     const hasContent =
@@ -99,7 +99,7 @@ test.describe('Smoke Tests — Critical Path', () => {
   });
 
   // ── SM-03 ────────────────────────────────────────────────────────────────
-  test('SM-03: employee can submit a leave request', async ({ page }) => {
+  test('SM-03: employee can submit a leave request', async ({page}) => {
     await loginAndWaitForDashboard(
       page,
       testUsers.employee.email,
@@ -111,14 +111,14 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     // "Apply Leave" button must be visible
     const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({ timeout: 10_000 });
+    await expect(applyBtn).toBeVisible({timeout: 10_000});
     await applyBtn.click();
 
     // Modal / drawer opens
     const modal = page
       .locator('div[role="dialog"], div.fixed.inset-0')
       .last();
-    await expect(modal).toBeVisible({ timeout: 8_000 });
+    await expect(modal).toBeVisible({timeout: 8_000});
 
     // --- Fill leave form ---
 
@@ -127,7 +127,7 @@ test.describe('Smoke Tests — Critical Path', () => {
       .locator('label:has-text("Leave Type")')
       .locator('..')
       .locator('select');
-    await leaveTypeSelect.selectOption({ index: 1 }); // pick first non-blank option
+    await leaveTypeSelect.selectOption({index: 1}); // pick first non-blank option
 
     // Dates: start = 10 days from now, end = same day (single-day request)
     const dateStr = futureDate(10);
@@ -145,23 +145,23 @@ test.describe('Smoke Tests — Critical Path', () => {
     const submitBtn = page.locator(
       'button:has-text("Submit"), button:has-text("Submit Request"), button[type="submit"]'
     ).last();
-    await expect(submitBtn).toBeEnabled({ timeout: 5_000 });
+    await expect(submitBtn).toBeEnabled({timeout: 5_000});
     await submitBtn.click();
 
     // Modal should close after successful submit
-    await expect(modal).not.toBeVisible({ timeout: 15_000 });
+    await expect(modal).not.toBeVisible({timeout: 15_000});
 
     // Leave list / table should reload and show at least one row
     await page.waitForLoadState('networkidle');
     const table = page.locator('table');
     if (await table.isVisible()) {
       const rows = page.locator('tbody tr');
-      await expect(rows.first()).toBeVisible({ timeout: 10_000 });
+      await expect(rows.first()).toBeVisible({timeout: 10_000});
     }
   });
 
   // ── SM-04 ────────────────────────────────────────────────────────────────
-  test('SM-04: manager can access the leave approvals page', async ({ page }) => {
+  test('SM-04: manager can access the leave approvals page', async ({page}) => {
     await loginAndWaitForDashboard(
       page,
       testUsers.manager.email,
@@ -173,7 +173,7 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     // Page must render a heading — either pending requests list or empty state
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 15_000 });
+    await expect(heading).toBeVisible({timeout: 15_000});
 
     // Must NOT be an error page
     const errorText = page.locator('text=404, text=Something went wrong, text=Unauthorized');
@@ -192,7 +192,7 @@ test.describe('Smoke Tests — Critical Path', () => {
    * re-testing the UI form (SM-03 already covers that).  The approval
    * action in step 3 is the critical integration point being tested here.
    */
-  test('SM-05: integrated leave flow — apply then approve', async ({ page, request }) => {
+  test('SM-05: integrated leave flow — apply then approve', async ({page, request}) => {
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
     // Step 1 — authenticate as employee via API to get a token for seeding
@@ -208,11 +208,11 @@ test.describe('Smoke Tests — Critical Path', () => {
 
     if (loginRes.ok()) {
       // Seed a leave request directly via API
-      const { accessToken } = await loginRes.json().catch(() => ({ accessToken: null }));
+      const {accessToken} = await loginRes.json().catch(() => ({accessToken: null}));
 
       if (accessToken) {
         const leaveRes = await request.post(`${apiBase}/leave/requests`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: {Authorization: `Bearer ${accessToken}`},
           data: {
             leaveTypeId: null, // backend will use default if null
             startDate: futureDate(14),
@@ -240,7 +240,7 @@ test.describe('Smoke Tests — Critical Path', () => {
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 15_000 });
+    await expect(heading).toBeVisible({timeout: 15_000});
 
     // Step 3 — if there is at least one pending row, approve it
     const approveButtons = page.locator('button:has-text("Approve")');
@@ -259,7 +259,7 @@ test.describe('Smoke Tests — Critical Path', () => {
       // Use a soft assertion — badge may appear in a toast or inline
       const badgeVisible = await approvedBadge
         .first()
-        .isVisible({ timeout: 8_000 })
+        .isVisible({timeout: 8_000})
         .catch(() => false);
 
       // Log result for debugging without failing the test if badge moved off screen
@@ -291,7 +291,7 @@ test.describe('Smoke Tests — Critical Path', () => {
   });
 
   // ── SM-06 ────────────────────────────────────────────────────────────────
-  test('SM-06: core routes render without 404 or crash', async ({ page }) => {
+  test('SM-06: core routes render without 404 or crash', async ({page}) => {
     await loginAndWaitForDashboard(
       page,
       testUsers.admin.email,
@@ -327,17 +327,17 @@ test.describe('Smoke Tests — Critical Path', () => {
   });
 
   // ── SM-07 ────────────────────────────────────────────────────────────────
-  test('SM-07: unauthenticated access to protected route redirects to /auth/login', async ({ page }) => {
+  test('SM-07: unauthenticated access to protected route redirects to /auth/login', async ({page}) => {
     // Clear all cookies to simulate a fresh/unauthenticated browser
     await page.context().clearCookies();
 
-    await page.goto('/employees', { waitUntil: 'networkidle' });
+    await page.goto('/employees', {waitUntil: 'networkidle'});
 
     // Middleware must redirect to login (may include ?returnUrl query param)
-    await page.waitForURL('**/auth/login**', { timeout: 15_000 });
+    await page.waitForURL('**/auth/login**', {timeout: 15_000});
     expect(page.url()).toContain('/auth/login');
 
     // Login form must be visible
-    await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 5_000 });
+    await expect(page.locator('input[type="email"]')).toBeVisible({timeout: 5_000});
   });
 });

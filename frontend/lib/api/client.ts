@@ -187,7 +187,6 @@ class ApiClient {
   clearTokens(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('tenantId');
-      sessionStorage.removeItem('user');
       sessionStorage.removeItem('auth-storage');
     }
   }

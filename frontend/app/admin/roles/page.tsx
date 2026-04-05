@@ -1,35 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Role,
-  Permission,
   CreateRoleRequest,
-  UpdateRoleRequest,
-  RoleScope,
   CustomTarget,
+  Permission,
   PermissionScopeRequest,
+  Role,
+  RoleScope,
   SCOPE_LABELS,
+  UpdateRoleRequest,
 } from '@/lib/types/core/roles';
-import { ScopeSelector } from '@/components/admin/ScopeSelector';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { AdminPageContent } from '@/components/layout';
-import { ConfirmDialog } from '@/components/ui';
+import {ScopeSelector} from '@/components/admin/ScopeSelector';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {AdminPageContent} from '@/components/layout';
+import {ConfirmDialog} from '@/components/ui';
 import {
-  useRoles,
-  usePermissions as useQueryPermissions,
-  useCreateRole,
-  useUpdateRole,
-  useDeleteRole,
   useAssignPermissionsWithScope,
+  useCreateRole,
+  useDeleteRole,
   useEffectivePermissions,
+  usePermissions as useQueryPermissions,
+  useRoles,
+  useUpdateRole,
 } from '@/lib/hooks/queries/useRoles';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('RolesPage');
 
@@ -58,8 +58,8 @@ interface ParentRoleOption {
 
 export default function RolesPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // Query hooks
   const rolesQuery = useRoles();
@@ -71,7 +71,10 @@ export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   // Track permissions with their scopes
-  const [permissionScopes, setPermissionScopes] = useState<Map<string, { scope: RoleScope; customTargets: CustomTarget[] }>>(new Map());
+  const [permissionScopes, setPermissionScopes] = useState<Map<string, {
+    scope: RoleScope;
+    customTargets: CustomTarget[]
+  }>>(new Map());
   const [searchTerm, setSearchTerm] = useState('');
   const [permissionSearch, setPermissionSearch] = useState('');
   const [showPermissionDropdown, setShowPermissionDropdown] = useState(false);
@@ -82,13 +85,13 @@ export default function RolesPage() {
   // Create form (for new role)
   const createForm = useForm<CreateRoleFormData>({
     resolver: zodResolver(createRoleFormSchema),
-    defaultValues: { code: '', name: '', description: '' },
+    defaultValues: {code: '', name: '', description: ''},
   });
 
   // Edit form (for updating role)
   const editForm = useForm<UpdateRoleFormData>({
     resolver: zodResolver(updateRoleFormSchema),
-    defaultValues: { name: '', description: '' },
+    defaultValues: {name: '', description: ''},
   });
 
   // Mutation hooks
@@ -173,7 +176,7 @@ export default function RolesPage() {
     try {
       // Build permissions with scopes
       const permissionsWithScopes: PermissionScopeRequest[] = selectedPermissions.map((code) => {
-        const scopeData = permissionScopes.get(code) || { scope: 'ALL' as RoleScope, customTargets: [] };
+        const scopeData = permissionScopes.get(code) || {scope: 'ALL' as RoleScope, customTargets: []};
         return {
           permissionCode: code,
           scope: scopeData.scope,
@@ -237,7 +240,7 @@ export default function RolesPage() {
       // Set default scope when permission is selected
       setPermissionScopes((prev) => {
         const newMap = new Map(prev);
-        newMap.set(code, { scope: 'ALL', customTargets: [] });
+        newMap.set(code, {scope: 'ALL', customTargets: []});
         return newMap;
       });
     }
@@ -246,8 +249,8 @@ export default function RolesPage() {
   const updatePermissionScope = (code: string, scope: RoleScope) => {
     setPermissionScopes((prev) => {
       const newMap = new Map(prev);
-      const current = newMap.get(code) || { scope: 'ALL', customTargets: [] };
-      newMap.set(code, { ...current, scope });
+      const current = newMap.get(code) || {scope: 'ALL', customTargets: []};
+      newMap.set(code, {...current, scope});
       return newMap;
     });
   };
@@ -255,8 +258,8 @@ export default function RolesPage() {
   const updatePermissionCustomTargets = (code: string, customTargets: CustomTarget[]) => {
     setPermissionScopes((prev) => {
       const newMap = new Map(prev);
-      const current = newMap.get(code) || { scope: 'CUSTOM', customTargets: [] };
-      newMap.set(code, { ...current, customTargets });
+      const current = newMap.get(code) || {scope: 'CUSTOM', customTargets: []};
+      newMap.set(code, {...current, customTargets});
       return newMap;
     });
   };
@@ -333,25 +336,25 @@ export default function RolesPage() {
           <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
         </div>
 
-      <div className="mb-6 flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Search roles..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="input-aura px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-        />
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="btn-primary px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
-        >
-          Create Role
-        </button>
-      </div>
+        <div className="mb-6 flex justify-between items-center">
+          <input
+            type="text"
+            placeholder="Search roles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input-aura px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+          />
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="btn-primary px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+          >
+            Create Role
+          </button>
+        </div>
 
-      <div className="skeuo-card rounded-xl overflow-x-auto">
-        <table className="table-aura">
-          <thead className="skeuo-table-header">
+        <div className="skeuo-card rounded-xl overflow-x-auto">
+          <table className="table-aura">
+            <thead className="skeuo-table-header">
             <tr>
               <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Code
@@ -368,17 +371,19 @@ export default function RolesPage() {
               <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th
+                className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Actions
               </th>
             </tr>
-          </thead>
-          <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
+            </thead>
+            <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
             {filteredRoles.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center">
                   <p className="text-[var(--text-muted)] text-sm">No roles found</p>
-                  <p className="text-[var(--text-muted)] text-xs mt-1">Try adjusting your search or create a new role.</p>
+                  <p className="text-[var(--text-muted)] text-xs mt-1">Try adjusting your search or create a new
+                    role.</p>
                 </td>
               </tr>
             )}
@@ -433,431 +438,437 @@ export default function RolesPage() {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
 
-      {/* Create Role Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Role</h2>
-            <form onSubmit={createForm.handleSubmit(handleCreateRole)}>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                {/* Code Input */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Code *
-                  </label>
-                  <input
-                    type="text"
-                    {...createForm.register('code')}
-                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                    placeholder="e.g., MANAGER"
-                  />
-                  {createForm.formState.errors.code && (
-                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.code.message}</p>
-                  )}
-                  <p className="mt-1 text-caption">
-                    Unique identifier for this role (uppercase)
-                  </p>
+        {/* Create Role Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Role</h2>
+              <form onSubmit={createForm.handleSubmit(handleCreateRole)}>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {/* Code Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      Code *
+                    </label>
+                    <input
+                      type="text"
+                      {...createForm.register('code')}
+                      className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                      placeholder="e.g., MANAGER"
+                    />
+                    {createForm.formState.errors.code && (
+                      <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.code.message}</p>
+                    )}
+                    <p className="mt-1 text-caption">
+                      Unique identifier for this role (uppercase)
+                    </p>
+                  </div>
+
+                  {/* Name Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      {...createForm.register('name')}
+                      className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                      placeholder="e.g., Manager"
+                    />
+                    {createForm.formState.errors.name && (
+                      <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.name.message}</p>
+                    )}
+                    <p className="mt-1 text-caption">
+                      Display name for this role
+                    </p>
+                  </div>
                 </div>
 
-                {/* Name Input */}
-                <div>
+                <div className="mb-4">
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Name *
+                    Description
                   </label>
-                  <input
-                    type="text"
-                    {...createForm.register('name')}
+                  <textarea
+                    {...createForm.register('description')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                    placeholder="e.g., Manager"
+                    rows={3}
+                    placeholder="Optional description of this role..."
                   />
-                  {createForm.formState.errors.name && (
-                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.name.message}</p>
+                  {createForm.formState.errors.description && (
+                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.description.message}</p>
                   )}
-                  <p className="mt-1 text-caption">
-                    Display name for this role
-                  </p>
                 </div>
-              </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Description
-                </label>
-                <textarea
-                  {...createForm.register('description')}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                  rows={3}
-                  placeholder="Optional description of this role..."
-                />
-                {createForm.formState.errors.description && (
-                  <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.description.message}</p>
-                )}
-              </div>
-
-              {/* Permissions Dropdown - Note: permissions are NOT part of the form, handled separately */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Permissions
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={permissionSearch}
-                    onChange={(e) => setPermissionSearch(e.target.value)}
-                    onFocus={() => setShowPermissionDropdown(true)}
-                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                    placeholder="Search and select permissions..."
-                  />
-                  {showPermissionDropdown && permissions.length > 0 && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setShowPermissionDropdown(false)} />
-                      <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-64 overflow-y-auto">
-                        {permissions
-                          .filter(permission =>
+                {/* Permissions Dropdown - Note: permissions are NOT part of the form, handled separately */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Permissions
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={permissionSearch}
+                      onChange={(e) => setPermissionSearch(e.target.value)}
+                      onFocus={() => setShowPermissionDropdown(true)}
+                      className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                      placeholder="Search and select permissions..."
+                    />
+                    {showPermissionDropdown && permissions.length > 0 && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setShowPermissionDropdown(false)}/>
+                        <div
+                          className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-64 overflow-y-auto">
+                          {permissions
+                            .filter(permission =>
+                              permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
+                              permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
+                            )
+                            .map((permission) => {
+                              // Permissions are managed separately from form
+                              const isSelected = false;
+                              return (
+                                <div
+                                  key={permission.code}
+                                  onClick={() => {
+                                    // Permissions are managed separately via the Permissions modal
+                                    // Not part of the create form
+                                  }}
+                                  className={`px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] ${
+                                    isSelected ? 'bg-accent-50' : ''
+                                  }`}
+                                >
+                                  <div className="row-between">
+                                    <div>
+                                      <div className="text-sm font-medium text-[var(--text-primary)]">
+                                        {permission.code}
+                                      </div>
+                                      <div className="text-caption">
+                                        {permission.description || 'No description'}
+                                      </div>
+                                    </div>
+                                    {isSelected && (
+                                      <svg className="w-5 h-5 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          {permissions.filter(permission =>
                             permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
                             permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
-                          )
-                          .map((permission) => {
-                            // Permissions are managed separately from form
-                            const isSelected = false;
-                            return (
-                              <div
-                                key={permission.code}
-                                onClick={() => {
-                                  // Permissions are managed separately via the Permissions modal
-                                  // Not part of the create form
-                                }}
-                                className={`px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] ${
-                                  isSelected ? 'bg-accent-50' : ''
-                                }`}
-                              >
-                                <div className="row-between">
-                                  <div>
-                                    <div className="text-sm font-medium text-[var(--text-primary)]">
-                                      {permission.code}
-                                    </div>
-                                    <div className="text-caption">
-                                      {permission.description || 'No description'}
-                                    </div>
-                                  </div>
-                                  {isSelected && (
-                                    <svg className="w-5 h-5 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        {permissions.filter(permission =>
-                          permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
-                          permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
-                        ).length === 0 && (
-                          <div className="px-4 py-4 text-body-muted text-center">
-                            No permissions found
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  {showPermissionDropdown && permissions.length === 0 && (
-                    <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] p-4">
-                      <p className="text-body-muted text-center">
-                        No permissions available. Please check if you are logged in.
-                      </p>
-                    </div>
-                  )}
-                </div>
-                {/* Permissions will be shown only in the permissions modal after creation */}
-              </div>
-
-              <div className="flex justify-end gap-2 mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    createForm.reset();
-                  }}
-                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
-                  className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
-                >
-                  {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Role Modal */}
-      {showEditModal && selectedRole && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
-            <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Code
-                </label>
-                <input
-                  type="text"
-                  value={selectedRole.code}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)]"
-                  disabled
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  {...editForm.register('name')}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                />
-                {editForm.formState.errors.name && (
-                  <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.name.message}</p>
-                )}
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Description
-                </label>
-                <textarea
-                  {...editForm.register('description')}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                  rows={3}
-                />
-                {editForm.formState.errors.description && (
-                  <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.description.message}</p>
-                )}
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Parent Role
-                </label>
-                <select
-                  {...editForm.register('parentRoleId')}
-                  value={selectedParentRoleId || ''}
-                  onChange={(e) => {
-                    const value = e.target.value || null;
-                    setSelectedParentRoleId(value);
-                    editForm.setValue('parentRoleId', value);
-                  }}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
-                >
-                  <option value="">None</option>
-                  {getAvailableParentRoles().map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1 text-caption">
-                  Select a parent role to inherit its permissions
-                </p>
-              </div>
-              {/* Inherited Permissions Section */}
-              {selectedParentRoleId && inheritedPermissionsQuery.data && inheritedPermissionsQuery.data.length > 0 && (
-                <div className="mb-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
-                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
-                    Inherited Permissions from {selectedRole.parentRoleName || 'Parent Role'}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {inheritedPermissionsQuery.data.map((permission) => (
-                      <span
-                        key={permission.code}
-                        className="inline-flex items-center px-4 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)] opacity-75"
-                      >
-                        {permission.code}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-caption mt-2">
-                    These permissions are inherited from the parent role and cannot be modified here.
-                  </p>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setSelectedRole(null);
-                    setSelectedParentRoleId(null);
-                    editForm.reset();
-                  }}
-                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
-                  className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
-                >
-                  {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Permissions Modal with Scope Selection */}
-      {showPermissionsModal && selectedRole && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-5xl max-h-[85vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-2 text-[var(--text-primary)]">
-              Manage Permissions - {selectedRole.name}
-            </h2>
-            <p className="text-body-muted mb-4">
-              Select permissions and configure their scope. Scope determines what data the permission grants access to.
-            </p>
-            <div className="space-y-4">
-              {Object.entries(groupedPermissions).map(([resource, perms]) => (
-                <div key={resource} className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-surface)]">
-                  <h3 className="font-semibold text-[var(--text-primary)] mb-4">{resource}</h3>
-                  <div className="space-y-4">
-                    {perms.map((permission) => {
-                      const isSelected = selectedPermissions.includes(permission.code);
-                      const scopeData = permissionScopes.get(permission.code);
-                      const currentScope = scopeData?.scope || 'ALL';
-
-                      return (
-                        <div
-                          key={permission.id}
-                          className={`p-4 rounded-lg border transition-colors ${
-                            isSelected
-                              ? 'border-accent-300 bg-accent-50'
-                              : 'border-[var(--border-main)] hover:border-[var(--border-focus)]'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <label className="flex items-start space-x-4 cursor-pointer flex-1">
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => togglePermission(permission.code)}
-                                disabled={selectedRole.isSystemRole}
-                                className="mt-1 rounded text-accent-700 focus:ring-accent-500"
-                              />
-                              <div>
-                                <span className="text-sm font-medium text-[var(--text-primary)]">
-                                  {permission.name}
-                                </span>
-                                <span className="text-caption ml-2">
-                                  ({permission.code})
-                                </span>
-                                {permission.description && (
-                                  <p className="text-caption mt-0.5">
-                                    {permission.description}
-                                  </p>
-                                )}
-                              </div>
-                            </label>
-
-                            {/* Show current scope badge for system roles */}
-                            {isSelected && selectedRole.isSystemRole && (
-                              <span className="text-xs px-2 py-1 rounded bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                                {SCOPE_LABELS[currentScope]}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Scope selector with custom target picker - only show when permission is selected */}
-                          {isSelected && !selectedRole.isSystemRole && (
-                            <div className="mt-4 pl-6">
-                              <ScopeSelector
-                                value={currentScope}
-                                onChange={(scope) => updatePermissionScope(permission.code, scope)}
-                                customTargets={scopeData?.customTargets || []}
-                                onCustomTargetsChange={(targets) => updatePermissionCustomTargets(permission.code, targets)}
-                                showDescription={false}
-                              />
+                          ).length === 0 && (
+                            <div className="px-4 py-4 text-body-muted text-center">
+                              No permissions found
                             </div>
                           )}
                         </div>
-                      );
-                    })}
+                      </>
+                    )}
+                    {showPermissionDropdown && permissions.length === 0 && (
+                      <div
+                        className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] p-4">
+                        <p className="text-body-muted text-center">
+                          No permissions available. Please check if you are logged in.
+                        </p>
+                      </div>
+                    )}
                   </div>
+                  {/* Permissions will be shown only in the permissions modal after creation */}
                 </div>
-              ))}
-            </div>
 
-            {/* Summary */}
-            <div className="mt-4 p-4 bg-[var(--bg-surface)] rounded-lg space-y-2">
-              <p className="text-body-secondary">
-                <strong>{selectedPermissions.length}</strong> permission(s) selected
-              </p>
-              {/* Show warning for CUSTOM scopes without targets */}
-              {(() => {
-                const customScopesWithoutTargets = selectedPermissions.filter(code => {
-                  const scopeData = permissionScopes.get(code);
-                  return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
-                });
-                if (customScopesWithoutTargets.length > 0) {
-                  return (
-                    <p className="text-xs text-warning-600 dark:text-warning-400">
-                      <strong>{customScopesWithoutTargets.length}</strong> permission(s) have CUSTOM scope but no targets selected
-                    </p>
-                  );
-                }
-                return null;
-              })()}
-            </div>
-
-            <div className="flex justify-end gap-4 mt-6">
-              <button
-                onClick={() => {
-                  setShowPermissionsModal(false);
-                  setSelectedRole(null);
-                  setSelectedPermissions([]);
-                  setPermissionScopes(new Map());
-                }}
-                className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
-              >
-                Cancel
-              </button>
-              {!selectedRole.isSystemRole && (() => {
-                const hasInvalidCustomScopes = selectedPermissions.some(code => {
-                  const scopeData = permissionScopes.get(code);
-                  return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
-                });
-                return (
+                <div className="flex justify-end gap-2 mt-6">
                   <button
-                    onClick={handleAssignPermissions}
-                    disabled={hasInvalidCustomScopes}
-                    title={hasInvalidCustomScopes ? 'Please add targets for all CUSTOM scope permissions' : undefined}
-                    className={`px-4 py-2 rounded-lg ${
-                      hasInvalidCustomScopes
-                        ? 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
-                        : 'bg-accent-500 text-white hover:bg-accent-700'
-                    }`}
+                    type="button"
+                    onClick={() => {
+                      setShowCreateModal(false);
+                      createForm.reset();
+                    }}
+                    className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
                   >
-                    Save Permissions
+                    Cancel
                   </button>
-                );
-              })()}
+                  <button
+                    type="submit"
+                    disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
+                    className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                  >
+                    {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Edit Role Modal */}
+        {showEditModal && selectedRole && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
+              <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Code
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedRole.code}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)]"
+                    disabled
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    {...editForm.register('name')}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  />
+                  {editForm.formState.errors.name && (
+                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.name.message}</p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    {...editForm.register('description')}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                    rows={3}
+                  />
+                  {editForm.formState.errors.description && (
+                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.description.message}</p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Parent Role
+                  </label>
+                  <select
+                    {...editForm.register('parentRoleId')}
+                    value={selectedParentRoleId || ''}
+                    onChange={(e) => {
+                      const value = e.target.value || null;
+                      setSelectedParentRoleId(value);
+                      editForm.setValue('parentRoleId', value);
+                    }}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
+                  >
+                    <option value="">None</option>
+                    {getAvailableParentRoles().map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-caption">
+                    Select a parent role to inherit its permissions
+                  </p>
+                </div>
+                {/* Inherited Permissions Section */}
+                {selectedParentRoleId && inheritedPermissionsQuery.data && inheritedPermissionsQuery.data.length > 0 && (
+                  <div className="mb-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">
+                      Inherited Permissions from {selectedRole.parentRoleName || 'Parent Role'}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {inheritedPermissionsQuery.data.map((permission) => (
+                        <span
+                          key={permission.code}
+                          className="inline-flex items-center px-4 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)] opacity-75"
+                        >
+                        {permission.code}
+                      </span>
+                      ))}
+                    </div>
+                    <p className="text-caption mt-2">
+                      These permissions are inherited from the parent role and cannot be modified here.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setSelectedRole(null);
+                      setSelectedParentRoleId(null);
+                      editForm.reset();
+                    }}
+                    className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
+                    className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                  >
+                    {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Permissions Modal with Scope Selection */}
+        {showPermissionsModal && selectedRole && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-5xl max-h-[85vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-2 text-[var(--text-primary)]">
+                Manage Permissions - {selectedRole.name}
+              </h2>
+              <p className="text-body-muted mb-4">
+                Select permissions and configure their scope. Scope determines what data the permission grants access
+                to.
+              </p>
+              <div className="space-y-4">
+                {Object.entries(groupedPermissions).map(([resource, perms]) => (
+                  <div key={resource}
+                       className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-surface)]">
+                    <h3 className="font-semibold text-[var(--text-primary)] mb-4">{resource}</h3>
+                    <div className="space-y-4">
+                      {perms.map((permission) => {
+                        const isSelected = selectedPermissions.includes(permission.code);
+                        const scopeData = permissionScopes.get(permission.code);
+                        const currentScope = scopeData?.scope || 'ALL';
+
+                        return (
+                          <div
+                            key={permission.id}
+                            className={`p-4 rounded-lg border transition-colors ${
+                              isSelected
+                                ? 'border-accent-300 bg-accent-50'
+                                : 'border-[var(--border-main)] hover:border-[var(--border-focus)]'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <label className="flex items-start space-x-4 cursor-pointer flex-1">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => togglePermission(permission.code)}
+                                  disabled={selectedRole.isSystemRole}
+                                  className="mt-1 rounded text-accent-700 focus:ring-accent-500"
+                                />
+                                <div>
+                                <span className="text-sm font-medium text-[var(--text-primary)]">
+                                  {permission.name}
+                                </span>
+                                  <span className="text-caption ml-2">
+                                  ({permission.code})
+                                </span>
+                                  {permission.description && (
+                                    <p className="text-caption mt-0.5">
+                                      {permission.description}
+                                    </p>
+                                  )}
+                                </div>
+                              </label>
+
+                              {/* Show current scope badge for system roles */}
+                              {isSelected && selectedRole.isSystemRole && (
+                                <span
+                                  className="text-xs px-2 py-1 rounded bg-[var(--bg-surface)] text-[var(--text-secondary)]">
+                                {SCOPE_LABELS[currentScope]}
+                              </span>
+                              )}
+                            </div>
+
+                            {/* Scope selector with custom target picker - only show when permission is selected */}
+                            {isSelected && !selectedRole.isSystemRole && (
+                              <div className="mt-4 pl-6">
+                                <ScopeSelector
+                                  value={currentScope}
+                                  onChange={(scope) => updatePermissionScope(permission.code, scope)}
+                                  customTargets={scopeData?.customTargets || []}
+                                  onCustomTargetsChange={(targets) => updatePermissionCustomTargets(permission.code, targets)}
+                                  showDescription={false}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Summary */}
+              <div className="mt-4 p-4 bg-[var(--bg-surface)] rounded-lg space-y-2">
+                <p className="text-body-secondary">
+                  <strong>{selectedPermissions.length}</strong> permission(s) selected
+                </p>
+                {/* Show warning for CUSTOM scopes without targets */}
+                {(() => {
+                  const customScopesWithoutTargets = selectedPermissions.filter(code => {
+                    const scopeData = permissionScopes.get(code);
+                    return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
+                  });
+                  if (customScopesWithoutTargets.length > 0) {
+                    return (
+                      <p className="text-xs text-warning-600 dark:text-warning-400">
+                        <strong>{customScopesWithoutTargets.length}</strong> permission(s) have CUSTOM scope but no
+                        targets selected
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowPermissionsModal(false);
+                    setSelectedRole(null);
+                    setSelectedPermissions([]);
+                    setPermissionScopes(new Map());
+                  }}
+                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:opacity-80"
+                >
+                  Cancel
+                </button>
+                {!selectedRole.isSystemRole && (() => {
+                  const hasInvalidCustomScopes = selectedPermissions.some(code => {
+                    const scopeData = permissionScopes.get(code);
+                    return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
+                  });
+                  return (
+                    <button
+                      onClick={handleAssignPermissions}
+                      disabled={hasInvalidCustomScopes}
+                      title={hasInvalidCustomScopes ? 'Please add targets for all CUSTOM scope permissions' : undefined}
+                      className={`px-4 py-2 rounded-lg ${
+                        hasInvalidCustomScopes
+                          ? 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
+                          : 'bg-accent-500 text-white hover:bg-accent-700'
+                      }`}
+                    >
+                      Save Permissions
+                    </button>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminPageContent>
   );

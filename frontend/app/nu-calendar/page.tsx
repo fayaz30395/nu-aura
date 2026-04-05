@@ -1,33 +1,33 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { useRouter } from 'next/navigation';
+import React, {useEffect, useMemo, useState} from 'react';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {useRouter} from 'next/navigation';
 import {
+  AlertCircle,
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  Plus,
-  X,
   Clock,
+  ExternalLink,
+  Loader2,
   MapPin,
+  Plus,
+  RefreshCw,
+  Trash2,
   Users,
   Video,
-  RefreshCw,
-  AlertCircle,
-  Loader2,
-  ExternalLink,
-  Trash2,
+  X,
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { useGoogleLogin } from '@react-oauth/google';
-import { getGoogleToken, saveGoogleToken, clearGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
-import { createLogger } from '@/lib/utils/logger';
-import { safeWindowOpen } from '@/lib/utils/url';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {useGoogleLogin} from '@react-oauth/google';
+import {clearGoogleToken, getGoogleToken, GOOGLE_SSO_SCOPES, saveGoogleToken} from '@/lib/utils/googleToken';
+import {createLogger} from '@/lib/utils/logger';
+import {safeWindowOpen} from '@/lib/utils/url';
 
 const log = createLogger('NuCalendarPage');
 
@@ -75,7 +75,7 @@ type ViewMode = 'month' | 'week' | 'day' | 'agenda';
 
 function CalendarContent() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [, setCalendars] = useState<CalendarList[]>([]);
@@ -158,7 +158,7 @@ function CalendarContent() {
     try {
       const response = await fetch(
         'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (!response.ok) {
@@ -193,7 +193,7 @@ function CalendarContent() {
         `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
         `timeMin=${startOfMonth.toISOString()}&timeMax=${endOfMonth.toISOString()}&` +
         `singleEvents=true&orderBy=startTime&maxResults=250`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (!response.ok) {
@@ -233,17 +233,17 @@ function CalendarContent() {
         summary: newEvent.summary,
         description: newEvent.description,
         location: newEvent.location,
-        start: { dateTime: startDateTime, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-        end: { dateTime: endDateTime, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+        start: {dateTime: startDateTime, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone},
+        end: {dateTime: endDateTime, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone},
       };
 
       if (newEvent.attendees.trim()) {
-        eventData.attendees = newEvent.attendees.split(',').map(email => ({ email: email.trim() }));
+        eventData.attendees = newEvent.attendees.split(',').map(email => ({email: email.trim()}));
       }
 
       if (newEvent.addMeet) {
         eventData.conferenceData = {
-          createRequest: { requestId: `meet-${Date.now()}`, conferenceSolutionKey: { type: 'hangoutsMeet' } }
+          createRequest: {requestId: `meet-${Date.now()}`, conferenceSolutionKey: {type: 'hangoutsMeet'}}
         };
       }
 
@@ -296,7 +296,7 @@ function CalendarContent() {
         `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventToDelete}`,
         {
           method: 'DELETE',
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: {Authorization: `Bearer ${accessToken}`},
         }
       );
 
@@ -373,7 +373,7 @@ function CalendarContent() {
   const formatTime = (dateTimeStr?: string) => {
     if (!dateTimeStr) return '';
     const date = new Date(dateTimeStr);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
   };
 
   const formatEventDate = (event: CalendarEvent) => {
@@ -433,9 +433,10 @@ function CalendarContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
+      <div
+        className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
@@ -445,14 +446,15 @@ function CalendarContent() {
   return (
     <AppLayout
       activeMenuItem="nu-calendar"
-      breadcrumbs={[{ label: 'NU-Calendar', href: '/nu-calendar' }]}
+      breadcrumbs={[{label: 'NU-Calendar', href: '/nu-calendar'}]}
     >
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
-              <CalendarIcon className="h-6 w-6 text-white" />
+            <div
+              className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
+              <CalendarIcon className="h-6 w-6 text-white"/>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">NU-Calendar</h1>
@@ -463,7 +465,7 @@ function CalendarContent() {
             <Button
               variant="primary"
               onClick={handleConnectClick}
-              leftIcon={<CalendarIcon className="h-4 w-4" />}
+              leftIcon={<CalendarIcon className="h-4 w-4"/>}
             >
               Connect Google Calendar
             </Button>
@@ -473,7 +475,7 @@ function CalendarContent() {
                 variant="primary"
                 size="sm"
                 onClick={() => openCreateModal()}
-                leftIcon={<Plus className="h-4 w-4" />}
+                leftIcon={<Plus className="h-4 w-4"/>}
               >
                 New Event
               </Button>
@@ -481,7 +483,7 @@ function CalendarContent() {
                 variant="outline"
                 size="sm"
                 onClick={() => loadEvents(accessToken)}
-                leftIcon={<RefreshCw className="h-4 w-4" />}
+                leftIcon={<RefreshCw className="h-4 w-4"/>}
               >
                 Refresh
               </Button>
@@ -502,7 +504,7 @@ function CalendarContent() {
           <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
             <CardContent className="py-4">
               <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
                   Try Again
@@ -517,8 +519,9 @@ function CalendarContent() {
           <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-accent-250 dark:bg-accent-900/30 flex items-center justify-center mx-auto mb-6">
-                  <CalendarIcon className="h-10 w-10 text-accent-800 dark:text-accent-600" />
+                <div
+                  className="w-20 h-20 rounded-full bg-accent-250 dark:bg-accent-900/30 flex items-center justify-center mx-auto mb-6">
+                  <CalendarIcon className="h-10 w-10 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Google Calendar
@@ -531,7 +534,7 @@ function CalendarContent() {
                   variant="primary"
                   size="lg"
                   onClick={handleConnectClick}
-                  leftIcon={<CalendarIcon className="h-5 w-5" />}
+                  leftIcon={<CalendarIcon className="h-5 w-5"/>}
                 >
                   Connect Google Calendar
                 </Button>
@@ -554,18 +557,18 @@ function CalendarContent() {
                         className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         aria-label="Previous month"
                       >
-                        <ChevronLeft className="h-5 w-5" />
+                        <ChevronLeft className="h-5 w-5"/>
                       </button>
                       <button
                         onClick={goToNext}
                         className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         aria-label="Next month"
                       >
-                        <ChevronRight className="h-5 w-5" />
+                        <ChevronRight className="h-5 w-5"/>
                       </button>
                     </div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                      {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      {currentDate.toLocaleDateString('en-US', {month: 'long', year: 'numeric'})}
                     </h2>
                   </div>
                   <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
@@ -679,26 +682,26 @@ function CalendarContent() {
                         className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                       >
                         <div className="flex items-start gap-4">
-                          <div className={`w-1 h-full min-h-[60px] rounded-full ${getEventColor(event)}`} />
+                          <div className={`w-1 h-full min-h-[60px] rounded-full ${getEventColor(event)}`}/>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-medium text-[var(--text-primary)]">
                               {event.summary}
                             </h3>
                             <div className="flex items-center gap-4 mt-1 text-body-muted">
                               <div className="flex items-center gap-1">
-                                <Clock className="h-4 w-4" />
+                                <Clock className="h-4 w-4"/>
                                 {formatEventDate(event)}
                               </div>
                               {event.location && (
                                 <div className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4" />
+                                  <MapPin className="h-4 w-4"/>
                                   {event.location}
                                 </div>
                               )}
                             </div>
                             {event.attendees && event.attendees.length > 0 && (
                               <div className="flex items-center gap-1 mt-2 text-body-muted">
-                                <Users className="h-4 w-4" />
+                                <Users className="h-4 w-4"/>
                                 {event.attendees.length} attendee(s)
                               </div>
                             )}
@@ -711,7 +714,7 @@ function CalendarContent() {
                                 e.stopPropagation();
                                 safeWindowOpen(event.hangoutLink, '_blank');
                               }}
-                              leftIcon={<Video className="h-4 w-4" />}
+                              leftIcon={<Video className="h-4 w-4"/>}
                             >
                               Join
                             </Button>
@@ -728,7 +731,7 @@ function CalendarContent() {
             {(viewMode === 'week' || viewMode === 'day') && (
               <Card>
                 <CardContent className="py-16 text-center">
-                  <CalendarIcon className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <CalendarIcon className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                   <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                     {viewMode === 'week' ? 'Week View' : 'Day View'}
                   </h3>
@@ -755,7 +758,7 @@ function CalendarContent() {
                       }}
                       className="flex items-center gap-4 p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
                     >
-                      <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`} />
+                      <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`}/>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-[var(--text-primary)] truncate">
                           {event.summary}
@@ -765,7 +768,7 @@ function CalendarContent() {
                         </p>
                       </div>
                       {event.hangoutLink && (
-                        <Video className="h-4 w-4 text-accent-500" />
+                        <Video className="h-4 w-4 text-accent-500"/>
                       )}
                     </div>
                   ))}
@@ -790,7 +793,7 @@ function CalendarContent() {
                 className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Close event modal"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5"/>
               </button>
             </div>
             <div className="p-4 space-y-4">
@@ -801,13 +804,13 @@ function CalendarContent() {
               </div>
 
               <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                <Clock className="h-4 w-4" />
+                <Clock className="h-4 w-4"/>
                 <span>{formatEventDate(selectedEvent)}</span>
               </div>
 
               {selectedEvent.location && (
                 <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-4 w-4"/>
                   <span>{selectedEvent.location}</span>
                 </div>
               )}
@@ -816,7 +819,7 @@ function CalendarContent() {
                 <Button
                   variant="primary"
                   onClick={() => safeWindowOpen(selectedEvent.hangoutLink, '_blank')}
-                  leftIcon={<Video className="h-4 w-4" />}
+                  leftIcon={<Video className="h-4 w-4"/>}
                   className="w-full"
                 >
                   Join Google Meet
@@ -853,8 +856,8 @@ function CalendarContent() {
                           {attendee.responseStatus && (
                             <p className={`text-xs ${
                               attendee.responseStatus === 'accepted' ? 'text-success-500' :
-                              attendee.responseStatus === 'declined' ? 'text-danger-500' :
-                              'text-warning-500'
+                                attendee.responseStatus === 'declined' ? 'text-danger-500' :
+                                  'text-warning-500'
                             }`}>
                               {attendee.responseStatus}
                             </p>
@@ -871,7 +874,7 @@ function CalendarContent() {
                   <Button
                     variant="outline"
                     onClick={() => safeWindowOpen(selectedEvent.htmlLink, '_blank')}
-                    leftIcon={<ExternalLink className="h-4 w-4" />}
+                    leftIcon={<ExternalLink className="h-4 w-4"/>}
                     className="flex-1"
                   >
                     Open in Calendar
@@ -883,7 +886,7 @@ function CalendarContent() {
                     deleteEvent(selectedEvent.id);
                   }}
                   className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30"
-                  leftIcon={<Trash2 className="h-4 w-4" />}
+                  leftIcon={<Trash2 className="h-4 w-4"/>}
                 >
                   Delete
                 </Button>
@@ -904,7 +907,7 @@ function CalendarContent() {
                 className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Close create modal"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5"/>
               </button>
             </div>
             <div className="p-4 space-y-4">
@@ -914,7 +917,7 @@ function CalendarContent() {
                 </label>
                 <Input
                   value={newEvent.summary}
-                  onChange={(e) => setNewEvent({ ...newEvent, summary: e.target.value })}
+                  onChange={(e) => setNewEvent({...newEvent, summary: e.target.value})}
                   placeholder="Event title"
                 />
               </div>
@@ -927,7 +930,7 @@ function CalendarContent() {
                   <Input
                     type="date"
                     value={newEvent.startDate}
-                    onChange={(e) => setNewEvent({ ...newEvent, startDate: e.target.value })}
+                    onChange={(e) => setNewEvent({...newEvent, startDate: e.target.value})}
                   />
                 </div>
                 <div>
@@ -937,7 +940,7 @@ function CalendarContent() {
                   <Input
                     type="time"
                     value={newEvent.startTime}
-                    onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
+                    onChange={(e) => setNewEvent({...newEvent, startTime: e.target.value})}
                   />
                 </div>
               </div>
@@ -950,7 +953,7 @@ function CalendarContent() {
                   <Input
                     type="date"
                     value={newEvent.endDate}
-                    onChange={(e) => setNewEvent({ ...newEvent, endDate: e.target.value })}
+                    onChange={(e) => setNewEvent({...newEvent, endDate: e.target.value})}
                   />
                 </div>
                 <div>
@@ -960,7 +963,7 @@ function CalendarContent() {
                   <Input
                     type="time"
                     value={newEvent.endTime}
-                    onChange={(e) => setNewEvent({ ...newEvent, endTime: e.target.value })}
+                    onChange={(e) => setNewEvent({...newEvent, endTime: e.target.value})}
                   />
                 </div>
               </div>
@@ -971,7 +974,7 @@ function CalendarContent() {
                 </label>
                 <Input
                   value={newEvent.location}
-                  onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+                  onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}
                   placeholder="Add location"
                 />
               </div>
@@ -982,7 +985,7 @@ function CalendarContent() {
                 </label>
                 <textarea
                   value={newEvent.description}
-                  onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                  onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
                   placeholder="Add description"
                   rows={3}
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -995,7 +998,7 @@ function CalendarContent() {
                 </label>
                 <Input
                   value={newEvent.attendees}
-                  onChange={(e) => setNewEvent({ ...newEvent, attendees: e.target.value })}
+                  onChange={(e) => setNewEvent({...newEvent, attendees: e.target.value})}
                   placeholder="email1@example.com, email2@example.com"
                 />
               </div>
@@ -1005,7 +1008,7 @@ function CalendarContent() {
                   type="checkbox"
                   id="addMeet"
                   checked={newEvent.addMeet}
-                  onChange={(e) => setNewEvent({ ...newEvent, addMeet: e.target.checked })}
+                  onChange={(e) => setNewEvent({...newEvent, addMeet: e.target.checked})}
                   className="rounded border-[var(--border-main)]"
                 />
                 <label htmlFor="addMeet" className="text-body-secondary">
@@ -1024,7 +1027,7 @@ function CalendarContent() {
                   variant="primary"
                   onClick={createEvent}
                   disabled={creating || !newEvent.summary.trim() || !newEvent.startDate}
-                  leftIcon={creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  leftIcon={creating ? <Loader2 className="h-4 w-4 animate-spin"/> : <Plus className="h-4 w-4"/>}
                 >
                   {creating ? 'Creating...' : 'Create Event'}
                 </Button>
@@ -1052,5 +1055,5 @@ function CalendarContent() {
 }
 
 export default function NuCalendarPage() {
-  return <CalendarContent />;
+  return <CalendarContent/>;
 }

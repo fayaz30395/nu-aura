@@ -3,20 +3,20 @@
  * All data fetching for mobile endpoints uses React Query
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import mobileApiService from '../../services/core/mobile-api.service';
 import {
-  MobileDashboardResponse,
   LeaveBalanceResponse,
-  RecentLeaveRequest,
-  MobileQuickLeaveRequest,
-  MobileCancelLeaveRequest,
-  PendingApprovalsResponse,
   MobileBulkApprovalRequest,
-  UnreadNotificationsResponse,
+  MobileCancelLeaveRequest,
+  MobileDashboardResponse,
   MobileDeviceRegistrationRequest,
   MobileMarkReadRequest,
+  MobileQuickLeaveRequest,
+  PendingApprovalsResponse,
+  RecentLeaveRequest,
   SyncResponse,
+  UnreadNotificationsResponse,
 } from '../../types/core/mobile-api';
 
 // Query keys for mobile API
@@ -90,9 +90,9 @@ export const UseMobileCancelLeaveRequest = () => {
 
   return useMutation({
     mutationFn: ({
-      leaveRequestId,
-      request,
-    }: {
+                   leaveRequestId,
+                   request,
+                 }: {
       leaveRequestId: string;
       request: MobileCancelLeaveRequest;
     }) => mobileApiService.cancelLeaveRequest(leaveRequestId, request),
@@ -121,7 +121,7 @@ export const useMobileApproveRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ approvalId, notes }: { approvalId: string; notes?: string }) =>
+    mutationFn: ({approvalId, notes}: { approvalId: string; notes?: string }) =>
       mobileApiService.approveRequest(approvalId, notes),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -139,10 +139,10 @@ export const useMobileRejectRequest = () => {
 
   return useMutation({
     mutationFn: ({
-      approvalId,
-      rejectionReason,
-      notes,
-    }: {
+                   approvalId,
+                   rejectionReason,
+                   notes,
+                 }: {
       approvalId: string;
       rejectionReason: string;
       notes?: string;

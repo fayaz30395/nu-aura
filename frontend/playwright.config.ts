@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 /**
  * Playwright E2E Test Configuration for HRMS Frontend
@@ -41,8 +41,8 @@ export default defineConfig({
 
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'playwright-report/results.json' }],
+    ['html', {outputFolder: 'playwright-report'}],
+    ['json', {outputFile: 'playwright-report/results.json'}],
     ['list'],
   ],
 
@@ -64,7 +64,7 @@ export default defineConfig({
     actionTimeout: 15000,
 
     // Browser context options
-    viewport: { width: 1280, height: 720 },
+    viewport: {width: 1280, height: 720},
 
     // Ignore HTTPS errors
     ignoreHTTPSErrors: true,

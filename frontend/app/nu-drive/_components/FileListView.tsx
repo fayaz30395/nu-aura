@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Star, Users, Clock, MoreVertical } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { DriveFile, ViewTab } from './types';
-import { getFileIcon, formatBytes } from './fileUtils';
+import {Clock, MoreVertical, Star, Users} from 'lucide-react';
+import {Card} from '@/components/ui/Card';
+import {DriveFile, ViewTab} from './types';
+import {formatBytes, getFileIcon} from './fileUtils';
 
 interface FileListViewProps {
   files: DriveFile[];
@@ -13,7 +13,7 @@ interface FileListViewProps {
   onContextMenu: (e: React.MouseEvent, file: DriveFile) => void;
 }
 
-export function FileListView({ files, activeTab, onFileClick, onContextMenu }: FileListViewProps) {
+export function FileListView({files, activeTab, onFileClick, onContextMenu}: FileListViewProps) {
   return (
     <Card>
       <div className="divide-y divide-surface-100 dark:divide-surface-800">
@@ -33,10 +33,10 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
                   {file.name}
                 </p>
                 {file.starred && (
-                  <Star className="h-4 w-4 text-warning-500 fill-warning-500 flex-shrink-0" />
+                  <Star className="h-4 w-4 text-warning-500 fill-warning-500 flex-shrink-0"/>
                 )}
                 {file.shared && (
-                  <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                  <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                 )}
               </div>
               <div className="flex items-center gap-4 mt-1">
@@ -52,7 +52,7 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
                 )}
                 {file.modifiedTime && (
                   <span className="text-caption flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
+                    <Clock className="h-3 w-3"/>
                     {new Date(file.modifiedTime).toLocaleDateString()}
                   </span>
                 )}
@@ -67,7 +67,8 @@ export function FileListView({ files, activeTab, onFileClick, onContextMenu }: F
               onClick={(e) => onContextMenu(e, file)}
               className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <MoreVertical className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <MoreVertical
+                className="h-4 w-4 text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
           </div>
         ))}

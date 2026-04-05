@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import {Locator, Page} from '@playwright/test';
 
 /**
  * Base Page Object Model
@@ -36,14 +36,14 @@ export class BasePage {
    * Wait for an element to be visible
    */
   async waitForElement(locator: Locator, timeout: number = 5000) {
-    await locator.waitFor({ state: 'visible', timeout });
+    await locator.waitFor({state: 'visible', timeout});
   }
 
   /**
    * Take a screenshot
    */
   async takeScreenshot(name: string) {
-    await this.page.screenshot({ path: `screenshots/${name}.png`, fullPage: true });
+    await this.page.screenshot({path: `screenshots/${name}.png`, fullPage: true});
   }
 
   /**

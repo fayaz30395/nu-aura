@@ -1,15 +1,14 @@
 /**
  * Unit Tests for Loan Service
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import type {LoanStatus} from './loan.service';
+import {loanService} from './loan.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
-  apiClient: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
+  apiClient: {get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn()},
 }));
-
-import { loanService } from './loan.service';
-import type { LoanStatus } from './loan.service';
-import { apiClient } from '@/lib/api/client';
 
 const mock = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -18,8 +17,18 @@ const mock = apiClient as {
   delete: ReturnType<typeof vi.fn>;
 };
 
-interface EmployeeLoan { id: string; employeeId: string; amount: number; status: string; }
-interface Page<T> { content: T[]; totalElements: number; totalPages: number; }
+interface EmployeeLoan {
+  id: string;
+  employeeId: string;
+  amount: number;
+  status: string;
+}
+
+interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+}
 
 const makeLoan = (overrides: Partial<EmployeeLoan> = {}): EmployeeLoan => ({
   id: 'l-1', employeeId: 'e-1', amount: 100000, status: 'DRAFT', ...overrides,
@@ -29,13 +38,18 @@ const makePage = (items: EmployeeLoan[]): Page<EmployeeLoan> => ({
 });
 
 describe('LoanService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe('createLoan', () => {
     it('should create a loan', async () => {
       const loan = makeLoan();
-      mock.post.mockResolvedValueOnce({ data: loan });
-      const result = await loanService.createLoan({ employeeId: 'e-1', amount: 100000 } as Parameters<typeof loanService.createLoan>[0]);
+      mock.post.mockResolvedValueOnce({data: loan});
+      const result = await loanService.createLoan({
+        employeeId: 'e-1',
+        amount: 100000
+      } as Parameters<typeof loanService.createLoan>[0]);
       expect(result).toEqual(loan);
       expect(mock.post).toHaveBeenCalledWith('/loans', expect.any(Object));
     });
@@ -48,7 +62,7 @@ describe('LoanService', () => {
 
   describe('getLoanById', () => {
     it('should return a loan by ID', async () => {
-      mock.get.mockResolvedValueOnce({ data: makeLoan() });
+      mock.get.mockResolvedValueOnce({data: makeLoan()});
       const result = await loanService.getLoanById('l-1');
       expect(result).toEqual(makeLoan());
       expect(mock.get).toHaveBeenCalledWith('/loans/l-1');
@@ -62,9 +76,9 @@ describe('LoanService', () => {
 
   describe('updateLoan', () => {
     it('should update a loan', async () => {
-      const loan = makeLoan({ amount: 200000 });
-      mock.put.mockResolvedValueOnce({ data: loan });
-      const result = await loanService.updateLoan('l-1', { amount: 200000 } as Parameters<typeof loanService.updateLoan>[1]);
+      const loan = makeLoan({amount: 200000});
+      mock.put.mockResolvedValueOnce({data: loan});
+      const result = await loanService.updateLoan('l-1', {amount: 200000} as Parameters<typeof loanService.updateLoan>[1]);
       expect(result.amount).toBe(200000);
       expect(mock.put).toHaveBeenCalledWith('/loans/l-1', expect.any(Object));
     });
@@ -77,7 +91,7 @@ describe('LoanService', () => {
 
   describe('deleteLoan', () => {
     it('should delete a loan', async () => {
-      mock.delete.mockResolvedValueOnce({ data: undefined });
+      mock.delete.mockResolvedValueOnce({data: undefined});
       await loanService.deleteLoan('l-1');
       expect(mock.delete).toHaveBeenCalledWith('/loans/l-1');
     });
@@ -90,39 +104,44 @@ describe('LoanService', () => {
 
   describe('getMyLoans', () => {
     it('should return my loans with default pagination', async () => {
-      mock.get.mockResolvedValueOnce({ data: makePage([makeLoan()]) });
+      mock.get.mockResolvedValueOnce({data: makePage([makeLoan()])});
       await loanService.getMyLoans();
-      expect(mock.get).toHaveBeenCalledWith('/loans/my', { params: { page: 0, size: 20 } });
+      expect(mock.get).toHaveBeenCalledWith('/loans/my', {params: {page: 0, size: 20}});
     });
 
     it('should support custom pagination', async () => {
-      mock.get.mockResolvedValueOnce({ data: makePage([]) });
+      mock.get.mockResolvedValueOnce({data: makePage([])});
       await loanService.getMyLoans(1, 5);
-      expect(mock.get).toHaveBeenCalledWith('/loans/my', { params: { page: 1, size: 5 } });
+      expect(mock.get).toHaveBeenCalledWith('/loans/my', {params: {page: 1, size: 5}});
     });
   });
 
   describe('getAllLoans', () => {
     it('should return all loans', async () => {
-      mock.get.mockResolvedValueOnce({ data: makePage([makeLoan()]) });
+      mock.get.mockResolvedValueOnce({data: makePage([makeLoan()])});
       await loanService.getAllLoans();
-      expect(mock.get).toHaveBeenCalledWith('/loans', expect.objectContaining({ params: expect.objectContaining({ page: 0, size: 20 }) }));
+      expect(mock.get).toHaveBeenCalledWith('/loans', expect.objectContaining({
+        params: expect.objectContaining({
+          page: 0,
+          size: 20
+        })
+      }));
     });
 
     it('should include filters when provided', async () => {
-      mock.get.mockResolvedValueOnce({ data: makePage([]) });
-      await loanService.getAllLoans(0, 20, { status: 'ACTIVE' as LoanStatus });
+      mock.get.mockResolvedValueOnce({data: makePage([])});
+      await loanService.getAllLoans(0, 20, {status: 'ACTIVE' as LoanStatus});
       expect(mock.get).toHaveBeenCalledWith('/loans', expect.objectContaining({
-        params: expect.objectContaining({ status: 'ACTIVE' }),
+        params: expect.objectContaining({status: 'ACTIVE'}),
       }));
     });
   });
 
   describe('getPendingApprovals', () => {
     it('should return pending approvals', async () => {
-      mock.get.mockResolvedValueOnce({ data: makePage([makeLoan({ status: 'PENDING_APPROVAL' })]) });
+      mock.get.mockResolvedValueOnce({data: makePage([makeLoan({status: 'PENDING_APPROVAL'})])});
       await loanService.getPendingApprovals();
-      expect(mock.get).toHaveBeenCalledWith('/loans/pending', { params: { page: 0, size: 20 } });
+      expect(mock.get).toHaveBeenCalledWith('/loans/pending', {params: {page: 0, size: 20}});
     });
 
     it('should throw on error', async () => {
@@ -133,7 +152,7 @@ describe('LoanService', () => {
 
   describe('submitLoan', () => {
     it('should submit a loan for approval', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'PENDING_APPROVAL' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'PENDING_APPROVAL'})});
       const result = await loanService.submitLoan('l-1');
       expect(result.status).toBe('PENDING_APPROVAL');
       expect(mock.post).toHaveBeenCalledWith('/loans/l-1/submit');
@@ -147,25 +166,25 @@ describe('LoanService', () => {
 
   describe('approveLoan', () => {
     it('should approve a loan', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'APPROVED' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'APPROVED'})});
       const result = await loanService.approveLoan('l-1');
       expect(result.status).toBe('APPROVED');
       expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', {});
     });
 
     it('should pass approvedAmount when provided', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'APPROVED', amount: 80000 }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'APPROVED', amount: 80000})});
       await loanService.approveLoan('l-1', 80000);
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', { approvedAmount: 80000 });
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/approve', {approvedAmount: 80000});
     });
   });
 
   describe('rejectLoan', () => {
     it('should reject a loan with reason', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'REJECTED' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'REJECTED'})});
       const result = await loanService.rejectLoan('l-1', 'Insufficient eligibility');
       expect(result.status).toBe('REJECTED');
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/reject', { reason: 'Insufficient eligibility' });
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/reject', {reason: 'Insufficient eligibility'});
     });
 
     it('should throw on error', async () => {
@@ -176,7 +195,7 @@ describe('LoanService', () => {
 
   describe('disburseLoan', () => {
     it('should disburse a loan', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'DISBURSED' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'DISBURSED'})});
       const result = await loanService.disburseLoan('l-1');
       expect(result.status).toBe('DISBURSED');
       expect(mock.post).toHaveBeenCalledWith('/loans/l-1/disburse');
@@ -190,9 +209,9 @@ describe('LoanService', () => {
 
   describe('recordPayment', () => {
     it('should record a payment', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'ACTIVE' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'ACTIVE'})});
       await loanService.recordPayment('l-1', 5000);
-      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/payment', null, { params: { amount: 5000 } });
+      expect(mock.post).toHaveBeenCalledWith('/loans/l-1/payment', null, {params: {amount: 5000}});
     });
 
     it('should throw on error', async () => {
@@ -203,7 +222,7 @@ describe('LoanService', () => {
 
   describe('closeLoan', () => {
     it('should close a loan', async () => {
-      mock.post.mockResolvedValueOnce({ data: makeLoan({ status: 'CLOSED' }) });
+      mock.post.mockResolvedValueOnce({data: makeLoan({status: 'CLOSED'})});
       const result = await loanService.closeLoan('l-1');
       expect(result.status).toBe('CLOSED');
       expect(mock.post).toHaveBeenCalledWith('/loans/l-1/close');
@@ -217,8 +236,8 @@ describe('LoanService', () => {
 
   describe('getLoanSummary', () => {
     it('should return loan summary', async () => {
-      const summary = { totalLoans: 10, activeLoans: 5, totalDisbursed: 1000000 };
-      mock.get.mockResolvedValueOnce({ data: summary });
+      const summary = {totalLoans: 10, activeLoans: 5, totalDisbursed: 1000000};
+      mock.get.mockResolvedValueOnce({data: summary});
       const result = await loanService.getLoanSummary();
       expect(result).toEqual(summary);
       expect(mock.get).toHaveBeenCalledWith('/loans/summary');

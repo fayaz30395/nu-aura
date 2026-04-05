@@ -30,6 +30,9 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
+  Download,
+  FileText,
+  FileType,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton, Modal, Tooltip, ActionIcon, Badge } from '@mantine/core';
@@ -50,6 +53,7 @@ import {
   useRestoreWikiPageRevision,
 } from '@/lib/hooks/queries/useFluence';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { fluenceService } from '@/lib/services/platform/fluence.service';
 import { MentionInput, type MentionInputHandle } from '@/components/fluence/MentionInput';
 import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
 import { TableOfContents } from '@/components/fluence/TableOfContents';
@@ -428,6 +432,8 @@ export default function WikiPageDetailPage() {
   const [showViewers, setShowViewers] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const commentInputRef = useRef<MentionInputHandle>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
 
@@ -480,6 +486,39 @@ export default function WikiPageDetailPage() {
       addFavorite.mutate({ contentId: page.id, contentType: 'WIKI_PAGE' });
     }
   }, [page, isFavorited, addFavorite, removeFavorite]);
+
+  const handleExport = useCallback(
+    async (format: 'pdf' | 'docx') => {
+      if (!page) return;
+      setExporting(true);
+      setExportMenuOpen(false);
+      try {
+        const blob = await fluenceService.exportPage(page.id, format);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${page.title}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        notifications.show({
+          title: 'Export complete',
+          message: `Downloaded as ${format.toUpperCase()}`,
+          color: 'green',
+        });
+      } catch {
+        notifications.show({
+          title: 'Export failed',
+          message: 'Unable to export the page. Please try again.',
+          color: 'red',
+        });
+      } finally {
+        setExporting(false);
+      }
+    },
+    [page]
+  );
 
   const handleAddComment = useCallback(() => {
     if (!page || !commentText.trim()) return;
@@ -779,6 +818,55 @@ export default function WikiPageDetailPage() {
                     <History className={iconSize.cardInline} />
                   </ActionIcon>
                 </Tooltip>
+
+                {/* Export dropdown */}
+                <div className="relative">
+                  <Tooltip label="Export page" withArrow>
+                    <ActionIcon
+                      size="lg"
+                      variant="subtle"
+                      onClick={() => setExportMenuOpen((prev) => !prev)}
+                      loading={exporting}
+                      className="hover:bg-[var(--bg-secondary)] transition-colors"
+                    >
+                      <Download className={iconSize.cardInline} />
+                    </ActionIcon>
+                  </Tooltip>
+
+                  <AnimatePresence>
+                    {exportMenuOpen && (
+                      <>
+                        {/* Backdrop to close menu */}
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setExportMenuOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-0 top-full mt-1 z-50 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
+                        >
+                          <button
+                            onClick={() => handleExport('pdf')}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+                          >
+                            <FileText className={iconSize.button} />
+                            Export as PDF
+                          </button>
+                          <button
+                            onClick={() => handleExport('docx')}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+                          >
+                            <FileType className={iconSize.button} />
+                            Export as DOCX
+                          </button>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
           </div>

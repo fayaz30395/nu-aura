@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { FileText } from 'lucide-react';
-import { EmptyState } from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Payslip, formatCurrency, formatDate, getStatusColor } from './types';
+import {FileText} from 'lucide-react';
+import {EmptyState} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatCurrency, formatDate, getStatusColor, Payslip} from './types';
 
 interface PayslipsTabProps {
   payslips: Payslip[];
@@ -20,16 +20,16 @@ interface PayslipsTabProps {
 }
 
 export function PayslipsTab({
-  payslips,
-  loading,
-  payslipSearchMonth,
-  payslipSearchEmployee,
-  onMonthChange,
-  onEmployeeSearch,
-  onCreatePayslip,
-  onEditPayslip,
-  onDeletePayslip,
-}: PayslipsTabProps) {
+                              payslips,
+                              loading,
+                              payslipSearchMonth,
+                              payslipSearchEmployee,
+                              onMonthChange,
+                              onEmployeeSearch,
+                              onCreatePayslip,
+                              onEditPayslip,
+                              onDeletePayslip,
+                            }: PayslipsTabProps) {
   const filtered = payslips.filter((payslip) => {
     const payslipMonth = payslip.paymentDate.substring(0, 7);
     const employeeMatch =
@@ -77,16 +77,17 @@ export function PayslipsTab({
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading payslips...</div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          icon={<FileText className="h-8 w-8" />}
+          icon={<FileText className="h-8 w-8"/>}
           title="No Payslips Found"
           description="Generate payslips for your employees to view their salary details and deductions"
-          action={{ label: 'Create Payslip', onClick: onCreatePayslip }}
+          action={{label: 'Create Payslip', onClick: onCreatePayslip}}
           iconColor="cyan"
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((payslip) => (
-            <div key={payslip.id} className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+            <div key={payslip.id}
+                 className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{payslip.employeeName}</h3>

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Send, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { RegularizationRequest } from './types';
-import { calculateResolutionTime, formatTime } from './utils';
+import {motion} from 'framer-motion';
+import {CheckCircle, Clock, Send, XCircle} from 'lucide-react';
+import {RegularizationRequest} from './types';
+import {calculateResolutionTime, formatTime} from './utils';
 
 interface RequestTimelineProps {
   request: RegularizationRequest;
@@ -32,14 +32,14 @@ function resolveRequestStatus(status: RegularizationRequest['status']): Timeline
 }
 
 function getTimelineIcon(index: number, requestStatus: RegularizationRequest['status']): React.ReactNode {
-  if (index === 0) return <Send className="h-5 w-5" />;
-  if (index === 1) return <Clock className="h-5 w-5" />;
-  if (requestStatus === 'APPROVED') return <CheckCircle className="h-5 w-5" />;
-  if (requestStatus === 'REJECTED') return <XCircle className="h-5 w-5" />;
-  return <Clock className="h-5 w-5" />;
+  if (index === 0) return <Send className="h-5 w-5"/>;
+  if (index === 1) return <Clock className="h-5 w-5"/>;
+  if (requestStatus === 'APPROVED') return <CheckCircle className="h-5 w-5"/>;
+  if (requestStatus === 'REJECTED') return <XCircle className="h-5 w-5"/>;
+  return <Clock className="h-5 w-5"/>;
 }
 
-export function RequestTimeline({ request }: RequestTimelineProps) {
+export function RequestTimeline({request}: RequestTimelineProps) {
   const timelineSteps: Array<{
     label: string;
     date: string;
@@ -72,7 +72,8 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
       {/* Timeline */}
       <div className="relative">
         {/* Timeline line */}
-        <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-[var(--status-success-text)] to-[var(--border-main)]" />
+        <div
+          className="absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-[var(--status-success-text)] to-[var(--border-main)]"/>
 
         {/* Timeline steps */}
         <div className="space-y-6">
@@ -82,16 +83,16 @@ export function RequestTimeline({ request }: RequestTimelineProps) {
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, delay: index * 0.1 }}
+                initial={{opacity: 0, x: -12}}
+                animate={{opacity: 1, x: 0}}
+                transition={{duration: 0.25, delay: index * 0.1}}
                 className="relative flex items-start gap-4 pl-16"
               >
                 {/* Timeline dot */}
                 <motion.div
                   className={`absolute left-0 w-12 h-12 rounded-full flex items-center justify-center ${getStatusColor(step.status)}`}
-                  animate={isActive ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 2, repeat: isActive ? Infinity : 0 }}
+                  animate={isActive ? {scale: [1, 1.1, 1]} : {}}
+                  transition={{duration: 2, repeat: isActive ? Infinity : 0}}
                 >
                   {getTimelineIcon(index, request.status)}
                 </motion.div>

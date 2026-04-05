@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useRef } from 'react';
-import {
-  X,
-  AlertCircle,
-  Send,
-  Loader2,
-  Users,
-  User,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
-import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
-import { ComposeEmail, EmailContact } from './types';
+import React, {useRef} from 'react';
+import {AlertCircle, Loader2, Send, User, Users, X,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Card} from '@/components/ui/Card';
+import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
+import {ComposeEmail, EmailContact} from './types';
 
 interface ComposeModalProps {
   opened: boolean;
@@ -35,23 +28,23 @@ interface ComposeModalProps {
 }
 
 export const ComposeModal = React.memo(function ComposeModal({
-  opened,
-  composeMode,
-  composeEmail,
-  isSending,
-  sendError,
-  sendSuccess,
-  emailSignatureHtml,
-  emailSignature,
-  filteredContacts,
-  showSuggestions,
-  activeField,
-  onClose,
-  onSend,
-  onComposeChange,
-  onFilterContacts,
-  onSelectContact,
-}: ComposeModalProps) {
+                                                               opened,
+                                                               composeMode,
+                                                               composeEmail,
+                                                               isSending,
+                                                               sendError,
+                                                               sendSuccess,
+                                                               emailSignatureHtml,
+                                                               emailSignature,
+                                                               filteredContacts,
+                                                               showSuggestions,
+                                                               activeField,
+                                                               onClose,
+                                                               onSend,
+                                                               onComposeChange,
+                                                               onFilterContacts,
+                                                               onSelectContact,
+                                                             }: ComposeModalProps) {
   const toInputRef = useRef<HTMLInputElement>(null);
   const ccInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
@@ -60,8 +53,8 @@ export const ComposeModal = React.memo(function ComposeModal({
 
   const modalTitle =
     composeMode === 'new' ? 'New Message' :
-    composeMode === 'reply' ? 'Reply' :
-    composeMode === 'replyAll' ? 'Reply All' : 'Forward';
+      composeMode === 'reply' ? 'Reply' :
+        composeMode === 'replyAll' ? 'Reply All' : 'Forward';
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
@@ -74,21 +67,21 @@ export const ComposeModal = React.memo(function ComposeModal({
             onClick={onClose}
             className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {sendError && (
             <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-600 rounded-lg">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="h-4 w-4"/>
               <span className="text-sm">{sendError}</span>
             </div>
           )}
 
           {sendSuccess && (
             <div className="flex items-center gap-2 p-4 bg-success-50 text-success-600 rounded-lg">
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4"/>
               <span className="text-sm">Email sent successfully!</span>
             </div>
           )}
@@ -103,14 +96,14 @@ export const ComposeModal = React.memo(function ComposeModal({
                 ref={toInputRef}
                 value={composeEmail.to}
                 onChange={(e) => {
-                  onComposeChange({ ...composeEmail, to: e.target.value });
+                  onComposeChange({...composeEmail, to: e.target.value});
                   onFilterContacts(e.target.value, 'to');
                 }}
                 onFocus={() => onFilterContacts(composeEmail.to, 'to')}
                 placeholder="Start typing to search employees..."
                 className="pr-10"
               />
-              <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+              <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             </div>
             {showSuggestions && activeField === 'to' && filteredContacts.length > 0 && (
               <div
@@ -124,7 +117,7 @@ export const ComposeModal = React.memo(function ComposeModal({
                     className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-accent-700" />
+                      <User className="h-4 w-4 text-accent-700"/>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
@@ -152,14 +145,14 @@ export const ComposeModal = React.memo(function ComposeModal({
                 ref={ccInputRef}
                 value={composeEmail.cc}
                 onChange={(e) => {
-                  onComposeChange({ ...composeEmail, cc: e.target.value });
+                  onComposeChange({...composeEmail, cc: e.target.value});
                   onFilterContacts(e.target.value, 'cc');
                 }}
                 onFocus={() => onFilterContacts(composeEmail.cc, 'cc')}
                 placeholder="Start typing to search employees..."
                 className="pr-10"
               />
-              <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+              <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             </div>
             {showSuggestions && activeField === 'cc' && filteredContacts.length > 0 && (
               <div
@@ -173,7 +166,7 @@ export const ComposeModal = React.memo(function ComposeModal({
                     className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] flex items-center gap-4 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-accent-700" />
+                      <User className="h-4 w-4 text-accent-700"/>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
@@ -197,7 +190,7 @@ export const ComposeModal = React.memo(function ComposeModal({
             </label>
             <Input
               value={composeEmail.subject}
-              onChange={(e) => onComposeChange({ ...composeEmail, subject: e.target.value })}
+              onChange={(e) => onComposeChange({...composeEmail, subject: e.target.value})}
               placeholder="Email subject"
             />
           </div>
@@ -208,7 +201,7 @@ export const ComposeModal = React.memo(function ComposeModal({
             </label>
             <textarea
               value={composeEmail.body}
-              onChange={(e) => onComposeChange({ ...composeEmail, body: e.target.value })}
+              onChange={(e) => onComposeChange({...composeEmail, body: e.target.value})}
               placeholder="Write your message..."
               rows={8}
               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-t-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
@@ -219,7 +212,7 @@ export const ComposeModal = React.memo(function ComposeModal({
                 <p className="text-caption mb-2">-- Signature --</p>
                 <div
                   className="signature-preview text-body-secondary"
-                  dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailSignatureHtml) }}
+                  dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailSignatureHtml)}}
                 />
               </div>
             )}
@@ -242,7 +235,7 @@ export const ComposeModal = React.memo(function ComposeModal({
             variant="primary"
             onClick={onSend}
             disabled={isSending || !composeEmail.to || sendSuccess}
-            leftIcon={isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            leftIcon={isSending ? <Loader2 className="h-4 w-4 animate-spin"/> : <Send className="h-4 w-4"/>}
           >
             {isSending ? 'Sending...' : 'Send'}
           </Button>

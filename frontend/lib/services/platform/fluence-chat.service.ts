@@ -1,9 +1,5 @@
-import { apiConfig } from '@/lib/config';
-import type {
-  FluenceChatRequest,
-  ChatSSEEvent,
-  ChatRole,
-} from '@/lib/types/platform/fluence-chat';
+import {apiConfig} from '@/lib/config';
+import type {ChatRole, ChatSSEEvent, FluenceChatRequest,} from '@/lib/types/platform/fluence-chat';
 
 /**
  * Get the tenant ID from localStorage (API-006: consistent with rest of app).
@@ -48,9 +44,9 @@ export interface StreamChatOptions {
  * Auth is handled via httpOnly cookies (same as the Axios client).
  */
 export async function streamFluenceChat(options: StreamChatOptions): Promise<void> {
-  const { message, conversationId, history, onToken, onSources, onDone, onError, signal } = options;
+  const {message, conversationId, history, onToken, onSources, onDone, onError, signal} = options;
 
-  const body: FluenceChatRequest = { message, history };
+  const body: FluenceChatRequest = {message, history};
   if (conversationId) {
     body.conversationId = conversationId;
   }
@@ -95,10 +91,10 @@ export async function streamFluenceChat(options: StreamChatOptions): Promise<voi
     let buffer = '';
 
     while (true) {
-      const { done, value } = await reader.read();
+      const {done, value} = await reader.read();
       if (done) break;
 
-      buffer += decoder.decode(value, { stream: true });
+      buffer += decoder.decode(value, {stream: true});
 
       // Parse SSE lines: "data: {...}\n\n"
       const lines = buffer.split('\n');

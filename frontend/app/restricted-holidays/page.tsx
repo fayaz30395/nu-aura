@@ -1,54 +1,54 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { motion } from 'framer-motion';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {motion} from 'framer-motion';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
+  Ban,
   Calendar,
-  Plus,
-  CheckCircle,
-  XCircle,
-  Clock,
   CalendarDays,
+  CheckCircle,
+  Clock,
+  Edit3,
+  Plus,
   Settings,
   Star,
   Trash2,
-  Edit3,
-  Ban,
+  XCircle,
 } from 'lucide-react';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
+  useApproveSelection,
   useAvailableRestrictedHolidays,
-  useRestrictedHolidays,
+  useCancelSelection,
+  useCreateRestrictedHoliday,
+  useDeleteRestrictedHoliday,
   useMyRestrictedHolidaySelections,
   useMyRestrictedHolidaySummary,
-  useSelectionsByStatus,
-  useRestrictedHolidayPolicy,
-  useCreateRestrictedHoliday,
-  useUpdateRestrictedHoliday,
-  useDeleteRestrictedHoliday,
-  useSelectRestrictedHoliday,
-  useCancelSelection,
-  useApproveSelection,
   useRejectSelection,
+  useRestrictedHolidayPolicy,
+  useRestrictedHolidays,
   useSaveRestrictedHolidayPolicy,
+  useSelectionsByStatus,
+  useSelectRestrictedHoliday,
+  useUpdateRestrictedHoliday,
 } from '@/lib/hooks/queries/useRestrictedHolidays';
 import type {
+  HolidayCategory,
+  PolicyRequest,
   RestrictedHoliday,
   RestrictedHolidayRequest,
   RestrictedHolidaySelection,
-  HolidayCategory,
   SelectionStatus,
-  PolicyRequest,
 } from '@/lib/types/hrms/restricted-holiday';
 
 // ─── Zod Schemas ────────────────────────────────────────────────
@@ -80,11 +80,21 @@ type TabView = 'browse' | 'my-selections' | 'manage' | 'approvals' | 'policy';
 
 // ─── Status Config ──────────────────────────────────────────────
 
-const statusConfig: Record<SelectionStatus, { label: string; color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  PENDING: { label: 'Pending', color: 'text-warning-600', bgColor: 'bg-warning-50 border-warning-200', icon: Clock },
-  APPROVED: { label: 'Approved', color: 'text-success-600', bgColor: 'bg-success-50 border-success-200', icon: CheckCircle },
-  REJECTED: { label: 'Rejected', color: 'text-danger-600', bgColor: 'bg-danger-50 border-danger-200', icon: XCircle },
-  CANCELLED: { label: 'Cancelled', color: 'text-surface-500', bgColor: 'bg-surface-50 border-surface-200', icon: Ban },
+const statusConfig: Record<SelectionStatus, {
+  label: string;
+  color: string;
+  bgColor: string;
+  icon: typeof CheckCircle
+}> = {
+  PENDING: {label: 'Pending', color: 'text-warning-600', bgColor: 'bg-warning-50 border-warning-200', icon: Clock},
+  APPROVED: {
+    label: 'Approved',
+    color: 'text-success-600',
+    bgColor: 'bg-success-50 border-success-200',
+    icon: CheckCircle
+  },
+  REJECTED: {label: 'Rejected', color: 'text-danger-600', bgColor: 'bg-danger-50 border-danger-200', icon: XCircle},
+  CANCELLED: {label: 'Cancelled', color: 'text-surface-500', bgColor: 'bg-surface-50 border-surface-200', icon: Ban},
 };
 
 const categoryLabels: Record<HolidayCategory, string> = {
@@ -109,7 +119,7 @@ const categoryColors: Record<HolidayCategory, string> = {
 
 export default function RestrictedHolidaysPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [activeTab, setActiveTab] = useState<TabView>('browse');
   const [showHolidayForm, setShowHolidayForm] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<RestrictedHoliday | null>(null);
@@ -119,22 +129,22 @@ export default function RestrictedHolidaysPage() {
   const year = new Date().getFullYear();
 
   // ─── Queries ────────────────────────────────────────────────
-  const { data: availableHolidays = [], isLoading: isAvailableLoading } =
+  const {data: availableHolidays = [], isLoading: isAvailableLoading} =
     useAvailableRestrictedHolidays(year, isAuthenticated);
 
-  const { data: mySelections = [], isLoading: isSelectionsLoading } =
+  const {data: mySelections = [], isLoading: isSelectionsLoading} =
     useMyRestrictedHolidaySelections(year, isAuthenticated);
 
-  const { data: summary, isLoading: _isSummaryLoading } =
+  const {data: summary, isLoading: _isSummaryLoading} =
     useMyRestrictedHolidaySummary(year, isAuthenticated);
 
-  const { data: pendingSelections, isLoading: isPendingLoading } =
+  const {data: pendingSelections, isLoading: isPendingLoading} =
     useSelectionsByStatus('PENDING', 0, 50, isAuthenticated && activeTab === 'approvals');
 
-  const { data: allHolidays, isLoading: isAllLoading } =
+  const {data: allHolidays, isLoading: isAllLoading} =
     useRestrictedHolidays(0, 50, year, isAuthenticated && activeTab === 'manage');
 
-  const { data: policy, isLoading: isPolicyLoading } =
+  const {data: policy, isLoading: isPolicyLoading} =
     useRestrictedHolidayPolicy(year, isAuthenticated);
 
   // ─── Mutations ──────────────────────────────────────────────
@@ -161,11 +171,11 @@ export default function RestrictedHolidaysPage() {
 
   // ─── Tab definitions ───────────────────────────────────────
   const tabs: { id: TabView; label: string; icon: typeof Calendar; permission?: string }[] = [
-    { id: 'browse', label: 'Browse Holidays', icon: Calendar },
-    { id: 'my-selections', label: 'My Selections', icon: Star },
-    { id: 'approvals', label: 'Approvals', icon: CheckCircle, permission: Permissions.LEAVE_APPROVE },
-    { id: 'manage', label: 'Manage Holidays', icon: Settings, permission: Permissions.LEAVE_MANAGE },
-    { id: 'policy', label: 'Policy', icon: Settings, permission: Permissions.LEAVE_MANAGE },
+    {id: 'browse', label: 'Browse Holidays', icon: Calendar},
+    {id: 'my-selections', label: 'My Selections', icon: Star},
+    {id: 'approvals', label: 'Approvals', icon: CheckCircle, permission: Permissions.LEAVE_APPROVE},
+    {id: 'manage', label: 'Manage Holidays', icon: Settings, permission: Permissions.LEAVE_MANAGE},
+    {id: 'policy', label: 'Policy', icon: Settings, permission: Permissions.LEAVE_MANAGE},
   ];
 
   return (
@@ -220,7 +230,7 @@ export default function RestrictedHolidaysPage() {
                       : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300'
                   }`}
                 >
-                  <TabIcon className="w-4 h-4" />
+                  <TabIcon className="w-4 h-4"/>
                   {tab.label}
                 </button>
               );
@@ -263,7 +273,7 @@ export default function RestrictedHolidaysPage() {
             isLoading={isPendingLoading}
             onApprove={(id) => approveSelection.mutate(id)}
             onReject={(id, reason) =>
-              rejectSelection.mutate({ selectionId: id, data: { rejectionReason: reason } })
+              rejectSelection.mutate({selectionId: id, data: {rejectionReason: reason}})
             }
             isActing={approveSelection.isPending || rejectSelection.isPending}
           />
@@ -273,8 +283,14 @@ export default function RestrictedHolidaysPage() {
           <ManageTab
             holidays={allHolidays?.content ?? []}
             isLoading={isAllLoading}
-            onAdd={() => { setEditingHoliday(null); setShowHolidayForm(true); }}
-            onEdit={(h) => { setEditingHoliday(h); setShowHolidayForm(true); }}
+            onAdd={() => {
+              setEditingHoliday(null);
+              setShowHolidayForm(true);
+            }}
+            onEdit={(h) => {
+              setEditingHoliday(h);
+              setShowHolidayForm(true);
+            }}
             onDelete={(id) => setDeleteHolidayId(id)}
           />
         )}
@@ -312,16 +328,26 @@ export default function RestrictedHolidaysPage() {
         {showHolidayForm && (
           <HolidayFormModal
             holiday={editingHoliday}
-            onClose={() => { setShowHolidayForm(false); setEditingHoliday(null); }}
+            onClose={() => {
+              setShowHolidayForm(false);
+              setEditingHoliday(null);
+            }}
             onSubmit={(data) => {
               if (editingHoliday) {
                 updateHoliday.mutate(
-                  { id: editingHoliday.id, data },
-                  { onSuccess: () => { setShowHolidayForm(false); setEditingHoliday(null); } }
+                  {id: editingHoliday.id, data},
+                  {
+                    onSuccess: () => {
+                      setShowHolidayForm(false);
+                      setEditingHoliday(null);
+                    }
+                  }
                 );
               } else {
                 createHoliday.mutate(data, {
-                  onSuccess: () => { setShowHolidayForm(false); },
+                  onSuccess: () => {
+                    setShowHolidayForm(false);
+                  },
                 });
               }
             }}
@@ -346,12 +372,12 @@ interface BrowseTabProps {
   summary: { remainingSelections: number; requiresApproval: boolean } | null;
 }
 
-function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, summary }: BrowseTabProps) {
-  if (isLoading) return <NuAuraLoader />;
+function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, summary}: BrowseTabProps) {
+  if (isLoading) return <NuAuraLoader/>;
   if (holidays.length === 0) {
     return (
       <EmptyState
-        icon={<CalendarDays className="w-12 h-12 text-surface-400" />}
+        icon={<CalendarDays className="w-12 h-12 text-surface-400"/>}
         title="No restricted holidays available"
         description="Your organization has not published any restricted holidays for this year yet."
       />
@@ -363,7 +389,8 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
   return (
     <div className="space-y-4">
       {summary && (
-        <div className="rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-900/20 dark:border-accent-800 p-4">
+        <div
+          className="rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-900/20 dark:border-accent-800 p-4">
           <p className="text-sm text-accent-800 dark:text-accent-300">
             You have <strong>{summary.remainingSelections}</strong> selection(s) remaining.
             {summary.requiresApproval && ' Selections require manager approval.'}
@@ -378,8 +405,8 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
           return (
             <motion.div
               key={holiday.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: 10}}
+              animate={{opacity: 1, y: 0}}
               className={`rounded-xl border p-6 transition-shadow hover:shadow-[var(--shadow-elevated)] ${
                 isSelected
                   ? 'border-accent-300 bg-accent-50 dark:bg-accent-900/20'
@@ -413,8 +440,9 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
 
               <div className="mt-auto">
                 {isSelected ? (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 dark:text-accent-400">
-                    <CheckCircle className="w-4 h-4" />
+                  <span
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 dark:text-accent-400">
+                    <CheckCircle className="w-4 h-4"/>
                     Selected
                   </span>
                 ) : isPast ? (
@@ -428,7 +456,7 @@ function BrowseTab({ holidays, isLoading, selectedIds, onSelect, isSelecting, su
                       disabled:cursor-not-allowed transition-colors
                       focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4"/>
                     Select
                   </button>
                 )}
@@ -452,12 +480,12 @@ interface MySelectionsTabProps {
   isCancelling: boolean;
 }
 
-function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySelectionsTabProps) {
-  if (isLoading) return <NuAuraLoader />;
+function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySelectionsTabProps) {
+  if (isLoading) return <NuAuraLoader/>;
   if (selections.length === 0) {
     return (
       <EmptyState
-        icon={<Star className="w-12 h-12 text-surface-400" />}
+        icon={<Star className="w-12 h-12 text-surface-400"/>}
         title="No selections yet"
         description="Browse available restricted holidays and select the ones you'd like to take."
       />
@@ -474,13 +502,13 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
         return (
           <motion.div
             key={selection.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{opacity: 0, x: -10}}
+            animate={{opacity: 1, x: 0}}
             className={`row-between rounded-lg border p-4 ${config.bgColor}`}
           >
             <div className="flex items-center gap-4">
               <div className={`p-2 rounded-lg ${config.color} bg-[var(--bg-card)]`}>
-                <CalendarDays className="w-5 h-5" />
+                <CalendarDays className="w-5 h-5"/>
               </div>
               <div>
                 <h4 className="font-medium text-surface-900 dark:text-white">
@@ -489,11 +517,11 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
                 <p className="text-sm text-surface-500 dark:text-surface-400">
                   {selection.holidayDate
                     ? new Date(selection.holidayDate).toLocaleDateString('en-IN', {
-                        weekday: 'short',
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
                     : 'Date N/A'}
                 </p>
                 {selection.rejectionReason && (
@@ -505,7 +533,7 @@ function MySelectionsTab({ selections, isLoading, onCancel, isCancelling }: MySe
             </div>
             <div className="flex items-center gap-4">
               <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${config.color}`}>
-                <StatusIcon className="w-4 h-4" />
+                <StatusIcon className="w-4 h-4"/>
                 {config.label}
               </span>
               {canCancel && (
@@ -538,15 +566,15 @@ interface ApprovalsTabProps {
   isActing: boolean;
 }
 
-function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: ApprovalsTabProps) {
+function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: ApprovalsTabProps) {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  if (isLoading) return <NuAuraLoader />;
+  if (isLoading) return <NuAuraLoader/>;
   if (selections.length === 0) {
     return (
       <EmptyState
-        icon={<CheckCircle className="w-12 h-12 text-surface-400" />}
+        icon={<CheckCircle className="w-12 h-12 text-surface-400"/>}
         title="No pending approvals"
         description="There are no restricted holiday selections waiting for approval."
       />
@@ -569,10 +597,10 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
               {' | '}
               {selection.holidayDate
                 ? new Date(selection.holidayDate).toLocaleDateString('en-IN', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
                 : ''}
             </p>
           </div>
@@ -600,7 +628,10 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                   Confirm
                 </button>
                 <button
-                  onClick={() => { setRejectingId(null); setRejectReason(''); }}
+                  onClick={() => {
+                    setRejectingId(null);
+                    setRejectReason('');
+                  }}
                   className="px-4 py-1.5 text-sm text-surface-600 hover:text-surface-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Cancel
@@ -616,7 +647,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                     disabled:opacity-50 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 >
-                  <CheckCircle className="w-3.5 h-3.5" />
+                  <CheckCircle className="w-3.5 h-3.5"/>
                   Approve
                 </button>
                 <button
@@ -627,7 +658,7 @@ function ApprovalsTab({ selections, isLoading, onApprove, onReject, isActing }: 
                     disabled:opacity-50 transition-colors
                     focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 >
-                  <XCircle className="w-3.5 h-3.5" />
+                  <XCircle className="w-3.5 h-3.5"/>
                   Reject
                 </button>
               </>
@@ -651,8 +682,8 @@ interface ManageTabProps {
   onDelete: (id: string) => void;
 }
 
-function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabProps) {
-  if (isLoading) return <NuAuraLoader />;
+function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProps) {
+  if (isLoading) return <NuAuraLoader/>;
 
   return (
     <div className="space-y-4">
@@ -663,14 +694,14 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
             bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors
             focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4"/>
           Add Restricted Holiday
         </button>
       </div>
 
       {holidays.length === 0 ? (
         <EmptyState
-          icon={<Calendar className="w-12 h-12 text-surface-400" />}
+          icon={<Calendar className="w-12 h-12 text-surface-400"/>}
           title="No restricted holidays"
           description="Add restricted holidays that employees can opt into."
         />
@@ -678,38 +709,38 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
         <div className="overflow-hidden rounded-xl border border-surface-200 dark:border-surface-700">
           <table className="w-full text-sm">
             <thead className="bg-surface-50 dark:bg-surface-800">
-              <tr>
-                <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Holiday</th>
-                <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Date</th>
-                <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Category</th>
-                <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Status</th>
-                <th className="text-right px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Actions</th>
-              </tr>
+            <tr>
+              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Holiday</th>
+              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Date</th>
+              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Category</th>
+              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Status</th>
+              <th className="text-right px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Actions</th>
+            </tr>
             </thead>
             <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
-              {holidays.map((holiday) => (
-                <tr key={holiday.id} className="bg-[var(--bg-card)] hover:bg-surface-50 dark:hover:bg-surface-750">
-                  <td className="px-4 py-4">
-                    <div>
-                      <p className="font-medium text-surface-900 dark:text-white">{holiday.holidayName}</p>
-                      {holiday.description && (
-                        <p className="text-xs text-surface-500 mt-0.5 truncate max-w-xs">{holiday.description}</p>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-surface-600 dark:text-surface-300">
-                    {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </td>
-                  <td className="px-4 py-4">
+            {holidays.map((holiday) => (
+              <tr key={holiday.id} className="bg-[var(--bg-card)] hover:bg-surface-50 dark:hover:bg-surface-750">
+                <td className="px-4 py-4">
+                  <div>
+                    <p className="font-medium text-surface-900 dark:text-white">{holiday.holidayName}</p>
+                    {holiday.description && (
+                      <p className="text-xs text-surface-500 mt-0.5 truncate max-w-xs">{holiday.description}</p>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-4 text-surface-600 dark:text-surface-300">
+                  {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </td>
+                <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${categoryColors[holiday.category]}`}>
                       {categoryLabels[holiday.category]}
                     </span>
-                  </td>
-                  <td className="px-4 py-4">
+                </td>
+                <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                       holiday.isActive
                         ? 'bg-success-100 text-success-700'
@@ -717,29 +748,29 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
                     }`}>
                       {holiday.isActive ? 'Active' : 'Inactive'}
                     </span>
-                  </td>
-                  <td className="px-4 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => onEdit(holiday)}
-                        className="p-1.5 rounded-lg text-surface-500 hover:text-accent-700 hover:bg-accent-50
+                </td>
+                <td className="px-4 py-4 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => onEdit(holiday)}
+                      className="p-1.5 rounded-lg text-surface-500 hover:text-accent-700 hover:bg-accent-50
                           transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
-                        aria-label={`Edit ${holiday.holidayName}`}
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(holiday.id)}
-                        className="p-1.5 rounded-lg text-surface-500 hover:text-danger-600 hover:bg-danger-50
+                      aria-label={`Edit ${holiday.holidayName}`}
+                    >
+                      <Edit3 className="w-4 h-4"/>
+                    </button>
+                    <button
+                      onClick={() => onDelete(holiday.id)}
+                      className="p-1.5 rounded-lg text-surface-500 hover:text-danger-600 hover:bg-danger-50
                           transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
-                        aria-label={`Delete ${holiday.holidayName}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      aria-label={`Delete ${holiday.holidayName}`}
+                    >
+                      <Trash2 className="w-4 h-4"/>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </table>
         </div>
@@ -753,14 +784,19 @@ function ManageTab({ holidays, isLoading, onAdd, onEdit, onDelete }: ManageTabPr
 // ═══════════════════════════════════════════════════════════════
 
 interface PolicyTabProps {
-  policy: { maxSelectionsPerYear: number; requiresApproval: boolean; minDaysBeforeSelection: number; year?: number } | null;
+  policy: {
+    maxSelectionsPerYear: number;
+    requiresApproval: boolean;
+    minDaysBeforeSelection: number;
+    year?: number
+  } | null;
   isLoading: boolean;
   year: number;
   onSave: (data: PolicyRequest) => void;
   isSaving: boolean;
 }
 
-function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps) {
+function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) {
   const form = useForm<PolicyFormValues>({
     resolver: zodResolver(policyFormSchema),
     defaultValues: {
@@ -771,7 +807,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
     },
   });
 
-  if (isLoading) return <NuAuraLoader />;
+  if (isLoading) return <NuAuraLoader/>;
 
   const onSubmit = (values: PolicyFormValues) => {
     onSave({
@@ -796,7 +832,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
             </label>
             <input
               type="number"
-              {...form.register('maxSelectionsPerYear', { valueAsNumber: true })}
+              {...form.register('maxSelectionsPerYear', {valueAsNumber: true})}
               min={1}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
@@ -815,7 +851,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
             </label>
             <input
               type="number"
-              {...form.register('minDaysBeforeSelection', { valueAsNumber: true })}
+              {...form.register('minDaysBeforeSelection', {valueAsNumber: true})}
               min={0}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
@@ -827,7 +863,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
             <Controller
               name="requiresApproval"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <button
                   type="button"
                   onClick={() => field.onChange(!field.value)}
@@ -850,7 +886,7 @@ function PolicyTab({ policy, isLoading, year, onSave, isSaving }: PolicyTabProps
             </span>
           </div>
 
-          <input type="hidden" {...form.register('year', { valueAsNumber: true })} />
+          <input type="hidden" {...form.register('year', {valueAsNumber: true})} />
 
           <button
             type="submit"
@@ -878,7 +914,7 @@ interface HolidayFormModalProps {
   isSubmitting: boolean;
 }
 
-function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayFormModalProps) {
+function HolidayFormModal({holiday, onClose, onSubmit, isSubmitting}: HolidayFormModalProps) {
   const form = useForm<HolidayFormValues>({
     resolver: zodResolver(holidayFormSchema),
     defaultValues: {
@@ -906,10 +942,10 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={onClose}/>
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{opacity: 0, scale: 0.95}}
+        animate={{opacity: 1, scale: 1}}
         className="relative w-full max-w-lg rounded-lg bg-[var(--bg-elevated)]
           shadow-[var(--shadow-dropdown)] border border-surface-200 dark:border-surface-700 p-6 mx-4"
       >
@@ -997,7 +1033,7 @@ function HolidayFormModal({ holiday, onClose, onSubmit, isSubmitting }: HolidayF
             <Controller
               name="isActive"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <button
                   type="button"
                   onClick={() => field.onChange(!field.value)}

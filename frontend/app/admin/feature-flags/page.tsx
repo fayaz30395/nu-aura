@@ -1,36 +1,36 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Title,
-  Text,
-  Group,
   Badge,
-  Switch,
-  TextInput,
-  Select,
-  Card,
-  Stack,
-  Tooltip,
-  Modal,
   Button,
+  Card,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  Switch,
+  Text,
   Textarea,
+  TextInput,
+  Title,
+  Tooltip,
 } from '@mantine/core';
-import { Search, ToggleLeft, Filter, Plus } from 'lucide-react';
-import { useFeatureFlags, useToggleFeatureFlag, useSetFeatureFlag } from '@/lib/hooks/queries/useFeatureFlags';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { SkeletonCard } from '@/components/ui/Loading';
-import type { FeatureFlag } from '@/lib/types/core/feature-flag';
+import {Filter, Plus, Search, ToggleLeft} from 'lucide-react';
+import {useFeatureFlags, useSetFeatureFlag, useToggleFeatureFlag} from '@/lib/hooks/queries/useFeatureFlags';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {SkeletonCard} from '@/components/ui/Loading';
+import type {FeatureFlag} from '@/lib/types/core/feature-flag';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 const CATEGORIES = [
-  { value: '', label: 'All Categories' },
-  { value: 'HRMS', label: 'HRMS' },
-  { value: 'PROJECTS', label: 'Projects' },
-  { value: 'INTEGRATION', label: 'Integration' },
+  {value: '', label: 'All Categories'},
+  {value: 'HRMS', label: 'HRMS'},
+  {value: 'PROJECTS', label: 'Projects'},
+  {value: 'INTEGRATION', label: 'Integration'},
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -41,18 +41,23 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function FeatureFlagsPage() {
   const router = useRouter();
-  const { isAdmin, hasAnyRole, isReady } = usePermissions();
-  const { hasHydrated, isAuthenticated } = useAuth();
-  const { data: flags, isLoading } = useFeatureFlags();
+  const {isAdmin, hasAnyRole, isReady} = usePermissions();
+  const {hasHydrated, isAuthenticated} = useAuth();
+  const {data: flags, isLoading} = useFeatureFlags();
 
   // DEF-51: RBAC gate — redirect non-admin users
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
-    if (!isAuthenticated) { router.replace('/auth/login'); return; }
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+      return;
+    }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.replace('/me/dashboard');
+    }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
-  const { mutate: toggleFlag, isPending: isToggling } = useToggleFeatureFlag();
-  const { mutate: setFlag, isPending: isSetting } = useSetFeatureFlag();
+  const {mutate: toggleFlag, isPending: isToggling} = useToggleFeatureFlag();
+  const {mutate: setFlag, isPending: isSetting} = useSetFeatureFlag();
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -88,10 +93,11 @@ export default function FeatureFlagsPage() {
       category: newFlag.category,
     });
     setCreateOpen(false);
-    setNewFlag({ featureKey: '', name: '', description: '', category: 'HRMS', enabled: false });
+    setNewFlag({featureKey: '', name: '', description: '', category: 'HRMS', enabled: false});
   };
 
-  if (isLoading) return <div className="space-y-4 p-6">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
+  if (isLoading) return <div className="space-y-4 p-6">{Array.from({length: 4}).map((_, i) => <SkeletonCard
+    key={i}/>)}</div>;
 
   return (
     <div className="space-y-6">
@@ -104,7 +110,7 @@ export default function FeatureFlagsPage() {
           </Text>
         </div>
         {isAdmin && (
-          <Button leftSection={<Plus size={16} />} onClick={() => setCreateOpen(true)}>
+          <Button leftSection={<Plus size={16}/>} onClick={() => setCreateOpen(true)}>
             Add Feature Flag
           </Button>
         )}
@@ -114,14 +120,14 @@ export default function FeatureFlagsPage() {
       <Group>
         <TextInput
           placeholder="Search features..."
-          leftSection={<Search size={16} />}
+          leftSection={<Search size={16}/>}
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
           className="flex-1"
         />
         <Select
           placeholder="Category"
-          leftSection={<Filter size={16} />}
+          leftSection={<Filter size={16}/>}
           data={CATEGORIES}
           value={categoryFilter}
           onChange={(val) => setCategoryFilter(val ?? '')}
@@ -135,12 +141,12 @@ export default function FeatureFlagsPage() {
         {filteredFlags.map((flag: FeatureFlag) => (
           <Card key={flag.id} withBorder padding="md" radius="md" className="skeuo-card">
             <Group justify="space-between" wrap="nowrap">
-              <Group gap="md" wrap="nowrap" style={{ flex: 1 }}>
+              <Group gap="md" wrap="nowrap" style={{flex: 1}}>
                 <ToggleLeft
                   size={24}
                   className={flag.enabled ? 'text-success-500' : 'text-[var(--text-muted)]'}
                 />
-                <div style={{ flex: 1 }}>
+                <div style={{flex: 1}}>
                   <Group gap="xs">
                     <Text fw={600} size="sm">
                       {flag.featureName}
@@ -193,7 +199,7 @@ export default function FeatureFlagsPage() {
         {filteredFlags.length === 0 && (
           <Card withBorder padding="xl" radius="md" className="skeuo-card">
             <Stack align="center" gap="sm">
-              <ToggleLeft size={48} className="text-[var(--text-muted)]" />
+              <ToggleLeft size={48} className="text-[var(--text-muted)]"/>
               <Text size="sm" c="dimmed">
                 {search || categoryFilter
                   ? 'No feature flags match your filters'
@@ -217,32 +223,32 @@ export default function FeatureFlagsPage() {
             placeholder="enable_new_feature"
             description="Unique identifier (snake_case)"
             value={newFlag.featureKey}
-            onChange={(e) => setNewFlag({ ...newFlag, featureKey: e.currentTarget.value })}
+            onChange={(e) => setNewFlag({...newFlag, featureKey: e.currentTarget.value})}
             required
           />
           <TextInput
             label="Display Name"
             placeholder="New Feature"
             value={newFlag.name}
-            onChange={(e) => setNewFlag({ ...newFlag, name: e.currentTarget.value })}
+            onChange={(e) => setNewFlag({...newFlag, name: e.currentTarget.value})}
             required
           />
           <Textarea
             label="Description"
             placeholder="What this feature flag controls..."
             value={newFlag.description}
-            onChange={(e) => setNewFlag({ ...newFlag, description: e.currentTarget.value })}
+            onChange={(e) => setNewFlag({...newFlag, description: e.currentTarget.value})}
           />
           <Select
             label="Category"
             data={CATEGORIES.filter((c) => c.value !== '')}
             value={newFlag.category}
-            onChange={(val) => setNewFlag({ ...newFlag, category: val ?? 'HRMS' })}
+            onChange={(val) => setNewFlag({...newFlag, category: val ?? 'HRMS'})}
           />
           <Switch
             label="Enable immediately"
             checked={newFlag.enabled}
-            onChange={(e) => setNewFlag({ ...newFlag, enabled: e.currentTarget.checked })}
+            onChange={(e) => setNewFlag({...newFlag, enabled: e.currentTarget.checked})}
           />
           <Group justify="flex-end" mt="md">
             <Button variant="default" onClick={() => setCreateOpen(false)}>

@@ -5,8 +5,8 @@
  * and scroll-based triggers
  */
 
-import { useEffect, useRef, useState, RefObject } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import {RefObject, useEffect, useRef, useState} from 'react';
+import {useReducedMotion} from 'framer-motion';
 
 interface UseAnimationOptions {
   /**
@@ -129,7 +129,7 @@ export function useScrollProgress<T extends HTMLElement = HTMLDivElement>(): [
       setProgress(scrollProgress);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, {passive: true});
     handleScroll(); // Initial calculation
 
     return () => {
@@ -196,8 +196,8 @@ export function useStaggerAnimation<T extends HTMLElement = HTMLDivElement>(
     triggerOnce?: boolean;
   } = {}
 ): [RefObject<T>, boolean[]] {
-  const { baseDelay = 100, triggerOnce = true } = options;
-  const [ref, isInView] = useInView<T>({ triggerOnce });
+  const {baseDelay = 100, triggerOnce = true} = options;
+  const [ref, isInView] = useInView<T>({triggerOnce});
   const [itemsInView, setItemsInView] = useState<boolean[]>(
     new Array(count).fill(false)
   );

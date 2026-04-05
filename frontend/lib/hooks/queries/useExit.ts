@@ -1,28 +1,28 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {
-  CreateExitProcessRequest,
-  UpdateExitProcessRequest,
-  ExitStatus,
-  CreateExitClearanceRequest,
-  UpdateExitClearanceRequest,
-  CreateFnFSettlementRequest,
-  UpdateFnFSettlementRequest,
-  PaymentMode,
-  CreateExitInterviewRequest,
   ConductExitInterviewRequest,
   CreateAssetRecoveryRequest,
+  CreateExitClearanceRequest,
+  CreateExitInterviewRequest,
+  CreateExitProcessRequest,
+  CreateFnFSettlementRequest,
+  ExitStatus,
+  PaymentMode,
   RecordAssetReturnRequest,
+  UpdateExitClearanceRequest,
+  UpdateExitProcessRequest,
+  UpdateFnFSettlementRequest,
 } from '@/lib/types/hrms/exit';
-import { exitService } from '@/lib/services/hrms/exit.service';
+import {exitService} from '@/lib/services/hrms/exit.service';
 
 // Query Key Factory
 export const exitKeys = {
   all: ['exit'] as const,
   processes: () => [...exitKeys.all, 'processes'] as const,
   processesPaginated: (page: number, size: number) =>
-    [...exitKeys.processes(), 'paginated', { page, size }] as const,
+    [...exitKeys.processes(), 'paginated', {page, size}] as const,
   processById: (id: string) => [...exitKeys.processes(), 'detail', id] as const,
   processByEmployeeId: (employeeId: string) =>
     [...exitKeys.processes(), 'employee', employeeId] as const,
@@ -38,7 +38,7 @@ export const exitKeys = {
   // Settlements
   settlements: () => [...exitKeys.all, 'settlements'] as const,
   settlementsPaginated: (page: number, size: number) =>
-    [...exitKeys.settlements(), 'paginated', { page, size }] as const,
+    [...exitKeys.settlements(), 'paginated', {page, size}] as const,
   settlementById: (id: string) => [...exitKeys.settlements(), 'detail', id] as const,
   settlementByProcess: (exitProcessId: string) =>
     [...exitKeys.settlements(), 'process', exitProcessId] as const,
@@ -46,7 +46,7 @@ export const exitKeys = {
   // Interviews
   interviews: () => [...exitKeys.all, 'interviews'] as const,
   interviewsPaginated: (page: number, size: number) =>
-    [...exitKeys.interviews(), 'paginated', { page, size }] as const,
+    [...exitKeys.interviews(), 'paginated', {page, size}] as const,
   interviewById: (id: string) => [...exitKeys.interviews(), 'detail', id] as const,
   scheduledInterviews: () => [...exitKeys.interviews(), 'scheduled'] as const,
   interviewAnalytics: () => [...exitKeys.interviews(), 'analytics'] as const,
@@ -126,8 +126,8 @@ export function useCreateExitProcess() {
   return useMutation({
     mutationFn: (data: CreateExitProcessRequest) => exitService.createExitProcess(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.processes() });
-      queryClient.invalidateQueries({ queryKey: exitKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: exitKeys.processes()});
+      queryClient.invalidateQueries({queryKey: exitKeys.dashboard()});
     },
   });
 }
@@ -139,12 +139,12 @@ export function useUpdateExitProcess() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateExitProcessRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateExitProcessRequest }) =>
       exitService.updateExitProcess(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.processes() });
-      queryClient.invalidateQueries({ queryKey: exitKeys.processById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: exitKeys.processes()});
+      queryClient.invalidateQueries({queryKey: exitKeys.processById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.dashboard()});
     },
   });
 }
@@ -156,12 +156,12 @@ export function useUpdateExitStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: ExitStatus }) =>
+    mutationFn: ({id, status}: { id: string; status: ExitStatus }) =>
       exitService.updateExitStatus(id, status),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.processes() });
-      queryClient.invalidateQueries({ queryKey: exitKeys.processById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: exitKeys.processes()});
+      queryClient.invalidateQueries({queryKey: exitKeys.processById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.dashboard()});
     },
   });
 }
@@ -175,8 +175,8 @@ export function useDeleteExitProcess() {
   return useMutation({
     mutationFn: (id: string) => exitService.deleteExitProcess(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.processes() });
-      queryClient.invalidateQueries({ queryKey: exitKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: exitKeys.processes()});
+      queryClient.invalidateQueries({queryKey: exitKeys.dashboard()});
     },
   });
 }
@@ -196,7 +196,7 @@ export function useCreateClearance() {
   return useMutation({
     mutationFn: (data: CreateExitClearanceRequest) => exitService.createClearance(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.clearancesByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.clearancesByProcess(data.exitProcessId)});
     },
   });
 }
@@ -204,10 +204,10 @@ export function useCreateClearance() {
 export function useUpdateClearance() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateExitClearanceRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateExitClearanceRequest }) =>
       exitService.updateClearance(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.clearancesByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.clearancesByProcess(data.exitProcessId)});
     },
   });
 }
@@ -243,7 +243,7 @@ export function useCreateSettlement() {
   return useMutation({
     mutationFn: (data: CreateFnFSettlementRequest) => exitService.createSettlement(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlements() });
+      queryClient.invalidateQueries({queryKey: exitKeys.settlements()});
     },
   });
 }
@@ -251,11 +251,11 @@ export function useCreateSettlement() {
 export function useUpdateSettlement() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateFnFSettlementRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateFnFSettlementRequest }) =>
       exitService.updateSettlement(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementByProcess(data.exitProcessId)});
     },
   });
 }
@@ -265,9 +265,9 @@ export function useSubmitSettlementForApproval() {
   return useMutation({
     mutationFn: (id: string) => exitService.submitSettlementForApproval(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementByProcess(data.exitProcessId) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.pendingApprovals() });
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementByProcess(data.exitProcessId)});
+      queryClient.invalidateQueries({queryKey: exitKeys.pendingApprovals()});
     },
   });
 }
@@ -277,9 +277,9 @@ export function useApproveSettlement() {
   return useMutation({
     mutationFn: (id: string) => exitService.approveSettlement(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementByProcess(data.exitProcessId) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.pendingApprovals() });
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementByProcess(data.exitProcessId)});
+      queryClient.invalidateQueries({queryKey: exitKeys.pendingApprovals()});
     },
   });
 }
@@ -287,11 +287,15 @@ export function useApproveSettlement() {
 export function useProcessSettlementPayment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, paymentMode, paymentReference }: { id: string; paymentMode: PaymentMode; paymentReference: string }) =>
+    mutationFn: ({id, paymentMode, paymentReference}: {
+      id: string;
+      paymentMode: PaymentMode;
+      paymentReference: string
+    }) =>
       exitService.processSettlementPayment(id, paymentMode, paymentReference),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.settlementByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.settlementByProcess(data.exitProcessId)});
     },
   });
 }
@@ -332,7 +336,7 @@ export function useCreateExitInterview() {
   return useMutation({
     mutationFn: (data: CreateExitInterviewRequest) => exitService.createExitInterview(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: exitKeys.interviews()});
     },
   });
 }
@@ -340,11 +344,11 @@ export function useCreateExitInterview() {
 export function useConductExitInterview() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ConductExitInterviewRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ConductExitInterviewRequest }) =>
       exitService.conductExitInterview(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.interviewById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: exitKeys.interviewById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.interviews()});
     },
   });
 }
@@ -352,11 +356,11 @@ export function useConductExitInterview() {
 export function useRescheduleInterview() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, newDate }: { id: string; newDate: string }) =>
+    mutationFn: ({id, newDate}: { id: string; newDate: string }) =>
       exitService.rescheduleInterview(id, newDate),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.interviewById(data.id) });
-      queryClient.invalidateQueries({ queryKey: exitKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: exitKeys.interviewById(data.id)});
+      queryClient.invalidateQueries({queryKey: exitKeys.interviews()});
     },
   });
 }
@@ -399,7 +403,7 @@ export function useCreateAssetRecovery() {
   return useMutation({
     mutationFn: (data: CreateAssetRecoveryRequest) => exitService.createAssetRecovery(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.assetsByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.assetsByProcess(data.exitProcessId)});
     },
   });
 }
@@ -407,10 +411,10 @@ export function useCreateAssetRecovery() {
 export function useRecordAssetReturn() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: RecordAssetReturnRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: RecordAssetReturnRequest }) =>
       exitService.recordAssetReturn(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.assetsByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.assetsByProcess(data.exitProcessId)});
     },
   });
 }
@@ -418,10 +422,10 @@ export function useRecordAssetReturn() {
 export function useMarkAssetAsLost() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, deductionAmount, remarks }: { id: string; deductionAmount?: number; remarks?: string }) =>
+    mutationFn: ({id, deductionAmount, remarks}: { id: string; deductionAmount?: number; remarks?: string }) =>
       exitService.markAssetAsLost(id, deductionAmount, remarks),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.assetsByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.assetsByProcess(data.exitProcessId)});
     },
   });
 }
@@ -429,10 +433,10 @@ export function useMarkAssetAsLost() {
 export function useWaiveAssetRecovery() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, waiverReason }: { id: string; waiverReason: string }) =>
+    mutationFn: ({id, waiverReason}: { id: string; waiverReason: string }) =>
       exitService.waiveAssetRecovery(id, waiverReason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.assetsByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.assetsByProcess(data.exitProcessId)});
     },
   });
 }
@@ -442,7 +446,7 @@ export function useVerifyAssetReturn() {
   return useMutation({
     mutationFn: (id: string) => exitService.verifyAssetReturn(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: exitKeys.assetsByProcess(data.exitProcessId) });
+      queryClient.invalidateQueries({queryKey: exitKeys.assetsByProcess(data.exitProcessId)});
     },
   });
 }

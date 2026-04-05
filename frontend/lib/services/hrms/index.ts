@@ -3,8 +3,8 @@
 export * from './asset.service';
 export * from './attendance.service';
 export * from './benefits.service';
-export { biometricDeviceService, biometricPunchService, biometricApiKeyService } from './biometricService';
-export type { BiometricDevice, BiometricDeviceRequest, BiometricPunchLog, BiometricApiKey } from './biometricService';
+export {biometricDeviceService, biometricPunchService, biometricApiKeyService} from './biometricService';
+export type {BiometricDevice, BiometricDeviceRequest, BiometricPunchLog, BiometricApiKey} from './biometricService';
 export * from './calendar.service';
 export * from './compensation.service';
 export * from './compliance.service';

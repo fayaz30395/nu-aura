@@ -1,5 +1,5 @@
-import { QueryClient, MutationCache } from '@tanstack/react-query';
-import { createQueryErrorHandler } from '@/lib/utils/error-handler';
+import {MutationCache, QueryClient} from '@tanstack/react-query';
+import {createQueryErrorHandler} from '@/lib/utils/error-handler';
 
 /**
  * Singleton QueryClient instance shared across the app.

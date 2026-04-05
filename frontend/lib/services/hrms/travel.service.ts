@@ -1,13 +1,13 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 // Travel service - uses /travel/requests endpoints
 import {
-  TravelRequest,
-  TravelRequestRequest,
+  Page,
   TravelExpense,
   TravelExpenseRequest,
-  TravelStatus,
-  Page,
+  TravelRequest,
   TravelRequestFilters,
+  TravelRequestRequest,
+  TravelStatus,
 } from '../../types/hrms/travel';
 
 class TravelService {
@@ -32,7 +32,7 @@ class TravelService {
     size: number = 20,
     filters?: TravelRequestFilters
   ): Promise<Page<TravelRequest>> {
-    const params: Record<string, string | number | boolean | undefined> = { page, size };
+    const params: Record<string, string | number | boolean | undefined> = {page, size};
 
     if (filters) {
       if (filters.status) params.status = filters.status;
@@ -57,7 +57,7 @@ class TravelService {
     const response = await apiClient.get<Page<TravelRequest>>(
       `/travel/requests/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -71,7 +71,7 @@ class TravelService {
     const response = await apiClient.get<Page<TravelRequest>>(
       `/travel/requests/status/${status}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -93,7 +93,7 @@ class TravelService {
       `/travel/requests/${id}/approve`,
       null,
       {
-        params: { approverId, comments },
+        params: {approverId, comments},
       }
     );
     return response.data;
@@ -108,7 +108,7 @@ class TravelService {
       `/travel/requests/${id}/reject`,
       null,
       {
-        params: { approverId, reason },
+        params: {approverId, reason},
       }
     );
     return response.data;
@@ -119,7 +119,7 @@ class TravelService {
       `/travel/requests/${id}/cancel`,
       null,
       {
-        params: { reason },
+        params: {reason},
       }
     );
     return response.data;
@@ -160,7 +160,7 @@ class TravelService {
     const response = await apiClient.get<Page<TravelExpense>>(
       `/travel/expenses/request/${travelRequestId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -174,7 +174,7 @@ class TravelService {
     const response = await apiClient.get<Page<TravelExpense>>(
       `/travel/expenses/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -190,7 +190,7 @@ class TravelService {
       `/travel/expenses/${id}/approve`,
       null,
       {
-        params: { approverId, approvedAmount, comments },
+        params: {approverId, approvedAmount, comments},
       }
     );
     return response.data;
@@ -205,7 +205,7 @@ class TravelService {
       `/travel/expenses/${id}/reject`,
       null,
       {
-        params: { approverId, reason },
+        params: {approverId, reason},
       }
     );
     return response.data;
@@ -222,7 +222,7 @@ class TravelService {
 
     const response = await apiClient.get(
       `/travel/requests/employee/${employeeId}/summary`,
-      { params }
+      {params}
     );
     return response.data;
   }

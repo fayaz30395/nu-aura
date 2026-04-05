@@ -1,8 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  KekaImportMapping,
-} from '../../types/core/keka-import';
-import { kekaImportService } from '../../services/core/keka-import.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {KekaImportMapping,} from '../../types/core/keka-import';
+import {kekaImportService} from '../../services/core/keka-import.service';
 
 // Query keys
 const kekaImportKeys = {
@@ -10,7 +8,7 @@ const kekaImportKeys = {
   uploads: () => [...kekaImportKeys.all, 'uploads'] as const,
   history: () => [...kekaImportKeys.all, 'history'] as const,
   historyPage: (page: number, size: number) =>
-    [...kekaImportKeys.history(), { page, size }] as const,
+    [...kekaImportKeys.history(), {page, size}] as const,
   details: (importId: string) =>
     [...kekaImportKeys.all, 'details', importId] as const,
   preview: (fileId: string) =>
@@ -61,9 +59,9 @@ export function useKekaDownloadTemplate(format: 'csv' | 'xlsx') {
 export function useKekaImportPreview() {
   return useMutation({
     mutationFn: ({
-      fileId,
-      mappings,
-    }: {
+                   fileId,
+                   mappings,
+                 }: {
       fileId: string;
       mappings: KekaImportMapping[];
     }) => kekaImportService.previewKekaImport(fileId, mappings),
@@ -78,10 +76,10 @@ export function useKekaExecuteImport() {
 
   return useMutation({
     mutationFn: ({
-      fileId,
-      mappings,
-      options,
-    }: {
+                   fileId,
+                   mappings,
+                   options,
+                 }: {
       fileId: string;
       mappings: KekaImportMapping[];
       options?: {

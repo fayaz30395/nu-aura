@@ -1,19 +1,19 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import {
-  homeService,
+  AttendanceTodayResponse,
   BirthdayResponse,
-  WorkAnniversaryResponse,
+  homeService,
   NewJoineeResponse,
   OnLeaveEmployeeResponse,
   RemoteWorkerResponse,
   UpcomingHolidayResponse,
-  AttendanceTodayResponse,
+  WorkAnniversaryResponse,
 } from '@/lib/services/core/home.service';
-import { wallService, WallPostResponse, PageResponse } from '@/lib/services/core/wall.service';
-import { leaveService } from '@/lib/services/hrms/leave.service';
-import { LeaveBalance } from '@/lib/types/hrms/leave';
+import {PageResponse, WallPostResponse, wallService} from '@/lib/services/core/wall.service';
+import {leaveService} from '@/lib/services/hrms/leave.service';
+import {LeaveBalance} from '@/lib/types/hrms/leave';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -21,16 +21,16 @@ export const homeKeys = {
   all: ['home'] as const,
   // Birthdays
   birthdays: () => [...homeKeys.all, 'birthdays'] as const,
-  birthdaysList: (days: number) => [...homeKeys.birthdays(), { days }] as const,
+  birthdaysList: (days: number) => [...homeKeys.birthdays(), {days}] as const,
   // Anniversaries
   anniversaries: () => [...homeKeys.all, 'anniversaries'] as const,
-  anniversariesList: (days: number) => [...homeKeys.anniversaries(), { days }] as const,
+  anniversariesList: (days: number) => [...homeKeys.anniversaries(), {days}] as const,
   // New joinees
   newJoinees: () => [...homeKeys.all, 'newJoinees'] as const,
-  newJoineesList: (days: number) => [...homeKeys.newJoinees(), { days }] as const,
+  newJoineesList: (days: number) => [...homeKeys.newJoinees(), {days}] as const,
   // Holidays
   holidays: () => [...homeKeys.all, 'holidays'] as const,
-  holidaysList: (days: number) => [...homeKeys.holidays(), { days }] as const,
+  holidaysList: (days: number) => [...homeKeys.holidays(), {days}] as const,
   // Employees on leave
   onLeave: () => [...homeKeys.all, 'onLeave'] as const,
   // Remote workers
@@ -40,7 +40,7 @@ export const homeKeys = {
   // Wall posts
   wallPosts: () => [...homeKeys.all, 'wallPosts'] as const,
   wallPostsList: (page: number, size: number) =>
-    [...homeKeys.wallPosts(), { page, size }] as const,
+    [...homeKeys.wallPosts(), {page, size}] as const,
   // Leave balances
   leaveBalances: () => [...homeKeys.all, 'leaveBalances'] as const,
   leaveBalancesForEmployee: (employeeId: string) =>

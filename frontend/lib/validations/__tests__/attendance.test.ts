@@ -1,15 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {
-  shiftSchema,
-  holidaySchema,
   checkInSchema,
   checkOutSchema,
-  regularizationSchema,
+  holidaySchema,
   manualAttendanceSchema,
-  type ShiftFormData as _ShiftFormData,
-  type HolidayFormData as _HolidayFormData,
-  type CheckInFormData as _CheckInFormData,
-  type ManualAttendanceFormData as _ManualAttendanceFormData,
+  regularizationSchema,
+  shiftSchema,
 } from '../attendance';
 
 describe('Attendance Validation Schemas', () => {
@@ -26,19 +22,19 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('requires shift code', () => {
-      const invalid = { shiftName: 'Morning', startTime: '09:00', endTime: '17:00' };
+      const invalid = {shiftName: 'Morning', startTime: '09:00', endTime: '17:00'};
       const result = shiftSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
 
     it('validates shift code format', () => {
-      const invalid = { shiftCode: 'shift-a', shiftName: 'Morning', startTime: '09:00', endTime: '17:00' };
+      const invalid = {shiftCode: 'shift-a', shiftName: 'Morning', startTime: '09:00', endTime: '17:00'};
       const result = shiftSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
 
     it('requires shift name', () => {
-      const invalid = { shiftCode: 'SHIFT_A', startTime: '09:00', endTime: '17:00' };
+      const invalid = {shiftCode: 'SHIFT_A', startTime: '09:00', endTime: '17:00'};
       const result = shiftSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
@@ -129,7 +125,7 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('requires holiday name', () => {
-      const invalid = { holidayDate: '2024-07-04', holidayType: 'NATIONAL' };
+      const invalid = {holidayDate: '2024-07-04', holidayType: 'NATIONAL'};
       const result = holidaySchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
@@ -189,7 +185,7 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('requires valid UUID for employeeId', () => {
-      const invalid = { employeeId: 'not-a-uuid' };
+      const invalid = {employeeId: 'not-a-uuid'};
       const result = checkInSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
@@ -235,7 +231,7 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('requires valid UUID for employeeId', () => {
-      const invalid = { employeeId: 'invalid' };
+      const invalid = {employeeId: 'invalid'};
       const result = checkOutSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
@@ -251,7 +247,7 @@ describe('Attendance Validation Schemas', () => {
     });
 
     it('requires reason with minimum length', () => {
-      const invalid = { reason: 'short' };
+      const invalid = {reason: 'short'};
       const result = regularizationSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });

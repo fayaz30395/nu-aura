@@ -1,29 +1,16 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import {
-  CreditCard,
-  Filter,
-  ChevronDown,
-  Search,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  XCircle,
-} from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { usePayments, usePaymentStats } from '@/lib/hooks/queries/usePayments';
-import { paymentService } from '@/lib/services/core/payment.service';
-import {
-  PaymentStatus,
-  PaymentType,
-  PaymentProvider,
-} from '@/lib/types/core/payment';
-import { EmptyState } from '@/components/ui';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {AlertCircle, CheckCircle, ChevronDown, Clock, CreditCard, Filter, Search, XCircle,} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {usePayments, usePaymentStats} from '@/lib/hooks/queries/usePayments';
+import {paymentService} from '@/lib/services/core/payment.service';
+import {PaymentProvider, PaymentStatus, PaymentType,} from '@/lib/types/core/payment';
+import {EmptyState} from '@/components/ui';
+import {endOfMonth, format, startOfMonth} from 'date-fns';
 
 // Phase 2 stabilization: payments module gated behind feature flag
 const _PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
@@ -43,12 +30,12 @@ interface Filters {
 
 export default function PaymentsPage() {
   const router = useRouter();
-  const { hasHydrated } = useAuth();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasHydrated} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
-  const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
-  const { data: statsData } = usePaymentStats();
+  const {data: paymentsData, isLoading: paymentsLoading} = usePayments();
+  const {data: statsData} = usePaymentStats();
 
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [showFilters, setShowFilters] = useState(false);
@@ -130,14 +117,14 @@ export default function PaymentsPage() {
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
       case 'COMPLETED':
-        return <CheckCircle className="w-5 h-5 text-success-600" />;
+        return <CheckCircle className="w-5 h-5 text-success-600"/>;
       case 'FAILED':
-        return <XCircle className="w-5 h-5 text-danger-600" />;
+        return <XCircle className="w-5 h-5 text-danger-600"/>;
       case 'PROCESSING':
       case 'INITIATED':
-        return <Clock className="w-5 h-5 text-warning-600" />;
+        return <Clock className="w-5 h-5 text-warning-600"/>;
       default:
-        return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]" />;
+        return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]"/>;
     }
   };
 
@@ -150,7 +137,7 @@ export default function PaymentsPage() {
     return (
       <AppLayout activeMenuItem="payments">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"/>
         </div>
       </AppLayout>
     );
@@ -162,8 +149,9 @@ export default function PaymentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
-              <CreditCard className="w-7 h-7 sm:w-8 sm:h-8" />
+            <h1
+              className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              <CreditCard className="w-7 h-7 sm:w-8 sm:h-8"/>
               Payment Gateway
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -178,7 +166,7 @@ export default function PaymentsPage() {
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
-                  <CreditCard className="w-5 h-5" />
+                  <CreditCard className="w-5 h-5"/>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -192,7 +180,7 @@ export default function PaymentsPage() {
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
-                  <CheckCircle className="w-5 h-5" />
+                  <CheckCircle className="w-5 h-5"/>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -206,7 +194,7 @@ export default function PaymentsPage() {
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
-                  <Clock className="w-5 h-5" />
+                  <Clock className="w-5 h-5"/>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -220,7 +208,7 @@ export default function PaymentsPage() {
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
-                  <XCircle className="w-5 h-5" />
+                  <XCircle className="w-5 h-5"/>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -238,12 +226,12 @@ export default function PaymentsPage() {
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search transactions..."
                 value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                onChange={(e) => setFilters({...filters, search: e.target.value})}
                 className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
             </div>
@@ -257,9 +245,9 @@ export default function PaymentsPage() {
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
-              <Filter className="w-4 h-4" />
+              <Filter className="w-4 h-4"/>
               Filters
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}/>
             </button>
 
             {/* Clear Filters */}
@@ -279,14 +267,15 @@ export default function PaymentsPage() {
 
           {/* Expanded Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Status
                 </label>
                 <select
                   value={filters.status}
-                  onChange={(e) => setFilters({ ...filters, status: e.target.value as PaymentStatus | 'ALL' })}
+                  onChange={(e) => setFilters({...filters, status: e.target.value as PaymentStatus | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Statuses</option>
@@ -306,7 +295,7 @@ export default function PaymentsPage() {
                 </label>
                 <select
                   value={filters.type}
-                  onChange={(e) => setFilters({ ...filters, type: e.target.value as PaymentType | 'ALL' })}
+                  onChange={(e) => setFilters({...filters, type: e.target.value as PaymentType | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Types</option>
@@ -323,7 +312,7 @@ export default function PaymentsPage() {
                 </label>
                 <select
                   value={filters.provider}
-                  onChange={(e) => setFilters({ ...filters, provider: e.target.value as PaymentProvider | 'ALL' })}
+                  onChange={(e) => setFilters({...filters, provider: e.target.value as PaymentProvider | 'ALL'})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Providers</option>
@@ -341,7 +330,7 @@ export default function PaymentsPage() {
                 <input
                   type="date"
                   value={filters.dateFrom}
-                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+                  onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
@@ -353,7 +342,7 @@ export default function PaymentsPage() {
                 <input
                   type="date"
                   value={filters.dateTo}
-                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+                  onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
@@ -367,7 +356,7 @@ export default function PaymentsPage() {
                     type="number"
                     placeholder="0"
                     value={filters.amountMin}
-                    onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
+                    onChange={(e) => setFilters({...filters, amountMin: e.target.value})}
                     className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
@@ -379,7 +368,7 @@ export default function PaymentsPage() {
                     type="number"
                     placeholder="0"
                     value={filters.amountMax}
-                    onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
+                    onChange={(e) => setFilters({...filters, amountMax: e.target.value})}
                     className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
@@ -438,11 +427,11 @@ export default function PaymentsPage() {
         <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-[var(--shadow-card)] p-6">
           {paymentsLoading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"/>
             </div>
           ) : filteredPayments.length === 0 ? (
             <EmptyState
-              icon={<CreditCard className="h-12 w-12" />}
+              icon={<CreditCard className="h-12 w-12"/>}
               title="No Transactions"
               description="No payment transactions found matching your filters"
             />

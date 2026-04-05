@@ -1,27 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import {
-  Plus,
-  BookOpen,
-  Pen,
-  FileText,
-  TrendingUp,
-  Clock,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import {
-  useWikiPages,
-  useBlogPosts,
-  useFluenceTemplates,
-} from '@/lib/hooks/queries/useFluence';
-import { ContentGrid, type ContentItem } from '@/components/fluence/ContentGrid';
-import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import {useEffect} from 'react';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
+import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
+import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/design-system';
 
 /**
  * NU-Fluence Dashboard — central hub for knowledge management.
@@ -29,7 +18,7 @@ import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/de
  */
 export default function FluenceDashboardPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_VIEW,
@@ -44,9 +33,9 @@ export default function FluenceDashboardPage() {
   }, [isReady, hasAccess, router]);
 
   // Fetch recent content
-  const { data: wikiData, isLoading: wikiLoading } = useWikiPages(undefined, 0, 6);
-  const { data: blogData, isLoading: blogLoading } = useBlogPosts(0, 6);
-  const { data: templatesData, isLoading: templatesLoading } = useFluenceTemplates(0, 3);
+  const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 6);
+  const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 6);
+  const {data: templatesData, isLoading: templatesLoading} = useFluenceTemplates(0, 3);
 
   if (!isReady || !hasAccess) return null;
 
@@ -89,9 +78,9 @@ export default function FluenceDashboardPage() {
       <motion.div className={layout.sectionGap} {...dsMotion.pageEnter}>
         {/* Hero Section */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3}}
           className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--accent-700)] via-[var(--accent-500)] to-[var(--accent-400)] dark:from-[var(--accent-950)] dark:via-[var(--accent-900)] dark:to-[var(--accent-800)] p-8 md:p-12"
         >
           <div className="relative z-10">
@@ -99,7 +88,7 @@ export default function FluenceDashboardPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-4 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <BookOpen className="w-6 h-6 text-white" />
+                    <BookOpen className="w-6 h-6 text-white"/>
                   </div>
                   <h1 className={`${typography.pageTitle} text-white skeuo-emboss`}>
                     NU-Fluence Knowledge Hub
@@ -118,7 +107,7 @@ export default function FluenceDashboardPage() {
                 onClick={() => router.push('/fluence/wiki/new')}
                 className="gap-2 bg-[var(--bg-card)] text-[var(--accent-700)] hover:bg-[var(--bg-card-hover)] font-medium shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] transition-all"
               >
-                <Plus className={iconSize.button} />
+                <Plus className={iconSize.button}/>
                 New Wiki Page
               </Button>
               <Button
@@ -126,7 +115,7 @@ export default function FluenceDashboardPage() {
                 variant="outline"
                 className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
               >
-                <Pen className={iconSize.button} />
+                <Pen className={iconSize.button}/>
                 Write Blog Post
               </Button>
               <Button
@@ -134,7 +123,7 @@ export default function FluenceDashboardPage() {
                 variant="outline"
                 className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
               >
-                <Clock className={iconSize.button} />
+                <Clock className={iconSize.button}/>
                 Explore
               </Button>
             </div>
@@ -142,17 +131,19 @@ export default function FluenceDashboardPage() {
 
           {/* Decorative background */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4" />
+            <div
+              className="absolute top-0 right-0 w-96 h-96 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4"/>
+            <div
+              className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
           </div>
         </motion.div>
 
         {/* Stats Grid */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-4 gap-4"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.1, duration: 0.3}}
         >
           <StatCard
             icon={BookOpen}
@@ -182,14 +173,14 @@ export default function FluenceDashboardPage() {
 
         {/* Recent Content */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.2, duration: 0.3}}
         >
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`} />
+                <div key={i} className={`${card.base} ${card.paddingLarge} h-32 animate-pulse`}/>
               ))}
             </div>
           ) : (
@@ -205,16 +196,16 @@ export default function FluenceDashboardPage() {
         {/* Three Column Layout */}
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.3, duration: 0.3}}
         >
           {/* Popular Wiki Pages */}
-          <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div initial={{opacity: 0, x: -8}} animate={{opacity: 1, x: 0}}>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <BookOpen className={`${iconSize.cardInline} text-accent-600`} />
+                  <BookOpen className={`${iconSize.cardInline} text-accent-600`}/>
                   <CardTitle className={typography.cardTitle}>
                     Top Wiki Pages
                   </CardTitle>
@@ -231,9 +222,10 @@ export default function FluenceDashboardPage() {
                       key={page.id}
                       onClick={() => router.push(`/fluence/wiki/${page.id}`)}
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                      whileHover={{ x: 4 }}
+                      whileHover={{x: 4}}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
+                      <p
+                        className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {page.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -245,7 +237,7 @@ export default function FluenceDashboardPage() {
                 <motion.button
                   onClick={() => router.push('/fluence/wiki')}
                   className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{scale: 1.02}}
                 >
                   View All Pages →
                 </motion.button>
@@ -254,11 +246,11 @@ export default function FluenceDashboardPage() {
           </motion.div>
 
           {/* Recent Blog Posts */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}}>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <Pen className={`${iconSize.cardInline} text-warning-600`} />
+                  <Pen className={`${iconSize.cardInline} text-warning-600`}/>
                   <CardTitle className={typography.cardTitle}>
                     Latest Blog Posts
                   </CardTitle>
@@ -275,9 +267,10 @@ export default function FluenceDashboardPage() {
                       key={post.id}
                       onClick={() => router.push(`/fluence/blogs/${post.id}`)}
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                      whileHover={{ x: 4 }}
+                      whileHover={{x: 4}}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
+                      <p
+                        className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {post.title}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -289,7 +282,7 @@ export default function FluenceDashboardPage() {
                 <motion.button
                   onClick={() => router.push('/fluence/blogs')}
                   className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{scale: 1.02}}
                 >
                   Read All Posts →
                 </motion.button>
@@ -298,11 +291,11 @@ export default function FluenceDashboardPage() {
           </motion.div>
 
           {/* Template Library */}
-          <motion.div initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div initial={{opacity: 0, x: 8}} animate={{opacity: 1, x: 0}}>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <FileText className={`${iconSize.cardInline} text-success-600`} />
+                  <FileText className={`${iconSize.cardInline} text-success-600`}/>
                   <CardTitle className={typography.cardTitle}>
                     Templates
                   </CardTitle>
@@ -319,9 +312,10 @@ export default function FluenceDashboardPage() {
                       key={template.id}
                       onClick={() => router.push(`/fluence/templates/${template.id}`)}
                       className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                      whileHover={{ x: 4 }}
+                      whileHover={{x: 4}}
                     >
-                      <p className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
+                      <p
+                        className={`${typography.cardTitle} text-sm line-clamp-2 group-hover:text-[var(--accent-700)]`}>
                         {template.name || 'Untitled'}
                       </p>
                       <p className={`${typography.caption} mt-1`}>
@@ -333,7 +327,7 @@ export default function FluenceDashboardPage() {
                 <motion.button
                   onClick={() => router.push('/fluence/templates')}
                   className="w-full pt-2 border-t border-[var(--border-main)] text-[var(--accent-700)] font-medium text-sm hover:text-[var(--accent-800)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{scale: 1.02}}
                 >
                   All Templates →
                 </motion.button>
@@ -353,7 +347,7 @@ interface StatCardProps {
   color: 'violet' | 'amber' | 'emerald' | 'blue';
 }
 
-function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
+function StatCard({icon: IconComponent, label, value, color}: StatCardProps) {
   const colorMap = {
     violet: 'from-accent-700 to-accent-800 bg-accent-100 dark:bg-accent-900/30',
     amber: 'from-warning-500 to-warning-600 bg-warning-100 dark:bg-warning-900/30',
@@ -369,7 +363,7 @@ function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+    <motion.div initial={{opacity: 0, scale: 0.9}} animate={{opacity: 1, scale: 1}}>
       <Card className={card.base}>
         <CardContent className={`p-6 row-between`}>
           <div>
@@ -379,7 +373,7 @@ function StatCard({ icon: IconComponent, label, value, color }: StatCardProps) {
             </p>
           </div>
           <div className={`p-4 rounded-lg ${colorMap[color]}`}>
-            <IconComponent className={`w-6 h-6 ${textColorMap[color]}`} />
+            <IconComponent className={`w-6 h-6 ${textColorMap[color]}`}/>
           </div>
         </CardContent>
       </Card>

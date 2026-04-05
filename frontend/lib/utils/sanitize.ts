@@ -110,5 +110,5 @@ export function sanitizeAnnouncementHtml(html: string | null | undefined): strin
  */
 export function stripHtml(html: string | null | undefined): string {
   if (!html) return '';
-  return String(DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }));
+  return String(DOMPurify.sanitize(html, {ALLOWED_TAGS: []}));
 }

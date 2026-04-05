@@ -1,41 +1,41 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import {
-  Calendar,
-  Clock,
-  Award,
-  Target,
-  FileText,
-  CheckCircle,
   AlertCircle,
-  Palmtree,
-  GraduationCap,
-  CalendarDays,
-  ChevronRight,
-  Users,
+  Award,
   Briefcase,
+  Calendar,
+  CalendarDays,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  FileText,
   Gift,
+  GraduationCap,
+  Palmtree,
+  Target,
+  Users,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
 import dynamic from 'next/dynamic';
-import { useEmployeeDashboard } from '@/lib/hooks/queries';
-import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEmployeeDashboard} from '@/lib/hooks/queries';
+import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 const EmployeeAttendanceChart = dynamic(
   () => import('./EmployeeAttendanceChart'),
-  { loading: () => <ChartLoadingFallback />, ssr: false }
+  {loading: () => <ChartLoadingFallback/>, ssr: false}
 );
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
-  const { data, isLoading: loading, error } = useEmployeeDashboard();
+  const {hasPermission, isReady: permReady} = usePermissions();
+  const {data, isLoading: loading, error} = useEmployeeDashboard();
 
   // A3: Permission gate — redirect if user lacks DASHBOARD:EMPLOYEE
   React.useEffect(() => {
@@ -68,17 +68,17 @@ export default function EmployeeDashboardPage() {
   const getEventIcon = (type: string) => {
     switch (type) {
       case 'HOLIDAY':
-        return <Calendar className="h-4 w-4" />;
+        return <Calendar className="h-4 w-4"/>;
       case 'BIRTHDAY':
-        return <Gift className="h-4 w-4" />;
+        return <Gift className="h-4 w-4"/>;
       case 'ANNIVERSARY':
-        return <Award className="h-4 w-4" />;
+        return <Award className="h-4 w-4"/>;
       case 'MEETING':
-        return <Users className="h-4 w-4" />;
+        return <Users className="h-4 w-4"/>;
       case 'TRAINING':
-        return <GraduationCap className="h-4 w-4" />;
+        return <GraduationCap className="h-4 w-4"/>;
       default:
-        return <CalendarDays className="h-4 w-4" />;
+        return <CalendarDays className="h-4 w-4"/>;
     }
   };
 
@@ -119,14 +119,14 @@ export default function EmployeeDashboardPage() {
       <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
         <div className="space-y-6">
           <div>
-            <Skeleton className="h-8 w-64 mb-2" />
-            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-8 w-64 mb-2"/>
+            <Skeleton className="h-4 w-48"/>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
               <Card key={i}>
                 <CardContent className="p-6">
-                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full"/>
                 </CardContent>
               </Card>
             ))}
@@ -135,14 +135,14 @@ export default function EmployeeDashboardPage() {
             <div className="lg:col-span-2">
               <Card>
                 <CardContent className="p-6">
-                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="h-64 w-full"/>
                 </CardContent>
               </Card>
             </div>
             <div>
               <Card>
                 <CardContent className="p-6">
-                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="h-64 w-full"/>
                 </CardContent>
               </Card>
             </div>
@@ -159,7 +159,7 @@ export default function EmployeeDashboardPage() {
           <Card className="max-w-md">
             <CardHeader>
               <div className="flex items-center gap-4 text-danger-600">
-                <AlertCircle className="h-6 w-6" />
+                <AlertCircle className="h-6 w-6"/>
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
             </CardHeader>
@@ -196,7 +196,7 @@ export default function EmployeeDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => router.push('/me/attendance')}
-              leftIcon={<Clock className="h-4 w-4" />}
+              leftIcon={<Clock className="h-4 w-4"/>}
             >
               Mark Attendance
             </Button>
@@ -204,7 +204,7 @@ export default function EmployeeDashboardPage() {
               variant="primary"
               size="sm"
               onClick={() => router.push('/leave/apply')}
-              leftIcon={<Palmtree className="h-4 w-4" />}
+              leftIcon={<Palmtree className="h-4 w-4"/>}
             >
               Apply Leave
             </Button>
@@ -227,8 +227,9 @@ export default function EmployeeDashboardPage() {
                     {data.attendanceSummary.currentMonth.attendancePercentage}% attendance
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
               </div>
             </CardContent>
@@ -246,8 +247,9 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-caption mt-1">This year</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
               </div>
             </CardContent>
@@ -265,8 +267,9 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-caption mt-1">Remaining</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
               </div>
             </CardContent>
@@ -284,8 +287,9 @@ export default function EmployeeDashboardPage() {
                   </p>
                   <p className="text-caption mt-1">Per day</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
               </div>
             </CardContent>
@@ -308,7 +312,7 @@ export default function EmployeeDashboardPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => router.push('/me/attendance')}
-                    rightIcon={<ChevronRight className="h-4 w-4" />}
+                    rightIcon={<ChevronRight className="h-4 w-4"/>}
                   >
                     View All
                   </Button>
@@ -316,11 +320,11 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 {data.attendanceSummary.weeklyTrend.length > 0 ? (
-                  <EmployeeAttendanceChart weeklyTrend={data.attendanceSummary.weeklyTrend} />
+                  <EmployeeAttendanceChart weeklyTrend={data.attendanceSummary.weeklyTrend}/>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center">
                     <div className="text-center text-[var(--text-muted)]">
-                      <Clock className="h-12 w-12 mx-auto mb-4" />
+                      <Clock className="h-12 w-12 mx-auto mb-4"/>
                       <p className="text-sm font-medium">No attendance data available</p>
                     </div>
                   </div>
@@ -343,7 +347,8 @@ export default function EmployeeDashboardPage() {
                         className="row-between p-4 bg-[var(--bg-secondary)] rounded-lg"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-[var(--shadow-card)]">
+                          <div
+                            className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-[var(--shadow-card)]">
                             <span className="text-sm font-semibold text-[var(--text-primary)]">
                               {new Date(record.date).getDate()}
                             </span>
@@ -383,7 +388,7 @@ export default function EmployeeDashboardPage() {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-[var(--text-muted)]">
-                    <CheckCircle className="h-12 w-12 mx-auto mb-4" />
+                    <CheckCircle className="h-12 w-12 mx-auto mb-4"/>
                     <p className="text-sm">No attendance records found</p>
                   </div>
                 )}
@@ -402,7 +407,7 @@ export default function EmployeeDashboardPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => router.push('/performance')}
-                    rightIcon={<ChevronRight className="h-4 w-4" />}
+                    rightIcon={<ChevronRight className="h-4 w-4"/>}
                   >
                     View All
                   </Button>
@@ -411,7 +416,7 @@ export default function EmployeeDashboardPage() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
-                    <Target className="h-8 w-8 text-accent-700 dark:text-accent-400 mx-auto" />
+                    <Target className="h-8 w-8 text-accent-700 dark:text-accent-400 mx-auto"/>
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
@@ -420,7 +425,7 @@ export default function EmployeeDashboardPage() {
                     </p>
                   </div>
                   <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
-                    <Award className="h-8 w-8 text-success-600 dark:text-success-400 mx-auto" />
+                    <Award className="h-8 w-8 text-success-600 dark:text-success-400 mx-auto"/>
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.recentReviews.length}
                     </p>
@@ -429,7 +434,7 @@ export default function EmployeeDashboardPage() {
                     </p>
                   </div>
                   <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
-                    <GraduationCap className="h-8 w-8 text-accent-600 dark:text-accent-400 mx-auto" />
+                    <GraduationCap className="h-8 w-8 text-accent-600 dark:text-accent-400 mx-auto"/>
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.completedTrainings}
                     </p>
@@ -438,7 +443,7 @@ export default function EmployeeDashboardPage() {
                     </p>
                   </div>
                   <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
-                    <Briefcase className="h-8 w-8 text-warning-600 dark:text-warning-400 mx-auto" />
+                    <Briefcase className="h-8 w-8 text-warning-600 dark:text-warning-400 mx-auto"/>
                     <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.upcomingTrainings}
                     </p>
@@ -468,18 +473,19 @@ export default function EmployeeDashboardPage() {
                               goal.status === 'COMPLETED'
                                 ? 'bg-success-100 text-success-700 dark:bg-success-950/30 dark:text-success-400'
                                 : goal.status === 'IN_PROGRESS'
-                                ? 'bg-accent-100 text-accent-700 dark:bg-accent-950/30 dark:text-accent-400'
-                                : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
+                                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-950/30 dark:text-accent-400'
+                                  : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                             }`}
                           >
                             {goal.status.replace('_', ' ')}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                          <div
+                            className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
                               className="h-full bg-accent-500 rounded-full transition-all"
-                              style={{ width: `${goal.progress}%` }}
+                              style={{width: `${goal.progress}%`}}
                             />
                           </div>
                           <span className="text-xs font-medium text-[var(--text-secondary)]">
@@ -505,7 +511,7 @@ export default function EmployeeDashboardPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => router.push('/me/leaves')}
-                    rightIcon={<ChevronRight className="h-4 w-4" />}
+                    rightIcon={<ChevronRight className="h-4 w-4"/>}
                   >
                     Details
                   </Button>
@@ -549,7 +555,7 @@ export default function EmployeeDashboardPage() {
                   ))}
                   {data.leaveBalances.length === 0 && (
                     <div className="text-center py-6 text-[var(--text-muted)]">
-                      <Palmtree className="h-8 w-8 mx-auto mb-2" />
+                      <Palmtree className="h-8 w-8 mx-auto mb-2"/>
                       <p className="text-sm">No leave balances available</p>
                     </div>
                   )}
@@ -569,7 +575,8 @@ export default function EmployeeDashboardPage() {
                       key={event.id}
                       className={`flex items-start gap-4 p-4 rounded-lg ${getEventColor(event.type)}`}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-[var(--shadow-card)]">
+                      <div
+                        className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-[var(--shadow-card)]">
                         {getEventIcon(event.type)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -584,7 +591,7 @@ export default function EmployeeDashboardPage() {
                   ))}
                   {data.upcomingEvents.length === 0 && (
                     <div className="text-center py-6 text-[var(--text-muted)]">
-                      <CalendarDays className="h-8 w-8 mx-auto mb-2" />
+                      <CalendarDays className="h-8 w-8 mx-auto mb-2"/>
                       <p className="text-sm">No upcoming events</p>
                     </div>
                   )}
@@ -603,7 +610,7 @@ export default function EmployeeDashboardPage() {
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push('/me/attendance')}
-                    leftIcon={<Clock className="h-4 w-4" />}
+                    leftIcon={<Clock className="h-4 w-4"/>}
                   >
                     View Attendance
                   </Button>
@@ -611,7 +618,7 @@ export default function EmployeeDashboardPage() {
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push('/leave/apply')}
-                    leftIcon={<Palmtree className="h-4 w-4" />}
+                    leftIcon={<Palmtree className="h-4 w-4"/>}
                   >
                     Apply for Leave
                   </Button>
@@ -619,7 +626,7 @@ export default function EmployeeDashboardPage() {
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push('/me/payslips')}
-                    leftIcon={<FileText className="h-4 w-4" />}
+                    leftIcon={<FileText className="h-4 w-4"/>}
                   >
                     View Payslips
                   </Button>
@@ -627,7 +634,7 @@ export default function EmployeeDashboardPage() {
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push('/performance')}
-                    leftIcon={<Target className="h-4 w-4" />}
+                    leftIcon={<Target className="h-4 w-4"/>}
                   >
                     My Goals
                   </Button>
@@ -635,7 +642,7 @@ export default function EmployeeDashboardPage() {
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push('/training')}
-                    leftIcon={<GraduationCap className="h-4 w-4" />}
+                    leftIcon={<GraduationCap className="h-4 w-4"/>}
                   >
                     Training Programs
                   </Button>

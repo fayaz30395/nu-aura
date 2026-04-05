@@ -7,7 +7,8 @@ description: Use when asked to "check design", "audit UI", "design compliance", 
 
 ## When to Use
 
-- After creating or modifying any frontend file (`frontend/app/`, `frontend/components/`, `frontend/lib/`)
+- After creating or modifying any frontend file (`frontend/app/`, `frontend/components/`,
+  `frontend/lib/`)
 - When the user says "check design", "audit UI", "design compliance", "design sweep", or "DS check"
 - Before committing frontend changes to verify zero design violations
 - When reviewing a PR that touches `.tsx` or `.ts` files in the frontend
@@ -148,6 +149,7 @@ Only shadow-[var(--*)] arbitrary values are allowed
 ### 3. Compile Results
 
 For each violation found, record:
+
 - **File path** (absolute)
 - **Line number**
 - **Violation type** (from categories above)

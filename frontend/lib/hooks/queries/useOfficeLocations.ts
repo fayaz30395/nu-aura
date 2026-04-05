@@ -1,10 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  officeLocationService,
-  OfficeLocationRequest,
-} from '@/lib/services/hrms/office-location.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {OfficeLocationRequest, officeLocationService,} from '@/lib/services/hrms/office-location.service';
 
 export const officeLocationKeys = {
   all: ['officeLocations'] as const,
@@ -51,7 +48,7 @@ export function useCreateOfficeLocation() {
   return useMutation({
     mutationFn: (data: OfficeLocationRequest) => officeLocationService.createLocation(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: officeLocationKeys.list() });
+      queryClient.invalidateQueries({queryKey: officeLocationKeys.list()});
     },
   });
 }
@@ -61,11 +58,11 @@ export function useUpdateOfficeLocation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: OfficeLocationRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: OfficeLocationRequest }) =>
       officeLocationService.updateLocation(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: officeLocationKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: officeLocationKeys.list() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: officeLocationKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: officeLocationKeys.list()});
     },
   });
 }
@@ -77,7 +74,7 @@ export function useDeleteOfficeLocation() {
   return useMutation({
     mutationFn: (id: string) => officeLocationService.deleteLocation(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: officeLocationKeys.list() });
+      queryClient.invalidateQueries({queryKey: officeLocationKeys.list()});
     },
   });
 }

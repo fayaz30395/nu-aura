@@ -1,23 +1,15 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import {Suspense, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import {
-  Building2,
-  Lock,
-  ArrowLeft,
-  CheckCircle,
-  AlertCircle,
-  Eye,
-  EyeOff,
-} from 'lucide-react';
-import { publicApiClient } from '@/lib/api/public-client';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {AlertCircle, ArrowLeft, Building2, CheckCircle, Eye, EyeOff, Lock,} from 'lucide-react';
+import {publicApiClient} from '@/lib/api/public-client';
 
 /**
  * Password reset form schema.
@@ -55,7 +47,7 @@ function ResetPasswordForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
@@ -63,18 +55,21 @@ function ResetPasswordForm() {
   // No token in URL -- invalid link
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white" />
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+              <Building2 className="w-8 h-8 text-white"/>
             </div>
             <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4">
-                <AlertCircle className="w-8 h-8 text-danger-600 dark:text-danger-400" />
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4">
+                <AlertCircle className="w-8 h-8 text-danger-600 dark:text-danger-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Invalid Reset Link
@@ -89,7 +84,7 @@ function ResetPasswordForm() {
               </Link>
               <Link href="/auth/login">
                 <Button variant="outline" className="w-full">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-4 h-4 mr-2"/>
                   Back to Sign In
                 </Button>
               </Link>
@@ -103,18 +98,21 @@ function ResetPasswordForm() {
   // Success state
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white" />
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+              <Building2 className="w-8 h-8 text-white"/>
             </div>
             <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400" />
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+                <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Password Reset Successfully
@@ -160,12 +158,14 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Building2 className="w-8 h-8 text-white" />
+          <div
+            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+            <Building2 className="w-8 h-8 text-white"/>
           </div>
           <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
           <p className="mt-2 text-body-secondary">
@@ -178,15 +178,17 @@ function ResetPasswordForm() {
           <CardHeader className="pb-4">
             <CardTitle className="text-xl skeuo-emboss">Reset Password</CardTitle>
             <CardDescription>
-              Enter your new password below. It must be at least 12 characters with uppercase, lowercase, digit, and special character.
+              Enter your new password below. It must be at least 12 characters with uppercase, lowercase, digit, and
+              special character.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Error Alert */}
               {error && (
-                <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+                <div
+                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <div className="flex-1">
                     <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
                   </div>
@@ -200,7 +202,7 @@ function ResetPasswordForm() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-[var(--text-muted)]" />
+                    <Lock className="h-5 w-5 text-[var(--text-muted)]"/>
                   </div>
                   <input
                     {...register('newPassword')}
@@ -222,9 +224,9 @@ function ResetPasswordForm() {
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-[var(--text-muted)]" />
+                      <EyeOff className="h-5 w-5 text-[var(--text-muted)]"/>
                     ) : (
-                      <Eye className="h-5 w-5 text-[var(--text-muted)]" />
+                      <Eye className="h-5 w-5 text-[var(--text-muted)]"/>
                     )}
                   </button>
                 </div>
@@ -242,7 +244,7 @@ function ResetPasswordForm() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-[var(--text-muted)]" />
+                    <Lock className="h-5 w-5 text-[var(--text-muted)]"/>
                   </div>
                   <input
                     {...register('confirmPassword')}
@@ -264,9 +266,9 @@ function ResetPasswordForm() {
                     aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-[var(--text-muted)]" />
+                      <EyeOff className="h-5 w-5 text-[var(--text-muted)]"/>
                     ) : (
-                      <Eye className="h-5 w-5 text-[var(--text-muted)]" />
+                      <Eye className="h-5 w-5 text-[var(--text-muted)]"/>
                     )}
                   </button>
                 </div>
@@ -306,7 +308,7 @@ function ResetPasswordForm() {
                   href="/auth/login"
                   className="inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 h-4"/>
                   Back to Sign In
                 </Link>
               </div>
@@ -336,12 +338,13 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950">
+        <div
+          className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950">
           <div className="animate-pulse text-[var(--text-muted)]">Loading...</div>
         </div>
       }
     >
-      <ResetPasswordForm />
+      <ResetPasswordForm/>
     </Suspense>
   );
 }

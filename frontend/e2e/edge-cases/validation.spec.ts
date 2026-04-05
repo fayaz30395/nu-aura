@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Validation and Edge Case E2E Tests
@@ -7,27 +7,27 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Form Validation', () => {
   test.describe('Login Form Validation', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       // Clear auth state for login tests
       await page.context().clearCookies();
       await page.goto('/auth/login');
     });
 
-    test('should show error for empty email', async ({ page }) => {
-      const submitButton = page.getByRole('button', { name: /sign in|log in|submit/i });
+    test('should show error for empty email', async ({page}) => {
+      const submitButton = page.getByRole('button', {name: /sign in|log in|submit/i});
 
       // Leave email empty and submit
       await submitButton.click();
 
       // Should show validation error
       const errorMessage = page.getByText(/required|email|invalid/i);
-      await expect(errorMessage.first()).toBeVisible({ timeout: 5000 });
+      await expect(errorMessage.first()).toBeVisible({timeout: 5000});
     });
 
-    test('should show error for invalid email format', async ({ page }) => {
+    test('should show error for invalid email format', async ({page}) => {
       const emailInput = page.locator('input[type="email"]');
       const passwordInput = page.locator('input[type="password"]');
-      const submitButton = page.getByRole('button', { name: /sign in|log in|submit/i });
+      const submitButton = page.getByRole('button', {name: /sign in|log in|submit/i});
 
       await emailInput.fill('invalid-email');
       await passwordInput.fill('password123');
@@ -43,10 +43,10 @@ test.describe('Form Validation', () => {
       expect(hasError || !inputValidity).toBeTruthy();
     });
 
-    test('should show error for short password', async ({ page }) => {
+    test('should show error for short password', async ({page}) => {
       const emailInput = page.locator('input[type="email"]');
       const passwordInput = page.locator('input[type="password"]');
-      const submitButton = page.getByRole('button', { name: /sign in|log in|submit/i });
+      const submitButton = page.getByRole('button', {name: /sign in|log in|submit/i});
 
       await emailInput.fill('test@example.com');
       await passwordInput.fill('123'); // Too short
@@ -58,11 +58,11 @@ test.describe('Form Validation', () => {
   });
 
   test.describe('Employee Form Validation', () => {
-    test('should validate required fields in employee form', async ({ page }) => {
+    test('should validate required fields in employee form', async ({page}) => {
       await page.goto('/employees');
 
       // Try to open add employee form
-      const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+      const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
       if (await addButton.isVisible()) {
         await addButton.click();
 
@@ -70,21 +70,21 @@ test.describe('Form Validation', () => {
         await page.waitForTimeout(500);
 
         // Try to submit empty form
-        const submitButton = page.getByRole('button', { name: /save|submit|create/i }).last();
+        const submitButton = page.getByRole('button', {name: /save|submit|create/i}).last();
         if (await submitButton.isVisible()) {
           await submitButton.click();
 
           // Should show validation errors for required fields
           const requiredErrors = page.getByText(/required|this field|cannot be empty/i);
-          await expect(requiredErrors.first()).toBeVisible({ timeout: 5000 });
+          await expect(requiredErrors.first()).toBeVisible({timeout: 5000});
         }
       }
     });
 
-    test('should validate email format in employee form', async ({ page }) => {
+    test('should validate email format in employee form', async ({page}) => {
       await page.goto('/employees');
 
-      const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+      const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
       if (await addButton.isVisible()) {
         await addButton.click();
 
@@ -100,7 +100,7 @@ test.describe('Form Validation', () => {
           await emailInput.first().fill('not-an-email');
 
           // Try to submit
-          const submitButton = page.getByRole('button', { name: /save|submit|create/i }).last();
+          const submitButton = page.getByRole('button', {name: /save|submit|create/i}).last();
           await submitButton.click();
 
           // Should show email error
@@ -114,10 +114,10 @@ test.describe('Form Validation', () => {
   });
 
   test.describe('Leave Request Validation', () => {
-    test('should validate date range in leave form', async ({ page }) => {
+    test('should validate date range in leave form', async ({page}) => {
       await page.goto('/leave');
 
-      const addButton = page.getByRole('button', { name: /new|request|create/i }).first();
+      const addButton = page.getByRole('button', {name: /new|request|create/i}).first();
       if (await addButton.isVisible()) {
         await addButton.click();
 
@@ -138,7 +138,7 @@ test.describe('Form Validation', () => {
           await toDate.first().fill('2025-12-01');
 
           // Submit
-          const submitButton = page.getByRole('button', { name: /submit|save|request/i }).last();
+          const submitButton = page.getByRole('button', {name: /submit|save|request/i}).last();
           await submitButton.click();
 
           // Should show date validation error
@@ -154,10 +154,10 @@ test.describe('Form Validation', () => {
 });
 
 test.describe('Boundary Conditions', () => {
-  test('should handle maximum length input', async ({ page }) => {
+  test('should handle maximum length input', async ({page}) => {
     await page.goto('/employees');
 
-    const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+    const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);
@@ -181,7 +181,7 @@ test.describe('Boundary Conditions', () => {
     }
   });
 
-  test('should handle special characters in input', async ({ page }) => {
+  test('should handle special characters in input', async ({page}) => {
     await page.goto('/employees');
 
     const searchInput = page.getByPlaceholder(/search/i).or(
@@ -211,7 +211,7 @@ test.describe('Boundary Conditions', () => {
     }
   });
 
-  test('should handle SQL injection attempt safely', async ({ page }) => {
+  test('should handle SQL injection attempt safely', async ({page}) => {
     await page.goto('/employees');
 
     const searchInput = page.getByPlaceholder(/search/i).or(
@@ -233,7 +233,7 @@ test.describe('Boundary Conditions', () => {
     }
   });
 
-  test('should handle unicode and emoji characters', async ({ page }) => {
+  test('should handle unicode and emoji characters', async ({page}) => {
     await page.goto('/employees');
 
     const searchInput = page.getByPlaceholder(/search/i).or(
@@ -251,10 +251,10 @@ test.describe('Boundary Conditions', () => {
     }
   });
 
-  test('should handle zero and negative numbers appropriately', async ({ page }) => {
+  test('should handle zero and negative numbers appropriately', async ({page}) => {
     await page.goto('/expenses');
 
-    const addButton = page.getByRole('button', { name: /new|add|create/i }).first();
+    const addButton = page.getByRole('button', {name: /new|add|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);
@@ -269,7 +269,7 @@ test.describe('Boundary Conditions', () => {
         await amountInput.first().fill('-100');
 
         // Submit form
-        const submitButton = page.getByRole('button', { name: /submit|save|create/i }).last();
+        const submitButton = page.getByRole('button', {name: /submit|save|create/i}).last();
         await submitButton.click();
 
         // Should show validation error or prevent negative amounts
@@ -287,10 +287,10 @@ test.describe('Boundary Conditions', () => {
 });
 
 test.describe('Partial Form Submission', () => {
-  test('should preserve form data on validation error', async ({ page }) => {
+  test('should preserve form data on validation error', async ({page}) => {
     await page.goto('/employees');
 
-    const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+    const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);
@@ -305,7 +305,7 @@ test.describe('Partial Form Submission', () => {
         await nameInput.first().fill(testName);
 
         // Submit with incomplete data
-        const submitButton = page.getByRole('button', { name: /save|submit|create/i }).last();
+        const submitButton = page.getByRole('button', {name: /save|submit|create/i}).last();
         await submitButton.click();
 
         // Wait for validation
@@ -318,10 +318,10 @@ test.describe('Partial Form Submission', () => {
     }
   });
 
-  test('should warn about unsaved changes when navigating away', async ({ page }) => {
+  test('should warn about unsaved changes when navigating away', async ({page}) => {
     await page.goto('/employees');
 
-    const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+    const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);
@@ -331,7 +331,7 @@ test.describe('Partial Form Submission', () => {
       await nameInput.fill('Test Data');
 
       // Try to navigate away
-      await page.getByRole('link', { name: /dashboard|home/i }).first().click();
+      await page.getByRole('link', {name: /dashboard|home/i}).first().click();
 
       // Should either show confirmation dialog or prevent navigation
       // Note: Browser dialogs are handled differently in Playwright
@@ -347,10 +347,10 @@ test.describe('Partial Form Submission', () => {
 });
 
 test.describe('Date Handling', () => {
-  test('should handle date picker boundary values', async ({ page }) => {
+  test('should handle date picker boundary values', async ({page}) => {
     await page.goto('/leave');
 
-    const addButton = page.getByRole('button', { name: /new|request|create/i }).first();
+    const addButton = page.getByRole('button', {name: /new|request|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);
@@ -361,7 +361,7 @@ test.describe('Date Handling', () => {
         await dateInput.fill('2020-01-01');
 
         // Submit
-        const submitButton = page.getByRole('button', { name: /submit|save/i }).last();
+        const submitButton = page.getByRole('button', {name: /submit|save/i}).last();
         await submitButton.click();
 
         // Should show error about past dates
@@ -377,10 +377,10 @@ test.describe('Date Handling', () => {
     }
   });
 
-  test('should handle far future dates', async ({ page }) => {
+  test('should handle far future dates', async ({page}) => {
     await page.goto('/leave');
 
-    const addButton = page.getByRole('button', { name: /new|request|create/i }).first();
+    const addButton = page.getByRole('button', {name: /new|request|create/i}).first();
     if (await addButton.isVisible()) {
       await addButton.click();
       await page.waitForTimeout(500);

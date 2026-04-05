@@ -5,7 +5,7 @@
  * and general animation helpers
  */
 
-import { Variants } from 'framer-motion';
+import {Variants} from 'framer-motion';
 
 // ──────────────────────────────────────────────────────────────────
 // FRAMER MOTION VARIANTS
@@ -15,10 +15,10 @@ import { Variants } from 'framer-motion';
  * Fade in animation variants
  */
 export const fadeInVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: {opacity: 0},
   visible: {
     opacity: 1,
-    transition: { duration: 0.3, ease: 'easeOut' },
+    transition: {duration: 0.3, ease: 'easeOut'},
   },
 };
 
@@ -26,11 +26,11 @@ export const fadeInVariants: Variants = {
  * Fade in from bottom
  */
 export const fadeInUpVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: {opacity: 0, y: 20},
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    transition: {duration: 0.4, ease: [0.16, 1, 0.3, 1]},
   },
 };
 
@@ -38,11 +38,11 @@ export const fadeInUpVariants: Variants = {
  * Fade in from top
  */
 export const fadeInDownVariants: Variants = {
-  hidden: { opacity: 0, y: -20 },
+  hidden: {opacity: 0, y: -20},
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    transition: {duration: 0.4, ease: [0.16, 1, 0.3, 1]},
   },
 };
 
@@ -50,11 +50,11 @@ export const fadeInDownVariants: Variants = {
  * Fade in from left
  */
 export const fadeInLeftVariants: Variants = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: {opacity: 0, x: -20},
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    transition: {duration: 0.4, ease: [0.16, 1, 0.3, 1]},
   },
 };
 
@@ -62,11 +62,11 @@ export const fadeInLeftVariants: Variants = {
  * Fade in from right
  */
 export const fadeInRightVariants: Variants = {
-  hidden: { opacity: 0, x: 20 },
+  hidden: {opacity: 0, x: 20},
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    transition: {duration: 0.4, ease: [0.16, 1, 0.3, 1]},
   },
 };
 
@@ -74,11 +74,11 @@ export const fadeInRightVariants: Variants = {
  * Scale in animation
  */
 export const scaleInVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: {opacity: 0, scale: 0.9},
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+    transition: {duration: 0.3, ease: [0.16, 1, 0.3, 1]},
   },
 };
 
@@ -86,7 +86,7 @@ export const scaleInVariants: Variants = {
  * Stagger container for lists
  */
 export const staggerContainerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: {opacity: 0},
   visible: {
     opacity: 1,
     transition: {
@@ -100,11 +100,11 @@ export const staggerContainerVariants: Variants = {
  * Stagger item for children
  */
 export const staggerItemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: {opacity: 0, y: 10},
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: 'easeOut' },
+    transition: {duration: 0.3, ease: 'easeOut'},
   },
 };
 
@@ -141,14 +141,14 @@ export const modalVariants: Variants = {
  * Backdrop animation
  */
 export const backdropVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: {opacity: 0},
   visible: {
     opacity: 1,
-    transition: { duration: 0.2 },
+    transition: {duration: 0.2},
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.15 },
+    transition: {duration: 0.15},
   },
 };
 
@@ -182,7 +182,7 @@ export const slideUpVariants: Variants = {
  * Card hover animation
  */
 export const cardHoverVariants: Variants = {
-  initial: { y: 0, boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' },
+  initial: {y: 0, boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'},
   hover: {
     y: -4,
     boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
@@ -318,13 +318,13 @@ export function createFadeVariants(
   const getTransform = () => {
     switch (direction) {
       case 'up':
-        return { y: distance };
+        return {y: distance};
       case 'down':
-        return { y: -distance };
+        return {y: -distance};
       case 'left':
-        return { x: distance };
+        return {x: distance};
       case 'right':
-        return { x: -distance };
+        return {x: -distance};
       default:
         return {};
     }

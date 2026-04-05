@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
-import { useAuth } from './useAuth';
-import { notifications } from '@mantine/notifications';
-import { logger } from '../utils/logger';
+import {useCallback, useEffect, useRef} from 'react';
+import {useAuth} from './useAuth';
+import {notifications} from '@mantine/notifications';
+import {logger} from '../utils/logger';
 
 /**
  * Session Timeout Hook
@@ -40,7 +40,7 @@ interface SessionTimeoutState {
 }
 
 export function useSessionTimeout(enabled: boolean = true) {
-  const { logout, isAuthenticated } = useAuth();
+  const {logout, isAuthenticated} = useAuth();
   const stateRef = useRef<SessionTimeoutState>({
     lastActivityTime: Date.now(),
     warningShownAt: null,

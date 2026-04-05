@@ -1,21 +1,26 @@
 # NU-AURA API Contracts
 
-Complete API contract documentation for the top 10 controllers. All endpoints require JWT authentication unless noted otherwise. Tenant isolation is enforced via `X-Tenant-ID` header or JWT claim.
+Complete API contract documentation for the top 10 controllers. All endpoints require JWT
+authentication unless noted otherwise. Tenant isolation is enforced via `X-Tenant-ID` header or JWT
+claim.
 
 **Base URL:** `/api/v1`
 
 **Common Headers:**
+
 - `Authorization: Bearer <jwt_token>` (except public endpoints)
 - `Content-Type: application/json`
 - `X-Tenant-ID: <uuid>` (resolved from JWT if not provided)
 - `X-XSRF-TOKEN: <csrf_token>` (required for mutating requests when CSRF is enabled)
 
 **Common Pagination Parameters (Spring Pageable):**
+
 - `page` (int, default 0) -- zero-indexed page number
 - `size` (int, default 20) -- page size
 - `sort` (string) -- e.g., `createdAt,DESC`
 
 **Standard Error Response:**
+
 ```json
 {
   "status": 400,
@@ -60,6 +65,7 @@ Login with email and password. Sets httpOnly cookies for access and refresh toke
 **Status Codes:** `200 OK`, `401 Unauthorized`
 
 **Cookies Set:**
+
 - `access_token` (httpOnly, Secure, SameSite=Strict, path=/, maxAge=3600)
 - `refresh_token` (httpOnly, Secure, SameSite=Strict, path=/api/v1/auth, maxAge=86400)
 
@@ -74,7 +80,8 @@ Login with Google OAuth token.
 |-------|------|----------|------------|
 | `credential` | String | Yes | `@NotBlank`, `@SkipSanitization` |
 | `tenantId` | UUID | No | |
-| `isAccessToken` | boolean | No | Default `false`. If true, credential is OAuth access token; otherwise Google ID token |
+| `isAccessToken` | boolean | No | Default `false`. If true, credential is OAuth access token;
+otherwise Google ID token |
 
 **Response:** Same as `/login` (`AuthResponse`).
 **Status Codes:** `200 OK`, `401 Unauthorized`
@@ -101,6 +108,7 @@ Complete MFA second-factor after initial password auth.
 Refresh the access token using a refresh token.
 
 **Headers / Cookies:**
+
 - `X-Refresh-Token` header OR `refresh_token` cookie (cookie preferred)
 
 **Response:** `AuthResponse` with new tokens.
@@ -113,6 +121,7 @@ Refresh the access token using a refresh token.
 Revoke tokens and clear authentication cookies.
 
 **Headers / Cookies:**
+
 - `Authorization: Bearer <token>` OR `access_token` cookie
 - `refresh_token` cookie
 
@@ -145,7 +154,8 @@ Request a password reset email.
 |-------|------|----------|------------|
 | `email` | String | Yes | `@NotBlank`, `@Email` |
 
-**Response:** `{ "message": "If an account exists with this email, a password reset link has been sent." }`
+**Response:**
+`{ "message": "If an account exists with this email, a password reset link has been sent." }`
 **Status Codes:** `200 OK` (always returns 200 to prevent email enumeration)
 
 ---
@@ -202,7 +212,8 @@ Create a new employee with user account.
 | `dottedLineManager1Id` | UUID | No | |
 | `dottedLineManager2Id` | UUID | No | |
 | `selfManaged` | Boolean | No | |
-| `employmentType` | Enum | Yes | `@NotNull`. Values: `FULL_TIME`, `PART_TIME`, `CONTRACT`, `INTERN`, `CONSULTANT` |
+| `employmentType` | Enum | Yes | `@NotNull`. Values: `FULL_TIME`, `PART_TIME`, `CONTRACT`,
+`INTERN`, `CONSULTANT` |
 | `bankAccountNumber` | String | No | |
 | `bankName` | String | No | |
 | `bankIfscCode` | String | No | |
@@ -264,7 +275,8 @@ Create a new employee with user account.
 
 Get all employees (paginated).
 
-**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` | `employee.view_self`
+**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` |
+`employee.view_self`
 
 **Query Parameters:**
 | Param | Type | Default |
@@ -282,7 +294,8 @@ Get all employees (paginated).
 
 Search employees by name, email, or employee code.
 
-**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` | `employee.view_self`
+**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` |
+`employee.view_self`
 
 **Query Parameters:**
 | Param | Type | Required |
@@ -309,7 +322,8 @@ Get the authenticated user's own employee profile.
 
 Get employee by UUID.
 
-**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` | `employee.view_self`
+**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` |
+`employee.view_self`
 **Response:** `EmployeeResponse`
 **Status Codes:** `200 OK`, `404 Not Found`
 
@@ -337,7 +351,8 @@ Get direct reports of an employee.
 
 Get employees at LEAD level and above (for manager-picker dropdowns).
 
-**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` | `employee.view_self`
+**Permission:** `employee.view_all` | `employee.view_department` | `employee.view_team` |
+`employee.view_self`
 **Response:** `List<EmployeeResponse>`
 
 ---
@@ -357,7 +372,9 @@ Update an existing employee (PATCH semantics -- only supplied fields are updated
 
 **Permission:** `employee.update`
 
-**Request Body (`UpdateEmployeeRequest`):** All fields optional. Same as `CreateEmployeeRequest` minus `workEmail` and `password`, with `level`, `jobRole`, and `status` added. Validation constraints enforced on provided values.
+**Request Body (`UpdateEmployeeRequest`):** All fields optional. Same as `CreateEmployeeRequest`
+minus `workEmail` and `password`, with `level`, `jobRole`, and `status` added. Validation
+constraints enforced on provided values.
 
 **Status Codes:** `200 OK`, `400 Bad Request`, `404 Not Found`
 
@@ -428,7 +445,8 @@ Create a new leave request.
 ### GET /api/v1/leave-requests/{id}
 
 **Permission:** `leave.view_all` | `leave.view_team` | `leave.view_self`
-**Scope Enforcement:** Validates access based on user's scope hierarchy (ALL > LOCATION > DEPARTMENT > TEAM > SELF > CUSTOM).
+**Scope Enforcement:** Validates access based on user's scope hierarchy (ALL > LOCATION >
+DEPARTMENT > TEAM > SELF > CUSTOM).
 **Status Codes:** `200 OK`, `403 Forbidden`, `404 Not Found`
 
 ---
@@ -595,7 +613,8 @@ Record employee check-out.
 
 **Permission:** `attendance.mark`
 
-**Request Body (`CheckOutRequest`):** Same structure as `CheckInRequest` but with `checkOutTime` instead of `checkInTime`.
+**Request Body (`CheckOutRequest`):** Same structure as `CheckInRequest` but with `checkOutTime`
+instead of `checkInTime`.
 
 **Status Codes:** `200 OK`, `400`, `403`
 
@@ -655,7 +674,8 @@ Break tracking endpoints for multiple check-ins/outs within a day.
 Bulk operations for marking attendance for multiple employees.
 
 **Permission:** `attendance.view_all`
-**Response:** `BulkAttendanceResponse` with `successCount`, `failureCount`, `successful[]`, `failed[]`
+**Response:** `BulkAttendanceResponse` with `successCount`, `failureCount`, `successful[]`,
+`failed[]`
 
 ---
 
@@ -729,19 +749,19 @@ Bulk import attendance from Excel file.
 
 ### Payroll Run Endpoints
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/runs` | `payroll.process` | Create payroll run (REPEATABLE_READ isolation, pessimistic lock) |
-| PUT | `/runs/{id}` | `payroll.process` | Update payroll run (blocked if LOCKED) |
-| GET | `/runs/{id}` | `payroll.view_all` | Get payroll run by ID |
-| GET | `/runs` | `payroll.view_all` | Get all payroll runs (paginated) |
-| GET | `/runs/period?year=&month=` | `payroll.view_all` | Get by period |
-| GET | `/runs/year/{year}` | `payroll.view_all` | Get all runs for a year |
-| GET | `/runs/status/{status}` | `payroll.view_all` | Filter by status (paginated) |
-| POST | `/runs/{id}/process` | `payroll.process` | Transition DRAFT -> PROCESSED |
-| POST | `/runs/{id}/approve` | `payroll.approve` | Transition PROCESSED -> APPROVED |
-| POST | `/runs/{id}/lock` | `payroll.approve` | Transition APPROVED -> LOCKED |
-| DELETE | `/runs/{id}` | `payroll.process` | Delete run (blocked if LOCKED) |
+| Method | Path                        | Permission         | Description                                                      |
+|--------|-----------------------------|--------------------|------------------------------------------------------------------|
+| POST   | `/runs`                     | `payroll.process`  | Create payroll run (REPEATABLE_READ isolation, pessimistic lock) |
+| PUT    | `/runs/{id}`                | `payroll.process`  | Update payroll run (blocked if LOCKED)                           |
+| GET    | `/runs/{id}`                | `payroll.view_all` | Get payroll run by ID                                            |
+| GET    | `/runs`                     | `payroll.view_all` | Get all payroll runs (paginated)                                 |
+| GET    | `/runs/period?year=&month=` | `payroll.view_all` | Get by period                                                    |
+| GET    | `/runs/year/{year}`         | `payroll.view_all` | Get all runs for a year                                          |
+| GET    | `/runs/status/{status}`     | `payroll.view_all` | Filter by status (paginated)                                     |
+| POST   | `/runs/{id}/process`        | `payroll.process`  | Transition DRAFT -> PROCESSED                                    |
+| POST   | `/runs/{id}/approve`        | `payroll.approve`  | Transition PROCESSED -> APPROVED                                 |
+| POST   | `/runs/{id}/lock`           | `payroll.approve`  | Transition APPROVED -> LOCKED                                    |
+| DELETE | `/runs/{id}`                | `payroll.process`  | Delete run (blocked if LOCKED)                                   |
 
 **PayrollRun Status State Machine:** `DRAFT -> PROCESSED -> APPROVED -> LOCKED`
 
@@ -749,35 +769,35 @@ Bulk import attendance from Excel file.
 
 ### Payslip Endpoints
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/payslips` | `payroll.process` | Create payslip |
-| PUT | `/payslips/{id}` | `payroll.process` | Update payslip |
-| GET | `/payslips/{id}` | `payroll.view_all` | Get payslip by ID |
-| GET | `/payslips` | `payroll.view_all` | Get all payslips (paginated) |
-| GET | `/payslips/employee/{employeeId}` | `payroll.view_all` | `payroll.view_self` | Employee payslips (paginated) |
-| GET | `/payslips/employee/{id}/period?year=&month=` | `payroll.view_all` | `payroll.view_self` | Single payslip by period |
-| GET | `/payslips/employee/{id}/year/{year}` | `payroll.view_all` | `payroll.view_self` | All payslips for year |
-| GET | `/payslips/run/{payrollRunId}` | `payroll.view_all` | Payslips for a run |
-| GET | `/payslips/{id}/pdf` | `payroll.view_all` | `payroll.view_self` | Download payslip PDF |
-| GET | `/payslips/employee/{id}/period/pdf?year=&month=` | `payroll.view_all` | `payroll.view_self` | Download PDF by period |
-| DELETE | `/payslips/{id}` | `payroll.process` | Delete payslip |
+| Method | Path                                              | Permission         | Description                  |
+|--------|---------------------------------------------------|--------------------|------------------------------|
+| POST   | `/payslips`                                       | `payroll.process`  | Create payslip               |
+| PUT    | `/payslips/{id}`                                  | `payroll.process`  | Update payslip               |
+| GET    | `/payslips/{id}`                                  | `payroll.view_all` | Get payslip by ID            |
+| GET    | `/payslips`                                       | `payroll.view_all` | Get all payslips (paginated) |
+| GET    | `/payslips/employee/{employeeId}`                 | `payroll.view_all` | `payroll.view_self`          | Employee payslips (paginated) |
+| GET    | `/payslips/employee/{id}/period?year=&month=`     | `payroll.view_all` | `payroll.view_self`          | Single payslip by period |
+| GET    | `/payslips/employee/{id}/year/{year}`             | `payroll.view_all` | `payroll.view_self`          | All payslips for year |
+| GET    | `/payslips/run/{payrollRunId}`                    | `payroll.view_all` | Payslips for a run           |
+| GET    | `/payslips/{id}/pdf`                              | `payroll.view_all` | `payroll.view_self`          | Download payslip PDF |
+| GET    | `/payslips/employee/{id}/period/pdf?year=&month=` | `payroll.view_all` | `payroll.view_self`          | Download PDF by period |
+| DELETE | `/payslips/{id}`                                  | `payroll.process`  | Delete payslip               |
 
 ---
 
 ### Salary Structure Endpoints
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/salary-structures` | `payroll.process` | Create salary structure |
-| PUT | `/salary-structures/{id}` | `payroll.process` | Update salary structure |
-| GET | `/salary-structures/{id}` | `payroll.view_all` | Get by ID |
-| GET | `/salary-structures` | `payroll.view_all` | Get all (paginated) |
-| GET | `/salary-structures/employee/{id}` | `payroll.view_all` | `payroll.view_self` | Employee structures |
-| GET | `/salary-structures/employee/{id}/active?date=` | `payroll.view_all` | `payroll.view_self` | Active structure |
-| GET | `/salary-structures/active` | `payroll.view_all` | All active structures (paginated) |
-| POST | `/salary-structures/{id}/deactivate` | `payroll.process` | Deactivate structure |
-| DELETE | `/salary-structures/{id}` | `payroll.process` | Delete structure |
+| Method | Path                                            | Permission         | Description                       |
+|--------|-------------------------------------------------|--------------------|-----------------------------------|
+| POST   | `/salary-structures`                            | `payroll.process`  | Create salary structure           |
+| PUT    | `/salary-structures/{id}`                       | `payroll.process`  | Update salary structure           |
+| GET    | `/salary-structures/{id}`                       | `payroll.view_all` | Get by ID                         |
+| GET    | `/salary-structures`                            | `payroll.view_all` | Get all (paginated)               |
+| GET    | `/salary-structures/employee/{id}`              | `payroll.view_all` | `payroll.view_self`               | Employee structures |
+| GET    | `/salary-structures/employee/{id}/active?date=` | `payroll.view_all` | `payroll.view_self`               | Active structure |
+| GET    | `/salary-structures/active`                     | `payroll.view_all` | All active structures (paginated) |
+| POST   | `/salary-structures/{id}/deactivate`            | `payroll.process`  | Deactivate structure              |
+| DELETE | `/salary-structures/{id}`                       | `payroll.process`  | Delete structure                  |
 
 ---
 
@@ -787,14 +807,14 @@ Bulk import attendance from Excel file.
 
 ### Job Openings
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/job-openings` | `recruitment.create` | Create job opening |
-| PUT | `/job-openings/{id}` | `recruitment.update` | Update job opening |
-| GET | `/job-openings/{id}` | `recruitment.view` | Get by ID |
-| GET | `/job-openings` | `recruitment.view` | Get all (paginated) |
-| GET | `/job-openings/status/{status}` | `recruitment.view` | Filter by status |
-| DELETE | `/job-openings/{id}` | `recruitment.delete` | Delete |
+| Method | Path                            | Permission           | Description         |
+|--------|---------------------------------|----------------------|---------------------|
+| POST   | `/job-openings`                 | `recruitment.create` | Create job opening  |
+| PUT    | `/job-openings/{id}`            | `recruitment.update` | Update job opening  |
+| GET    | `/job-openings/{id}`            | `recruitment.view`   | Get by ID           |
+| GET    | `/job-openings`                 | `recruitment.view`   | Get all (paginated) |
+| GET    | `/job-openings/status/{status}` | `recruitment.view`   | Filter by status    |
+| DELETE | `/job-openings/{id}`            | `recruitment.delete` | Delete              |
 
 **Request Body (`JobOpeningRequest`):**
 | Field | Type | Required |
@@ -819,26 +839,28 @@ Bulk import attendance from Excel file.
 | `isActive` | Boolean | No |
 
 **Response Body (`JobOpeningResponse`):**
-All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`, `candidateCount`, `createdAt`, `updatedAt`, `createdBy`, `lastModifiedBy`, `version`.
+All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`, `candidateCount`,
+`createdAt`, `updatedAt`, `createdBy`, `lastModifiedBy`, `version`.
 
 ---
 
 ### Candidates
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/candidates` | `recruitment.create` | Create candidate |
-| PUT | `/candidates/{id}` | `recruitment.update` | Update candidate |
-| GET | `/candidates/{id}` | `candidate.view` | Get by ID |
-| GET | `/candidates` | `candidate.view` | Get all (paginated) |
-| GET | `/candidates/job-opening/{jobOpeningId}` | `candidate.view` | Candidates for a job opening |
-| PUT | `/candidates/{id}/stage` | `recruitment.update` | Move candidate to stage |
-| POST | `/candidates/{id}/offer` | `recruitment.update` | Create offer |
-| POST | `/candidates/{id}/accept-offer` | `recruitment.update` | Accept offer |
-| POST | `/candidates/{id}/decline-offer` | `recruitment.update` | Decline offer |
-| DELETE | `/candidates/{id}` | `recruitment.delete` | Delete |
+| Method | Path                                     | Permission           | Description                  |
+|--------|------------------------------------------|----------------------|------------------------------|
+| POST   | `/candidates`                            | `recruitment.create` | Create candidate             |
+| PUT    | `/candidates/{id}`                       | `recruitment.update` | Update candidate             |
+| GET    | `/candidates/{id}`                       | `candidate.view`     | Get by ID                    |
+| GET    | `/candidates`                            | `candidate.view`     | Get all (paginated)          |
+| GET    | `/candidates/job-opening/{jobOpeningId}` | `candidate.view`     | Candidates for a job opening |
+| PUT    | `/candidates/{id}/stage`                 | `recruitment.update` | Move candidate to stage      |
+| POST   | `/candidates/{id}/offer`                 | `recruitment.update` | Create offer                 |
+| POST   | `/candidates/{id}/accept-offer`          | `recruitment.update` | Accept offer                 |
+| POST   | `/candidates/{id}/decline-offer`         | `recruitment.update` | Decline offer                |
+| DELETE | `/candidates/{id}`                       | `recruitment.delete` | Delete                       |
 
-**MoveStageRequest:** `{ "stage": "SCREENING|PHONE_SCREEN|INTERVIEW|TECHNICAL|OFFER|HIRED|REJECTED", "notes": "..." }`
+**MoveStageRequest:**
+`{ "stage": "SCREENING|PHONE_SCREEN|INTERVIEW|TECHNICAL|OFFER|HIRED|REJECTED", "notes": "..." }`
 
 **CreateOfferRequest:**
 | Field | Type |
@@ -853,14 +875,14 @@ All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`
 
 ### Interviews
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/interviews` | `recruitment.view` | Get all (paginated) |
-| POST | `/interviews` | `recruitment.create` | Schedule interview |
-| PUT | `/interviews/{id}` | `recruitment.update` | Update interview |
-| GET | `/interviews/{id}` | `recruitment.view` | Get by ID |
-| GET | `/interviews/candidate/{candidateId}` | `recruitment.view` | Interviews for candidate |
-| DELETE | `/interviews/{id}` | `recruitment.delete` | Delete |
+| Method | Path                                  | Permission           | Description              |
+|--------|---------------------------------------|----------------------|--------------------------|
+| GET    | `/interviews`                         | `recruitment.view`   | Get all (paginated)      |
+| POST   | `/interviews`                         | `recruitment.create` | Schedule interview       |
+| PUT    | `/interviews/{id}`                    | `recruitment.update` | Update interview         |
+| GET    | `/interviews/{id}`                    | `recruitment.view`   | Get by ID                |
+| GET    | `/interviews/candidate/{candidateId}` | `recruitment.view`   | Interviews for candidate |
+| DELETE | `/interviews/{id}`                    | `recruitment.delete` | Delete                   |
 
 **InterviewRequest:**
 | Field | Type |
@@ -890,31 +912,32 @@ All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`
 
 **Base Path:** `/api/v1/reviews`
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/` | `review.create` | Create review |
-| GET | `/` | `review.view` | Get all (paginated) |
-| GET | `/{id}` | `review.view` | Get by ID |
-| GET | `/employee/{employeeId}` | `review.view` | Get employee reviews |
-| GET | `/employee/{employeeId}/paged` | `review.view` | Get employee reviews (paginated) |
-| GET | `/pending/{reviewerId}` | `review.view` | Get pending reviews for reviewer |
-| GET | `/pending/{reviewerId}/paged` | `review.view` | Pending reviews (paginated) |
-| PUT | `/{id}` | `review.create` | Update review |
-| PUT | `/{id}/submit` | `review.submit` | Submit review |
-| PUT | `/{id}/complete` | `review.approve` | Complete/approve review |
-| POST | `/competencies` | `review.create` | Add competency to review |
-| GET | `/{reviewId}/competencies` | `review.view` | Get competencies for review |
+| Method | Path                           | Permission       | Description                      |
+|--------|--------------------------------|------------------|----------------------------------|
+| POST   | `/`                            | `review.create`  | Create review                    |
+| GET    | `/`                            | `review.view`    | Get all (paginated)              |
+| GET    | `/{id}`                        | `review.view`    | Get by ID                        |
+| GET    | `/employee/{employeeId}`       | `review.view`    | Get employee reviews             |
+| GET    | `/employee/{employeeId}/paged` | `review.view`    | Get employee reviews (paginated) |
+| GET    | `/pending/{reviewerId}`        | `review.view`    | Get pending reviews for reviewer |
+| GET    | `/pending/{reviewerId}/paged`  | `review.view`    | Pending reviews (paginated)      |
+| PUT    | `/{id}`                        | `review.create`  | Update review                    |
+| PUT    | `/{id}/submit`                 | `review.submit`  | Submit review                    |
+| PUT    | `/{id}/complete`               | `review.approve` | Complete/approve review          |
+| POST   | `/competencies`                | `review.create`  | Add competency to review         |
+| GET    | `/{reviewId}/competencies`     | `review.view`    | Get competencies for review      |
 
 ### PerformanceRevolutionController
 
 **Base Path:** `/api/v1/performance/revolution`
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/okr-graph` | `okr.view` | Get organization-wide OKR graph |
-| GET | `/spider/{employeeId}` | `review.view` | Get performance spider chart data |
+| Method | Path                   | Permission    | Description                       |
+|--------|------------------------|---------------|-----------------------------------|
+| GET    | `/okr-graph`           | `okr.view`    | Get organization-wide OKR graph   |
+| GET    | `/spider/{employeeId}` | `review.view` | Get performance spider chart data |
 
-**OKRGraphResponse / PerformanceSpiderResponse:** Returns graph/chart data structures for visualization.
+**OKRGraphResponse / PerformanceSpiderResponse:** Returns graph/chart data structures for
+visualization.
 
 ---
 
@@ -924,10 +947,10 @@ All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`
 
 **Base Path:** `/api/v1/users`
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/` | `user.view` | Get all users |
-| PUT | `/{id}/roles` | `user.manage` | Assign roles to user |
+| Method | Path          | Permission    | Description          |
+|--------|---------------|---------------|----------------------|
+| GET    | `/`           | `user.view`   | Get all users        |
+| PUT    | `/{id}/roles` | `user.manage` | Assign roles to user |
 
 **AssignRolesRequest:** `{ "roleCodes": ["HR_ADMIN", "EMPLOYEE"] }` (`@NotEmpty`)
 
@@ -951,18 +974,18 @@ All request fields plus: `id`, `tenantId`, `departmentName`, `hiringManagerName`
 
 All endpoints require `role.manage` permission.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/` | Get all roles |
-| GET | `/{id}` | Get role by ID |
-| POST | `/` | Create role |
-| PUT | `/{id}` | Update role |
-| DELETE | `/{id}` | Delete role |
-| PUT | `/{id}/permissions` | Replace all permissions |
-| POST | `/{id}/permissions` | Add permissions |
-| DELETE | `/{id}/permissions` | Remove permissions |
-| PUT | `/{id}/permissions-with-scope` | Assign permissions with scopes (Keka-style RBAC) |
-| PATCH | `/{id}/permissions/{permissionCode}/scope` | Update scope for a single permission |
+| Method | Path                                       | Description                                      |
+|--------|--------------------------------------------|--------------------------------------------------|
+| GET    | `/`                                        | Get all roles                                    |
+| GET    | `/{id}`                                    | Get role by ID                                   |
+| POST   | `/`                                        | Create role                                      |
+| PUT    | `/{id}`                                    | Update role                                      |
+| DELETE | `/{id}`                                    | Delete role                                      |
+| PUT    | `/{id}/permissions`                        | Replace all permissions                          |
+| POST   | `/{id}/permissions`                        | Add permissions                                  |
+| DELETE | `/{id}/permissions`                        | Remove permissions                               |
+| PUT    | `/{id}/permissions-with-scope`             | Assign permissions with scopes (Keka-style RBAC) |
+| PATCH  | `/{id}/permissions/{permissionCode}/scope` | Update scope for a single permission             |
 
 **CreateRoleRequest:**
 | Field | Type | Required |
@@ -998,6 +1021,7 @@ All endpoints require `role.manage` permission.
 | `customTargets` | Set&lt;CustomTargetResponse&gt; -- only for CUSTOM scope |
 
 **AssignPermissionsWithScopeRequest:**
+
 ```json
 {
   "permissions": [
@@ -1031,15 +1055,15 @@ All endpoints require `role.manage` permission.
 
 **Base Path:** `/api/v1/feature-flags`
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/` | (authenticated) | Get all feature flags for current tenant |
-| GET | `/map` | (authenticated) | Get flags as `Map<String, Boolean>` |
-| GET | `/enabled` | (authenticated) | Get list of enabled feature key strings |
-| GET | `/check/{featureKey}` | (authenticated) | Check single feature: `{ "featureKey": "...", "enabled": true }` |
-| GET | `/category/{category}` | (authenticated) | Get flags by category |
-| POST | `/` | `system.admin` | Create/update flag |
-| POST | `/{featureKey}/toggle` | `system.admin` | Toggle flag on/off |
+| Method | Path                   | Permission      | Description                                                      |
+|--------|------------------------|-----------------|------------------------------------------------------------------|
+| GET    | `/`                    | (authenticated) | Get all feature flags for current tenant                         |
+| GET    | `/map`                 | (authenticated) | Get flags as `Map<String, Boolean>`                              |
+| GET    | `/enabled`             | (authenticated) | Get list of enabled feature key strings                          |
+| GET    | `/check/{featureKey}`  | (authenticated) | Check single feature: `{ "featureKey": "...", "enabled": true }` |
+| GET    | `/category/{category}` | (authenticated) | Get flags by category                                            |
+| POST   | `/`                    | `system.admin`  | Create/update flag                                               |
+| POST   | `/{featureKey}/toggle` | `system.admin`  | Toggle flag on/off                                               |
 
 **FeatureFlagRequest (record):**
 | Field | Type | Required |
@@ -1058,15 +1082,15 @@ All endpoints require `role.manage` permission.
 
 ### Posts
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/posts` | `wall.post` | Create post/poll/praise |
-| GET | `/posts` | `wall.view` | Get all posts (paginated, max size 50) |
-| GET | `/posts/type/{type}` | `wall.view` | Filter by type: `POST`, `POLL`, `PRAISE` |
-| GET | `/posts/{postId}` | `wall.view` | Get post by ID |
-| PUT | `/posts/{postId}` | `wall.post` | `wall.manage` | Update post |
-| DELETE | `/posts/{postId}` | `wall.post` | `wall.manage` | Delete post |
-| PATCH | `/posts/{postId}/pin?pinned=true` | `wall.pin` | Pin/unpin post |
+| Method | Path                              | Permission  | Description                              |
+|--------|-----------------------------------|-------------|------------------------------------------|
+| POST   | `/posts`                          | `wall.post` | Create post/poll/praise                  |
+| GET    | `/posts`                          | `wall.view` | Get all posts (paginated, max size 50)   |
+| GET    | `/posts/type/{type}`              | `wall.view` | Filter by type: `POST`, `POLL`, `PRAISE` |
+| GET    | `/posts/{postId}`                 | `wall.view` | Get post by ID                           |
+| PUT    | `/posts/{postId}`                 | `wall.post` | `wall.manage`                            | Update post |
+| DELETE | `/posts/{postId}`                 | `wall.post` | `wall.manage`                            | Delete post |
+| PATCH  | `/posts/{postId}/pin?pinned=true` | `wall.pin`  | Pin/unpin post                           |
 
 **CreatePostRequest:**
 | Field | Type | Required | Validation |
@@ -1106,24 +1130,25 @@ All endpoints require `role.manage` permission.
 
 ### Reactions
 
-| Method | Path | Permission |
-|--------|------|------------|
-| POST | `/posts/{postId}/reactions` | `wall.react` |
-| GET | `/posts/{postId}/reactions/details` | `wall.view` |
-| DELETE | `/posts/{postId}/reactions` | `wall.react` |
+| Method | Path                                | Permission   |
+|--------|-------------------------------------|--------------|
+| POST   | `/posts/{postId}/reactions`         | `wall.react` |
+| GET    | `/posts/{postId}/reactions/details` | `wall.view`  |
+| DELETE | `/posts/{postId}/reactions`         | `wall.react` |
 
 **ReactionRequest:** `{ "reactionType": "LIKE|LOVE|CELEBRATE|INSIGHTFUL|CURIOUS" }`
 
 ### Comments
 
-| Method | Path | Permission |
-|--------|------|------------|
-| POST | `/posts/{postId}/comments` | `wall.comment` |
-| GET | `/posts/{postId}/comments` | `wall.view` |
-| GET | `/comments/{commentId}/replies` | `wall.view` |
-| DELETE | `/comments/{commentId}` | `wall.comment` |
+| Method | Path                            | Permission     |
+|--------|---------------------------------|----------------|
+| POST   | `/posts/{postId}/comments`      | `wall.comment` |
+| GET    | `/posts/{postId}/comments`      | `wall.view`    |
+| GET    | `/comments/{commentId}/replies` | `wall.view`    |
+| DELETE | `/comments/{commentId}`         | `wall.comment` |
 
-**CreateCommentRequest:** `{ "content": "...", "parentCommentId": null }` (parentCommentId for replies)
+**CreateCommentRequest:** `{ "content": "...", "parentCommentId": null }` (parentCommentId for
+replies)
 
 **CommentResponse:**
 | Field | Type |
@@ -1141,15 +1166,15 @@ All endpoints require `role.manage` permission.
 
 ### Polls
 
-| Method | Path | Permission |
-|--------|------|------------|
-| POST | `/posts/{postId}/vote` | `wall.react` |
+| Method | Path                   | Permission   |
+|--------|------------------------|--------------|
+| POST   | `/posts/{postId}/vote` | `wall.react` |
 | DELETE | `/posts/{postId}/vote` | `wall.react` |
 
 **VoteRequest:** `{ "optionId": "<uuid>" }`
 
 ### Praise
 
-| Method | Path | Permission |
-|--------|------|------------|
-| GET | `/praise/employee/{employeeId}` | `wall.view` |
+| Method | Path                            | Permission  |
+|--------|---------------------------------|-------------|
+| GET    | `/praise/employee/{employeeId}` | `wall.view` |

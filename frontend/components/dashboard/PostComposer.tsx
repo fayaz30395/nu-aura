@@ -1,40 +1,90 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import NextImage from 'next/image';
 import {
-  Edit3, BarChart3, Trophy, Image as ImageIcon, Smile, Paperclip, Send, Loader2,
-  Plus, X, Search, Check,
+  BarChart3,
+  Check,
+  Edit3,
+  Image as ImageIcon,
+  Loader2,
+  Paperclip,
+  Plus,
+  Search,
+  Send,
+  Smile,
+  Trophy,
+  X,
 } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { useQueryClient } from '@tanstack/react-query';
-import { wallService, CreatePostRequest } from '@/lib/services/core/wall.service';
-import { wallKeys } from '@/lib/hooks/queries/useWall';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { cn } from '@/lib/utils';
+import {notifications} from '@mantine/notifications';
+import {useQueryClient} from '@tanstack/react-query';
+import {CreatePostRequest, wallService} from '@/lib/services/core/wall.service';
+import {wallKeys} from '@/lib/hooks/queries/useWall';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {cn} from '@/lib/utils';
 
 type TabType = 'post' | 'poll' | 'praise';
 
 // ─── Praise badge categories ────────────────────────────────────────
 const PRAISE_CATEGORIES = [
-  { id: 'team_player', label: 'Team Player', emoji: '🤝', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
-  { id: 'innovator', label: 'Innovator', emoji: '💡', color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800' },
-  { id: 'mentor', label: 'Mentor', emoji: '🎓', color: 'bg-accent-250 text-accent-900 border-accent-400 dark:bg-accent-900 dark:text-accent-500 dark:border-accent-900' },
-  { id: 'go_getter', label: 'Go-Getter', emoji: '🚀', color: 'bg-success-50 text-success-700 border-success-200 dark:bg-success-950 dark:text-success-300 dark:border-success-800' },
-  { id: 'problem_solver', label: 'Problem Solver', emoji: '🧩', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
-  { id: 'customer_champion', label: 'Customer Champion', emoji: '⭐', color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800' },
-  { id: 'culture_hero', label: 'Culture Hero', emoji: '🏆', color: 'bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-950 dark:text-danger-300 dark:border-danger-800' },
-  { id: 'rising_star', label: 'Rising Star', emoji: '🌟', color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800' },
+  {
+    id: 'team_player',
+    label: 'Team Player',
+    emoji: '🤝',
+    color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800'
+  },
+  {
+    id: 'innovator',
+    label: 'Innovator',
+    emoji: '💡',
+    color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800'
+  },
+  {
+    id: 'mentor',
+    label: 'Mentor',
+    emoji: '🎓',
+    color: 'bg-accent-250 text-accent-900 border-accent-400 dark:bg-accent-900 dark:text-accent-500 dark:border-accent-900'
+  },
+  {
+    id: 'go_getter',
+    label: 'Go-Getter',
+    emoji: '🚀',
+    color: 'bg-success-50 text-success-700 border-success-200 dark:bg-success-950 dark:text-success-300 dark:border-success-800'
+  },
+  {
+    id: 'problem_solver',
+    label: 'Problem Solver',
+    emoji: '🧩',
+    color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800'
+  },
+  {
+    id: 'customer_champion',
+    label: 'Customer Champion',
+    emoji: '⭐',
+    color: 'bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800'
+  },
+  {
+    id: 'culture_hero',
+    label: 'Culture Hero',
+    emoji: '🏆',
+    color: 'bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-950 dark:text-danger-300 dark:border-danger-800'
+  },
+  {
+    id: 'rising_star',
+    label: 'Rising Star',
+    emoji: '🌟',
+    color: 'bg-accent-50 text-accent-700 border-accent-200 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-800'
+  },
 ] as const;
 
-export { PRAISE_CATEGORIES };
+export {PRAISE_CATEGORIES};
 
 interface PostComposerProps {
   onPostCreated?: () => void;
 }
 
-export function PostComposer({ onPostCreated }: PostComposerProps) {
+export function PostComposer({onPostCreated}: PostComposerProps) {
   const [activeTab, setActiveTab] = useState<TabType>('post');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
@@ -62,14 +112,14 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const recipientInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { user } = useAuth();
-  const { data: searchResults } = useEmployeeSearch(recipientSearch, 0, 8, recipientSearch.length >= 2);
+  const {user} = useAuth();
+  const {data: searchResults} = useEmployeeSearch(recipientSearch, 0, 8, recipientSearch.length >= 2);
 
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
-          recipientInputRef.current && !recipientInputRef.current.contains(e.target as Node)) {
+        recipientInputRef.current && !recipientInputRef.current.contains(e.target as Node)) {
         setShowRecipientDropdown(false);
       }
     };
@@ -105,8 +155,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         visibility: 'ORGANIZATION',
       };
       await wallService.createPost(request);
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
-      notifications.show({ title: 'Posted!', message: 'Your post has been shared.', color: 'green' });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
+      notifications.show({title: 'Posted!', message: 'Your post has been shared.', color: 'green'});
       resetAll();
       onPostCreated?.();
     } catch (error) {
@@ -132,8 +182,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         pollOptions: validOptions.map((o) => o.trim()),
       };
       await wallService.createPost(request);
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
-      notifications.show({ title: 'Poll created!', message: 'Your poll is now live.', color: 'green' });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
+      notifications.show({title: 'Poll created!', message: 'Your poll is now live.', color: 'green'});
       resetAll();
       onPostCreated?.();
     } catch (error) {
@@ -161,7 +211,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         visibility: 'ORGANIZATION',
       };
       await wallService.createPost(request);
-      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      queryClient.invalidateQueries({queryKey: wallKeys.posts()});
       notifications.show({
         title: 'Praise sent!',
         message: `${selectedRecipient.fullName} has been recognized.`,
@@ -201,9 +251,9 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
       {/* Tabs */}
       <div className="flex items-center border-b border-[var(--border-main)]">
         {([
-          { key: 'post' as const, label: 'Post', icon: <Edit3 size={14} /> },
-          { key: 'poll' as const, label: 'Poll', icon: <BarChart3 size={14} /> },
-          { key: 'praise' as const, label: 'Praise', icon: <Trophy size={14} /> },
+          {key: 'post' as const, label: 'Post', icon: <Edit3 size={14}/>},
+          {key: 'poll' as const, label: 'Poll', icon: <BarChart3 size={14}/>},
+          {key: 'praise' as const, label: 'Praise', icon: <Trophy size={14}/>},
         ]).map((tab) => (
           <button
             key={tab.key}
@@ -233,20 +283,28 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               if (container && e.relatedTarget && container.contains(e.relatedTarget as Node)) return;
               if (!postContent.trim()) setIsFocused(false);
             }}
-            onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey) handlePost(); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.ctrlKey) handlePost();
+            }}
             placeholder="Write something..."
             className={cn('input-aura w-full resize-none transition-all', isFocused ? 'h-20' : 'h-10')}
           />
           <div className="row-between">
             <div className="flex items-center gap-1">
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Add image">
-                <ImageIcon size={14} />
+              <button type="button"
+                      className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                      title="Add image">
+                <ImageIcon size={14}/>
               </button>
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Add emoji">
-                <Smile size={14} />
+              <button type="button"
+                      className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                      title="Add emoji">
+                <Smile size={14}/>
               </button>
-              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" title="Attach file">
-                <Paperclip size={14} />
+              <button type="button"
+                      className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                      title="Attach file">
+                <Paperclip size={14}/>
               </button>
             </div>
             <button
@@ -254,7 +312,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               disabled={!postContent.trim() || isSubmitting}
               className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              {isSubmitting ? <Loader2 size={14} className="animate-spin"/> : <Send size={14}/>}
               {isSubmitting ? 'Posting...' : 'Post'}
             </button>
           </div>
@@ -278,7 +336,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             <p className="text-xs font-medium text-[var(--text-secondary)]">Options</p>
             {pollOptions.map((option, index) => (
               <div key={index} className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-5 h-5 rounded-full border-2 border-[var(--border-main)] text-[var(--text-muted)] text-xs shrink-0">
+                <div
+                  className="flex items-center justify-center w-5 h-5 rounded-full border-2 border-[var(--border-main)] text-[var(--text-muted)] text-xs shrink-0">
                   {index + 1}
                 </div>
                 <input
@@ -295,7 +354,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                     onClick={() => removePollOption(index)}
                     className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950 transition-colors"
                   >
-                    <X size={14} />
+                    <X size={14}/>
                   </button>
                 )}
               </div>
@@ -306,7 +365,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 onClick={addPollOption}
                 className="flex items-center gap-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 transition-colors pl-7 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
-                <Plus size={12} />
+                <Plus size={12}/>
                 Add option
               </button>
             )}
@@ -319,7 +378,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               disabled={!canSubmitPoll || isSubmitting}
               className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
+              {isSubmitting ? <Loader2 size={14} className="animate-spin"/> : <BarChart3 size={14}/>}
               {isSubmitting ? 'Creating...' : 'Create Poll'}
             </button>
           </div>
@@ -333,44 +392,55 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           <div className="relative">
             <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Who do you want to recognize?</p>
             {selectedRecipient ? (
-              <div className="flex items-center gap-2 p-2 rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-950 dark:border-accent-800">
-                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-sm font-semibold text-accent-700 dark:text-accent-300 overflow-hidden shrink-0">
+              <div
+                className="flex items-center gap-2 p-2 rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-950 dark:border-accent-800">
+                <div
+                  className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-sm font-semibold text-accent-700 dark:text-accent-300 overflow-hidden shrink-0">
                   {selectedRecipient.avatarUrl ? (
-                    <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32} className="w-full h-full object-cover" unoptimized />
+                    <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32}
+                               className="w-full h-full object-cover" unoptimized/>
                   ) : (
                     selectedRecipient.fullName.charAt(0)
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">{selectedRecipient.fullName}</p>
+                  <p
+                    className="text-sm font-medium text-[var(--text-primary)] truncate">{selectedRecipient.fullName}</p>
                   {selectedRecipient.designation && (
                     <p className="text-caption truncate">{selectedRecipient.designation}</p>
                   )}
                 </div>
                 <button
                   type="button"
-                  onClick={() => { setSelectedRecipient(null); setRecipientSearch(''); }}
+                  onClick={() => {
+                    setSelectedRecipient(null);
+                    setRecipientSearch('');
+                  }}
                   className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
                 >
-                  <X size={14} />
+                  <X size={14}/>
                 </button>
               </div>
             ) : (
               <>
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"/>
                   <input
                     ref={recipientInputRef}
                     type="text"
                     value={recipientSearch}
-                    onChange={(e) => { setRecipientSearch(e.target.value); setShowRecipientDropdown(true); }}
+                    onChange={(e) => {
+                      setRecipientSearch(e.target.value);
+                      setShowRecipientDropdown(true);
+                    }}
                     onFocus={() => recipientSearch.length >= 2 && setShowRecipientDropdown(true)}
                     placeholder="Search by name..."
                     className="input-aura w-full pl-8"
                   />
                 </div>
                 {showRecipientDropdown && searchResults && searchResults.content.length > 0 && (
-                  <div ref={dropdownRef} className="absolute z-30 left-4 right-4 mt-1 max-h-48 overflow-y-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]">
+                  <div ref={dropdownRef}
+                       className="absolute z-30 left-4 right-4 mt-1 max-h-48 overflow-y-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)]">
                     {searchResults.content
                       .filter((emp) => emp.id !== user?.employeeId)
                       .map((emp) => (
@@ -390,15 +460,18 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                           }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] transition-colors"
                         >
-                          <div className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] overflow-hidden shrink-0">
+                          <div
+                            className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] overflow-hidden shrink-0">
                             {emp.profilePhotoUrl ? (
-                              <NextImage src={emp.profilePhotoUrl} alt="" width={28} height={28} className="w-full h-full object-cover" unoptimized />
+                              <NextImage src={emp.profilePhotoUrl} alt="" width={28} height={28}
+                                         className="w-full h-full object-cover" unoptimized/>
                             ) : (
                               emp.firstName?.charAt(0)
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm text-[var(--text-primary)] truncate">{emp.firstName} {emp.lastName}</p>
+                            <p
+                              className="text-sm text-[var(--text-primary)] truncate">{emp.firstName} {emp.lastName}</p>
                             <p className="text-caption truncate">{emp.designation || emp.departmentName}</p>
                           </div>
                         </button>
@@ -427,7 +500,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 >
                   <span>{cat.emoji}</span>
                   {cat.label}
-                  {praiseCategory === cat.id && <Check size={10} className="ml-0.5" />}
+                  {praiseCategory === cat.id && <Check size={10} className="ml-0.5"/>}
                 </button>
               ))}
             </div>
@@ -449,7 +522,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               disabled={!canSubmitPraise || isSubmitting}
               className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-xs font-semibold text-white hover:bg-accent-700 active:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
+              {isSubmitting ? <Loader2 size={14} className="animate-spin"/> : <Trophy size={14}/>}
               {isSubmitting ? 'Sending...' : 'Send Praise'}
             </button>
           </div>

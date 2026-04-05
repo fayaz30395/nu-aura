@@ -62,6 +62,7 @@ readinessProbe:
 ### Health Indicators
 
 #### ApplicationHealthIndicator
+
 - **Component**: JVM/Runtime information
 - **Metrics**: Uptime, heap memory usage, available processors
 - **Thresholds**:
@@ -69,18 +70,21 @@ readinessProbe:
   - Critical: >95% heap usage (returns DOWN)
 
 #### DatabaseHealthIndicator
+
 - **Component**: PostgreSQL connectivity
 - **Metrics**: Response time, connection status
 - **Thresholds**:
   - Warning: Response time >100ms
 
 #### RedisHealthIndicator
+
 - **Component**: Redis connectivity
 - **Metrics**: PING response, memory usage (if available)
 - **Thresholds**:
   - Warning: Response time >50ms
 
 #### WebhookHealthIndicator
+
 - **Component**: Webhook delivery system
 - **Metrics**: Pending queue depth, success rate (last hour)
 - **Thresholds**:
@@ -100,6 +104,7 @@ GET /actuator/prometheus
 ### Business Metrics
 
 #### Authentication
+
 - `auth_login`: Login attempts (tagged: `status=success|failure`, `method=password|google`)
 - `auth_login_success`: Successful logins
 - `auth_login_failure`: Failed login attempts
@@ -107,17 +112,20 @@ GET /actuator/prometheus
 - `rate_limit_exceeded_total`: Rate limit violations
 
 #### API Requests
+
 - `http.server.requests`: HTTP request metrics (automatic via Micrometer)
   - Tags: `method`, `status`, `uri`
   - Quantiles: 50th, 95th, 99th percentile
   - SLOs: 50ms, 100ms, 200ms, 500ms, 1s, 2s
 
 #### Workflows & Approvals
+
 - `workflow_executions`: Workflow execution count (tagged: `tenant_id`, `type`, `status`)
 - `workflow_execution_duration`: Execution duration histogram
 - `approval_tasks`: Approval task events (tagged: `tenant_id`, `type`, `action`)
 
 #### HR Operations
+
 - `employee_actions`: Employee-related actions (tagged: `tenant_id`, `action`)
 - `attendance_events`: Attendance punch-in/out events (tagged: `tenant_id`, `event_type`)
 - `leave_requests`: Leave request events (tagged: `tenant_id`, `status`)
@@ -127,6 +135,7 @@ GET /actuator/prometheus
 - `performance_reviews`: Performance review events (tagged: `tenant_id`, `review_type`, `status`)
 
 #### Data Operations
+
 - `file_uploads`: File upload count (tagged: `tenant_id`, `type`)
 - `file_upload_bytes`: Total bytes uploaded (tagged: `tenant_id`, `type`)
 - `data_exports`: Data export events (tagged: `tenant_id`, `type`)
@@ -134,6 +143,7 @@ GET /actuator/prometheus
 - `export_duration`: Export execution time
 
 #### System Operations
+
 - `tenant_usage`: Tenant-level usage counters (tagged: `tenant_id`, `operation`)
 - `api_requests`: API requests by module (tagged: `module`, `operation`)
 - `api_errors`: API errors (tagged: `endpoint`, `error_type`, `status_code`)
@@ -141,21 +151,25 @@ GET /actuator/prometheus
 - `email_sent`: Email delivery (tagged: `type`, `success`)
 
 #### Caching
+
 - `cache.hits`: Cache hit count (tagged: `cache`)
 - `cache.misses`: Cache miss count (tagged: `cache`)
 - `cache.accesses`: Total cache accesses (tagged: `cache`)
 - `cache.latency`: Cache operation latency (tagged: `cache`)
 
 #### Notifications & Webhooks
+
 - `notification_delivery`: Notification send events (tagged: `channel`, `success`)
 - `webhook_deliveries`: Webhook delivery count
 - `webhook_pending`: Pending webhook deliveries (gauge)
 - `webhook_success_rate`: Last hour webhook success rate
 
 #### Feature Flags
+
 - `feature_flag_checks`: Feature flag evaluations (tagged: `feature`, `enabled`)
 
 #### Scheduled Jobs
+
 - `scheduled_jobs`: Job execution count (tagged: `name`, `success`)
 - `scheduled_job_duration`: Job execution duration
 
@@ -175,15 +189,18 @@ All metrics include standard tags for filtering and alerting:
 Logging is configured in `logback-spring.xml` with profile-specific behavior:
 
 #### Development Profile (`dev`)
+
 - **Output**: Colored console output
 - **Format**: Human-readable with timestamp, level, logger, message
 - **Level**: DEBUG for `com.hrms.*`, INFO for Spring/Hibernate
 - **Example**:
+
 ```
 2026-03-11 10:45:23.456 DEBUG [main] com.hrms.application.auth.service.AuthService : User login successful for user@example.com
 ```
 
 #### Production Profile (`prod`, `production`, `staging`)
+
 - **Output**: JSON to stdout (for container log aggregation) + file backup
 - **Format**: Logstash JSON encoder
 - **Level**: INFO for applications, WARN for frameworks
@@ -461,8 +478,9 @@ rate(jvm_gc_pause_seconds_sum[5m])
 ### Missing Metrics
 
 1. Verify Prometheus scraping:
-   - Navigate to http://localhost:9090/targets
-   - Check scrape status for `hrms-backend`
+
+- Navigate to http://localhost:9090/targets
+- Check scrape status for `hrms-backend`
 
 2. Check metric names:
    ```bash

@@ -3,14 +3,9 @@
  * Run with: npx vitest run lib/hooks/useDebounce.test.ts
  */
 
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  useDebounce,
-  useDebouncedCallback,
-  useAbortController,
-  useThrottledCallback,
-} from './useDebounce';
+import {act, renderHook} from '@testing-library/react';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {useAbortController, useDebounce, useDebouncedCallback, useThrottledCallback,} from './useDebounce';
 
 describe('useDebounce', () => {
   beforeEach(() => {
@@ -22,20 +17,20 @@ describe('useDebounce', () => {
   });
 
   it('should return initial value immediately', () => {
-    const { result } = renderHook(() => useDebounce('initial', 500));
+    const {result} = renderHook(() => useDebounce('initial', 500));
     expect(result.current).toBe('initial');
   });
 
   it('should debounce value changes', async () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      { initialProps: { value: 'initial', delay: 500 } }
+    const {result, rerender} = renderHook(
+      ({value, delay}) => useDebounce(value, delay),
+      {initialProps: {value: 'initial', delay: 500}}
     );
 
     expect(result.current).toBe('initial');
 
     // Update value
-    rerender({ value: 'updated', delay: 500 });
+    rerender({value: 'updated', delay: 500});
 
     // Value should not change immediately
     expect(result.current).toBe('initial');
@@ -50,25 +45,31 @@ describe('useDebounce', () => {
   });
 
   it('should reset timer on rapid value changes', async () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      { initialProps: { value: 'a', delay: 500 } }
+    const {result, rerender} = renderHook(
+      ({value, delay}) => useDebounce(value, delay),
+      {initialProps: {value: 'a', delay: 500}}
     );
 
     // Rapid changes
-    rerender({ value: 'b', delay: 500 });
-    act(() => { vi.advanceTimersByTime(200); });
+    rerender({value: 'b', delay: 500});
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
-    rerender({ value: 'c', delay: 500 });
-    act(() => { vi.advanceTimersByTime(200); });
+    rerender({value: 'c', delay: 500});
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
-    rerender({ value: 'd', delay: 500 });
+    rerender({value: 'd', delay: 500});
 
     // Still showing initial value
     expect(result.current).toBe('a');
 
     // Wait for full delay
-    act(() => { vi.advanceTimersByTime(500); });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
 
     // Should show final value
     expect(result.current).toBe('d');
@@ -86,7 +87,7 @@ describe('useDebouncedCallback', () => {
 
   it('should debounce callback execution', () => {
     const callback = vi.fn();
-    const { result } = renderHook(() => useDebouncedCallback(callback, 500));
+    const {result} = renderHook(() => useDebouncedCallback(callback, 500));
 
     // Call the debounced callback
     act(() => {
@@ -108,7 +109,7 @@ describe('useDebouncedCallback', () => {
 
   it('should only call callback once for rapid calls', () => {
     const callback = vi.fn();
-    const { result } = renderHook(() => useDebouncedCallback(callback, 500));
+    const {result} = renderHook(() => useDebouncedCallback(callback, 500));
 
     // Rapid calls
     act(() => {
@@ -118,14 +119,18 @@ describe('useDebouncedCallback', () => {
     });
 
     // Advance partial time
-    act(() => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
     act(() => {
       result.current('call4');
     });
 
     // Advance full time
-    act(() => { vi.advanceTimersByTime(500); });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
 
     // Only the last call should be executed
     expect(callback).toHaveBeenCalledTimes(1);
@@ -135,7 +140,7 @@ describe('useDebouncedCallback', () => {
 
 describe('useAbortController', () => {
   it('should provide getSignal and abort functions', () => {
-    const { result } = renderHook(() => useAbortController());
+    const {result} = renderHook(() => useAbortController());
 
     expect(result.current.getSignal).toBeDefined();
     expect(result.current.abort).toBeDefined();
@@ -144,7 +149,7 @@ describe('useAbortController', () => {
   });
 
   it('should create a new AbortSignal', () => {
-    const { result } = renderHook(() => useAbortController());
+    const {result} = renderHook(() => useAbortController());
 
     let signal: AbortSignal;
     act(() => {
@@ -156,7 +161,7 @@ describe('useAbortController', () => {
   });
 
   it('should abort signal when abort is called', () => {
-    const { result } = renderHook(() => useAbortController());
+    const {result} = renderHook(() => useAbortController());
 
     let signal: AbortSignal;
     act(() => {
@@ -173,7 +178,7 @@ describe('useAbortController', () => {
   });
 
   it('should abort previous signal when getting new one', () => {
-    const { result } = renderHook(() => useAbortController());
+    const {result} = renderHook(() => useAbortController());
 
     let signal1: AbortSignal;
     let signal2: AbortSignal;
@@ -204,7 +209,7 @@ describe('useThrottledCallback', () => {
 
   it('should execute callback immediately on first call', () => {
     const callback = vi.fn();
-    const { result } = renderHook(() => useThrottledCallback(callback, 500));
+    const {result} = renderHook(() => useThrottledCallback(callback, 500));
 
     act(() => {
       result.current('first');
@@ -216,7 +221,7 @@ describe('useThrottledCallback', () => {
 
   it('should throttle subsequent calls', () => {
     const callback = vi.fn();
-    const { result } = renderHook(() => useThrottledCallback(callback, 500));
+    const {result} = renderHook(() => useThrottledCallback(callback, 500));
 
     // First call - executes immediately
     act(() => {
@@ -247,7 +252,7 @@ describe('useThrottledCallback', () => {
 
   it('should allow new calls after throttle period', () => {
     const callback = vi.fn();
-    const { result } = renderHook(() => useThrottledCallback(callback, 500));
+    const {result} = renderHook(() => useThrottledCallback(callback, 500));
 
     // First call
     act(() => {

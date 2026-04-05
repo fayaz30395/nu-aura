@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@mantine/core';
+import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
@@ -8,27 +8,27 @@ export default function Loading() {
       {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-2">
-          <Skeleton height={28} width={160} />
-          <Skeleton height={16} width="50%" />
+          <Skeleton height={28} width={160}/>
+          <Skeleton height={16} width="50%"/>
         </div>
         <div className="flex gap-2">
-          <Skeleton height={36} width={110} />
-          <Skeleton height={36} width={110} />
+          <Skeleton height={36} width={110}/>
+          <Skeleton height={36} width={110}/>
         </div>
       </div>
 
       {/* Stat cards skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({length: 3}).map((_, i) => (
           <div
             key={i}
             className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4"
           >
             <div className="flex items-start gap-4">
-              <Skeleton height={48} width={48} radius="md" />
+              <Skeleton height={48} width={48} radius="md"/>
               <div className="space-y-2 flex-1">
-                <Skeleton height={14} width="40%" />
-                <Skeleton height={32} width="30%" />
+                <Skeleton height={14} width="40%"/>
+                <Skeleton height={32} width="30%"/>
               </div>
             </div>
           </div>
@@ -37,15 +37,15 @@ export default function Loading() {
 
       {/* Tab bar skeleton */}
       <div className="flex gap-4 border-b border-surface-200 dark:border-surface-800">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} height={40} width={100} />
+        {Array.from({length: 3}).map((_, i) => (
+          <Skeleton key={i} height={40} width={100}/>
         ))}
       </div>
 
       {/* Content list skeleton */}
       <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} height={72} radius="lg" />
+        {Array.from({length: 5}).map((_, i) => (
+          <Skeleton key={i} height={72} radius="lg"/>
         ))}
       </div>
     </div>

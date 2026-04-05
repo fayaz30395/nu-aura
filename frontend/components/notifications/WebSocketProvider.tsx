@@ -1,14 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import {
-  webSocketService,
-  WebSocketNotification,
-  NotificationHandler,
-  WebSocketStatus,
-} from '@/lib/websocket';
-import { useToast } from './ToastProvider';
-import { logger } from '@/lib/utils/logger';
+import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
+import {NotificationHandler, WebSocketNotification, webSocketService, WebSocketStatus,} from '@/lib/websocket';
+import {useToast} from './ToastProvider';
+import {logger} from '@/lib/utils/logger';
 
 interface WebSocketContextType {
   isConnected: boolean;
@@ -38,13 +33,13 @@ interface WebSocketProviderProps {
 }
 
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
-  children,
-  userId,
-  tenantId,
-  token,
-  autoConnect = true,
-  showToasts = true,
-}) => {
+                                                                      children,
+                                                                      userId,
+                                                                      tenantId,
+                                                                      token,
+                                                                      autoConnect = true,
+                                                                      showToasts = true,
+                                                                    }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [status, setStatus] = useState<WebSocketStatus>(WebSocketStatus.DISCONNECTED);
   const [showReconnectNotification, setShowReconnectNotification] = useState(false);
@@ -75,7 +70,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     }
 
     // Dispatch custom event for other components to listen to
-    const event = new CustomEvent('hrms-notification', { detail: notification });
+    const event = new CustomEvent('hrms-notification', {detail: notification});
     window.dispatchEvent(event);
   }, [showToasts, toast]);
 
@@ -158,7 +153,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   }, [showToasts, toast]);
 
   return (
-    <WebSocketContext.Provider value={{ isConnected, status, connect, disconnect, addHandler }}>
+    <WebSocketContext.Provider value={{isConnected, status, connect, disconnect, addHandler}}>
       {children}
     </WebSocketContext.Provider>
   );

@@ -1,10 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import {
-  sanitizeHtml,
-  sanitizeEmailHtml,
-  sanitizeAnnouncementHtml,
-  stripHtml,
-} from '../sanitize';
+import {describe, expect, it} from 'vitest';
+import {sanitizeAnnouncementHtml, sanitizeEmailHtml, sanitizeHtml, stripHtml,} from '../sanitize';
 
 describe('sanitize utilities', () => {
   describe('sanitizeHtml', () => {

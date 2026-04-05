@@ -3,7 +3,16 @@
  * Run with: npx vitest run lib/services/feedback360.service.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {
+  CycleRequest,
+  Feedback360Cycle,
+  Feedback360Request,
+  feedback360Service,
+  Feedback360Summary,
+  FeedbackResponse
+} from './feedback360.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -14,16 +23,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { feedback360Service } from './feedback360.service';
-import {
-  Feedback360Cycle,
-  Feedback360Request,
-  Feedback360Summary,
-  CycleRequest,
-  FeedbackResponse,
-} from './feedback360.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockedApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -73,7 +72,7 @@ describe('Feedback360Service', () => {
         createdAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockCycle });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockCycle});
 
       const result = await feedback360Service.createCycle(cycleData);
 
@@ -120,7 +119,7 @@ describe('Feedback360Service', () => {
         createdAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockCycle });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockCycle});
 
       const result = await feedback360Service.createCycle(cycleData);
 
@@ -154,12 +153,12 @@ describe('Feedback360Service', () => {
         totalElements: 1,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockResponse });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockResponse});
 
       const result = await feedback360Service.getCycles();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/feedback360/cycles', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockResponse);
       expect(result.content).toHaveLength(1);
@@ -171,12 +170,12 @@ describe('Feedback360Service', () => {
         totalElements: 0,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockResponse });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockResponse});
 
       const result = await feedback360Service.getCycles(2, 10);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/feedback360/cycles', {
-        params: { page: 2, size: 10 },
+        params: {page: 2, size: 10},
       });
       expect(result).toEqual(mockResponse);
     });
@@ -187,7 +186,7 @@ describe('Feedback360Service', () => {
         totalElements: 0,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockResponse });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockResponse});
 
       const result = await feedback360Service.getCycles();
 
@@ -224,7 +223,7 @@ describe('Feedback360Service', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockCycles });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockCycles});
 
       const result = await feedback360Service.getActiveCycles();
 
@@ -234,7 +233,7 @@ describe('Feedback360Service', () => {
     });
 
     it('should handle empty active cycles', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await feedback360Service.getActiveCycles();
 
@@ -261,7 +260,7 @@ describe('Feedback360Service', () => {
         createdAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockCycle });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockCycle});
 
       const result = await feedback360Service.getCycle('cycle-1');
 
@@ -280,7 +279,7 @@ describe('Feedback360Service', () => {
 
   describe('activateCycle', () => {
     it('should activate cycle successfully', async () => {
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.activateCycle('cycle-1');
 
@@ -299,7 +298,7 @@ describe('Feedback360Service', () => {
 
   describe('closeCycle', () => {
     it('should close cycle successfully', async () => {
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.closeCycle('cycle-1');
 
@@ -316,7 +315,7 @@ describe('Feedback360Service', () => {
 
   describe('deleteCycle', () => {
     it('should delete cycle successfully', async () => {
-      mockedApiClient.delete.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.delete.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.deleteCycle('cycle-1');
 
@@ -371,7 +370,7 @@ describe('Feedback360Service', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockReviews });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockReviews});
 
       const result = await feedback360Service.getMyPendingReviews();
 
@@ -381,7 +380,7 @@ describe('Feedback360Service', () => {
     });
 
     it('should handle no pending reviews', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await feedback360Service.getMyPendingReviews();
 
@@ -411,7 +410,7 @@ describe('Feedback360Service', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockReviews });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockReviews});
 
       const result = await feedback360Service.getMyPendingReviews();
 
@@ -437,7 +436,7 @@ describe('Feedback360Service', () => {
         additionalComments: 'Good overall performer',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.submitResponse(responseData);
 
@@ -451,7 +450,7 @@ describe('Feedback360Service', () => {
         overallRating: 3,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.submitResponse(responseData);
 
@@ -498,7 +497,7 @@ describe('Feedback360Service', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockSummaries });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockSummaries});
 
       const result = await feedback360Service.getMySummaries();
 
@@ -508,7 +507,7 @@ describe('Feedback360Service', () => {
     });
 
     it('should handle no summaries available', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await feedback360Service.getMySummaries();
 
@@ -544,7 +543,7 @@ describe('Feedback360Service', () => {
         createdAt: '2024-03-31T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockSummary });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockSummary});
 
       const result = await feedback360Service.generateSummary('cycle-1', 'emp-1');
 
@@ -576,7 +575,7 @@ describe('Feedback360Service', () => {
 
   describe('shareWithEmployee', () => {
     it('should share summary with employee successfully', async () => {
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
 
       await feedback360Service.shareWithEmployee('summary-1');
 
@@ -629,7 +628,7 @@ describe('Feedback360Service', () => {
         ],
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await feedback360Service.getDashboard();
 
@@ -647,7 +646,7 @@ describe('Feedback360Service', () => {
         recentSummaries: [],
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await feedback360Service.getDashboard();
 
@@ -670,7 +669,7 @@ describe('Feedback360Service', () => {
         },
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await feedback360Service.getDashboard();
 
@@ -706,12 +705,12 @@ describe('Feedback360Service', () => {
         createdAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockCycle });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockCycle});
       const createdCycle = await feedback360Service.createCycle(cycleData);
       expect(createdCycle.id).toBe('cycle-1');
 
       // Activate cycle
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
       await feedback360Service.activateCycle('cycle-1');
 
       // Get pending reviews
@@ -730,7 +729,7 @@ describe('Feedback360Service', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockReviews });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockReviews});
       const reviews = await feedback360Service.getMyPendingReviews();
       expect(reviews).toHaveLength(1);
 
@@ -741,7 +740,7 @@ describe('Feedback360Service', () => {
         overallRating: 4,
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
       await feedback360Service.submitResponse(responseData);
 
       // Generate summary
@@ -759,16 +758,16 @@ describe('Feedback360Service', () => {
         createdAt: '2024-03-31T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockSummary });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockSummary});
       const summary = await feedback360Service.generateSummary('cycle-1', 'emp-1');
       expect(summary.finalRating).toBe(4.0);
 
       // Share with employee
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
       await feedback360Service.shareWithEmployee('summary-1');
 
       // Close cycle
-      mockedApiClient.post.mockResolvedValueOnce({ data: {} });
+      mockedApiClient.post.mockResolvedValueOnce({data: {}});
       await feedback360Service.closeCycle('cycle-1');
 
       expect(mockedApiClient.post).toHaveBeenCalledTimes(6);

@@ -26,8 +26,12 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   WikiPageRevision,
+  WikiPageTreeNode,
+  WikiPageBreadcrumb,
   FavoriteContentType,
   WatchStatus,
+  SpaceMember,
+  SpaceMemberRole,
 } from '../../types/platform/fluence';
 
 class FluenceService {
@@ -90,6 +94,41 @@ class FluenceService {
     const response = await apiClient.post<WikiPage>(
       `/knowledge/wiki/pages/${pageId}/revisions/${revisionId}/restore`,
       {}
+    );
+    return response.data;
+  }
+
+  // ─── Wiki Page Tree & Hierarchy ──────────────────────────────────────────────
+
+  async getPageTree(spaceId: string): Promise<WikiPageTreeNode[]> {
+    const response = await apiClient.get<WikiPageTreeNode[]>(
+      `/knowledge/wiki/pages/space/${spaceId}/tree`
+    );
+    return response.data;
+  }
+
+  async getPageBreadcrumbs(pageId: string): Promise<WikiPageBreadcrumb[]> {
+    const response = await apiClient.get<WikiPageBreadcrumb[]>(
+      `/knowledge/wiki/pages/${pageId}/breadcrumbs`
+    );
+    return response.data;
+  }
+
+  async movePage(pageId: string, parentPageId: string | null): Promise<WikiPage> {
+    const response = await apiClient.patch<WikiPage>(
+      `/knowledge/wiki/pages/${pageId}/move`,
+      { parentPageId }
+    );
+    return response.data;
+  }
+
+  async exportPage(pageId: string, format: 'pdf' | 'docx'): Promise<Blob> {
+    const response = await apiClient.get<Blob>(
+      `/knowledge/wiki/pages/${pageId}/export`,
+      {
+        params: { format },
+        responseType: 'blob',
+      }
     );
     return response.data;
   }
@@ -568,6 +607,45 @@ class FluenceService {
       `/fluence/engagement/watches/wiki/${pageId}/status`
     );
     return response.data;
+  }
+
+  // ─── Space Members ──────────────────────────────────────────────────────────
+
+  async getSpaceMembers(spaceId: string): Promise<SpaceMember[]> {
+    const response = await apiClient.get<SpaceMember[]>(
+      `/knowledge/wiki/spaces/${spaceId}/members`
+    );
+    return response.data;
+  }
+
+  async addSpaceMember(
+    spaceId: string,
+    userId: string,
+    role: SpaceMemberRole
+  ): Promise<SpaceMember> {
+    const response = await apiClient.post<SpaceMember>(
+      `/knowledge/wiki/spaces/${spaceId}/members`,
+      { userId, role }
+    );
+    return response.data;
+  }
+
+  async updateSpaceMemberRole(
+    spaceId: string,
+    userId: string,
+    role: SpaceMemberRole
+  ): Promise<SpaceMember> {
+    const response = await apiClient.patch<SpaceMember>(
+      `/knowledge/wiki/spaces/${spaceId}/members/${userId}`,
+      { role }
+    );
+    return response.data;
+  }
+
+  async removeSpaceMember(spaceId: string, userId: string): Promise<void> {
+    await apiClient.delete(
+      `/knowledge/wiki/spaces/${spaceId}/members/${userId}`
+    );
   }
 }
 

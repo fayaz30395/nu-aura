@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { HardDrive, AlertCircle, FolderPlus, UploadCloud, RefreshCw, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import {AlertCircle, FolderPlus, HardDrive, Loader2, RefreshCw, UploadCloud} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent} from '@/components/ui/Card';
 
 interface DriveOAuthPanelProps {
   isConnected: boolean;
@@ -17,22 +17,23 @@ interface DriveOAuthPanelProps {
 }
 
 export function DriveOAuthPanel({
-  isConnected,
-  uploading,
-  error,
-  onConnect,
-  onNewFolder,
-  onFileSelect,
-  onRefresh,
-  onDisconnect,
-}: DriveOAuthPanelProps) {
+                                  isConnected,
+                                  uploading,
+                                  error,
+                                  onConnect,
+                                  onNewFolder,
+                                  onFileSelect,
+                                  onRefresh,
+                                  onDisconnect,
+                                }: DriveOAuthPanelProps) {
   return (
     <>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-success-500 flex items-center justify-center">
-            <HardDrive className="h-6 w-6 text-white" />
+          <div
+            className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-success-500 flex items-center justify-center">
+            <HardDrive className="h-6 w-6 text-white"/>
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Drive</h1>
@@ -43,7 +44,7 @@ export function DriveOAuthPanel({
           <Button
             variant="primary"
             onClick={onConnect}
-            leftIcon={<HardDrive className="h-4 w-4" />}
+            leftIcon={<HardDrive className="h-4 w-4"/>}
           >
             Connect Google Drive
           </Button>
@@ -53,7 +54,7 @@ export function DriveOAuthPanel({
               variant="outline"
               size="sm"
               onClick={onNewFolder}
-              leftIcon={<FolderPlus className="h-4 w-4" />}
+              leftIcon={<FolderPlus className="h-4 w-4"/>}
             >
               New Folder
             </Button>
@@ -64,8 +65,9 @@ export function DriveOAuthPanel({
                 onChange={onFileSelect}
                 disabled={uploading}
               />
-              <div className={`cursor-pointer inline-flex items-center gap-2 h-8 px-4 text-sm font-medium text-white bg-accent-700 rounded-md hover:bg-accent-700 disabled:opacity-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+              <div
+                className={`cursor-pointer inline-flex items-center gap-2 h-8 px-4 text-sm font-medium text-white bg-accent-700 rounded-md hover:bg-accent-700 disabled:opacity-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                {uploading ? <Loader2 className="h-4 w-4 animate-spin"/> : <UploadCloud className="h-4 w-4"/>}
                 <span>Upload</span>
               </div>
             </label>
@@ -73,7 +75,7 @@ export function DriveOAuthPanel({
               variant="outline"
               size="sm"
               onClick={onRefresh}
-              leftIcon={<RefreshCw className="h-4 w-4" />}
+              leftIcon={<RefreshCw className="h-4 w-4"/>}
             >
               Refresh
             </Button>
@@ -94,7 +96,7 @@ export function DriveOAuthPanel({
         <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
           <CardContent className="py-4">
             <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
-              <AlertCircle className="h-5 w-5" />
+              <AlertCircle className="h-5 w-5"/>
               <span>{error}</span>
               <Button variant="ghost" size="sm" onClick={onConnect} className="ml-auto">
                 Try Again
@@ -109,8 +111,9 @@ export function DriveOAuthPanel({
         <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
           <CardContent className="py-16">
             <div className="text-center">
-              <div className="w-20 h-20 rounded-full bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mx-auto mb-6">
-                <HardDrive className="h-10 w-10 text-accent-600 dark:text-accent-400" />
+              <div
+                className="w-20 h-20 rounded-full bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mx-auto mb-6">
+                <HardDrive className="h-10 w-10 text-accent-600 dark:text-accent-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Connect to Google Drive
@@ -123,7 +126,7 @@ export function DriveOAuthPanel({
                 variant="primary"
                 size="lg"
                 onClick={onConnect}
-                leftIcon={<HardDrive className="h-5 w-5" />}
+                leftIcon={<HardDrive className="h-5 w-5"/>}
               >
                 Connect Google Drive
               </Button>

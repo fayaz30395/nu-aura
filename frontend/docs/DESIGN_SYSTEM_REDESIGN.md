@@ -9,14 +9,14 @@
 
 ## Color Tokens
 
-| Element | Token | Value |
-|---------|-------|-------|
-| Primary CTA | `sky-700` | #0369A1 |
-| Primary hover | `sky-800` | #075985 |
-| Background (dark) | `slate-900` | #0F172A |
-| Sidebar | `--bg-sidebar` | #1e1b4b |
-| Accents | `sky-*` palette | Various |
-| Focus ring | `sky-700` | #0369A1 |
+| Element           | Token           | Value   |
+|-------------------|-----------------|---------|
+| Primary CTA       | `sky-700`       | #0369A1 |
+| Primary hover     | `sky-800`       | #075985 |
+| Background (dark) | `slate-900`     | #0F172A |
+| Sidebar           | `--bg-sidebar`  | #1e1b4b |
+| Accents           | `sky-*` palette | Various |
+| Focus ring        | `sky-700`       | #0369A1 |
 
 ### Quick Replace Patterns
 
@@ -39,13 +39,13 @@ text-primary-600 dark:text-primary-400 → text-sky-700 dark:text-sky-400
 
 ## Typography
 
-| Variant | Font | Weight | Size |
-|---------|------|--------|------|
-| Page title | IBM Plex Sans | 700 | 24px |
-| Section title | IBM Plex Sans | 600 | 18px |
-| Card title | IBM Plex Sans | 600 | 16px |
-| Body | IBM Plex Sans | 400 | 14px |
-| Code/mono | IBM Plex Mono | 400 | 13px |
+| Variant       | Font          | Weight | Size |
+|---------------|---------------|--------|------|
+| Page title    | IBM Plex Sans | 700    | 24px |
+| Section title | IBM Plex Sans | 600    | 18px |
+| Card title    | IBM Plex Sans | 600    | 16px |
+| Body          | IBM Plex Sans | 400    | 14px |
+| Code/mono     | IBM Plex Mono | 400    | 13px |
 
 Font variables: `--font-sans`, `--font-serif`, `--font-mono` (loaded in `frontend/app/layout.tsx`)
 
@@ -62,8 +62,10 @@ Font variables: `--font-sans`, `--font-serif`, `--font-mono` (loaded in `fronten
 
 ## Spacing
 
-8px grid. Banned Tailwind classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`, `m-3`, `m-5`
+8px grid. Banned Tailwind classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`, `m-3`,
+`m-5`
 
 ## Design Token File
 
-`frontend/styles/design-tokens.css` — spacing scale, typography scale, z-index scale (10, 20, 30, 50), touch targets (44px minimum)
+`frontend/styles/design-tokens.css` — spacing scale, typography scale, z-index scale (10, 20, 30,
+50), touch targets (44px minimum)

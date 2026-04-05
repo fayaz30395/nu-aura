@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Calendar Page Smoke Tests
@@ -6,24 +6,24 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Calendar Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/calendar');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display calendar page without errors', async ({ page }) => {
+  test('should display calendar page without errors', async ({page}) => {
     expect(page.url()).toContain('/calendar');
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display calendar heading or navigation', async ({ page }) => {
+  test('should display calendar heading or navigation', async ({page}) => {
     const hasHeading = await page.locator('h1, h2').first().isVisible().catch(() => false);
     const hasCalendarNav = await page.locator('text=/january|february|march|april|may|june|july|august|september|october|november|december/i').first().isVisible().catch(() => false);
 
     expect(hasHeading || hasCalendarNav).toBe(true);
   });
 
-  test('should display month/week navigation controls', async ({ page }) => {
+  test('should display month/week navigation controls', async ({page}) => {
     await page.waitForTimeout(500);
 
     const hasPrev = await page.locator('button[aria-label*="prev" i], button[aria-label*="back" i]').first().isVisible().catch(() => false);
@@ -32,7 +32,7 @@ test.describe('Calendar Page', () => {
     expect(hasPrev || hasChevron || true).toBe(true);
   });
 
-  test('should show create event button', async ({ page }) => {
+  test('should show create event button', async ({page}) => {
     await page.waitForTimeout(500);
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
@@ -41,7 +41,7 @@ test.describe('Calendar Page', () => {
     expect(hasCreate || true).toBe(true);
   });
 
-  test('should display events or empty state', async ({ page }) => {
+  test('should display events or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasEvents = await page.locator('[class*="event"], [class*="card"], [class*="Card"]').first().isVisible().catch(() => false);

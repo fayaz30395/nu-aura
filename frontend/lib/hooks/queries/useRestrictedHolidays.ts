@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { restrictedHolidayService } from '@/lib/services/hrms/restrictedHoliday.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {restrictedHolidayService} from '@/lib/services/hrms/restrictedHoliday.service';
 import {
-  RestrictedHolidayRequest,
   PolicyRequest,
-  SelectionStatus,
+  RestrictedHolidayRequest,
   SelectionActionRequest,
+  SelectionStatus,
 } from '@/lib/types/hrms/restricted-holiday';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
 
 // ─── Query Keys ─────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ export const restrictedHolidayKeys = {
   all: ['restricted-holidays'] as const,
   holidays: () => [...restrictedHolidayKeys.all, 'holidays'] as const,
   holidaysList: (year?: number, page?: number, size?: number) =>
-    [...restrictedHolidayKeys.holidays(), 'list', { year, page, size }] as const,
+    [...restrictedHolidayKeys.holidays(), 'list', {year, page, size}] as const,
   holidaysAvailable: (year: number) =>
     [...restrictedHolidayKeys.holidays(), 'available', year] as const,
   holidayDetail: (id: string) =>
@@ -27,9 +27,9 @@ export const restrictedHolidayKeys = {
   mySummary: (year: number) =>
     [...restrictedHolidayKeys.all, 'summary', 'me', year] as const,
   selectionsByStatus: (status: SelectionStatus, page: number, size: number) =>
-    [...restrictedHolidayKeys.selections(), 'status', status, { page, size }] as const,
+    [...restrictedHolidayKeys.selections(), 'status', status, {page, size}] as const,
   selectionsByHoliday: (holidayId: string, page: number, size: number) =>
-    [...restrictedHolidayKeys.selections(), 'holiday', holidayId, { page, size }] as const,
+    [...restrictedHolidayKeys.selections(), 'holiday', holidayId, {page, size}] as const,
   policy: (year: number) =>
     [...restrictedHolidayKeys.all, 'policy', year] as const,
 };
@@ -78,7 +78,7 @@ export function useCreateRestrictedHoliday() {
     mutationFn: (data: RestrictedHolidayRequest) =>
       restrictedHolidayService.createHoliday(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.holidays() });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.holidays()});
       notifications.show({
         title: 'Holiday Created',
         message: 'Restricted holiday created successfully.',
@@ -98,10 +98,10 @@ export function useCreateRestrictedHoliday() {
 export function useUpdateRestrictedHoliday() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: RestrictedHolidayRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: RestrictedHolidayRequest }) =>
       restrictedHolidayService.updateHoliday(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.holidays() });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.holidays()});
       notifications.show({
         title: 'Holiday Updated',
         message: 'Restricted holiday updated successfully.',
@@ -123,7 +123,7 @@ export function useDeleteRestrictedHoliday() {
   return useMutation({
     mutationFn: (id: string) => restrictedHolidayService.deleteHoliday(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.holidays() });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.holidays()});
       notifications.show({
         title: 'Holiday Deleted',
         message: 'Restricted holiday deleted.',
@@ -189,8 +189,8 @@ export function useSelectRestrictedHoliday() {
     mutationFn: (holidayId: string) =>
       restrictedHolidayService.selectHoliday(holidayId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.selections() });
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.all });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.selections()});
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.all});
       notifications.show({
         title: 'Holiday Selected',
         message: 'Your restricted holiday selection has been submitted.',
@@ -213,8 +213,8 @@ export function useCancelSelection() {
     mutationFn: (selectionId: string) =>
       restrictedHolidayService.cancelSelection(selectionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.selections() });
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.all });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.selections()});
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.all});
       notifications.show({
         title: 'Selection Cancelled',
         message: 'Your selection has been cancelled.',
@@ -237,7 +237,7 @@ export function useApproveSelection() {
     mutationFn: (selectionId: string) =>
       restrictedHolidayService.approveSelection(selectionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.selections() });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.selections()});
       notifications.show({
         title: 'Approved',
         message: 'Selection approved successfully.',
@@ -258,14 +258,14 @@ export function useRejectSelection() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      selectionId,
-      data,
-    }: {
+                   selectionId,
+                   data,
+                 }: {
       selectionId: string;
       data?: SelectionActionRequest;
     }) => restrictedHolidayService.rejectSelection(selectionId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: restrictedHolidayKeys.selections() });
+      queryClient.invalidateQueries({queryKey: restrictedHolidayKeys.selections()});
       notifications.show({
         title: 'Rejected',
         message: 'Selection rejected.',

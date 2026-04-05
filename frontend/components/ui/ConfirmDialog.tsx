@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -15,16 +15,16 @@ interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({
-  isOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  type = 'danger',
-  loading = false,
-}: ConfirmDialogProps) {
+                                isOpen,
+                                onClose,
+                                onConfirm,
+                                title,
+                                message,
+                                confirmText = 'Confirm',
+                                cancelText = 'Cancel',
+                                type = 'danger',
+                                loading = false,
+                              }: ConfirmDialogProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -59,8 +59,10 @@ export function ConfirmDialog({
   const typeStyles = {
     danger: {
       icon: (
-        <svg className="w-6 h-6 text-danger-600 dark:text-danger-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <svg className="w-6 h-6 text-danger-600 dark:text-danger-400" fill="none" stroke="currentColor"
+             viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
       ),
       buttonClass: 'bg-danger-600 hover:bg-danger-700 focus:ring-danger-500',
@@ -68,8 +70,10 @@ export function ConfirmDialog({
     },
     warning: {
       icon: (
-        <svg className="w-6 h-6 text-warning-600 dark:text-warning-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <svg className="w-6 h-6 text-warning-600 dark:text-warning-400" fill="none" stroke="currentColor"
+             viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
       ),
       buttonClass: 'bg-warning-600 hover:bg-warning-700 focus:ring-warning-500',
@@ -77,8 +81,10 @@ export function ConfirmDialog({
     },
     info: {
       icon: (
-        <svg className="w-6 h-6 text-accent-600 dark:text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg className="w-6 h-6 text-accent-600 dark:text-accent-400" fill="none" stroke="currentColor"
+             viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       ),
       buttonClass: 'bg-accent-600 hover:bg-accent-700 focus:ring-accent-500',
@@ -131,9 +137,9 @@ export function ConfirmDialog({
             </p>
             <div className="flex gap-2">
               <button ref={cancelButtonRef}
-                onClick={onClose}
-                disabled={loading}
-                className="flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      onClick={onClose}
+                      disabled={loading}
+                      className="flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--border-focus)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {cancelText}
               </button>
@@ -145,8 +151,9 @@ export function ConfirmDialog({
                 {loading ? (
                   <>
                     <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
                     Processing...
                   </>

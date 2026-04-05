@@ -1,23 +1,12 @@
 'use client';
 
 import React from 'react';
-import {
-  Search,
-  Grid,
-  List,
-  FolderOpen,
-  Users,
-  Star,
-  Clock,
-  FolderPlus,
-  UploadCloud,
-  Folder,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card, CardContent } from '@/components/ui/Card';
-import { DriveStats, ViewTab } from './types';
-import { formatBytes } from './fileUtils';
+import {Clock, Folder, FolderOpen, FolderPlus, Grid, List, Search, Star, UploadCloud, Users,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Card, CardContent} from '@/components/ui/Card';
+import {DriveStats, ViewTab} from './types';
+import {formatBytes} from './fileUtils';
 
 interface DriveToolbarProps {
   searchQuery: string;
@@ -34,18 +23,18 @@ interface DriveToolbarProps {
 }
 
 export function DriveToolbar({
-  searchQuery,
-  viewMode,
-  activeTab,
-  breadcrumbs,
-  driveStats,
-  onSearchChange,
-  onViewModeChange,
-  onTabChange,
-  onNavigateToFolder,
-  onNewFolder,
-  onFileSelect,
-}: DriveToolbarProps) {
+                               searchQuery,
+                               viewMode,
+                               activeTab,
+                               breadcrumbs,
+                               driveStats,
+                               onSearchChange,
+                               onViewModeChange,
+                               onTabChange,
+                               onNavigateToFolder,
+                               onNewFolder,
+                               onFileSelect,
+                             }: DriveToolbarProps) {
   return (
     <>
       {/* Storage Stats */}
@@ -61,7 +50,7 @@ export function DriveToolbar({
             <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-accent-500 to-success-500 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min((driveStats.used / driveStats.limit) * 100, 100)}%` }}
+                style={{width: `${Math.min((driveStats.used / driveStats.limit) * 100, 100)}%`}}
               />
             </div>
           </CardContent>
@@ -78,7 +67,7 @@ export function DriveToolbar({
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
-          <FolderOpen className="h-4 w-4" />
+          <FolderOpen className="h-4 w-4"/>
           My Drive
         </button>
         <button
@@ -89,7 +78,7 @@ export function DriveToolbar({
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
-          <Users className="h-4 w-4" />
+          <Users className="h-4 w-4"/>
           Shared with me
         </button>
         <button
@@ -100,7 +89,7 @@ export function DriveToolbar({
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
-          <Star className="h-4 w-4" />
+          <Star className="h-4 w-4"/>
           Starred
         </button>
         <button
@@ -111,7 +100,7 @@ export function DriveToolbar({
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
-          <Clock className="h-4 w-4" />
+          <Clock className="h-4 w-4"/>
           Recent
         </button>
       </div>
@@ -119,7 +108,7 @@ export function DriveToolbar({
       {/* Search + View Mode */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
           <Input
             placeholder="Search files..."
             value={searchQuery}
@@ -133,13 +122,15 @@ export function DriveToolbar({
               onClick={() => onViewModeChange('grid')}
               className={`p-2 ${viewMode === 'grid' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
-              <Grid className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <Grid
+                className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
             <button
               onClick={() => onViewModeChange('list')}
               className={`p-2 ${viewMode === 'list' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
-              <List className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <List
+                className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
           </div>
         </div>
@@ -154,9 +145,9 @@ export function DriveToolbar({
               <button
                 onClick={() => onNavigateToFolder(crumb.id, crumb.name)}
                 className={`hover:text-accent-700 ${index === breadcrumbs.length - 1
-                    ? 'text-[var(--text-primary)] font-medium'
-                    : 'text-[var(--text-muted)]'
-                  }`}
+                  ? 'text-[var(--text-primary)] font-medium'
+                  : 'text-[var(--text-muted)]'
+                }`}
               >
                 {crumb.name}
               </button>
@@ -173,14 +164,15 @@ export function DriveToolbar({
             variant="outline"
             size="sm"
             onClick={onNewFolder}
-            leftIcon={<FolderPlus className="h-4 w-4" />}
+            leftIcon={<FolderPlus className="h-4 w-4"/>}
           >
             New Folder
           </Button>
           <label className="cursor-pointer">
-            <input type="file" className="hidden" onChange={onFileSelect} />
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
-              <UploadCloud className="h-4 w-4" />
+            <input type="file" className="hidden" onChange={onFileSelect}/>
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+              <UploadCloud className="h-4 w-4"/>
               Upload File
             </span>
           </label>
@@ -204,22 +196,22 @@ interface DriveEmptyStateProps {
 }
 
 export function DriveEmptyState({
-  searchQuery,
-  activeTab,
-  onNewFolder,
-  onFileSelect,
-}: DriveEmptyStateProps) {
+                                  searchQuery,
+                                  activeTab,
+                                  onNewFolder,
+                                  onFileSelect,
+                                }: DriveEmptyStateProps) {
   return (
     <Card>
       <CardContent className="py-16">
         <div className="text-center">
-          <Folder className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+          <Folder className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
           <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
             {searchQuery ? 'No files found' :
-             activeTab === 'shared' ? 'No files shared with you' :
-             activeTab === 'starred' ? 'No starred files' :
-             activeTab === 'recent' ? 'No recent files' :
-             'This folder is empty'}
+              activeTab === 'shared' ? 'No files shared with you' :
+                activeTab === 'starred' ? 'No starred files' :
+                  activeTab === 'recent' ? 'No recent files' :
+                    'This folder is empty'}
           </h3>
           <p className="text-[var(--text-muted)]">
             {searchQuery
@@ -234,14 +226,15 @@ export function DriveEmptyState({
                 variant="outline"
                 size="sm"
                 onClick={onNewFolder}
-                leftIcon={<FolderPlus className="h-4 w-4" />}
+                leftIcon={<FolderPlus className="h-4 w-4"/>}
               >
                 New Folder
               </Button>
               <label className="cursor-pointer">
-                <input type="file" className="hidden" onChange={onFileSelect} />
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
-                  <UploadCloud className="h-4 w-4" />
+                <input type="file" className="hidden" onChange={onFileSelect}/>
+                <span
+                  className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  <UploadCloud className="h-4 w-4"/>
                   Upload File
                 </span>
               </label>

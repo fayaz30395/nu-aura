@@ -1,59 +1,50 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Package,
-  Search,
-  Plus,
-  Laptop,
-  Monitor,
-  Phone,
-  Tablet,
-  Armchair,
-  Car,
-  Key,
-  Box,
   AlertCircle,
-  Loader2,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Eye,
-  UserPlus,
-  RotateCcw,
+  Armchair,
+  Box,
   Calendar,
+  Car,
   DollarSign,
+  Edit,
+  Eye,
+  Key,
+  Laptop,
+  Loader2,
   MapPin,
-  User,
+  Monitor,
+  MoreVertical,
+  Package,
+  Phone,
+  Plus,
+  RotateCcw,
+  Search,
+  Tablet,
   Tag,
+  Trash2,
+  User,
+  UserPlus,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import {
-  Card,
-  CardContent,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  EmptyState,
-} from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/hrms/asset';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {Asset, AssetCategory, AssetStatus, CreateAssetRequest, UpdateAssetRequest} from '@/lib/types/hrms/asset';
 import {
   useAllAssets,
-  useCreateAsset,
-  useUpdateAsset,
-  useDeleteAsset,
   useAssignAsset,
+  useCreateAsset,
+  useDeleteAsset,
   useReturnAsset,
+  useUpdateAsset,
 } from '@/lib/hooks/queries';
-import { createLogger } from '@/lib/utils/logger';
-import { formatCurrency } from '@/lib/utils';
+import {createLogger} from '@/lib/utils/logger';
+import {formatCurrency} from '@/lib/utils';
 
 const log = createLogger('AssetsPage');
 
@@ -65,8 +56,8 @@ const assetFormSchema = z.object({
   model: z.string().optional().or(z.literal('')),
   serialNumber: z.string().optional().or(z.literal('')),
   purchaseDate: z.string().optional().or(z.literal('')),
-  purchaseCost: z.number({ coerce: true }).optional(),
-  currentValue: z.number({ coerce: true }).optional(),
+  purchaseCost: z.number({coerce: true}).optional(),
+  currentValue: z.number({coerce: true}).optional(),
   status: z.string().min(1, 'Status required'),
   location: z.string().optional().or(z.literal('')),
   warrantyExpiry: z.string().optional().or(z.literal('')),
@@ -83,23 +74,23 @@ type AssignAssetFormData = z.infer<typeof assignAssetFormSchema>;
 const getCategoryIcon = (category: AssetCategory) => {
   switch (category) {
     case AssetCategory.LAPTOP:
-      return <Laptop className="h-5 w-5" />;
+      return <Laptop className="h-5 w-5"/>;
     case AssetCategory.DESKTOP:
-      return <Monitor className="h-5 w-5" />;
+      return <Monitor className="h-5 w-5"/>;
     case AssetCategory.MONITOR:
-      return <Monitor className="h-5 w-5" />;
+      return <Monitor className="h-5 w-5"/>;
     case AssetCategory.PHONE:
-      return <Phone className="h-5 w-5" />;
+      return <Phone className="h-5 w-5"/>;
     case AssetCategory.TABLET:
-      return <Tablet className="h-5 w-5" />;
+      return <Tablet className="h-5 w-5"/>;
     case AssetCategory.FURNITURE:
-      return <Armchair className="h-5 w-5" />;
+      return <Armchair className="h-5 w-5"/>;
     case AssetCategory.VEHICLE:
-      return <Car className="h-5 w-5" />;
+      return <Car className="h-5 w-5"/>;
     case AssetCategory.SOFTWARE_LICENSE:
-      return <Key className="h-5 w-5" />;
+      return <Key className="h-5 w-5"/>;
     default:
-      return <Box className="h-5 w-5" />;
+      return <Box className="h-5 w-5"/>;
   }
 };
 
@@ -183,7 +174,7 @@ export default function AssetManagementPage() {
     register,
     handleSubmit,
     reset: resetAssetForm,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     setValue,
   } = useForm<AssetFormData>({
     resolver: zodResolver(assetFormSchema),
@@ -208,7 +199,7 @@ export default function AssetManagementPage() {
     register: registerAssign,
     handleSubmit: handleSubmitAssign,
     reset: resetAssignForm,
-    formState: { errors: assignErrors, isSubmitting: isAssigning },
+    formState: {errors: assignErrors, isSubmitting: isAssigning},
   } = useForm<AssignAssetFormData>({
     resolver: zodResolver(assignAssetFormSchema),
     defaultValues: {
@@ -290,8 +281,8 @@ export default function AssetManagementPage() {
   const onAssetSubmit = async (data: AssetFormData) => {
     try {
       if (isEditing && selectedAsset) {
-        const updateData: UpdateAssetRequest = { ...data } as UpdateAssetRequest;
-        await updateMutation.mutateAsync({ id: selectedAsset.id, data: updateData });
+        const updateData: UpdateAssetRequest = {...data} as UpdateAssetRequest;
+        await updateMutation.mutateAsync({id: selectedAsset.id, data: updateData});
       } else {
         await createMutation.mutateAsync(data as CreateAssetRequest);
       }
@@ -299,20 +290,24 @@ export default function AssetManagementPage() {
       resetForm();
     } catch (err: unknown) {
       log.error('Error saving asset:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save asset');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to save asset');
     }
   };
 
   const onAssignSubmit = async (data: AssignAssetFormData) => {
     if (!selectedAsset) return;
     try {
-      await assignMutation.mutateAsync({ assetId: selectedAsset.id, employeeId: data.assignEmployeeId });
+      await assignMutation.mutateAsync({assetId: selectedAsset.id, employeeId: data.assignEmployeeId});
       setShowAssignModal(false);
       resetAssignForm();
       setSelectedAsset(null);
     } catch (err: unknown) {
       log.error('Error assigning asset:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to assign asset');
     }
   };
 
@@ -325,7 +320,9 @@ export default function AssetManagementPage() {
       setSelectedAsset(null);
     } catch (err: unknown) {
       log.error('Error deleting asset:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete asset');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete asset');
     } finally {
       setDeleting(false);
     }
@@ -336,7 +333,9 @@ export default function AssetManagementPage() {
       await returnMutation.mutateAsync(asset.id);
     } catch (err: unknown) {
       log.error('Error returning asset:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to return asset');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to return asset');
     }
   };
 
@@ -349,15 +348,15 @@ export default function AssetManagementPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Asset Management' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Asset Management'},
   ];
 
   if (assetsQuery.isLoading && !assetsQuery.data) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading assets...</span>
         </div>
       </AppLayout>
@@ -379,7 +378,7 @@ export default function AssetManagementPage() {
           </div>
           <PermissionGate permission={Permissions.ASSET_CREATE}>
             <Button onClick={handleOpenAddModal}>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2"/>
               Add Asset
             </Button>
           </PermissionGate>
@@ -390,7 +389,7 @@ export default function AssetManagementPage() {
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
                 <Button size="sm" variant="outline" onClick={() => assetsQuery.refetch()} className="ml-auto">
                   Retry
@@ -406,7 +405,7 @@ export default function AssetManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Package className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <Package className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Assets</p>
@@ -419,7 +418,7 @@ export default function AssetManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Package className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <Package className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Available</p>
@@ -432,7 +431,7 @@ export default function AssetManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <User className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <User className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Assigned</p>
@@ -445,7 +444,7 @@ export default function AssetManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">In Maintenance</p>
@@ -459,7 +458,7 @@ export default function AssetManagementPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search assets..."
@@ -505,130 +504,138 @@ export default function AssetManagementPage() {
               <div className="overflow-x-auto">
                 <table className="table-aura">
                   <thead>
-                    <tr>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Asset
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Category
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Assigned To
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Value
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Location
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
+                  <tr>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Asset
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Assigned To
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Value
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody>
-                    {filteredAssets.map((asset) => (
-                      <tr key={asset.id} className="h-11">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-4">
-                            <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
-                              {getCategoryIcon(asset.category)}
-                            </div>
-                            <div>
-                              <p className="font-medium text-[var(--text-primary)]">{asset.assetName}</p>
-                              <p className="text-caption">{asset.assetCode}</p>
-                            </div>
+                  {filteredAssets.map((asset) => (
+                    <tr key={asset.id} className="h-11">
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
+                            {getCategoryIcon(asset.category)}
                           </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div>
+                            <p className="font-medium text-[var(--text-primary)]">{asset.assetName}</p>
+                            <p className="text-caption">{asset.assetCode}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
                             {asset.category.replace('_', ' ')}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-center">
                           <span className={getStatusColor(asset.status)}>
                             {asset.status.replace('_', ' ')}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
                             {asset.assignedToName || '-'}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-right">
                           <span className="text-body-secondary">
                             {formatCurrency(asset.currentValue)}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
                             {asset.location || '-'}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <div className="relative group inline-block">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-right">
+                        <div className="relative group inline-block">
+                          <button
+                            aria-label="Asset actions menu"
+                            className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+                          >
+                            <MoreVertical className="h-4 w-4 text-[var(--text-muted)]"/>
+                          </button>
+                          <div
+                            className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                             <button
-                              aria-label="Asset actions menu"
-                              className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+                              onClick={() => handleViewDetails(asset)}
+                              className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
                             >
-                              <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
+                              <Eye className="h-4 w-4"/>
+                              View Details
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div/>}>
                               <button
-                                onClick={() => handleViewDetails(asset)}
-                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--border-focus)]"
+                                onClick={() => handleOpenEditModal(asset)}
+                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
-                                <Eye className="h-4 w-4" />
-                                View Details
+                                <Edit className="h-4 w-4"/>
+                                Edit
                               </button>
-                              <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
+                            </PermissionGate>
+                            {asset.status === AssetStatus.AVAILABLE && (
+                              <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div/>}>
                                 <button
-                                  onClick={() => handleOpenEditModal(asset)}
+                                  onClick={() => handleAssignClick(asset)}
                                   className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <Edit className="h-4 w-4" />
-                                  Edit
+                                  <UserPlus className="h-4 w-4"/>
+                                  Assign
                                 </button>
                               </PermissionGate>
-                              {asset.status === AssetStatus.AVAILABLE && (
-                                <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
-                                  <button
-                                    onClick={() => handleAssignClick(asset)}
-                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                  >
-                                    <UserPlus className="h-4 w-4" />
-                                    Assign
-                                  </button>
-                                </PermissionGate>
-                              )}
-                              {asset.status === AssetStatus.ASSIGNED && (
-                                <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div />}>
-                                  <button
-                                    onClick={() => handleReturn(asset)}
-                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                  >
-                                    <RotateCcw className="h-4 w-4" />
-                                    Return
-                                  </button>
-                                </PermissionGate>
-                              )}
-                              <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div />}>
+                            )}
+                            {asset.status === AssetStatus.ASSIGNED && (
+                              <PermissionGate permission={Permissions.ASSET_ASSIGN} fallback={<div/>}>
                                 <button
-                                  onClick={() => handleDeleteClick(asset)}
-                                  className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
+                                  onClick={() => handleReturn(asset)}
+                                  className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <Trash2 className="h-4 w-4" />
-                                  Delete
+                                  <RotateCcw className="h-4 w-4"/>
+                                  Return
                                 </button>
                               </PermissionGate>
-                            </div>
+                            )}
+                            <PermissionGate permission={Permissions.ASSET_MANAGE} fallback={<div/>}>
+                              <button
+                                onClick={() => handleDeleteClick(asset)}
+                                className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2"
+                              >
+                                <Trash2 className="h-4 w-4"/>
+                                Delete
+                              </button>
+                            </PermissionGate>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                   </tbody>
                 </table>
               </div>
@@ -637,7 +644,7 @@ export default function AssetManagementPage() {
         ) : (
           !assetsQuery.isLoading && (
             <EmptyState
-              icon={<Package className="h-12 w-12" />}
+              icon={<Package className="h-12 w-12"/>}
               title="No Assets Found"
               description="Start tracking company assets by adding your first item. Manage laptops, monitors, furniture, and more."
               actionLabel="Add Asset"
@@ -866,7 +873,7 @@ export default function AssetManagementPage() {
               <Button type="submit" disabled={isSubmitting}>
                 {saving ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Saving...
                   </>
                 ) : isEditing ? (
@@ -905,7 +912,8 @@ export default function AssetManagementPage() {
                   <span className={getStatusColor(selectedAsset.status)}>
                     {selectedAsset.status.replace('_', ' ')}
                   </span>
-                  <span className={`px-4 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
+                  <span
+                    className={`px-4 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
                     {selectedAsset.category.replace('_', ' ')}
                   </span>
                 </div>
@@ -914,7 +922,7 @@ export default function AssetManagementPage() {
                   {selectedAsset.brand && (
                     <div className="p-4 card-aura">
                       <p className="text-body-muted flex items-center gap-2">
-                        <Tag className="h-4 w-4" />
+                        <Tag className="h-4 w-4"/>
                         Brand
                       </p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -925,7 +933,7 @@ export default function AssetManagementPage() {
                   {selectedAsset.model && (
                     <div className="p-4 card-aura">
                       <p className="text-body-muted flex items-center gap-2">
-                        <Package className="h-4 w-4" />
+                        <Package className="h-4 w-4"/>
                         Model
                       </p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -947,7 +955,7 @@ export default function AssetManagementPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <DollarSign className="h-4 w-4" />
+                      <DollarSign className="h-4 w-4"/>
                       Purchase Cost
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -956,7 +964,7 @@ export default function AssetManagementPage() {
                   </div>
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <DollarSign className="h-4 w-4" />
+                      <DollarSign className="h-4 w-4"/>
                       Current Value
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -968,7 +976,7 @@ export default function AssetManagementPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4"/>
                       Purchase Date
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -977,7 +985,7 @@ export default function AssetManagementPage() {
                   </div>
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4"/>
                       Warranty Expiry
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -989,7 +997,7 @@ export default function AssetManagementPage() {
                 {selectedAsset.assignedToName && (
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <User className="h-4 w-4" />
+                      <User className="h-4 w-4"/>
                       Assigned To
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -1001,7 +1009,7 @@ export default function AssetManagementPage() {
                 {selectedAsset.location && (
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4"/>
                       Location
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -1029,7 +1037,7 @@ export default function AssetManagementPage() {
               setShowDetailModal(false);
               if (selectedAsset) handleOpenEditModal(selectedAsset);
             }}>
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4 mr-2"/>
               Edit Asset
             </Button>
           </ModalFooter>
@@ -1054,12 +1062,12 @@ export default function AssetManagementPage() {
             <Button variant="danger" onClick={handleDelete} disabled={deleting}>
               {deleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                   Deleting...
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2"/>
                   Delete
                 </>
               )}
@@ -1089,7 +1097,8 @@ export default function AssetManagementPage() {
                   placeholder="Enter employee ID"
                   {...registerAssign('assignEmployeeId')}
                 />
-                {assignErrors.assignEmployeeId && <span className="text-danger-500 text-sm">{assignErrors.assignEmployeeId.message}</span>}
+                {assignErrors.assignEmployeeId &&
+                  <span className="text-danger-500 text-sm">{assignErrors.assignEmployeeId.message}</span>}
               </div>
             </ModalBody>
             <ModalFooter>
@@ -1099,12 +1108,12 @@ export default function AssetManagementPage() {
               <Button type="submit" disabled={isAssigning}>
                 {isAssigning ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Assigning...
                   </>
                 ) : (
                   <>
-                    <UserPlus className="h-4 w-4 mr-2" />
+                    <UserPlus className="h-4 w-4 mr-2"/>
                     Assign
                   </>
                 )}

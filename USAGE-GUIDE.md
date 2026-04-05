@@ -19,17 +19,17 @@ Do the workers need to coordinate or work in parallel?
   YES → Use Agent Teams (Layer 3)
 ```
 
-| Scenario | Approach | Example |
-| -------- | -------- | ------- |
-| Fix a bug in one service | Single session + `@dev` | "Fix null pointer in LeaveService.approve()" |
-| Add a new API endpoint | Single session + `@dev` | "Add GET /api/v1/departments/{id}/employees" |
-| Design + implement + test a feature | Subagents (sequential) | "Build leave request module" |
-| Research best practices | Subagents (parallel) | "Compare JWT rotation strategies" |
-| Build a full module end-to-end | Agent Teams (6 agents) | "Build expense management for NU-HRMS" |
-| Debug a complex cross-cutting issue | Agent Teams (3 agents, debate) | "Why do users get 401 after 30 min?" |
-| Execute 5 sprint tickets | Agent Teams (5 agents, parallel) | "Sprint 4 execution" |
-| Review a PR | Single session + `@reviewer` | "Review the expense module PR" |
-| Update deployment config | Single session + `@devops` | "Add Redis to docker-compose" |
+| Scenario                            | Approach                         | Example                                      |
+|-------------------------------------|----------------------------------|----------------------------------------------|
+| Fix a bug in one service            | Single session + `@dev`          | "Fix null pointer in LeaveService.approve()" |
+| Add a new API endpoint              | Single session + `@dev`          | "Add GET /api/v1/departments/{id}/employees" |
+| Design + implement + test a feature | Subagents (sequential)           | "Build leave request module"                 |
+| Research best practices             | Subagents (parallel)             | "Compare JWT rotation strategies"            |
+| Build a full module end-to-end      | Agent Teams (6 agents)           | "Build expense management for NU-HRMS"       |
+| Debug a complex cross-cutting issue | Agent Teams (3 agents, debate)   | "Why do users get 401 after 30 min?"         |
+| Execute 5 sprint tickets            | Agent Teams (5 agents, parallel) | "Sprint 4 execution"                         |
+| Review a PR                         | Single session + `@reviewer`     | "Review the expense module PR"               |
+| Update deployment config            | Single session + `@devops`       | "Add Redis to docker-compose"                |
 
 ---
 
@@ -37,7 +37,8 @@ Do the workers need to coordinate or work in parallel?
 
 ### How to Use
 
-Open Claude Code in your NU-AURA project root (where `CLAUDE.md` lives). Claude automatically reads it.
+Open Claude Code in your NU-AURA project root (where `CLAUDE.md` lives). Claude automatically reads
+it.
 
 ```bash
 cd ~/IdeaProjects/nulogic/nu-aura
@@ -273,12 +274,12 @@ nu-aura/
 
 ## Cost Management
 
-| Approach | Relative Token Cost | When to Use |
-| -------- | ------------------- | ----------- |
-| Single session + role | 1x (baseline) | Daily tasks, simple changes |
-| 2-3 subagents | 2-3x | Feature design → implement → test |
-| Agent Teams (3 agents) | 5-8x | Debugging, research |
-| Agent Teams (6 agents) | 10-15x | Major module builds |
+| Approach               | Relative Token Cost | When to Use                       |
+|------------------------|---------------------|-----------------------------------|
+| Single session + role  | 1x (baseline)       | Daily tasks, simple changes       |
+| 2-3 subagents          | 2-3x                | Feature design → implement → test |
+| Agent Teams (3 agents) | 5-8x                | Debugging, research               |
+| Agent Teams (6 agents) | 10-15x              | Major module builds               |
 
 **Rules of thumb**:
 

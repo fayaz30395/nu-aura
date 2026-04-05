@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { RefreshCw, AlertTriangle, Info } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import {
-  ResourceManagementApiError,
-} from '@/lib/services/hrms/resource-management.service';
-import { EmployeeWorkload } from '@/lib/types/hrms/resource-management';
-import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {AlertTriangle, Info, RefreshCw} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {ResourceManagementApiError,} from '@/lib/services/hrms/resource-management.service';
+import {EmployeeWorkload} from '@/lib/types/hrms/resource-management';
+import {useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -28,6 +26,7 @@ const PROJECT_COLORS = [
   'var(--chart-info)', 'var(--chart-primary)', 'var(--chart-warning)',
   'var(--chart-secondary)', 'var(--chart-info)',
 ];
+
 function projectColor(id: string): string {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i)) % PROJECT_COLORS.length;
@@ -36,9 +35,13 @@ function projectColor(id: string): string {
 
 // ─── Row component ────────────────────────────────────────────────────────────
 
-function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
+function CapacityRow({emp}: { emp: EmployeeWorkload }) {
   const total = emp.totalAllocation ?? 0;
-  const bands: ProjectBand[] = (emp.allocations || []).map((p: { projectId: string; projectName: string; allocationPercentage?: number }) => ({
+  const bands: ProjectBand[] = (emp.allocations || []).map((p: {
+    projectId: string;
+    projectName: string;
+    allocationPercentage?: number
+  }) => ({
     projectName: p.projectName,
     projectId: p.projectId,
     allocationPct: p.allocationPercentage ?? 0,
@@ -48,7 +51,8 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
   const barColor = total >= 100 ? 'var(--chart-danger)' : total >= 81 ? 'var(--chart-warning)' : 'var(--chart-success)';
 
   return (
-    <div className="flex items-center gap-4 py-2 border-b border-[var(--border-main)] last:border-0 hover:bg-[var(--bg-secondary)] transition-colors group">
+    <div
+      className="flex items-center gap-4 py-2 border-b border-[var(--border-main)] last:border-0 hover:bg-[var(--bg-secondary)] transition-colors group">
       {/* Employee name */}
       <div className="w-44 flex-shrink-0">
         <p className="text-sm font-medium text-[var(--text-primary)] truncate">{emp.employeeName}</p>
@@ -59,7 +63,8 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
 
       {/* Stacked bar */}
       <div className="flex-1 min-w-0">
-        <div className="relative h-7 bg-[var(--bg-secondary)] rounded-lg overflow-hidden border border-[var(--border-main)]">
+        <div
+          className="relative h-7 bg-[var(--bg-secondary)] rounded-lg overflow-hidden border border-[var(--border-main)]">
           {/* Project bands */}
           {bands.length > 0 ? (
             <div className="absolute inset-0 flex">
@@ -81,7 +86,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
               {total < 100 && (
                 <div
                   className="h-full bg-[var(--bg-secondary)]"
-                  style={{ width: `${100 - total}%` }}
+                  style={{width: `${100 - total}%`}}
                 />
               )}
             </div>
@@ -109,19 +114,20 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
       <div className="w-16 flex-shrink-0 text-right">
         <span
           className="text-sm font-bold"
-          style={{ color: barColor }}
+          style={{color: barColor}}
         >
           {total}%
         </span>
       </div>
 
       {/* Project legend (visible on hover) */}
-      <div className="w-48 flex-shrink-0 hidden lg:flex flex-wrap gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        className="w-48 flex-shrink-0 hidden lg:flex flex-wrap gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {bands.slice(0, 3).map(b => (
           <span
             key={b.projectId}
             className="text-xs px-1.5 py-0.5 rounded-full text-white font-medium truncate max-w-[80px]"
-            style={{ backgroundColor: b.color }}
+            style={{backgroundColor: b.color}}
             title={b.projectName}
           >
             {b.projectName.length > 10 ? b.projectName.slice(0, 9) + '…' : b.projectName}
@@ -139,7 +145,7 @@ function CapacityRow({ emp }: { emp: EmployeeWorkload }) {
 
 export default function CapacityTimelinePage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -152,7 +158,7 @@ export default function CapacityTimelinePage() {
   const [deptFilter, setDeptFilter] = useState('ALL');
   const [viewMode, setViewMode] = useState<'week' | 'month'>('month');
 
-  const { data, isLoading, error, refetch } = useWorkloadDashboard({});
+  const {data, isLoading, error, refetch} = useWorkloadDashboard({});
 
   const isApiUnavailable = (error instanceof Error &&
     (error as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
@@ -167,14 +173,14 @@ export default function CapacityTimelinePage() {
 
   const filtered = useMemo(() => employees.filter(e => {
     if (search && !e.employeeName.toLowerCase().includes(search.toLowerCase()) &&
-        !(e.employeeCode || '').toLowerCase().includes(search.toLowerCase())) return false;
+      !(e.employeeCode || '').toLowerCase().includes(search.toLowerCase())) return false;
     if (deptFilter !== 'ALL' && e.departmentName !== deptFilter) return false;
     return true;
   }), [employees, search, deptFilter]);
 
   // Sort: over-allocated first, then by allocation % desc
   const sorted = useMemo(() =>
-    [...filtered].sort((a, b) => (b.totalAllocation ?? 0) - (a.totalAllocation ?? 0)),
+      [...filtered].sort((a, b) => (b.totalAllocation ?? 0) - (a.totalAllocation ?? 0)),
     [filtered]
   );
 
@@ -182,17 +188,20 @@ export default function CapacityTimelinePage() {
 
   if (isApiUnavailable) {
     return (
-      <AppLayout activeMenuItem="resources" breadcrumbs={[{ label: 'Resources', href: '/resources' }, { label: 'Capacity' }]}>
+      <AppLayout activeMenuItem="resources"
+                 breadcrumbs={[{label: 'Resources', href: '/resources'}, {label: 'Capacity'}]}>
         <div className="p-6 flex flex-col items-center justify-center py-24 text-center">
           <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
-            <Info size={24} className="text-warning-600" />
+            <Info size={24} className="text-warning-600"/>
           </div>
-          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not
+            Available</h2>
           <p className="text-[var(--text-muted)] text-sm max-w-md">
             {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
-          <button onClick={() => refetch()} className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors">
-            <RefreshCw size={14} /> Retry
+          <button onClick={() => refetch()}
+                  className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors">
+            <RefreshCw size={14}/> Retry
           </button>
         </div>
       </AppLayout>
@@ -209,8 +218,8 @@ export default function CapacityTimelinePage() {
     <AppLayout
       activeMenuItem="resources"
       breadcrumbs={[
-        { label: 'Resources', href: '/resources' },
-        { label: 'Capacity Timeline' },
+        {label: 'Resources', href: '/resources'},
+        {label: 'Capacity Timeline'},
       ]}
     >
       <div className="p-6 space-y-6">
@@ -253,15 +262,16 @@ export default function CapacityTimelinePage() {
               disabled={isLoading}
               className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
             >
-              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''}/>
               Refresh
             </button>
           </div>
         </div>
 
         {error && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
-            <AlertTriangle size={15} />
+          <div
+            className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
+            <AlertTriangle size={15}/>
             {error instanceof Error ? error.message : String(error)}
           </div>
         )}
@@ -277,11 +287,14 @@ export default function CapacityTimelinePage() {
               <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgAlloc}%</p>
               <p className="text-caption mt-0.5">Avg allocation</p>
             </div>
-            <div className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
-              <p className={`text-2xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
+            <div
+              className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
+              <p
+                className={`text-2xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
                 {overAllocated}
               </p>
-              <p className={`text-xs mt-0.5 ${overAllocated > 0 ? 'text-danger-600 dark:text-danger-300' : 'text-success-600 dark:text-success-300'}`}>
+              <p
+                className={`text-xs mt-0.5 ${overAllocated > 0 ? 'text-danger-600 dark:text-danger-300' : 'text-success-600 dark:text-success-300'}`}>
                 Over-allocated
               </p>
             </div>
@@ -311,7 +324,7 @@ export default function CapacityTimelinePage() {
         {isLoading ? (
           <div className="space-y-2">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="h-10 bg-[var(--bg-secondary)] animate-pulse rounded-xl" />
+              <div key={i} className="h-10 bg-[var(--bg-secondary)] animate-pulse rounded-xl"/>
             ))}
           </div>
         ) : sorted.length === 0 ? (
@@ -324,13 +337,13 @@ export default function CapacityTimelinePage() {
             <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)] text-caption">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-success-500" /> ≤80% optimal
+                <span className="inline-block w-3 h-3 rounded-md bg-success-500"/> ≤80% optimal
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-warning-400" /> 81–99% high
+                <span className="inline-block w-3 h-3 rounded-md bg-warning-400"/> 81–99% high
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-danger-500" /> ≥100% over-allocated
+                <span className="inline-block w-3 h-3 rounded-md bg-danger-500"/> ≥100% over-allocated
               </span>
               <span className="ml-auto text-[var(--text-muted)] italic">
                 Hover a row to see project names
@@ -339,7 +352,7 @@ export default function CapacityTimelinePage() {
 
             <div className="space-y-0">
               {sorted.map(emp => (
-                <CapacityRow key={emp.employeeId} emp={emp} />
+                <CapacityRow key={emp.employeeId} emp={emp}/>
               ))}
             </div>
 

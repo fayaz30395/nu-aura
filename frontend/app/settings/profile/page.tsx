@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { User, ArrowRight } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {ArrowRight, User} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
 
 export default function SettingsProfilePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   return (
     <AppLayout>
@@ -25,7 +25,7 @@ export default function SettingsProfilePage() {
         <Card className="skeuo-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 skeuo-emboss">
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5"/>
               Your Profile
             </CardTitle>
             <CardDescription>
@@ -49,7 +49,7 @@ export default function SettingsProfilePage() {
                 onClick={() => router.push('/me/profile')}
                 className="mt-4"
               >
-                Go to Full Profile <ArrowRight className="ml-2 h-4 w-4" />
+                Go to Full Profile <ArrowRight className="ml-2 h-4 w-4"/>
               </Button>
             </div>
           </CardContent>

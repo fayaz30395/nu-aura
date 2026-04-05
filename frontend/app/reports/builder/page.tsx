@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { AppLayout } from '@/components/layout';
-import { apiClient } from '@/lib/api/client';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useState} from 'react';
+import {AppLayout} from '@/components/layout';
+import {apiClient} from '@/lib/api/client';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -29,60 +29,60 @@ interface ReportQuery {
 // ─── Module definitions ───────────────────────────────────────────────────────
 
 const MODULES: { value: Module; label: string }[] = [
-  { value: 'EMPLOYEE', label: 'Employee' },
-  { value: 'ATTENDANCE', label: 'Attendance' },
-  { value: 'LEAVE', label: 'Leave' },
-  { value: 'PAYROLL', label: 'Payroll' },
-  { value: 'PERFORMANCE', label: 'Performance' },
+  {value: 'EMPLOYEE', label: 'Employee'},
+  {value: 'ATTENDANCE', label: 'Attendance'},
+  {value: 'LEAVE', label: 'Leave'},
+  {value: 'PAYROLL', label: 'Payroll'},
+  {value: 'PERFORMANCE', label: 'Performance'},
 ];
 
 const MODULE_COLUMNS: Record<Module, { key: string; label: string }[]> = {
   EMPLOYEE: [
-    { key: 'employeeCode', label: 'Employee Code' },
-    { key: 'fullName', label: 'Full Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'designation', label: 'Designation' },
-    { key: 'departmentId', label: 'Department' },
-    { key: 'status', label: 'Status' },
-    { key: 'joinDate', label: 'Join Date' },
+    {key: 'employeeCode', label: 'Employee Code'},
+    {key: 'fullName', label: 'Full Name'},
+    {key: 'email', label: 'Email'},
+    {key: 'designation', label: 'Designation'},
+    {key: 'departmentId', label: 'Department'},
+    {key: 'status', label: 'Status'},
+    {key: 'joinDate', label: 'Join Date'},
   ],
   ATTENDANCE: [
-    { key: 'employeeId', label: 'Employee' },
-    { key: 'date', label: 'Date' },
-    { key: 'checkInTime', label: 'Check In' },
-    { key: 'checkOutTime', label: 'Check Out' },
-    { key: 'status', label: 'Status' },
+    {key: 'employeeId', label: 'Employee'},
+    {key: 'date', label: 'Date'},
+    {key: 'checkInTime', label: 'Check In'},
+    {key: 'checkOutTime', label: 'Check Out'},
+    {key: 'status', label: 'Status'},
   ],
   LEAVE: [
-    { key: 'employeeId', label: 'Employee' },
-    { key: 'leaveType', label: 'Leave Type' },
-    { key: 'startDate', label: 'Start Date' },
-    { key: 'endDate', label: 'End Date' },
-    { key: 'status', label: 'Status' },
-    { key: 'reason', label: 'Reason' },
+    {key: 'employeeId', label: 'Employee'},
+    {key: 'leaveType', label: 'Leave Type'},
+    {key: 'startDate', label: 'Start Date'},
+    {key: 'endDate', label: 'End Date'},
+    {key: 'status', label: 'Status'},
+    {key: 'reason', label: 'Reason'},
   ],
   PAYROLL: [
-    { key: 'employeeId', label: 'Employee' },
-    { key: 'month', label: 'Month' },
-    { key: 'year', label: 'Year' },
-    { key: 'basicSalary', label: 'Basic Salary' },
-    { key: 'grossSalary', label: 'Gross Salary' },
-    { key: 'netSalary', label: 'Net Salary' },
+    {key: 'employeeId', label: 'Employee'},
+    {key: 'month', label: 'Month'},
+    {key: 'year', label: 'Year'},
+    {key: 'basicSalary', label: 'Basic Salary'},
+    {key: 'grossSalary', label: 'Gross Salary'},
+    {key: 'netSalary', label: 'Net Salary'},
   ],
   PERFORMANCE: [
-    { key: 'employeeId', label: 'Employee' },
-    { key: 'reviewCycleId', label: 'Review Cycle' },
-    { key: 'selfRating', label: 'Self Rating' },
-    { key: 'managerRating', label: 'Manager Rating' },
-    { key: 'finalRating', label: 'Final Rating' },
+    {key: 'employeeId', label: 'Employee'},
+    {key: 'reviewCycleId', label: 'Review Cycle'},
+    {key: 'selfRating', label: 'Self Rating'},
+    {key: 'managerRating', label: 'Manager Rating'},
+    {key: 'finalRating', label: 'Final Rating'},
   ],
 };
 
 const OPERATORS = [
-  { value: 'equals', label: 'Equals' },
-  { value: 'contains', label: 'Contains' },
-  { value: 'gt', label: 'Greater than' },
-  { value: 'lt', label: 'Less than' },
+  {value: 'equals', label: 'Equals'},
+  {value: 'contains', label: 'Contains'},
+  {value: 'gt', label: 'Greater than'},
+  {value: 'lt', label: 'Less than'},
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -118,11 +118,11 @@ export default function ReportBuilderPage() {
 
   function addFilter() {
     if (filters.length >= 5) return;
-    setFilters(prev => [...prev, { column: columns[0].key, operator: 'equals', value: '' }]);
+    setFilters(prev => [...prev, {column: columns[0].key, operator: 'equals', value: ''}]);
   }
 
   function updateFilter(i: number, field: keyof FilterRow, val: string) {
-    setFilters(prev => prev.map((f, idx) => idx === i ? { ...f, [field]: val } : f));
+    setFilters(prev => prev.map((f, idx) => idx === i ? {...f, [field]: val} : f));
   }
 
   function removeFilter(i: number) {
@@ -210,8 +210,8 @@ export default function ReportBuilderPage() {
     <AppLayout
       activeMenuItem="reports"
       breadcrumbs={[
-        { label: 'Reports', href: '/reports' },
-        { label: 'Custom Builder' },
+        {label: 'Reports', href: '/reports'},
+        {label: 'Custom Builder'},
       ]}
     >
       <div className="p-6 space-y-6">
@@ -420,27 +420,27 @@ export default function ReportBuilderPage() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm divide-y divide-[var(--border-main)]">
                 <thead className="bg-[var(--bg-surface)]">
-                  <tr>
-                    {Object.keys(previewRows[0]).map(col => (
-                      <th
-                        key={col}
-                        className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider whitespace-nowrap"
-                      >
-                        {col}
-                      </th>
-                    ))}
-                  </tr>
+                <tr>
+                  {Object.keys(previewRows[0]).map(col => (
+                    <th
+                      key={col}
+                      className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider whitespace-nowrap"
+                    >
+                      {col}
+                    </th>
+                  ))}
+                </tr>
                 </thead>
                 <tbody className="bg-[var(--bg-card)] divide-y divide-[var(--border-subtle)]">
-                  {previewRows.slice(0, 50).map((row, i) => (
-                    <tr key={i} className="hover:bg-[var(--bg-surface)]">
-                      {Object.values(row).map((val, j) => (
-                        <td key={j} className="px-4 py-2 text-[var(--text-primary)] whitespace-nowrap">
-                          {val != null ? String(val) : '—'}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                {previewRows.slice(0, 50).map((row, i) => (
+                  <tr key={i} className="hover:bg-[var(--bg-surface)]">
+                    {Object.values(row).map((val, j) => (
+                      <td key={j} className="px-4 py-2 text-[var(--text-primary)] whitespace-nowrap">
+                        {val != null ? String(val) : '—'}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>
@@ -448,7 +448,8 @@ export default function ReportBuilderPage() {
         )}
 
         {previewRows.length === 0 && !loading && (
-          <div className="bg-[var(--bg-surface)] border border-dashed border-[var(--border-strong)] rounded-lg p-12 text-center text-[var(--text-muted)] text-sm">
+          <div
+            className="bg-[var(--bg-surface)] border border-dashed border-[var(--border-strong)] rounded-lg p-12 text-center text-[var(--text-muted)] text-sm">
             Select columns and click <strong>Preview Results</strong> to see data.
           </div>
         )}

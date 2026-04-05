@@ -1,25 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  CheckCircle2,
-  MessageSquare,
-  HelpCircle,
-  Clock,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
+import {motion} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {CheckCircle2, Clock, HelpCircle, Mail, MapPin, MessageSquare, Phone, Send,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Input} from '@/components/ui/Input';
 
 const contactFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -39,7 +30,7 @@ export default function ContactPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
   });
@@ -100,7 +91,8 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -130,7 +122,8 @@ export default function ContactPage() {
             Let&apos;s start a conversation
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
+            Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as
+            possible.
           </p>
         </div>
       </section>
@@ -142,15 +135,15 @@ export default function ContactPage() {
             {contactMethods.map((method, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: index * 0.1}}
               >
                 <Card padding="lg" className="text-center h-full">
                   <div
                     className={`w-14 h-14 rounded-lg bg-gradient-to-br ${method.color} flex items-center justify-center mx-auto mb-4`}
                   >
-                    <method.icon className="h-7 w-7 text-white" />
+                    <method.icon className="h-7 w-7 text-white"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
@@ -181,11 +174,11 @@ export default function ContactPage() {
 
               {isSubmitted && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{opacity: 0, y: -10}}
+                  animate={{opacity: 1, y: 0}}
                   className="mb-6 p-4 rounded-lg bg-success-50 dark:bg-success-950 border border-success-200 dark:border-success-800 flex items-start gap-4"
                 >
-                  <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400 flex-shrink-0 mt-0.5"/>
                   <div>
                     <p className="text-sm font-medium text-success-700 dark:text-success-300">
                       Message sent successfully!
@@ -311,7 +304,7 @@ export default function ContactPage() {
                   isLoading={isSubmitting}
                   loadingText="Sending..."
                 >
-                  <Send className="h-5 w-5" />
+                  <Send className="h-5 w-5"/>
                   Send Message
                 </Button>
               </form>
@@ -347,7 +340,7 @@ export default function ContactPage() {
                 ].map((faq, index) => (
                   <Card key={index} padding="md">
                     <div className="flex items-start gap-4">
-                      <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0 mt-0.5" />
+                      <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
                       <div>
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                           {faq.question}
@@ -378,15 +371,16 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {offices.map((office, index) => (
               <Card key={index} padding="lg">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
+                  <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}
                 </h3>
                 <p className="text-body-secondary mb-2">{office.address}</p>
                 <div className="flex items-center gap-2 text-body-muted">
-                  <Clock className="h-4 w-4" />
+                  <Clock className="h-4 w-4"/>
                   {office.timezone}
                 </div>
               </Card>

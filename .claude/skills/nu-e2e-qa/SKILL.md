@@ -17,10 +17,10 @@ description: Use when asked to run QA, full QA check, test everything, QA sweep,
 
 ## Modes
 
-| Mode | Command | Phases | Duration |
-|------|---------|--------|----------|
-| **Quick** | `/nu-e2e-qa quick` | 0, 1, 2 | ~10 min |
-| **Full** | `/nu-e2e-qa full` or `/nu-e2e-qa` | 0 through 6 | ~45 min |
+| Mode      | Command                           | Phases      | Duration |
+|-----------|-----------------------------------|-------------|----------|
+| **Quick** | `/nu-e2e-qa quick`                | 0, 1, 2     | ~10 min  |
+| **Full**  | `/nu-e2e-qa full` or `/nu-e2e-qa` | 0 through 6 | ~45 min  |
 
 Default mode is **full** unless `quick` is specified.
 
@@ -97,18 +97,19 @@ npx playwright test --project=chromium --reporter=json,list 2>&1 | tee qa-report
 
 Read `frontend/playwright-report/results.json` and extract:
 
-| Metric | Value |
-|--------|-------|
-| Total tests | Count |
-| Passed | Count (green) |
-| Failed | Count (red) |
-| Skipped | Count (yellow) |
-| Flaky | Count (orange) |
-| Duration | Total time |
+| Metric      | Value          |
+|-------------|----------------|
+| Total tests | Count          |
+| Passed      | Count (green)  |
+| Failed      | Count (red)    |
+| Skipped     | Count (yellow) |
+| Flaky       | Count (orange) |
+| Duration    | Total time     |
 
 ### 1.3 Failure Details
 
 For each failed test:
+
 - **File**: e.g., `e2e/leave.spec.ts`
 - **Test name**: e.g., "should apply for annual leave"
 - **Error**: First line of error message
@@ -119,21 +120,31 @@ For each failed test:
 
 The suite covers these features — failures in any indicate regressions:
 
-**NU-HRMS (26 files)**: `admin-roles`, `analytics`, `announcements`, `assets`, `asset-flow`, `attendance`, `attendance-flow`, `benefits`, `calendar`, `custom-fields`, `dashboard`, `documents`, `employee`, `employee-crud`, `expenses`, `expense-flow`, `holidays`, `home`, `leave`, `leave-flow`, `loans`, `notifications`, `payroll-flow`, `payroll-run`, `payroll-statutory`, `settings`
+**NU-HRMS (26 files)**: `admin-roles`, `analytics`, `announcements`, `assets`, `asset-flow`,
+`attendance`, `attendance-flow`, `benefits`, `calendar`, `custom-fields`, `dashboard`, `documents`,
+`employee`, `employee-crud`, `expenses`, `expense-flow`, `holidays`, `home`, `leave`, `leave-flow`,
+`loans`, `notifications`, `payroll-flow`, `payroll-run`, `payroll-statutory`, `settings`
 
-**NU-Hire (4 files)**: `recruitment-kanban`, `recruitment-pipeline`, `onboarding-offboarding`, `hire-to-onboard`
+**NU-Hire (4 files)**: `recruitment-kanban`, `recruitment-pipeline`, `onboarding-offboarding`,
+`hire-to-onboard`
 
-**NU-Grow (10 files)**: `feedback360`, `okr`, `performance-calibration`, `performance-pip`, `performance-review`, `performance-review-cycle`, `recognition`, `review-cycles`, `surveys`, `training`, `training-enrollment`, `wellness`
+**NU-Grow (10 files)**: `feedback360`, `okr`, `performance-calibration`, `performance-pip`,
+`performance-review`, `performance-review-cycle`, `recognition`, `review-cycles`, `surveys`,
+`training`, `training-enrollment`, `wellness`
 
 **NU-Fluence (1 file)**: `fluence-content-lifecycle`
 
-**Platform / Cross-cutting (9 files)**: `auth`, `auth-flow`, `navigation`, `smoke`, `app-switcher`, `sub-app-smoke`, `scheduled-reports`, `reports-builder`
+**Platform / Cross-cutting (9 files)**: `auth`, `auth-flow`, `navigation`, `smoke`, `app-switcher`,
+`sub-app-smoke`, `scheduled-reports`, `reports-builder`
 
-**RBAC (4 files)**: `rbac-employee-boundaries`, `rbac-manager-boundaries`, `rbac-tenant-isolation`, `rbac-superadmin`
+**RBAC (4 files)**: `rbac-employee-boundaries`, `rbac-manager-boundaries`, `rbac-tenant-isolation`,
+`rbac-superadmin`
 
-**Cross-module lifecycle (4 files)**: `leave-approval-chain`, `payroll-end-to-end`, `hire-to-onboard`, `fluence-content-lifecycle`
+**Cross-module lifecycle (4 files)**: `leave-approval-chain`, `payroll-end-to-end`,
+`hire-to-onboard`, `fluence-content-lifecycle`
 
-**Other (9 files)**: `fnf-settlement`, `gantt`, `org-chart`, `projects`, `resource-allocation`, `resources`, `resources-capacity`, `timesheets`, `travel`
+**Other (9 files)**: `fnf-settlement`, `gantt`, `org-chart`, `projects`, `resource-allocation`,
+`resources`, `resources-capacity`, `timesheets`, `travel`
 
 ---
 
@@ -146,16 +157,23 @@ Visit every route and check for errors.
 Source of truth: `frontend/lib/config/apps.ts` > `PLATFORM_APPS[*].routePrefixes`
 
 **NU-HRMS routes** (35):
-`/me/dashboard`, `/me/profile`, `/dashboard`, `/employees`, `/departments`, `/attendance`, `/leave`, `/payroll`, `/compensation`, `/benefits`, `/expenses`, `/loans`, `/travel`, `/assets`, `/letters`, `/statutory`, `/tax`, `/helpdesk`, `/approvals`, `/announcements`, `/org-chart`, `/timesheets`, `/time-tracking`, `/projects`, `/resources`, `/allocations`, `/calendar`, `/overtime`, `/probation`, `/shifts`, `/reports`, `/analytics`, `/settings`, `/admin`, `/admin/roles`
+`/me/dashboard`, `/me/profile`, `/dashboard`, `/employees`, `/departments`, `/attendance`, `/leave`,
+`/payroll`, `/compensation`, `/benefits`, `/expenses`, `/loans`, `/travel`, `/assets`, `/letters`,
+`/statutory`, `/tax`, `/helpdesk`, `/approvals`, `/announcements`, `/org-chart`, `/timesheets`,
+`/time-tracking`, `/projects`, `/resources`, `/allocations`, `/calendar`, `/overtime`, `/probation`,
+`/shifts`, `/reports`, `/analytics`, `/settings`, `/admin`, `/admin/roles`
 
 **NU-Hire routes** (7):
-`/recruitment`, `/recruitment/candidates`, `/recruitment/pipeline`, `/onboarding`, `/preboarding`, `/offboarding`, `/careers`
+`/recruitment`, `/recruitment/candidates`, `/recruitment/pipeline`, `/onboarding`, `/preboarding`,
+`/offboarding`, `/careers`
 
 **NU-Grow routes** (10):
-`/performance`, `/performance/reviews`, `/okr`, `/feedback360`, `/training`, `/training/catalog`, `/learning`, `/recognition`, `/surveys`, `/wellness`
+`/performance`, `/performance/reviews`, `/okr`, `/feedback360`, `/training`, `/training/catalog`,
+`/learning`, `/recognition`, `/surveys`, `/wellness`
 
 **NU-Fluence routes** (9):
-`/fluence/wiki`, `/fluence/blogs`, `/fluence/templates`, `/fluence/drive`, `/fluence/search`, `/fluence/my-content`, `/fluence/wall`, `/fluence/dashboard`, `/fluence/analytics`
+`/fluence/wiki`, `/fluence/blogs`, `/fluence/templates`, `/fluence/drive`, `/fluence/search`,
+`/fluence/my-content`, `/fluence/wall`, `/fluence/dashboard`, `/fluence/analytics`
 
 ### 2.2 Check Protocol
 
@@ -185,13 +203,14 @@ const renderTime = Date.now() - startTime;
 
 ### 2.3 Output Table
 
-| Sub-App | Route | Status | Console Errors | Render (ms) | Notes |
-|---------|-------|--------|----------------|-------------|-------|
-| HRMS | /employees | OK | 0 | 1200 | |
-| HRMS | /payroll | WARN | 1 | 4800 | Slow render |
-| HIRE | /recruitment | FAIL | 3 | - | JS crash |
+| Sub-App | Route        | Status | Console Errors | Render (ms) | Notes       |
+|---------|--------------|--------|----------------|-------------|-------------|
+| HRMS    | /employees   | OK     | 0              | 1200        |             |
+| HRMS    | /payroll     | WARN   | 1              | 4800        | Slow render |
+| HIRE    | /recruitment | FAIL   | 3              | -           | JS crash    |
 
 **Thresholds**:
+
 - OK: 0 console errors, render < 3000ms
 - WARN: 1-2 non-critical console errors OR render 3000-5000ms
 - FAIL: any JS exception, render > 5000ms, blank page, or 404/500
@@ -204,31 +223,32 @@ const renderTime = Date.now() - startTime;
 
 Test these 6 representative roles from `frontend/e2e/fixtures/testData.ts`:
 
-| Role | Email | Expected Access |
-|------|-------|-----------------|
-| SUPER_ADMIN | `fayaz.m@nulogic.io` | Everything (bypasses all RBAC) |
-| MANAGER | `sumit@nulogic.io` | Team views + own self-service |
-| TEAM_LEAD | `mani@nulogic.io` | Team views (smaller scope) + own self-service |
-| HR_MANAGER | `jagadeesh@nulogic.io` | All HR admin views |
-| RECRUITMENT_ADMIN | `suresh@nulogic.io` | Hire module + own self-service |
-| EMPLOYEE | `saran@nulogic.io` | Self-service only (/me/*) |
+| Role              | Email                  | Expected Access                               |
+|-------------------|------------------------|-----------------------------------------------|
+| SUPER_ADMIN       | `fayaz.m@nulogic.io`   | Everything (bypasses all RBAC)                |
+| MANAGER           | `sumit@nulogic.io`     | Team views + own self-service                 |
+| TEAM_LEAD         | `mani@nulogic.io`      | Team views (smaller scope) + own self-service |
+| HR_MANAGER        | `jagadeesh@nulogic.io` | All HR admin views                            |
+| RECRUITMENT_ADMIN | `suresh@nulogic.io`    | Hire module + own self-service                |
+| EMPLOYEE          | `saran@nulogic.io`     | Self-service only (/me/*)                     |
 
 ### 3.2 Access Matrix Check
 
 For each role, attempt these routes and verify expected outcome:
 
-| Route | SUPER_ADMIN | MANAGER | TEAM_LEAD | HR_MANAGER | REC_ADMIN | EMPLOYEE |
-|-------|:-----------:|:-------:|:---------:|:----------:|:---------:|:--------:|
-| `/me/dashboard` | OK | OK | OK | OK | OK | OK |
-| `/me/profile` | OK | OK | OK | OK | OK | OK |
-| `/employees` | OK | OK | OK | OK | DENY | DENY |
-| `/admin/roles` | OK | DENY | DENY | DENY | DENY | DENY |
-| `/payroll` | OK | DENY | DENY | OK | DENY | DENY |
-| `/recruitment` | OK | DENY | DENY | OK | OK | DENY |
-| `/performance` | OK | OK | OK | OK | DENY | DENY |
-| `/settings` | OK | DENY | DENY | DENY | DENY | DENY |
+| Route           | SUPER_ADMIN | MANAGER | TEAM_LEAD | HR_MANAGER | REC_ADMIN | EMPLOYEE |
+|-----------------|:-----------:|:-------:|:---------:|:----------:|:---------:|:--------:|
+| `/me/dashboard` |     OK      |   OK    |    OK     |     OK     |    OK     |    OK    |
+| `/me/profile`   |     OK      |   OK    |    OK     |     OK     |    OK     |    OK    |
+| `/employees`    |     OK      |   OK    |    OK     |     OK     |   DENY    |   DENY   |
+| `/admin/roles`  |     OK      |  DENY   |   DENY    |    DENY    |   DENY    |   DENY   |
+| `/payroll`      |     OK      |  DENY   |   DENY    |     OK     |   DENY    |   DENY   |
+| `/recruitment`  |     OK      |  DENY   |   DENY    |     OK     |    OK     |   DENY   |
+| `/performance`  |     OK      |   OK    |    OK     |     OK     |   DENY    |   DENY   |
+| `/settings`     |     OK      |  DENY   |   DENY    |    DENY    |   DENY    |   DENY   |
 
-**"DENY" means**: redirect to `/me/dashboard`, `/auth/login`, or a 403 page. NOT the actual admin content.
+**"DENY" means**: redirect to `/me/dashboard`, `/auth/login`, or a 403 page. NOT the actual admin
+content.
 
 ### 3.3 API Boundary Check
 
@@ -250,6 +270,7 @@ GET /api/v1/admin/roles        # 403 (role management)
 ### 3.5 Permission Leak Detection
 
 For each DENY case:
+
 1. Visit the route in the browser
 2. Check the page content for data that should be hidden
 3. Check the Network tab for 200 responses to APIs the role should not access
@@ -339,9 +360,11 @@ git diff --name-only HEAD~10 -- 'frontend/**/*.tsx' 'frontend/**/*.ts'
 ```
 
 Check for violations:
+
 - `bg-white` instead of `bg-[var(--bg-card)]`
 - `shadow-sm/md/lg` instead of `shadow-[var(--shadow-card)]`
-- Banned Tailwind color tokens (`sky-*`, `rose-*`, `amber-*`, `emerald-*`, `slate-*`, `gray-*`, etc.)
+- Banned Tailwind color tokens (`sky-*`, `rose-*`, `amber-*`, `emerald-*`, `slate-*`, `gray-*`,
+  etc.)
 - Missing `cursor-pointer` on interactive elements
 - Missing `aria-label` on icon-only buttons
 
@@ -367,9 +390,11 @@ await page.setViewportSize({ width: 1366, height: 768 });
 await page.setViewportSize({ width: 768, height: 1024 });
 ```
 
-For each viewport, check 5 key routes: `/me/dashboard`, `/employees`, `/recruitment`, `/performance`, `/leave`
+For each viewport, check 5 key routes: `/me/dashboard`, `/employees`, `/recruitment`,
+`/performance`, `/leave`
 
 Verify:
+
 - No horizontal scroll
 - Sidebar collapses on tablet
 - Tables become scrollable or card view on tablet
@@ -391,24 +416,24 @@ Verify:
 
 ### 6.1 Summary Table
 
-| Phase | Passed | Failed | Skipped | Critical Issues |
-|-------|--------|--------|---------|-----------------|
-| P0: Pre-flight | - | - | - | Services: all UP |
-| P1: Automated Suite | 180 | 3 | 5 | 2 CRUD failures |
-| P2: Route Health | 58 | 2 | 0 | /payroll 404, /fluence/drive crash |
-| P3: RBAC Boundaries | 48 | 1 | 0 | Employee can access /reports |
-| P4: Workflow Smoke | 4 | 1 | 0 | Attendance clock-in broken |
-| P5: Cross-Cutting | 12 | 0 | 2 | None |
-| **TOTAL** | **302** | **7** | **7** | **3 P0, 2 P1** |
+| Phase               | Passed  | Failed | Skipped | Critical Issues                    |
+|---------------------|---------|--------|---------|------------------------------------|
+| P0: Pre-flight      | -       | -      | -       | Services: all UP                   |
+| P1: Automated Suite | 180     | 3      | 5       | 2 CRUD failures                    |
+| P2: Route Health    | 58      | 2      | 0       | /payroll 404, /fluence/drive crash |
+| P3: RBAC Boundaries | 48      | 1      | 0       | Employee can access /reports       |
+| P4: Workflow Smoke  | 4       | 1      | 0       | Attendance clock-in broken         |
+| P5: Cross-Cutting   | 12      | 0      | 2       | None                               |
+| **TOTAL**           | **302** | **7**  | **7**   | **3 P0, 2 P1**                     |
 
 ### 6.2 Issue Classification
 
-| Severity | Definition | Action |
-|----------|-----------|--------|
-| **P0** | Blocks release. Security leak, data corruption, critical workflow broken | Must fix before release |
-| **P1** | Major. CRUD operation fails, page crashes, wrong data displayed | Should fix before release |
-| **P2** | Medium. UI glitch, slow render, non-critical edge case | Fix in next sprint |
-| **P3** | Minor. Visual inconsistency, missing empty state, non-blocking | Backlog |
+| Severity | Definition                                                               | Action                    |
+|----------|--------------------------------------------------------------------------|---------------------------|
+| **P0**   | Blocks release. Security leak, data corruption, critical workflow broken | Must fix before release   |
+| **P1**   | Major. CRUD operation fails, page crashes, wrong data displayed          | Should fix before release |
+| **P2**   | Medium. UI glitch, slow render, non-critical edge case                   | Fix in next sprint        |
+| **P3**   | Minor. Visual inconsistency, missing empty state, non-blocking           | Backlog                   |
 
 ### 6.3 Issue List Format
 
@@ -459,19 +484,24 @@ Generate an Excel report at `qa-reports/results/qa-report-YYYY-MM-DD.xlsx` with 
 ## Execution Notes
 
 ### Auth Rate Limiting
+
 The backend rate-limits `/api/v1/auth/**` at 5 requests/minute. When switching roles:
+
 - Use `loginAs()` from `frontend/e2e/fixtures/helpers.ts` (API-based, fastest)
 - Wait 15 seconds between login switches to avoid 429 errors
 - Group tests by role to minimize switches
 - SuperAdmin session covers Phases 2 and 5 without switching
 
 ### Demo Tenant
+
 All tests run against the NuLogic demo tenant seeded by Flyway V8:
+
 - `tenant_id`: `660e8400-e29b-41d4-a716-446655440001`
 - Shared password: `Welcome@123`
 - 13 demo users across 6 roles (see `frontend/e2e/fixtures/testData.ts`)
 
 ### Approval Hierarchy (for Phase 4 workflows)
+
 ```
 Raj V (EMPLOYEE) -> Mani S (TEAM_LEAD) -> Sumit Kumar (MANAGER) -> Fayaz M (CEO)
 Saran V (EMPLOYEE) -> Sumit Kumar (MANAGER) -> Fayaz M (CEO)
@@ -479,16 +509,23 @@ Arun K (EMPLOYEE) -> Suresh M (RECRUITMENT_ADMIN) -> Jagadeesh N (HR_MANAGER) ->
 ```
 
 ### Feature Flags
+
 These are all enabled for the demo tenant. A 403 from a feature-flag check on any = bug:
-`enable_payroll`, `enable_performance`, `enable_documents`, `enable_helpdesk`, `enable_lms`, `enable_wellness`, `enable_projects`, `enable_timesheets`, `enable_fluence`, `enable_google_drive`, `enable_payments`, `enable_ai_recruitment`
+`enable_payroll`, `enable_performance`, `enable_documents`, `enable_helpdesk`, `enable_lms`,
+`enable_wellness`, `enable_projects`, `enable_timesheets`, `enable_fluence`, `enable_google_drive`,
+`enable_payments`, `enable_ai_recruitment`
 
 ### Test Data Naming
+
 All data created during QA uses prefix `QA-` + timestamp to avoid collisions and allow cleanup:
+
 - Leave: `QA smoke test — <timestamp>`
 - Employee: `QA-Test-<timestamp>`
 
 ### Cleanup
+
 After a full QA run, clean up test data:
+
 ```bash
 # Delete test leave requests, employees, etc. created with QA- prefix
 # Or simply rely on the demo tenant being re-seeded before next run

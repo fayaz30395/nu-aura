@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
-import { Heart, Send } from 'lucide-react';
-import { wallService } from '@/lib/services/core/wall.service';
-import type { CommentResponse } from '@/lib/services/core/wall.service';
-import { logger } from '@/lib/utils/logger';
-import { parseISO, isToday, formatDistanceToNow } from 'date-fns';
+import {Heart, Send} from 'lucide-react';
+import type {CommentResponse} from '@/lib/services/core/wall.service';
+import {wallService} from '@/lib/services/core/wall.service';
+import {logger} from '@/lib/utils/logger';
+import {formatDistanceToNow, isToday, parseISO} from 'date-fns';
 
 // ─── Helpers (local to this file — no circular dep with CompanyFeed) ──
 function formatFeedDate(dateStr: string): string {
   try {
     const date = parseISO(dateStr);
     if (isToday(date)) return 'Today';
-    return formatDistanceToNow(date, { addSuffix: true });
+    return formatDistanceToNow(date, {addSuffix: true});
   } catch {
     return dateStr;
   }
@@ -37,12 +37,12 @@ export interface FeedCommentItemProps {
  * Replies are lazy-loaded on first expansion.
  */
 export const FeedCommentItem = React.memo(function FeedCommentItem({
-  comment,
-  postId,
-  depth,
-  onReplyAdded,
-  currentUser,
-}: FeedCommentItemProps) {
+                                                                     comment,
+                                                                     postId,
+                                                                     depth,
+                                                                     onReplyAdded,
+                                                                     currentUser,
+                                                                   }: FeedCommentItemProps) {
   const [liked, setLiked] = useState(false);
   const [localLikes, setLocalLikes] = useState(comment.likesCount ?? 0);
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -111,7 +111,8 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
     <div className={depth > 0 ? 'ml-6 mt-1.5' : ''}>
       <div className="flex gap-2">
         <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden">
-          <Image src={commentAvatarUrl} alt={comment.author.fullName} width={24} height={24} className="rounded-full object-cover w-6 h-6" />
+          <Image src={commentAvatarUrl} alt={comment.author.fullName} width={24} height={24}
+                 className="rounded-full object-cover w-6 h-6"/>
         </div>
         <div className="flex-1 min-w-0">
           <div className="rounded-lg bg-[var(--bg-secondary)] px-2.5 py-1.5">
@@ -131,7 +132,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                 liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
-              <Heart className={`h-2.5 w-2.5 ${liked ? 'fill-danger-500' : ''}`} />
+              <Heart className={`h-2.5 w-2.5 ${liked ? 'fill-danger-500' : ''}`}/>
               {localLikes > 0 ? localLikes : 'Like'}
             </button>
             {depth < MAX_REPLY_DEPTH && (
@@ -171,7 +172,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                 aria-label="Send reply"
                 className="px-2 py-1 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Send className="h-3 w-3" />
+                <Send className="h-3 w-3"/>
               </button>
             </div>
           )}

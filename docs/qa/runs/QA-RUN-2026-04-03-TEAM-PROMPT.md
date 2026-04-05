@@ -473,6 +473,7 @@ When QA sees their UC is marked 'Fixed — needs revalidation' in results.md:
 ## Quick Reference for the Session
 
 ### Auth Rate Limits
+
 - `/api/v1/auth/**` → 5 requests/minute
 - Space role-switches by **15 seconds**
 - Group tests by role to minimize login switches
@@ -528,6 +529,7 @@ mcp__claude-in-chrome__gif_creator
 ```
 
 ### API Quick Auth
+
 ```bash
 # Get SuperAdmin token
 SA_TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
@@ -548,20 +550,21 @@ curl -s -H "Authorization: Bearer $SA_TOKEN" \
 
 ### UC Assignment Map
 
-| Teammate | UC Groups | UC Count |
-|----------|-----------|----------|
-| QA-1 | AUTH, PAY, APPR, EXP, LOAN, TRAVEL, STAT, REPORT, ADMIN, NOTIF, FNF, PERF | ~42 |
-| QA-2 | EMP, ATT, LEAVE, BEN, ASSET, CONTRACT, LETTER, DEPT, HELP, TIME, RESOURCE, COMP, PROB, MY, SETTINGS, APPSW, SMOKE | ~44 |
-| QA-3 | RBAC, TENANT, SEC, HIRE | ~51 |
-| QA-4 | GROW, DASH | ~30 |
-| Dev+Report | Monitor bugs, fix, write sign-off | — |
+| Teammate   | UC Groups                                                                                                         | UC Count |
+|------------|-------------------------------------------------------------------------------------------------------------------|----------|
+| QA-1       | AUTH, PAY, APPR, EXP, LOAN, TRAVEL, STAT, REPORT, ADMIN, NOTIF, FNF, PERF                                         | ~42      |
+| QA-2       | EMP, ATT, LEAVE, BEN, ASSET, CONTRACT, LETTER, DEPT, HELP, TIME, RESOURCE, COMP, PROB, MY, SETTINGS, APPSW, SMOKE | ~44      |
+| QA-3       | RBAC, TENANT, SEC, HIRE                                                                                           | ~51      |
+| QA-4       | GROW, DASH                                                                                                        | ~30      |
+| Dev+Report | Monitor bugs, fix, write sign-off                                                                                 | —        |
 
 ### Severity Levels
-| Level | Meaning | Action |
-|-------|---------|--------|
-| CRITICAL | Auth bypass, data leak, crash | Block release immediately |
-| MAJOR | Wrong data, RBAC failure, broken CRUD | Fix before release |
-| MINOR | UI glitch, missing validation msg | Fix in next sprint |
+
+| Level    | Meaning                               | Action                    |
+|----------|---------------------------------------|---------------------------|
+| CRITICAL | Auth bypass, data leak, crash         | Block release immediately |
+| MAJOR    | Wrong data, RBAC failure, broken CRUD | Fix before release        |
+| MINOR    | UI glitch, missing validation msg     | Fix in next sprint        |
 
 ---
 

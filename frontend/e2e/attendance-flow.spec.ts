@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { AttendancePage } from './pages/AttendancePage';
+import {expect, test} from '@playwright/test';
+import {AttendancePage} from './pages/AttendancePage';
 
 /**
  * Attendance Flow E2E Tests
@@ -11,36 +11,36 @@ import { AttendancePage } from './pages/AttendancePage';
 test.describe('Attendance Flow — Page Load', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should display attendance page with heading', async ({ page }) => {
+  test('should display attendance page with heading', async ({page}) => {
     await expect(attendancePage.pageHeading).toBeVisible();
   });
 
-  test('should display check-in or check-out button', async ({ page }) => {
+  test('should display check-in or check-out button', async ({page}) => {
     const hasCheckIn = await attendancePage.isCheckInButtonVisible();
     const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
     expect(hasCheckIn || hasCheckOut).toBe(true);
   });
 
-  test('should not show error on page load', async ({ page }) => {
+  test('should not show error on page load', async ({page}) => {
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 });
 
 test.describe('Attendance Flow — Check-In', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should perform check-in and update state', async ({ page }) => {
+  test('should perform check-in and update state', async ({page}) => {
     const hasCheckIn = await attendancePage.isCheckInButtonVisible();
 
     if (hasCheckIn) {
@@ -55,7 +55,7 @@ test.describe('Attendance Flow — Check-In', () => {
     }
   });
 
-  test('should maintain state after page refresh', async ({ page }) => {
+  test('should maintain state after page refresh', async ({page}) => {
     const hasCheckIn = await attendancePage.isCheckInButtonVisible();
     if (hasCheckIn) {
       await attendancePage.checkIn();
@@ -78,19 +78,19 @@ test.describe('Attendance Flow — Check-In', () => {
 test.describe('Attendance Flow — Records', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should navigate to my attendance records', async ({ page }) => {
+  test('should navigate to my attendance records', async ({page}) => {
     await attendancePage.navigateToMyAttendance();
 
     const url = page.url();
     expect(url.includes('/attendance') || url.includes('/me/attendance')).toBe(true);
   });
 
-  test('should display attendance statistics cards', async ({ page }) => {
+  test('should display attendance statistics cards', async ({page}) => {
     await attendancePage.navigateToMyAttendance();
     await page.waitForTimeout(1000);
 
@@ -101,7 +101,7 @@ test.describe('Attendance Flow — Records', () => {
     expect(hasTotalHours || hasPresentDays || hasContent).toBe(true);
   });
 
-  test('should navigate to team attendance', async ({ page }) => {
+  test('should navigate to team attendance', async ({page}) => {
     await attendancePage.navigateToTeamAttendance();
     expect(page.url()).toContain('/attendance/team');
   });

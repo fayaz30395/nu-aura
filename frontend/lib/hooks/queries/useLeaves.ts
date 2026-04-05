@@ -1,25 +1,25 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { leaveService, LeaveEncashmentRequest } from '@/lib/services/hrms/leave.service';
-import { LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest } from '@/lib/types/hrms/leave';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {LeaveEncashmentRequest, leaveService} from '@/lib/services/hrms/leave.service';
+import {LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest} from '@/lib/types/hrms/leave';
+import {notifications} from '@mantine/notifications';
 
 // Query keys for cache management
 export const leaveKeys = {
   all: ['leaves'] as const,
   // Leave Types
   types: () => [...leaveKeys.all, 'types'] as const,
-  typesList: (page: number, size: number) => [...leaveKeys.types(), 'list', { page, size }] as const,
+  typesList: (page: number, size: number) => [...leaveKeys.types(), 'list', {page, size}] as const,
   typesActive: () => [...leaveKeys.types(), 'active'] as const,
   typeDetail: (id: string) => [...leaveKeys.types(), 'detail', id] as const,
   // Leave Requests
   requests: () => [...leaveKeys.all, 'requests'] as const,
-  requestsList: (page: number, size: number) => [...leaveKeys.requests(), 'list', { page, size }] as const,
+  requestsList: (page: number, size: number) => [...leaveKeys.requests(), 'list', {page, size}] as const,
   requestsByEmployee: (employeeId: string, page: number, size: number) =>
-    [...leaveKeys.requests(), 'employee', employeeId, { page, size }] as const,
+    [...leaveKeys.requests(), 'employee', employeeId, {page, size}] as const,
   requestsByStatus: (status: LeaveRequestStatus, page: number, size: number) =>
-    [...leaveKeys.requests(), 'status', status, { page, size }] as const,
+    [...leaveKeys.requests(), 'status', status, {page, size}] as const,
   requestDetail: (id: string) => [...leaveKeys.requests(), 'detail', id] as const,
   // Leave Balances
   balances: () => [...leaveKeys.all, 'balances'] as const,
@@ -151,7 +151,7 @@ export function useCreateLeaveRequest() {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
     },
   });
 }
@@ -161,11 +161,11 @@ export function useUpdateLeaveRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: LeaveRequestRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: LeaveRequestRequest }) =>
       leaveService.updateLeaveRequest(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requestDetail(id) });
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: leaveKeys.requestDetail(id)});
+      queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
     },
   });
 }
@@ -176,10 +176,10 @@ export function useApproveLeaveRequest() {
 
   return useMutation({
     // API-004: Backend derives approver from SecurityContext
-    mutationFn: ({ id }: { id: string; approverId?: string; comments?: string }) =>
+    mutationFn: ({id}: { id: string; approverId?: string; comments?: string }) =>
       leaveService.approveLeaveRequest(id),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
       if (result.employeeId) {
         queryClient.invalidateQueries({
           queryKey: leaveKeys.employeeBalances(result.employeeId),
@@ -194,10 +194,10 @@ export function useRejectLeaveRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       leaveService.rejectLeaveRequest(id, reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
     },
   });
 }
@@ -207,10 +207,10 @@ export function useCancelLeaveRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       leaveService.cancelLeaveRequest(id, reason),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.requests() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
       if (result.employeeId) {
         queryClient.invalidateQueries({
           queryKey: leaveKeys.employeeBalances(result.employeeId),
@@ -229,7 +229,7 @@ export function useCreateLeaveType() {
   return useMutation<LeaveType, Error, LeaveTypeRequest>({
     mutationFn: (data) => leaveService.createLeaveType(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.types()});
     },
   });
 }
@@ -239,10 +239,10 @@ export function useUpdateLeaveType() {
   const queryClient = useQueryClient();
 
   return useMutation<LeaveType, Error, { id: string; data: LeaveTypeRequest }>({
-    mutationFn: ({ id, data }) =>
+    mutationFn: ({id, data}) =>
       leaveService.updateLeaveType(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.types()});
     },
   });
 }
@@ -254,7 +254,7 @@ export function useDeleteLeaveType() {
   return useMutation({
     mutationFn: (id: string) => leaveService.deleteLeaveType(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.types()});
     },
   });
 }
@@ -266,7 +266,7 @@ export function useActivateLeaveType() {
   return useMutation({
     mutationFn: (id: string) => leaveService.activateLeaveType(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.types()});
     },
   });
 }
@@ -278,7 +278,7 @@ export function useDeactivateLeaveType() {
   return useMutation({
     mutationFn: (id: string) => leaveService.deactivateLeaveType(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.types()});
     },
   });
 }
@@ -291,7 +291,7 @@ export function useRequestLeaveEncashment() {
   return useMutation({
     mutationFn: (data: LeaveEncashmentRequest) => leaveService.requestLeaveEncashment(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: leaveKeys.balances() });
+      queryClient.invalidateQueries({queryKey: leaveKeys.balances()});
       notifications.show({
         title: 'Encashment Requested',
         message: 'Your leave encashment request has been submitted for approval.',
@@ -301,7 +301,9 @@ export function useRequestLeaveEncashment() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Encashment Failed',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit encashment request',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to submit encashment request',
         color: 'red',
       });
     },

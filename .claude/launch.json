@@ -4,7 +4,10 @@
     {
       "name": "frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000,
       "autoPort": false,
       "cwd": "frontend"
@@ -12,7 +15,9 @@
     {
       "name": "backend",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["start-backend.sh"],
+      "runtimeArgs": [
+        "start-backend.sh"
+      ],
       "port": 8080,
       "autoPort": false,
       "cwd": "backend"

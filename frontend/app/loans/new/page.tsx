@@ -1,39 +1,31 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { LoanType, RepaymentFrequency } from '@/lib/types/hrms/loan';
-import { useCreateLoan } from '@/lib/hooks/queries/useLoans';
-import { loanService } from '@/lib/services/hrms/loan.service';
-import {
-  ArrowLeft,
-  Wallet,
-  Loader2,
-  AlertCircle,
-  DollarSign,
-  Calendar,
-  FileText,
-} from 'lucide-react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {logger} from '@/lib/utils/logger';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {LoanType, RepaymentFrequency} from '@/lib/types/hrms/loan';
+import {useCreateLoan} from '@/lib/hooks/queries/useLoans';
+import {loanService} from '@/lib/services/hrms/loan.service';
+import {AlertCircle, ArrowLeft, Calendar, DollarSign, FileText, Loader2, Wallet,} from 'lucide-react';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
 const loanFormSchema = z.object({
   loanType: z.enum(['PERSONAL', 'HOME', 'VEHICLE', 'EDUCATION', 'MEDICAL', 'EMERGENCY', 'OTHER']),
   requestedAmount: z
-    .number({ coerce: true, invalid_type_error: 'Please enter a valid loan amount' })
+    .number({coerce: true, invalid_type_error: 'Please enter a valid loan amount'})
     .positive('Loan amount must be greater than 0'),
   interestRate: z
-    .number({ coerce: true, invalid_type_error: 'Please enter a valid interest rate' })
+    .number({coerce: true, invalid_type_error: 'Please enter a valid interest rate'})
     .min(0, 'Interest rate cannot be negative')
     .max(100, 'Interest rate cannot exceed 100%'),
   termMonths: z
-    .number({ coerce: true, invalid_type_error: 'Please enter a valid term in months' })
+    .number({coerce: true, invalid_type_error: 'Please enter a valid term in months'})
     .int('Term must be a whole number')
     .positive('Loan term must be greater than 0'),
   purpose: z
@@ -49,19 +41,19 @@ type LoanFormData = z.infer<typeof loanFormSchema>;
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const LOAN_TYPES: { value: LoanType; label: string }[] = [
-  { value: 'PERSONAL', label: 'Personal Loan' },
-  { value: 'HOME', label: 'Home Loan' },
-  { value: 'VEHICLE', label: 'Vehicle Loan' },
-  { value: 'EDUCATION', label: 'Education Loan' },
-  { value: 'MEDICAL', label: 'Medical Loan' },
-  { value: 'EMERGENCY', label: 'Emergency Loan' },
-  { value: 'OTHER', label: 'Other' },
+  {value: 'PERSONAL', label: 'Personal Loan'},
+  {value: 'HOME', label: 'Home Loan'},
+  {value: 'VEHICLE', label: 'Vehicle Loan'},
+  {value: 'EDUCATION', label: 'Education Loan'},
+  {value: 'MEDICAL', label: 'Medical Loan'},
+  {value: 'EMERGENCY', label: 'Emergency Loan'},
+  {value: 'OTHER', label: 'Other'},
 ];
 
 const REPAYMENT_FREQUENCIES: { value: RepaymentFrequency; label: string }[] = [
-  { value: 'MONTHLY', label: 'Monthly' },
-  { value: 'BI_WEEKLY', label: 'Bi-Weekly' },
-  { value: 'WEEKLY', label: 'Weekly' },
+  {value: 'MONTHLY', label: 'Monthly'},
+  {value: 'BI_WEEKLY', label: 'Bi-Weekly'},
+  {value: 'WEEKLY', label: 'Weekly'},
 ];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -74,7 +66,7 @@ export default function NewLoanPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<LoanFormData>({
     resolver: zodResolver(loanFormSchema),
     defaultValues: {
@@ -134,7 +126,7 @@ export default function NewLoanPage() {
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Go back"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Apply for Loan</h1>
@@ -145,8 +137,9 @@ export default function NewLoanPage() {
         </div>
 
         {createLoanMutation.isError && (
-          <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+          <div
+            className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
             <p className="text-sm text-danger-700 dark:text-danger-400">
               Failed to create loan application. Please try again.
             </p>
@@ -184,10 +177,10 @@ export default function NewLoanPage() {
               Loan Amount *
             </label>
             <div className="relative">
-              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="number"
-                {...register('requestedAmount', { valueAsNumber: true })}
+                {...register('requestedAmount', {valueAsNumber: true})}
                 placeholder="Enter loan amount"
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.requestedAmount ? 'border-danger-500' : 'border-[var(--border-main)]'
@@ -207,7 +200,7 @@ export default function NewLoanPage() {
             <input
               type="number"
               step="0.1"
-              {...register('interestRate', { valueAsNumber: true })}
+              {...register('interestRate', {valueAsNumber: true})}
               placeholder="8.5"
               className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
                 errors.interestRate ? 'border-danger-500' : 'border-[var(--border-main)]'
@@ -224,10 +217,10 @@ export default function NewLoanPage() {
               Loan Term (months) *
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="number"
-                {...register('termMonths', { valueAsNumber: true })}
+                {...register('termMonths', {valueAsNumber: true})}
                 placeholder="12"
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
                   errors.termMonths ? 'border-danger-500' : 'border-[var(--border-main)]'
@@ -265,7 +258,7 @@ export default function NewLoanPage() {
               Purpose *
             </label>
             <div className="relative">
-              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]" />
+              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
                 {...register('purpose')}
                 placeholder="Describe the purpose of this loan..."
@@ -300,7 +293,7 @@ export default function NewLoanPage() {
           {monthlyPayment > 0 && (
             <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
               <div className="flex items-center gap-4 mb-4">
-                <Wallet className="h-6 w-6" />
+                <Wallet className="h-6 w-6"/>
                 <h3 className="text-xl font-semibold">Estimated Monthly Payment</h3>
               </div>
               <div className="text-4xl font-bold mb-2">
@@ -329,7 +322,7 @@ export default function NewLoanPage() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin"/>
                     Saving...
                   </>
                 ) : (

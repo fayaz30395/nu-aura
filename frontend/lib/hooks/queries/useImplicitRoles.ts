@@ -1,14 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { implicitRolesApi } from '@/lib/api/implicitRoles';
-import {
-  ImplicitRoleRule as _ImplicitRoleRule,
-  ImplicitRoleRuleRequest,
-  ImplicitUserRole as _ImplicitUserRole,
-  BulkRuleIdsRequest,
-} from '@/lib/types/core/implicitRoles';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {implicitRolesApi} from '@/lib/api/implicitRoles';
+import {BulkRuleIdsRequest, ImplicitRoleRuleRequest,} from '@/lib/types/core/implicitRoles';
 
 interface ListParams {
   page?: number;
@@ -59,7 +54,7 @@ export function useAffectedUsers(ruleId: string, page: number = 0, size: number 
   return useQuery({
     queryKey: [
       ...implicitRoleKeys.affectedUsers(ruleId),
-      { page, size },
+      {page, size},
     ] as const,
     queryFn: () => implicitRolesApi.getAffectedUsers(ruleId, page, size),
     enabled: !!ruleId,
@@ -79,7 +74,7 @@ export function useCreateImplicitRoleRule() {
     mutationFn: (data: ImplicitRoleRuleRequest) =>
       implicitRolesApi.createRule(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
       notifications.show({
         title: 'Success',
         message: 'Implicit role rule created successfully',
@@ -107,8 +102,8 @@ export function useUpdateImplicitRoleRule(ruleId: string) {
     mutationFn: (data: ImplicitRoleRuleRequest) =>
       implicitRolesApi.updateRule(ruleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rule(ruleId) });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rule(ruleId)});
       notifications.show({
         title: 'Success',
         message: 'Implicit role rule updated successfully',
@@ -135,7 +130,7 @@ export function useDeleteImplicitRoleRule() {
   return useMutation({
     mutationFn: (ruleId: string) => implicitRolesApi.deleteRule(ruleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
       notifications.show({
         title: 'Success',
         message: 'Implicit role rule deleted successfully',
@@ -162,8 +157,8 @@ export function useRecomputeAll() {
   return useMutation({
     mutationFn: () => implicitRolesApi.recomputeAll(),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.all });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.all});
       notifications.show({
         title: 'Recomputation Triggered',
         message: data.message || 'Implicit role recomputation has been triggered',
@@ -191,7 +186,7 @@ export function useBulkActivateRules() {
     mutationFn: (data: BulkRuleIdsRequest) =>
       implicitRolesApi.bulkActivate(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
       notifications.show({
         title: 'Success',
         message: `Activated ${data.totalProcessed} of ${data.totalRequested} rule(s)`,
@@ -219,7 +214,7 @@ export function useBulkDeactivateRules() {
     mutationFn: (data: BulkRuleIdsRequest) =>
       implicitRolesApi.bulkDeactivate(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: implicitRoleKeys.rules() });
+      queryClient.invalidateQueries({queryKey: implicitRoleKeys.rules()});
       notifications.show({
         title: 'Success',
         message: `Deactivated ${data.totalProcessed} of ${data.totalRequested} rule(s)`,

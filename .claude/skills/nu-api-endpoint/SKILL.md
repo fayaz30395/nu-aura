@@ -9,14 +9,17 @@ description: Use when asked to add a new API endpoint, add an action to an exist
 
 - User says "add endpoint for X", "new API for X", "add action to Y controller"
 - An existing controller needs a new method (e.g., add bulk import, add export, add custom action)
-- A new backend operation needs full wiring: controller method + service method + frontend service + hook
+- A new backend operation needs full wiring: controller method + service method + frontend service +
+  hook
 
 ## Input Required
 
 Ask the user for:
+
 1. **Controller name** — which existing controller to add to (e.g., `DepartmentController`)
 2. **HTTP method** — `GET`, `POST`, `PUT`, `PATCH`, `DELETE`
-3. **Path** — relative to the controller's base path (e.g., `/{id}/transfer`, `/bulk-import`, `/export`)
+3. **Path** — relative to the controller's base path (e.g., `/{id}/transfer`, `/bulk-import`,
+   `/export`)
 4. **Permission string** — the `Permission.*` constant to use (e.g., `Permission.DEPARTMENT_MANAGE`)
 5. **Description** — what the endpoint does (for Swagger docs)
 6. **Request body** (if POST/PUT/PATCH) — field names and types, or an existing DTO to reuse
@@ -27,6 +30,7 @@ Ask the user for:
 ### Step 1: Locate the Existing Controller
 
 Read the target controller file to understand:
+
 - The base `@RequestMapping` path (e.g., `/api/v1/departments`)
 - The injected service class
 - Existing methods (to avoid path conflicts)
@@ -107,6 +111,7 @@ public ResponseEntity<Void> {methodName}(
 ```
 
 **Mandatory annotations on every endpoint:**
+
 - `@RequiresPermission(Permission.{X})` — no exceptions, ever
 - `@Operation(summary = "...", description = "...")` — for Swagger
 - `@ApiResponses({...})` — document all possible HTTP status codes
@@ -159,7 +164,8 @@ public class {ActionName}Request {
 }
 ```
 
-**Response DTO** — only if the return shape differs from the entity's standard response DTO. If it is the same entity, reuse the existing `{EntityName}Response`.
+**Response DTO** — only if the return shape differs from the entity's standard response DTO. If it
+is the same entity, reuse the existing `{EntityName}Response`.
 
 ### Step 4: Add the Service Method
 
@@ -217,19 +223,22 @@ public {ResponseType} {methodName}({params}) {
 ```
 
 **Key rules for every service method:**
+
 - `UUID tenantId = TenantContext.requireCurrentTenant()` — FIRST line in every method
 - `@Transactional` for writes, `@Transactional(readOnly = true)` for reads
 - `@CacheEvict` on writes that change cached data
 - `@Cacheable` on reads that return stable data (with tenant-scoped key)
 - All repository calls must include `tenantId` — never query without tenant scoping
-- Use `ResourceNotFoundException` for 404, `BusinessException` for rule violations, `DuplicateResourceException` for conflicts
+- Use `ResourceNotFoundException` for 404, `BusinessException` for rule violations,
+  `DuplicateResourceException` for conflicts
 - Audit log sensitive operations (create, delete, status changes, permission changes)
 
 ### Step 5: Add Repository Method (if needed)
 
 If the service method requires a query that does not exist on the repository, add it.
 
-**File:** `backend/src/main/java/com/hrms/infrastructure/{module}/repository/{EntityName}Repository.java`
+**File:**
+`backend/src/main/java/com/hrms/infrastructure/{module}/repository/{EntityName}Repository.java`
 
 ```java
 // Spring Data derived query (simple cases)
@@ -249,6 +258,7 @@ boolean existsByNameAndTenantId(String name, UUID tenantId);
 ```
 
 **Key rules:**
+
 - Every query MUST include `tenantId` in the WHERE clause
 - Use `@Query` with JPQL for anything beyond simple derived queries
 - Never use native SQL unless there is a compelling performance reason
@@ -263,7 +273,8 @@ If the endpoint requires a permission that does not exist in `Permission.java`, 
 public static final String {PREFIX}_{ACTION} = "{PREFIX}:{ACTION}";
 ```
 
-Follow the naming convention: `MODULE_ACTION` for the constant name, `MODULE:ACTION` for the string value.
+Follow the naming convention: `MODULE_ACTION` for the constant name, `MODULE:ACTION` for the string
+value.
 
 ### Step 7: Wire the Frontend Service
 
@@ -284,6 +295,7 @@ Add the new method to the existing service object:
 ```
 
 **HTTP method mapping:**
+
 - `GET` -> `apiClient.get<T>(url, { params })`
 - `POST` -> `apiClient.post<T>(url, data)`
 - `PUT` -> `apiClient.put<T>(url, data)`
@@ -337,6 +349,7 @@ export function use{HookName}() {
 ```
 
 **Key rules:**
+
 - Query keys must be added to the factory to enable targeted invalidation
 - Mutations must invalidate all queries that could be affected by the change
 - Use `enabled` to prevent queries from firing with incomplete parameters

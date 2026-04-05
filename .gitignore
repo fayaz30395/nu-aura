@@ -87,3 +87,10 @@ LAYOUT_FILES_CREATED.txt
 deployment/kubernetes/secrets.yaml
 
 .fuse_hidden*
+
+# Ruflo / claude-flow runtime
+.claude-flow/
+.claude/agents/
+.claude/commands/
+.claude/helpers/
+.claude/skills/

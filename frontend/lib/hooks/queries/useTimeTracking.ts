@@ -1,28 +1,25 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { timeTrackingService } from '@/lib/services/hrms/time-tracking.service';
-import {
-  CreateTimeEntryRequest,
-  TimeEntryStatus,
-} from '@/lib/types/hrms/time-tracking';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {timeTrackingService} from '@/lib/services/hrms/time-tracking.service';
+import {CreateTimeEntryRequest, TimeEntryStatus,} from '@/lib/types/hrms/time-tracking';
+import {notifications} from '@mantine/notifications';
 
 export const timeTrackingKeys = {
   all: ['time-tracking'] as const,
   myEntries: (page: number, size: number) =>
-    [...timeTrackingKeys.all, 'my', { page, size }] as const,
+    [...timeTrackingKeys.all, 'my', {page, size}] as const,
   myEntriesRange: (startDate: string, endDate: string) =>
-    [...timeTrackingKeys.all, 'my-range', { startDate, endDate }] as const,
+    [...timeTrackingKeys.all, 'my-range', {startDate, endDate}] as const,
   allEntries: (page: number, size: number, status?: TimeEntryStatus) =>
-    [...timeTrackingKeys.all, 'all', { page, size, status }] as const,
+    [...timeTrackingKeys.all, 'all', {page, size, status}] as const,
   detail: (id: string) => [...timeTrackingKeys.all, 'detail', id] as const,
   byProject: (projectId: string) =>
     [...timeTrackingKeys.all, 'project', projectId] as const,
   pending: (page: number, size: number) =>
-    [...timeTrackingKeys.all, 'pending', { page, size }] as const,
+    [...timeTrackingKeys.all, 'pending', {page, size}] as const,
   summary: (startDate: string, endDate: string) =>
-    [...timeTrackingKeys.all, 'summary', { startDate, endDate }] as const,
+    [...timeTrackingKeys.all, 'summary', {startDate, endDate}] as const,
   projectSummary: (projectId: string) =>
     [...timeTrackingKeys.all, 'summary-project', projectId] as const,
 };
@@ -148,7 +145,7 @@ export function useCreateTimeEntry() {
     mutationFn: (data: CreateTimeEntryRequest) =>
       timeTrackingService.createEntry(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
     onError: (error: Error) => {
       notifications.show({
@@ -167,11 +164,11 @@ export function useUpdateTimeEntry() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateTimeEntryRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateTimeEntryRequest }) =>
       timeTrackingService.updateEntry(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
     onError: (error: Error) => {
       notifications.show({
@@ -192,7 +189,7 @@ export function useDeleteTimeEntry() {
   return useMutation({
     mutationFn: (id: string) => timeTrackingService.deleteEntry(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
     onError: (error: Error) => {
       notifications.show({
@@ -213,8 +210,8 @@ export function useSubmitTimeEntry() {
   return useMutation({
     mutationFn: (id: string) => timeTrackingService.submitEntry(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
   });
 }
@@ -229,7 +226,7 @@ export function useSubmitMultipleTimeEntries() {
     mutationFn: (entryIds: string[]) =>
       timeTrackingService.submitMultiple(entryIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
   });
 }
@@ -243,8 +240,8 @@ export function useApproveTimeEntry() {
   return useMutation({
     mutationFn: (id: string) => timeTrackingService.approveEntry(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
   });
 }
@@ -259,7 +256,7 @@ export function useApproveMultipleTimeEntries() {
     mutationFn: (entryIds: string[]) =>
       timeTrackingService.approveMultiple(entryIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
   });
 }
@@ -271,11 +268,11 @@ export function useRejectTimeEntry() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       timeTrackingService.rejectEntry(id, reason),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: timeTrackingKeys.all });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
   });
 }

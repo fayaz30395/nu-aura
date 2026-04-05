@@ -1,41 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelStatus, TravelType, TransportMode } from '@/lib/types/hrms/travel';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { formatCurrency } from '@/lib/utils';
-import { useTravelRequests } from '@/lib/hooks/queries/useTravel';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {TransportMode, TravelStatus, TravelType} from '@/lib/types/hrms/travel';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {formatCurrency} from '@/lib/utils';
+import {useTravelRequests} from '@/lib/hooks/queries/useTravel';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
+  AlertCircle,
+  Briefcase,
+  Building,
+  Calendar,
+  Car,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Filter,
+  GraduationCap,
+  Loader2,
+  MapPin,
+  MoreHorizontal,
   Plane,
   Plus,
   Search,
-  Filter,
-  Calendar,
-  MapPin,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Loader2,
-  ChevronRight,
   Train,
-  Car,
-  Briefcase,
-  GraduationCap,
   Users,
-  Building,
-  MoreHorizontal,
+  XCircle,
 } from 'lucide-react';
 
 export default function TravelPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TravelStatus | 'ALL'>('ALL');
   const [typeFilter, setTypeFilter] = useState<TravelType | 'ALL'>('ALL');
@@ -49,12 +49,12 @@ export default function TravelPage() {
   }, [isAuthenticated, hasHydrated, router]);
 
   const filters = {
-    ...(statusFilter !== 'ALL' && { status: statusFilter }),
-    ...(typeFilter !== 'ALL' && { travelType: typeFilter }),
-    ...(searchTerm && { search: searchTerm }),
+    ...(statusFilter !== 'ALL' && {status: statusFilter}),
+    ...(typeFilter !== 'ALL' && {travelType: typeFilter}),
+    ...(searchTerm && {search: searchTerm}),
   };
 
-  const { data, isLoading, error, refetch } = useTravelRequests(currentPage, 10, filters);
+  const {data, isLoading, error, refetch} = useTravelRequests(currentPage, 10, filters);
   const travelRequests = data?.content || [];
   const totalPages = data?.totalPages || 0;
   const totalElements = data?.totalElements || 0;
@@ -147,7 +147,7 @@ export default function TravelPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading travel requests...</p>
           </div>
         </div>
@@ -168,12 +168,12 @@ export default function TravelPage() {
               Manage travel requests and expenses
             </p>
           </div>
-          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div />}>
+          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/travel/new')}
               className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5"/>
               New Travel Request
             </button>
           </PermissionGate>
@@ -184,7 +184,7 @@ export default function TravelPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search by destination, purpose..."
@@ -199,7 +199,7 @@ export default function TravelPage() {
 
             {/* Status Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
                 value={statusFilter}
                 onChange={(e) => {
@@ -223,7 +223,7 @@ export default function TravelPage() {
 
             {/* Type Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
                 value={typeFilter}
                 onChange={(e) => {
@@ -251,9 +251,11 @@ export default function TravelPage() {
 
         {/* Travel Requests List */}
         {error ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-            <AlertCircle className="h-12 w-12 text-danger-500 mb-4" />
-            <p className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
+          <div
+            className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
+            <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
+            <p
+              className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
               onClick={() => void refetch()}
               className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -262,12 +264,14 @@ export default function TravelPage() {
             </button>
           </div>
         ) : travelRequests.length === 0 ? (
-          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<EmptyState icon={<Plane className="h-12 w-12" />} title="No Travel Requests" description="No travel requests available" />}>
+          <PermissionGate permission={Permissions.TRAVEL_CREATE}
+                          fallback={<EmptyState icon={<Plane className="h-12 w-12"/>} title="No Travel Requests"
+                                                description="No travel requests available"/>}>
             <EmptyState
-              icon={<Plane className="h-12 w-12" />}
+              icon={<Plane className="h-12 w-12"/>}
               title="No Travel Requests"
               description="Submit a travel request"
-              action={{ label: 'New Request', onClick: () => router.push('/travel/new') }}
+              action={{label: 'New Request', onClick: () => router.push('/travel/new')}}
             />
           </PermissionGate>
         ) : (
@@ -290,7 +294,7 @@ export default function TravelPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                            <TypeIcon className="h-5 w-5 text-white" />
+                            <TypeIcon className="h-5 w-5 text-white"/>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -300,7 +304,7 @@ export default function TravelPage() {
                               <span
                                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
                               >
-                                <StatusIcon className="h-3.5 w-3.5" />
+                                <StatusIcon className="h-3.5 w-3.5"/>
                                 {request.status.replace(/_/g, ' ')}
                               </span>
                             </div>
@@ -309,20 +313,22 @@ export default function TravelPage() {
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+                        <ChevronRight
+                          className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
                       </div>
 
                       {/* Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="flex items-start gap-4">
-                          <MapPin className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
+                          <MapPin className="h-5 w-5 text-[var(--text-muted)] mt-0.5"/>
                           <div>
                             <p className="text-caption">Route</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
                               {request.originCity} → {request.destinationCity}
                             </p>
                             {request.isInternational && (
-                              <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
+                              <span
+                                className="inline-block mt-1 text-xs px-2 py-0.5 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
                                 International
                               </span>
                             )}
@@ -330,7 +336,7 @@ export default function TravelPage() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <Calendar className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
+                          <Calendar className="h-5 w-5 text-[var(--text-muted)] mt-0.5"/>
                           <div>
                             <p className="text-caption">Duration</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -343,7 +349,7 @@ export default function TravelPage() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <TransportIcon className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
+                          <TransportIcon className="h-5 w-5 text-[var(--text-muted)] mt-0.5"/>
                           <div>
                             <p className="text-caption">Transport</p>
                             <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -358,7 +364,7 @@ export default function TravelPage() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <DollarSign className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
+                          <DollarSign className="h-5 w-5 text-[var(--text-muted)] mt-0.5"/>
                           <div>
                             <p className="text-caption">
                               Estimated Cost

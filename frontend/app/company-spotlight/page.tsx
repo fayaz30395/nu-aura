@@ -1,29 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AnimatePresence, motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Calendar, Edit2, ExternalLink, Lightbulb, Loader2, Plus, Trash2, X,} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {isAdmin} from '@/lib/utils';
+import {CreateSpotlightRequest, Spotlight, UpdateSpotlightRequest} from '@/lib/types/platform/spotlight';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
-  Lightbulb,
-  Plus,
-  Loader2,
-  Edit2,
-  Trash2,
-  X,
-  Calendar,
-  ExternalLink,
-} from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { isAdmin } from '@/lib/utils';
-import { Spotlight, CreateSpotlightRequest, UpdateSpotlightRequest } from '@/lib/types/platform/spotlight';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useAllSpotlights, useDeleteSpotlight, useCreateSpotlight, useUpdateSpotlight } from '@/lib/hooks/queries/useSpotlight';
-import { createLogger } from '@/lib/utils/logger';
+  useAllSpotlights,
+  useCreateSpotlight,
+  useDeleteSpotlight,
+  useUpdateSpotlight
+} from '@/lib/hooks/queries/useSpotlight';
+import {createLogger} from '@/lib/utils/logger';
 
 const logger = createLogger('CompanySpotlight');
 
@@ -70,14 +66,14 @@ const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
 };
 
 export default function CompanySpotlightPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const toast = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingSpotlight, setEditingSpotlight] = useState<Spotlight | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   // React Query - fetch spotlights
-  const { data: spotlightResponse, isLoading: loading } = useAllSpotlights(0, 100);
+  const {data: spotlightResponse, isLoading: loading} = useAllSpotlights(0, 100);
   const deleteSpotlightMutation = useDeleteSpotlight();
 
   // Sort by displayOrder
@@ -110,7 +106,7 @@ export default function CompanySpotlightPage() {
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <EmptyState
-              icon={<Lightbulb className="h-12 w-12" />}
+              icon={<Lightbulb className="h-12 w-12"/>}
               title="Access Denied"
               description="Only administrators can manage company spotlights."
             />
@@ -122,7 +118,7 @@ export default function CompanySpotlightPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
   };
 
   const getGradientClass = (gradient?: string) => {
@@ -141,14 +137,14 @@ export default function CompanySpotlightPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: -20}}
+            animate={{opacity: 1, y: 0}}
             className="mb-8"
           >
             <div className="row-between">
               <div>
                 <h1 className="text-2xl font-bold skeuo-emboss">
-                  <Lightbulb className="w-8 h-8 text-warning-500" />
+                  <Lightbulb className="w-8 h-8 text-warning-500"/>
                   Company Spotlight
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -162,7 +158,7 @@ export default function CompanySpotlightPage() {
                 }}
                 className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-5 h-5"/>
                 Add Slide
               </button>
             </div>
@@ -170,17 +166,17 @@ export default function CompanySpotlightPage() {
 
           {/* Spotlights List */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.1}}
           >
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-warning-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-warning-500"/>
               </div>
             ) : spotlights.length === 0 ? (
               <EmptyState
-                icon={<Lightbulb className="h-12 w-12" />}
+                icon={<Lightbulb className="h-12 w-12"/>}
                 title="No Spotlights"
                 description="No spotlight slides yet. Create one to get started."
               />
@@ -198,9 +194,9 @@ export default function CompanySpotlightPage() {
                   return (
                     <motion.div
                       key={spotlight.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      initial={{opacity: 0, y: 20}}
+                      animate={{opacity: 1, y: 0}}
+                      transition={{delay: index * 0.05}}
                       className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all border border-[var(--border-main)] overflow-hidden group"
                     >
                       <div className="flex gap-6 p-6">
@@ -237,12 +233,14 @@ export default function CompanySpotlightPage() {
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               {!spotlight.isActive && (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
+                                <span
+                                  className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                                   Inactive
                                 </span>
                               )}
                               {isDateRestricted && !isActive && spotlight.isActive && (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300">
+                                <span
+                                  className="px-2 py-1 text-xs font-medium rounded-full bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300">
                                   Scheduled
                                 </span>
                               )}
@@ -254,13 +252,13 @@ export default function CompanySpotlightPage() {
                             <span>Order: {spotlight.displayOrder}</span>
                             {spotlight.startDate && (
                               <span className="flex items-center gap-1">
-                                <Calendar className="w-3.5 h-3.5" />
+                                <Calendar className="w-3.5 h-3.5"/>
                                 From {formatDate(spotlight.startDate)}
                               </span>
                             )}
                             {spotlight.endDate && (
                               <span className="flex items-center gap-1">
-                                <Calendar className="w-3.5 h-3.5" />
+                                <Calendar className="w-3.5 h-3.5"/>
                                 Until {formatDate(spotlight.endDate)}
                               </span>
                             )}
@@ -271,7 +269,7 @@ export default function CompanySpotlightPage() {
                                 rel="noopener noreferrer"
                                 className="text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 flex items-center gap-1"
                               >
-                                <ExternalLink className="w-3.5 h-3.5" />
+                                <ExternalLink className="w-3.5 h-3.5"/>
                                 CTA Link
                               </a>
                             )}
@@ -286,7 +284,7 @@ export default function CompanySpotlightPage() {
                             title="Edit"
                             aria-label="Edit spotlight"
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <Edit2 className="w-4 h-4"/>
                           </button>
                           <button
                             onClick={() => setShowDeleteConfirm(spotlight.id)}
@@ -294,7 +292,7 @@ export default function CompanySpotlightPage() {
                             title="Delete"
                             aria-label="Delete spotlight"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4"/>
                           </button>
                         </div>
                       </div>
@@ -347,7 +345,7 @@ interface CreateSpotlightModalProps {
   onSuccess: () => void;
 }
 
-function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlightModalProps) {
+function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightModalProps) {
   const toast = useToast();
   const isEditing = !!spotlight;
   const [error, setError] = useState('');
@@ -358,7 +356,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
     register,
     watch,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<SpotlightFormData>({
     resolver: zodResolver(spotlightFormSchema),
     defaultValues: {
@@ -400,7 +398,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           startDate: data.startDate,
           endDate: data.endDate,
         };
-        await updateMutation.mutateAsync({ id: spotlight.id, data: updatePayload });
+        await updateMutation.mutateAsync({id: spotlight.id, data: updatePayload});
         toast.success('Spotlight Updated', 'The spotlight slide has been updated.');
       } else {
         const createPayload: CreateSpotlightRequest = {
@@ -420,7 +418,9 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
       onSuccess();
     } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} spotlight:`, err);
-      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} spotlight`;
+      const errorMessage = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} spotlight`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
     }
@@ -428,16 +428,16 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-3xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -451,7 +451,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
             className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-[var(--text-muted)]" />
+            <X className="w-5 h-5 text-[var(--text-muted)]"/>
           </button>
         </div>
 
@@ -537,7 +537,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   {...register('bgGradient')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                 >
-                  {Object.entries(GRADIENT_PRESETS).map(([key, { name }]) => (
+                  {Object.entries(GRADIENT_PRESETS).map(([key, {name}]) => (
                     <option key={key} value={key}>
                       {name}
                     </option>
@@ -553,7 +553,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                 <input
                   type="number"
                   min="0"
-                  {...register('displayOrder', { valueAsNumber: true })}
+                  {...register('displayOrder', {valueAsNumber: true})}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                 />
                 <p className="mt-1 text-caption">
@@ -587,7 +587,8 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
               {/* Error */}
               {error && (
-                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
                   {error}
                 </div>
               )}
@@ -611,7 +612,8 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                     </p>
                   )}
                   {ctaLabel && (
-                    <button className="mt-4 px-4 py-2 bg-[var(--bg-card)] text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <button
+                      className="mt-4 px-4 py-2 bg-[var(--bg-card)] text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       {ctaLabel}
                     </button>
                   )}
@@ -636,12 +638,12 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           >
             {createMutation.isPending || updateMutation.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin"/>
                 {isEditing ? 'Updating...' : 'Creating...'}
               </>
             ) : (
               <>
-                <Lightbulb className="w-4 h-4" />
+                <Lightbulb className="w-4 h-4"/>
                 {isEditing ? 'Update' : 'Create Slide'}
               </>
             )}

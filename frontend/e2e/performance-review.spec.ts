@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { loginAs } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {loginAs} from './fixtures/helpers';
 
 /**
  * Performance Review E2E Tests
@@ -9,19 +9,19 @@ import { loginAs } from './fixtures/helpers';
  */
 
 test.describe('Performance Dashboard', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
   });
 
-  test('should display performance page with heading', async ({ page }) => {
+  test('should display performance page with heading', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should display performance dashboard content', async ({ page }) => {
+  test('should display performance dashboard content', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
@@ -33,15 +33,15 @@ test.describe('Performance Dashboard', () => {
     expect(hasCards || hasTable || hasContent).toBe(true);
   });
 
-  test('should not show error on performance page load', async ({ page }) => {
+  test('should not show error on performance page load', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
 
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 
-  test('should display navigation tabs or sections', async ({ page }) => {
+  test('should display navigation tabs or sections', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
 
@@ -55,7 +55,7 @@ test.describe('Performance Dashboard', () => {
 
     let hasAnyTab = false;
     for (const tab of tabs) {
-      if (await tab.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await tab.isVisible({timeout: 3000}).catch(() => false)) {
         hasAnyTab = true;
         break;
       }
@@ -68,23 +68,23 @@ test.describe('Performance Dashboard', () => {
 });
 
 test.describe('Performance — Goals', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
   });
 
-  test('should navigate to goals or OKR page', async ({ page }) => {
+  test('should navigate to goals or OKR page', async ({page}) => {
     await page.goto('/okr');
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
 
     // Should not show error
     const errorMsg = page.locator('text=/Something went wrong|Error loading/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 
-  test('should display goals list or empty state', async ({ page }) => {
+  test('should display goals list or empty state', async ({page}) => {
     await page.goto('/okr');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
@@ -96,14 +96,14 @@ test.describe('Performance — Goals', () => {
     expect(hasTable || hasCards || hasEmpty || true).toBe(true);
   });
 
-  test('should display create goal button', async ({ page }) => {
+  test('should display create goal button', async ({page}) => {
     await page.goto('/okr');
     await page.waitForLoadState('networkidle');
 
     const createBtn = page.locator(
       'button:has-text("Create"), button:has-text("Add"), button:has-text("New")'
     ).first();
-    const hasCreate = await createBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     expect(hasCreate || true).toBe(true);
   });

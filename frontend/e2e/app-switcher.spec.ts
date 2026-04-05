@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Platform App Switcher E2E Tests
@@ -10,7 +10,7 @@ import { testUsers } from './fixtures/testData';
  */
 
 test.describe('App Switcher — Waffle Grid', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -18,22 +18,22 @@ test.describe('App Switcher — Waffle Grid', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('waffle grid trigger button is visible in the header', async ({ page }) => {
+  test('waffle grid trigger button is visible in the header', async ({page}) => {
     // The AppSwitcher renders a button with aria-label="Switch application"
-    const switcher = page.getByRole('button', { name: /switch application/i });
+    const switcher = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcher.isVisible().catch(() => false);
 
     if (!hasSwitcher) {
       // Fallback — look for the LayoutGrid icon wrapper in the header
-      const headerBtn = page.locator('header button').filter({ has: page.locator('svg') }).first();
+      const headerBtn = page.locator('header button').filter({has: page.locator('svg')}).first();
       await expect(headerBtn).toBeVisible();
     } else {
       await expect(switcher).toBeVisible();
     }
   });
 
-  test('clicking switcher opens the waffle grid dropdown', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('clicking switcher opens the waffle grid dropdown', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -49,8 +49,8 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('waffle grid shows all four NU-AURA apps', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('waffle grid shows all four NU-AURA apps', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -69,12 +69,12 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('current active app is visually indicated in the switcher', async ({ page }) => {
+  test('current active app is visually indicated in the switcher', async ({page}) => {
     // Navigate to an HRMS route so HRMS is the active app
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
 
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -93,8 +93,8 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('can navigate to NU-Hire via app switcher', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('can navigate to NU-Hire via app switcher', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -121,8 +121,8 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('can navigate to NU-Grow via app switcher', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('can navigate to NU-Grow via app switcher', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -147,8 +147,8 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('pressing Escape closes the app switcher dropdown', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('pressing Escape closes the app switcher dropdown', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -171,14 +171,14 @@ test.describe('App Switcher — Waffle Grid', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('NU-Fluence shows locked or coming-soon indicator for limited users', async ({ page }) => {
+  test('NU-Fluence shows locked or coming-soon indicator for limited users', async ({page}) => {
     // Log in as a regular employee (limited permissions)
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
     await page.waitForURL('**/dashboard');
 
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -202,7 +202,7 @@ test.describe('App Switcher — Waffle Grid', () => {
 });
 
 test.describe('App Switcher — Cross-App Navigation Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -210,7 +210,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('HRMS to Hire: sidebar updates to show recruitment items', async ({ page }) => {
+  test('HRMS to Hire: sidebar updates to show recruitment items', async ({page}) => {
     // Start on HRMS route
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
@@ -220,7 +220,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     expect(hasEmployeesLink || true).toBe(true);
 
     // Switch to NU-Hire via app switcher
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -251,13 +251,13 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('Hire to Grow: sidebar updates to show performance items', async ({ page }) => {
+  test('Hire to Grow: sidebar updates to show performance items', async ({page}) => {
     // Navigate to a Hire route first
     await page.goto('/recruitment');
     await page.waitForLoadState('networkidle');
 
     // Switch to NU-Grow
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -287,13 +287,13 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('Grow back to HRMS: sidebar reverts to HR management items', async ({ page }) => {
+  test('Grow back to HRMS: sidebar reverts to HR management items', async ({page}) => {
     // Start on Grow route
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
 
     // Switch back to NU-HRMS
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -319,8 +319,8 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
     expect(hasSwitcher || true).toBe(true);
   });
 
-  test('full round-trip: HRMS -> Hire -> Grow -> HRMS preserves auth', async ({ page }) => {
-    const switcherBtn = page.getByRole('button', { name: /switch application/i });
+  test('full round-trip: HRMS -> Hire -> Grow -> HRMS preserves auth', async ({page}) => {
+    const switcherBtn = page.getByRole('button', {name: /switch application/i});
     const hasSwitcher = await switcherBtn.isVisible().catch(() => false);
 
     if (hasSwitcher) {
@@ -337,7 +337,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
       expect(page.url()).not.toContain('/auth/login');
 
       // Hire -> Grow
-      const switcherBtn2 = page.getByRole('button', { name: /switch application/i });
+      const switcherBtn2 = page.getByRole('button', {name: /switch application/i});
       if (await switcherBtn2.isVisible().catch(() => false)) {
         await switcherBtn2.click();
         await page.waitForTimeout(400);
@@ -351,7 +351,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
       expect(page.url()).not.toContain('/auth/login');
 
       // Grow -> HRMS
-      const switcherBtn3 = page.getByRole('button', { name: /switch application/i });
+      const switcherBtn3 = page.getByRole('button', {name: /switch application/i});
       if (await switcherBtn3.isVisible().catch(() => false)) {
         await switcherBtn3.click();
         await page.waitForTimeout(400);

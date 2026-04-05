@@ -1,16 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { rolesApi, permissionsApi } from '@/lib/api/roles';
-import { usersApi } from '@/lib/api/users';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {permissionsApi, rolesApi} from '@/lib/api/roles';
+import {usersApi} from '@/lib/api/users';
 import {
-  CreateRoleRequest,
-  UpdateRoleRequest,
   AssignPermissionsRequest,
   AssignPermissionsWithScopeRequest,
+  CreateRoleRequest,
   UpdatePermissionScopeRequest,
-  Permission as _Permission,
+  UpdateRoleRequest,
 } from '@/lib/types/core/roles';
 
 // Query key factory
@@ -107,7 +106,7 @@ export function useCreateRole() {
   return useMutation({
     mutationFn: (data: CreateRoleRequest) => rolesApi.createRole(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
       notifications.show({
         title: 'Success',
         message: 'Role created successfully',
@@ -133,8 +132,8 @@ export function useUpdateRole(roleId: string) {
   return useMutation({
     mutationFn: (data: UpdateRoleRequest) => rolesApi.updateRole(roleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Role updated successfully',
@@ -160,7 +159,7 @@ export function useDeleteRole() {
   return useMutation({
     mutationFn: (roleId: string) => rolesApi.deleteRole(roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
       notifications.show({
         title: 'Success',
         message: 'Role deleted successfully',
@@ -187,8 +186,8 @@ export function useAssignPermissions(roleId: string) {
     mutationFn: (data: AssignPermissionsRequest) =>
       rolesApi.assignPermissions(roleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Permissions assigned successfully',
@@ -215,8 +214,8 @@ export function useAddPermissions(roleId: string) {
     mutationFn: (data: AssignPermissionsRequest) =>
       rolesApi.addPermissions(roleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Permissions added successfully',
@@ -243,8 +242,8 @@ export function useRemovePermissions(roleId: string) {
     mutationFn: (data: AssignPermissionsRequest) =>
       rolesApi.removePermissions(roleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Permissions removed successfully',
@@ -271,8 +270,8 @@ export function useAssignPermissionsWithScope(roleId: string) {
     mutationFn: (data: AssignPermissionsWithScopeRequest) =>
       rolesApi.assignPermissionsWithScope(roleId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Permissions with scope assigned successfully',
@@ -296,11 +295,11 @@ export function useAssignPermissionsWithScope(roleId: string) {
 export function useUpdatePermissionScope(roleId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ permissionCode, data }: { permissionCode: string; data: UpdatePermissionScopeRequest }) =>
+    mutationFn: ({permissionCode, data}: { permissionCode: string; data: UpdatePermissionScopeRequest }) =>
       rolesApi.updatePermissionScope(roleId, permissionCode, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: roleKeys.detail(roleId) });
+      queryClient.invalidateQueries({queryKey: roleKeys.lists()});
+      queryClient.invalidateQueries({queryKey: roleKeys.detail(roleId)});
       notifications.show({
         title: 'Success',
         message: 'Permission scope updated successfully',
@@ -327,7 +326,7 @@ export function useAssignRolesToUser(userId: string) {
     mutationFn: (roleCodes: string[]) =>
       usersApi.assignRoles(userId, roleCodes),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: roleKeys.users() });
+      queryClient.invalidateQueries({queryKey: roleKeys.users()});
       notifications.show({
         title: 'Success',
         message: 'User roles updated successfully',

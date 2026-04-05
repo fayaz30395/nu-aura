@@ -1,23 +1,23 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import {
+  Building2,
+  Calendar,
+  ChevronRight,
+  Clock,
+  Layers,
+  MapPin,
+  Palmtree,
   Settings,
   Shield,
-  Users,
-  Calendar,
-  Clock,
-  MapPin,
-  Building2,
-  ChevronRight,
-  Palmtree,
   UserCog,
-  Layers,
+  Users,
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -108,8 +108,8 @@ const settingsCards: SettingsCard[] = [
 
 export default function AdminSettingsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -132,8 +132,9 @@ export default function AdminSettingsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-          <Settings className="h-6 w-6 text-white" />
+        <div
+          className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+          <Settings className="h-6 w-6 text-white"/>
         </div>
         <div>
           <h1 className="text-2xl font-bold skeuo-emboss">
@@ -158,11 +159,13 @@ export default function AdminSettingsPage() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className={`p-4 rounded-xl ${card.bgColor}`}>
-                    <Icon className={`h-6 w-6 ${card.color}`} />
+                    <Icon className={`h-6 w-6 ${card.color}`}/>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                  <ChevronRight
+                    className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
                 </div>
-                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <h3
+                  className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {card.title}
                 </h3>
                 <p className="mt-1 text-body-secondary">
@@ -178,7 +181,7 @@ export default function AdminSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
+            <Users className="h-5 w-5"/>
             Quick Actions
           </CardTitle>
           <CardDescription>Common administrative tasks</CardDescription>
@@ -190,7 +193,8 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <Calendar className="h-5 w-5 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                <Calendar
+                  className="h-5 w-5 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
@@ -203,7 +207,8 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Users className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                <Users
+                  className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Employees</p>
@@ -216,7 +221,8 @@ export default function AdminSettingsPage() {
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+                <Building2
+                  className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Departments</p>

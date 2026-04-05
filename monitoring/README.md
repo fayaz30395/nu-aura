@@ -4,10 +4,10 @@ Prometheus + Grafana + AlertManager observability stack for the NU-AURA platform
 
 ## Components
 
-| Component | Port | Purpose |
-|-----------|------|---------|
-| Prometheus | 9090 | Metrics scraping and storage |
-| Grafana | 3001 | Dashboards and visualization |
+| Component    | Port | Purpose                        |
+|--------------|------|--------------------------------|
+| Prometheus   | 9090 | Metrics scraping and storage   |
+| Grafana      | 3001 | Dashboards and visualization   |
 | AlertManager | 9093 | Alert routing and notification |
 
 ## Quick Start
@@ -25,6 +25,7 @@ docker-compose up -d
 ## Prometheus
 
 ### Scrape Targets
+
 - Spring Boot Actuator (`localhost:8080/actuator/prometheus`)
 - Node Exporter (optional, `localhost:9100`)
 - Redis Exporter (optional, `localhost:9121`)
@@ -33,12 +34,13 @@ docker-compose up -d
 
 **28 alert rules** in `prometheus/rules/`:
 
-| Category | Count | Examples |
-|----------|-------|---------|
-| Application | 9 | High error rate, high latency, app down, failed logins |
-| SLO | 19 | Availability, latency percentiles, error budgets |
+| Category    | Count | Examples                                               |
+|-------------|-------|--------------------------------------------------------|
+| Application | 9     | High error rate, high latency, app down, failed logins |
+| SLO         | 19    | Availability, latency percentiles, error budgets       |
 
 Key alerts:
+
 - API error rate > 5% for 5 minutes
 - API latency p95 > 500ms
 - Database connection pool > 90%
@@ -82,6 +84,7 @@ hikaricp_connections_active
 ## AlertManager
 
 Configured in `alertmanager/alertmanager.yml`:
+
 - Severity-based routing (critical → immediate, warning → grouped)
 - Email and Slack receivers (configure in alertmanager.yml)
 - Inhibition rules to prevent alert storms

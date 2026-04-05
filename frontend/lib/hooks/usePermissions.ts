@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
-import { useAuth } from './useAuth';
+import {useCallback, useMemo} from 'react';
+import {useAuth} from './useAuth';
 
 /**
  * Permission constants matching backend Permission.java
@@ -599,7 +599,7 @@ interface UsePermissionsReturn {
  * if (hasAnyRole(Roles.HR_ADMIN, Roles.HR_MANAGER)) { ... }
  */
 export function usePermissions(): UsePermissionsReturn {
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
 
   // Extract all permission codes from user's roles
   // Normalizes app-prefixed permissions (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")

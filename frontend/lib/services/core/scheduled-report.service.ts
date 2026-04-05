@@ -1,8 +1,5 @@
-import { apiClient } from '../../api/client';
-import {
-  ScheduledReport,
-  ScheduledReportRequest,
-} from '../../types/core/analytics';
+import {apiClient} from '../../api/client';
+import {ScheduledReport, ScheduledReportRequest,} from '../../types/core/analytics';
 
 interface PaginatedResponse<T> {
   content: T[];
@@ -34,7 +31,7 @@ export const scheduledReportService = {
   // Get all scheduled reports with pagination
   getAll: async (page = 0, size = 20): Promise<PaginatedResponse<ScheduledReport>> => {
     const response = await apiClient.get<PaginatedResponse<ScheduledReport>>('/scheduled-reports', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },

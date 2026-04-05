@@ -1,31 +1,32 @@
-import { describe, it, expect } from 'vitest';
+// Import vi for mocking
+import {describe, expect, it, vi} from 'vitest';
 import {
-  toBadgeVariant,
-  isValidGender,
-  isValidEmploymentType,
-  isValidEmployeeLevel,
-  isValidEmployeeStatus,
-  isValidJobRole,
-  toGender,
-  toEmploymentType,
-  toEmployeeLevel,
-  toEmployeeStatus,
-  toJobRole,
-  isPageResponse,
+  assertDefined,
+  createSelectHandler,
   extractContent,
   extractPaginationMeta,
-  isValidPriority,
-  toPriority,
-  isValidTaskStatus,
-  toTaskStatus,
-  assertDefined,
-  narrowResponse,
-  isAxiosError,
   is401Error,
   is403Error,
+  isAxiosError,
   isNetworkError,
-  createSelectHandler,
+  isPageResponse,
+  isValidEmployeeLevel,
+  isValidEmployeeStatus,
+  isValidEmploymentType,
+  isValidGender,
+  isValidJobRole,
+  isValidPriority,
+  isValidTaskStatus,
+  narrowResponse,
   type PageResponse,
+  toBadgeVariant,
+  toEmployeeLevel,
+  toEmployeeStatus,
+  toEmploymentType,
+  toGender,
+  toJobRole,
+  toPriority,
+  toTaskStatus,
 } from '../type-guards';
 
 describe('type-guards', () => {
@@ -180,7 +181,7 @@ describe('type-guards', () => {
 
     it('isPageResponse rejects invalid responses', () => {
       expect(isPageResponse(['a', 'b'])).toBe(false);
-      expect(isPageResponse({ content: 'not-array' })).toBe(false);
+      expect(isPageResponse({content: 'not-array'})).toBe(false);
       expect(isPageResponse(null)).toBe(false);
       expect(isPageResponse(undefined)).toBe(false);
     });
@@ -318,12 +319,12 @@ describe('type-guards', () => {
 
   describe('Axios error type guards', () => {
     it('isAxiosError detects axios-like errors', () => {
-      const axiosError = { response: { status: 400 } };
+      const axiosError = {response: {status: 400}};
       expect(isAxiosError(axiosError)).toBe(true);
     });
 
     it('isAxiosError detects errors with message', () => {
-      const error = { message: 'Network error' };
+      const error = {message: 'Network error'};
       expect(isAxiosError(error)).toBe(true);
     });
 
@@ -335,27 +336,27 @@ describe('type-guards', () => {
     });
 
     it('is401Error detects 401 errors', () => {
-      const error = { response: { status: 401 } };
+      const error = {response: {status: 401}};
       expect(is401Error(error)).toBe(true);
     });
 
     it('is401Error rejects non-401 errors', () => {
-      expect(is401Error({ response: { status: 403 } })).toBe(false);
-      expect(is401Error({ message: 'error' })).toBe(false);
+      expect(is401Error({response: {status: 403}})).toBe(false);
+      expect(is401Error({message: 'error'})).toBe(false);
     });
 
     it('is403Error detects 403 errors', () => {
-      const error = { response: { status: 403 } };
+      const error = {response: {status: 403}};
       expect(is403Error(error)).toBe(true);
     });
 
     it('isNetworkError detects missing response', () => {
-      const error = { message: 'Network failed' };
+      const error = {message: 'Network failed'};
       expect(isNetworkError(error)).toBe(true);
     });
 
     it('isNetworkError rejects errors with response', () => {
-      expect(isNetworkError({ response: { status: 500 } })).toBe(false);
+      expect(isNetworkError({response: {status: 500}})).toBe(false);
     });
   });
 
@@ -363,7 +364,7 @@ describe('type-guards', () => {
     it('calls setter with valid value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B', 'C'], setter);
-      const event = { target: { value: 'B' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
+      const event = {target: {value: 'B'}} as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('B');
     });
@@ -371,7 +372,7 @@ describe('type-guards', () => {
     it('calls setter with undefined for empty value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter);
-      const event = { target: { value: '' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
+      const event = {target: {value: ''}} as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith(undefined);
     });
@@ -379,7 +380,7 @@ describe('type-guards', () => {
     it('uses default value for invalid input', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter, 'A');
-      const event = { target: { value: 'INVALID' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
+      const event = {target: {value: 'INVALID'}} as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('A');
     });
@@ -387,12 +388,10 @@ describe('type-guards', () => {
     it('handles empty string with default value', () => {
       const setter = vi.fn();
       const handler = createSelectHandler(['A', 'B'], setter, 'B');
-      const event = { target: { value: '' } } as unknown as React.ChangeEvent<HTMLSelectElement>;
+      const event = {target: {value: ''}} as unknown as React.ChangeEvent<HTMLSelectElement>;
       handler(event);
       expect(setter).toHaveBeenCalledWith('B');
     });
   });
 });
 
-// Import vi for mocking
-import { vi } from 'vitest';

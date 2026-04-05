@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { MultiSelect } from '@mantine/core';
-import { ConnectorCapabilities } from '@/lib/types/core/connector';
+import {MultiSelect} from '@mantine/core';
+import {ConnectorCapabilities} from '@/lib/types/core/connector';
 
 const AVAILABLE_EVENTS = [
   'employee.created',
@@ -31,11 +31,11 @@ interface EventSubscriptionPickerProps {
 }
 
 export function EventSubscriptionPicker({
-  capabilities,
-  selectedEvents,
-  onChange,
-  disabled,
-}: EventSubscriptionPickerProps) {
+                                          capabilities,
+                                          selectedEvents,
+                                          onChange,
+                                          disabled,
+                                        }: EventSubscriptionPickerProps) {
   // Filter available events to only those supported by this connector
   const supportedEvents = AVAILABLE_EVENTS.filter((event) =>
     capabilities.supportedEvents.some((supported) =>
@@ -45,7 +45,8 @@ export function EventSubscriptionPicker({
 
   if (supportedEvents.length === 0) {
     return (
-      <div className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
+      <div
+        className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
         <p className="text-sm text-warning-700 dark:text-warning-300">
           No events available for this connector.
         </p>

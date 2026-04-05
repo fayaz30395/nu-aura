@@ -1,70 +1,70 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
   ClipboardList,
+  Edit,
+  Eye,
+  FileText,
+  Pause,
+  Play,
   Plus,
   Search,
-  Eye,
-  Edit,
-  Trash2,
-  Play,
-  Pause,
-  CheckCircle,
-  Users,
-  Calendar,
-  BarChart3,
-  FileText,
   Send,
-  AlertCircle,
+  Trash2,
+  Users,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
+  ConfirmDialog,
   Input,
-  Select,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  Badge,
+  ModalHeader,
+  Select,
   Textarea,
-  ConfirmDialog,
 } from '@/components/ui';
-import type { Survey, SurveyRequest } from '@/lib/types/grow/survey';
-import { SurveyType, SurveyStatus } from '@/lib/types/grow/survey';
-import { toBadgeVariant } from '@/lib/utils/type-guards';
+import type {Survey, SurveyRequest} from '@/lib/types/grow/survey';
+import {SurveyStatus, SurveyType} from '@/lib/types/grow/survey';
+import {toBadgeVariant} from '@/lib/utils/type-guards';
 import {
   useAllSurveys,
-  useCreateSurvey,
-  useUpdateSurvey,
-  useLaunchSurvey,
   useCompleteSurvey,
+  useCreateSurvey,
   useDeleteSurvey,
+  useLaunchSurvey,
+  useUpdateSurvey,
 } from '@/lib/hooks/queries/useSurveys';
 
 const surveyTypeOptions = [
-  { value: SurveyType.ENGAGEMENT, label: 'Engagement' },
-  { value: SurveyType.SATISFACTION, label: 'Satisfaction' },
-  { value: SurveyType.PULSE, label: 'Pulse' },
-  { value: SurveyType.EXIT, label: 'Exit' },
-  { value: SurveyType.FEEDBACK, label: 'Feedback' },
-  { value: SurveyType.CUSTOM, label: 'Custom' },
+  {value: SurveyType.ENGAGEMENT, label: 'Engagement'},
+  {value: SurveyType.SATISFACTION, label: 'Satisfaction'},
+  {value: SurveyType.PULSE, label: 'Pulse'},
+  {value: SurveyType.EXIT, label: 'Exit'},
+  {value: SurveyType.FEEDBACK, label: 'Feedback'},
+  {value: SurveyType.CUSTOM, label: 'Custom'},
 ];
 
 const statusOptions = [
-  { value: SurveyStatus.DRAFT, label: 'Draft' },
-  { value: SurveyStatus.ACTIVE, label: 'Active' },
-  { value: SurveyStatus.PAUSED, label: 'Paused' },
-  { value: SurveyStatus.COMPLETED, label: 'Completed' },
-  { value: SurveyStatus.ARCHIVED, label: 'Archived' },
+  {value: SurveyStatus.DRAFT, label: 'Draft'},
+  {value: SurveyStatus.ACTIVE, label: 'Active'},
+  {value: SurveyStatus.PAUSED, label: 'Paused'},
+  {value: SurveyStatus.COMPLETED, label: 'Completed'},
+  {value: SurveyStatus.ARCHIVED, label: 'Archived'},
 ];
 
 // Form validation schema
@@ -83,7 +83,7 @@ const surveyFormSchema = z.object({
 type SurveyFormData = z.infer<typeof surveyFormSchema>;
 
 export default function SurveysPage() {
-  const { data: surveysResponse, isLoading, isError, refetch } = useAllSurveys();
+  const {data: surveysResponse, isLoading, isError, refetch} = useAllSurveys();
   const surveys = surveysResponse?.content || [];
 
   const createMutation = useCreateSurvey();
@@ -108,7 +108,7 @@ export default function SurveysPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<SurveyFormData>({
     resolver: zodResolver(surveyFormSchema),
     defaultValues: {
@@ -169,7 +169,7 @@ export default function SurveysPage() {
     } as SurveyRequest;
 
     if (editingSurvey) {
-      updateMutation.mutate({ surveyId: editingSurvey.id, data: submitData });
+      updateMutation.mutate({surveyId: editingSurvey.id, data: submitData});
     } else {
       createMutation.mutate(submitData);
     }
@@ -184,7 +184,7 @@ export default function SurveysPage() {
     // Pause uses updateStatus with PAUSED status
     const survey = surveys.find(s => s.id === surveyId);
     if (survey) {
-      updateMutation.mutate({ surveyId, data: { ...survey, status: SurveyStatus.PAUSED } as SurveyRequest });
+      updateMutation.mutate({surveyId, data: {...survey, status: SurveyStatus.PAUSED} as SurveyRequest});
     }
   };
 
@@ -215,8 +215,8 @@ export default function SurveysPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Surveys' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Surveys'},
   ];
 
   return (
@@ -234,7 +234,7 @@ export default function SurveysPage() {
           </div>
           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
             <Button onClick={handleCreateSurvey}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4"/>
               Create Survey
             </Button>
           </PermissionGate>
@@ -246,7 +246,7 @@ export default function SurveysPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <ClipboardList className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Surveys</p>
@@ -259,7 +259,7 @@ export default function SurveysPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Play className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Active</p>
@@ -272,7 +272,7 @@ export default function SurveysPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
-                  <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
+                  <FileText className="h-6 w-6 text-[var(--text-secondary)]"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Drafts</p>
@@ -285,7 +285,7 @@ export default function SurveysPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600" />
+                  <CheckCircle className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Completed</p>
@@ -298,7 +298,7 @@ export default function SurveysPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Users className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Users className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Responses</p>
@@ -314,7 +314,7 @@ export default function SurveysPage() {
           <CardContent className="p-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"/>
                 <Input
                   type="text"
                   placeholder="Search surveys..."
@@ -357,8 +357,9 @@ export default function SurveysPage() {
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent"></div>
           </div>
         ) : isError ? (
-          <div className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
-            <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2" />
+          <div
+            className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
+            <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2"/>
             <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load surveys.</p>
             <button
               onClick={() => refetch()}
@@ -370,7 +371,7 @@ export default function SurveysPage() {
         ) : filteredSurveys.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <ClipboardList className="h-12 w-12 text-[var(--text-muted)]" />
+              <ClipboardList className="h-12 w-12 text-[var(--text-muted)]"/>
               <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                 No surveys found
               </p>
@@ -379,7 +380,7 @@ export default function SurveysPage() {
               </p>
               <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                 <Button onClick={handleCreateSurvey} className="mt-4">
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className="mr-2 h-4 w-4"/>
                   Create Survey
                 </Button>
               </PermissionGate>
@@ -420,7 +421,7 @@ export default function SurveysPage() {
                     <div className="space-y-2 text-sm">
                       {survey.startDate && (
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-4 w-4"/>
                           <span>
                             {new Date(survey.startDate).toLocaleDateString()}
                             {survey.endDate && ` - ${new Date(survey.endDate).toLocaleDateString()}`}
@@ -428,23 +429,23 @@ export default function SurveysPage() {
                         </div>
                       )}
                       <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                        <Users className="h-4 w-4" />
+                        <Users className="h-4 w-4"/>
                         <span>{survey.totalResponses || 0} responses</span>
                       </div>
                       <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                        <BarChart3 className="h-4 w-4" />
+                        <BarChart3 className="h-4 w-4"/>
                         <span>Target: {survey.targetAudience || 'All Employees'}</span>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-main)]">
                       <Button size="sm" variant="outline" onClick={() => handleViewSurvey(survey)}>
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4"/>
                       </Button>
                       {survey.status === SurveyStatus.DRAFT && (
                         <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                           <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
-                            <Send className="h-4 w-4" />
+                            <Send className="h-4 w-4"/>
                           </Button>
                         </PermissionGate>
                       )}
@@ -452,12 +453,12 @@ export default function SurveysPage() {
                         <>
                           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                             <Button size="sm" variant="outline" onClick={() => handlePauseSurvey(survey.id)}>
-                              <Pause className="h-4 w-4" />
+                              <Pause className="h-4 w-4"/>
                             </Button>
                           </PermissionGate>
                           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                             <Button size="sm" variant="outline" onClick={() => handleCompleteSurvey(survey.id)}>
-                              <CheckCircle className="h-4 w-4" />
+                              <CheckCircle className="h-4 w-4"/>
                             </Button>
                           </PermissionGate>
                         </>
@@ -465,13 +466,13 @@ export default function SurveysPage() {
                       {survey.status === SurveyStatus.PAUSED && (
                         <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                           <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
-                            <Play className="h-4 w-4" />
+                            <Play className="h-4 w-4"/>
                           </Button>
                         </PermissionGate>
                       )}
                       <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                         <Button size="sm" variant="outline" onClick={() => handleEditSurvey(survey)}>
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4"/>
                         </Button>
                       </PermissionGate>
                       <PermissionGate permission={Permissions.SURVEY_MANAGE}>
@@ -481,7 +482,7 @@ export default function SurveysPage() {
                           className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                           onClick={() => handleDeleteSurvey(survey.id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4"/>
                         </Button>
                       </PermissionGate>
                     </div>
@@ -743,7 +744,7 @@ export default function SurveysPage() {
                   handleLaunchSurvey(selectedSurvey.id);
                   setIsViewModalOpen(false);
                 }}>
-                  <Send className="mr-2 h-4 w-4" />
+                  <Send className="mr-2 h-4 w-4"/>
                   Launch Survey
                 </Button>
               </PermissionGate>

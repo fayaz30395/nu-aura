@@ -1,51 +1,46 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
 import {
-  Clock,
-  Users,
-  TrendingUp,
-  DollarSign,
-  ChevronDown,
-  Download,
-  ArrowUpRight,
-  ArrowDownRight,
-  Building2,
-  FolderOpen,
-  User,
-  Search,
-  RefreshCw,
   AlertCircle,
+  ArrowDownRight,
+  ArrowUpRight,
+  Building2,
+  ChevronDown,
+  Clock,
+  DollarSign,
+  Download,
+  FolderOpen,
+  RefreshCw,
+  Search,
+  TrendingUp,
+  User,
+  Users,
 } from 'lucide-react';
+import {Card, CardContent, CardHeader, CardTitle,} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
-import {
-  getUtilizationColor,
-  getUtilizationBgColor,
+  formatCurrency,
   formatHours,
   formatPercentage,
-  formatCurrency,
+  getUtilizationBgColor,
+  getUtilizationColor,
 } from '@/lib/types/hrms/utilization';
-import { getDateRanges } from '@/lib/services/hrms/utilization.service';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useUtilizationDashboard } from '@/lib/hooks/queries/useReports';
+import {getDateRanges} from '@/lib/services/hrms/utilization.service';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUtilizationDashboard} from '@/lib/hooks/queries/useReports';
 
 type DateRangeKey = 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'thisQuarter' | 'thisYear' | 'custom';
 
 export default function UtilizationReportsPage() {
 
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {
@@ -65,12 +60,12 @@ export default function UtilizationReportsPage() {
 
   const currentRange = useMemo(() => {
     if (selectedDateRange === 'custom') {
-      return { startDate: customStartDate, endDate: customEndDate, label: 'Custom Range' };
+      return {startDate: customStartDate, endDate: customEndDate, label: 'Custom Range'};
     }
     return dateRanges[selectedDateRange];
   }, [selectedDateRange, customStartDate, customEndDate, dateRanges]);
 
-  const { data: dashboardData, isLoading: loading, error, refetch } = useUtilizationDashboard(
+  const {data: dashboardData, isLoading: loading, error, refetch} = useUtilizationDashboard(
     {
       startDate: currentRange.startDate,
       endDate: currentRange.endDate,
@@ -107,17 +102,15 @@ export default function UtilizationReportsPage() {
   }
 
 
-
-
   const StatCard = ({
-    title,
-    value,
-    subValue,
-    icon: Icon,
-    trend,
-    trendDirection,
-    color,
-  }: {
+                      title,
+                      value,
+                      subValue,
+                      icon: Icon,
+                      trend,
+                      trendDirection,
+                      color,
+                    }: {
     title: string;
     value: string | number;
     subValue?: string;
@@ -138,13 +131,13 @@ export default function UtilizationReportsPage() {
             {trend && (
               <div className="flex items-center gap-1">
                 {trendDirection === 'up' ? (
-                  <ArrowUpRight className="h-4 w-4 text-success-500" />
+                  <ArrowUpRight className="h-4 w-4 text-success-500"/>
                 ) : (
-                  <ArrowDownRight className="h-4 w-4 text-danger-500" />
+                  <ArrowDownRight className="h-4 w-4 text-danger-500"/>
                 )}
                 <span
                   className={`text-sm font-medium ${trendDirection === 'up' ? 'text-success-500' : 'text-danger-500'
-                    }`}
+                  }`}
                 >
                   {trend}
                 </span>
@@ -152,7 +145,7 @@ export default function UtilizationReportsPage() {
             )}
           </div>
           <div className={`p-4 rounded-xl ${color}`}>
-            <Icon className="h-6 w-6 text-white" />
+            <Icon className="h-6 w-6 text-white"/>
           </div>
         </div>
       </CardContent>
@@ -160,8 +153,7 @@ export default function UtilizationReportsPage() {
   );
 
 
-
-  const UtilizationBar = ({ rate }: { rate: number }) => (
+  const UtilizationBar = ({rate}: { rate: number }) => (
     <div className="flex items-center gap-4">
       <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
@@ -169,8 +161,8 @@ export default function UtilizationReportsPage() {
             rate >= 75 ? 'bg-accent-500' :
               rate >= 50 ? 'bg-warning-500' :
                 'bg-danger-500'
-            }`}
-          style={{ width: `${Math.min(rate, 100)}%` }}
+          }`}
+          style={{width: `${Math.min(rate, 100)}%`}}
         />
       </div>
       <span className={`text-sm font-medium w-12 text-right ${getUtilizationColor(rate)}`}>
@@ -184,34 +176,34 @@ export default function UtilizationReportsPage() {
       {/* Header Skeleton */}
       <div className="flex justify-between items-center h-10">
         <div className="space-y-2">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96" />
+          <Skeleton className="h-8 w-64"/>
+          <Skeleton className="h-4 w-96"/>
         </div>
         <div className="flex gap-2">
-          <Skeleton className="h-10 w-40" />
-          <Skeleton className="h-10 w-10" />
-          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-40"/>
+          <Skeleton className="h-10 w-10"/>
+          <Skeleton className="h-10 w-24"/>
         </div>
       </div>
 
       {/* Stats Cards Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-32 rounded-xl" />
+          <Skeleton key={i} className="h-32 rounded-xl"/>
         ))}
       </div>
 
       {/* Tabs Skeleton */}
       <div className="flex gap-6 border-b border-[var(--border-main)] pb-1">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-10 w-24" />
+          <Skeleton key={i} className="h-10 w-24"/>
         ))}
       </div>
 
       {/* Content Skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Skeleton className="h-96 rounded-xl" />
-        <Skeleton className="h-96 rounded-xl" />
+        <Skeleton className="h-96 rounded-xl"/>
+        <Skeleton className="h-96 rounded-xl"/>
       </div>
     </div>
   );
@@ -220,7 +212,7 @@ export default function UtilizationReportsPage() {
     return (
       <AppLayout activeMenuItem="reports">
         <div className="p-6">
-          <LoadingSkeleton />
+          <LoadingSkeleton/>
         </div>
       </AppLayout>
     );
@@ -230,9 +222,10 @@ export default function UtilizationReportsPage() {
     return (
       <AppLayout activeMenuItem="reports">
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
-          <AlertCircle className="w-16 h-16 text-danger-500 mb-4" />
+          <AlertCircle className="w-16 h-16 text-danger-500 mb-4"/>
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Failed to load data</h2>
-          <p className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as Error).message : 'Unknown error occurred'}</p>
+          <p
+            className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as Error).message : 'Unknown error occurred'}</p>
           <Button
             onClick={() => refetch()}
             variant="primary"
@@ -253,8 +246,8 @@ export default function UtilizationReportsPage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: -20}}
+          animate={{opacity: 1, y: 0}}
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
@@ -282,7 +275,8 @@ export default function UtilizationReportsPage() {
                 <option value="thisYear">This Year</option>
                 <option value="custom">Custom Range</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none"/>
             </div>
 
             {selectedDateRange === 'custom' && (
@@ -308,10 +302,10 @@ export default function UtilizationReportsPage() {
               disabled={loading}
               className="p-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>
             </button>
 
-            <Button variant="primary" leftIcon={<Download className="h-4 w-4" />}>
+            <Button variant="primary" leftIcon={<Download className="h-4 w-4"/>}>
               Export
             </Button>
           </div>
@@ -320,20 +314,21 @@ export default function UtilizationReportsPage() {
         {/* Error Alert */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: -10}}
+            animate={{opacity: 1, y: 0}}
             className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-center gap-4"
           >
-            <AlertCircle className="h-5 w-5 text-danger-500" />
-            <span className="text-danger-700 dark:text-danger-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
+            <AlertCircle className="h-5 w-5 text-danger-500"/>
+            <span
+              className="text-danger-700 dark:text-danger-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
           </motion.div>
         )}
 
         {/* Stats Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{opacity: 0, y: 20}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.1}}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           <StatCard
@@ -372,10 +367,10 @@ export default function UtilizationReportsPage() {
         <div className="border-b border-[var(--border-main)]">
           <nav className="flex gap-6">
             {[
-              { id: 'overview', label: 'Overview', icon: TrendingUp },
-              { id: 'employees', label: 'By Employee', icon: User },
-              { id: 'departments', label: 'By Department', icon: Building2 },
-              { id: 'projects', label: 'By Project', icon: FolderOpen },
+              {id: 'overview', label: 'Overview', icon: TrendingUp},
+              {id: 'employees', label: 'By Employee', icon: User},
+              {id: 'departments', label: 'By Department', icon: Building2},
+              {id: 'projects', label: 'By Project', icon: FolderOpen},
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -383,9 +378,9 @@ export default function UtilizationReportsPage() {
                 className={`flex items-center gap-2 px-1 py-4 border-b-2 transition-colors ${activeTab === tab.id
                   ? 'border-accent-500 text-accent-700 dark:text-accent-400'
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
-                  }`}
+                }`}
               >
-                <tab.icon className="h-4 w-4" />
+                <tab.icon className="h-4 w-4"/>
                 <span className="font-medium">{tab.label}</span>
               </button>
             ))}
@@ -395,9 +390,9 @@ export default function UtilizationReportsPage() {
         {/* Tab Content */}
         <motion.div
           key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.2}}
         >
           {activeTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -405,7 +400,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowUpRight className="h-5 w-5 text-success-500" />
+                    <ArrowUpRight className="h-5 w-5 text-success-500"/>
                     Top Performers
                   </CardTitle>
                 </CardHeader>
@@ -416,7 +411,8 @@ export default function UtilizationReportsPage() {
                         key={emp.employeeId}
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400 text-sm font-bold">
+                        <div
+                          className="flex items-center justify-center w-8 h-8 rounded-full bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400 text-sm font-bold">
                           {index + 1}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -445,7 +441,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowDownRight className="h-5 w-5 text-danger-500" />
+                    <ArrowDownRight className="h-5 w-5 text-danger-500"/>
                     Under-Utilized Resources
                   </CardTitle>
                 </CardHeader>
@@ -456,8 +452,9 @@ export default function UtilizationReportsPage() {
                         key={emp.employeeId}
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
-                        <div className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-danger-600 dark:text-danger-400" />
+                        <div
+                          className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                          <User className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-[var(--text-primary)] truncate">
@@ -468,7 +465,7 @@ export default function UtilizationReportsPage() {
                           </p>
                         </div>
                         <div className="w-32">
-                          <UtilizationBar rate={emp.utilizationRate} />
+                          <UtilizationBar rate={emp.utilizationRate}/>
                         </div>
                       </div>
                     ))}
@@ -485,7 +482,7 @@ export default function UtilizationReportsPage() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-accent-500" />
+                    <Building2 className="h-5 w-5 text-accent-500"/>
                     Department Utilization
                   </CardTitle>
                 </CardHeader>
@@ -502,7 +499,7 @@ export default function UtilizationReportsPage() {
                           </h4>
                           <Badge variant="secondary">{dept.employeeCount} members</Badge>
                         </div>
-                        <UtilizationBar rate={dept.averageUtilization} />
+                        <UtilizationBar rate={dept.averageUtilization}/>
                         <div className="mt-4 flex justify-between text-body-muted">
                           <span>{formatHours(dept.billableHours)} billable</span>
                           <span>of {formatHours(dept.totalHours)} total</span>
@@ -521,7 +518,7 @@ export default function UtilizationReportsPage() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <CardTitle>Employee Utilization</CardTitle>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                     <input
                       type="text"
                       placeholder="Search employees..."
@@ -536,43 +533,50 @@ export default function UtilizationReportsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-[var(--border-main)]">
-                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Employee</th>
-                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Department</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
-                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Rate</th>
-                      </tr>
+                    <tr className="border-b border-[var(--border-main)]">
+                      <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Employee</th>
+                      <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Department</th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours
+                      </th>
+                      <th
+                        className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization
+                      </th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Rate
+                      </th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {filteredEmployees.map((emp) => (
-                        <tr
-                          key={emp.employeeId}
-                          className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                        >
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium">
-                                {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                              </div>
-                              <div>
-                                <p className="font-medium text-[var(--text-primary)]">{emp.employeeName}</p>
-                                <p className="text-caption">{emp.employeeCode}</p>
-                              </div>
+                    {filteredEmployees.map((emp) => (
+                      <tr
+                        key={emp.employeeId}
+                        className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-4">
+                            <div
+                              className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium">
+                              {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
-                          </td>
-                          <td className="py-4 px-4 text-[var(--text-secondary)]">{emp.departmentName}</td>
-                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.totalHours)}</td>
-                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.billableHours)}</td>
-                          <td className="py-4 px-4">
-                            <UtilizationBar rate={emp.utilizationRate} />
-                          </td>
-                          <td className={`py-4 px-4 text-right font-medium ${getUtilizationColor(emp.billableRate)}`}>
-                            {formatPercentage(emp.billableRate)}
-                          </td>
-                        </tr>
-                      ))}
+                            <div>
+                              <p className="font-medium text-[var(--text-primary)]">{emp.employeeName}</p>
+                              <p className="text-caption">{emp.employeeCode}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-[var(--text-secondary)]">{emp.departmentName}</td>
+                        <td
+                          className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.totalHours)}</td>
+                        <td
+                          className="py-4 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.billableHours)}</td>
+                        <td className="py-4 px-4">
+                          <UtilizationBar rate={emp.utilizationRate}/>
+                        </td>
+                        <td className={`py-4 px-4 text-right font-medium ${getUtilizationColor(emp.billableRate)}`}>
+                          {formatPercentage(emp.billableRate)}
+                        </td>
+                      </tr>
+                    ))}
                     </tbody>
                   </table>
                 </div>
@@ -592,7 +596,8 @@ export default function UtilizationReportsPage() {
                         </h3>
                         <p className="text-body-muted">{dept.employeeCount} employees</p>
                       </div>
-                      <div className={`px-4 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
+                      <div
+                        className={`px-4 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
                         {formatPercentage(dept.averageUtilization)}
                       </div>
                     </div>
@@ -605,10 +610,11 @@ export default function UtilizationReportsPage() {
                             {formatHours(dept.billableHours)}
                           </span>
                         </div>
-                        <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                        <div
+                          className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
                             className="h-full bg-success-500 rounded-full"
-                            style={{ width: `${(dept.billableHours / dept.totalHours) * 100}%` }}
+                            style={{width: `${(dept.billableHours / dept.totalHours) * 100}%`}}
                           />
                         </div>
                       </div>
@@ -620,10 +626,11 @@ export default function UtilizationReportsPage() {
                             {formatHours(dept.totalHours - dept.billableHours)}
                           </span>
                         </div>
-                        <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                        <div
+                          className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
                             className="h-full bg-warning-500 rounded-full"
-                            style={{ width: `${((dept.totalHours - dept.billableHours) / dept.totalHours) * 100}%` }}
+                            style={{width: `${((dept.totalHours - dept.billableHours) / dept.totalHours) * 100}%`}}
                           />
                         </div>
                       </div>
@@ -652,48 +659,52 @@ export default function UtilizationReportsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-[var(--border-main)]">
-                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Project</th>
-                        <th className="text-center py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Team Size</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
-                        <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
-                        <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Revenue</th>
-                      </tr>
+                    <tr className="border-b border-[var(--border-main)]">
+                      <th className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Project</th>
+                      <th className="text-center py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Team Size</th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours
+                      </th>
+                      <th
+                        className="text-left py-2 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization
+                      </th>
+                      <th className="text-right py-2 px-4 text-sm font-medium text-[var(--text-muted)]">Revenue</th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {dashboardData.byProject.map((project) => (
-                        <tr
-                          key={project.projectId}
-                          className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                        >
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                                <FolderOpen className="h-5 w-5 text-accent-700 dark:text-accent-400" />
-                              </div>
-                              <span className="font-medium text-[var(--text-primary)]">
+                    {dashboardData.byProject.map((project) => (
+                      <tr
+                        key={project.projectId}
+                        className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-4">
+                            <div
+                              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                              <FolderOpen className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                            </div>
+                            <span className="font-medium text-[var(--text-primary)]">
                                 {project.projectName}
                               </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-center">
-                            <Badge variant="secondary">{project.teamSize}</Badge>
-                          </td>
-                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">
-                            {formatHours(project.totalHours)}
-                          </td>
-                          <td className="py-4 px-4 text-right text-[var(--text-primary)]">
-                            {formatHours(project.billableHours)}
-                          </td>
-                          <td className="py-4 px-4">
-                            <UtilizationBar rate={project.utilizationRate} />
-                          </td>
-                          <td className="py-4 px-4 text-right font-semibold text-success-600 dark:text-success-400">
-                            {formatCurrency(project.billedAmount)}
-                          </td>
-                        </tr>
-                      ))}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          <Badge variant="secondary">{project.teamSize}</Badge>
+                        </td>
+                        <td className="py-4 px-4 text-right text-[var(--text-primary)]">
+                          {formatHours(project.totalHours)}
+                        </td>
+                        <td className="py-4 px-4 text-right text-[var(--text-primary)]">
+                          {formatHours(project.billableHours)}
+                        </td>
+                        <td className="py-4 px-4">
+                          <UtilizationBar rate={project.utilizationRate}/>
+                        </td>
+                        <td className="py-4 px-4 text-right font-semibold text-success-600 dark:text-success-400">
+                          {formatCurrency(project.billedAmount)}
+                        </td>
+                      </tr>
+                    ))}
                     </tbody>
                   </table>
                 </div>

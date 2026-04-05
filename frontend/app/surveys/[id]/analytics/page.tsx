@@ -1,46 +1,30 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {useParams, useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {ArrowLeft, BarChart3, MessageSquare, PieChart as PieChartIcon, TrendingUp, Users,} from 'lucide-react';
 import {
-  ArrowLeft,
-  Users,
-  TrendingUp,
-  BarChart3,
-  MessageSquare,
-  PieChart as PieChartIcon,
-} from 'lucide-react';
-import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
   Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
-import { AppLayout } from '@/components/layout/AppLayout';
-import {
-  Card,
-  CardContent,
-  Button,
-} from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useSurveyDetail } from '@/lib/hooks/queries/useSurveys';
-import { useSurveyAnalytics } from '@/lib/hooks/queries/useSurveyQuestions';
-import { QuestionType } from '@/lib/types/grow/survey';
-import {
-  motion as dsMotion,
-  typography,
-  chartColors,
-  iconSize,
-} from '@/lib/design-system';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button, Card, CardContent,} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
+import {useSurveyAnalytics} from '@/lib/hooks/queries/useSurveyQuestions';
+import {QuestionType} from '@/lib/types/grow/survey';
+import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
 
 const PIE_COLORS = [
   chartColors.primary,
@@ -67,16 +51,16 @@ export default function SurveyAnalyticsPage() {
   const router = useRouter();
   const surveyId = params.id as string;
 
-  const { data: survey, isLoading: surveyLoading } = useSurveyDetail(surveyId);
-  const { data: analytics, isLoading: analyticsLoading } = useSurveyAnalytics(surveyId);
+  const {data: survey, isLoading: surveyLoading} = useSurveyDetail(surveyId);
+  const {data: analytics, isLoading: analyticsLoading} = useSurveyAnalytics(surveyId);
 
   const isLoading = surveyLoading || analyticsLoading;
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Surveys', href: '/surveys' },
-    { label: survey?.title ?? 'Survey', href: `/surveys/${surveyId}` },
-    { label: 'Analytics' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Surveys', href: '/surveys'},
+    {label: survey?.title ?? 'Survey', href: `/surveys/${surveyId}`},
+    {label: 'Analytics'},
   ];
 
   // Derive response rate
@@ -104,7 +88,7 @@ export default function SurveyAnalyticsPage() {
                 size="sm"
                 onClick={() => router.push(`/surveys/${surveyId}`)}
               >
-                <ArrowLeft className={iconSize.button} />
+                <ArrowLeft className={iconSize.button}/>
               </Button>
               <div>
                 <h1 className={typography.pageTitle}>
@@ -133,7 +117,7 @@ export default function SurveyAnalyticsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                      <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                      <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Total Responses</p>
@@ -147,7 +131,7 @@ export default function SurveyAnalyticsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                      <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400" />
+                      <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Completion Rate</p>
@@ -163,7 +147,7 @@ export default function SurveyAnalyticsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                      <BarChart3 className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                      <BarChart3 className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Questions</p>
@@ -192,17 +176,17 @@ export default function SurveyAnalyticsPage() {
                 // Bar chart data for rating/NPS/likert
                 const barData = hasDistribution
                   ? Object.entries(stat.optionDistribution!).map(([key, value]) => ({
-                      name: key,
-                      count: value,
-                    }))
+                    name: key,
+                    count: value,
+                  }))
                   : [];
 
                 // Pie chart data for choice questions
                 const pieData = hasDistribution
                   ? Object.entries(stat.optionDistribution!).map(([name, value]) => ({
-                      name,
-                      value,
-                    }))
+                    name,
+                    value,
+                  }))
                   : [];
 
                 return (
@@ -213,12 +197,12 @@ export default function SurveyAnalyticsPage() {
                           <div className="flex items-start gap-2">
                             {hasDistribution ? (
                               showPieChart ? (
-                                <PieChartIcon className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`} />
+                                <PieChartIcon className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`}/>
                               ) : (
-                                <BarChart3 className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`} />
+                                <BarChart3 className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`}/>
                               )
                             ) : (
-                              <MessageSquare className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`} />
+                              <MessageSquare className={`${iconSize.cardInline} mt-0.5 text-[var(--text-secondary)]`}/>
                             )}
                             <div>
                               <h3 className={typography.cardTitle}>
@@ -244,11 +228,11 @@ export default function SurveyAnalyticsPage() {
                                 />
                                 <XAxis
                                   dataKey="name"
-                                  tick={{ fontSize: 12, fill: chartColors.tooltip.text }}
+                                  tick={{fontSize: 12, fill: chartColors.tooltip.text}}
                                 />
                                 <YAxis
                                   allowDecimals={false}
-                                  tick={{ fontSize: 12, fill: chartColors.tooltip.text }}
+                                  tick={{fontSize: 12, fill: chartColors.tooltip.text}}
                                 />
                                 <Tooltip
                                   contentStyle={{
@@ -278,7 +262,7 @@ export default function SurveyAnalyticsPage() {
                                   cx="50%"
                                   cy="50%"
                                   labelLine={false}
-                                  label={({ name, percent }) =>
+                                  label={({name, percent}) =>
                                     `${name} (${(percent * 100).toFixed(0)}%)`
                                   }
                                   outerRadius={80}
@@ -291,7 +275,7 @@ export default function SurveyAnalyticsPage() {
                                     />
                                   ))}
                                 </Pie>
-                                <Legend />
+                                <Legend/>
                                 <Tooltip
                                   contentStyle={{
                                     backgroundColor: chartColors.tooltip.bg,
@@ -308,7 +292,7 @@ export default function SurveyAnalyticsPage() {
                         {/* Text questions — just show count */}
                         {!hasDistribution && barData.length === 0 && (
                           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] p-4">
-                            <MessageSquare className={`${iconSize.cardInline} text-[var(--text-muted)]`} />
+                            <MessageSquare className={`${iconSize.cardInline} text-[var(--text-muted)]`}/>
                             <span className={typography.bodySecondary}>
                               {stat.responseCount} text responses collected
                             </span>
@@ -327,7 +311,7 @@ export default function SurveyAnalyticsPage() {
             (!analytics?.questionStats || analytics.questionStats.length === 0) && (
               <Card className="card-aura">
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <BarChart3 className="h-12 w-12 text-[var(--text-muted)]" />
+                  <BarChart3 className="h-12 w-12 text-[var(--text-muted)]"/>
                   <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                     No analytics data yet
                   </p>

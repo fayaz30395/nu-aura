@@ -7,7 +7,7 @@ export const performanceKeys = {
   // Goals
   goals: () => [...performanceKeys.all, 'goals'] as const,
   allGoals: (page: number, size: number) =>
-    [...performanceKeys.goals(), 'all', { page, size }] as const,
+    [...performanceKeys.goals(), 'all', {page, size}] as const,
   employeeGoals: (employeeId: string) =>
     [...performanceKeys.goals(), 'employee', employeeId] as const,
   teamGoals: (managerId: string) =>
@@ -17,13 +17,13 @@ export const performanceKeys = {
   // Review Cycles
   cycles: () => [...performanceKeys.all, 'cycles'] as const,
   allCycles: (page: number, size: number) =>
-    [...performanceKeys.cycles(), 'all', { page, size }] as const,
+    [...performanceKeys.cycles(), 'all', {page, size}] as const,
   activeCycles: () => [...performanceKeys.cycles(), 'active'] as const,
   cycleDetail: (id: string) => [...performanceKeys.cycles(), 'detail', id] as const,
   // Performance Reviews
   reviews: () => [...performanceKeys.all, 'reviews'] as const,
   allReviews: (page: number, size: number) =>
-    [...performanceKeys.reviews(), 'all', { page, size }] as const,
+    [...performanceKeys.reviews(), 'all', {page, size}] as const,
   employeeReviews: (employeeId: string) =>
     [...performanceKeys.reviews(), 'employee', employeeId] as const,
   pendingReviews: (reviewerId: string) =>

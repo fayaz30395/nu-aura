@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Download, Loader2, Plus, Search, X } from 'lucide-react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Download, Loader2, Plus, Search, X} from 'lucide-react';
 import {
   Button,
   Card,
@@ -19,15 +19,15 @@ import {
   Select,
   TablePagination,
 } from '@/components/ui';
-import { ProjectAllocation } from '@/lib/types/hrms/hrms-allocation';
-import { apiClient } from '@/lib/api/client';
+import {ProjectAllocation} from '@/lib/types/hrms/hrms-allocation';
+import {apiClient} from '@/lib/api/client';
 import {
-  useProjectAllocations,
   useAssignToProject,
   useEndAllocation,
   useExportAllocations,
+  useProjectAllocations,
 } from '@/lib/hooks/queries/useProjects';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('TeamTab');
 
@@ -80,7 +80,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
 const formatPercent = (value?: number | null) => {
@@ -105,7 +105,7 @@ interface EmployeeTypeaheadProps {
   disabled?: boolean;
 }
 
-function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: EmployeeTypeaheadProps) {
+function EmployeeTypeahead({label, value, onChange, placeholder, disabled}: EmployeeTypeaheadProps) {
   const [query, setQuery] = useState(value ? buildEmployeeName(value) : '');
   const [results, setResults] = useState<EmployeeSummary[]>([]);
   const [loading, setLoading] = useState(false);
@@ -139,7 +139,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
       setLoading(true);
       try {
         const response = await apiClient.get<PageResponse<EmployeeSummary>>('/employees', {
-          params: { search: term, page: 0, size: 10 },
+          params: {search: term, page: 0, size: 10},
         });
         setResults(response.data.content ?? []);
       } catch (err) {
@@ -183,13 +183,15 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
         value={query}
         onChange={handleInputChange}
         onFocus={() => setOpen(true)}
-        icon={<Search className="h-4 w-4" />}
-        rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : showClear ? <X className="h-4 w-4" /> : undefined}
+        icon={<Search className="h-4 w-4"/>}
+        rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin"/> : showClear ?
+          <X className="h-4 w-4"/> : undefined}
         onRightIconClick={showClear ? handleClear : undefined}
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        <div
+          className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-4 text-body-muted">Searching employees...</div>
           )}
@@ -224,7 +226,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
   );
 }
 
-export function TeamTab({ projectId }: TeamTabProps) {
+export function TeamTab({projectId}: TeamTabProps) {
   const [allocationsPage, setAllocationsPage] = useState(0);
   const [allocationsSize, setAllocationsSize] = useState(20);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -236,7 +238,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
     register: registerAddMember,
     handleSubmit: handleSubmitAddMember,
     reset: resetAddMember,
-    formState: { errors: addMemberErrors },
+    formState: {errors: addMemberErrors},
   } = useForm<AddMemberFormData>({
     resolver: zodResolver(addMemberFormSchema),
     defaultValues: {
@@ -335,7 +337,7 @@ export function TeamTab({ projectId }: TeamTabProps) {
       },
       mobilePriority: 'secondary' as const,
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [today]);
 
   const handleExportRoster = async () => {
@@ -413,14 +415,14 @@ export function TeamTab({ projectId }: TeamTabProps) {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Button
-                leftIcon={<Plus className="h-4 w-4" />}
+                leftIcon={<Plus className="h-4 w-4"/>}
                 onClick={handleOpenAddMember}
               >
                 Add Member
               </Button>
               <Button
                 variant="outline"
-                leftIcon={<Download className="h-4 w-4" />}
+                leftIcon={<Download className="h-4 w-4"/>}
                 isLoading={exportingRoster}
                 onClick={handleExportRoster}
               >
@@ -430,7 +432,8 @@ export function TeamTab({ projectId }: TeamTabProps) {
           </div>
 
           {allocationsErrorMessage && (
-            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <div
+              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
               {allocationsErrorMessage}
             </div>
           )}
@@ -467,7 +470,8 @@ export function TeamTab({ projectId }: TeamTabProps) {
         <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
           <ModalBody className="space-y-4">
             {addMemberError && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div
+                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 {addMemberError}
               </div>
             )}
@@ -506,18 +510,21 @@ export function TeamTab({ projectId }: TeamTabProps) {
                   placeholder="e.g. 100"
                   {...registerAddMember('allocationPercentage')}
                 />
-                {addMemberErrors.allocationPercentage && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+                {addMemberErrors.allocationPercentage &&
+                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.allocationPercentage.message}</p>}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
-                {addMemberErrors.startDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.startDate.message}</p>}
+                {addMemberErrors.startDate &&
+                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
-                {addMemberErrors.endDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.endDate.message}</p>}
+                {addMemberErrors.endDate &&
+                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.endDate.message}</p>}
               </div>
             </div>
           </ModalBody>

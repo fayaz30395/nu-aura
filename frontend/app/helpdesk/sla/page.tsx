@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { TicketSLA } from '@/lib/services/hrms/helpdesk-sla.service';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {
+  useAcknowledgeEscalation,
+  useCreateSlaConfig,
+  useDeleteSlaConfig,
+  useMyPendingEscalations,
+  useSlaConfigs,
+  useSLADashboard,
+  useUpdateSlaConfig,
+} from '@/lib/hooks/queries/useHelpdeskSla';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -17,26 +26,17 @@ const slaFormSchema = z.object({
   name: z.string().min(1, 'Policy name is required').max(255),
   description: z.string().optional().or(z.literal('')),
   priority: z.string().optional().or(z.literal('')),
-  firstResponseMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1'),
-  resolutionMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1'),
-  escalationAfterMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1').optional(),
-  businessStartHour: z.number({ coerce: true }).min(0).max(23),
-  businessEndHour: z.number({ coerce: true }).min(0).max(23),
+  firstResponseMinutes: z.number({coerce: true}).min(1, 'Must be >= 1'),
+  resolutionMinutes: z.number({coerce: true}).min(1, 'Must be >= 1'),
+  escalationAfterMinutes: z.number({coerce: true}).min(1, 'Must be >= 1').optional(),
+  businessStartHour: z.number({coerce: true}).min(0).max(23),
+  businessEndHour: z.number({coerce: true}).min(0).max(23),
   isBusinessHoursOnly: z.boolean().optional(),
   isActive: z.boolean().optional(),
   applyToAllCategories: z.boolean().optional(),
 });
 
 type SLAFormData = z.infer<typeof slaFormSchema>;
-import {
-  useSLADashboard,
-  useSlaConfigs,
-  useMyPendingEscalations,
-  useCreateSlaConfig,
-  useUpdateSlaConfig,
-  useDeleteSlaConfig,
-  useAcknowledgeEscalation,
-} from '@/lib/hooks/queries/useHelpdeskSla';
 
 export default function HelpdeskSLAPage() {
   const toast = useToast();
@@ -50,7 +50,7 @@ export default function HelpdeskSLAPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<SLAFormData>({
     resolver: zodResolver(slaFormSchema),
     defaultValues: {
@@ -67,9 +67,9 @@ export default function HelpdeskSLAPage() {
     },
   });
 
-  const { data: dashboardData } = useSLADashboard();
-  const { data: slasResponse, isLoading: slasLoading } = useSlaConfigs();
-  const { data: escalations = [], isLoading: escalationsLoading } =
+  const {data: dashboardData} = useSLADashboard();
+  const {data: slasResponse, isLoading: slasLoading} = useSlaConfigs();
+  const {data: escalations = [], isLoading: escalationsLoading} =
     useMyPendingEscalations();
   const createMutation = useCreateSlaConfig();
   const updateMutation = useUpdateSlaConfig();
@@ -90,7 +90,7 @@ export default function HelpdeskSLAPage() {
       };
 
       if (editingId) {
-        await updateMutation.mutateAsync({ id: editingId, data: slaData });
+        await updateMutation.mutateAsync({id: editingId, data: slaData});
       } else {
         await createMutation.mutateAsync(slaData);
       }
@@ -177,10 +177,14 @@ export default function HelpdeskSLAPage() {
 
   const getEscalationLevelColor = (level: string) => {
     switch (level) {
-      case 'FIRST': return 'bg-warning-100 text-warning-800';
-      case 'SECOND': return 'bg-warning-100 text-warning-800';
-      case 'THIRD': return 'bg-danger-100 text-danger-800';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'FIRST':
+        return 'bg-warning-100 text-warning-800';
+      case 'SECOND':
+        return 'bg-warning-100 text-warning-800';
+      case 'THIRD':
+        return 'bg-danger-100 text-danger-800';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -206,7 +210,11 @@ export default function HelpdeskSLAPage() {
           {activeTab === 'slas' && (
             <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
               <button
-                onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
+                onClick={() => {
+                  setShowForm(true);
+                  setEditingId(null);
+                  resetFormHandler();
+                }}
                 className="btn-primary !h-auto"
               >
                 Create SLA Policy
@@ -219,22 +227,27 @@ export default function HelpdeskSLAPage() {
         {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
+              <div
+                className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%
+              </div>
               <div className="text-[var(--text-secondary)]">SLA Compliance</div>
               <div className="text-body-muted mt-1">
                 {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
               </div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
+              <div
+                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-accent-800 dark:text-accent-600">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
+              <div
+                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
             </div>
             <div className="skeuo-card p-6">
-              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
+              <div
+                className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
               <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
               <div className="text-body-muted mt-1">
                 {dashboardData.firstContactResolutions} FCR
@@ -351,7 +364,7 @@ export default function HelpdeskSLAPage() {
                     {...register('businessStartHour')}
                     className="input-aura"
                   >
-                    {Array.from({ length: 24 }, (_, i) => (
+                    {Array.from({length: 24}, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
                     ))}
                   </select>
@@ -362,7 +375,7 @@ export default function HelpdeskSLAPage() {
                     {...register('businessEndHour')}
                     className="input-aura"
                   >
-                    {Array.from({ length: 24 }, (_, i) => (
+                    {Array.from({length: 24}, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
                     ))}
                   </select>
@@ -410,7 +423,10 @@ export default function HelpdeskSLAPage() {
                 </PermissionGate>
                 <button
                   type="button"
-                  onClick={() => { setShowForm(false); setEditingId(null); }}
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditingId(null);
+                  }}
                   className="btn-secondary"
                 >
                   Cancel
@@ -439,9 +455,9 @@ export default function HelpdeskSLAPage() {
                       <div
                         className={`h-4 rounded-full ${
                           (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-success-500' :
-                          (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-warning-500' : 'bg-danger-500'
+                            (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-warning-500' : 'bg-danger-500'
                         }`}
-                        style={{ width: `${dashboardData.slaComplianceRate || 0}%` }}
+                        style={{width: `${dashboardData.slaComplianceRate || 0}%`}}
                       />
                     </div>
                   </div>
@@ -457,7 +473,8 @@ export default function HelpdeskSLAPage() {
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">First Contact Resolutions</div>
-                      <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
+                      <div
+                        className="text-2xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">Customer Satisfaction</div>
@@ -475,73 +492,87 @@ export default function HelpdeskSLAPage() {
               <div className="skeuo-card overflow-hidden">
                 <table className="table-aura">
                   <thead className="skeuo-table-header">
-                    <tr>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First Response</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Resolution</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Escalation</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Hours</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
-                    </tr>
+                  <tr>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy
+                    </th>
+                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First
+                      Response
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Resolution
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Escalation
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Hours
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
-                    {slas.map((sla) => (
-                      <tr key={sla.id}>
-                        <td className="px-6 py-4">
-                          <div className="font-medium">{sla.name}</div>
-                          {sla.priority && (
-                            <span className="text-xs text-[var(--text-secondary)]">Priority: {sla.priority}</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {formatMinutes(sla.firstResponseMinutes)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {formatMinutes(sla.resolutionMinutes)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {sla.escalationAfterMinutes ? formatMinutes(sla.escalationAfterMinutes) : '-'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {sla.isBusinessHoursOnly ? (
-                            <span>{sla.businessStartHour}:00 - {sla.businessEndHour}:00</span>
-                          ) : (
-                            <span>24/7</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                  {slas.map((sla) => (
+                    <tr key={sla.id}>
+                      <td className="px-6 py-4">
+                        <div className="font-medium">{sla.name}</div>
+                        {sla.priority && (
+                          <span className="text-xs text-[var(--text-secondary)]">Priority: {sla.priority}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {formatMinutes(sla.firstResponseMinutes)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {formatMinutes(sla.resolutionMinutes)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {sla.escalationAfterMinutes ? formatMinutes(sla.escalationAfterMinutes) : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {sla.isBusinessHoursOnly ? (
+                          <span>{sla.businessStartHour}:00 - {sla.businessEndHour}:00</span>
+                        ) : (
+                          <span>24/7</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             sla.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           }`}>
                             {sla.isActive ? 'Active' : 'Inactive'}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
-                            <button
-                              onClick={() => handleEdit(sla)}
-                              className="text-accent-700 dark:text-accent-400 hover:text-accent-700 mr-4"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(sla)}
-                              className="text-danger-600 hover:text-danger-800"
-                            >
-                              Delete
-                            </button>
-                          </PermissionGate>
-                        </td>
-                      </tr>
-                    ))}
-                    {slas.length === 0 && (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-8 text-center text-[var(--text-secondary)]">
-                          No SLA policies found. Create one to get started.
-                        </td>
-                      </tr>
-                    )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+                          <button
+                            onClick={() => handleEdit(sla)}
+                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 mr-4"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(sla)}
+                            className="text-danger-600 hover:text-danger-800"
+                          >
+                            Delete
+                          </button>
+                        </PermissionGate>
+                      </td>
+                    </tr>
+                  ))}
+                  {slas.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-8 text-center text-[var(--text-secondary)]">
+                        No SLA policies found. Create one to get started.
+                      </td>
+                    </tr>
+                  )}
                   </tbody>
                 </table>
               </div>
@@ -556,14 +587,17 @@ export default function HelpdeskSLAPage() {
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
-                            <span className={`px-2 py-1 rounded-full text-xs ${getEscalationLevelColor(escalation.escalationLevel)}`}>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${getEscalationLevelColor(escalation.escalationLevel)}`}>
                               {escalation.escalationLevel} Level
                             </span>
-                            <span className="px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full text-xs">
+                            <span
+                              className="px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full text-xs">
                               {escalation.escalationReason.replace('_', ' ')}
                             </span>
                             {escalation.isAutoEscalated && (
-                              <span className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
+                              <span
+                                className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
                                 Auto-Escalated
                               </span>
                             )}

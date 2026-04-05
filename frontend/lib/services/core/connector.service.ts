@@ -1,13 +1,13 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ConnectorInfo,
-  ConnectorConfig,
   ConnectionTestResult,
-  IntegrationEventLog,
-  PageResponse,
+  ConnectorConfig,
+  ConnectorConfigRequest,
+  ConnectorInfo,
   DocuSignEnvelope,
   DocuSignTemplateMapping,
-  ConnectorConfigRequest,
+  IntegrationEventLog,
+  PageResponse,
   TemplateMappingRequest,
 } from '../../types/core/connector';
 
@@ -65,8 +65,8 @@ export const connectorService = {
   ): Promise<PageResponse<IntegrationEventLog>> => {
     const response = await apiClient.get<PageResponse<IntegrationEventLog>>(`${BASE_URL}/events`, {
       params: {
-        ...(connectorId && { connectorId }),
-        ...(status && { status }),
+        ...(connectorId && {connectorId}),
+        ...(status && {status}),
         page,
         size,
       },
@@ -80,7 +80,7 @@ export const connectorService = {
     size: number = 20
   ): Promise<PageResponse<DocuSignEnvelope>> => {
     const response = await apiClient.get<PageResponse<DocuSignEnvelope>>(`${BASE_URL}/docusign/envelopes`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },

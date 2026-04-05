@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Mobile Navigation E2E Tests
@@ -6,75 +6,75 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Mobile Navigation', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     // Navigate to dashboard
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display mobile bottom navigation', async ({ page }) => {
+  test('should display mobile bottom navigation', async ({page}) => {
     // Bottom nav should be visible on mobile
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
     await expect(bottomNav).toBeVisible();
 
     // Check for navigation items
-    await expect(bottomNav.getByRole('link', { name: /home/i })).toBeVisible();
-    await expect(bottomNav.getByRole('link', { name: /team/i })).toBeVisible();
-    await expect(bottomNav.getByRole('link', { name: /leave/i })).toBeVisible();
-    await expect(bottomNav.getByRole('link', { name: /tasks|projects/i })).toBeVisible();
-    await expect(bottomNav.getByRole('link', { name: /me/i })).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /home/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /team/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /leave/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /tasks|projects/i})).toBeVisible();
+    await expect(bottomNav.getByRole('link', {name: /me/i})).toBeVisible();
   });
 
-  test('should navigate using bottom navigation', async ({ page }) => {
+  test('should navigate using bottom navigation', async ({page}) => {
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Click Team link
-    await bottomNav.getByRole('link', { name: /team/i }).click();
+    await bottomNav.getByRole('link', {name: /team/i}).click();
     await page.waitForURL(/\/employees/);
     expect(page.url()).toContain('/employees');
 
     // Click Leave link
-    await bottomNav.getByRole('link', { name: /leave/i }).click();
+    await bottomNav.getByRole('link', {name: /leave/i}).click();
     await page.waitForURL(/\/leave/);
     expect(page.url()).toContain('/leave');
 
     // Click Me link
-    await bottomNav.getByRole('link', { name: /me/i }).click();
+    await bottomNav.getByRole('link', {name: /me/i}).click();
     await page.waitForURL(/\/me\/dashboard/);
     expect(page.url()).toContain('/me/dashboard');
 
     // Click Home to go back
-    await bottomNav.getByRole('link', { name: /home/i }).click();
+    await bottomNav.getByRole('link', {name: /home/i}).click();
     await page.waitForURL(/\/dashboard/);
     expect(page.url()).toContain('/dashboard');
   });
 
-  test('should show active state on current page link', async ({ page }) => {
+  test('should show active state on current page link', async ({page}) => {
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Dashboard should be active
-    const homeLink = bottomNav.getByRole('link', { name: /home/i });
+    const homeLink = bottomNav.getByRole('link', {name: /home/i});
     await expect(homeLink).toHaveClass(/text-primary/);
 
     // Navigate to employees
-    await bottomNav.getByRole('link', { name: /team/i }).click();
+    await bottomNav.getByRole('link', {name: /team/i}).click();
     await page.waitForURL(/\/employees/);
 
     // Team should now be active
-    const teamLink = bottomNav.getByRole('link', { name: /team/i });
+    const teamLink = bottomNav.getByRole('link', {name: /team/i});
     await expect(teamLink).toHaveClass(/text-primary/);
   });
 
-  test('should hide desktop sidebar on mobile', async ({ page }) => {
+  test('should hide desktop sidebar on mobile', async ({page}) => {
     // Desktop sidebar should be hidden on mobile
     const sidebar = page.locator('aside.hidden.md\\:block');
     await expect(sidebar).toBeHidden();
   });
 
-  test('should open mobile menu from hamburger button', async ({ page }) => {
+  test('should open mobile menu from hamburger button', async ({page}) => {
     // Find and click hamburger menu button
     const menuButton = page.locator('button[aria-label="Open menu"]').or(
-      page.locator('header button').filter({ has: page.locator('svg') }).first()
+      page.locator('header button').filter({has: page.locator('svg')}).first()
     );
 
     if (await menuButton.isVisible()) {
@@ -85,14 +85,14 @@ test.describe('Mobile Navigation', () => {
       await expect(mobileMenu).toBeVisible();
 
       // Should show navigation items
-      await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();
+      await expect(page.getByRole('link', {name: /dashboard/i})).toBeVisible();
     }
   });
 
-  test('should close mobile menu when clicking outside', async ({ page }) => {
+  test('should close mobile menu when clicking outside', async ({page}) => {
     // Open mobile menu
     const menuButton = page.locator('button[aria-label="Open menu"]').or(
-      page.locator('header button').filter({ has: page.locator('svg') }).first()
+      page.locator('header button').filter({has: page.locator('svg')}).first()
     );
 
     if (await menuButton.isVisible()) {
@@ -105,13 +105,13 @@ test.describe('Mobile Navigation', () => {
       // Click overlay to close
       const overlay = page.locator('div.fixed.inset-0.bg-black\\/50');
       if (await overlay.isVisible()) {
-        await overlay.click({ force: true });
+        await overlay.click({force: true});
         await expect(mobileMenu).toBeHidden();
       }
     }
   });
 
-  test('should have appropriate touch targets (48px minimum)', async ({ page }) => {
+  test('should have appropriate touch targets (48px minimum)', async ({page}) => {
     const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
 
     // Get all nav links
@@ -131,7 +131,7 @@ test.describe('Mobile Navigation', () => {
 });
 
 test.describe('Mobile Responsive Layout', () => {
-  test('should display content in single column on mobile', async ({ page }) => {
+  test('should display content in single column on mobile', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
@@ -152,7 +152,7 @@ test.describe('Mobile Responsive Layout', () => {
     }
   });
 
-  test('should scroll content horizontally for wide tables', async ({ page }) => {
+  test('should scroll content horizontally for wide tables', async ({page}) => {
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
 
@@ -175,7 +175,7 @@ test.describe('Mobile Responsive Layout', () => {
     }
   });
 
-  test('should show mobile card view for employee list', async ({ page }) => {
+  test('should show mobile card view for employee list', async ({page}) => {
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
 
@@ -198,12 +198,12 @@ test.describe('Mobile Responsive Layout', () => {
 });
 
 test.describe('Mobile Forms', () => {
-  test('should display form fields stacked vertically', async ({ page }) => {
+  test('should display form fields stacked vertically', async ({page}) => {
     await page.goto('/leave');
     await page.waitForLoadState('networkidle');
 
     // Try to open new leave form
-    const newButton = page.getByRole('button', { name: /new|request|create/i }).first();
+    const newButton = page.getByRole('button', {name: /new|request|create/i}).first();
     if (await newButton.isVisible()) {
       await newButton.click();
 
@@ -227,7 +227,7 @@ test.describe('Mobile Forms', () => {
     }
   });
 
-  test('should have large touch-friendly input fields', async ({ page }) => {
+  test('should have large touch-friendly input fields', async ({page}) => {
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');
 
@@ -251,7 +251,7 @@ test.describe('Mobile Forms', () => {
 });
 
 test.describe('Mobile Header', () => {
-  test('should show compact header on mobile', async ({ page }) => {
+  test('should show compact header on mobile', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
@@ -263,7 +263,7 @@ test.describe('Mobile Header', () => {
     await expect(menuButton).toBeVisible();
   });
 
-  test('should show search when available', async ({ page }) => {
+  test('should show search when available', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
@@ -280,14 +280,14 @@ test.describe('Mobile Header', () => {
     expect(hasSearch).toBeDefined();
   });
 
-  test('should show user menu/profile button', async ({ page }) => {
+  test('should show user menu/profile button', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
     const header = page.locator('header').first();
 
     // Should have user dropdown or avatar
-    const userButton = header.getByRole('button', { name: /user|profile|account/i }).or(
+    const userButton = header.getByRole('button', {name: /user|profile|account/i}).or(
       header.locator('[data-testid="user-menu"]').or(
         header.locator('.rounded-full') // Avatar
       )

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 /**
  * Debounce a value - returns the debounced value after the specified delay
@@ -89,7 +89,7 @@ export function useAbortController(): {
     };
   }, [abort]);
 
-  return useMemo(() => ({ getSignal, abort }), [getSignal, abort]);
+  return useMemo(() => ({getSignal, abort}), [getSignal, abort]);
 }
 
 /**
@@ -109,7 +109,7 @@ export function useDebouncedFetch<T>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { getSignal } = useAbortController();
+  const {getSignal} = useAbortController();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
 
@@ -160,7 +160,7 @@ export function useDebouncedFetch<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
-  return { data, loading, error, refetch: execute };
+  return {data, loading, error, refetch: execute};
 }
 
 /**

@@ -1,17 +1,10 @@
 'use client';
 
 import React from 'react';
-import {
-  Star,
-  Paperclip,
-  MailOpen,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { EmailMessage } from './types';
+import {ChevronLeft, ChevronRight, MailOpen, Paperclip, Search, Star,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {EmailMessage} from './types';
 
 interface EmailListProps {
   emails: EmailMessage[];
@@ -29,26 +22,26 @@ interface EmailListProps {
 }
 
 export function EmailList({
-  emails,
-  searchQuery,
-  isLoading,
-  selectedLabel,
-  pageToken,
-  prevPageTokens,
-  onSearchChange,
-  onEmailClick,
-  onToggleStar,
-  onNextPage,
-  onPrevPage,
-  formatDate,
-}: EmailListProps) {
+                            emails,
+                            searchQuery,
+                            isLoading,
+                            selectedLabel,
+                            pageToken,
+                            prevPageTokens,
+                            onSearchChange,
+                            onEmailClick,
+                            onToggleStar,
+                            onNextPage,
+                            onPrevPage,
+                            formatDate,
+                          }: EmailListProps) {
   return (
     <>
       {/* Toolbar */}
       <div className="border-b border-[var(--border-main)] p-4">
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <Input
               placeholder="Search emails..."
               value={searchQuery}
@@ -63,7 +56,7 @@ export function EmailList({
               onClick={onPrevPage}
               disabled={prevPageTokens.length === 0}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4"/>
             </Button>
             <Button
               variant="ghost"
@@ -71,7 +64,7 @@ export function EmailList({
               onClick={onNextPage}
               disabled={!pageToken}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4"/>
             </Button>
           </div>
         </div>
@@ -81,7 +74,7 @@ export function EmailList({
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+            <div className="w-10 h-10 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
             <p className="text-[var(--text-muted)]">Loading emails...</p>
           </div>
         </div>
@@ -89,7 +82,7 @@ export function EmailList({
         /* Empty State */
         <div className="py-16">
           <div className="text-center">
-            <MailOpen className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+            <MailOpen className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
             <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
               {searchQuery ? 'No emails found' : 'No emails here'}
             </h3>
@@ -123,7 +116,7 @@ export function EmailList({
                 }`}
                 aria-label={email.isStarred ? 'Remove star' : 'Add star'}
               >
-                <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`} />
+                <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`}/>
               </button>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -135,7 +128,7 @@ export function EmailList({
                     {email.from}
                   </span>
                   {email.hasAttachments && (
-                    <Paperclip className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <Paperclip className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   )}
                 </div>
                 <div className="flex items-center gap-2">

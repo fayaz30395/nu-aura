@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { demoUsers } from './fixtures/testData';
-import { loginAs, navigateTo } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {demoUsers} from './fixtures/testData';
+import {loginAs, navigateTo} from './fixtures/helpers';
 
 /**
  * Shifts E2E Tests
@@ -11,23 +11,23 @@ import { loginAs, navigateTo } from './fixtures/helpers';
 // ─── SHIFT DASHBOARD ──────────────────────────────────────────────────────────
 
 test.describe('Shifts — Dashboard (Team Schedule)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await navigateTo(page, '/shifts');
   });
 
-  test('should display Shifts dashboard heading or content', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display Shifts dashboard heading or content', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should display week/list view toggle buttons', async ({ page }) => {
+  test('should display week/list view toggle buttons', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasWeek = await page.locator('button[aria-label*="week" i], button:has-text("Week")').first().isVisible().catch(() => false);
     const hasList = await page.locator('button[aria-label*="list" i], button:has-text("List")').first().isVisible().catch(() => false);
     expect(hasWeek || hasList || true).toBe(true);
   });
 
-  test('should display navigation to Shift Definitions', async ({ page }) => {
+  test('should display navigation to Shift Definitions', async ({page}) => {
     await page.waitForTimeout(500);
     const hasLink = await page
       .locator('a[href*="/shifts/definitions"], button:has-text("Definitions"), button:has-text("Settings")')
@@ -37,7 +37,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
     expect(hasLink || true).toBe(true);
   });
 
-  test('should display navigation to Shift Swaps', async ({ page }) => {
+  test('should display navigation to Shift Swaps', async ({page}) => {
     await page.waitForTimeout(500);
     const hasLink = await page
       .locator('a[href*="/shifts/swaps"], button:has-text("Swap"), button:has-text("Swaps")')
@@ -47,7 +47,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
     expect(hasLink || true).toBe(true);
   });
 
-  test('week view shows day columns', async ({ page }) => {
+  test('week view shows day columns', async ({page}) => {
     await page.waitForTimeout(1500);
     const hasDays = await page
       .locator('text=/Mon|Tue|Wed|Thu|Fri|Monday|Tuesday/i')
@@ -57,7 +57,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
     expect(hasDays || true).toBe(true);
   });
 
-  test('prev/next week navigation buttons work', async ({ page }) => {
+  test('prev/next week navigation buttons work', async ({page}) => {
     await page.waitForTimeout(500);
     const prevBtn = page.locator('button[aria-label*="prev" i], button svg').first();
     const hasBtn = await prevBtn.isVisible().catch(() => false);
@@ -68,7 +68,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
     expect(page.url()).toContain('/shifts');
   });
 
-  test('should have no critical console errors', async ({ page }) => {
+  test('should have no critical console errors', async ({page}) => {
     const errors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -89,16 +89,16 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
 // ─── SHIFT DEFINITIONS ───────────────────────────────────────────────────────
 
 test.describe('Shifts — Definitions', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/shifts/definitions');
   });
 
-  test('should display Shift Definitions heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display Shift Definitions heading', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should display shift list or empty state', async ({ page }) => {
+  test('should display shift list or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasContent = await page
       .locator('table, [class*="card"], text=/No shifts|Add your first shift/i')
@@ -108,7 +108,7 @@ test.describe('Shifts — Definitions', () => {
     expect(hasContent || true).toBe(true);
   });
 
-  test('Add Shift button opens creation form', async ({ page }) => {
+  test('Add Shift button opens creation form', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Shift"), button:has-text("New Shift"), button:has-text("Create Shift")')
       .first();
@@ -125,7 +125,7 @@ test.describe('Shifts — Definitions', () => {
     expect(hasForm || true).toBe(true);
   });
 
-  test('shift creation form has required time fields', async ({ page }) => {
+  test('shift creation form has required time fields', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Shift"), button:has-text("New Shift"), button:has-text("Create Shift")')
       .first();
@@ -141,7 +141,7 @@ test.describe('Shifts — Definitions', () => {
     expect(hasStartTime || true).toBe(true);
   });
 
-  test('shift type dropdown has Fixed, Rotating, Flexible options', async ({ page }) => {
+  test('shift type dropdown has Fixed, Rotating, Flexible options', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Shift"), button:has-text("New Shift"), button:has-text("Create Shift")')
       .first();
@@ -156,7 +156,7 @@ test.describe('Shifts — Definitions', () => {
     expect(options.some((o) => o.toLowerCase().includes('fixed'))).toBe(true);
   });
 
-  test('night shift toggle checkbox is present', async ({ page }) => {
+  test('night shift toggle checkbox is present', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Shift"), button:has-text("New Shift"), button:has-text("Create Shift")')
       .first();
@@ -172,7 +172,7 @@ test.describe('Shifts — Definitions', () => {
     expect(hasNight || true).toBe(true);
   });
 
-  test('shift cards display time and type info', async ({ page }) => {
+  test('shift cards display time and type info', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasTime = await page
       .locator('text=/AM|PM|:00|Morning|Night|Day/i')
@@ -186,16 +186,16 @@ test.describe('Shifts — Definitions', () => {
 // ─── SHIFT PATTERNS ───────────────────────────────────────────────────────────
 
 test.describe('Shifts — Patterns', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/shifts/patterns');
   });
 
-  test('should display Shift Patterns heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display Shift Patterns heading', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should display patterns list or empty state', async ({ page }) => {
+  test('should display patterns list or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
     const hasContent = await page
       .locator('[class*="card"], text=/No patterns|empty/i, table')
@@ -205,7 +205,7 @@ test.describe('Shifts — Patterns', () => {
     expect(hasContent || true).toBe(true);
   });
 
-  test('Add Pattern button is visible', async ({ page }) => {
+  test('Add Pattern button is visible', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Pattern"), button:has-text("New Pattern"), button:has-text("Create Pattern")')
       .first();
@@ -213,7 +213,7 @@ test.describe('Shifts — Patterns', () => {
     expect(hasAdd || true).toBe(true);
   });
 
-  test('Pattern form has rotation type dropdown', async ({ page }) => {
+  test('Pattern form has rotation type dropdown', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Pattern"), button:has-text("New Pattern"), button:has-text("Create Pattern")')
       .first();
@@ -228,7 +228,7 @@ test.describe('Shifts — Patterns', () => {
     expect(options.some((o) => o.toLowerCase().includes('fixed') || o.toLowerCase().includes('rotating'))).toBe(true);
   });
 
-  test('Pattern form has cycle days field', async ({ page }) => {
+  test('Pattern form has cycle days field', async ({page}) => {
     const addBtn = page
       .locator('button:has-text("Add Pattern"), button:has-text("New Pattern"), button:has-text("Create Pattern")')
       .first();
@@ -245,16 +245,16 @@ test.describe('Shifts — Patterns', () => {
 // ─── MY SCHEDULE ─────────────────────────────────────────────────────────────
 
 test.describe('Shifts — My Schedule', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/shifts/my-schedule');
   });
 
-  test('should display My Schedule heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display My Schedule heading', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should display month calendar grid', async ({ page }) => {
+  test('should display month calendar grid', async ({page}) => {
     await page.waitForTimeout(1500);
     const hasDays = await page
       .locator('text=/Mon|Tue|Wed|Thu|Fri|Sat|Sun/i')
@@ -264,7 +264,7 @@ test.describe('Shifts — My Schedule', () => {
     expect(hasDays || true).toBe(true);
   });
 
-  test('prev/next month navigation works', async ({ page }) => {
+  test('prev/next month navigation works', async ({page}) => {
     await page.waitForTimeout(500);
     const prevBtn = page.locator('button[aria-label*="prev" i], button svg').first();
     const hasBtn = await prevBtn.isVisible().catch(() => false);
@@ -274,7 +274,7 @@ test.describe('Shifts — My Schedule', () => {
     expect(page.url()).toContain('/shifts/my-schedule');
   });
 
-  test('current month is displayed', async ({ page }) => {
+  test('current month is displayed', async ({page}) => {
     await page.waitForTimeout(1000);
     const currentYear = new Date().getFullYear().toString();
     const hasYear = await page.locator(`text=${currentYear}`).first().isVisible().catch(() => false);
@@ -285,28 +285,28 @@ test.describe('Shifts — My Schedule', () => {
 // ─── SHIFT SWAPS ─────────────────────────────────────────────────────────────
 
 test.describe('Shifts — Swaps', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/shifts/swaps');
   });
 
-  test('should display Shift Swaps heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+  test('should display Shift Swaps heading', async ({page}) => {
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('should show My Requests tab', async ({ page }) => {
+  test('should show My Requests tab', async ({page}) => {
     await expect(page.locator('button:has-text("My Requests"), [role="tab"]:has-text("My Requests")').first()).toBeVisible({
       timeout: 10000,
     });
   });
 
-  test('should show Incoming Requests tab', async ({ page }) => {
+  test('should show Incoming Requests tab', async ({page}) => {
     await expect(
       page.locator('button:has-text("Incoming"), [role="tab"]:has-text("Incoming")').first()
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({timeout: 10000});
   });
 
-  test('swap status labels are configured', async ({ page }) => {
+  test('swap status labels are configured', async ({page}) => {
     await page.waitForTimeout(1500);
     const hasStatus = await page
       .locator('text=/Pending|Accepted|Approved|Rejected|Completed|Cancelled/i')
@@ -316,7 +316,7 @@ test.describe('Shifts — Swaps', () => {
     expect(hasStatus || true).toBe(true);
   });
 
-  test('Manager sees Pending Approval tab for swaps', async ({ page }) => {
+  test('Manager sees Pending Approval tab for swaps', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await navigateTo(page, '/shifts/swaps');
     await page.waitForTimeout(1000);
@@ -332,13 +332,13 @@ test.describe('Shifts — Swaps', () => {
 // ─── SHIFTS RBAC ─────────────────────────────────────────────────────────────
 
 test.describe('Shifts — RBAC', () => {
-  test('Employee can access My Schedule', async ({ page }) => {
+  test('Employee can access My Schedule', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await navigateTo(page, '/shifts/my-schedule');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 
-  test('Employee cannot manage shift definitions', async ({ page }) => {
+  test('Employee cannot manage shift definitions', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/shifts/definitions');
     await page.waitForTimeout(3000);
@@ -347,9 +347,9 @@ test.describe('Shifts — RBAC', () => {
     expect(url.includes('/shifts/definitions') || url.includes('/dashboard')).toBe(true);
   });
 
-  test('Super Admin can access shift definitions management', async ({ page }) => {
+  test('Super Admin can access shift definitions management', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/shifts/definitions');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 });

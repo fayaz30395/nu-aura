@@ -1,17 +1,17 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import {cn} from '@/lib/utils';
 import {
-  EmployeeCapacity,
+  ALLOCATION_THRESHOLDS,
   AllocationBreakdown,
+  EmployeeCapacity,
+  formatAllocationPercentage,
   getAllocationStatus,
   getAllocationStatusColor,
   getAllocationStatusLabel,
-  formatAllocationPercentage,
-  ALLOCATION_THRESHOLDS,
 } from '@/lib/types/hrms/resource-management';
-import { AlertTriangle, Clock, CheckCircle, User, Briefcase } from 'lucide-react';
+import {AlertTriangle, Briefcase, CheckCircle, Clock, User} from 'lucide-react';
 
 interface EmployeeCapacityDisplayProps {
   capacity: EmployeeCapacity;
@@ -25,12 +25,12 @@ interface EmployeeCapacityDisplayProps {
  * Displays an employee's current allocation capacity with visual indicators
  */
 export function EmployeeCapacityDisplay({
-  capacity,
-  showBreakdown = true,
-  compact = false,
-  onViewDetails,
-  className,
-}: EmployeeCapacityDisplayProps) {
+                                          capacity,
+                                          showBreakdown = true,
+                                          compact = false,
+                                          onViewDetails,
+                                          className,
+                                        }: EmployeeCapacityDisplayProps) {
   const status = getAllocationStatus(capacity.totalAllocation);
   const statusColor = getAllocationStatusColor(status);
   const statusLabel = getAllocationStatusLabel(status);
@@ -56,8 +56,9 @@ export function EmployeeCapacityDisplay({
       {/* Header with employee info */}
       <div className="row-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
-            <User className="h-5 w-5" />
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+            <User className="h-5 w-5"/>
           </div>
           <div>
             <p className="font-medium text-surface-900 dark:text-surface-50">
@@ -69,8 +70,9 @@ export function EmployeeCapacityDisplay({
           </div>
         </div>
         {capacity.hasPendingApprovals && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
-            <Clock className="h-3 w-3" />
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
+            <Clock className="h-3 w-3"/>
             Pending Approval
           </span>
         )}
@@ -85,20 +87,21 @@ export function EmployeeCapacityDisplay({
           <div className="flex items-center gap-2">
             <span
               className="font-semibold"
-              style={{ color: statusColor }}
+              style={{color: statusColor}}
             >
               {formatAllocationPercentage(capacity.totalAllocation)}
             </span>
-            <StatusBadge status={status} label={statusLabel} />
+            <StatusBadge status={status} label={statusLabel}/>
           </div>
         </div>
 
         {/* Progress bar */}
         <div className="relative h-3 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
           {/* Background markers at 50%, 75%, 100% */}
-          <div className="absolute left-1/2 top-0 h-full w-px bg-surface-300 dark:bg-surface-600" />
-          <div className="absolute left-3/4 top-0 h-full w-px bg-surface-300 dark:bg-surface-600" />
-          <div className="absolute right-0 top-0 h-full w-px bg-surface-400 dark:bg-surface-500" style={{ left: '66.67%' }} />
+          <div className="absolute left-1/2 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
+          <div className="absolute left-3/4 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
+          <div className="absolute right-0 top-0 h-full w-px bg-surface-400 dark:bg-surface-500"
+               style={{left: '66.67%'}}/>
 
           {/* Filled portion */}
           <div
@@ -110,13 +113,13 @@ export function EmployeeCapacityDisplay({
                   ? 'bg-gradient-to-r from-warning-400 to-warning-500'
                   : 'bg-gradient-to-r from-success-400 to-success-500'
             )}
-            style={{ width: `${(gaugePercentage / 150) * 100}%` }}
+            style={{width: `${(gaugePercentage / 150) * 100}%`}}
           />
 
           {/* 100% marker line */}
           <div
             className="absolute top-0 h-full w-0.5 bg-surface-800 dark:bg-surface-200"
-            style={{ left: '66.67%' }}
+            style={{left: '66.67%'}}
           />
         </div>
 
@@ -167,7 +170,7 @@ export function EmployeeCapacityDisplay({
           </p>
           <div className="max-h-48 space-y-2 overflow-y-auto">
             {capacity.allocations.map((allocation) => (
-              <AllocationRow key={allocation.projectId} allocation={allocation} />
+              <AllocationRow key={allocation.projectId} allocation={allocation}/>
             ))}
           </div>
         </div>
@@ -190,11 +193,11 @@ export function EmployeeCapacityDisplay({
  * Compact version of capacity display for inline use
  */
 function CompactCapacityDisplay({
-  capacity,
-  status: _status,
-  statusColor,
-  className,
-}: {
+                                  capacity,
+                                  status: _status,
+                                  statusColor,
+                                  className,
+                                }: {
   capacity: EmployeeCapacity;
   status: string;
   statusColor: string;
@@ -211,23 +214,23 @@ function CompactCapacityDisplay({
             'absolute left-0 top-0 h-full rounded-full',
             isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
           )}
-          style={{ width: `${Math.min((capacity.totalAllocation / 100) * 100, 100)}%` }}
+          style={{width: `${Math.min((capacity.totalAllocation / 100) * 100, 100)}%`}}
         />
       </div>
 
       {/* Percentage */}
       <span
         className="text-sm font-medium"
-        style={{ color: statusColor }}
+        style={{color: statusColor}}
       >
         {formatAllocationPercentage(capacity.totalAllocation)}
       </span>
 
       {/* Status icon */}
       {isOverAllocated ? (
-        <AlertTriangle className="h-4 w-4 text-danger-500" />
+        <AlertTriangle className="h-4 w-4 text-danger-500"/>
       ) : capacity.hasPendingApprovals ? (
-        <Clock className="h-4 w-4 text-warning-500" />
+        <Clock className="h-4 w-4 text-warning-500"/>
       ) : null}
     </div>
   );
@@ -236,7 +239,7 @@ function CompactCapacityDisplay({
 /**
  * Status badge component
  */
-function StatusBadge({ status, label }: { status: string; label: string }) {
+function StatusBadge({status, label}: { status: string; label: string }) {
   const bgColors: Record<string, string> = {
     OVER_ALLOCATED: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
     OPTIMAL: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
@@ -245,10 +248,10 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
   };
 
   const icons: Record<string, React.ReactNode> = {
-    OVER_ALLOCATED: <AlertTriangle className="h-3 w-3" />,
-    OPTIMAL: <CheckCircle className="h-3 w-3" />,
-    UNDER_UTILIZED: <Clock className="h-3 w-3" />,
-    UNASSIGNED: <User className="h-3 w-3" />,
+    OVER_ALLOCATED: <AlertTriangle className="h-3 w-3"/>,
+    OPTIMAL: <CheckCircle className="h-3 w-3"/>,
+    UNDER_UTILIZED: <Clock className="h-3 w-3"/>,
+    UNASSIGNED: <User className="h-3 w-3"/>,
   };
 
   return (
@@ -267,7 +270,7 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
 /**
  * Single allocation row in breakdown
  */
-function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
+function AllocationRow({allocation}: { allocation: AllocationBreakdown }) {
   return (
     <div
       className={cn(
@@ -279,7 +282,7 @@ function AllocationRow({ allocation }: { allocation: AllocationBreakdown }) {
     >
       <div className="flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-surface-100 dark:bg-surface-700">
-          <Briefcase className="h-4 w-4 text-surface-600 dark:text-surface-400" />
+          <Briefcase className="h-4 w-4 text-surface-600 dark:text-surface-400"/>
         </div>
         <div>
           <p className="text-sm font-medium text-surface-900 dark:text-surface-50">

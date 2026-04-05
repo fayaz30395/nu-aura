@@ -1,38 +1,44 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { logger } from '@/lib/utils/logger';
+import React, {useMemo, useState} from 'react';
+import {logger} from '@/lib/utils/logger';
 import {
-  Clock,
-  Plus,
-  CheckCircle,
   AlertCircle,
-  Loader2,
-  Send,
-  Eye,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
-  Timer,
+  Clock,
+  Eye,
   FileSpreadsheet,
+  Loader2,
+  Plus,
+  Send,
+  Timer,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
-  Badge,
+  EmptyState,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  EmptyState,
+  ModalHeader,
 } from '@/components/ui';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployeeTimesheets, useTimesheetEntries, useCreateTimesheet, useSubmitTimesheet, useAddTimeEntry } from '@/lib/hooks/queries/useTimesheets';
-import { useProjects } from '@/lib/hooks/queries/useProjects';
-import { Timesheet, ActivityType, CreateTimeEntryRequest } from '@/lib/types/hrms/timesheet';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {
+  useAddTimeEntry,
+  useCreateTimesheet,
+  useEmployeeTimesheets,
+  useSubmitTimesheet,
+  useTimesheetEntries
+} from '@/lib/hooks/queries/useTimesheets';
+import {useProjects} from '@/lib/hooks/queries/useProjects';
+import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -62,28 +68,28 @@ const formatFullDate = (dateString: string) => {
 };
 
 const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
-  { value: 'DEVELOPMENT', label: 'Development' },
-  { value: 'TESTING', label: 'Testing' },
-  { value: 'DESIGN', label: 'Design' },
-  { value: 'DOCUMENTATION', label: 'Documentation' },
-  { value: 'MEETING', label: 'Meeting' },
-  { value: 'CODE_REVIEW', label: 'Code Review' },
-  { value: 'PLANNING', label: 'Planning' },
-  { value: 'SUPPORT', label: 'Support' },
-  { value: 'RESEARCH', label: 'Research' },
-  { value: 'OTHER', label: 'Other' },
+  {value: 'DEVELOPMENT', label: 'Development'},
+  {value: 'TESTING', label: 'Testing'},
+  {value: 'DESIGN', label: 'Design'},
+  {value: 'DOCUMENTATION', label: 'Documentation'},
+  {value: 'MEETING', label: 'Meeting'},
+  {value: 'CODE_REVIEW', label: 'Code Review'},
+  {value: 'PLANNING', label: 'Planning'},
+  {value: 'SUPPORT', label: 'Support'},
+  {value: 'RESEARCH', label: 'Research'},
+  {value: 'OTHER', label: 'Other'},
 ];
 
 export default function TimesheetsPage() {
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
 
   // React Query hooks
-  const { data: timesheets = [], isLoading, error: queryError } = useEmployeeTimesheets(
+  const {data: timesheets = [], isLoading, error: queryError} = useEmployeeTimesheets(
     user?.employeeId || '',
     isAuthenticated && hasHydrated && !!user?.employeeId
   );
 
-  const { data: projectsResponse } = useProjects(0, 100);
+  const {data: projectsResponse} = useProjects(0, 100);
   const projects = projectsResponse?.content ?? [];
 
   // Mutations
@@ -125,7 +131,7 @@ export default function TimesheetsPage() {
   });
 
   // Fetch timesheet entries when a timesheet is selected
-  const { data: entriesData = [] } = useTimesheetEntries(
+  const {data: entriesData = []} = useTimesheetEntries(
     selectedTimesheet?.id || '',
     showDetailModal && !!selectedTimesheet?.id
   );
@@ -137,7 +143,7 @@ export default function TimesheetsPage() {
     return ts?.id || '';
   }, [timesheets, currentWeekStart]);
 
-  const { data: entriesForCurrentWeek = [] } = useTimesheetEntries(
+  const {data: entriesForCurrentWeek = []} = useTimesheetEntries(
     currentWeekTimesheetId,
     !!currentWeekTimesheetId
   );
@@ -186,7 +192,9 @@ export default function TimesheetsPage() {
       setShowCreateModal(false);
     } catch (err: unknown) {
       logger.error('Error creating timesheet:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create timesheet');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to create timesheet');
     } finally {
       setSaving(false);
     }
@@ -207,7 +215,9 @@ export default function TimesheetsPage() {
       setShowDetailModal(false);
     } catch (err: unknown) {
       logger.error('Error submitting timesheet:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit timesheet');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to submit timesheet');
     } finally {
       setSubmitting(false);
     }
@@ -241,7 +251,9 @@ export default function TimesheetsPage() {
       setShowEntryModal(false);
     } catch (err: unknown) {
       logger.error('Error adding entry:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add time entry');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to add time entry');
     } finally {
       setSaving(false);
     }
@@ -258,8 +270,8 @@ export default function TimesheetsPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Timesheets' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Timesheets'},
   ];
 
   if (!hasHydrated) {
@@ -270,7 +282,7 @@ export default function TimesheetsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading timesheets...</span>
         </div>
       </AppLayout>
@@ -282,7 +294,7 @@ export default function TimesheetsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <EmptyState
-          icon={<FileSpreadsheet className="h-12 w-12" />}
+          icon={<FileSpreadsheet className="h-12 w-12"/>}
           title="Timesheets"
           description="As an administrator, you don't have personal timesheets. Select an employee to view their timesheets."
         />
@@ -310,7 +322,7 @@ export default function TimesheetsPage() {
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
               </div>
             </CardContent>
@@ -323,7 +335,7 @@ export default function TimesheetsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Timer className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <Timer className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Hours</p>
@@ -336,7 +348,7 @@ export default function TimesheetsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
@@ -349,7 +361,7 @@ export default function TimesheetsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Approved</p>
@@ -366,7 +378,7 @@ export default function TimesheetsPage() {
             <div className="row-between mb-4">
               <div className="flex items-center gap-4">
                 <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4"/>
                 </Button>
                 <div className="text-center">
                   <h3 className="font-semibold text-[var(--text-primary)]">
@@ -377,7 +389,7 @@ export default function TimesheetsPage() {
                   </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4"/>
                 </Button>
               </div>
 
@@ -387,14 +399,14 @@ export default function TimesheetsPage() {
                     {currentWeekTimesheet.status.replace('_', ' ')}
                   </Badge>
                   <Button size="sm" onClick={() => handleViewTimesheet(currentWeekTimesheet)}>
-                    <Eye className="h-4 w-4 mr-2" />
+                    <Eye className="h-4 w-4 mr-2"/>
                     View
                   </Button>
                 </div>
               ) : (
                 <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
                   <Button onClick={() => setShowCreateModal(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 mr-2"/>
                     Create Timesheet
                   </Button>
                 </PermissionGate>
@@ -405,98 +417,104 @@ export default function TimesheetsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[var(--border-main)]">
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project</th>
-                    {weekDates.map((date, i) => (
-                      <th key={i} className={`px-2 py-2 text-center font-medium min-w-[80px] ${
-                        date.getDay() === 0 || date.getDay() === 6
-                          ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
-                          : 'text-[var(--text-secondary)]'
-                      }`}>
-                        <div className="text-xs uppercase">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                        <div className="text-sm">{date.getDate()}</div>
-                      </th>
-                    ))}
-                    <th className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
-                  </tr>
+                <tr className="border-b border-[var(--border-main)]">
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project
+                  </th>
+                  {weekDates.map((date, i) => (
+                    <th key={i} className={`px-2 py-2 text-center font-medium min-w-[80px] ${
+                      date.getDay() === 0 || date.getDay() === 6
+                        ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
+                        : 'text-[var(--text-secondary)]'
+                    }`}>
+                      <div className="text-xs uppercase">{date.toLocaleDateString('en-US', {weekday: 'short'})}</div>
+                      <div className="text-sm">{date.getDate()}</div>
+                    </th>
+                  ))}
+                  <th className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
+                </tr>
                 </thead>
                 <tbody>
-                  {/* Group entries by project */}
-                  {(() => {
-                    // Build a map of projectId → entries per day
-                    const projectMap = new Map<string, { name: string; entries: Map<string, typeof entriesForCurrentWeek[0]> }>();
+                {/* Group entries by project */}
+                {(() => {
+                  // Build a map of projectId → entries per day
+                  const projectMap = new Map<string, {
+                    name: string;
+                    entries: Map<string, typeof entriesForCurrentWeek[0]>
+                  }>();
 
-                    entriesForCurrentWeek.forEach(entry => {
-                      const projectName = projects.find(p => p.id === entry.projectId)?.name || 'Unknown Project';
-                      if (!projectMap.has(entry.projectId)) {
-                        projectMap.set(entry.projectId, { name: projectName, entries: new Map() });
-                      }
-                      projectMap.get(entry.projectId)!.entries.set(entry.entryDate, entry);
-                    });
-
-                    const projectRows = Array.from(projectMap.entries());
-
-                    if (projectRows.length === 0) {
-                      return (
-                        <tr>
-                          <td colSpan={9} className="py-8 text-center text-[var(--text-muted)]">
-                            No time entries for this week. Click &quot;+ Add Entry&quot; to get started.
-                          </td>
-                        </tr>
-                      );
+                  entriesForCurrentWeek.forEach(entry => {
+                    const projectName = projects.find(p => p.id === entry.projectId)?.name || 'Unknown Project';
+                    if (!projectMap.has(entry.projectId)) {
+                      projectMap.set(entry.projectId, {name: projectName, entries: new Map()});
                     }
+                    projectMap.get(entry.projectId)!.entries.set(entry.entryDate, entry);
+                  });
 
-                    return projectRows.map(([projectId, { name, entries }]) => {
-                      const rowTotal = weekDates.reduce((sum, date) => {
-                        const key = date.toISOString().split('T')[0];
-                        return sum + (entries.get(key)?.hours || 0);
-                      }, 0);
+                  const projectRows = Array.from(projectMap.entries());
 
-                      return (
-                        <tr key={projectId} className="h-11 divider-b hover:bg-[var(--bg-card-hover)] transition-colors">
-                          <td className="px-4 py-2">
-                            <span className="font-medium text-[var(--text-primary)]">{name}</span>
-                          </td>
-                          {weekDates.map((date, i) => {
-                            const key = date.toISOString().split('T')[0];
-                            const entry = entries.get(key);
-                            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-                            return (
-                              <td key={i} className={`px-2 py-2 text-center ${isWeekend ? 'bg-[var(--bg-secondary)]' : ''}`}>
-                                <span className={`text-sm ${entry?.hours ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
+                  if (projectRows.length === 0) {
+                    return (
+                      <tr>
+                        <td colSpan={9} className="py-8 text-center text-[var(--text-muted)]">
+                          No time entries for this week. Click &quot;+ Add Entry&quot; to get started.
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  return projectRows.map(([projectId, {name, entries}]) => {
+                    const rowTotal = weekDates.reduce((sum, date) => {
+                      const key = date.toISOString().split('T')[0];
+                      return sum + (entries.get(key)?.hours || 0);
+                    }, 0);
+
+                    return (
+                      <tr key={projectId} className="h-11 divider-b hover:bg-[var(--bg-card-hover)] transition-colors">
+                        <td className="px-4 py-2">
+                          <span className="font-medium text-[var(--text-primary)]">{name}</span>
+                        </td>
+                        {weekDates.map((date, i) => {
+                          const key = date.toISOString().split('T')[0];
+                          const entry = entries.get(key);
+                          const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                          return (
+                            <td key={i}
+                                className={`px-2 py-2 text-center ${isWeekend ? 'bg-[var(--bg-secondary)]' : ''}`}>
+                                <span
+                                  className={`text-sm ${entry?.hours ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
                                   {entry?.hours ? `${entry.hours}h` : '—'}
                                 </span>
-                              </td>
-                            );
-                          })}
-                          <td className="px-4 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
-                            {rowTotal > 0 ? `${rowTotal}h` : '—'}
-                          </td>
-                        </tr>
-                      );
-                    });
-                  })()}
+                            </td>
+                          );
+                        })}
+                        <td className="px-4 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
+                          {rowTotal > 0 ? `${rowTotal}h` : '—'}
+                        </td>
+                      </tr>
+                    );
+                  });
+                })()}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                    <td className="px-4 py-4 font-semibold text-[var(--text-primary)]">Daily Total</td>
-                    {weekDates.map((date, i) => {
-                      const key = date.toISOString().split('T')[0];
-                      const dayTotal = entriesForCurrentWeek
-                        .filter(e => e.entryDate === key)
-                        .reduce((sum, e) => sum + (e.hours || 0), 0);
-                      return (
-                        <td key={i} className={`px-2 py-4 text-center font-semibold ${
-                          date.getDay() === 0 || date.getDay() === 6 ? 'bg-[var(--bg-secondary)]' : ''
-                        } ${dayTotal > 0 ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
-                          {dayTotal > 0 ? `${dayTotal}h` : '—'}
-                        </td>
-                      );
-                    })}
-                    <td className="px-4 py-4 text-center font-bold text-accent-700 dark:text-accent-400">
-                      {currentWeekTimesheet?.totalHours || 0}h
-                    </td>
-                  </tr>
+                <tr className="border-t-2 border-[var(--border-main)] bg-[var(--bg-secondary)]">
+                  <td className="px-4 py-4 font-semibold text-[var(--text-primary)]">Daily Total</td>
+                  {weekDates.map((date, i) => {
+                    const key = date.toISOString().split('T')[0];
+                    const dayTotal = entriesForCurrentWeek
+                      .filter(e => e.entryDate === key)
+                      .reduce((sum, e) => sum + (e.hours || 0), 0);
+                    return (
+                      <td key={i} className={`px-2 py-4 text-center font-semibold ${
+                        date.getDay() === 0 || date.getDay() === 6 ? 'bg-[var(--bg-secondary)]' : ''
+                      } ${dayTotal > 0 ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}`}>
+                        {dayTotal > 0 ? `${dayTotal}h` : '—'}
+                      </td>
+                    );
+                  })}
+                  <td className="px-4 py-4 text-center font-bold text-accent-700 dark:text-accent-400">
+                    {currentWeekTimesheet?.totalHours || 0}h
+                  </td>
+                </tr>
                 </tfoot>
               </table>
             </div>
@@ -518,7 +536,7 @@ export default function TimesheetsPage() {
                   {currentWeekTimesheet.status === 'DRAFT' && (
                     <PermissionGate permission={Permissions.TIMESHEET_CREATE}>
                       <Button size="sm" onClick={handleAddEntry}>
-                        <Plus className="h-4 w-4 mr-1" />
+                        <Plus className="h-4 w-4 mr-1"/>
                         Add Entry
                       </Button>
                     </PermissionGate>
@@ -542,7 +560,7 @@ export default function TimesheetsPage() {
                     <div className="row-between">
                       <div className="flex items-center gap-4">
                         <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
-                          <FileSpreadsheet className="h-5 w-5 text-[var(--text-secondary)]" />
+                          <FileSpreadsheet className="h-5 w-5 text-[var(--text-secondary)]"/>
                         </div>
                         <div>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -568,7 +586,7 @@ export default function TimesheetsPage() {
                           {timesheet.status.replace('_', ' ')}
                         </Badge>
                         <Button size="sm" variant="outline" onClick={() => handleViewTimesheet(timesheet)}>
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-4 w-4"/>
                         </Button>
                       </div>
                     </div>
@@ -577,10 +595,10 @@ export default function TimesheetsPage() {
               ))
             ) : (
               <EmptyState
-                icon={<FileSpreadsheet className="h-12 w-12" />}
+                icon={<FileSpreadsheet className="h-12 w-12"/>}
                 title="No Timesheets"
                 description="Fill in your timesheet for the current period"
-                action={{ label: 'Create Timesheet', onClick: () => setShowCreateModal(true) }}
+                action={{label: 'Create Timesheet', onClick: () => setShowCreateModal(true)}}
               />
             )}
           </div>
@@ -606,12 +624,12 @@ export default function TimesheetsPage() {
             <Button onClick={handleCreateTimesheet} disabled={saving}>
               {saving ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                   Creating...
                 </>
               ) : (
                 <>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2"/>
                   Create
                 </>
               )}
@@ -624,7 +642,7 @@ export default function TimesheetsPage() {
           <ModalHeader>
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                <FileSpreadsheet className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                <FileSpreadsheet className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -652,7 +670,8 @@ export default function TimesheetsPage() {
                 </div>
 
                 {selectedTimesheet.rejectionReason && (
-                  <div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
+                  <div
+                    className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
                     <strong>Rejection Reason:</strong> {selectedTimesheet.rejectionReason}
                   </div>
                 )}
@@ -662,7 +681,7 @@ export default function TimesheetsPage() {
                     <h3 className="font-medium text-[var(--text-primary)]">Time Entries</h3>
                     {selectedTimesheet.status === 'DRAFT' && (
                       <Button size="sm" onClick={handleAddEntry}>
-                        <Plus className="h-4 w-4 mr-2" />
+                        <Plus className="h-4 w-4 mr-2"/>
                         Add Entry
                       </Button>
                     )}
@@ -719,12 +738,12 @@ export default function TimesheetsPage() {
                 <Button onClick={handleSubmitTimesheet} disabled={submitting}>
                   {submitting ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                       Submitting...
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4 mr-2" />
+                      <Send className="h-4 w-4 mr-2"/>
                       Submit for Approval
                     </>
                   )}
@@ -750,7 +769,7 @@ export default function TimesheetsPage() {
                 <select
                   required
                   value={entryForm.projectId}
-                  onChange={(e) => setEntryForm({ ...entryForm, projectId: e.target.value })}
+                  onChange={(e) => setEntryForm({...entryForm, projectId: e.target.value})}
                   className="input-aura"
                 >
                   <option value="">Select a project</option>
@@ -771,7 +790,7 @@ export default function TimesheetsPage() {
                     type="date"
                     required
                     value={entryForm.entryDate}
-                    onChange={(e) => setEntryForm({ ...entryForm, entryDate: e.target.value })}
+                    onChange={(e) => setEntryForm({...entryForm, entryDate: e.target.value})}
                     className="input-aura"
                   />
                 </div>
@@ -788,7 +807,7 @@ export default function TimesheetsPage() {
                     value={entryForm.hours}
                     onChange={(e) => {
                       const val = parseFloat(e.target.value);
-                      setEntryForm({ ...entryForm, hours: Number.isNaN(val) ? 0 : val });
+                      setEntryForm({...entryForm, hours: Number.isNaN(val) ? 0 : val});
                     }}
                     className="input-aura"
                   />
@@ -801,7 +820,7 @@ export default function TimesheetsPage() {
                 </label>
                 <select
                   value={entryForm.activityType}
-                  onChange={(e) => setEntryForm({ ...entryForm, activityType: e.target.value as ActivityType })}
+                  onChange={(e) => setEntryForm({...entryForm, activityType: e.target.value as ActivityType})}
                   className="input-aura"
                 >
                   {ACTIVITY_TYPES.map((type) => (
@@ -819,7 +838,7 @@ export default function TimesheetsPage() {
                 <textarea
                   rows={3}
                   value={entryForm.workDescription}
-                  onChange={(e) => setEntryForm({ ...entryForm, workDescription: e.target.value })}
+                  onChange={(e) => setEntryForm({...entryForm, workDescription: e.target.value})}
                   className="input-aura"
                   placeholder="Describe the work done..."
                 />
@@ -830,7 +849,7 @@ export default function TimesheetsPage() {
                   <input
                     type="checkbox"
                     checked={entryForm.isBillable}
-                    onChange={(e) => setEntryForm({ ...entryForm, isBillable: e.target.checked })}
+                    onChange={(e) => setEntryForm({...entryForm, isBillable: e.target.checked})}
                     className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   <span className="text-body-secondary">Billable</span>
@@ -839,7 +858,7 @@ export default function TimesheetsPage() {
                   <input
                     type="checkbox"
                     checked={entryForm.isOvertime || false}
-                    onChange={(e) => setEntryForm({ ...entryForm, isOvertime: e.target.checked })}
+                    onChange={(e) => setEntryForm({...entryForm, isOvertime: e.target.checked})}
                     className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
                   />
                   <span className="text-body-secondary">Overtime</span>
@@ -854,12 +873,12 @@ export default function TimesheetsPage() {
             <Button onClick={handleSaveEntry} disabled={saving || !entryForm.projectId || !entryForm.hours}>
               {saving ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                   Saving...
                 </>
               ) : (
                 <>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2"/>
                   Add Entry
                 </>
               )}

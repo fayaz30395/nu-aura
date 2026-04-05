@@ -1,17 +1,17 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
+  GenerateScheduleRequest,
+  Page,
+  ScheduleEntry,
+  ShiftAssignment,
+  ShiftAssignmentRequest,
   ShiftDefinition,
   ShiftDefinitionRequest,
   ShiftPattern,
   ShiftPatternRequest,
-  ShiftAssignment,
-  ShiftAssignmentRequest,
-  ScheduleEntry,
-  GenerateScheduleRequest,
+  ShiftRuleViolation,
   ShiftSwapRequest,
   SubmitSwapRequest,
-  ShiftRuleViolation,
-  Page,
 } from '../../types/hrms/shift';
 
 class ShiftService {
@@ -34,7 +34,7 @@ class ShiftService {
 
   async getAllShifts(page: number = 0, size: number = 20): Promise<Page<ShiftDefinition>> {
     const response = await apiClient.get<Page<ShiftDefinition>>('/shifts', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -77,7 +77,7 @@ class ShiftService {
 
   async getAllPatterns(page: number = 0, size: number = 20): Promise<Page<ShiftPattern>> {
     const response = await apiClient.get<Page<ShiftPattern>>('/shifts/patterns', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -105,7 +105,7 @@ class ShiftService {
   ): Promise<Page<ShiftAssignment>> {
     const response = await apiClient.get<Page<ShiftAssignment>>(
       `/shifts/assignments/employee/${employeeId}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -132,7 +132,7 @@ class ShiftService {
     endDate: string
   ): Promise<ScheduleEntry[]> {
     const response = await apiClient.get<ScheduleEntry[]>('/shifts/schedule', {
-      params: { employeeId, startDate, endDate },
+      params: {employeeId, startDate, endDate},
     });
     return response.data;
   }
@@ -143,7 +143,7 @@ class ShiftService {
     endDate: string
   ): Promise<ScheduleEntry[]> {
     const response = await apiClient.get<ScheduleEntry[]>('/shifts/team-schedule', {
-      params: { managerId, startDate, endDate },
+      params: {managerId, startDate, endDate},
     });
     return response.data;
   }
@@ -156,7 +156,7 @@ class ShiftService {
     date: string
   ): Promise<ShiftRuleViolation[]> {
     const response = await apiClient.get<ShiftRuleViolation[]>('/shifts/validate-rules', {
-      params: { employeeId, shiftId, date },
+      params: {employeeId, shiftId, date},
     });
     return response.data;
   }
@@ -171,7 +171,7 @@ class ShiftService {
   async acceptSwapRequest(requestId: string, employeeId: string): Promise<ShiftSwapRequest> {
     const response = await apiClient.post<ShiftSwapRequest>(
       `/shift-swaps/${requestId}/accept`,
-      { employeeId }
+      {employeeId}
     );
     return response.data;
   }
@@ -179,7 +179,7 @@ class ShiftService {
   async declineSwapRequest(requestId: string, employeeId: string): Promise<ShiftSwapRequest> {
     const response = await apiClient.post<ShiftSwapRequest>(
       `/shift-swaps/${requestId}/decline`,
-      { employeeId }
+      {employeeId}
     );
     return response.data;
   }
@@ -187,7 +187,7 @@ class ShiftService {
   async cancelSwapRequest(requestId: string, employeeId: string): Promise<ShiftSwapRequest> {
     const response = await apiClient.post<ShiftSwapRequest>(
       `/shift-swaps/${requestId}/cancel`,
-      { employeeId }
+      {employeeId}
     );
     return response.data;
   }
@@ -195,7 +195,7 @@ class ShiftService {
   async approveSwapRequest(requestId: string, managerId: string): Promise<ShiftSwapRequest> {
     const response = await apiClient.post<ShiftSwapRequest>(
       `/shift-swaps/${requestId}/approve`,
-      { managerId }
+      {managerId}
     );
     return response.data;
   }
@@ -207,7 +207,7 @@ class ShiftService {
   ): Promise<ShiftSwapRequest> {
     const response = await apiClient.post<ShiftSwapRequest>(
       `/shift-swaps/${requestId}/reject`,
-      { managerId, reason }
+      {managerId, reason}
     );
     return response.data;
   }
@@ -219,7 +219,7 @@ class ShiftService {
   ): Promise<Page<ShiftSwapRequest>> {
     const response = await apiClient.get<Page<ShiftSwapRequest>>(
       `/shift-swaps/my-requests/${employeeId}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -241,7 +241,7 @@ class ShiftService {
     size: number = 20
   ): Promise<Page<ShiftSwapRequest>> {
     const response = await apiClient.get<Page<ShiftSwapRequest>>('/shift-swaps', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }

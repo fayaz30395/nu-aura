@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { EmployeePage } from './pages/EmployeePage';
-import { testUsers, testEmployee } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {EmployeePage} from './pages/EmployeePage';
+import {testEmployee, testUsers} from './fixtures/testData';
 
 /**
  * Employee CRUD E2E Tests
@@ -14,7 +14,7 @@ test.describe('Employee CRUD', () => {
   let loginPage: LoginPage;
   let employeePage: EmployeePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     employeePage = new EmployeePage(page);
 
@@ -28,24 +28,24 @@ test.describe('Employee CRUD', () => {
   });
 
   test.describe('List Employees', () => {
-    test('should display employee list page with heading', async ({ page }) => {
+    test('should display employee list page with heading', async ({page}) => {
       await expect(employeePage.pageHeading).toBeVisible();
       expect(page.url()).toContain('/employees');
     });
 
-    test('should display employee table with data', async ({ page }) => {
+    test('should display employee table with data', async ({page}) => {
       await expect(employeePage.employeeTable).toBeVisible();
 
       const count = await employeePage.getEmployeeCount();
       expect(count).toBeGreaterThanOrEqual(0);
     });
 
-    test('should have add employee and import buttons', async ({ page }) => {
+    test('should have add employee and import buttons', async ({page}) => {
       await expect(employeePage.addEmployeeButton).toBeVisible();
       await expect(employeePage.importButton).toBeVisible();
     });
 
-    test('should search employees by name', async ({ page }) => {
+    test('should search employees by name', async ({page}) => {
       await employeePage.searchEmployee('Fayaz');
       await page.waitForLoadState('networkidle');
 
@@ -55,14 +55,14 @@ test.describe('Employee CRUD', () => {
   });
 
   test.describe('Create Employee', () => {
-    test('should open add employee modal with form fields', async ({ page }) => {
+    test('should open add employee modal with form fields', async ({page}) => {
       await employeePage.clickAddEmployee();
 
       await expect(employeePage.modalTitle).toBeVisible();
       await expect(employeePage.modalTitle).toHaveText('Add New Employee');
     });
 
-    test('should create employee with basic info and close modal', async ({ page }) => {
+    test('should create employee with basic info and close modal', async ({page}) => {
       await employeePage.clickAddEmployee();
 
       await employeePage.fillBasicInfo(testEmployee.basic);
@@ -79,7 +79,7 @@ test.describe('Employee CRUD', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should validate required fields on empty submit', async ({ page }) => {
+    test('should validate required fields on empty submit', async ({page}) => {
       await employeePage.clickAddEmployee();
       await employeePage.submitForm();
 
@@ -89,7 +89,7 @@ test.describe('Employee CRUD', () => {
   });
 
   test.describe('View Employee Profile', () => {
-    test('should navigate to employee detail page', async ({ page }) => {
+    test('should navigate to employee detail page', async ({page}) => {
       const count = await employeePage.getEmployeeCount();
 
       if (count > 0) {
@@ -100,7 +100,7 @@ test.describe('Employee CRUD', () => {
   });
 
   test.describe('Delete Employee', () => {
-    test('should show delete confirmation modal', async ({ page }) => {
+    test('should show delete confirmation modal', async ({page}) => {
       const count = await employeePage.getEmployeeCount();
 
       if (count > 0) {
@@ -109,7 +109,7 @@ test.describe('Employee CRUD', () => {
       }
     });
 
-    test('should cancel delete without removing employee', async ({ page }) => {
+    test('should cancel delete without removing employee', async ({page}) => {
       const count = await employeePage.getEmployeeCount();
 
       if (count > 0) {

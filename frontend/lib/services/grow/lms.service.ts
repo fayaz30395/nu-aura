@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 export interface Course {
   id: string;
@@ -153,13 +153,28 @@ class LmsService {
     return response.data;
   }
 
-  async getCourses(page: number = 0, size: number = 20, search?: string): Promise<{ content: Course[], totalElements: number }> {
-    const response = await apiClient.get<{ content: Course[], totalElements: number }>('/lms/courses', { params: { page, size, search } });
+  async getCourses(page: number = 0, size: number = 20, search?: string): Promise<{
+    content: Course[],
+    totalElements: number
+  }> {
+    const response = await apiClient.get<{ content: Course[], totalElements: number }>('/lms/courses', {
+      params: {
+        page,
+        size,
+        search
+      }
+    });
     return response.data;
   }
 
-  async getPublishedCourses(page: number = 0, size: number = 20): Promise<{ content: Course[], totalElements: number }> {
-    const response = await apiClient.get<{ content: Course[], totalElements: number }>('/lms/courses/published', { params: { page, size } });
+  async getPublishedCourses(page: number = 0, size: number = 20): Promise<{
+    content: Course[],
+    totalElements: number
+  }> {
+    const response = await apiClient.get<{
+      content: Course[],
+      totalElements: number
+    }>('/lms/courses/published', {params: {page, size}});
     return response.data;
   }
 
@@ -212,7 +227,7 @@ class LmsService {
   async updateEnrollmentProgress(enrollmentId: string, progressPercent: number): Promise<CourseEnrollment> {
     const response = await apiClient.put<CourseEnrollment>(
       `/lms/enrollments/${enrollmentId}/progress`,
-      { progressPercent }
+      {progressPercent}
     );
     return response.data;
   }
@@ -224,7 +239,7 @@ class LmsService {
     const response = await apiClient.post<ContentProgress>(
       `/lms/progress/${enrollmentId}/content/${contentId}`,
       null,
-      { params: { status, timeSpentSeconds } }
+      {params: {status, timeSpentSeconds}}
     );
     return response.data;
   }
@@ -255,12 +270,12 @@ class LmsService {
   }
 
   async getCatalog(page: number = 0, size: number = 10): Promise<CourseCatalogResponse> {
-    const response = await apiClient.get<CourseCatalogResponse>('/lms/catalog', { params: { page, size } });
+    const response = await apiClient.get<CourseCatalogResponse>('/lms/catalog', {params: {page, size}});
     return response.data;
   }
 
   async enrollEmployee(courseId: string, employeeId: string): Promise<void> {
-    await apiClient.post(`/lms/courses/${courseId}/enroll`, null, { params: { employeeId } });
+    await apiClient.post(`/lms/courses/${courseId}/enroll`, null, {params: {employeeId}});
   }
 }
 

@@ -1,16 +1,16 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 // Attendance service - handles paginated response mapping
 import {
-  Shift,
-  ShiftRequest,
-  Holiday,
-  HolidayRequest,
   AttendanceRecord,
   AttendanceStatus,
   CheckInRequest,
   CheckOutRequest,
-  RegularizationRequest,
+  Holiday,
+  HolidayRequest,
   Page,
+  RegularizationRequest,
+  Shift,
+  ShiftRequest,
   TimeEntry,
 } from '../../types/hrms/attendance';
 
@@ -101,7 +101,7 @@ class AttendanceService {
 
   async getAllShifts(page: number = 0, size: number = 20): Promise<Page<Shift>> {
     const response = await apiClient.get<Page<Shift>>('/shifts', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -169,7 +169,7 @@ class AttendanceService {
     const response = await apiClient.get<Page<AttendanceDayResponse>>(
       `/attendance/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return {
@@ -185,7 +185,7 @@ class AttendanceService {
     const response = await apiClient.get<{ content: AttendanceDayResponse[] }>(
       `/attendance/my-attendance`,
       {
-        params: { startDate, endDate },
+        params: {startDate, endDate},
       }
     );
     // Handle both paginated response (with content property) and direct array response
@@ -201,7 +201,7 @@ class AttendanceService {
     const response = await apiClient.get<Page<AttendanceDayResponse>>(
       `/attendance/date/${date}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return {
@@ -217,7 +217,7 @@ class AttendanceService {
     const response = await apiClient.get<Page<AttendanceRecord>>(
       '/attendance/pending-regularizations',
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -228,7 +228,7 @@ class AttendanceService {
       `/attendance/${id}/request-regularization`,
       null,
       {
-        params: { reason: data.reason },
+        params: {reason: data.reason},
       }
     );
     return response.data;
@@ -246,7 +246,7 @@ class AttendanceService {
       `/attendance/${id}/reject-regularization`,
       null,
       {
-        params: { reason },
+        params: {reason},
       }
     );
     return response.data;
@@ -257,7 +257,7 @@ class AttendanceService {
     const response = await apiClient.get<TimeEntry[]>(
       `/attendance/my-time-entries`,
       {
-        params: { date },
+        params: {date},
       }
     );
     return response.data;

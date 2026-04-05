@@ -12,9 +12,12 @@
 
 The RBAC comparison between NU-AURA and KEKA HRMS identified three gaps where KEKA leads:
 
-1. **Implicit Roles** — KEKA auto-assigns organizational roles (Reporting Manager, Department Head, L2 Manager) from the org chart. NU-AURA requires manual role assignment.
-2. **Role Hierarchy Inheritance** — KEKA's Global Admin inherits all permissions implicitly. NU-AURA has no parent-child role inheritance; every role must have all permissions explicitly assigned.
-3. **Auto-Escalation** — KEKA supports auto-approval timeouts when approvers don't act. NU-AURA approval tasks remain pending indefinitely.
+1. **Implicit Roles** — KEKA auto-assigns organizational roles (Reporting Manager, Department Head,
+   L2 Manager) from the org chart. NU-AURA requires manual role assignment.
+2. **Role Hierarchy Inheritance** — KEKA's Global Admin inherits all permissions implicitly. NU-AURA
+   has no parent-child role inheritance; every role must have all permissions explicitly assigned.
+3. **Auto-Escalation** — KEKA supports auto-approval timeouts when approvers don't act. NU-AURA
+   approval tasks remain pending indefinitely.
 
 ### What Already Exists (95% Infrastructure)
 
@@ -22,11 +25,14 @@ The RBAC comparison between NU-AURA and KEKA HRMS identified three gaps where KE
 - `RolePermission` entity with scope + `CustomScopeTarget` for fine-grained scoping
 - `SecurityContext` with scope-aware permission checks and `getAllReporteeIds()`
 - Role management admin UI at `/admin/roles/` with scope selector
-- `ApprovalStep` with approver types: `REPORTING_MANAGER`, `DEPARTMENT_HEAD`, `SKIP_LEVEL_MANAGER`, `ROLE`, `COMMITTEE`, `DYNAMIC`, etc.
-- `StepExecution` entity already has `escalated` (boolean), `escalatedAt`, `escalatedToUserId`, status `ESCALATED`
+- `ApprovalStep` with approver types: `REPORTING_MANAGER`, `DEPARTMENT_HEAD`, `SKIP_LEVEL_MANAGER`,
+  `ROLE`, `COMMITTEE`, `DYNAMIC`, etc.
+- `StepExecution` entity already has `escalated` (boolean), `escalatedAt`, `escalatedToUserId`,
+  status `ESCALATED`
 - Employee entity with `managerId`, `dottedLineManager1Id`, `dottedLineManager2Id`, `departmentId`
 - Department entity with `managerId` (department head) and `parentDepartmentId`
-- `employee-lifecycle-events` Kafka topic with `EmployeeLifecycleEvent` — metadata for `TRANSFERRED` includes `oldReportingManager`, `oldDepartment`
+- `employee-lifecycle-events` Kafka topic with `EmployeeLifecycleEvent` — metadata for `TRANSFERRED`
+  includes `oldReportingManager`, `oldDepartment`
 - Redis-cached permission loading via `SecurityService.getCachedPermissions()`
 
 ### What's Missing
@@ -40,14 +46,14 @@ The RBAC comparison between NU-AURA and KEKA HRMS identified three gaps where KE
 
 ## 2. Architecture Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Role model | Hybrid: separate `implicit_user_roles` table, merged at permission-check time | Clean audit separation, unified enforcement |
-| Event model | Kafka consumer on `nu-aura.employee-lifecycle` | Leverages existing topic (events already include `oldReportingManager` in metadata), sub-second propagation, decoupled from employee CRUD |
-| Inheritance | `parent_role_id` on `roles` + Redis flattened cache | Runtime flexibility + zero-overhead permission checks |
-| Escalation | `@Scheduled` job every 15 minutes | Simple, reliable; `StepExecution` already has escalation fields |
-| Escalation action | Auto-escalate to skip-level manager | Safer than auto-approve; respects approval chain integrity |
-| Cache key | User-keyed: `permissions:{tenantId}:{userId}` | Required because two users with same explicit roles can have different implicit roles |
+| Decision          | Choice                                                                        | Rationale                                                                                                                                 |
+|-------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| Role model        | Hybrid: separate `implicit_user_roles` table, merged at permission-check time | Clean audit separation, unified enforcement                                                                                               |
+| Event model       | Kafka consumer on `nu-aura.employee-lifecycle`                                | Leverages existing topic (events already include `oldReportingManager` in metadata), sub-second propagation, decoupled from employee CRUD |
+| Inheritance       | `parent_role_id` on `roles` + Redis flattened cache                           | Runtime flexibility + zero-overhead permission checks                                                                                     |
+| Escalation        | `@Scheduled` job every 15 minutes                                             | Simple, reliable; `StepExecution` already has escalation fields                                                                           |
+| Escalation action | Auto-escalate to skip-level manager                                           | Safer than auto-approve; respects approval chain integrity                                                                                |
+| Cache key         | User-keyed: `permissions:{tenantId}:{userId}`                                 | Required because two users with same explicit roles can have different implicit roles                                                     |
 
 ---
 
@@ -85,8 +91,13 @@ CREATE POLICY rls_implicit_role_rules ON implicit_role_rules
 ```
 
 **Condition Types (enum `ImplicitRoleCondition`):**
-- `IS_REPORTING_MANAGER` — `SELECT COUNT(*) FROM employees WHERE manager_id = :employeeId AND tenant_id = :tenantId AND is_deleted = false` > 0
-- `IS_DEPARTMENT_HEAD` — `SELECT COUNT(*) FROM departments WHERE manager_id = :employeeId AND tenant_id = :tenantId AND is_deleted = false` > 0
+
+- `IS_REPORTING_MANAGER` —
+  `SELECT COUNT(*) FROM employees WHERE manager_id = :employeeId AND tenant_id = :tenantId AND is_deleted = false` >
+  0
+- `IS_DEPARTMENT_HEAD` —
+  `SELECT COUNT(*) FROM departments WHERE manager_id = :employeeId AND tenant_id = :tenantId AND is_deleted = false` >
+  0
 - `IS_SKIP_LEVEL_MANAGER` — Has direct reports who themselves have direct reports (2-level query)
 - `HAS_DIRECT_REPORTS` — Alias for `IS_REPORTING_MANAGER`
 - `CUSTOM_EXPRESSION` — SpEL expression (future; not implemented in Phase 1)
@@ -152,6 +163,7 @@ CREATE POLICY rls_approval_escalation_config ON approval_escalation_config
 ```
 
 **Escalation Types (enum `EscalationType`):**
+
 - `SKIP_LEVEL_MANAGER` — Escalate to the original approver's manager
 - `DEPARTMENT_HEAD` — Escalate to the requester's department head
 - `SPECIFIC_ROLE` — Escalate to anyone with `fallback_role_id`
@@ -168,6 +180,7 @@ CREATE INDEX idx_roles_parent ON roles(parent_role_id) WHERE parent_role_id IS N
 ### 3.5 No Changes to `step_executions`
 
 The `step_executions` table **already has** escalation fields:
+
 - `escalated` (boolean), `escalated_at` (timestamp), `escalated_to_user_id` (UUID)
 - Status enum already includes `ESCALATED`
 - `reminder_count` and `last_reminder_sent_at` for tracking
@@ -185,14 +198,15 @@ No schema changes needed. The escalation job will use the existing fields.
 
 **Events consumed and cascade logic:**
 
-| Event | Recompute For |
-|-------|---------------|
-| `HIRED` | New employee only (unlikely to trigger rules initially) |
-| `PROMOTED` | Employee (may gain/lose hierarchy position) |
+| Event         | Recompute For                                                                                                                                                                                                     |
+|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `HIRED`       | New employee only (unlikely to trigger rules initially)                                                                                                                                                           |
+| `PROMOTED`    | Employee (may gain/lose hierarchy position)                                                                                                                                                                       |
 | `TRANSFERRED` | Employee + old manager (via `metadata.oldReportingManager`) + new manager (via `managerId`) + old dept head (via `metadata.oldDepartment` → dept.managerId) + new dept head (via `departmentId` → dept.managerId) |
-| `OFFBOARDED` | Former manager (may lose MANAGER role if no other reports) + former dept head (if was dept head) |
+| `OFFBOARDED`  | Former manager (may lose MANAGER role if no other reports) + former dept head (if was dept head)                                                                                                                  |
 
-**Key:** The `TRANSFERRED` event's `metadata` map already includes `oldReportingManager` and `oldDepartment` — no Kafka payload changes needed.
+**Key:** The `TRANSFERRED` event's `metadata` map already includes `oldReportingManager` and
+`oldDepartment` — no Kafka payload changes needed.
 
 ### 4.2 Recomputation Service: `ImplicitRoleEngine`
 
@@ -229,6 +243,7 @@ recompute(userId: UUID, tenantId: UUID):
 ```
 
 **Recompute-all (admin action):**
+
 ```
 recomputeAll(tenantId: UUID):
   allEmployeeUserIds = SELECT u.id FROM users u JOIN employees e ON u.employee_id = e.id WHERE u.tenant_id = :tenantId
@@ -239,26 +254,34 @@ recomputeAll(tenantId: UUID):
 
 ### 4.3 Permission Merge in SecurityService
 
-**Cache key change:** `permissions:{tenantId}:{userId}` (currently role-set-keyed, must become user-keyed).
+**Cache key change:** `permissions:{tenantId}:{userId}` (currently role-set-keyed, must become
+user-keyed).
 
 **Modified `getCachedPermissions(userId, tenantId, roleCodes)`:**
+
 1. Check Redis: `GET permissions:{tenantId}:{userId}`
 2. If cache miss:
    a. Load explicit role permissions (existing logic via roleCodes)
-   b. For each explicit role, walk `parent_role_id` chain and union inherited permissions (max scope wins)
-   c. Load `implicit_user_roles` WHERE `user_id = :userId AND tenant_id = :tenantId AND is_active = true`
+   b. For each explicit role, walk `parent_role_id` chain and union inherited permissions (max scope
+   wins)
+   c. Load `implicit_user_roles` WHERE
+   `user_id = :userId AND tenant_id = :tenantId AND is_active = true`
    d. For each implicit role, load its permissions (including inherited via parent_role_id)
    e. Merge all additively: for duplicate permission codes, take MAX scope via `RoleScope.getRank()`
    f. Cache in Redis with 1-hour TTL
 3. Return merged permission map
 
 **Cache invalidation triggers:**
+
 - Implicit role recomputation (Step 4.2 #7)
 - Explicit role assignment/removal (existing `@CacheEvict`)
-- Role permission change → invalidate all users with that role (existing `allEntries=true` is safe; document that for 10K+ users this is O(1) Redis `FLUSHDB` not O(N))
-- `parent_role_id` change → recursive CTE to find child roles + invalidate all users with affected roles
+- Role permission change → invalidate all users with that role (existing `allEntries=true` is safe;
+  document that for 10K+ users this is O(1) Redis `FLUSHDB` not O(N))
+- `parent_role_id` change → recursive CTE to find child roles + invalidate all users with affected
+  roles
 
 **Recursive CTE for child roles (tenant-scoped):**
+
 ```sql
 WITH RECURSIVE children AS (
   SELECT id FROM roles WHERE parent_role_id = :roleId AND tenant_id = :tenantId
@@ -322,7 +345,8 @@ public void updateParentRole(UUID roleId, UUID newParentId, UUID tenantId) {
 ### 6.1 Scheduled Job: `ApprovalEscalationJob`
 
 **Schedule:** Every 15 minutes (`@Scheduled(fixedRate = 900000)`)
-**Existing infrastructure:** `StepExecution.escalated`, `escalatedAt`, `escalatedToUserId`, status `ESCALATED`
+**Existing infrastructure:** `StepExecution.escalated`, `escalatedAt`, `escalatedToUserId`, status
+`ESCALATED`
 
 ```
 @Scheduled(fixedRate = 900000)
@@ -408,6 +432,7 @@ resolveFallbackTarget(step, config, tenantId):
 ### 7.1 New Page: `/admin/implicit-roles/page.tsx`
 
 CRUD for implicit role rules with:
+
 - Table: Rule Name, Condition Type, Target Role, Scope, Active toggle, Actions
 - Create/Edit modal: Rule name, Condition type dropdown, Target role dropdown, Scope dropdown
 - Preview panel: "This rule currently affects X users" (calls `/affected-users` endpoint)
@@ -416,16 +441,21 @@ CRUD for implicit role rules with:
 ### 7.2 Enhanced: User Detail / Employee Profile
 
 New "Role Assignment" panel showing:
+
 - **Assigned Roles** — Existing explicit roles (editable)
-- **Implicit Roles** — Auto-assigned roles with badge "Auto-assigned: {derived_from_context}" (read-only)
+- **Implicit Roles** — Auto-assigned roles with badge "Auto-assigned: {derived_from_context}" (
+  read-only)
 
 ### 7.3 Enhanced: `/admin/roles/page.tsx`
 
-New "Parent Role" dropdown in role create/edit form. When parent selected, show "Inherited Permissions" as grayed-out read-only entries labeled "(inherited from {parentRoleName})". Descendants excluded from dropdown to prevent cycles.
+New "Parent Role" dropdown in role create/edit form. When parent selected, show "Inherited
+Permissions" as grayed-out read-only entries labeled "(inherited from {parentRoleName})".
+Descendants excluded from dropdown to prevent cycles.
 
 ### 7.4 Enhanced: Workflow Definition Edit
 
-New "Escalation Settings" section: enable toggle, timeout hours, escalation target type, conditional role/user picker, max escalations, notify checkbox.
+New "Escalation Settings" section: enable toggle, timeout hours, escalation target type, conditional
+role/user picker, max escalations, notify checkbox.
 
 ---
 
@@ -434,6 +464,7 @@ New "Escalation Settings" section: enable toggle, timeout hours, escalation targ
 ### V48 — Schema Changes
 
 All SQL provided in Section 3 above. Single migration file containing:
+
 1. `CREATE TABLE implicit_role_rules` with RLS
 2. `CREATE TABLE implicit_user_roles` with RLS
 3. `CREATE TABLE approval_escalation_config` with RLS
@@ -492,80 +523,100 @@ WHERE wd.tenant_id = '660e8400-e29b-41d4-a716-446655440001'
 
 ### Implicit Role Rules
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/api/v1/implicit-role-rules?page=0&size=20&active=true&sortBy=priority` | `ROLE:MANAGE` | List rules (paginated, filterable) |
-| POST | `/api/v1/implicit-role-rules` | `ROLE:MANAGE` | Create rule |
-| PUT | `/api/v1/implicit-role-rules/{id}` | `ROLE:MANAGE` | Update rule |
-| DELETE | `/api/v1/implicit-role-rules/{id}` | `ROLE:MANAGE` | Delete rule |
-| GET | `/api/v1/implicit-role-rules/{id}/affected-users` | `ROLE:MANAGE` | Preview affected user count |
-| POST | `/api/v1/implicit-role-rules/recompute-all?ruleId={optional}` | `ROLE:MANAGE` | Trigger recomputation (all or per-rule) |
-| POST | `/api/v1/implicit-role-rules/bulk-activate` | `ROLE:MANAGE` | Bulk activate rules (body: `{ruleIds: [...]}`) |
-| POST | `/api/v1/implicit-role-rules/bulk-deactivate` | `ROLE:MANAGE` | Bulk deactivate rules (body: `{ruleIds: [...]}`) |
+| Method | Path                                                                     | Permission    | Description                                      |
+|--------|--------------------------------------------------------------------------|---------------|--------------------------------------------------|
+| GET    | `/api/v1/implicit-role-rules?page=0&size=20&active=true&sortBy=priority` | `ROLE:MANAGE` | List rules (paginated, filterable)               |
+| POST   | `/api/v1/implicit-role-rules`                                            | `ROLE:MANAGE` | Create rule                                      |
+| PUT    | `/api/v1/implicit-role-rules/{id}`                                       | `ROLE:MANAGE` | Update rule                                      |
+| DELETE | `/api/v1/implicit-role-rules/{id}`                                       | `ROLE:MANAGE` | Delete rule                                      |
+| GET    | `/api/v1/implicit-role-rules/{id}/affected-users`                        | `ROLE:MANAGE` | Preview affected user count                      |
+| POST   | `/api/v1/implicit-role-rules/recompute-all?ruleId={optional}`            | `ROLE:MANAGE` | Trigger recomputation (all or per-rule)          |
+| POST   | `/api/v1/implicit-role-rules/bulk-activate`                              | `ROLE:MANAGE` | Bulk activate rules (body: `{ruleIds: [...]}`)   |
+| POST   | `/api/v1/implicit-role-rules/bulk-deactivate`                            | `ROLE:MANAGE` | Bulk deactivate rules (body: `{ruleIds: [...]}`) |
 
 ### Implicit User Roles (read-only)
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/api/v1/users/{userId}/implicit-roles` | `ROLE:READ` | Get user's implicit roles |
-| GET | `/api/v1/implicit-user-roles?page=0&size=20` | `ROLE:MANAGE` | List all assignments (paginated) |
+| Method | Path                                         | Permission    | Description                      |
+|--------|----------------------------------------------|---------------|----------------------------------|
+| GET    | `/api/v1/users/{userId}/implicit-roles`      | `ROLE:READ`   | Get user's implicit roles        |
+| GET    | `/api/v1/implicit-user-roles?page=0&size=20` | `ROLE:MANAGE` | List all assignments (paginated) |
 
 ### Escalation Config
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/api/v1/workflows/{workflowId}/escalation-config` | `APPROVAL:READ` | Get escalation config |
-| PUT | `/api/v1/workflows/{workflowId}/escalation-config` | `APPROVAL:MANAGE` | Create/update config |
-| DELETE | `/api/v1/workflows/{workflowId}/escalation-config` | `APPROVAL:MANAGE` | Remove config |
-| POST | `/api/v1/workflows/{workflowId}/escalate-pending?dryRun=true` | `APPROVAL:MANAGE` | Manual escalation trigger (dryRun=true previews) |
+| Method | Path                                                          | Permission        | Description                                      |
+|--------|---------------------------------------------------------------|-------------------|--------------------------------------------------|
+| GET    | `/api/v1/workflows/{workflowId}/escalation-config`            | `APPROVAL:READ`   | Get escalation config                            |
+| PUT    | `/api/v1/workflows/{workflowId}/escalation-config`            | `APPROVAL:MANAGE` | Create/update config                             |
+| DELETE | `/api/v1/workflows/{workflowId}/escalation-config`            | `APPROVAL:MANAGE` | Remove config                                    |
+| POST   | `/api/v1/workflows/{workflowId}/escalate-pending?dryRun=true` | `APPROVAL:MANAGE` | Manual escalation trigger (dryRun=true previews) |
 
 ### Role Hierarchy (enhanced existing)
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| PUT | `/api/v1/roles/{id}` | `ROLE:MANAGE` | Now accepts `parentRoleId` field |
-| GET | `/api/v1/roles/{id}/effective-permissions` | `ROLE:READ` | Flattened permissions including inherited |
+| Method | Path                                       | Permission    | Description                               |
+|--------|--------------------------------------------|---------------|-------------------------------------------|
+| PUT    | `/api/v1/roles/{id}`                       | `ROLE:MANAGE` | Now accepts `parentRoleId` field          |
+| GET    | `/api/v1/roles/{id}/effective-permissions` | `ROLE:READ`   | Flattened permissions including inherited |
 
 ---
 
 ## 10. Testing Strategy
 
 ### Unit Tests
-- `ImplicitRoleEngineTest`: Rule evaluation for each condition type, cascade recomputation for old/new manager, diff logic (add/remove/unchanged)
-- `RoleHierarchyServiceTest`: Permission flattening, cycle detection, max depth enforcement, cache invalidation cascade with tenant-scoped CTE
-- `ApprovalEscalationJobTest`: Stale task detection with tenant filtering, escalation target resolution, max escalation limit, fallback to HR_MANAGER when target deleted/terminated
-- `SecurityServiceTest`: Permission merge (explicit + implicit + inherited), scope ranking, user-keyed cache
+
+- `ImplicitRoleEngineTest`: Rule evaluation for each condition type, cascade recomputation for
+  old/new manager, diff logic (add/remove/unchanged)
+- `RoleHierarchyServiceTest`: Permission flattening, cycle detection, max depth enforcement, cache
+  invalidation cascade with tenant-scoped CTE
+- `ApprovalEscalationJobTest`: Stale task detection with tenant filtering, escalation target
+  resolution, max escalation limit, fallback to HR_MANAGER when target deleted/terminated
+- `SecurityServiceTest`: Permission merge (explicit + implicit + inherited), scope ranking,
+  user-keyed cache
 
 ### Integration Tests
-- Full lifecycle: Create employee with manager → verify implicit MANAGER role → change manager → verify old manager loses role (if no other reports) → verify new manager gains role
-- Role hierarchy: Create MANAGER with parent EMPLOYEE → verify inherited permissions in `getCachedPermissions()`
-- Escalation: Create approval task → wait timeout → verify step_execution updated with escalated=true + new PENDING step created
+
+- Full lifecycle: Create employee with manager → verify implicit MANAGER role → change manager →
+  verify old manager loses role (if no other reports) → verify new manager gains role
+- Role hierarchy: Create MANAGER with parent EMPLOYEE → verify inherited permissions in
+  `getCachedPermissions()`
+- Escalation: Create approval task → wait timeout → verify step_execution updated with
+  escalated=true + new PENDING step created
 
 ### Edge Cases
+
 - Employee is both reporting manager AND department head (gets both implicit roles)
 - Circular role hierarchy attempt (should throw `CircularReferenceException`)
 - Manager terminated while having pending implicit roles (deactivate all implicit roles for user)
 - Escalation with deleted/terminated target (fallback to HR_MANAGER)
-- Redis unavailable during cache invalidation: log warning, set short TTL on next cache write (5 min instead of 1 hour) so stale data self-heals
-- Self-referential dept head: employee is head of dept D, then transfers out — verify dept head role removed
-- Recompute-all for large tenant (1000+ employees): batch in groups of 50, use `@Async` to parallelize
+- Redis unavailable during cache invalidation: log warning, set short TTL on next cache write (5 min
+  instead of 1 hour) so stale data self-heals
+- Self-referential dept head: employee is head of dept D, then transfers out — verify dept head role
+  removed
+- Recompute-all for large tenant (1000+ employees): batch in groups of 50, use `@Async` to
+  parallelize
 - Kafka consumer restart: idempotent recomputation (diff-based, not blind overwrite)
 
 ---
 
 ## 11. Performance Considerations
 
-- **Implicit role recomputation:** O(rules * 1 SQL query) per user. ~5 rules, each query hits indexed columns → sub-100ms per user
-- **Permission cache:** User-keyed adds more Redis entries than role-set-keyed. For 1000 users: 1000 cache entries vs. ~10 role-set entries. Redis handles millions of keys trivially. TTL: 1 hour
-- **Escalation job:** Runs every 15 minutes, queries indexed columns (`status`, `assigned_at`, `tenant_id`). Handles 10K+ pending tasks efficiently
-- **Role hierarchy flattening:** Max depth 10. Cached in Redis per-user. Only recomputed on role change or cache miss
-- **Bulk recompute-all:** Batched in groups of 50, parallelized with `@Async`. For 1000 users: ~20 batches × 100ms = 2 seconds
+- **Implicit role recomputation:** O(rules * 1 SQL query) per user. ~5 rules, each query hits
+  indexed columns → sub-100ms per user
+- **Permission cache:** User-keyed adds more Redis entries than role-set-keyed. For 1000 users: 1000
+  cache entries vs. ~10 role-set entries. Redis handles millions of keys trivially. TTL: 1 hour
+- **Escalation job:** Runs every 15 minutes, queries indexed columns (`status`, `assigned_at`,
+  `tenant_id`). Handles 10K+ pending tasks efficiently
+- **Role hierarchy flattening:** Max depth 10. Cached in Redis per-user. Only recomputed on role
+  change or cache miss
+- **Bulk recompute-all:** Batched in groups of 50, parallelized with `@Async`. For 1000 users: ~20
+  batches × 100ms = 2 seconds
 
 ---
 
 ## 12. Rollout Plan
 
-1. **Phase 1 (V48-V49 migrations):** Schema + seed data. No behavior change. Behind `enable_implicit_roles` feature flag.
-2. **Phase 2 (Backend):** ImplicitRoleEngine + Kafka consumer, role hierarchy service, escalation job. Feature-flagged.
+1. **Phase 1 (V48-V49 migrations):** Schema + seed data. No behavior change. Behind
+   `enable_implicit_roles` feature flag.
+2. **Phase 2 (Backend):** ImplicitRoleEngine + Kafka consumer, role hierarchy service, escalation
+   job. Feature-flagged.
 3. **Phase 3 (Frontend):** Admin UI for implicit rules, role hierarchy UI, escalation config UI.
 4. **Phase 4 (Go-live):** Enable feature flag for demo tenant → QA sweep → production rollout.

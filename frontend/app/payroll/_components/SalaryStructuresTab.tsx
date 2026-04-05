@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Layers } from 'lucide-react';
-import { EmptyState } from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { SalaryStructure, formatCurrency, formatDate, getStatusColor } from './types';
+import {Layers} from 'lucide-react';
+import {EmptyState} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {formatCurrency, formatDate, getStatusColor, SalaryStructure} from './types';
 
 interface SalaryStructuresTabProps {
   salaryStructures: SalaryStructure[];
@@ -18,14 +18,14 @@ interface SalaryStructuresTabProps {
 }
 
 export function SalaryStructuresTab({
-  salaryStructures,
-  loading,
-  structureFilter,
-  onFilterChange,
-  onCreateStructure,
-  onEditStructure,
-  onDeleteStructure,
-}: SalaryStructuresTabProps) {
+                                      salaryStructures,
+                                      loading,
+                                      structureFilter,
+                                      onFilterChange,
+                                      onCreateStructure,
+                                      onEditStructure,
+                                      onDeleteStructure,
+                                    }: SalaryStructuresTabProps) {
   const filtered = salaryStructures.filter(
     (structure) => structureFilter === 'ALL' || structure.status === structureFilter
   );
@@ -64,16 +64,17 @@ export function SalaryStructuresTab({
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading salary structures...</div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          icon={<Layers className="h-8 w-8" />}
+          icon={<Layers className="h-8 w-8"/>}
           title="No Salary Structures Yet"
           description="Define salary structures with allowances and deductions for your employees"
-          action={{ label: 'Create Structure', onClick: onCreateStructure }}
+          action={{label: 'Create Structure', onClick: onCreateStructure}}
           iconColor="grape"
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filtered.map((structure) => (
-            <div key={structure.id} className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+            <div key={structure.id}
+                 className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold">{structure.employeeName}</h3>

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import {cva, type VariantProps} from 'class-variance-authority';
+import {cn} from '@/lib/utils';
 
 const badgeVariants = cva(
   'inline-flex items-center gap-1 font-medium transition-all duration-150',
@@ -64,7 +64,7 @@ export interface BadgeProps
 }
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant, size, icon, dot, dotColor = 'default', children, ...props }, ref) => {
+  ({className, variant, size, icon, dot, dotColor = 'default', children, ...props}, ref) => {
     const dotColorClasses = {
       default: 'bg-surface-500',
       success: 'bg-success-500',
@@ -76,11 +76,11 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     return (
       <span
         ref={ref}
-        className={cn(badgeVariants({ variant, size }), className)}
+        className={cn(badgeVariants({variant, size}), className)}
         {...props}
       >
         {dot && (
-          <span className={cn('w-1.5 h-1.5 rounded-full', dotColorClasses[dotColor])} />
+          <span className={cn('w-1.5 h-1.5 rounded-full', dotColorClasses[dotColor])}/>
         )}
         {icon && <span className="shrink-0">{icon}</span>}
         {children}
@@ -91,4 +91,4 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
 
 Badge.displayName = 'Badge';
 
-export { Badge, badgeVariants };
+export {Badge, badgeVariants};

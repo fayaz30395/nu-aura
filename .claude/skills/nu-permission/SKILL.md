@@ -5,9 +5,11 @@ description: Use when asked to add a permission, wire RBAC, create a new permiss
 
 # RBAC Permission Wiring
 
-> **Purpose:** Wire a new permission across ALL 4 layers of the NU-AURA RBAC system in a single pass.
+> **Purpose:** Wire a new permission across ALL 4 layers of the NU-AURA RBAC system in a single
+> pass.
 > Prevents the common bug where a permission exists in one layer but is missing in another.
-> Every endpoint in NU-AURA must be protected by `@RequiresPermission` -- this skill ensures the full chain is connected.
+> Every endpoint in NU-AURA must be protected by `@RequiresPermission` -- this skill ensures the
+> full chain is connected.
 
 ## When to Use
 
@@ -19,7 +21,8 @@ description: Use when asked to add a permission, wire RBAC, create a new permiss
 ## Input Required
 
 - **Module name**: The domain area (e.g., `ASSET`, `TRAINING`, `RECRUITMENT`)
-- **Action(s)**: What operations to permit (e.g., `VIEW`, `CREATE`, `UPDATE`, `DELETE`, `MANAGE`, `APPROVE`)
+- **Action(s)**: What operations to permit (e.g., `VIEW`, `CREATE`, `UPDATE`, `DELETE`, `MANAGE`,
+  `APPROVE`)
 - **Which roles** should get this permission by default (or ask user)
 - **Endpoint(s)** that will use this permission (optional but recommended)
 
@@ -32,6 +35,7 @@ Follow the existing naming convention from `Permission.java`:
 **Format:** `MODULE_ACTION` (constant name) = `"MODULE:ACTION"` (string value)
 
 Examples from the codebase:
+
 ```java
 public static final String EMPLOYEE_READ = "EMPLOYEE:READ";
 public static final String PAYROLL_APPROVE = "PAYROLL:APPROVE";
@@ -40,9 +44,12 @@ public static final String HELPDESK_TICKET_ASSIGN = "HELPDESK:TICKET_ASSIGN";
 ```
 
 Rules:
+
 - Module name: UPPER_SNAKE_CASE, matches the domain area
-- Action: typically one of `VIEW`, `CREATE`, `UPDATE`, `DELETE`, `MANAGE`, `APPROVE`, `SUBMIT`, `ASSIGN`, `SIGN`
-- `MANAGE` implies all CRUD operations for that module (frontend `usePermissions` checks this via hierarchy)
+- Action: typically one of `VIEW`, `CREATE`, `UPDATE`, `DELETE`, `MANAGE`, `APPROVE`, `SUBMIT`,
+  `ASSIGN`, `SIGN`
+- `MANAGE` implies all CRUD operations for that module (frontend `usePermissions` checks this via
+  hierarchy)
 - Compound modules use underscore: `LEAVE_TYPE`, `LEAVE_BALANCE`, `OFFICE_LOCATION`, `FEEDBACK_360`
 
 ### Step 2: Add Backend Constant
@@ -82,6 +89,7 @@ public ResponseEntity<ModuleDto> getById(@PathVariable UUID id) {
 ```
 
 Common patterns:
+
 - `GET` (list/read) -> `Permission.MODULE_VIEW` or `Permission.MODULE_VIEW_ALL`
 - `POST` (create) -> `Permission.MODULE_CREATE`
 - `PUT` (update) -> `Permission.MODULE_UPDATE`
@@ -89,7 +97,9 @@ Common patterns:
 - `POST /approve` -> `Permission.MODULE_APPROVE`
 - Admin endpoints -> `Permission.MODULE_MANAGE`
 
-**Note:** SuperAdmin bypasses ALL `@RequiresPermission` checks automatically via `PermissionAspect`. This means during admin testing, missing permissions will not surface as errors -- always test with a non-admin role.
+**Note:** SuperAdmin bypasses ALL `@RequiresPermission` checks automatically via `PermissionAspect`.
+This means during admin testing, missing permissions will not surface as errors -- always test with
+a non-admin role.
 
 ### Step 4: Add Frontend Constant
 
@@ -106,9 +116,12 @@ export const Permissions = {
 } as const;
 ```
 
-The string value MUST exactly match the backend `Permission.java` value. The frontend `usePermissions` hook normalizes both `MODULE:ACTION` (colon, uppercase) and `module.action` (dot, lowercase from DB) formats, so only the colon-uppercase format is needed here.
+The string value MUST exactly match the backend `Permission.java` value. The frontend
+`usePermissions` hook normalizes both `MODULE:ACTION` (colon, uppercase) and `module.action` (dot,
+lowercase from DB) formats, so only the colon-uppercase format is needed here.
 
 **Usage in components:**
+
 ```tsx
 const { hasPermission } = usePermissions();
 
@@ -148,16 +161,16 @@ ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 Generate role-permission assignment SQL. Default role assignments follow this pattern:
 
-| Permission Type | Roles That Typically Get It |
-|----------------|---------------------------|
-| `VIEW` / `VIEW_SELF` | EMPLOYEE, TEAM_LEAD, HR_MANAGER, HR_ADMIN, TENANT_ADMIN |
-| `VIEW_TEAM` | TEAM_LEAD, DEPARTMENT_HEAD, HR_MANAGER, HR_ADMIN |
-| `VIEW_ALL` | HR_MANAGER, HR_ADMIN, TENANT_ADMIN |
-| `CREATE` | Varies by module (HR_MANAGER for HR, RECRUITER for recruitment) |
-| `UPDATE` | Same as CREATE, plus the resource owner |
-| `DELETE` | HR_ADMIN, TENANT_ADMIN (restrictive) |
-| `APPROVE` | One level above the requester (TEAM_LEAD approves EMPLOYEE, HR_MANAGER approves TEAM_LEAD) |
-| `MANAGE` | HR_ADMIN, TENANT_ADMIN (full control) |
+| Permission Type      | Roles That Typically Get It                                                                |
+|----------------------|--------------------------------------------------------------------------------------------|
+| `VIEW` / `VIEW_SELF` | EMPLOYEE, TEAM_LEAD, HR_MANAGER, HR_ADMIN, TENANT_ADMIN                                    |
+| `VIEW_TEAM`          | TEAM_LEAD, DEPARTMENT_HEAD, HR_MANAGER, HR_ADMIN                                           |
+| `VIEW_ALL`           | HR_MANAGER, HR_ADMIN, TENANT_ADMIN                                                         |
+| `CREATE`             | Varies by module (HR_MANAGER for HR, RECRUITER for recruitment)                            |
+| `UPDATE`             | Same as CREATE, plus the resource owner                                                    |
+| `DELETE`             | HR_ADMIN, TENANT_ADMIN (restrictive)                                                       |
+| `APPROVE`            | One level above the requester (TEAM_LEAD approves EMPLOYEE, HR_MANAGER approves TEAM_LEAD) |
+| `MANAGE`             | HR_ADMIN, TENANT_ADMIN (full control)                                                      |
 
 ```sql
 -- Assign permissions to roles
@@ -183,20 +196,32 @@ After completing all steps, verify:
 
 ## Output Checklist
 
-- [ ] **Backend constant** added to `Permission.java` (`backend/src/main/java/com/hrms/common/security/Permission.java`)
+- [ ] **Backend constant** added to `Permission.java` (
+  `backend/src/main/java/com/hrms/common/security/Permission.java`)
 - [ ] **Controller annotation** `@RequiresPermission(Permission.MODULE_ACTION)` on every endpoint
 - [ ] **Frontend constant** added to `Permissions` object in `frontend/lib/hooks/usePermissions.ts`
-- [ ] **String values match exactly** between backend (`Permission.java`), frontend (`usePermissions.ts`), and DB seed
-- [ ] **Database migration** created with INSERT into `permissions` table using `ON CONFLICT DO NOTHING`
+- [ ] **String values match exactly** between backend (`Permission.java`), frontend (
+  `usePermissions.ts`), and DB seed
+- [ ] **Database migration** created with INSERT into `permissions` table using
+  `ON CONFLICT DO NOTHING`
 - [ ] **Role assignment** either via migration SQL or documented for `HrmsRoleInitializer`
-- [ ] **No orphaned permissions**: every backend constant is used in at least one `@RequiresPermission`
-- [ ] **SuperAdmin note**: Permission is automatically bypassed for SUPER_ADMIN and TENANT_ADMIN roles (both backend and frontend). Test with a lower-privilege role to verify enforcement.
-- [ ] **Sidebar/UI gating**: If this permission gates a menu item, update `frontend/components/layout/menuSections.tsx` with `requiredPermission`
+- [ ] **No orphaned permissions**: every backend constant is used in at least one
+  `@RequiresPermission`
+- [ ] **SuperAdmin note**: Permission is automatically bypassed for SUPER_ADMIN and TENANT_ADMIN
+  roles (both backend and frontend). Test with a lower-privilege role to verify enforcement.
+- [ ] **Sidebar/UI gating**: If this permission gates a menu item, update
+  `frontend/components/layout/menuSections.tsx` with `requiredPermission`
 
 ## Common Mistakes to Avoid
 
-1. **Typo mismatch**: Backend says `ASSET:VIEW` but frontend says `ASSETS:VIEW` -- always copy-paste the exact string
-2. **Missing colon**: Backend uses `MODULE:ACTION` (colon), DB seed `resource` and `action` columns use lowercase without colon
-3. **Forgetting VIEW permission**: A module with CREATE/UPDATE/DELETE but no VIEW means users can modify but not see
-4. **Not scoping MANAGE**: The frontend `usePermissions` hook treats `MODULE:MANAGE` as implying all actions in that module -- if you add `MANAGE`, you usually do not need separate VIEW/CREATE/UPDATE/DELETE checks in the UI
-5. **Testing with SuperAdmin only**: SuperAdmin bypasses all checks. A missing permission will not cause a 403 for SuperAdmin but will block all other roles.
+1. **Typo mismatch**: Backend says `ASSET:VIEW` but frontend says `ASSETS:VIEW` -- always copy-paste
+   the exact string
+2. **Missing colon**: Backend uses `MODULE:ACTION` (colon), DB seed `resource` and `action` columns
+   use lowercase without colon
+3. **Forgetting VIEW permission**: A module with CREATE/UPDATE/DELETE but no VIEW means users can
+   modify but not see
+4. **Not scoping MANAGE**: The frontend `usePermissions` hook treats `MODULE:MANAGE` as implying all
+   actions in that module -- if you add `MANAGE`, you usually do not need separate
+   VIEW/CREATE/UPDATE/DELETE checks in the UI
+5. **Testing with SuperAdmin only**: SuperAdmin bypasses all checks. A missing permission will not
+   cause a 403 for SuperAdmin but will block all other roles.

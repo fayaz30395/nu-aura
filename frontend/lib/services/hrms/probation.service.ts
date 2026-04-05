@@ -1,15 +1,15 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ProbationPeriodRequest,
-  ProbationPeriodResponse,
+  Page,
+  ProbationConfirmationRequest,
   ProbationEvaluationRequest,
   ProbationEvaluationResponse,
   ProbationExtensionRequest,
-  ProbationConfirmationRequest,
-  ProbationTerminationRequest,
+  ProbationPeriodRequest,
+  ProbationPeriodResponse,
   ProbationStatisticsResponse,
   ProbationStatus,
-  Page,
+  ProbationTerminationRequest,
 } from '../../types/hrms/probation';
 
 const BASE_URL = '/probation';
@@ -45,7 +45,7 @@ export const probationService = {
     size = 20
   ): Promise<Page<ProbationPeriodResponse>> => {
     const response = await apiClient.get<Page<ProbationPeriodResponse>>(BASE_URL, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -57,7 +57,7 @@ export const probationService = {
   ): Promise<Page<ProbationPeriodResponse>> => {
     const response = await apiClient.get<Page<ProbationPeriodResponse>>(
       `${BASE_URL}/status/${status}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -68,7 +68,7 @@ export const probationService = {
   ): Promise<Page<ProbationPeriodResponse>> => {
     const response = await apiClient.get<Page<ProbationPeriodResponse>>(
       `${BASE_URL}/my-team`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -126,7 +126,7 @@ export const probationService = {
     const response = await apiClient.post<ProbationPeriodResponse>(
       `${BASE_URL}/${probationId}/hold`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   },
@@ -138,7 +138,7 @@ export const probationService = {
     const response = await apiClient.post<ProbationPeriodResponse>(
       `${BASE_URL}/${probationId}/resume`,
       null,
-      { params: extensionDays ? { extensionDays } : {} }
+      {params: extensionDays ? {extensionDays} : {}}
     );
     return response.data;
   },
@@ -171,7 +171,7 @@ export const probationService = {
     const response = await apiClient.post<ProbationEvaluationResponse>(
       `${BASE_URL}/evaluations/${evaluationId}/acknowledge`,
       null,
-      { params: comments ? { comments } : {} }
+      {params: comments ? {comments} : {}}
     );
     return response.data;
   },
@@ -190,7 +190,7 @@ export const probationService = {
   ): Promise<ProbationPeriodResponse[]> => {
     const response = await apiClient.get<ProbationPeriodResponse[]>(
       `${BASE_URL}/ending-soon`,
-      { params: { daysAhead } }
+      {params: {daysAhead}}
     );
     return response.data;
   },

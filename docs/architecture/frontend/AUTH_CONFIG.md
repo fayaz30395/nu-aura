@@ -19,18 +19,21 @@ const DEBOUNCE_ACTIVITY_MS = 60 * 1000;           // Track activity every 60 sec
 To change the session timeout duration, modify the constants in `useSessionTimeout.ts`:
 
 **More Lenient (60 minutes):**
+
 ```typescript
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000;    // 60 minutes
 const TIMEOUT_WARNING_MS = 5 * 60 * 1000;         // Warning at 55 minutes
 ```
 
 **More Strict (15 minutes):**
+
 ```typescript
 const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;    // 15 minutes
 const TIMEOUT_WARNING_MS = 3 * 60 * 1000;         // Warning at 12 minutes
 ```
 
 **Financial/High-Security (5 minutes):**
+
 ```typescript
 const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;     // 5 minutes
 const TIMEOUT_WARNING_MS = 60 * 1000;             // Warning at 4 minutes
@@ -50,6 +53,7 @@ const MIN_REFRESH_GAP_MS = 5 * 60 * 1000;         // Minimum 5 minutes between r
 ```
 
 These values are based on the assumption that:
+
 - Backend access token TTL: 60 minutes
 - Refresh should happen before expiry
 - 50-minute refresh gives 10-minute safety margin
@@ -59,6 +63,7 @@ These values are based on the assumption that:
 Ensure backend token configuration matches:
 
 **Application Configuration (Spring Boot):**
+
 ```yaml
 app:
   jwt:
@@ -82,6 +87,7 @@ const DEBOUNCE_ACTIVITY_MS = 60 * 1000;  // Only process activity every 60 secon
 ```
 
 **Tracked Activities:**
+
 - `mousedown` - Any mouse button
 - `keydown` - Any keyboard key
 - `scroll` - Page/element scrolling
@@ -106,6 +112,7 @@ const events = [
 ### Development Environment
 
 **File: `.env.local`**
+
 ```env
 # Longer timeouts for testing
 SESSION_TIMEOUT_MS=1800000              # 30 minutes
@@ -118,6 +125,7 @@ TOKEN_REFRESH_INTERVAL_MS=3000000       # 50 minutes
 ### Staging Environment
 
 **File: `.env.staging`**
+
 ```env
 # Match production settings
 SESSION_TIMEOUT_MS=1800000              # 30 minutes
@@ -129,6 +137,7 @@ TOKEN_REFRESH_INTERVAL_MS=3000000       # 50 minutes
 ### Production Environment
 
 **File: `.env.production`**
+
 ```env
 # Standard enterprise configuration
 SESSION_TIMEOUT_MS=1800000              # 30 minutes
@@ -325,6 +334,7 @@ localStorage.setItem('debug', 'nu-aura:*');
 
 **Possible Cause:** Activity not being detected
 **Solution:** Check that event listeners are attached:
+
 ```javascript
 // In browser console
 window.addEventListener('mousedown', () => console.log('Activity detected'));
@@ -335,6 +345,7 @@ window.addEventListener('mousedown', () => console.log('Activity detected'));
 
 **Possible Cause:** Interval not set correctly
 **Solution:** Check hook is loaded:
+
 ```javascript
 // In browser console
 console.log('Token refresh interval active');
@@ -344,6 +355,7 @@ console.log('Token refresh interval active');
 
 **Possible Cause:** Backend not setting XSRF-TOKEN cookie
 **Solution:** Verify backend sets cookie on login/refresh:
+
 ```javascript
 // Check cookies
 document.cookie; // Should see XSRF-TOKEN
@@ -353,6 +365,7 @@ document.cookie; // Should see XSRF-TOKEN
 
 **Possible Cause:** Backend not invalidating tokens
 **Solution:** Ensure backend:
+
 1. Blacklists tokens on logout
 2. Uses token version/serial number
 3. Implements session store (Redis) for revocation
@@ -419,6 +432,7 @@ For users with many concurrent requests:
 ## Quick Configuration Presets
 
 ### Startup/Quick Deployment
+
 ```typescript
 // Longer timeout for user convenience
 INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000    // 60 minutes
@@ -426,6 +440,7 @@ TIMEOUT_WARNING_MS = 10 * 60 * 1000       // 10 minute warning
 ```
 
 ### Healthcare/Finance
+
 ```typescript
 // Stricter security
 INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000    // 15 minutes
@@ -433,6 +448,7 @@ TIMEOUT_WARNING_MS = 2 * 60 * 1000        // 2 minute warning
 ```
 
 ### High-Security/Government
+
 ```typescript
 // Maximum security
 INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000     // 5 minutes

@@ -1,55 +1,54 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
+  AlertCircle,
   Award,
-  Heart,
-  ThumbsUp,
-  Trophy,
-  Star,
-  Users,
-  TrendingUp,
+  Crown,
   Gift,
+  Heart,
+  Medal,
   MessageCircle,
   Send,
-  Crown,
-  Medal,
   Sparkles,
-  AlertCircle,
+  Star,
+  ThumbsUp,
+  TrendingUp,
+  Trophy,
+  Users,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
   Input,
-  Select,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  Badge,
-  Textarea,
+  ModalHeader,
+  Select,
   Skeleton,
+  Textarea,
 } from '@/components/ui';
-import type { RecognitionRequest } from '@/lib/types/grow/recognition';
-import { RecognitionType, RecognitionCategory } from '@/lib/types/grow/recognition';
+import type {RecognitionRequest} from '@/lib/types/grow/recognition';
+import {ReactionType, RecognitionCategory, RecognitionType} from '@/lib/types/grow/recognition';
 import {
-  usePublicFeed,
-  useMyReceivedRecognitions,
-  useMyGivenRecognitions,
-  useLeaderboard,
-  useMyPoints,
-  useGiveRecognition,
   useAddReaction,
+  useGiveRecognition,
+  useLeaderboard,
+  useMyGivenRecognitions,
+  useMyPoints,
+  useMyReceivedRecognitions,
+  usePublicFeed,
   useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
-import { ReactionType } from '@/lib/types/grow/recognition';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
@@ -66,42 +65,42 @@ const recognitionFormSchema = z.object({
 type RecognitionFormData = z.infer<typeof recognitionFormSchema>;
 
 const recognitionTypeOptions = [
-  { value: RecognitionType.KUDOS, label: 'Kudos', icon: ThumbsUp },
-  { value: RecognitionType.APPRECIATION, label: 'Appreciation', icon: Heart },
-  { value: RecognitionType.ACHIEVEMENT, label: 'Achievement', icon: Trophy },
-  { value: RecognitionType.SPOT_AWARD, label: 'Spot Award', icon: Star },
-  { value: RecognitionType.PEER_NOMINATION, label: 'Peer Nomination', icon: Users },
-  { value: RecognitionType.MANAGER_RECOGNITION, label: 'Manager Recognition', icon: Crown },
-  { value: RecognitionType.TEAM_RECOGNITION, label: 'Team Recognition', icon: Users },
+  {value: RecognitionType.KUDOS, label: 'Kudos', icon: ThumbsUp},
+  {value: RecognitionType.APPRECIATION, label: 'Appreciation', icon: Heart},
+  {value: RecognitionType.ACHIEVEMENT, label: 'Achievement', icon: Trophy},
+  {value: RecognitionType.SPOT_AWARD, label: 'Spot Award', icon: Star},
+  {value: RecognitionType.PEER_NOMINATION, label: 'Peer Nomination', icon: Users},
+  {value: RecognitionType.MANAGER_RECOGNITION, label: 'Manager Recognition', icon: Crown},
+  {value: RecognitionType.TEAM_RECOGNITION, label: 'Team Recognition', icon: Users},
 ];
 
 const categoryOptions = [
-  { value: RecognitionCategory.TEAMWORK, label: 'Teamwork' },
-  { value: RecognitionCategory.INNOVATION, label: 'Innovation' },
-  { value: RecognitionCategory.CUSTOMER_FOCUS, label: 'Customer Focus' },
-  { value: RecognitionCategory.LEADERSHIP, label: 'Leadership' },
-  { value: RecognitionCategory.PROBLEM_SOLVING, label: 'Problem Solving' },
-  { value: RecognitionCategory.GOING_EXTRA_MILE, label: 'Going Extra Mile' },
-  { value: RecognitionCategory.MENTORSHIP, label: 'Mentorship' },
-  { value: RecognitionCategory.QUALITY, label: 'Quality' },
-  { value: RecognitionCategory.INITIATIVE, label: 'Initiative' },
-  { value: RecognitionCategory.COLLABORATION, label: 'Collaboration' },
-  { value: RecognitionCategory.COMMUNICATION, label: 'Communication' },
-  { value: RecognitionCategory.OTHER, label: 'Other' },
+  {value: RecognitionCategory.TEAMWORK, label: 'Teamwork'},
+  {value: RecognitionCategory.INNOVATION, label: 'Innovation'},
+  {value: RecognitionCategory.CUSTOMER_FOCUS, label: 'Customer Focus'},
+  {value: RecognitionCategory.LEADERSHIP, label: 'Leadership'},
+  {value: RecognitionCategory.PROBLEM_SOLVING, label: 'Problem Solving'},
+  {value: RecognitionCategory.GOING_EXTRA_MILE, label: 'Going Extra Mile'},
+  {value: RecognitionCategory.MENTORSHIP, label: 'Mentorship'},
+  {value: RecognitionCategory.QUALITY, label: 'Quality'},
+  {value: RecognitionCategory.INITIATIVE, label: 'Initiative'},
+  {value: RecognitionCategory.COLLABORATION, label: 'Collaboration'},
+  {value: RecognitionCategory.COMMUNICATION, label: 'Communication'},
+  {value: RecognitionCategory.OTHER, label: 'Other'},
 ];
 
 const getTypeIcon = (type: RecognitionType) => {
   switch (type) {
     case RecognitionType.KUDOS:
-      return <ThumbsUp className="h-5 w-5" />;
+      return <ThumbsUp className="h-5 w-5"/>;
     case RecognitionType.APPRECIATION:
-      return <Heart className="h-5 w-5" />;
+      return <Heart className="h-5 w-5"/>;
     case RecognitionType.ACHIEVEMENT:
-      return <Trophy className="h-5 w-5" />;
+      return <Trophy className="h-5 w-5"/>;
     case RecognitionType.SPOT_AWARD:
-      return <Star className="h-5 w-5" />;
+      return <Star className="h-5 w-5"/>;
     default:
-      return <Award className="h-5 w-5" />;
+      return <Award className="h-5 w-5"/>;
   }
 };
 
@@ -143,18 +142,18 @@ export default function RecognitionPage() {
   const [commentText, setCommentText] = useState<Record<string, string>>({});
 
   const reactionEmojis: { type: ReactionType; emoji: string; label: string }[] = [
-    { type: ReactionType.LIKE, emoji: '\uD83D\uDC4D', label: 'Like' },
-    { type: ReactionType.LOVE, emoji: '\u2764\uFE0F', label: 'Love' },
-    { type: ReactionType.CELEBRATE, emoji: '\uD83C\uDF89', label: 'Celebrate' },
-    { type: ReactionType.SUPPORT, emoji: '\uD83D\uDE4F', label: 'Support' },
-    { type: ReactionType.INSIGHTFUL, emoji: '\uD83D\uDCA1', label: 'Insightful' },
+    {type: ReactionType.LIKE, emoji: '\uD83D\uDC4D', label: 'Like'},
+    {type: ReactionType.LOVE, emoji: '\u2764\uFE0F', label: 'Love'},
+    {type: ReactionType.CELEBRATE, emoji: '\uD83C\uDF89', label: 'Celebrate'},
+    {type: ReactionType.SUPPORT, emoji: '\uD83D\uDE4F', label: 'Support'},
+    {type: ReactionType.INSIGHTFUL, emoji: '\uD83D\uDCA1', label: 'Insightful'},
   ];
 
   const handleReaction = (recognitionId: string, reactionType: ReactionType, hasReacted: boolean | undefined) => {
     if (hasReacted) {
-      removeReactionMutation.mutate({ recognitionId, reactionType });
+      removeReactionMutation.mutate({recognitionId, reactionType});
     } else {
-      addReactionMutation.mutate({ recognitionId, reactionType });
+      addReactionMutation.mutate({recognitionId, reactionType});
     }
     setShowReactionPicker(null);
   };
@@ -177,7 +176,7 @@ export default function RecognitionPage() {
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<RecognitionFormData>({
     resolver: zodResolver(recognitionFormSchema),
     defaultValues: {
@@ -239,8 +238,8 @@ export default function RecognitionPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Recognition' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Recognition'},
   ];
 
   return (
@@ -258,7 +257,7 @@ export default function RecognitionPage() {
           </div>
           <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
             <Button onClick={handleGiveRecognition}>
-              <Sparkles className="mr-2 h-4 w-4" />
+              <Sparkles className="mr-2 h-4 w-4"/>
               Give Recognition
             </Button>
           </PermissionGate>
@@ -266,15 +265,17 @@ export default function RecognitionPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="skeuo-card bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30 border-warning-200 dark:border-warning-800">
+          <Card
+            className="skeuo-card bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30 border-warning-200 dark:border-warning-800">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-500 p-4">
-                  <Trophy className="h-6 w-6 text-white" />
+                  <Trophy className="h-6 w-6 text-white"/>
                 </div>
                 <div>
                   <p className="text-sm text-warning-700 dark:text-warning-300 skeuo-deboss">My Points</p>
-                  <p className="text-2xl font-bold text-warning-900 dark:text-warning-100 skeuo-emboss">{stats.myPoints}</p>
+                  <p
+                    className="text-2xl font-bold text-warning-900 dark:text-warning-100 skeuo-emboss">{stats.myPoints}</p>
                 </div>
               </div>
             </CardContent>
@@ -283,11 +284,12 @@ export default function RecognitionPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <Award className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <Award className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Received</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
                 </div>
               </div>
             </CardContent>
@@ -296,11 +298,12 @@ export default function RecognitionPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <Gift className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Given</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
                 </div>
               </div>
             </CardContent>
@@ -309,11 +312,12 @@ export default function RecognitionPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600" />
+                  <TrendingUp className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Activity</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
+                  <p
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
                 </div>
               </div>
             </CardContent>
@@ -351,15 +355,15 @@ export default function RecognitionPage() {
             {/* Recognition Feed */}
             {isLoading ? (
               <div className="space-y-4">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {Array.from({length: 3}).map((_, i) => (
                   <Card key={i}>
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <Skeleton className="h-12 w-12 rounded-full"/>
                         <div className="flex-1 space-y-2">
-                          <Skeleton className="h-5 w-1/3" />
-                          <Skeleton className="h-4 w-2/3" />
-                          <Skeleton className="h-4 w-1/2" />
+                          <Skeleton className="h-5 w-1/3"/>
+                          <Skeleton className="h-4 w-2/3"/>
+                          <Skeleton className="h-4 w-1/2"/>
                         </div>
                       </div>
                     </CardContent>
@@ -367,8 +371,9 @@ export default function RecognitionPage() {
                 ))}
               </div>
             ) : isError ? (
-              <div className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
-                <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2" />
+              <div
+                className="p-6 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20 text-center">
+                <AlertCircle className="h-8 w-8 text-danger-500 mx-auto mb-2"/>
                 <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load recognitions.</p>
                 <button
                   onClick={() => activeQuery.refetch()}
@@ -380,7 +385,7 @@ export default function RecognitionPage() {
             ) : recognitions.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Award className="h-12 w-12 text-[var(--text-muted)]" />
+                  <Award className="h-12 w-12 text-[var(--text-muted)]"/>
                   <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                     No recognitions yet
                   </p>
@@ -389,7 +394,7 @@ export default function RecognitionPage() {
                   </p>
                   <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
                     <Button onClick={handleGiveRecognition} className="mt-4">
-                      <Sparkles className="mr-2 h-4 w-4" />
+                      <Sparkles className="mr-2 h-4 w-4"/>
                       Give Recognition
                     </Button>
                   </PermissionGate>
@@ -401,7 +406,8 @@ export default function RecognitionPage() {
                   <Card key={recognition.id} className="card-aura overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
-                        <div className={`rounded-full p-4 flex-shrink-0 ${getTypeColor(recognition.type)}`} aria-label={`Recognition type: ${recognition.type}`}>
+                        <div className={`rounded-full p-4 flex-shrink-0 ${getTypeColor(recognition.type)}`}
+                             aria-label={`Recognition type: ${recognition.type}`}>
                           {getTypeIcon(recognition.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -423,7 +429,7 @@ export default function RecognitionPage() {
                               </span>
                               {recognition.pointsAwarded > 0 && (
                                 <span className="badge-status status-warning flex items-center gap-1 whitespace-nowrap">
-                                  <Star className="h-3 w-3" />
+                                  <Star className="h-3 w-3"/>
                                   {recognition.pointsAwarded}
                                 </span>
                               )}
@@ -458,11 +464,12 @@ export default function RecognitionPage() {
                                   }
                                 }}
                               >
-                                <Heart className={`h-4 w-4 ${recognition.hasReacted ? 'fill-current' : ''}`} />
+                                <Heart className={`h-4 w-4 ${recognition.hasReacted ? 'fill-current' : ''}`}/>
                                 {recognition.likesCount}
                               </button>
                               {showReactionPicker === recognition.id && (
-                                <div className="absolute bottom-full left-0 mb-2 p-1.5 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] flex gap-1 z-10">
+                                <div
+                                  className="absolute bottom-full left-0 mb-2 p-1.5 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] flex gap-1 z-10">
                                   {reactionEmojis.map((reaction) => (
                                     <button
                                       key={reaction.type}
@@ -481,7 +488,7 @@ export default function RecognitionPage() {
                               aria-label={`Comment on recognition (${recognition.commentsCount} comments)`}
                               onClick={() => toggleComments(recognition.id)}
                             >
-                              <MessageCircle className="h-4 w-4" />
+                              <MessageCircle className="h-4 w-4"/>
                               {recognition.commentsCount}
                             </button>
                             <span className="text-xs">
@@ -511,12 +518,13 @@ export default function RecognitionPage() {
                                   className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   disabled={!commentText[recognition.id]?.trim()}
                                 >
-                                  <Send className="h-3.5 w-3.5" />
+                                  <Send className="h-3.5 w-3.5"/>
                                 </button>
                               </div>
                               {recognition.commentsCount > 0 && (
                                 <p className="text-caption mt-2">
-                                  {recognition.commentsCount} comment{recognition.commentsCount !== 1 ? 's' : ''} - view all
+                                  {recognition.commentsCount} comment{recognition.commentsCount !== 1 ? 's' : ''} - view
+                                  all
                                 </p>
                               )}
                             </div>
@@ -534,19 +542,20 @@ export default function RecognitionPage() {
           <div className="space-y-4">
             <Card className="skeuo-card">
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
-                  <Crown className="h-5 w-5 text-warning-500" />
+                <h3
+                  className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-4">
+                  <Crown className="h-5 w-5 text-warning-500"/>
                   Top Contributors
                 </h3>
                 {leaderboardQuery.isPending || (leaderboardQuery.isLoading && leaderboard.length === 0) ? (
                   <div className="space-y-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Skeleton key={i} className="h-12 w-full rounded-lg" />
+                    {Array.from({length: 5}).map((_, i) => (
+                      <Skeleton key={i} className="h-12 w-full rounded-lg"/>
                     ))}
                   </div>
                 ) : leaderboard.length === 0 ? (
                   <div className="text-center py-6">
-                    <AlertCircle className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2" />
+                    <AlertCircle className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2"/>
                     <p className="text-body-muted">No data yet</p>
                   </div>
                 ) : (
@@ -556,14 +565,15 @@ export default function RecognitionPage() {
                         key={employee.id}
                         className="flex items-center gap-4 p-2 rounded-lg card-aura transition-colors"
                       >
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-warning-500 text-white' :
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-warning-500 text-white' :
                             index === 1 ? 'bg-[var(--text-muted)] text-white' :
                               index === 2 ? 'bg-warning-600 text-white' :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
-                          {index === 0 ? <Crown className="h-4 w-4" /> :
-                            index === 1 ? <Medal className="h-4 w-4" /> :
-                              index === 2 ? <Medal className="h-4 w-4" /> :
+                          {index === 0 ? <Crown className="h-4 w-4"/> :
+                            index === 1 ? <Medal className="h-4 w-4"/> :
+                              index === 2 ? <Medal className="h-4 w-4"/> :
                                 <span className="text-sm font-medium">{index + 1}</span>}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -599,12 +609,12 @@ export default function RecognitionPage() {
                       <PermissionGate key={type.value} permission={Permissions.RECOGNITION_CREATE}>
                         <button
                           onClick={() => {
-                            reset({ ...watch(), type: type.value });
+                            reset({...watch(), type: type.value});
                             setIsModalOpen(true);
                           }}
                           className="flex flex-col items-center gap-2 p-4 rounded-lg card-interactive"
                         >
-                          <Icon className="h-6 w-6 text-accent-500" />
+                          <Icon className="h-6 w-6 text-accent-500"/>
                           <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>
                         </button>
                       </PermissionGate>
@@ -620,7 +630,7 @@ export default function RecognitionPage() {
         <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="lg">
           <ModalHeader>
             <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-warning-500" />
+              <Sparkles className="h-6 w-6 text-warning-500"/>
               Give Recognition
             </h2>
           </ModalHeader>
@@ -701,7 +711,7 @@ export default function RecognitionPage() {
                     Points to Award
                   </label>
                   <Input
-                    {...register('pointsAwarded', { valueAsNumber: true })}
+                    {...register('pointsAwarded', {valueAsNumber: true})}
                     type="number"
                     min={0}
                     max={100}
@@ -740,7 +750,7 @@ export default function RecognitionPage() {
               Cancel
             </Button>
             <Button onClick={handleSubmit(handleSubmitRecognition)}>
-              <Send className="mr-2 h-4 w-4" />
+              <Send className="mr-2 h-4 w-4"/>
               Send Recognition
             </Button>
           </ModalFooter>

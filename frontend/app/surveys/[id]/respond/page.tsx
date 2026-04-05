@@ -1,38 +1,18 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import {
-  ArrowLeft,
-  Send,
-  ShieldCheck,
-  ChevronRight,
-  ChevronLeft,
-  CheckCircle,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import {
-  Card,
-  CardContent,
-  Button,
-  Textarea,
-  Badge,
-} from '@/components/ui';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { useSurveyDetail } from '@/lib/hooks/queries/useSurveys';
-import {
-  useSurveyQuestions,
-  useSubmitSurveyResponse,
-} from '@/lib/hooks/queries/useSurveyQuestions';
-import { QuestionType } from '@/lib/types/grow/survey';
-import type { SurveyQuestion } from '@/lib/types/grow/survey';
-import {
-  motion as dsMotion,
-  typography,
-  iconSize,
-} from '@/lib/design-system';
+import React, {useMemo, useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {ArrowLeft, CheckCircle, ChevronLeft, ChevronRight, Send, ShieldCheck,} from 'lucide-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Badge, Button, Card, CardContent, Textarea,} from '@/components/ui';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
+import {useSubmitSurveyResponse, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
+import type {SurveyQuestion} from '@/lib/types/grow/survey';
+import {QuestionType} from '@/lib/types/grow/survey';
+import {iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
 
 // ─── Per-question answer state ─────────────────────────────────────────────
 interface AnswerState {
@@ -44,9 +24,9 @@ interface AnswerState {
 // ─── Question Renderers ────────────────────────────────────────────────────
 
 function TextQuestion({
-  answer,
-  onChange,
-}: {
+                        answer,
+                        onChange,
+                      }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -54,7 +34,7 @@ function TextQuestion({
   return (
     <Textarea
       value={answer.answerText ?? ''}
-      onChange={(e) => onChange({ answerText: e.target.value })}
+      onChange={(e) => onChange({answerText: e.target.value})}
       placeholder="Type your answer..."
       rows={4}
     />
@@ -62,10 +42,10 @@ function TextQuestion({
 }
 
 function SingleChoiceQuestion({
-  question,
-  answer,
-  onChange,
-}: {
+                                question,
+                                answer,
+                                onChange,
+                              }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -87,7 +67,7 @@ function SingleChoiceQuestion({
             name={`q-${question.id}`}
             value={opt}
             checked={answer.selectedOptions?.[0] === opt}
-            onChange={() => onChange({ selectedOptions: [opt] })}
+            onChange={() => onChange({selectedOptions: [opt]})}
             className="text-accent-700 focus:ring-accent-500"
           />
           <span className={typography.body}>{opt}</span>
@@ -98,10 +78,10 @@ function SingleChoiceQuestion({
 }
 
 function MultipleChoiceQuestion({
-  question,
-  answer,
-  onChange,
-}: {
+                                  question,
+                                  answer,
+                                  onChange,
+                                }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -113,7 +93,7 @@ function MultipleChoiceQuestion({
     const next = selected.includes(opt)
       ? selected.filter((s) => s !== opt)
       : [...selected, opt];
-    onChange({ selectedOptions: next });
+    onChange({selectedOptions: next});
   };
 
   return (
@@ -141,9 +121,9 @@ function MultipleChoiceQuestion({
 }
 
 function LikertQuestion({
-  answer,
-  onChange,
-}: {
+                          answer,
+                          onChange,
+                        }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -155,7 +135,7 @@ function LikertQuestion({
         <button
           key={val}
           type="button"
-          onClick={() => onChange({ ratingValue: val })}
+          onClick={() => onChange({ratingValue: val})}
           className={`flex flex-col items-center gap-1 rounded-lg border p-4 min-w-[80px] transition-colors ${
             answer.ratingValue === val
               ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300'
@@ -171,9 +151,9 @@ function LikertQuestion({
 }
 
 function NpsQuestion({
-  answer,
-  onChange,
-}: {
+                       answer,
+                       onChange,
+                     }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -181,11 +161,11 @@ function NpsQuestion({
   return (
     <div>
       <div className="flex flex-wrap gap-2">
-        {Array.from({ length: 11 }, (_, i) => i).map((val) => (
+        {Array.from({length: 11}, (_, i) => i).map((val) => (
           <button
             key={val}
             type="button"
-            onClick={() => onChange({ ratingValue: val })}
+            onClick={() => onChange({ratingValue: val})}
             className={`flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${
               answer.ratingValue === val
                 ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300'
@@ -205,9 +185,9 @@ function NpsQuestion({
 }
 
 function RatingQuestion({
-  answer,
-  onChange,
-}: {
+                          answer,
+                          onChange,
+                        }: {
   question: SurveyQuestion;
   answer: AnswerState;
   onChange: (a: AnswerState) => void;
@@ -218,7 +198,7 @@ function RatingQuestion({
         <button
           key={val}
           type="button"
-          onClick={() => onChange({ ratingValue: val })}
+          onClick={() => onChange({ratingValue: val})}
           className="transition-transform hover:scale-110"
         >
           <svg
@@ -249,8 +229,8 @@ export default function SurveyRespondPage() {
   const router = useRouter();
   const surveyId = params.id as string;
 
-  const { data: survey, isLoading: surveyLoading } = useSurveyDetail(surveyId);
-  const { data: questions, isLoading: questionsLoading } = useSurveyQuestions(surveyId);
+  const {data: survey, isLoading: surveyLoading} = useSurveyDetail(surveyId);
+  const {data: questions, isLoading: questionsLoading} = useSurveyQuestions(surveyId);
   const submitMutation = useSubmitSurveyResponse();
 
   const sortedQuestions = useMemo(
@@ -266,7 +246,7 @@ export default function SurveyRespondPage() {
   const progress = total > 0 ? Math.round(((currentIndex + 1) / total) * 100) : 0;
 
   const updateAnswer = (questionId: string, answer: AnswerState) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+    setAnswers((prev) => ({...prev, [questionId]: answer}));
   };
 
   const handleSubmit = () => {
@@ -281,17 +261,17 @@ export default function SurveyRespondPage() {
     });
 
     submitMutation.mutate(
-      { surveyId, answers: formattedAnswers },
-      { onSuccess: () => setSubmitted(true) }
+      {surveyId, answers: formattedAnswers},
+      {onSuccess: () => setSubmitted(true)}
     );
   };
 
   const isLoading = surveyLoading || questionsLoading;
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Surveys', href: '/surveys' },
-    { label: survey?.title ?? 'Respond' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Surveys', href: '/surveys'},
+    {label: survey?.title ?? 'Respond'},
   ];
 
   const renderQuestion = (question: SurveyQuestion) => {
@@ -300,19 +280,19 @@ export default function SurveyRespondPage() {
 
     switch (question.questionType) {
       case QuestionType.TEXT:
-        return <TextQuestion question={question} answer={answer} onChange={onChange} />;
+        return <TextQuestion question={question} answer={answer} onChange={onChange}/>;
       case QuestionType.SINGLE_CHOICE:
-        return <SingleChoiceQuestion question={question} answer={answer} onChange={onChange} />;
+        return <SingleChoiceQuestion question={question} answer={answer} onChange={onChange}/>;
       case QuestionType.MULTIPLE_CHOICE:
-        return <MultipleChoiceQuestion question={question} answer={answer} onChange={onChange} />;
+        return <MultipleChoiceQuestion question={question} answer={answer} onChange={onChange}/>;
       case QuestionType.SCALE:
-        return <LikertQuestion question={question} answer={answer} onChange={onChange} />;
+        return <LikertQuestion question={question} answer={answer} onChange={onChange}/>;
       case QuestionType.NPS:
-        return <NpsQuestion question={question} answer={answer} onChange={onChange} />;
+        return <NpsQuestion question={question} answer={answer} onChange={onChange}/>;
       case QuestionType.RATING:
-        return <RatingQuestion question={question} answer={answer} onChange={onChange} />;
+        return <RatingQuestion question={question} answer={answer} onChange={onChange}/>;
       default:
-        return <TextQuestion question={question} answer={answer} onChange={onChange} />;
+        return <TextQuestion question={question} answer={answer} onChange={onChange}/>;
     }
   };
 
@@ -323,7 +303,7 @@ export default function SurveyRespondPage() {
           className="flex flex-col items-center justify-center py-24"
           {...dsMotion.pageEnter}
         >
-          <CheckCircle className="h-16 w-16 text-success-500" />
+          <CheckCircle className="h-16 w-16 text-success-500"/>
           <h2 className="mt-6 text-2xl font-bold text-[var(--text-primary)]">
             Thank you!
           </h2>
@@ -354,7 +334,7 @@ export default function SurveyRespondPage() {
           {/* Survey header */}
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm" onClick={() => router.push('/surveys')}>
-              <ArrowLeft className={iconSize.button} />
+              <ArrowLeft className={iconSize.button}/>
             </Button>
             <div>
               <h1 className={typography.pageTitle}>
@@ -367,8 +347,9 @@ export default function SurveyRespondPage() {
           </div>
 
           {survey?.isAnonymous && (
-            <div className="flex items-center gap-2 rounded-lg border border-accent-200 bg-accent-50 p-4 dark:border-accent-800 dark:bg-accent-900/20">
-              <ShieldCheck className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+            <div
+              className="flex items-center gap-2 rounded-lg border border-accent-200 bg-accent-50 p-4 dark:border-accent-800 dark:bg-accent-900/20">
+              <ShieldCheck className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
               <span className={typography.body}>
                 This is an anonymous survey. Your identity will not be recorded.
               </span>
@@ -387,7 +368,7 @@ export default function SurveyRespondPage() {
               <div className="h-2 w-full rounded-full bg-[var(--bg-surface)]">
                 <div
                   className="h-2 rounded-full bg-accent-600 transition-all duration-300"
-                  style={{ width: `${progress}%` }}
+                  style={{width: `${progress}%`}}
                 />
               </div>
             </div>
@@ -438,7 +419,7 @@ export default function SurveyRespondPage() {
                 onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
                 disabled={currentIndex === 0}
               >
-                <ChevronLeft className={`${iconSize.button} mr-2`} />
+                <ChevronLeft className={`${iconSize.button} mr-2`}/>
                 Previous
               </Button>
 
@@ -447,14 +428,14 @@ export default function SurveyRespondPage() {
                   onClick={() => setCurrentIndex((p) => Math.min(total - 1, p + 1))}
                 >
                   Next
-                  <ChevronRight className={`${iconSize.button} ml-2`} />
+                  <ChevronRight className={`${iconSize.button} ml-2`}/>
                 </Button>
               ) : (
                 <Button
                   onClick={handleSubmit}
                   disabled={submitMutation.isPending}
                 >
-                  <Send className={`${iconSize.button} mr-2`} />
+                  <Send className={`${iconSize.button} mr-2`}/>
                   {submitMutation.isPending ? 'Submitting...' : 'Submit'}
                 </Button>
               )}

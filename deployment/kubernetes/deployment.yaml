@@ -155,9 +155,9 @@ spec:
       # Volumes
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir: { }
         - name: logs
-          emptyDir: {}
+          emptyDir: { }
 
       # Node affinity and pod anti-affinity for HA
       affinity:
@@ -281,9 +281,9 @@ spec:
       # Volumes
       volumes:
         - name: cache
-          emptyDir: {}
+          emptyDir: { }
         - name: tmp
-          emptyDir: {}
+          emptyDir: { }
 
       # Pod anti-affinity
       affinity:

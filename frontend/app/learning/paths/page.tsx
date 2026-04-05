@@ -1,25 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  BookOpen,
-  Clock,
-  Users,
-  Play,
-  CheckCircle2,
-  Zap,
-  Filter,
-  Search,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { apiClient } from '@/lib/api/client';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {ArrowLeft, BookOpen, CheckCircle2, Clock, Filter, Play, Search, Users, Zap,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {apiClient} from '@/lib/api/client';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 interface LearningPath {
   id: string;
@@ -38,7 +28,7 @@ interface LearningPath {
 export default function LearningPathsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -57,7 +47,7 @@ export default function LearningPathsPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
 
   // Query for learning paths
-  const { data: paths = [], isLoading, refetch } = useQuery({
+  const {data: paths = [], isLoading, refetch} = useQuery({
     queryKey: ['learning-paths'],
     queryFn: async () => {
       const response = await apiClient.get<{ content: LearningPath[] }>('/lms/learning-paths');
@@ -74,7 +64,9 @@ export default function LearningPathsPage() {
       refetch();
     },
     onError: (err: unknown) => {
-      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in learning path');
+      toast.error((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to enroll in learning path');
     },
   });
 
@@ -110,19 +102,27 @@ export default function LearningPathsPage() {
 
   const getDifficultyColor = (level: string) => {
     switch (level) {
-      case 'BEGINNER': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
-      case 'INTERMEDIATE': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
-      case 'ADVANCED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'BEGINNER':
+        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+      case 'INTERMEDIATE':
+        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'ADVANCED':
+        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getStatusColor = (status?: string) => {
     switch (status) {
-      case 'NOT_STARTED': return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-700';
-      case 'COMPLETED': return 'bg-success-100 text-success-700';
-      default: return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      case 'NOT_STARTED':
+        return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
+      case 'IN_PROGRESS':
+        return 'bg-warning-100 text-warning-700';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-700';
+      default:
+        return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     }
   };
 
@@ -131,11 +131,13 @@ export default function LearningPathsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/learning" className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
-            <ArrowLeft className="h-4 w-4" /> Back to Learning
+          <Link href="/learning"
+                className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
+            <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
-          <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and competencies</p>
+          <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and
+            competencies</p>
         </div>
 
         {/* Search and Filter */}
@@ -143,7 +145,7 @@ export default function LearningPathsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search learning paths..."
@@ -155,7 +157,7 @@ export default function LearningPathsPage() {
 
             {/* Difficulty Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-[var(--text-secondary)]" />
+              <Filter className="h-5 w-5 text-[var(--text-secondary)]"/>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
@@ -174,14 +176,16 @@ export default function LearningPathsPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4" />
+              <div
+                className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
               <p className="text-[var(--text-muted)]">Loading learning paths...</p>
             </div>
           </div>
         ) : filteredPaths.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPaths.map((path) => (
-              <div key={path.id} className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+              <div key={path.id}
+                   className="skeuo-card bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 {/* Thumbnail */}
                 {path.thumbnailUrl ? (
                   <div className="relative w-full h-40">
@@ -194,8 +198,9 @@ export default function LearningPathsPage() {
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center">
-                    <Zap className="h-12 w-12 text-white opacity-50" />
+                  <div
+                    className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center">
+                    <Zap className="h-12 w-12 text-white opacity-50"/>
                   </div>
                 )}
 
@@ -205,7 +210,8 @@ export default function LearningPathsPage() {
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
                     {path.status && (
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
                         {path.status.replace('_', ' ')}
                       </span>
                     )}
@@ -219,18 +225,18 @@ export default function LearningPathsPage() {
                   {/* Meta Info */}
                   <div className="flex flex-wrap gap-4 mb-4 text-xs text-[var(--text-secondary)]">
                     <div className="flex items-center gap-1">
-                      <BookOpen className="h-4 w-4" />
+                      <BookOpen className="h-4 w-4"/>
                       {path.courseCount} {path.courseCount === 1 ? 'course' : 'courses'}
                     </div>
                     {path.durationHours && (
                       <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
+                        <Clock className="h-4 w-4"/>
                         {path.durationHours}h
                       </div>
                     )}
                     {path.totalEnrollments > 0 && (
                       <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
+                        <Users className="h-4 w-4"/>
                         {path.totalEnrollments} enrolled
                       </div>
                     )}
@@ -238,7 +244,8 @@ export default function LearningPathsPage() {
 
                   {/* Difficulty Badge */}
                   <div className="mb-4">
-                    <span className={`badge-status inline-block px-4 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
+                    <span
+                      className={`badge-status inline-block px-4 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
                       {path.difficulty}
                     </span>
                   </div>
@@ -253,7 +260,7 @@ export default function LearningPathsPage() {
                       <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-accent-600 transition-all duration-300"
-                          style={{ width: `${path.progressPercentage}%` }}
+                          style={{width: `${path.progressPercentage}%`}}
                         />
                       </div>
                     </div>
@@ -267,11 +274,11 @@ export default function LearningPathsPage() {
                     >
                       {path.status === 'COMPLETED' ? (
                         <>
-                          <CheckCircle2 className="h-4 w-4" /> Review Path
+                          <CheckCircle2 className="h-4 w-4"/> Review Path
                         </>
                       ) : (
                         <>
-                          <Play className="h-4 w-4" /> Continue
+                          <Play className="h-4 w-4"/> Continue
                         </>
                       )}
                     </button>
@@ -283,12 +290,13 @@ export default function LearningPathsPage() {
                     >
                       {enrollPathMutation.isPending ? (
                         <>
-                          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                          <div
+                            className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"/>
                           Enrolling...
                         </>
                       ) : (
                         <>
-                          <Play className="h-4 w-4" /> Enroll Now
+                          <Play className="h-4 w-4"/> Enroll Now
                         </>
                       )}
                     </button>
@@ -299,12 +307,12 @@ export default function LearningPathsPage() {
           </div>
         ) : (
           <div className="bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
-            <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+            <Zap className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
             </h3>
             <p className="text-[var(--text-secondary)] mb-6">
-              {searchQuery || selectedDifficulty !== 'ALL' 
+              {searchQuery || selectedDifficulty !== 'ALL'
                 ? 'Try adjusting your search or filter criteria'
                 : 'Learning paths will be available soon'}
             </p>

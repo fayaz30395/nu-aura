@@ -1,63 +1,55 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {
-  FileText,
-  Search,
-  Plus,
-  Calendar,
-  Clock,
   AlertCircle,
-  Loader2,
-  MoreVertical,
-  Eye,
-  User,
-  Send,
+  Calendar,
   CheckCircle,
-  XCircle,
+  Clock,
   Download,
+  Eye,
   FileCheck,
   FilePlus,
   Files,
+  FileText,
+  Loader2,
+  MoreVertical,
   PenTool,
+  Plus,
+  Search,
+  Send,
+  User,
   UserPlus,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import {
-  Card,
-  CardContent,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from '@/components/ui';
-import {
-  LetterTemplate,
   GeneratedLetter,
   GenerateLetterRequest,
   GenerateOfferLetterRequest,
   LetterCategory,
   LetterStatus,
+  LetterTemplate,
 } from '@/lib/types/hrms/letter';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useRouter} from 'next/navigation';
 import {
-  useAllLetters,
   useActiveLetterTemplates,
+  useAllLetters,
+  useApproveLetter,
   useGenerateLetter,
   useGenerateOfferLetter,
   useIssueLetter,
-  useApproveLetter,
   useRevokeLetter,
 } from '@/lib/hooks/queries/useLetter';
-import { useCandidates } from '@/lib/hooks/queries/useRecruitment';
-import { createLogger } from '@/lib/utils/logger';
+import {useCandidates} from '@/lib/hooks/queries/useRecruitment';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('LettersPage');
 
@@ -79,7 +71,7 @@ const GenerateOfferLetterFormSchema = z.object({
   candidateId: z.string().min(1, 'Candidate is required'),
   letterTitle: z.string().optional().or(z.literal('')),
   offeredDesignation: z.string().min(1, 'Offered designation is required'),
-  offeredCtc: z.number({ coerce: true }).positive('Offered CTC must be greater than 0'),
+  offeredCtc: z.number({coerce: true}).positive('Offered CTC must be greater than 0'),
   proposedJoiningDate: z.string().min(1, 'Proposed joining date is required'),
   letterDate: z.string().min(1, 'Letter date is required'),
   expiryDate: z.string().optional().or(z.literal('')),
@@ -159,13 +151,18 @@ const formatDate = (date: string | undefined) => {
 
 export default function LettersPage() {
   const router = useRouter();
-  const { isAuthenticated, user, hasHydrated } = useAuth();
+  const {isAuthenticated, user, hasHydrated} = useAuth();
 
   // React Query hooks for data fetching
   const [currentPage, setCurrentPage] = useState(0);
-  const { data: lettersData, isLoading: lettersLoading, error: lettersError, refetch: refetchLetters } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
-  const { data: templatesData, isLoading: _templatesLoading } = useActiveLetterTemplates(isAuthenticated && hasHydrated);
-  const { data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates } = useCandidates(0, 100);
+  const {
+    data: lettersData,
+    isLoading: lettersLoading,
+    error: lettersError,
+    refetch: refetchLetters
+  } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
+  const {data: templatesData, isLoading: _templatesLoading} = useActiveLetterTemplates(isAuthenticated && hasHydrated);
+  const {data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates} = useCandidates(0, 100);
 
   // React Query mutations
   const generateLetterMutation = useGenerateLetter();
@@ -337,7 +334,7 @@ export default function LettersPage() {
       additionalNotes: data.additionalNotes || '',
     };
     generateLetterMutation.mutate(
-      { data: submitData, generatedBy: user?.id || '' },
+      {data: submitData, generatedBy: user?.id || ''},
       {
         onSuccess: () => {
           setShowGenerateModal(false);
@@ -366,7 +363,7 @@ export default function LettersPage() {
       sendForESign: data.sendForESign,
     };
     generateOfferLetterMutation.mutate(
-      { data: submitData, generatedBy: user?.id || '' },
+      {data: submitData, generatedBy: user?.id || ''},
       {
         onSuccess: () => {
           setShowOfferLetterModal(false);
@@ -384,30 +381,30 @@ export default function LettersPage() {
   const handleSubmitForApproval = async (letter: GeneratedLetter) => {
     // This calls approveLetterMutation with status update
     approveLetterMutation.mutate(
-      { letterId: letter.id, approverId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
+      {letterId: letter.id, approverId: user?.id || ''},
+      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
     );
   };
 
   const handleApproveLetter = async (letter: GeneratedLetter) => {
     approveLetterMutation.mutate(
-      { letterId: letter.id, approverId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
+      {letterId: letter.id, approverId: user?.id || ''},
+      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
     );
   };
 
   const handleIssueLetter = async (letter: GeneratedLetter) => {
     issueLetterMutation.mutate(
-      { letterId: letter.id, issuerId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
+      {letterId: letter.id, issuerId: user?.id || ''},
+      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
     );
   };
 
   const handleIssueWithESign = async (letter: GeneratedLetter) => {
     // For e-sign, use the same issue mutation (backend handles e-sign flag)
     issueLetterMutation.mutate(
-      { letterId: letter.id, issuerId: user?.id || '' },
-      { onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err) }
+      {letterId: letter.id, issuerId: user?.id || ''},
+      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
     );
   };
 
@@ -427,15 +424,15 @@ export default function LettersPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Letter Generation' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Letter Generation'},
   ];
 
   if (lettersLoading && filteredLetters.length === 0) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letters">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading letters...</span>
         </div>
       </AppLayout>
@@ -458,13 +455,13 @@ export default function LettersPage() {
           <div className="flex gap-2">
             <PermissionGate permission={Permissions.LETTER_GENERATE}>
               <Button variant="outline" onClick={handleOpenOfferLetterModal}>
-                <UserPlus className="h-4 w-4 mr-2" />
+                <UserPlus className="h-4 w-4 mr-2"/>
                 Generate Offer Letter
               </Button>
             </PermissionGate>
             <PermissionGate permission={Permissions.LETTER_GENERATE}>
               <Button onClick={handleOpenGenerateModal}>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-2"/>
                 Generate Letter
               </Button>
             </PermissionGate>
@@ -476,7 +473,7 @@ export default function LettersPage() {
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{lettersError instanceof Error ? lettersError.message : 'Failed to load letters'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetchLetters()} className="ml-auto">
                   Retry
@@ -492,7 +489,7 @@ export default function LettersPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Files className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <Files className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Letters</p>
@@ -505,7 +502,7 @@ export default function LettersPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
-                  <FilePlus className="h-6 w-6 text-[var(--text-secondary)]" />
+                  <FilePlus className="h-6 w-6 text-[var(--text-secondary)]"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Drafts</p>
@@ -518,7 +515,7 @@ export default function LettersPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
@@ -531,7 +528,7 @@ export default function LettersPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <FileCheck className="h-6 w-6 text-success-600 dark:text-success-400" />
+                  <FileCheck className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Issued</p>
@@ -571,7 +568,8 @@ export default function LettersPage() {
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                 <input
                   type="text"
                   placeholder="Search letters..."
@@ -613,170 +611,182 @@ export default function LettersPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead className="bg-[var(--bg-secondary)]">
-                        <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Reference / Title
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Employee
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Category
-                          </th>
-                          <th className="px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Letter Date
-                          </th>
-                          <th className="px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
+                      <tr>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Reference / Title
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Employee
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Category
+                        </th>
+                        <th
+                          className="px-4 py-2 text-center text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Letter Date
+                        </th>
+                        <th
+                          className="px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--border-subtle)]">
-                        {filteredLetters.map((letter) => (
-                          <tr key={letter.id} className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <div>
-                                <p className="font-medium text-[var(--text-primary)]">
-                                  {letter.referenceNumber}
-                                </p>
-                                <p className="text-body-muted line-clamp-1">
-                                  {letter.letterTitle}
-                                </p>
+                      {filteredLetters.map((letter) => (
+                        <tr key={letter.id}
+                            className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div>
+                              <p className="font-medium text-[var(--text-primary)]">
+                                {letter.referenceNumber}
+                              </p>
+                              <p className="text-body-muted line-clamp-1">
+                                {letter.letterTitle}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-accent-100 dark:bg-accent-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
+                                {letter.candidateId ? (
+                                  <UserPlus className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
+                                ) : (
+                                  <User className="h-4 w-4 text-[var(--text-secondary)]"/>
+                                )}
                               </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-accent-100 dark:bg-accent-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
-                                  {letter.candidateId ? (
-                                    <UserPlus className="h-4 w-4 text-accent-700 dark:text-accent-400" />
-                                  ) : (
-                                    <User className="h-4 w-4 text-[var(--text-secondary)]" />
-                                  )}
-                                </div>
-                                <div>
+                              <div>
                                   <span className="text-body-secondary">
                                     {letter.candidateName || letter.employeeName || 'N/A'}
                                   </span>
-                                  {letter.candidateId && (
-                                    <p className="text-xs text-accent-700 dark:text-accent-400">Candidate</p>
-                                  )}
-                                </div>
+                                {letter.candidateId && (
+                                  <p className="text-xs text-accent-700 dark:text-accent-400">Candidate</p>
+                                )}
                               </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
                               <span className="text-body-secondary">
                                 {getCategoryLabel(letter.category)}
                               </span>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-center">
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(letter.status)}`}>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-center">
+                              <span
+                                className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(letter.status)}`}>
                                 {getStatusLabel(letter.status)}
                               </span>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
                               <span className="text-body-secondary">
                                 {formatDate(letter.letterDate)}
                               </span>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-right">
-                              <div className="relative group inline-block">
-                                <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="More options">
-                                  <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-right">
+                            <div className="relative group inline-block">
+                              <button
+                                className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                aria-label="More options">
+                                <MoreVertical className="h-4 w-4 text-[var(--text-muted)]"/>
+                              </button>
+                              <div
+                                className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                                <button
+                                  onClick={() => handleViewDetails(letter)}
+                                  className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                >
+                                  <Eye className="h-4 w-4"/>
+                                  View Details
                                 </button>
-                                <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                                {letter.status === LetterStatus.DRAFT && (
                                   <button
-                                    onClick={() => handleViewDetails(letter)}
+                                    onClick={() => handleSubmitForApproval(letter)}
                                     className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                   >
-                                    <Eye className="h-4 w-4" />
-                                    View Details
+                                    <Send className="h-4 w-4"/>
+                                    Submit for Approval
                                   </button>
-                                  {letter.status === LetterStatus.DRAFT && (
+                                )}
+                                {letter.status === LetterStatus.PENDING_APPROVAL && (
+                                  <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div/>}>
                                     <button
-                                      onClick={() => handleSubmitForApproval(letter)}
-                                      className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                      onClick={() => handleApproveLetter(letter)}
+                                      className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                     >
-                                      <Send className="h-4 w-4" />
-                                      Submit for Approval
+                                      <CheckCircle className="h-4 w-4"/>
+                                      Approve
                                     </button>
-                                  )}
-                                  {letter.status === LetterStatus.PENDING_APPROVAL && (
-                                    <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div />}>
+                                  </PermissionGate>
+                                )}
+                                {letter.status === LetterStatus.APPROVED && (
+                                  <>
+                                    <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div/>}>
                                       <button
-                                        onClick={() => handleApproveLetter(letter)}
-                                        className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                        onClick={() => handleIssueLetter(letter)}
+                                        className="w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                       >
-                                        <CheckCircle className="h-4 w-4" />
-                                        Approve
+                                        <FileCheck className="h-4 w-4"/>
+                                        Issue Letter
                                       </button>
                                     </PermissionGate>
-                                  )}
-                                  {letter.status === LetterStatus.APPROVED && (
-                                    <>
-                                      <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
+                                    {letter.candidateId && letter.category === LetterCategory.OFFER && (
+                                      <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div/>}>
                                         <button
-                                          onClick={() => handleIssueLetter(letter)}
-                                          className="w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                          onClick={() => handleIssueWithESign(letter)}
+                                          className="w-full px-4 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                         >
-                                          <FileCheck className="h-4 w-4" />
-                                          Issue Letter
+                                          <PenTool className="h-4 w-4"/>
+                                          Issue with E-Sign
                                         </button>
                                       </PermissionGate>
-                                      {letter.candidateId && letter.category === LetterCategory.OFFER && (
-                                        <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div />}>
-                                          <button
-                                            onClick={() => handleIssueWithESign(letter)}
-                                            className="w-full px-4 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                          >
-                                            <PenTool className="h-4 w-4" />
-                                            Issue with E-Sign
-                                          </button>
-                                        </PermissionGate>
-                                      )}
-                                    </>
-                                  )}
-                                  {letter.status === LetterStatus.ISSUED && letter.pdfUrl ? (
-                                    <a
-                                      href={letter.pdfUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                      onClick={(e) => {
-                                        if (!letter.pdfUrl) {
-                                          e.preventDefault();
-                                        }
-                                      }}
-                                    >
-                                      <Download className="h-4 w-4" />
-                                      Download PDF
-                                    </a>
-                                  ) : letter.status === LetterStatus.ISSUED ? (
-                                    <button
-                                      disabled
-                                      className="w-full px-4 py-2 text-left text-body-muted cursor-not-allowed opacity-50 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                      title="PDF not yet available"
-                                    >
-                                      <Download className="h-4 w-4" />
-                                      PDF Generating...
-                                    </button>
-                                  ) : null}
-                                  {letter.status === LetterStatus.ISSUED && (
-                                    <button
-                                      onClick={() => handleRevokeLetter(letter)}
-                                      className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                    >
-                                      <XCircle className="h-4 w-4" />
-                                      Revoke
-                                    </button>
-                                  )}
-                                </div>
+                                    )}
+                                  </>
+                                )}
+                                {letter.status === LetterStatus.ISSUED && letter.pdfUrl ? (
+                                  <a
+                                    href={letter.pdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
+                                    onClick={(e) => {
+                                      if (!letter.pdfUrl) {
+                                        e.preventDefault();
+                                      }
+                                    }}
+                                  >
+                                    <Download className="h-4 w-4"/>
+                                    Download PDF
+                                  </a>
+                                ) : letter.status === LetterStatus.ISSUED ? (
+                                  <button
+                                    disabled
+                                    className="w-full px-4 py-2 text-left text-body-muted cursor-not-allowed opacity-50 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    title="PDF not yet available"
+                                  >
+                                    <Download className="h-4 w-4"/>
+                                    PDF Generating...
+                                  </button>
+                                ) : null}
+                                {letter.status === LetterStatus.ISSUED && (
+                                  <button
+                                    onClick={() => handleRevokeLetter(letter)}
+                                    className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  >
+                                    <XCircle className="h-4 w-4"/>
+                                    Revoke
+                                  </button>
+                                )}
                               </div>
-                            </td>
-                          </tr>
-                        ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                       </tbody>
                     </table>
                   </div>
@@ -786,7 +796,7 @@ export default function LettersPage() {
               !lettersLoading && (
                 <Card>
                   <CardContent className="p-12 text-center">
-                    <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                    <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       No Letters Found
                     </h3>
@@ -797,7 +807,7 @@ export default function LettersPage() {
                     </p>
                     {!searchQuery && !statusFilter && !categoryFilter && (
                       <Button onClick={handleOpenGenerateModal}>
-                        <Plus className="h-4 w-4 mr-2" />
+                        <Plus className="h-4 w-4 mr-2"/>
                         Generate Letter
                       </Button>
                     )}
@@ -842,7 +852,7 @@ export default function LettersPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                          <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                          <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                         </div>
                         <div>
                           <p className="text-caption font-mono">{template.code}</p>
@@ -856,7 +866,8 @@ export default function LettersPage() {
                       {template.description || 'No description'}
                     </p>
                     <div className="row-between">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                      <span
+                        className="px-2 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                         {getCategoryLabel(template.category)}
                       </span>
                       {template.requiresApproval && (
@@ -870,7 +881,7 @@ export default function LettersPage() {
               <div className="col-span-full">
                 <Card>
                   <CardContent className="p-12 text-center">
-                    <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                    <FileText className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       No Templates Available
                     </h3>
@@ -911,7 +922,8 @@ export default function LettersPage() {
                     ))}
                   </select>
                   {generateLetterForm.formState.errors.templateId && (
-                    <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-caption">{selectedTemplate.description}</p>
@@ -929,7 +941,8 @@ export default function LettersPage() {
                     placeholder="Enter employee ID"
                   />
                   {generateLetterForm.formState.errors.employeeId && (
-                    <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
                   )}
                 </div>
 
@@ -956,7 +969,8 @@ export default function LettersPage() {
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {generateLetterForm.formState.errors.letterDate && (
-                      <p className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -1002,7 +1016,7 @@ export default function LettersPage() {
               <Button type="submit" disabled={generateLetterMutation.isPending}>
                 {generateLetterMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Generating...
                   </>
                 ) : (
@@ -1018,7 +1032,7 @@ export default function LettersPage() {
           <ModalHeader>
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                <FileText className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                <FileText className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
               </div>
               <div>
                 <p className="text-body-muted font-mono">{selectedLetter?.referenceNumber}</p>
@@ -1032,10 +1046,12 @@ export default function LettersPage() {
             {selectedLetter && (
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
-                  <span className={`px-4 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedLetter.status)}`}>
+                  <span
+                    className={`px-4 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedLetter.status)}`}>
                     {getStatusLabel(selectedLetter.status)}
                   </span>
-                  <span className="px-4 py-1 text-sm font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                  <span
+                    className="px-4 py-1 text-sm font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                     {getCategoryLabel(selectedLetter.category)}
                   </span>
                 </div>
@@ -1043,7 +1059,7 @@ export default function LettersPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted flex items-center gap-2">
-                      <User className="h-4 w-4" />
+                      <User className="h-4 w-4"/>
                       Employee
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -1052,7 +1068,7 @@ export default function LettersPage() {
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4"/>
                       Letter Date
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -1099,7 +1115,7 @@ export default function LettersPage() {
                 {selectedLetter.approvedByName && (
                   <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
                     <p className="text-sm text-success-600 dark:text-success-400 flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4" />
+                      <CheckCircle className="h-4 w-4"/>
                       Approved By
                     </p>
                     <p className="font-semibold text-[var(--text-primary)]">
@@ -1140,13 +1156,13 @@ export default function LettersPage() {
                     }
                   }}
                 >
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2"/>
                   Download PDF
                 </a>
               </Button>
             ) : selectedLetter?.status === LetterStatus.ISSUED ? (
               <Button disabled>
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="h-4 w-4 mr-2"/>
                 PDF Generating...
               </Button>
             ) : null}
@@ -1182,7 +1198,8 @@ export default function LettersPage() {
                       ))}
                   </select>
                   {offerLetterForm.formState.errors.templateId && (
-                    <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-caption">{selectedTemplate.description}</p>
@@ -1206,10 +1223,12 @@ export default function LettersPage() {
                     ))}
                   </select>
                   {offerLetterForm.formState.errors.candidateId && (
-                    <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
                   )}
                   {eligibleCandidates.length === 0 && (
-                    <p className="mt-1 text-xs text-warning-600">No eligible candidates. Candidates must be in SELECTED status.</p>
+                    <p className="mt-1 text-xs text-warning-600">No eligible candidates. Candidates must be in SELECTED
+                      status.</p>
                   )}
                 </div>
 
@@ -1237,7 +1256,8 @@ export default function LettersPage() {
                       placeholder="e.g., Senior Software Engineer"
                     />
                     {offerLetterForm.formState.errors.offeredDesignation && (
-                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
                     )}
                   </div>
                   <div>
@@ -1247,12 +1267,13 @@ export default function LettersPage() {
                     <input
                       type="number"
                       min="0"
-                      {...offerLetterForm.register('offeredCtc', { valueAsNumber: true })}
+                      {...offerLetterForm.register('offeredCtc', {valueAsNumber: true})}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       placeholder="e.g., 1500000"
                     />
                     {offerLetterForm.formState.errors.offeredCtc && (
-                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
                     )}
                   </div>
                 </div>
@@ -1268,7 +1289,8 @@ export default function LettersPage() {
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {offerLetterForm.formState.errors.proposedJoiningDate && (
-                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -1281,7 +1303,8 @@ export default function LettersPage() {
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     {offerLetterForm.formState.errors.letterDate && (
-                      <p className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                 </div>
@@ -1336,7 +1359,7 @@ export default function LettersPage() {
               <Button type="submit" disabled={generateLetterMutation.isPending}>
                 {generateLetterMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Generating...
                   </>
                 ) : (

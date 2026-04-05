@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Clock, LogOut, LogIn, CheckCircle2 } from 'lucide-react';
+import {useEffect, useState} from 'react';
+import {CheckCircle2, Clock, LogIn, LogOut} from 'lucide-react';
 
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
@@ -32,15 +32,15 @@ function getInitialDateDisplay() {
 }
 
 export function TimeClockWidget({
-  isCheckedIn,
-  checkInTime,
-  onCheckIn,
-  onCheckOut,
-  isLoading = false,
-  isCompleted = false,
-  checkOutTime,
-  workDurationMinutes,
-}: TimeClockWidgetProps) {
+                                  isCheckedIn,
+                                  checkInTime,
+                                  onCheckIn,
+                                  onCheckOut,
+                                  isLoading = false,
+                                  isCompleted = false,
+                                  checkOutTime,
+                                  workDurationMinutes,
+                                }: TimeClockWidgetProps) {
   const [currentTime, setCurrentTime] = useState<string>(getInitialTime());
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [dateDisplay, setDateDisplay] = useState<string>(getInitialDateDisplay());
@@ -90,8 +90,9 @@ export function TimeClockWidget({
       {/* Header */}
       <div className="row-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-md" style={{ background: 'var(--accent-primary-subtle)' }}>
-            <Clock className="h-3.5 w-3.5" style={{ color: 'var(--accent-primary)' }} />
+          <div className="flex items-center justify-center w-6 h-6 rounded-md"
+               style={{background: 'var(--accent-primary-subtle)'}}>
+            <Clock className="h-3.5 w-3.5" style={{color: 'var(--accent-primary)'}}/>
           </div>
           <span className="text-xs font-medium text-[var(--text-muted)]">
             {dateDisplay}
@@ -108,17 +109,19 @@ export function TimeClockWidget({
       {/* Time Display — large monospace with accent period */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1.5">
-          <span className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
+          <span
+            className="text-4xl font-bold text-[var(--text-primary)] tracking-tight font-mono tabular-nums leading-none">
             {timeValue}
           </span>
-          <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--accent-primary)' }}>
+          <span className="text-sm font-semibold uppercase tracking-wider" style={{color: 'var(--accent-primary)'}}>
             {timePeriod}
           </span>
         </div>
         {elapsedTime && (
-          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg" style={{ background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)' }}>
-            <div className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse" />
-            <span className="text-xs font-medium" style={{ color: 'var(--status-success-text)' }}>
+          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+               style={{background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)'}}>
+            <div className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"/>
+            <span className="text-xs font-medium" style={{color: 'var(--status-success-text)'}}>
               Working: {elapsedTime}
             </span>
           </div>
@@ -127,11 +130,12 @@ export function TimeClockWidget({
 
       {/* Check In/Out Button or Completed State */}
       {isCompleted ? (
-        <div className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)]"
-          style={{ background: 'var(--status-success-bg)' }}>
+        <div
+          className="flex w-full flex-col items-center gap-2 rounded-xl py-4 px-4 border border-[var(--status-success-border)]"
+          style={{background: 'var(--status-success-bg)'}}>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--status-success-text)' }} />
-            <span className="text-sm font-semibold" style={{ color: 'var(--status-success-text)' }}>
+            <CheckCircle2 className="h-4 w-4" style={{color: 'var(--status-success-text)'}}/>
+            <span className="text-sm font-semibold" style={{color: 'var(--status-success-text)'}}>
               Attendance Completed
             </span>
           </div>
@@ -159,12 +163,12 @@ export function TimeClockWidget({
         >
           {isCheckedIn ? (
             <>
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4"/>
               Clock Out
             </>
           ) : (
             <>
-              <LogIn className="h-4 w-4" />
+              <LogIn className="h-4 w-4"/>
               Clock In
             </>
           )}

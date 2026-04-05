@@ -1,1 +1,1 @@
-export { CreateAllocationModal } from './CreateAllocationModal';
+export {CreateAllocationModal} from './CreateAllocationModal';

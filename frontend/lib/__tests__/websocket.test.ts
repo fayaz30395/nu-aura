@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { webSocketService, WebSocketStatus, WebSocketNotification } from '@/lib/websocket';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {WebSocketNotification, webSocketService, WebSocketStatus} from '@/lib/websocket';
 
 /**
  * WebSocket Service Reconnection Tests
@@ -82,7 +82,8 @@ describe('WebSocketService - Reconnection Logic', () => {
       webSocketService.addStatusChangeListener(listener);
 
       // Same status should not trigger listener twice
-      const unsubscribe = webSocketService.addStatusChangeListener(() => {});
+      const unsubscribe = webSocketService.addStatusChangeListener(() => {
+      });
       unsubscribe();
 
       expect(listener).toBeDefined();

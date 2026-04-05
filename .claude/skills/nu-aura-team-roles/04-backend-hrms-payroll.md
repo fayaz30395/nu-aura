@@ -7,12 +7,14 @@
 ## Core Responsibilities
 
 ### 1. Payroll Engine (SpEL-based)
+
 - Formula evaluation (`PayrollCalculationService.java`)
 - Component DAG ordering
 - Monthly payroll runs
 - Payslip generation (PDF via OpenPDF)
 
 **Formula Example**:
+
 ```java
 // DB: "basicSalary * 0.12"
 SpelExpressionParser parser = new SpelExpressionParser();
@@ -21,11 +23,14 @@ BigDecimal result = parser.parseExpression(formula)
 ```
 
 ### 2. Indian Payroll Compliance
+
 **PF (Provident Fund)**:
+
 - Employee: 12% of basic (max ₹21,000)
 - Employer: 3.67% PF + 8.33% Pension
 
 **ESI (Employee State Insurance)**:
+
 - Employee: 0.75% of gross
 - Employer: 3.25% of gross
 - Applicable if salary ≤ ₹21,000/month
@@ -35,6 +40,7 @@ BigDecimal result = parser.parseExpression(formula)
 **Gratuity**: (Basic × 15 × Years) / 26
 
 ### 3. Leave Management
+
 - Leave types (CL, SL, EL, Comp-Off)
 - Accrual (monthly cron job)
 - Deduction on approval
@@ -44,6 +50,7 @@ BigDecimal result = parser.parseExpression(formula)
 **Cron**: `@Scheduled(cron = "0 0 1 * * ?")` // 1st of month
 
 ### 4. Document Management (MinIO)
+
 - S3-compatible storage
 - Payslip PDFs
 - Form 16 generation
@@ -51,6 +58,7 @@ BigDecimal result = parser.parseExpression(formula)
 - Secure URLs (presigned, 1-hour TTL)
 
 ### 5. Statutory Reports
+
 - Form 16 (annual tax certificate)
 - PF ECR (monthly return)
 - ESI challan (monthly)
@@ -59,21 +67,25 @@ BigDecimal result = parser.parseExpression(formula)
 ## Key Services
 
 **PayrollService.java**:
+
 - `runPayroll(tenantId, month)` - Execute monthly payroll
 - `calculateComponentValue(formula, context)` - SpEL evaluation
 - `generatePayslip(employeeId, month)` - PDF generation
 
 **LeaveAccrualService.java**:
+
 - `accrueMonthlyLeaves()` - Scheduled job
 - `deductLeave(approvalId)` - On approval
 
 **MinioService.java**:
+
 - `uploadDocument(file, bucket, key)` - Upload
 - `getPresignedUrl(bucket, key)` - Temporary access
 
 ## Indian Compliance Examples
 
 **PF Calculation**:
+
 ```java
 BigDecimal basic = employee.getBasicSalary();
 BigDecimal employeePF = basic.multiply(new BigDecimal("0.12"))
@@ -83,12 +95,13 @@ BigDecimal employerPF = basic.multiply(new BigDecimal("0.0367"))
 ```
 
 **TDS Slabs** (FY 2025-26, New Regime):
+
 - ₹0-3L: Nil
 - ₹3L-6L: 5%
 - ₹6L-9L: 10%
 - ₹9L-12L: 15%
 - ₹12L-15L: 20%
-- >₹15L: 30%
+- > ₹15L: 30%
 
 ## Tests
 

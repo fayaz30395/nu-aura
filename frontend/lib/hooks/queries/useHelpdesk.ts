@@ -1,10 +1,10 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {
   helpdeskService,
-  TicketRequest,
   TicketCommentRequest,
+  TicketRequest,
   TicketStatus,
 } from '@/lib/services/hrms/helpdesk.service';
 
@@ -12,7 +12,7 @@ export const helpdeskKeys = {
   all: ['helpdesk'] as const,
   tickets: () => [...helpdeskKeys.all, 'tickets'] as const,
   ticketsList: (page: number, size: number) =>
-    [...helpdeskKeys.tickets(), { page, size }] as const,
+    [...helpdeskKeys.tickets(), {page, size}] as const,
   ticketDetail: (id: string) => [...helpdeskKeys.all, 'ticket', id] as const,
   ticketByNumber: (num: string) => [...helpdeskKeys.all, 'ticket-number', num] as const,
   ticketsByEmployee: (employeeId: string) =>
@@ -120,7 +120,7 @@ export function useCreateTicket() {
   return useMutation({
     mutationFn: (data: TicketRequest) => helpdeskService.createTicket(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.tickets() });
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.tickets()});
     },
   });
 }
@@ -129,11 +129,11 @@ export function useUpdateTicket() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TicketRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: TicketRequest }) =>
       helpdeskService.updateTicket(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.ticketDetail(id) });
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.tickets() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.ticketDetail(id)});
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.tickets()});
     },
   });
 }
@@ -142,11 +142,11 @@ export function useUpdateTicketStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: TicketStatus }) =>
+    mutationFn: ({id, status}: { id: string; status: TicketStatus }) =>
       helpdeskService.updateTicketStatus(id, status),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.ticketDetail(id) });
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.tickets() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.ticketDetail(id)});
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.tickets()});
     },
   });
 }
@@ -155,11 +155,11 @@ export function useAssignTicket() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, assigneeId }: { id: string; assigneeId: string }) =>
+    mutationFn: ({id, assigneeId}: { id: string; assigneeId: string }) =>
       helpdeskService.assignTicket(id, assigneeId),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.ticketDetail(id) });
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.tickets() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.ticketDetail(id)});
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.tickets()});
     },
   });
 }
@@ -170,7 +170,7 @@ export function useDeleteTicket() {
   return useMutation({
     mutationFn: (id: string) => helpdeskService.deleteTicket(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.tickets() });
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.tickets()});
     },
   });
 }
@@ -182,9 +182,9 @@ export function useAddComment() {
 
   return useMutation({
     mutationFn: (data: TicketCommentRequest) => helpdeskService.addComment(data),
-    onSuccess: (_, { ticketId }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.comments(ticketId) });
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.ticketDetail(ticketId) });
+    onSuccess: (_, {ticketId}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.comments(ticketId)});
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.ticketDetail(ticketId)});
     },
   });
 }
@@ -193,10 +193,10 @@ export function useDeleteComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId, ticketId: _ticketId }: { commentId: string; ticketId: string }) =>
+    mutationFn: ({commentId, ticketId: _ticketId}: { commentId: string; ticketId: string }) =>
       helpdeskService.deleteComment(commentId),
-    onSuccess: (_, { ticketId }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskKeys.comments(ticketId) });
+    onSuccess: (_, {ticketId}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskKeys.comments(ticketId)});
     },
   });
 }

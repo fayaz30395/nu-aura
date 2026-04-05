@@ -1,16 +1,9 @@
 'use client';
 
-import {
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AtSign, Search } from 'lucide-react';
-import { MOCK_USERS, type MockUser } from '@/lib/data/mock-fluence';
+import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {AtSign, Search} from 'lucide-react';
+import {MOCK_USERS, type MockUser} from '@/lib/data/mock-fluence';
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -30,7 +23,7 @@ export interface MentionInputHandle {
 // ─── Component ──────────────────────────────────────────────────
 
 export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
-  function MentionInput({ value, onChange, onSubmit, placeholder, disabled, className }, ref) {
+  function MentionInput({value, onChange, onSubmit, placeholder, disabled, className}, ref) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [mentionActive, setMentionActive] = useState(false);
@@ -46,11 +39,11 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
     const filteredUsers = mentionQuery.length === 0
       ? MOCK_USERS.slice(0, 6)
       : MOCK_USERS.filter(
-          (u) =>
-            u.fullName.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-            u.email.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-            u.department.toLowerCase().includes(mentionQuery.toLowerCase())
-        ).slice(0, 6);
+        (u) =>
+          u.fullName.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+          u.email.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+          u.department.toLowerCase().includes(mentionQuery.toLowerCase())
+      ).slice(0, 6);
 
     // Auto-resize textarea
     const autoResize = useCallback(() => {
@@ -206,13 +199,14 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           disabled={disabled}
           rows={1}
           className="w-full px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-700)]/40 focus:border-[var(--accent-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
-          style={{ minHeight: '42px' }}
+          style={{minHeight: '42px'}}
         />
 
         {/* Mention hint */}
         {!mentionActive && value.length === 0 && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[var(--text-muted)] pointer-events-none">
-            <AtSign className="h-3.5 w-3.5" />
+          <div
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[var(--text-muted)] pointer-events-none">
+            <AtSign className="h-3.5 w-3.5"/>
             <span className="text-xs">mention</span>
           </div>
         )}
@@ -222,15 +216,15 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           {mentionActive && filteredUsers.length > 0 && (
             <motion.div
               ref={dropdownRef}
-              initial={{ opacity: 0, y: 4, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.98 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
+              initial={{opacity: 0, y: 4, scale: 0.98}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 4, scale: 0.98}}
+              transition={{duration: 0.15, ease: 'easeOut'}}
               className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
             >
               {/* Search header */}
               <div className="flex items-center gap-2 px-4 py-2 divider-b">
-                <Search className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                <Search className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                 <span className="text-caption">
                   {mentionQuery ? `Searching "${mentionQuery}"` : 'Tag a team member'}
                 </span>
@@ -268,7 +262,8 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                       </p>
                     </div>
                     {idx === selectedIdx && (
-                      <kbd className="flex-shrink-0 text-2xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                      <kbd
+                        className="flex-shrink-0 text-2xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
                         Enter
                       </kbd>
                     )}
@@ -283,12 +278,12 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
         <AnimatePresence>
           {mentionActive && filteredUsers.length === 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
+              initial={{opacity: 0, y: 4}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: 4}}
               className="absolute bottom-full left-0 mb-2 w-full max-w-sm z-50 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4 text-center"
             >
-              <AtSign className="h-5 w-5 text-[var(--text-muted)] mx-auto mb-1" />
+              <AtSign className="h-5 w-5 text-[var(--text-muted)] mx-auto mb-1"/>
               <p className="text-body-muted">No matching team members</p>
             </motion.div>
           )}

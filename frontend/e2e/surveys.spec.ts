@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Surveys Page Smoke Tests
@@ -6,20 +6,20 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Surveys Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/surveys');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display surveys page with heading', async ({ page }) => {
+  test('should display surveys page with heading', async ({page}) => {
     await expect(page.locator('h1').first()).toBeVisible();
   });
 
-  test('should not show application error', async ({ page }) => {
+  test('should not show application error', async ({page}) => {
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display survey list or empty state', async ({ page }) => {
+  test('should display survey list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasSurveys = await page.locator('[class*="card"], [class*="Card"], table').first().isVisible().catch(() => false);
@@ -28,7 +28,7 @@ test.describe('Surveys Page', () => {
     expect(hasSurveys || hasEmpty || true).toBe(true);
   });
 
-  test('should show create survey button for admin', async ({ page }) => {
+  test('should show create survey button for admin', async ({page}) => {
     await page.waitForTimeout(500);
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
@@ -37,7 +37,7 @@ test.describe('Surveys Page', () => {
     expect(hasCreate || true).toBe(true);
   });
 
-  test('should display survey status indicators', async ({ page }) => {
+  test('should display survey status indicators', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasStatus = await page.locator('text=/active|draft|closed|completed/i').first().isVisible().catch(() => false);

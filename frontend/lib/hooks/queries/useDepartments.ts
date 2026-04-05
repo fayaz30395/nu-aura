@@ -1,19 +1,19 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { departmentService } from '@/lib/services/hrms/department.service';
-import { Department, DepartmentRequest } from '@/lib/types/hrms/employee';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {departmentService} from '@/lib/services/hrms/department.service';
+import {Department, DepartmentRequest} from '@/lib/types/hrms/employee';
 
 // Query keys for cache management
 export const departmentKeys = {
   all: ['departments'] as const,
   lists: () => [...departmentKeys.all, 'list'] as const,
   list: (page: number, size: number) =>
-    [...departmentKeys.lists(), { page, size }] as const,
+    [...departmentKeys.lists(), {page, size}] as const,
   active: () => [...departmentKeys.all, 'active'] as const,
   hierarchy: () => [...departmentKeys.all, 'hierarchy'] as const,
   search: (query: string, page: number, size: number) =>
-    [...departmentKeys.all, 'search', { query, page, size }] as const,
+    [...departmentKeys.all, 'search', {query, page, size}] as const,
   details: () => [...departmentKeys.all, 'detail'] as const,
   detail: (id: string) => [...departmentKeys.details(), id] as const,
 };
@@ -73,9 +73,9 @@ export function useCreateDepartment() {
     mutationFn: (data: DepartmentRequest) => departmentService.createDepartment(data),
     onSuccess: () => {
       // Invalidate all department lists and hierarchies
-      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.active() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.hierarchy() });
+      queryClient.invalidateQueries({queryKey: departmentKeys.lists()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.active()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.hierarchy()});
     },
   });
 }
@@ -85,11 +85,11 @@ export function useUpdateDepartment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: DepartmentRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: DepartmentRequest }) =>
       departmentService.updateDepartment(id, data),
-    onMutate: async ({ id, data }) => {
+    onMutate: async ({id, data}) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: departmentKeys.detail(id) });
+      await queryClient.cancelQueries({queryKey: departmentKeys.detail(id)});
 
       // Snapshot the previous value
       const previousDepartment = queryClient.getQueryData<Department>(departmentKeys.detail(id));
@@ -102,20 +102,20 @@ export function useUpdateDepartment() {
         });
       }
 
-      return { previousDepartment };
+      return {previousDepartment};
     },
-    onError: (_err, { id }, context) => {
+    onError: (_err, {id}, context) => {
       // Rollback on error
       if (context?.previousDepartment) {
         queryClient.setQueryData(departmentKeys.detail(id), context.previousDepartment);
       }
     },
-    onSettled: (_, _error, { id }) => {
+    onSettled: (_, _error, {id}) => {
       // Always refetch after mutation settles
-      queryClient.invalidateQueries({ queryKey: departmentKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.active() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.hierarchy() });
+      queryClient.invalidateQueries({queryKey: departmentKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: departmentKeys.lists()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.active()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.hierarchy()});
     },
   });
 }
@@ -127,9 +127,9 @@ export function useActivateDepartment() {
   return useMutation({
     mutationFn: (id: string) => departmentService.activateDepartment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.active() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.hierarchy() });
+      queryClient.invalidateQueries({queryKey: departmentKeys.lists()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.active()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.hierarchy()});
     },
   });
 }
@@ -141,9 +141,9 @@ export function useDeactivateDepartment() {
   return useMutation({
     mutationFn: (id: string) => departmentService.deactivateDepartment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.active() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.hierarchy() });
+      queryClient.invalidateQueries({queryKey: departmentKeys.lists()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.active()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.hierarchy()});
     },
   });
 }
@@ -155,9 +155,9 @@ export function useDeleteDepartment() {
   return useMutation({
     mutationFn: (id: string) => departmentService.deleteDepartment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.active() });
-      queryClient.invalidateQueries({ queryKey: departmentKeys.hierarchy() });
+      queryClient.invalidateQueries({queryKey: departmentKeys.lists()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.active()});
+      queryClient.invalidateQueries({queryKey: departmentKeys.hierarchy()});
     },
   });
 }

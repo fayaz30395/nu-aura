@@ -1,29 +1,28 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { payrollService, BULK_PROCESSING_AVAILABLE } from '@/lib/services/hrms/payroll.service';
-import { Employee } from '@/lib/types/hrms/employee';
-import { logger } from '@/lib/utils/logger';
-import { formatCurrency } from '@/lib/utils';
+import React, {useEffect, useState} from 'react';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {BULK_PROCESSING_AVAILABLE, payrollService} from '@/lib/services/hrms/payroll.service';
+import {Employee} from '@/lib/types/hrms/employee';
+import {logger} from '@/lib/utils/logger';
+import {cn, formatCurrency} from '@/lib/utils';
 import {
-  CheckCircle2,
-  Circle,
-  ChevronRight,
-  ChevronLeft,
-  Users,
-  Calendar,
-  DollarSign,
   AlertCircle,
-  Loader2,
+  Calendar,
   Check,
-  X,
-  Search,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
   Construction,
+  DollarSign,
+  Loader2,
+  Search,
+  Users,
+  X,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -113,7 +112,9 @@ export const BulkProcessingWizard: React.FC = () => {
       setPreviewData(data);
       setCurrentStep(3);
     } catch (err: unknown) {
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as {
+        response?: { data?: { message?: string } }
+      }).response?.data?.message : null;
       setError(message || 'Failed to load preview');
     } finally {
       setLoading(false);
@@ -138,7 +139,9 @@ export const BulkProcessingWizard: React.FC = () => {
       setProcessingStatus('completed');
       setCurrentStep(4);
     } catch (err: unknown) {
-      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
+      const message = typeof err === 'object' && err !== null && 'response' in err ? (err as {
+        response?: { data?: { message?: string } }
+      }).response?.data?.message : null;
       setError(message || 'Failed to process payroll');
       setProcessingStatus('failed');
     } finally {
@@ -171,10 +174,10 @@ export const BulkProcessingWizard: React.FC = () => {
   const canProceedFromStep2 = payrollPeriodStart && payrollPeriodEnd && paymentDate && runName;
 
   const steps = [
-    { number: 1, title: 'Select Employees', icon: Users },
-    { number: 2, title: 'Set Period', icon: Calendar },
-    { number: 3, title: 'Review', icon: DollarSign },
-    { number: 4, title: 'Process', icon: CheckCircle2 },
+    {number: 1, title: 'Select Employees', icon: Users},
+    {number: 2, title: 'Set Period', icon: Calendar},
+    {number: 3, title: 'Review', icon: DollarSign},
+    {number: 4, title: 'Process', icon: CheckCircle2},
   ];
 
   if (!BULK_PROCESSING_AVAILABLE) {
@@ -183,7 +186,7 @@ export const BulkProcessingWizard: React.FC = () => {
         <Card variant="elevated">
           <CardContent className="p-8">
             <div className="flex flex-col items-center justify-center text-center space-y-4">
-              <Construction className="h-16 w-16 text-warning-500" />
+              <Construction className="h-16 w-16 text-warning-500"/>
               <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
                 Coming Soon
               </h2>
@@ -227,9 +230,9 @@ export const BulkProcessingWizard: React.FC = () => {
                       )}
                     >
                       {isCompleted ? (
-                        <Check className="h-6 w-6" />
+                        <Check className="h-6 w-6"/>
                       ) : (
-                        <StepIcon className="h-6 w-6" />
+                        <StepIcon className="h-6 w-6"/>
                       )}
                     </div>
                     <div className="text-center">
@@ -261,8 +264,9 @@ export const BulkProcessingWizard: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-200 rounded-lg flex items-start gap-2">
-          <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+        <div
+          className="p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-200 rounded-lg flex items-start gap-2">
+          <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0"/>
           <div className="flex-1">
             <p className="font-medium">Error</p>
             <p className="text-sm mt-1">{error}</p>
@@ -271,7 +275,7 @@ export const BulkProcessingWizard: React.FC = () => {
             onClick={() => setError(null)}
             className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
       )}
@@ -294,7 +298,7 @@ export const BulkProcessingWizard: React.FC = () => {
               {/* Search and Select All */}
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-400"/>
                   <input
                     type="text"
                     value={searchQuery}
@@ -314,7 +318,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {/* Selected Count */}
               <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
-                <Users className="h-4 w-4" />
+                <Users className="h-4 w-4"/>
                 <span>
                   {selectedEmployeeIds.size} of {filteredEmployees.length} employees selected
                 </span>
@@ -325,7 +329,7 @@ export const BulkProcessingWizard: React.FC = () => {
                 <div className="max-h-[400px] overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+                      <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
                     </div>
                   ) : filteredEmployees.length === 0 ? (
                     <div className="text-center py-12 text-surface-600 dark:text-surface-400">
@@ -347,16 +351,17 @@ export const BulkProcessingWizard: React.FC = () => {
                           >
                             <div className="flex-shrink-0">
                               {isSelected ? (
-                                <CheckCircle2 className="h-6 w-6 text-accent-500" />
+                                <CheckCircle2 className="h-6 w-6 text-accent-500"/>
                               ) : (
-                                <Circle className="h-6 w-6 text-surface-400" />
+                                <Circle className="h-6 w-6 text-surface-400"/>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-surface-900 dark:text-surface-50">
                                 {employee.fullName}
                               </p>
-                              <div className="flex items-center gap-2 mt-1 text-sm text-surface-600 dark:text-surface-400">
+                              <div
+                                className="flex items-center gap-2 mt-1 text-sm text-surface-600 dark:text-surface-400">
                                 <span>{employee.employeeCode}</span>
                                 {employee.departmentName && (
                                   <>
@@ -542,50 +547,50 @@ export const BulkProcessingWizard: React.FC = () => {
                 <div className="overflow-x-auto max-h-[400px]">
                   <table className="w-full">
                     <thead className="bg-surface-50 dark:bg-surface-800/50 sticky top-0">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Employee
-                        </th>
-                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Base Salary
-                        </th>
-                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Allowances
-                        </th>
-                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Deductions
-                        </th>
-                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Gross Amount
-                        </th>
-                        <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                          Net Amount
-                        </th>
-                      </tr>
+                    <tr>
+                      <th className="px-4 py-2 text-left text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Employee
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Base Salary
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Allowances
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Deductions
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Gross Amount
+                      </th>
+                      <th className="px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                        Net Amount
+                      </th>
+                    </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                      {previewData.map((emp) => (
-                        <tr key={emp.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                          <td className="px-4 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
-                            {emp.employeeName}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-right text-surface-900 dark:text-surface-50">
-                            {formatCurrency(emp.baseSalary)}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-right text-success-600 dark:text-success-400">
-                            {formatCurrency(emp.totalAllowances)}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-right text-danger-600 dark:text-danger-400">
-                            {formatCurrency(emp.totalDeductions)}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
-                            {formatCurrency(emp.grossAmount)}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-right font-semibold text-accent-700 dark:text-accent-400">
-                            {formatCurrency(emp.netAmount)}
-                          </td>
-                        </tr>
-                      ))}
+                    {previewData.map((emp) => (
+                      <tr key={emp.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                        <td className="px-4 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
+                          {emp.employeeName}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-right text-surface-900 dark:text-surface-50">
+                          {formatCurrency(emp.baseSalary)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-right text-success-600 dark:text-success-400">
+                          {formatCurrency(emp.totalAllowances)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-right text-danger-600 dark:text-danger-400">
+                          {formatCurrency(emp.totalDeductions)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-right font-medium text-surface-900 dark:text-surface-50">
+                          {formatCurrency(emp.grossAmount)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-right font-semibold text-accent-700 dark:text-accent-400">
+                          {formatCurrency(emp.netAmount)}
+                        </td>
+                      </tr>
+                    ))}
                     </tbody>
                   </table>
                 </div>
@@ -599,7 +604,7 @@ export const BulkProcessingWizard: React.FC = () => {
               <div className="text-center">
                 {processingStatus === 'processing' ? (
                   <>
-                    <Loader2 className="h-16 w-16 animate-spin text-accent-500 mx-auto mb-4" />
+                    <Loader2 className="h-16 w-16 animate-spin text-accent-500 mx-auto mb-4"/>
                     <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
                       Processing Payroll
                     </h2>
@@ -609,7 +614,7 @@ export const BulkProcessingWizard: React.FC = () => {
                   </>
                 ) : processingStatus === 'completed' ? (
                   <>
-                    <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4" />
+                    <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4"/>
                     <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
                       Payroll Processed Successfully
                     </h2>
@@ -619,7 +624,7 @@ export const BulkProcessingWizard: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-16 w-16 text-danger-500 mx-auto mb-4" />
+                    <AlertCircle className="h-16 w-16 text-danger-500 mx-auto mb-4"/>
                     <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 mb-2">
                       Processing Failed
                     </h2>
@@ -669,7 +674,7 @@ export const BulkProcessingWizard: React.FC = () => {
           {currentStep > 1 && currentStep < 4 && (
             <Button
               variant="outline"
-              leftIcon={<ChevronLeft className="h-4 w-4" />}
+              leftIcon={<ChevronLeft className="h-4 w-4"/>}
               onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1) as Step)}
               disabled={loading}
             >
@@ -689,7 +694,7 @@ export const BulkProcessingWizard: React.FC = () => {
           ) : currentStep === 1 ? (
             <Button
               variant="primary"
-              rightIcon={<ChevronRight className="h-4 w-4" />}
+              rightIcon={<ChevronRight className="h-4 w-4"/>}
               onClick={() => setCurrentStep(2)}
               disabled={!canProceedFromStep1}
             >
@@ -698,7 +703,7 @@ export const BulkProcessingWizard: React.FC = () => {
           ) : currentStep === 2 ? (
             <Button
               variant="primary"
-              rightIcon={<ChevronRight className="h-4 w-4" />}
+              rightIcon={<ChevronRight className="h-4 w-4"/>}
               onClick={handleLoadPreview}
               disabled={!canProceedFromStep2 || loading}
               isLoading={loading}

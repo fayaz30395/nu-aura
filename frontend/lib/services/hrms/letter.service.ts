@@ -1,13 +1,13 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  LetterTemplate,
-  GeneratedLetter,
   CreateLetterTemplateRequest,
+  GeneratedLetter,
+  GeneratedLettersResponse,
   GenerateLetterRequest,
   GenerateOfferLetterRequest,
-  LetterTemplatesResponse,
-  GeneratedLettersResponse,
   LetterCategory,
+  LetterTemplate,
+  LetterTemplatesResponse,
   PlaceholderItem,
 } from '../../types/hrms/letter';
 
@@ -19,7 +19,7 @@ export const letterService = {
   // Get all templates with pagination
   getAllTemplates: async (page = 0, size = 20): Promise<LetterTemplatesResponse> => {
     const response = await apiClient.get<LetterTemplatesResponse>(`${BASE_URL}/templates`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -33,7 +33,7 @@ export const letterService = {
   // Get templates by category
   getTemplatesByCategory: async (category: LetterCategory): Promise<LetterTemplate[]> => {
     const response = await apiClient.get<LetterTemplate[]>(`${BASE_URL}/templates/by-category`, {
-      params: { category },
+      params: {category},
     });
     return response.data;
   },
@@ -72,7 +72,7 @@ export const letterService = {
   // Get all generated letters with pagination
   getAllLetters: async (page = 0, size = 20): Promise<GeneratedLettersResponse> => {
     const response = await apiClient.get<GeneratedLettersResponse>(BASE_URL, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -86,7 +86,7 @@ export const letterService = {
   // Get letters by employee
   getLettersByEmployee: async (employeeId: string, page = 0, size = 20): Promise<GeneratedLettersResponse> => {
     const response = await apiClient.get<GeneratedLettersResponse>(`${BASE_URL}/employee/${employeeId}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -100,7 +100,7 @@ export const letterService = {
   // Get pending approvals
   getPendingApprovals: async (page = 0, size = 20): Promise<GeneratedLettersResponse> => {
     const response = await apiClient.get<GeneratedLettersResponse>(`${BASE_URL}/pending-approvals`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -108,7 +108,7 @@ export const letterService = {
   // Generate letter
   generateLetter: async (data: GenerateLetterRequest, generatedBy: string): Promise<GeneratedLetter> => {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/generate`, data, {
-      params: { generatedBy },
+      params: {generatedBy},
     });
     return response.data;
   },
@@ -116,7 +116,7 @@ export const letterService = {
   // Generate offer letter for candidate
   generateOfferLetter: async (data: GenerateOfferLetterRequest, generatedBy: string): Promise<GeneratedLetter> => {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/generate-offer`, data, {
-      params: { generatedBy },
+      params: {generatedBy},
     });
     return response.data;
   },
@@ -124,7 +124,7 @@ export const letterService = {
   // Issue offer letter with e-signature
   issueOfferLetterWithESign: async (letterId: string, issuerId: string): Promise<GeneratedLetter> => {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/${letterId}/issue-with-esign`, null, {
-      params: { issuerId },
+      params: {issuerId},
     });
     return response.data;
   },
@@ -145,7 +145,7 @@ export const letterService = {
   // Approve letter
   approveLetter: async (letterId: string, approverId: string, comments?: string): Promise<GeneratedLetter> => {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/${letterId}/approve`, null, {
-      params: { approverId, comments },
+      params: {approverId, comments},
     });
     return response.data;
   },
@@ -153,7 +153,7 @@ export const letterService = {
   // Issue letter
   issueLetter: async (letterId: string, issuerId: string): Promise<GeneratedLetter> => {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/${letterId}/issue`, null, {
-      params: { issuerId },
+      params: {issuerId},
     });
     return response.data;
   },
@@ -167,7 +167,7 @@ export const letterService = {
   // Mark letter as downloaded
   markLetterDownloaded: async (letterId: string, employeeId: string): Promise<void> => {
     await apiClient.post(`${BASE_URL}/${letterId}/downloaded`, null, {
-      params: { employeeId },
+      params: {employeeId},
     });
   },
 
@@ -192,7 +192,7 @@ export const letterService = {
   // Bulk generate letters for multiple employees
   bulkGenerate: async (templateId: string, employeeIds: string[]): Promise<GeneratedLetter[]> => {
     const response = await apiClient.post<GeneratedLetter[]>(`${BASE_URL}/bulk-generate`, employeeIds, {
-      params: { templateId },
+      params: {templateId},
     });
     return response.data;
   },

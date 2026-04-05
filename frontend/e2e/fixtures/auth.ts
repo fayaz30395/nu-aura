@@ -20,8 +20,8 @@
  *   NEXT_PUBLIC_API_URL — defaults to http://localhost:8080/api/v1
  */
 
-import { test as base, expect, type Page } from '@playwright/test';
-import { demoUsers, DEMO_PASSWORD } from './testData';
+import {expect, type Page, test as base} from '@playwright/test';
+import {DEMO_PASSWORD, demoUsers} from './testData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
@@ -54,7 +54,7 @@ async function authenticateViaApi(
   password: string,
   tenantId?: string
 ): Promise<void> {
-  const body: Record<string, string> = { email, password };
+  const body: Record<string, string> = {email, password};
   if (tenantId) {
     body['tenantId'] = tenantId;
   }
@@ -96,7 +96,7 @@ async function authenticateViaApi(
   // Inject the access token into localStorage.  The Zustand auth store reads
   // `auth-token` on hydration; `auth-storage` is the persisted store key.
   await page.evaluate(
-    ({ token, authData }: { token: string; authData: string }) => {
+    ({token, authData}: { token: string; authData: string }) => {
       localStorage.setItem('auth-token', token);
       // Also seed the Zustand persist key so the store hydrates immediately
       localStorage.setItem('auth-storage', authData);
@@ -126,7 +126,7 @@ async function authenticateViaApi(
 // ── Extended test fixture ─────────────────────────────────────────────────────
 
 export const test = base.extend<AuthFixtures>({
-  authenticatedPage: async ({ page }, use) => {
+  authenticatedPage: async ({page}, use) => {
     const email =
       process.env.E2E_AUTH_EMAIL ?? demoUsers.superAdmin.email;
     const password =
@@ -140,4 +140,4 @@ export const test = base.extend<AuthFixtures>({
   },
 });
 
-export { expect };
+export {expect};

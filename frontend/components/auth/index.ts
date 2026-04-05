@@ -1,2 +1,2 @@
-export { MfaSetup } from './MfaSetup';
-export { MfaVerification } from './MfaVerification';
+export {MfaSetup} from './MfaSetup';
+export {MfaVerification} from './MfaVerification';

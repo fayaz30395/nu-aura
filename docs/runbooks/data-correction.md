@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Procedures for correcting data issues in the NU-AURA platform, including soft-delete recovery, tenant data fixes, and entity relationship repairs. All corrections must maintain referential integrity, respect tenant isolation, and be auditable.
+Procedures for correcting data issues in the NU-AURA platform, including soft-delete recovery,
+tenant data fixes, and entity relationship repairs. All corrections must maintain referential
+integrity, respect tenant isolation, and be auditable.
 
 ---
 
@@ -17,7 +19,8 @@ Procedures for correcting data issues in the NU-AURA platform, including soft-de
 
 ## 1. Soft-Delete Recovery
 
-All entities in NU-AURA use soft deletes. Recovering a soft-deleted record requires resetting the delete markers.
+All entities in NU-AURA use soft deletes. Recovering a soft-deleted record requires resetting the
+delete markers.
 
 ### Recover a single employee
 

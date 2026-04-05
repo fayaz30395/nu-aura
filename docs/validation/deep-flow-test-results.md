@@ -9,29 +9,29 @@
 
 ## Summary
 
-| Flow | Test | Status | HTTP Code |
-|------|------|--------|-----------|
-| 1 | Login as Employee (Saran) | PASS | 200 |
-| 1 | Get Leave Types (8 types) | PASS | 200 |
-| 1 | Check Leave Balances | **FAIL** | 500 |
-| 1 | Apply for Casual Leave | PASS | 201 |
-| 1 | Login as Manager (Sumit) | PASS | 200 |
-| 1 | View Pending Approvals (scope-filtered) | PASS (empty - scope issue) | 200 |
-| 1 | Approve Leave Request | PASS | 200 |
-| 1 | Verify Leave Status as Employee | PASS | 200 |
-| 2 | Login as Employee (Raj) | PASS | 200 |
-| 2 | Get Current Profile | PASS | 200 |
-| 2 | Update Profile (DOB, Phone, Gender) | PASS | 200 |
-| 2 | Verify Profile Update | PASS | 200 |
-| 3 | Create Wall Post | PASS | 201 |
-| 3 | Create Poll | PASS | 201 |
-| 3 | Vote on Poll | PASS | 200 |
-| 3 | Create Praise (Wall) | PASS | 201 |
-| 3 | Create Recognition (dedicated endpoint) | **FAIL** | 500 |
-| 3 | Create Announcement | **FAIL** | 500 |
-| 3 | Get Wall Feed | PASS | 200 |
-| 3 | Get Recognition Feed | PASS (empty) | 200 |
-| 3 | Get Announcements List | PASS (empty) | 200 |
+| Flow | Test                                    | Status                     | HTTP Code |
+|------|-----------------------------------------|----------------------------|-----------|
+| 1    | Login as Employee (Saran)               | PASS                       | 200       |
+| 1    | Get Leave Types (8 types)               | PASS                       | 200       |
+| 1    | Check Leave Balances                    | **FAIL**                   | 500       |
+| 1    | Apply for Casual Leave                  | PASS                       | 201       |
+| 1    | Login as Manager (Sumit)                | PASS                       | 200       |
+| 1    | View Pending Approvals (scope-filtered) | PASS (empty - scope issue) | 200       |
+| 1    | Approve Leave Request                   | PASS                       | 200       |
+| 1    | Verify Leave Status as Employee         | PASS                       | 200       |
+| 2    | Login as Employee (Raj)                 | PASS                       | 200       |
+| 2    | Get Current Profile                     | PASS                       | 200       |
+| 2    | Update Profile (DOB, Phone, Gender)     | PASS                       | 200       |
+| 2    | Verify Profile Update                   | PASS                       | 200       |
+| 3    | Create Wall Post                        | PASS                       | 201       |
+| 3    | Create Poll                             | PASS                       | 201       |
+| 3    | Vote on Poll                            | PASS                       | 200       |
+| 3    | Create Praise (Wall)                    | PASS                       | 201       |
+| 3    | Create Recognition (dedicated endpoint) | **FAIL**                   | 500       |
+| 3    | Create Announcement                     | **FAIL**                   | 500       |
+| 3    | Get Wall Feed                           | PASS                       | 200       |
+| 3    | Get Recognition Feed                    | PASS (empty)               | 200       |
+| 3    | Get Announcements List                  | PASS (empty)               | 200       |
 
 **Overall: 18/21 PASS (86%), 3 FAIL (all 500 Internal Server Error)**
 
@@ -48,6 +48,7 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 **Result:** 200 OK
+
 - userId: `48000000-0e02-0000-0000-000000000002`
 - employeeId: `48000000-e001-0000-0000-000000000002`
 - tenantId: `660e8400-e29b-41d4-a716-446655440001`
@@ -62,18 +63,19 @@ curl -s http://localhost:8080/api/v1/leave-types \
 ```
 
 **Result:** 200 OK
+
 - 8 leave types returned as expected:
 
-| Code | Name | Annual Quota | Paid |
-|------|------|-------------|------|
-| EL | Earned Leave | 18 | Yes |
-| CL | Casual Leave | 7 | Yes |
-| SL | Sick Leave | 12 | Yes |
-| ML | Maternity Leave | 182 | Yes |
-| PL | Paternity Leave | 15 | Yes |
-| BL | Bereavement Leave | 5 | Yes |
-| CO | Compensatory Off | 0 | Yes |
-| LOP | Loss of Pay | 365 | No |
+| Code | Name              | Annual Quota | Paid |
+|------|-------------------|--------------|------|
+| EL   | Earned Leave      | 18           | Yes  |
+| CL   | Casual Leave      | 7            | Yes  |
+| SL   | Sick Leave        | 12           | Yes  |
+| ML   | Maternity Leave   | 182          | Yes  |
+| PL   | Paternity Leave   | 15           | Yes  |
+| BL   | Bereavement Leave | 5            | Yes  |
+| CO   | Compensatory Off  | 0            | Yes  |
+| LOP  | Loss of Pay       | 365          | No   |
 
 - CL ID: `7f9f8213-4adf-4e7f-b2d4-b9b9bf4d5794`
 
@@ -88,11 +90,13 @@ curl -s http://localhost:8080/api/v1/leave-balances/me \
 ```
 
 **Result:** 500 Internal Server Error (BOTH endpoints)
-**Bug:** Leave balance endpoints return 500. Error masked by generic handler — no stack trace in response. Likely a repository query issue or missing DB view/function.
+**Bug:** Leave balance endpoints return 500. Error masked by generic handler — no stack trace in
+response. Likely a repository query issue or missing DB view/function.
 
 ### Step 4: Apply for Casual Leave (CL)
 
-**Important Discovery:** All POST/PUT/DELETE endpoints require CSRF token (double-submit cookie pattern).
+**Important Discovery:** All POST/PUT/DELETE endpoints require CSRF token (double-submit cookie
+pattern).
 
 ```bash
 # Step 1: GET any endpoint to receive XSRF-TOKEN cookie
@@ -117,6 +121,7 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/leave-requests \
 
 **Result (without CSRF):** 403 Forbidden
 **Result (with CSRF):** 201 Created
+
 ```json
 {
   "id": "28b747a2-ca9d-4efa-a14b-ec1fd57dfca2",
@@ -130,7 +135,8 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/leave-requests \
 }
 ```
 
-**Note:** The initial attempt with SuperAdmin token (without CSRF) also returned 403 — confirming CSRF is enforced for ALL POST requests regardless of role, as designed.
+**Note:** The initial attempt with SuperAdmin token (without CSRF) also returned 403 — confirming
+CSRF is enforced for ALL POST requests regardless of role, as designed.
 
 ### Step 5: Login as Manager (Sumit Kumar)
 
@@ -141,6 +147,7 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 **Result:** 200 OK
+
 - userId: `48000000-0e02-0000-0000-000000000001`
 - employeeId: `48000000-e001-0000-0000-000000000001`
 - roles: `["SKIP_LEVEL_MANAGER", "MANAGER", "REPORTING_MANAGER"]`
@@ -153,7 +160,10 @@ curl -s "http://localhost:8080/api/v1/leave-requests/status/PENDING" \
 ```
 
 **Result:** 200 OK — BUT empty content
-**Observation:** The data scope filter (`DataScopeService.getScopeSpecification`) may be filtering out Saran's leave request from Sumit's view. Sumit has `LEAVE:VIEW_TEAM` scope, but the scope specification query may not be matching correctly. This is a **potential scope bug** — the manager can approve the leave (Step 7) but cannot see it in the filtered list.
+**Observation:** The data scope filter (`DataScopeService.getScopeSpecification`) may be filtering
+out Saran's leave request from Sumit's view. Sumit has `LEAVE:VIEW_TEAM` scope, but the scope
+specification query may not be matching correctly. This is a **potential scope bug** — the manager
+can approve the leave (Step 7) but cannot see it in the filtered list.
 
 ### Step 7: Approve the Leave
 
@@ -166,6 +176,7 @@ curl -s -b cookies.txt -X POST \
 ```
 
 **Result:** 200 OK
+
 ```json
 {
   "id": "28b747a2-ca9d-4efa-a14b-ec1fd57dfca2",
@@ -176,7 +187,8 @@ curl -s -b cookies.txt -X POST \
 }
 ```
 
-**Note:** The approve endpoint validates that the approver is the employee's manager (L1 approval). It also deducts the leave balance and sends WebSocket notification.
+**Note:** The approve endpoint validates that the approver is the employee's manager (L1 approval).
+It also deducts the leave balance and sends WebSocket notification.
 
 ### Step 8: Verify Leave Status as Employee
 
@@ -186,6 +198,7 @@ curl -s "http://localhost:8080/api/v1/leave-requests/employee/48000000-e001-0000
 ```
 
 **Result:** 200 OK
+
 - Leave status confirmed as `APPROVED`
 - Approved by: Sumit Kumar
 - Total days: 1.00
@@ -204,6 +217,7 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 **Result:** 200 OK
+
 - employeeId: `48000000-e001-0000-0000-000000000004`
 - roles: `["EMPLOYEE"]`
 
@@ -215,6 +229,7 @@ curl -s http://localhost:8080/api/v1/employees/me \
 ```
 
 **Result:** 200 OK
+
 - **Before update:** dateOfBirth: null, phoneNumber: null, gender: null
 - Employee code: EMP-0005
 - Department: Engineering
@@ -223,7 +238,8 @@ curl -s http://localhost:8080/api/v1/employees/me \
 
 ### Step 3: Update Profile Fields
 
-**Note:** No `PUT /employees/me` endpoint exists. Profile updates require `PUT /employees/{id}` with `EMPLOYEE:UPDATE` permission. Employee role does not have this permission, so SuperAdmin was used.
+**Note:** No `PUT /employees/me` endpoint exists. Profile updates require `PUT /employees/{id}` with
+`EMPLOYEE:UPDATE` permission. Employee role does not have this permission, so SuperAdmin was used.
 
 ```bash
 curl -s -b cookies.txt -X PUT \
@@ -239,12 +255,15 @@ curl -s -b cookies.txt -X PUT \
 ```
 
 **Result:** 200 OK
+
 - dateOfBirth updated to `1995-06-15`
 - phoneNumber updated to `+919876543210`
 - gender updated to `MALE`
 - updatedAt timestamp unchanged (potential bug — should reflect update time)
 
-**Observation:** There is no self-service profile update endpoint for employees. The `UpdateEmployeeRequest` DTO includes sensitive fields like `status`, `managerId`, `bankAccountNumber` — an employee self-service endpoint should restrict which fields are updatable.
+**Observation:** There is no self-service profile update endpoint for employees. The
+`UpdateEmployeeRequest` DTO includes sensitive fields like `status`, `managerId`,
+`bankAccountNumber` — an employee self-service endpoint should restrict which fields are updatable.
 
 ### Step 4: Verify Update
 
@@ -254,6 +273,7 @@ curl -s http://localhost:8080/api/v1/employees/me \
 ```
 
 **Result:** 200 OK
+
 - dateOfBirth: `1995-06-15` (confirmed)
 - phoneNumber: `+919876543210` (confirmed)
 - gender: `MALE` (confirmed)
@@ -272,6 +292,7 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 ```
 
 **Result:** 200 OK
+
 - roles: `["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"]`
 - employeeId: `550e8400-e29b-41d4-a716-446655440040`
 
@@ -290,6 +311,7 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/wall/posts \
 ```
 
 **Result:** 201 Created
+
 ```json
 {
   "id": "23a20be6-1291-4681-aa47-e12ef9623e8f",
@@ -321,6 +343,7 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/wall/posts \
 ```
 
 **Result:** 201 Created
+
 ```json
 {
   "id": "905a9888-9a50-44f4-8ef8-a2257b0f3cc8",
@@ -345,6 +368,7 @@ curl -s -b cookies.txt -X POST \
 ```
 
 **Result:** 200 OK
+
 - Friday now has 1 vote (100%)
 - `hasVoted: true`, `userVotedOptionId` correctly set
 
@@ -365,6 +389,7 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/wall/posts \
 ```
 
 **Result:** 201 Created
+
 ```json
 {
   "id": "361ea2de-32c4-48e4-a6af-99c1306f580b",
@@ -397,7 +422,10 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/recognition \
 ```
 
 **Result:** 500 Internal Server Error
-**Bug:** Recognition creation consistently fails with 500 regardless of `receiverId` format (tried userId, employeeId). The error is masked by the global exception handler. Likely cause: missing DB table/column for the `Recognition` entity, or a constraint violation in `recognition_repository.save()`.
+**Bug:** Recognition creation consistently fails with 500 regardless of `receiverId` format (tried
+userId, employeeId). The error is masked by the global exception handler. Likely cause: missing DB
+table/column for the `Recognition` entity, or a constraint violation in
+`recognition_repository.save()`.
 
 **GET /api/v1/recognition/feed:** 200 OK (returns empty — reads work, writes fail)
 
@@ -421,7 +449,8 @@ curl -s -b cookies.txt -X POST http://localhost:8080/api/v1/announcements \
 ```
 
 **Result:** 500 Internal Server Error
-**Bug:** Announcement creation fails with 500. GET /api/v1/announcements returns 200 (empty). Similar pattern to Recognition — reads work, writes fail.
+**Bug:** Announcement creation fails with 500. GET /api/v1/announcements returns 200 (empty).
+Similar pattern to Recognition — reads work, writes fail.
 
 ### Step 7: Verify Wall Feed
 
@@ -431,6 +460,7 @@ curl -s "http://localhost:8080/api/v1/wall/posts?size=5" \
 ```
 
 **Result:** 200 OK
+
 - 8 total posts in feed (including historical posts)
 - All 3 new posts (POST, POLL, PRAISE) appear correctly
 - Post ordering: newest first (createdAt DESC)
@@ -442,36 +472,54 @@ curl -s "http://localhost:8080/api/v1/wall/posts?size=5" \
 ## Bugs Found
 
 ### BUG-1: Leave Balances Endpoint Returns 500 (Critical)
+
 - **Endpoints:** `GET /api/v1/leave-balances` and `GET /api/v1/leave-balances/me`
 - **Impact:** Employees cannot view their leave balance dashboard
-- **Probable Cause:** Repository query issue, missing DB view/function, or entity mapping error in `LeaveBalanceController`
-- **Workaround:** Leave application still works despite balance check failure (the `getOrCreateBalance` in the service creates balances on-the-fly)
+- **Probable Cause:** Repository query issue, missing DB view/function, or entity mapping error in
+  `LeaveBalanceController`
+- **Workaround:** Leave application still works despite balance check failure (the
+  `getOrCreateBalance` in the service creates balances on-the-fly)
 
 ### BUG-2: Recognition Creation Returns 500 (Medium)
+
 - **Endpoint:** `POST /api/v1/recognition`
 - **Impact:** Cannot create recognition/kudos through the dedicated recognition module
-- **Workaround:** Use wall praise posts (`POST /api/v1/wall/posts` with `type: PRAISE`) — this works correctly
+- **Workaround:** Use wall praise posts (`POST /api/v1/wall/posts` with `type: PRAISE`) — this works
+  correctly
 - **Probable Cause:** Missing or mismatched DB table/column for `Recognition` entity
 
 ### BUG-3: Announcement Creation Returns 500 (Medium)
+
 - **Endpoint:** `POST /api/v1/announcements`
 - **Impact:** Cannot create company announcements
-- **Probable Cause:** Missing or mismatched DB table/column for `Announcement` entity, or a service-layer error in `AnnouncementService.createAnnouncement()`
+- **Probable Cause:** Missing or mismatched DB table/column for `Announcement` entity, or a
+  service-layer error in `AnnouncementService.createAnnouncement()`
 
 ### BUG-4: CSRF Required for ALL Mutations — No Documentation (Low)
-- **Issue:** All POST/PUT/DELETE endpoints require CSRF double-submit cookie (`X-XSRF-TOKEN` header matching `XSRF-TOKEN` cookie). Without it, the server returns 403 Forbidden with no indication that CSRF is the issue.
+
+- **Issue:** All POST/PUT/DELETE endpoints require CSRF double-submit cookie (`X-XSRF-TOKEN` header
+  matching `XSRF-TOKEN` cookie). Without it, the server returns 403 Forbidden with no indication
+  that CSRF is the issue.
 - **Impact:** API consumers (mobile apps, external integrations) will get silent 403s
-- **Recommendation:** Add CSRF requirement to API documentation. Consider CSRF exemption for pure JWT-authenticated API calls (cookie-less).
+- **Recommendation:** Add CSRF requirement to API documentation. Consider CSRF exemption for pure
+  JWT-authenticated API calls (cookie-less).
 
 ### BUG-5: Scope Filtering Gap for Manager Leave View (Low)
+
 - **Endpoint:** `GET /api/v1/leave-requests/status/PENDING`
-- **Issue:** Sumit (MANAGER role with `LEAVE:VIEW_TEAM` scope) gets empty results when querying PENDING leave requests, even though Saran (his reportee) has a pending request. However, Sumit CAN approve the same leave request by ID.
-- **Probable Cause:** `DataScopeService.getScopeSpecification()` may not be correctly building the team scope filter, or Saran's `managerId` is not set to Sumit's employeeId.
+- **Issue:** Sumit (MANAGER role with `LEAVE:VIEW_TEAM` scope) gets empty results when querying
+  PENDING leave requests, even though Saran (his reportee) has a pending request. However, Sumit CAN
+  approve the same leave request by ID.
+- **Probable Cause:** `DataScopeService.getScopeSpecification()` may not be correctly building the
+  team scope filter, or Saran's `managerId` is not set to Sumit's employeeId.
 
 ### BUG-6: No Self-Service Profile Update Endpoint (Enhancement)
-- **Issue:** No `PUT /employees/me` or `PATCH /employees/me/profile` endpoint exists. Profile updates require `EMPLOYEE:UPDATE` permission (admin-only).
+
+- **Issue:** No `PUT /employees/me` or `PATCH /employees/me/profile` endpoint exists. Profile
+  updates require `EMPLOYEE:UPDATE` permission (admin-only).
 - **Impact:** Employees cannot update their own phone number, address, emergency contact, etc.
-- **Recommendation:** Create a restricted self-service endpoint that allows updates only to non-sensitive fields (phone, personal email, emergency contact, address).
+- **Recommendation:** Create a restricted self-service endpoint that allows updates only to
+  non-sensitive fields (phone, personal email, emergency contact, address).
 
 ---
 

@@ -1,39 +1,39 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { loanService } from '@/lib/services/hrms/loan.service';
-import { LoanStatus } from '@/lib/types/hrms/loan';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { useEmployeeLoans } from '@/lib/hooks/queries/useLoans';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {loanService} from '@/lib/services/hrms/loan.service';
+import {LoanStatus} from '@/lib/types/hrms/loan';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {useEmployeeLoans} from '@/lib/hooks/queries/useLoans';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
-  Wallet,
-  Plus,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  ChevronRight,
-  DollarSign,
-  CreditCard,
-  Loader2,
-  FileText,
-  TrendingUp,
   Banknote,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Loader2,
+  Plus,
+  TrendingUp,
+  Wallet,
+  XCircle,
 } from 'lucide-react';
 
 export default function LoansPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [page] = useState(0);
   const [size] = useState(10);
 
   // Fetch loans using React Query
-  const { data: loansResponse, isLoading: loading, error: queryError } = useEmployeeLoans(
+  const {data: loansResponse, isLoading: loading, error: queryError} = useEmployeeLoans(
     page,
     size,
     isAuthenticated && hasHydrated
@@ -44,8 +44,8 @@ export default function LoansPage() {
   const loans = Array.isArray(loansResponse?.content)
     ? loansResponse.content
     : Array.isArray(loansResponse)
-    ? loansResponse
-    : [];
+      ? loansResponse
+      : [];
   const error = queryError ? 'Failed to load loans data' : null;
 
   // Calculate summary from loans
@@ -114,7 +114,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading loans data...</p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">{error}</p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function LoansPage() {
               onClick={() => router.push('/loans/new')}
               className="btn-primary flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5"/>
               Apply for Loan
             </button>
           </PermissionGate>
@@ -164,7 +164,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <CreditCard className="h-5 w-5 text-white" />
+                <CreditCard className="h-5 w-5 text-white"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -180,7 +180,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-danger-500 to-danger-600">
-                <DollarSign className="h-5 w-5 text-white" />
+                <DollarSign className="h-5 w-5 text-white"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -196,7 +196,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <TrendingUp className="h-5 w-5 text-white" />
+                <TrendingUp className="h-5 w-5 text-white"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -212,7 +212,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600">
-                <Clock className="h-5 w-5 text-white" />
+                <Clock className="h-5 w-5 text-white"/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -236,97 +236,97 @@ export default function LoansPage() {
 
           {loans.length === 0 ? (
             <EmptyState
-              icon={<Wallet className="h-12 w-12" />}
+              icon={<Wallet className="h-12 w-12"/>}
               title="No Loan Requests"
               description="Apply for a loan to get started"
-              action={{ label: 'Apply for Loan', onClick: () => router.push('/loans/new') }}
+              action={{label: 'Apply for Loan', onClick: () => router.push('/loans/new')}}
             />
           ) : (
             <div className="overflow-x-auto">
               <table className="table-aura">
                 <thead>
-                  <tr className="skeuo-table-header">
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
-                      Loan #
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
-                      Type
-                    </th>
-                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
-                      Amount
-                    </th>
-                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
-                      Term
-                    </th>
-                    <th className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)]">
-                      Status
-                    </th>
-                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
-                      Balance
-                    </th>
-                    <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
-                      Actions
-                    </th>
-                  </tr>
+                <tr className="skeuo-table-header">
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
+                    Loan #
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)]">
+                    Type
+                  </th>
+                  <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
+                    Amount
+                  </th>
+                  <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
+                    Term
+                  </th>
+                  <th className="px-6 py-2 text-center text-xs font-medium text-[var(--text-muted)]">
+                    Status
+                  </th>
+                  <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
+                    Balance
+                  </th>
+                  <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)]">
+                    Actions
+                  </th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                  {loans.map((loan) => {
-                    const statusConfig = getStatusConfig(loan.status);
-                    const StatusIcon = statusConfig.icon;
+                {loans.map((loan) => {
+                  const statusConfig = getStatusConfig(loan.status);
+                  const StatusIcon = statusConfig.icon;
 
-                    return (
-                      <tr
-                        key={loan.id}
-                        className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
-                        onClick={() => router.push(`/loans/${loan.id}`)}
-                      >
-                        <td className="px-6 py-4">
+                  return (
+                    <tr
+                      key={loan.id}
+                      className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
+                      onClick={() => router.push(`/loans/${loan.id}`)}
+                    >
+                      <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+                      <td className="px-6 py-4">
                           <span className="text-body-secondary">
                             {loanService.getLoanTypeLabel(loan.loanType)}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
+                      </td>
+                      <td className="px-6 py-4 text-right">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
+                      </td>
+                      <td className="px-6 py-4 text-right">
                           <span className="text-body-secondary">
                             {loan.tenureMonths} months
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-center">
+                      </td>
+                      <td className="px-6 py-4 text-center">
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg justify-center ${statusConfig.bg} ${statusConfig.text}`}
                           >
-                            <StatusIcon className="h-3.5 w-3.5" />
+                            <StatusIcon className="h-3.5 w-3.5"/>
                             {loan.status.replace('_', ' ')}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
+                      </td>
+                      <td className="px-6 py-4 text-right">
                           <span className="text-body-secondary">
                             {loanService.formatCurrency(loan.outstandingAmount || 0)}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push(`/loans/${loan.id}`);
-                            }}
-                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
-                          >
-                            View Details
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/loans/${loan.id}`);
+                          }}
+                          className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
                 </tbody>
               </table>
             </div>
@@ -340,18 +340,20 @@ export default function LoansPage() {
               onClick={() => router.push('/loans/new')}
               className="group card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg"
             >
-            <div className="row-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                <Plus className="h-5 w-5 text-white" />
+              <div className="row-between mb-4">
+                <div
+                  className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
+                  <Plus className="h-5 w-5 text-white"/>
+                </div>
+                <ChevronRight
+                  className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
-            </div>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
-              Apply for Loan
-            </h3>
-            <p className="text-body-muted">
-              Submit a new loan application
-            </p>
+              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
+                Apply for Loan
+              </h3>
+              <p className="text-body-muted">
+                Submit a new loan application
+              </p>
             </button>
           </PermissionGate>
 
@@ -360,10 +362,12 @@ export default function LoansPage() {
             className="group card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg"
           >
             <div className="row-between mb-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
-                <FileText className="h-5 w-5 text-white" />
+              <div
+                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
+                <FileText className="h-5 w-5 text-white"/>
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight
+                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans

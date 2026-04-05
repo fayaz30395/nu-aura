@@ -1,10 +1,10 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { goalService } from '@/lib/services/grow/performance.service';
-import { Goal, GoalRequest } from '@/lib/types/grow/performance';
-import { notifications } from '@mantine/notifications';
-import { performanceKeys } from './performanceKeys';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {goalService} from '@/lib/services/grow/performance.service';
+import {Goal, GoalRequest} from '@/lib/types/grow/performance';
+import {notifications} from '@mantine/notifications';
+import {performanceKeys} from './performanceKeys';
 
 // ─── Goal Hooks ───────────────────────────────────────────────────────────
 
@@ -67,7 +67,7 @@ export function useCreateGoal() {
   return useMutation({
     mutationFn: (data: GoalRequest) => goalService.createGoal(data),
     onSuccess: (_data: Goal) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.goals()});
       notifications.show({
         title: 'Success',
         message: 'Goal created successfully',
@@ -88,10 +88,10 @@ export function useUpdateGoal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: GoalRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: GoalRequest }) =>
       goalService.updateGoal(id, data),
     onSuccess: (data: Goal) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.goals()});
       queryClient.setQueryData(performanceKeys.goalDetail(data.id), data);
       notifications.show({
         title: 'Success',
@@ -113,10 +113,10 @@ export function useUpdateGoalProgress() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, progress }: { id: string; progress: number }) =>
+    mutationFn: ({id, progress}: { id: string; progress: number }) =>
       goalService.updateProgress(id, progress),
     onSuccess: (data: Goal) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.goals()});
       queryClient.setQueryData(performanceKeys.goalDetail(data.id), data);
       notifications.show({
         title: 'Success',
@@ -138,9 +138,9 @@ export function useApproveGoal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approverId }: { id: string; approverId: string }) => goalService.approveGoal(id, approverId),
+    mutationFn: ({id, approverId}: { id: string; approverId: string }) => goalService.approveGoal(id, approverId),
     onSuccess: (data: Goal) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.goals()});
       queryClient.setQueryData(performanceKeys.goalDetail(data.id), data);
       notifications.show({
         title: 'Success',
@@ -164,7 +164,7 @@ export function useDeleteGoal() {
   return useMutation({
     mutationFn: (id: string) => goalService.deleteGoal(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.goals() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.goals()});
       notifications.show({
         title: 'Success',
         message: 'Goal deleted successfully',

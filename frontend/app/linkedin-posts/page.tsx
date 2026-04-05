@@ -1,49 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
+import {useEffect, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
 import {
-  Linkedin,
-  Plus,
-  Loader2,
+  Calendar,
   Edit2,
-  Trash2,
-  Search,
-  X,
   ExternalLink,
   Heart,
+  Linkedin,
+  Loader2,
   MessageCircle,
+  Plus,
+  Search,
   Share2,
-  Calendar,
   Tag,
+  Trash2,
   User,
+  X,
   Zap,
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { isAdmin } from '@/lib/utils';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {isAdmin} from '@/lib/utils';
 import {
   useAllLinkedInPosts,
   useCreateLinkedInPost,
-  useUpdateLinkedInPost,
   useDeleteLinkedInPost,
+  useUpdateLinkedInPost,
 } from '@/lib/hooks/queries/useLinkedIn';
-import { LinkedInPost, CreateLinkedInPostRequest, UpdateLinkedInPostRequest } from '@/lib/types/platform/linkedin';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { createLogger } from '@/lib/utils/logger';
-import { useDebounce } from '@/lib/hooks/useDebounce';
+import {CreateLinkedInPostRequest, LinkedInPost, UpdateLinkedInPostRequest} from '@/lib/types/platform/linkedin';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {createLogger} from '@/lib/utils/logger';
+import {useDebounce} from '@/lib/hooks/useDebounce';
 
 const logger = createLogger('LinkedInPosts');
 
 export default function LinkedInPostsPage() {
-  const { user } = useAuth();
-  const { hasPermission } = usePermissions();
+  const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const canManagePosts = hasPermission(Permissions.ANNOUNCEMENT_MANAGE) || isAdmin(user?.roles);
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,7 +54,7 @@ export default function LinkedInPostsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // React Query hooks
-  const { data: postsResponse, isLoading } = useAllLinkedInPosts(0, 100);
+  const {data: postsResponse, isLoading} = useAllLinkedInPosts(0, 100);
   const deletePostMutation = useDeleteLinkedInPost();
 
   const posts = postsResponse?.content || [];
@@ -86,7 +86,7 @@ export default function LinkedInPostsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
   };
 
   return (
@@ -95,14 +95,14 @@ export default function LinkedInPostsPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: -20}}
+            animate={{opacity: 1, y: 0}}
             className="mb-8"
           >
             <div className="row-between">
               <div>
                 <h1 className="text-2xl font-bold skeuo-emboss">
-                  <Linkedin className="w-8 h-8 text-accent-600" />
+                  <Linkedin className="w-8 h-8 text-accent-600"/>
                   LinkedIn Posts
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -117,7 +117,7 @@ export default function LinkedInPostsPage() {
                   }}
                   className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-[var(--shadow-card)]"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-5 h-5"/>
                   Add Post
                 </button>
               )}
@@ -126,13 +126,13 @@ export default function LinkedInPostsPage() {
 
           {/* Search */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.1}}
             className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-4 mb-6"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
               <input
                 type="text"
                 placeholder="Search by content or author..."
@@ -145,17 +145,17 @@ export default function LinkedInPostsPage() {
 
           {/* Posts Grid */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.2}}
           >
             {isLoading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-accent-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-accent-600"/>
               </div>
             ) : filteredPosts.length === 0 ? (
               <EmptyState
-                icon={<Linkedin className="h-12 w-12" />}
+                icon={<Linkedin className="h-12 w-12"/>}
                 title="No LinkedIn Posts"
                 description={
                   debouncedSearchTerm
@@ -168,9 +168,9 @@ export default function LinkedInPostsPage() {
                 {filteredPosts.map((post, index) => (
                   <motion.div
                     key={post.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: index * 0.05}}
                     className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all border border-[var(--border-main)] overflow-hidden group"
                   >
                     {/* Card Header */}
@@ -178,7 +178,7 @@ export default function LinkedInPostsPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
-                            <User className="w-4 h-4 text-[var(--text-muted)]" />
+                            <User className="w-4 h-4 text-[var(--text-muted)]"/>
                             <span className="font-semibold text-[var(--text-primary)] truncate">
                               {post.authorName}
                             </span>
@@ -190,7 +190,8 @@ export default function LinkedInPostsPage() {
                           )}
                         </div>
                         {!post.isActive && (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
+                          <span
+                            className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                             Inactive
                           </span>
                         )}
@@ -211,12 +212,13 @@ export default function LinkedInPostsPage() {
                               key={tag}
                               className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full"
                             >
-                              <Tag className="w-3 h-3" />
+                              <Tag className="w-3 h-3"/>
                               {tag}
                             </span>
                           ))}
                           {post.tags.length > 3 && (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-[var(--text-muted)]">
+                            <span
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium text-[var(--text-muted)]">
                               +{post.tags.length - 3}
                             </span>
                           )}
@@ -226,19 +228,19 @@ export default function LinkedInPostsPage() {
                       {/* Engagement Stats */}
                       <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[var(--border-main)]">
                         <div className="flex items-center gap-2 text-sm">
-                          <Heart className="w-4 h-4 text-danger-500" />
+                          <Heart className="w-4 h-4 text-danger-500"/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.likes}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <MessageCircle className="w-4 h-4 text-accent-500" />
+                          <MessageCircle className="w-4 h-4 text-accent-500"/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.comments}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <Share2 className="w-4 h-4 text-success-500" />
+                          <Share2 className="w-4 h-4 text-success-500"/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.shares}
                           </span>
@@ -251,12 +253,13 @@ export default function LinkedInPostsPage() {
                       <div className="row-between">
                         <div className="flex items-center gap-4">
                           <span className="flex items-center gap-1 text-caption">
-                            <Calendar className="w-3.5 h-3.5" />
+                            <Calendar className="w-3.5 h-3.5"/>
                             {formatDate(post.postedAt)}
                           </span>
                           {post.isFromNulogic && (
-                            <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500">
-                              <Zap className="w-3 h-3" />
+                            <span
+                              className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500">
+                              <Zap className="w-3 h-3"/>
                               Nulogic
                             </span>
                           )}
@@ -268,26 +271,27 @@ export default function LinkedInPostsPage() {
                           className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
                           title="View on LinkedIn"
                         >
-                          <ExternalLink className="w-4 h-4" />
+                          <ExternalLink className="w-4 h-4"/>
                         </a>
                       </div>
                     </div>
 
                     {/* Actions */}
                     {canManagePosts && (
-                      <div className="px-6 py-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
+                      <div
+                        className="px-6 py-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
                         <button
                           onClick={() => handleEditPost(post)}
                           className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-4 h-4"/>
                           Edit
                         </button>
                         <button
                           onClick={() => setShowDeleteConfirm(post.id)}
                           className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4"/>
                           Delete
                         </button>
                       </div>
@@ -355,7 +359,7 @@ const linkedInFormSchema = z.object({
 
 type LinkedInFormData = z.infer<typeof linkedInFormSchema>;
 
-function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPostModalProps) {
+function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostModalProps) {
   const toast = useToast();
   const isEditing = !!post;
   const createPostMutation = useCreateLinkedInPost();
@@ -366,7 +370,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<LinkedInFormData>({
     resolver: zodResolver(linkedInFormSchema),
     defaultValues: {
@@ -402,7 +406,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           },
           tags,
         };
-        await updatePostMutation.mutateAsync({ id: post.id, data: updatePayload });
+        await updatePostMutation.mutateAsync({id: post.id, data: updatePayload});
         toast.success('Post Updated', 'The LinkedIn post has been updated.');
       } else {
         const createPayload: CreateLinkedInPostRequest = {
@@ -427,7 +431,9 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
       onSuccess();
     } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} post:`, err);
-      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} post`;
+      const errorMessage = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} post`;
       toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
     }
   };
@@ -452,16 +458,16 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -474,12 +480,13 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
             onClick={onClose}
             className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="w-5 h-5 text-[var(--text-muted)]" />
+            <X className="w-5 h-5 text-[var(--text-muted)]"/>
           </button>
         </div>
 
         {/* Content */}
-        <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)} className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
+        <form id="linkedin-form" onSubmit={handleSubmit(onSubmit)}
+              className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
           {/* Post URL */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -611,7 +618,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                 <Controller
                   name="likes"
                   control={control}
-                  render={({ field }) => (
+                  render={({field}) => (
                     <>
                       <input
                         type="number"
@@ -636,7 +643,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                 <Controller
                   name="comments"
                   control={control}
-                  render={({ field }) => (
+                  render={({field}) => (
                     <>
                       <input
                         type="number"
@@ -661,7 +668,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                 <Controller
                   name="shares"
                   control={control}
-                  render={({ field }) => (
+                  render={({field}) => (
                     <>
                       <input
                         type="number"
@@ -683,11 +690,12 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           </div>
 
           {/* Checkbox Options */}
-          <div className="flex items-center gap-2 cursor-pointer p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+          <div
+            className="flex items-center gap-2 cursor-pointer p-4 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
             <Controller
               name="isFromNulogic"
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <input
                   type="checkbox"
                   checked={field.value || false}
@@ -721,12 +729,12 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           >
             {createPostMutation.isPending || updatePostMutation.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin"/>
                 {isEditing ? 'Updating...' : 'Adding...'}
               </>
             ) : (
               <>
-                <Linkedin className="w-4 h-4" />
+                <Linkedin className="w-4 h-4"/>
                 {isEditing ? 'Update' : 'Add Post'}
               </>
             )}

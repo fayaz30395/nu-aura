@@ -1,28 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { EventType, EventVisibility } from '@/lib/types/hrms/calendar';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useCreateCalendarEvent } from '@/lib/hooks/queries/useCalendar';
-import {
-  ArrowLeft,
-  Loader2,
-  AlertCircle,
-  Calendar,
-  Clock,
-  MapPin,
-  Video,
-  FileText,
-  Bell,
-  Globe,
-} from 'lucide-react';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {EventType, EventVisibility} from '@/lib/types/hrms/calendar';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useCreateCalendarEvent} from '@/lib/hooks/queries/useCalendar';
+import {AlertCircle, ArrowLeft, Bell, Calendar, Clock, FileText, Globe, Loader2, MapPin, Video,} from 'lucide-react';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -41,7 +30,7 @@ const calendarEventSchema = z
     visibility: z.enum(['PUBLIC', 'PRIVATE', 'CONFIDENTIAL']),
     location: z.string().optional(),
     meetingLink: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
-    reminderMinutes: z.number({ coerce: true }).min(0).optional(),
+    reminderMinutes: z.number({coerce: true}).min(0).optional(),
     description: z.string().optional(),
     notes: z.string().optional(),
     isRecurring: z.boolean().default(false),
@@ -63,37 +52,37 @@ type CalendarEventFormData = z.infer<typeof calendarEventSchema>;
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const EVENT_TYPES: { value: EventType; label: string }[] = [
-  { value: 'MEETING', label: 'Meeting' },
-  { value: 'APPOINTMENT', label: 'Appointment' },
-  { value: 'TASK', label: 'Task' },
-  { value: 'REMINDER', label: 'Reminder' },
-  { value: 'OUT_OF_OFFICE', label: 'Out of Office' },
-  { value: 'TRAINING', label: 'Training' },
-  { value: 'INTERVIEW', label: 'Interview' },
-  { value: 'REVIEW', label: 'Review' },
-  { value: 'OTHER', label: 'Other' },
+  {value: 'MEETING', label: 'Meeting'},
+  {value: 'APPOINTMENT', label: 'Appointment'},
+  {value: 'TASK', label: 'Task'},
+  {value: 'REMINDER', label: 'Reminder'},
+  {value: 'OUT_OF_OFFICE', label: 'Out of Office'},
+  {value: 'TRAINING', label: 'Training'},
+  {value: 'INTERVIEW', label: 'Interview'},
+  {value: 'REVIEW', label: 'Review'},
+  {value: 'OTHER', label: 'Other'},
 ];
 
 const VISIBILITIES: { value: EventVisibility; label: string }[] = [
-  { value: 'PUBLIC', label: 'Public' },
-  { value: 'PRIVATE', label: 'Private' },
-  { value: 'CONFIDENTIAL', label: 'Confidential' },
+  {value: 'PUBLIC', label: 'Public'},
+  {value: 'PRIVATE', label: 'Private'},
+  {value: 'CONFIDENTIAL', label: 'Confidential'},
 ];
 
 const REMINDER_OPTIONS = [
-  { value: 0, label: 'At time of event' },
-  { value: 5, label: '5 minutes before' },
-  { value: 15, label: '15 minutes before' },
-  { value: 30, label: '30 minutes before' },
-  { value: 60, label: '1 hour before' },
-  { value: 1440, label: '1 day before' },
+  {value: 0, label: 'At time of event'},
+  {value: 5, label: '5 minutes before'},
+  {value: 15, label: '15 minutes before'},
+  {value: 30, label: '30 minutes before'},
+  {value: 60, label: '1 hour before'},
+  {value: 1440, label: '1 day before'},
 ];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function NewEventPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const createEventMutation = useCreateCalendarEvent();
 
   const now = new Date();
@@ -105,7 +94,7 @@ export default function NewEventPage() {
     watch,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CalendarEventFormData>({
     resolver: zodResolver(calendarEventSchema),
     defaultValues: {
@@ -175,7 +164,7 @@ export default function NewEventPage() {
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">New Event</h1>
@@ -184,9 +173,13 @@ export default function NewEventPage() {
         </div>
 
         {createEventMutation.isError && (
-          <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-            <p className="text-sm text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Failed to create event. Please try again.</p>
+          <div
+            className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+            <AlertCircle
+              className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+            <p
+              className="text-sm text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Failed
+              to create event. Please try again.</p>
           </div>
         )}
 
@@ -209,7 +202,8 @@ export default function NewEventPage() {
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.title.message}</p>
+              <p
+                className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.title.message}</p>
             )}
           </div>
 
@@ -232,7 +226,7 @@ export default function NewEventPage() {
                 Start {watchedAllDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('startTime')}
@@ -242,7 +236,8 @@ export default function NewEventPage() {
                 />
               </div>
               {errors.startTime && (
-                <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.startTime.message}</p>
+                <p
+                  className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.startTime.message}</p>
               )}
             </div>
             <div>
@@ -250,7 +245,7 @@ export default function NewEventPage() {
                 End {watchedAllDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('endTime')}
@@ -260,7 +255,8 @@ export default function NewEventPage() {
                 />
               </div>
               {errors.endTime && (
-                <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.endTime.message}</p>
+                <p
+                  className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.endTime.message}</p>
               )}
             </div>
           </div>
@@ -288,7 +284,7 @@ export default function NewEventPage() {
               Location
             </label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 {...register('location')}
@@ -304,7 +300,7 @@ export default function NewEventPage() {
               Meeting Link
             </label>
             <div className="relative">
-              <Video className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Video className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="url"
                 {...register('meetingLink')}
@@ -315,7 +311,8 @@ export default function NewEventPage() {
               />
             </div>
             {errors.meetingLink && (
-              <p className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.meetingLink.message}</p>
+              <p
+                className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.meetingLink.message}</p>
             )}
           </div>
 
@@ -325,9 +322,9 @@ export default function NewEventPage() {
               Reminder
             </label>
             <div className="relative">
-              <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
-                {...register('reminderMinutes', { valueAsNumber: true })}
+                {...register('reminderMinutes', {valueAsNumber: true})}
                 className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="">No reminder</option>
@@ -346,7 +343,7 @@ export default function NewEventPage() {
               Visibility
             </label>
             <div className="relative">
-              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <select
                 {...register('visibility')}
                 className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -366,7 +363,7 @@ export default function NewEventPage() {
               Description
             </label>
             <div className="relative">
-              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]" />
+              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
                 {...register('description')}
                 placeholder="Add event description..."
@@ -404,14 +401,14 @@ export default function NewEventPage() {
                 disabled={isLoading}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
               >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                'Create Event'
-              )}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin"/>
+                    Creating...
+                  </>
+                ) : (
+                  'Create Event'
+                )}
               </button>
             </PermissionGate>
           </div>

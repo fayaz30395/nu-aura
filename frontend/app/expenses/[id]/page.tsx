@@ -1,36 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout';
+import {useEffect, useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
 import {
-  ArrowLeft, Receipt, CheckCircle, XCircle, Clock, DollarSign,
-  FileText, User, Calendar, Tag, Plus, Trash2,
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  FileText,
+  Plus,
+  Receipt,
+  Tag,
+  Trash2,
+  User,
+  XCircle,
 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { formatCurrency } from '@/lib/utils';
-import { format } from 'date-fns';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {formatCurrency} from '@/lib/utils';
+import {format} from 'date-fns';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
+  useActiveExpenseCategories,
+  useAddExpenseItem,
+  useApproveExpenseClaim,
+  useDeleteExpenseItem,
   useExpenseClaimDetail,
   useExpenseClaimItems,
-  useAddExpenseItem,
-  useDeleteExpenseItem,
-  useSubmitExpenseClaim,
-  useApproveExpenseClaim,
   useRejectExpenseClaim,
-  useActiveExpenseCategories,
+  useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
-import { Modal, ModalHeader, ModalBody, ModalFooter, ConfirmDialog } from '@/components/ui';
-import { ExpenseStatus, CreateExpenseItemRequest } from '@/lib/types/hrms/expense';
-import { ReceiptScanner, ConfirmedOcrData } from '@/components/expenses';
+import {ConfirmDialog, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {CreateExpenseItemRequest, ExpenseStatus} from '@/lib/types/hrms/expense';
+import {ConfirmedOcrData, ReceiptScanner} from '@/components/expenses';
 
 const itemSchema = z.object({
   description: z.string().min(1, 'Description required'),
-  amount: z.number({ coerce: true }).positive('Amount must be positive'),
+  amount: z.number({coerce: true}).positive('Amount must be positive'),
   expenseDate: z.string().min(1, 'Date required'),
   categoryId: z.string().optional(),
   merchantName: z.string().optional(),
@@ -42,22 +52,22 @@ const itemSchema = z.object({
 type ItemFormData = z.infer<typeof itemSchema>;
 
 const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; label: string }> = {
-  DRAFT: { color: 'bg-surface-100 text-surface-700', icon: FileText, label: 'Draft' },
-  SUBMITTED: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Submitted' },
-  PENDING_APPROVAL: { color: 'bg-warning-100 text-warning-700', icon: Clock, label: 'Pending Approval' },
-  APPROVED: { color: 'bg-success-100 text-success-700', icon: CheckCircle, label: 'Approved' },
-  REJECTED: { color: 'bg-danger-100 text-danger-700', icon: XCircle, label: 'Rejected' },
-  PROCESSING: { color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Processing' },
-  REIMBURSED: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Reimbursed' },
-  PAID: { color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Paid' },
-  CANCELLED: { color: 'bg-surface-100 text-surface-500', icon: XCircle, label: 'Cancelled' },
+  DRAFT: {color: 'bg-surface-100 text-surface-700', icon: FileText, label: 'Draft'},
+  SUBMITTED: {color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Submitted'},
+  PENDING_APPROVAL: {color: 'bg-warning-100 text-warning-700', icon: Clock, label: 'Pending Approval'},
+  APPROVED: {color: 'bg-success-100 text-success-700', icon: CheckCircle, label: 'Approved'},
+  REJECTED: {color: 'bg-danger-100 text-danger-700', icon: XCircle, label: 'Rejected'},
+  PROCESSING: {color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Processing'},
+  REIMBURSED: {color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Reimbursed'},
+  PAID: {color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Paid'},
+  CANCELLED: {color: 'bg-surface-100 text-surface-500', icon: XCircle, label: 'Cancelled'},
 };
 
 export default function ExpenseDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
-  const { user } = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {user} = useAuth();
   const claimId = params.id as string;
 
   useEffect(() => {
@@ -67,9 +77,9 @@ export default function ExpenseDetailPage() {
     }
   }, [permissionsReady, hasPermission, router]);
 
-  const { data: claim, isLoading } = useExpenseClaimDetail(claimId);
-  const { data: items = [], isLoading: itemsLoading } = useExpenseClaimItems(claimId);
-  const { data: categories = [] } = useActiveExpenseCategories();
+  const {data: claim, isLoading} = useExpenseClaimDetail(claimId);
+  const {data: items = [], isLoading: itemsLoading} = useExpenseClaimItems(claimId);
+  const {data: categories = []} = useActiveExpenseCategories();
 
   const addItemMutation = useAddExpenseItem();
   const deleteItemMutation = useDeleteExpenseItem();
@@ -87,7 +97,7 @@ export default function ExpenseDetailPage() {
     register,
     handleSubmit,
     reset: resetForm,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
@@ -98,7 +108,7 @@ export default function ExpenseDetailPage() {
 
   const onAddItem = (data: ItemFormData) => {
     addItemMutation.mutate(
-      { claimId, data: { ...data, currency: 'INR' } as CreateExpenseItemRequest },
+      {claimId, data: {...data, currency: 'INR'} as CreateExpenseItemRequest},
       {
         onSuccess: () => {
           setShowAddItem(false);
@@ -124,8 +134,8 @@ export default function ExpenseDetailPage() {
   const onDeleteItem = () => {
     if (!deleteItemId) return;
     deleteItemMutation.mutate(
-      { claimId, itemId: deleteItemId },
-      { onSuccess: () => setDeleteItemId(null) }
+      {claimId, itemId: deleteItemId},
+      {onSuccess: () => setDeleteItemId(null)}
     );
   };
 
@@ -139,8 +149,13 @@ export default function ExpenseDetailPage() {
 
   const onReject = () => {
     rejectMutation.mutate(
-      { claimId, reason: rejectReason },
-      { onSuccess: () => { setShowRejectDialog(false); setRejectReason(''); } }
+      {claimId, reason: rejectReason},
+      {
+        onSuccess: () => {
+          setShowRejectDialog(false);
+          setRejectReason('');
+        }
+      }
     );
   };
 
@@ -152,7 +167,7 @@ export default function ExpenseDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700" />
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700"/>
         </div>
       </AppLayout>
     );
@@ -182,7 +197,7 @@ export default function ExpenseDetailPage() {
             className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Back to expenses"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5"/>
           </button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
@@ -190,8 +205,9 @@ export default function ExpenseDetailPage() {
             </h1>
             <p className="text-surface-500">{claim.title || claim.description}</p>
           </div>
-          <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium ${statusConfig.color}`}>
-            <StatusIcon className="w-4 h-4" />
+          <span
+            className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium ${statusConfig.color}`}>
+            <StatusIcon className="w-4 h-4"/>
             {statusConfig.label}
           </span>
         </div>
@@ -200,7 +216,7 @@ export default function ExpenseDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-2 text-surface-500 mb-1">
-              <DollarSign className="w-4 h-4" />
+              <DollarSign className="w-4 h-4"/>
               <span className="text-sm">Total Amount</span>
             </div>
             <p className="text-xl font-bold text-surface-900 dark:text-surface-50">
@@ -209,14 +225,14 @@ export default function ExpenseDetailPage() {
           </div>
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-2 text-surface-500 mb-1">
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4"/>
               <span className="text-sm">Employee</span>
             </div>
             <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{claim.employeeName}</p>
           </div>
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-2 text-surface-500 mb-1">
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4"/>
               <span className="text-sm">Claim Date</span>
             </div>
             <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
@@ -225,7 +241,7 @@ export default function ExpenseDetailPage() {
           </div>
           <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-2 text-surface-500 mb-1">
-              <Tag className="w-4 h-4" />
+              <Tag className="w-4 h-4"/>
               <span className="text-sm">Category</span>
             </div>
             <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
@@ -238,7 +254,7 @@ export default function ExpenseDetailPage() {
         <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg">
           <div className="row-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
             <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-              <Receipt className="w-5 h-5" />
+              <Receipt className="w-5 h-5"/>
               Expense Items ({items.length})
             </h2>
             {isDraft && isOwner && (
@@ -247,14 +263,14 @@ export default function ExpenseDetailPage() {
                   onClick={() => setShowReceiptScanner(true)}
                   className="flex items-center gap-1.5 px-4 py-1.5 border border-accent-700 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Receipt className="w-4 h-4" />
+                  <Receipt className="w-4 h-4"/>
                   Scan Receipt
                 </button>
                 <button
                   onClick={() => setShowAddItem(true)}
                   className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4"/>
                   Add Item
                 </button>
               </div>
@@ -286,7 +302,7 @@ export default function ExpenseDetailPage() {
                   </p>
                   {item.receiptFileName && (
                     <span className="text-xs text-accent-600 flex items-center gap-1">
-                      <FileText className="w-3 h-3" />
+                      <FileText className="w-3 h-3"/>
                       {item.receiptFileName}
                     </span>
                   )}
@@ -296,7 +312,7 @@ export default function ExpenseDetailPage() {
                       className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       aria-label="Delete item"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4"/>
                     </button>
                   )}
                 </div>
@@ -312,7 +328,7 @@ export default function ExpenseDetailPage() {
             <div className="space-y-4">
               {claim.submittedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-accent-500" />
+                  <div className="w-2 h-2 rounded-full bg-accent-500"/>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Submitted on {format(new Date(claim.submittedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -320,7 +336,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.approvedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-success-500" />
+                  <div className="w-2 h-2 rounded-full bg-success-500"/>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Approved by {claim.approvedByName} on {format(new Date(claim.approvedAt), 'dd MMM yyyy HH:mm')}
                   </span>
@@ -328,7 +344,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.rejectedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-danger-500" />
+                  <div className="w-2 h-2 rounded-full bg-danger-500"/>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Rejected by {claim.rejectedByName} on {format(new Date(claim.rejectedAt), 'dd MMM yyyy HH:mm')}
                     {claim.rejectionReason && ` — "${claim.rejectionReason}"`}
@@ -337,7 +353,7 @@ export default function ExpenseDetailPage() {
               )}
               {claim.reimbursedAt && (
                 <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-success-500" />
+                  <div className="w-2 h-2 rounded-full bg-success-500"/>
                   <span className="text-sm text-surface-600 dark:text-surface-400">
                     Reimbursed on {format(new Date(claim.reimbursedAt), 'dd MMM yyyy HH:mm')}
                     {claim.reimbursementRef && ` (Ref: ${claim.reimbursementRef})`}
@@ -393,26 +409,34 @@ export default function ExpenseDetailPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description *</label>
-                  <input {...register('description')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description
+                    *</label>
+                  <input {...register('description')}
+                         className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                   {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount *</label>
-                    <input type="number" step="0.01" {...register('amount')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Amount
+                      *</label>
+                    <input type="number" step="0.01" {...register('amount')}
+                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                     {errors.amount && <p className="text-danger-500 text-sm mt-1">{errors.amount.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date *</label>
-                    <input type="date" {...register('expenseDate')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date
+                      *</label>
+                    <input type="date" {...register('expenseDate')}
+                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                     {errors.expenseDate && <p className="text-danger-500 text-sm mt-1">{errors.expenseDate.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
-                    <select {...register('categoryId')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
+                    <label
+                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
+                    <select {...register('categoryId')}
+                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2">
                       <option value="">Select category</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -420,25 +444,30 @@ export default function ExpenseDetailPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
-                    <input {...register('merchantName')} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                    <label
+                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Merchant</label>
+                    <input {...register('merchantName')}
+                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
-                  <textarea {...register('notes')} rows={2} className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2" />
+                  <textarea {...register('notes')} rows={2}
+                            className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
                 </div>
                 <label className="flex items-center gap-2">
-                  <input type="checkbox" {...register('isBillable')} className="rounded border-surface-300" />
+                  <input type="checkbox" {...register('isBillable')} className="rounded border-surface-300"/>
                   <span className="text-sm text-surface-700 dark:text-surface-300">Billable to client</span>
                 </label>
               </div>
             </ModalBody>
             <ModalFooter>
-              <button type="button" onClick={() => setShowAddItem(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <button type="button" onClick={() => setShowAddItem(false)}
+                      className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 Cancel
               </button>
-              <button type="submit" disabled={addItemMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <button type="submit" disabled={addItemMutation.isPending}
+                      className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 {addItemMutation.isPending ? 'Adding...' : 'Add Item'}
               </button>
             </ModalFooter>
@@ -450,7 +479,8 @@ export default function ExpenseDetailPage() {
           <ModalHeader>Reject Expense Claim</ModalHeader>
           <ModalBody>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Reason for Rejection *</label>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Reason for
+                Rejection *</label>
               <textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
@@ -461,7 +491,8 @@ export default function ExpenseDetailPage() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <button type="button" onClick={() => setShowRejectDialog(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <button type="button" onClick={() => setShowRejectDialog(false)}
+                    className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               Cancel
             </button>
             <button

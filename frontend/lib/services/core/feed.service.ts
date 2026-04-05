@@ -18,20 +18,33 @@ import type {
  * Feed Service — aggregates announcements, celebrations, and recognitions
  * into a unified chronological feed for the dashboard.
  */
+/** PERF-6: Per-source timeout — prevents one slow endpoint from blocking the feed. */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`[FeedService] ${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
+const FEED_SOURCE_TIMEOUT_MS = 5000;
+
 class FeedService {
   /**
    * Get the unified company feed.
    * Fetches from multiple sources in parallel and merges by timestamp.
    */
   async getCompanyFeed(employeeId?: string): Promise<FeedItem[]> {
+    const T = FEED_SOURCE_TIMEOUT_MS;
     const results = await Promise.allSettled([
-      this.fetchAnnouncements(employeeId),
-      this.fetchBirthdays(),
-      this.fetchAnniversaries(),
-      this.fetchNewJoiners(),
-      this.fetchRecognitions(),
-      this.fetchLinkedInPosts(),
-      this.fetchWallPosts(),
+      withTimeout(this.fetchAnnouncements(employeeId), T, 'announcements'),
+      withTimeout(this.fetchBirthdays(), T, 'birthdays'),
+      withTimeout(this.fetchAnniversaries(), T, 'anniversaries'),
+      withTimeout(this.fetchNewJoiners(), T, 'newJoiners'),
+      withTimeout(this.fetchRecognitions(), T, 'recognitions'),
+      withTimeout(this.fetchLinkedInPosts(), T, 'linkedInPosts'),
+      withTimeout(this.fetchWallPosts(), T, 'wallPosts'),
     ]);
 
     const items: FeedItem[] = [];
@@ -61,10 +74,11 @@ class FeedService {
   async getCompanyFeedOlder(employeeId?: string, page = 0, size = 20): Promise<FeedItem[]> {
     // For older content, only wall posts and announcements have historical data worth fetching.
     // Celebrations (birthdays, anniversaries, new joiners) are always near-current-date.
+    const T = FEED_SOURCE_TIMEOUT_MS;
     const results = await Promise.allSettled([
-      this.fetchAnnouncements(employeeId, page, size),
-      this.fetchWallPosts(page, size),
-      this.fetchLinkedInPosts(page, size),
+      withTimeout(this.fetchAnnouncements(employeeId, page, size), T, 'announcements'),
+      withTimeout(this.fetchWallPosts(page, size), T, 'wallPosts'),
+      withTimeout(this.fetchLinkedInPosts(page, size), T, 'linkedInPosts'),
     ]);
 
     const items: FeedItem[] = [];
@@ -107,10 +121,11 @@ class FeedService {
         isPinned: a.isPinned,
         publishedByName: a.publishedByName,
         readCount: a.readCount,
-        wallPostId: a.wallPostId, // Enable reactions/comments through wall API
-        hasReacted: a.hasReacted, // User's reaction status
+        wallPostId: a.wallPostId,
+        hasReacted: a.hasReacted,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchAnnouncements failed:', error);
       return [];
     }
   }
@@ -131,7 +146,8 @@ class FeedService {
         isToday: b.isToday,
         daysUntil: b.daysUntil,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchBirthdays failed:', error);
       return [];
     }
   }
@@ -154,7 +170,8 @@ class FeedService {
         isToday: a.isToday,
         daysUntil: a.daysUntil,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchAnniversaries failed:', error);
       return [];
     }
   }
@@ -176,7 +193,8 @@ class FeedService {
         personDesignation: j.designation,
         daysSinceJoining: j.daysSinceJoining,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchNewJoiners failed:', error);
       return [];
     }
   }
@@ -200,7 +218,8 @@ class FeedService {
         wallPostId: r.wallPostId, // Enable reactions/comments through wall API
         hasReacted: r.hasReacted, // User's reaction status
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchRecognitions failed:', error);
       return [];
     }
   }
@@ -245,7 +264,8 @@ class FeedService {
         recentReactors: post.recentReactors,
         totalReactorCount: post.totalReactorCount,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchWallPosts failed:', error);
       return [];
     }
   }
@@ -264,7 +284,8 @@ class FeedService {
         linkedinImageUrl: post.imageUrl,
         linkedinEngagement: post.engagement,
       }));
-    } catch {
+    } catch (error) {
+      console.error('[FeedService] fetchLinkedInPosts failed:', error);
       return [];
     }
   }

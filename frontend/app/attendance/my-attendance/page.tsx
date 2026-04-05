@@ -1,30 +1,30 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
 import {
+  AlertCircle,
   Calendar,
-  LogIn,
   ChevronLeft,
   ChevronRight,
   Download,
-  MapPin,
-  FileText,
-  MoreHorizontal,
-  Users,
-  Timer,
-  AlertCircle,
   Eye,
+  FileText,
+  LogIn,
+  MapPin,
+  MoreHorizontal,
+  Timer,
+  Users,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Loading';
-import { AttendanceRecord } from '@/lib/types/hrms/attendance';
-import { getMonthStartString, getMonthEndString, getLocalDateString, getDateOffsetString } from '@/lib/utils/dateUtils';
-import { useAttendanceByDateRange, useMyTimeEntries, useHolidaysByYear } from '@/lib/hooks/queries/useAttendance';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Loading';
+import {AttendanceRecord} from '@/lib/types/hrms/attendance';
+import {getDateOffsetString, getLocalDateString, getMonthEndString, getMonthStartString} from '@/lib/utils/dateUtils';
+import {useAttendanceByDateRange, useHolidaysByYear, useMyTimeEntries} from '@/lib/hooks/queries/useAttendance';
 
 type TabView = 'log' | 'calendar' | 'requests';
 type PeriodFilter = '30days' | string; // string for month names
@@ -59,9 +59,9 @@ function formatTime(isoString: string | undefined, use24h: boolean): string {
   try {
     const date = new Date(isoString);
     if (use24h) {
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      return date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: false});
     }
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
   } catch {
     return '--:--';
   }
@@ -71,14 +71,14 @@ function formatTime(isoString: string | undefined, use24h: boolean): string {
 function formatDateLabel(dateStr: string): string {
   try {
     const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    return d.toLocaleDateString('en-US', {weekday: 'short', day: 'numeric', month: 'short'});
   } catch {
     return dateStr;
   }
 }
 
 // ─── Timeline bar component for attendance visual ──────────────────
-function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
+function AttendanceTimelineBar({record}: { record: AttendanceRecord }) {
   const getBarSegments = () => {
     if (!record.checkInTime) return [];
 
@@ -98,7 +98,7 @@ function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
     const startPct = Math.max(0, ((checkIn - windowStart) / windowSize) * 100);
     const widthPct = Math.max(2, ((checkOut - checkIn) / windowSize) * 100);
 
-    return [{ left: startPct, width: Math.min(widthPct, 100 - startPct) }];
+    return [{left: startPct, width: Math.min(widthPct, 100 - startPct)}];
   };
 
   const segments = getBarSegments();
@@ -111,7 +111,7 @@ function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
         <div
           key={i}
           className="absolute top-0 h-full rounded-full bg-accent-400"
-          style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
+          style={{left: `${seg.left}%`, width: `${seg.width}%`}}
         />
       ))}
       {/* Break gaps would go here if we had break data */}
@@ -120,20 +120,20 @@ function AttendanceTimelineBar({ record }: { record: AttendanceRecord }) {
 }
 
 // ─── Status dot component ──────────────────────────────────────────
-function StatusDot({ hours }: { hours: number }) {
+function StatusDot({hours}: { hours: number }) {
   const color = hours >= 8 ? 'bg-success-500' : hours >= 6 ? 'bg-warning-500' : hours >= 4 ? 'bg-warning-500' : 'bg-danger-500';
-  return <div className={`w-2.5 h-2.5 rounded-full ${color} shrink-0`} />;
+  return <div className={`w-2.5 h-2.5 rounded-full ${color} shrink-0`}/>;
 }
 
 // ─── Skeleton loaders ──────────────────────────────────────────────
 function SkeletonStatRow() {
   return (
     <div className="flex items-center gap-4 py-4">
-      <Skeleton className="w-8 h-8 rounded-full" />
-      <Skeleton className="h-4 w-16" />
+      <Skeleton className="w-8 h-8 rounded-full"/>
+      <Skeleton className="h-4 w-16"/>
       <div className="ml-auto flex gap-8">
-        <Skeleton className="h-6 w-16" />
-        <Skeleton className="h-6 w-12" />
+        <Skeleton className="h-6 w-16"/>
+        <Skeleton className="h-6 w-12"/>
       </div>
     </div>
   );
@@ -142,11 +142,11 @@ function SkeletonStatRow() {
 function SkeletonLogRow() {
   return (
     <div className="flex items-center gap-4 py-4 divider-b">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-2.5 flex-1 rounded-full" />
-      <Skeleton className="h-4 w-16" />
-      <Skeleton className="h-4 w-16" />
-      <Skeleton className="h-6 w-6 rounded-full" />
+      <Skeleton className="h-4 w-24"/>
+      <Skeleton className="h-2.5 flex-1 rounded-full"/>
+      <Skeleton className="h-4 w-16"/>
+      <Skeleton className="h-4 w-16"/>
+      <Skeleton className="h-6 w-6 rounded-full"/>
     </div>
   );
 }
@@ -156,7 +156,7 @@ function SkeletonLogRow() {
 // ════════════════════════════════════════════════════════════════════
 export default function MyAttendancePage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabView>('log');
   const [use24h, setUse24h] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -180,7 +180,7 @@ export default function MyAttendancePage() {
   }, []);
 
   // ── Date range based on period filter ────────────────────────────
-  const { startDate, endDate } = useMemo(() => {
+  const {startDate, endDate} = useMemo(() => {
     if (periodFilter === '30days') {
       return {
         startDate: getDateOffsetString(-30),
@@ -195,7 +195,7 @@ export default function MyAttendancePage() {
   }, [periodFilter, selectedMonth, selectedYear]);
 
   // ── Data hooks ───────────────────────────────────────────────────
-  const { data: records = [], isLoading: loading } = useAttendanceByDateRange(startDate, endDate);
+  const {data: records = [], isLoading: loading} = useAttendanceByDateRange(startDate, endDate);
   useHolidaysByYear(selectedYear); // Pre-fetch for cache warming (data displayed on parent page)
 
   // Fetch time entries for expanded row
@@ -208,7 +208,7 @@ export default function MyAttendancePage() {
     const monday = new Date(today);
     monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
 
-    return Array.from({ length: 7 }, (_, i) => {
+    return Array.from({length: 7}, (_, i) => {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
       return {
@@ -237,7 +237,7 @@ export default function MyAttendancePage() {
     const onTimeCount = workRecords.filter((r) => !r.isLate).length;
     const onTimePct = workRecords.length > 0 ? Math.round((onTimeCount / workRecords.length) * 100) : 0;
 
-    return { avgMinutes, onTimePct, totalDays: workRecords.length };
+    return {avgMinutes, onTimePct, totalDays: workRecords.length};
   }, [records]);
 
   // ── Sorted records for log view (newest first) ──────────────────
@@ -252,7 +252,7 @@ export default function MyAttendancePage() {
     for (let i = 0; i < 7; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       months.push({
-        label: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+        label: d.toLocaleDateString('en-US', {month: 'short'}).toUpperCase(),
         month: d.getMonth(),
         year: d.getFullYear(),
       });
@@ -279,7 +279,7 @@ export default function MyAttendancePage() {
     // Previous month padding
     const prevMonthLastDay = new Date(selectedYear, selectedMonth, 0).getDate();
     for (let i = startDay - 1; i >= 0; i--) {
-      days.push({ date: prevMonthLastDay - i, isCurrentMonth: false, isToday: false, isWeekend: false });
+      days.push({date: prevMonthLastDay - i, isCurrentMonth: false, isToday: false, isWeekend: false});
     }
 
     // Current month
@@ -298,7 +298,7 @@ export default function MyAttendancePage() {
     // Next month padding
     const remaining = 42 - days.length;
     for (let i = 1; i <= remaining; i++) {
-      days.push({ date: i, isCurrentMonth: false, isToday: false, isWeekend: false });
+      days.push({date: i, isCurrentMonth: false, isToday: false, isWeekend: false});
     }
 
     return days;
@@ -331,12 +331,17 @@ export default function MyAttendancePage() {
 
   const getNonWorkLabel = (record: AttendanceRecord) => {
     switch (record.status) {
-      case 'WEEKLY_OFF': return 'Full day Weekly-off';
-      case 'HOLIDAY': return 'Holiday';
+      case 'WEEKLY_OFF':
+        return 'Full day Weekly-off';
+      case 'HOLIDAY':
+        return 'Holiday';
       case 'ON_LEAVE':
-      case 'LEAVE': return 'On Leave';
-      case 'ABSENT': return 'No Time Entries Logged';
-      default: return '';
+      case 'LEAVE':
+        return 'On Leave';
+      case 'ABSENT':
+        return 'No Time Entries Logged';
+      default:
+        return '';
     }
   };
 
@@ -367,7 +372,7 @@ export default function MyAttendancePage() {
       formatHoursFromMinutes(r.workDurationMinutes),
     ]);
     const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -385,7 +390,7 @@ export default function MyAttendancePage() {
             <h1 className="text-page-title text-[var(--text-primary)] skeuo-emboss">Attendance</h1>
           </div>
           <Button variant="outline" onClick={exportCSV} className="gap-2">
-            <Download className="h-4 w-4" />
+            <Download className="h-4 w-4"/>
             Export
           </Button>
         </div>
@@ -400,16 +405,17 @@ export default function MyAttendancePage() {
             <CardContent className="space-y-0">
               {loading ? (
                 <>
-                  <SkeletonStatRow />
-                  <SkeletonStatRow />
+                  <SkeletonStatRow/>
+                  <SkeletonStatRow/>
                 </>
               ) : (
                 <>
                   {/* Me row */}
                   <div className="flex items-center py-4 divider-b">
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-accent-500" />
+                      <div
+                        className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        <Users className="h-4 w-4 text-accent-500"/>
                       </div>
                       <span className="text-sm font-medium text-[var(--text-primary)]">Me</span>
                     </div>
@@ -431,8 +437,9 @@ export default function MyAttendancePage() {
                   {/* Team row */}
                   <div className="flex items-center py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-full bg-info-100 dark:bg-info-900/30 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-info-500" />
+                      <div
+                        className="w-8 h-8 rounded-full bg-info-100 dark:bg-info-900/30 flex items-center justify-center">
+                        <Users className="h-4 w-4 text-info-500"/>
                       </div>
                       <span className="text-sm font-medium text-[var(--text-secondary)]">My Team</span>
                     </div>
@@ -466,9 +473,9 @@ export default function MyAttendancePage() {
                     className={`
                       w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all
                       ${day.isToday
-                        ? 'bg-accent-500 text-white ring-2 ring-accent-200 dark:ring-accent-800'
-                        : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
-                      }
+                      ? 'bg-accent-500 text-white ring-2 ring-accent-200 dark:ring-accent-800'
+                      : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
+                    }
                     `}
                   >
                     {day.label}
@@ -484,12 +491,12 @@ export default function MyAttendancePage() {
                 {todayRecord?.checkInTime ? (
                   <>
                     <div className="relative h-4 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                      <AttendanceTimelineBar record={todayRecord} />
+                      <AttendanceTimelineBar record={todayRecord}/>
                     </div>
                     <div className="row-between text-caption">
                       <span>Duration: {formatDuration(todayRecord.workDurationMinutes)}</span>
                       <div className="flex items-center gap-1">
-                        <Timer className="h-3 w-3" />
+                        <Timer className="h-3 w-3"/>
                         <span>60 min</span>
                       </div>
                     </div>
@@ -520,17 +527,24 @@ export default function MyAttendancePage() {
                   })}
                 </p>
                 <p className="text-caption mt-1">
-                  {liveTime.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                  {liveTime.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
                 </p>
               </div>
               {/* Action links */}
               <div className="space-y-2">
-                <button className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
-                  <LogIn className="h-4 w-4" />
+                <button
+                  className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
+                  <LogIn className="h-4 w-4"/>
                   <span>Remote Clock-In</span>
                 </button>
-                <button className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
-                  <FileText className="h-4 w-4" />
+                <button
+                  className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
+                  <FileText className="h-4 w-4"/>
                   <span>Attendance Policy</span>
                 </button>
               </div>
@@ -569,9 +583,9 @@ export default function MyAttendancePage() {
             {/* Tabs */}
             <div className="flex items-center gap-0 mt-4 border-b border-[var(--border-main)]">
               {[
-                { key: 'log' as TabView, label: 'Attendance Log' },
-                { key: 'calendar' as TabView, label: 'Calendar' },
-                { key: 'requests' as TabView, label: 'Attendance Requests' },
+                {key: 'log' as TabView, label: 'Attendance Log'},
+                {key: 'calendar' as TabView, label: 'Calendar'},
+                {key: 'requests' as TabView, label: 'Attendance Requests'},
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -579,9 +593,9 @@ export default function MyAttendancePage() {
                   className={`
                     cursor-pointer px-4 py-2 text-sm font-medium transition-colors relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                     ${activeTab === tab.key
-                      ? 'text-accent-700 dark:text-accent-400'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-                    }
+                    ? 'text-accent-700 dark:text-accent-400'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  }
                   `}
                 >
                   {tab.label}
@@ -602,10 +616,10 @@ export default function MyAttendancePage() {
               {activeTab === 'log' && (
                 <motion.div
                   key="log"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{opacity: 0, y: 8}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, y: -8}}
+                  transition={{duration: 0.2}}
                 >
                   {/* Period filters */}
                   <div className="row-between mb-6 flex-wrap gap-4">
@@ -618,9 +632,9 @@ export default function MyAttendancePage() {
                         className={`
                           cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                           ${periodFilter === '30days'
-                            ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
-                            : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
-                          }
+                          ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
+                          : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
+                        }
                         `}
                       >
                         30 DAYS
@@ -638,9 +652,9 @@ export default function MyAttendancePage() {
                             className={`
                               cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                               ${periodFilter === key
-                                ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
-                                : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
-                              }
+                              ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
+                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
+                            }
                             `}
                           >
                             {m.label}
@@ -654,126 +668,132 @@ export default function MyAttendancePage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b border-[var(--border-main)]">
-                          <th className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[140px]">
-                            Date
-                          </th>
-                          <th className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                            Attendance Visual
-                          </th>
-                          <th className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[120px]">
-                            Effective Hours
-                          </th>
-                          <th className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[120px]">
-                            Gross Hours
-                          </th>
-                          <th className="text-center py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[60px]">
-                            Log
-                          </th>
-                        </tr>
+                      <tr className="border-b border-[var(--border-main)]">
+                        <th
+                          className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[140px]">
+                          Date
+                        </th>
+                        <th
+                          className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                          Attendance Visual
+                        </th>
+                        <th
+                          className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[120px]">
+                          Effective Hours
+                        </th>
+                        <th
+                          className="text-left py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[120px]">
+                          Gross Hours
+                        </th>
+                        <th
+                          className="text-center py-2 px-2 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider w-[60px]">
+                          Log
+                        </th>
+                      </tr>
                       </thead>
                       <tbody>
-                        {loading ? (
-                          Array.from({ length: 10 }).map((_, i) => (
-                            <tr key={i}>
-                              <td colSpan={5}><SkeletonLogRow /></td>
-                            </tr>
-                          ))
-                        ) : sortedRecords.length === 0 ? (
-                          <tr>
-                            <td colSpan={5} className="text-center py-16">
-                              <div className="flex flex-col items-center gap-2">
-                                <Calendar className="h-8 w-8 text-[var(--text-muted)]" />
-                                <p className="text-sm font-medium text-[var(--text-muted)]">No attendance records found</p>
-                                <p className="text-caption">Records will appear here once you start clocking in</p>
-                              </div>
-                            </td>
+                      {loading ? (
+                        Array.from({length: 10}).map((_, i) => (
+                          <tr key={i}>
+                            <td colSpan={5}><SkeletonLogRow/></td>
                           </tr>
-                        ) : (
-                          sortedRecords.map((record) => {
-                            const isNonWork = isNonWorkingDay(record);
-                            const effectiveMin = record.workDurationMinutes || 0;
-                            const effectiveHours = effectiveMin / 60;
-                            const isExpanded = expandedRow === record.attendanceDate;
+                        ))
+                      ) : sortedRecords.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="text-center py-16">
+                            <div className="flex flex-col items-center gap-2">
+                              <Calendar className="h-8 w-8 text-[var(--text-muted)]"/>
+                              <p className="text-sm font-medium text-[var(--text-muted)]">No attendance records
+                                found</p>
+                              <p className="text-caption">Records will appear here once you start clocking in</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        sortedRecords.map((record) => {
+                          const isNonWork = isNonWorkingDay(record);
+                          const effectiveMin = record.workDurationMinutes || 0;
+                          const effectiveHours = effectiveMin / 60;
+                          const isExpanded = expandedRow === record.attendanceDate;
 
-                            return (
-                              <motion.tr
-                                key={record.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className={`
+                          return (
+                            <motion.tr
+                              key={record.id}
+                              initial={{opacity: 0}}
+                              animate={{opacity: 1}}
+                              className={`
                                   divider-b transition-colors
                                   ${isNonWork ? 'bg-surface-50 dark:bg-surface-900/30' : 'hover:bg-[var(--bg-card-hover)]'}
                                 `}
-                              >
-                                {/* Date */}
-                                <td className="py-4 px-2">
-                                  <div className="flex items-center gap-2">
+                            >
+                              {/* Date */}
+                              <td className="py-4 px-2">
+                                <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium text-[var(--text-primary)]">
                                       {formatDateLabel(record.attendanceDate)}
                                     </span>
-                                    {getStatusBadge(record)}
-                                  </div>
-                                </td>
+                                  {getStatusBadge(record)}
+                                </div>
+                              </td>
 
-                                {/* Attendance Visual */}
-                                <td className="py-4 px-2">
-                                  {isNonWork || record.status === 'ABSENT' ? (
-                                    <span className="text-body-muted italic">
+                              {/* Attendance Visual */}
+                              <td className="py-4 px-2">
+                                {isNonWork || record.status === 'ABSENT' ? (
+                                  <span className="text-body-muted italic">
                                       {getNonWorkLabel(record)}
                                     </span>
-                                  ) : (
-                                    <div className="flex items-center gap-2">
-                                      <AttendanceTimelineBar record={record} />
-                                      {record.checkInLocation && (
-                                        <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
-                                      )}
-                                    </div>
-                                  )}
-                                </td>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <AttendanceTimelineBar record={record}/>
+                                    {record.checkInLocation && (
+                                      <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"/>
+                                    )}
+                                  </div>
+                                )}
+                              </td>
 
-                                {/* Effective Hours */}
-                                <td className="py-4 px-2">
-                                  {!isNonWork && effectiveMin > 0 ? (
-                                    <div className="flex items-center gap-2">
-                                      <StatusDot hours={effectiveHours} />
-                                      <span className="text-sm font-medium text-[var(--text-primary)] tabular-nums">
+                              {/* Effective Hours */}
+                              <td className="py-4 px-2">
+                                {!isNonWork && effectiveMin > 0 ? (
+                                  <div className="flex items-center gap-2">
+                                    <StatusDot hours={effectiveHours}/>
+                                    <span className="text-sm font-medium text-[var(--text-primary)] tabular-nums">
                                         {formatDuration(effectiveMin)}
                                       </span>
-                                    </div>
-                                  ) : (
-                                    <span className="text-body-muted">--</span>
-                                  )}
-                                </td>
+                                  </div>
+                                ) : (
+                                  <span className="text-body-muted">--</span>
+                                )}
+                              </td>
 
-                                {/* Gross Hours */}
-                                <td className="py-4 px-2">
+                              {/* Gross Hours */}
+                              <td className="py-4 px-2">
                                   <span className="text-body-secondary tabular-nums">
                                     {!isNonWork && effectiveMin > 0
                                       ? formatHoursFromMinutes(effectiveMin + (record.breakDurationMinutes || 0))
                                       : '--'
                                     }
                                   </span>
-                                </td>
+                              </td>
 
-                                {/* Log action */}
-                                <td className="py-4 px-2 text-center">
-                                  {!isNonWork && record.checkInTime ? (
-                                    <button
-                                      onClick={() => setExpandedRow(isExpanded ? null : record.attendanceDate)}
-                                      className="cursor-pointer inline-flex items-center justify-center w-7 h-7 rounded-full hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                      aria-label={isExpanded ? 'Hide time entries' : 'View time entries'}
-                                    >
-                                      <Eye className="h-4 w-4 text-accent-500" />
-                                    </button>
-                                  ) : (
-                                    <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)] mx-auto" />
-                                  )}
-                                </td>
-                              </motion.tr>
-                            );
-                          })
-                        )}
+                              {/* Log action */}
+                              <td className="py-4 px-2 text-center">
+                                {!isNonWork && record.checkInTime ? (
+                                  <button
+                                    onClick={() => setExpandedRow(isExpanded ? null : record.attendanceDate)}
+                                    className="cursor-pointer inline-flex items-center justify-center w-7 h-7 rounded-full hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    aria-label={isExpanded ? 'Hide time entries' : 'View time entries'}
+                                  >
+                                    <Eye className="h-4 w-4 text-accent-500"/>
+                                  </button>
+                                ) : (
+                                  <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)] mx-auto"/>
+                                )}
+                              </td>
+                            </motion.tr>
+                          );
+                        })
+                      )}
                       </tbody>
                     </table>
                   </div>
@@ -784,10 +804,10 @@ export default function MyAttendancePage() {
               {activeTab === 'calendar' && (
                 <motion.div
                   key="calendar"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{opacity: 0, y: 8}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, y: -8}}
+                  transition={{duration: 0.2}}
                 >
                   {/* Month navigation */}
                   <div className="row-between mb-4">
@@ -803,10 +823,13 @@ export default function MyAttendancePage() {
                       className="cursor-pointer p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       aria-label="Previous month"
                     >
-                      <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]" />
+                      <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]"/>
                     </button>
                     <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                      {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', {
+                        month: 'long',
+                        year: 'numeric'
+                      })}
                     </h3>
                     <button
                       onClick={() => {
@@ -820,14 +843,15 @@ export default function MyAttendancePage() {
                       className="cursor-pointer p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       aria-label="Next month"
                     >
-                      <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]" />
+                      <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
                     </button>
                   </div>
 
                   {/* Calendar grid — compact */}
                   <div className="grid grid-cols-7 gap-1 mb-2">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} className="text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider py-2">
+                      <div key={day}
+                           className="text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider py-2">
                         {day}
                       </div>
                     ))}
@@ -843,7 +867,8 @@ export default function MyAttendancePage() {
                           ${day.isCurrentMonth ? getCalCellColor(day.record, day.isWeekend) : 'bg-[var(--bg-secondary)]'}
                         `}
                       >
-                        <span className={`text-xs ${day.isToday ? 'font-bold text-accent-700 dark:text-accent-400' : 'text-[var(--text-primary)]'}`}>
+                        <span
+                          className={`text-xs ${day.isToday ? 'font-bold text-accent-700 dark:text-accent-400' : 'text-[var(--text-primary)]'}`}>
                           {day.date}
                         </span>
                         {day.record && day.isCurrentMonth && day.record.totalWorkHours ? (
@@ -858,23 +883,28 @@ export default function MyAttendancePage() {
                   {/* Legend */}
                   <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-md bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800" />
+                      <div
+                        className="w-3 h-3 rounded-md bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800"/>
                       <span className="text-caption">Full day</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-md bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800" />
+                      <div
+                        className="w-3 h-3 rounded-md bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800"/>
                       <span className="text-caption">Partial</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-md bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800" />
+                      <div
+                        className="w-3 h-3 rounded-md bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800"/>
                       <span className="text-caption">Absent</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-md bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800" />
+                      <div
+                        className="w-3 h-3 rounded-md bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800"/>
                       <span className="text-caption">Leave</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-md bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700" />
+                      <div
+                        className="w-3 h-3 rounded-md bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700"/>
                       <span className="text-caption">Off / Holiday</span>
                     </div>
                   </div>
@@ -885,15 +915,15 @@ export default function MyAttendancePage() {
               {activeTab === 'requests' && (
                 <motion.div
                   key="requests"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{opacity: 0, y: 8}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, y: -8}}
+                  transition={{duration: 0.2}}
                   className="py-8"
                 >
                   <div className="flex flex-col items-center gap-4 text-center">
                     <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
-                      <AlertCircle className="h-8 w-8 text-[var(--text-muted)]" />
+                      <AlertCircle className="h-8 w-8 text-[var(--text-muted)]"/>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">No pending requests</p>
@@ -901,8 +931,9 @@ export default function MyAttendancePage() {
                         Regularization and correction requests will appear here
                       </p>
                     </div>
-                    <Button variant="outline" className="gap-2" onClick={() => window.location.href = '/attendance/regularization'}>
-                      <FileText className="h-4 w-4" />
+                    <Button variant="outline" className="gap-2"
+                            onClick={() => window.location.href = '/attendance/regularization'}>
+                      <FileText className="h-4 w-4"/>
                       Request Regularization
                     </Button>
                   </div>

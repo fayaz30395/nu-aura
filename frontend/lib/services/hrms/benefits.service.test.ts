@@ -1,4 +1,18 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {benefitsService} from './benefits.service';
+import {apiClient} from '@/lib/api/client';
+import type {
+  BenefitClaim,
+  BenefitEnrollment,
+  BenefitPlan,
+  BenefitPlanEnhanced,
+  BenefitPlanRequest,
+  BenefitsDashboard,
+  ClaimRequest,
+  EmployeeBenefitsSummary,
+  EnrollmentRequest,
+} from '@/lib/types/hrms/benefits';
+import type {Page} from '@/lib/types/hrms/payroll';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,22 +23,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { benefitsService } from './benefits.service';
-import { apiClient } from '@/lib/api/client';
-import type {
-  BenefitPlan,
-  BenefitPlanEnhanced,
-  BenefitPlanRequest,
-  BenefitEnrollment,
-  EnrollmentRequest,
-  BenefitClaim,
-  ClaimRequest,
-  FlexAllocation,
-  BenefitsDashboard,
-  EmployeeBenefitsSummary,
-} from '@/lib/types/hrms/benefits';
-import type { Page } from '@/lib/types/hrms/payroll';
 
 const mockApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -68,7 +66,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockPlan });
+      mockApiClient.post.mockResolvedValueOnce({data: mockPlan});
 
       const result = await benefitsService.createPlan(planRequest);
 
@@ -122,7 +120,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.put.mockResolvedValueOnce({ data: mockPlan });
+      mockApiClient.put.mockResolvedValueOnce({data: mockPlan});
 
       const result = await benefitsService.updatePlan('plan-1', planRequest);
 
@@ -172,7 +170,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockPlan });
+      mockApiClient.post.mockResolvedValueOnce({data: mockPlan});
 
       const result = await benefitsService.activatePlan('plan-1');
 
@@ -210,7 +208,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockPlan });
+      mockApiClient.post.mockResolvedValueOnce({data: mockPlan});
 
       const result = await benefitsService.deactivatePlan('plan-1');
 
@@ -248,7 +246,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPlan });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPlan});
 
       const result = await benefitsService.getPlanById('plan-1');
 
@@ -292,12 +290,12 @@ describe('benefitsService', () => {
         number: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await benefitsService.getAllPlans();
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/benefits/plans', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result.content.length).toBe(1);
     });
@@ -332,7 +330,7 @@ describe('benefitsService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPlans });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPlans});
 
       const result = await benefitsService.getActivePlans();
 
@@ -370,7 +368,7 @@ describe('benefitsService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPlans });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPlans});
 
       const result = await benefitsService.getPlansByType('HEALTH');
 
@@ -442,13 +440,13 @@ describe('benefitsService', () => {
         number: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await benefitsService.getEnhancedPlans();
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
         '/benefits-enhanced/plans',
-        { params: { page: 0, size: 20 } }
+        {params: {page: 0, size: 20}}
       );
       expect(result.content[0].planType).toBe('HEALTH_INSURANCE');
     });
@@ -488,7 +486,7 @@ describe('benefitsService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPlans });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPlans});
 
       const result = await benefitsService.getActiveEnhancedPlans();
 
@@ -542,7 +540,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockEnrollment });
+      mockApiClient.post.mockResolvedValueOnce({data: mockEnrollment});
 
       const result = await benefitsService.enrollEmployee(enrollmentRequest);
 
@@ -599,7 +597,7 @@ describe('benefitsService', () => {
         approvedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockEnrollment });
+      mockApiClient.post.mockResolvedValueOnce({data: mockEnrollment});
 
       const result = await benefitsService.approveEnrollment(
         'enroll-1',
@@ -609,7 +607,7 @@ describe('benefitsService', () => {
       expect(mockApiClient.post).toHaveBeenCalledWith(
         '/benefits-enhanced/enrollments/enroll-1/approve',
         null,
-        { params: { comments: 'Approved' } }
+        {params: {comments: 'Approved'}}
       );
       expect(result.status).toBe('APPROVED');
     });
@@ -653,7 +651,7 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockClaim });
+      mockApiClient.post.mockResolvedValueOnce({data: mockClaim});
 
       const result = await benefitsService.submitClaim(claimRequest);
 
@@ -706,7 +704,7 @@ describe('benefitsService', () => {
         processedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockClaim });
+      mockApiClient.post.mockResolvedValueOnce({data: mockClaim});
 
       const result = await benefitsService.processClaim(
         'claim-1',
@@ -717,7 +715,7 @@ describe('benefitsService', () => {
       expect(mockApiClient.post).toHaveBeenCalledWith(
         '/benefits-enhanced/claims/claim-1/process',
         null,
-        { params: { approvedAmount: 4400, comments: 'Approved' } }
+        {params: {approvedAmount: 4400, comments: 'Approved'}}
       );
       expect(result.status).toBe('APPROVED');
     });
@@ -745,7 +743,7 @@ describe('benefitsService', () => {
         flexCreditsUsed: 1000,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockSummary });
+      mockApiClient.get.mockResolvedValueOnce({data: mockSummary});
 
       const result = await benefitsService.getEmployeeBenefitsSummary('emp-1');
 
@@ -777,11 +775,11 @@ describe('benefitsService', () => {
         pendingClaims: 3,
         totalClaimsAmount: 50000,
         approvedClaimsAmount: 40000,
-        enrollmentsByPlanType: { HEALTH_INSURANCE: 60, DENTAL: 40 },
-        claimsByStatus: { APPROVED: 15, PENDING: 3, REJECTED: 2 },
+        enrollmentsByPlanType: {HEALTH_INSURANCE: 60, DENTAL: 40},
+        claimsByStatus: {APPROVED: 15, PENDING: 3, REJECTED: 2},
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockDashboard });
+      mockApiClient.get.mockResolvedValueOnce({data: mockDashboard});
 
       const result = await benefitsService.getBenefitsDashboard();
 

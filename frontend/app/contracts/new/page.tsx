@@ -1,23 +1,23 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useCreateContract } from '@/lib/hooks/queries/useContracts';
-import { Button, Input, Select, Textarea, Card } from '@mantine/core';
-import { ArrowLeft } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { createLogger } from '@/lib/utils/logger';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {useCreateContract} from '@/lib/hooks/queries/useContracts';
+import {Button, Card, Input, Select, Textarea} from '@mantine/core';
+import {ArrowLeft} from 'lucide-react';
+import {notifications} from '@mantine/notifications';
+import {createLogger} from '@/lib/utils/logger';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 const log = createLogger('ContractPage');
 
 const contractFormSchema = z.object({
   title: z.string().min(1, 'Contract title is required').max(255, 'Title must not exceed 255 characters'),
-  type: z.enum(['EMPLOYMENT', 'VENDOR', 'NDA', 'SLA', 'FREELANCER', 'OTHER'], { errorMap: () => ({ message: 'Please select a contract type' }) }),
+  type: z.enum(['EMPLOYMENT', 'VENDOR', 'NDA', 'SLA', 'FREELANCER', 'OTHER'], {errorMap: () => ({message: 'Please select a contract type'})}),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().optional(),
   description: z.string().optional(),
@@ -28,7 +28,7 @@ type ContractFormData = z.infer<typeof contractFormSchema>;
 
 export default function CreateContractPage() {
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
   const createMutation = useCreateContract();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_CREATE);
@@ -39,7 +39,7 @@ export default function CreateContractPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContractFormData>({
+  const {register, control, handleSubmit, formState: {errors, isSubmitting}} = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
     defaultValues: {
       title: '',
@@ -66,22 +66,23 @@ export default function CreateContractPage() {
       router.push('/contracts');
     } catch (error) {
       log.error('Error creating contract:', error);
-      notifications.show({ title: 'Error', message: 'Failed to create contract. Please try again.', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to create contract. Please try again.', color: 'red'});
     }
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Contracts', href: '/contracts' },
-    { label: 'New Contract', href: '/contracts/new' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Contracts', href: '/contracts'},
+    {label: 'New Contract', href: '/contracts/new'},
   ];
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6 max-w-2xl">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} aria-label="Go back" className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
-            <ArrowLeft className="w-5 h-5" />
+          <button onClick={() => router.back()} aria-label="Go back"
+                  className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
+            <ArrowLeft className="w-5 h-5"/>
           </button>
           <h1 className="text-2xl font-bold skeuo-emboss">Create Contract</h1>
         </div>
@@ -102,16 +103,16 @@ export default function CreateContractPage() {
               <Controller
                 name="type"
                 control={control}
-                render={({ field }) => (
+                render={({field}) => (
                   <Select
                     placeholder="Select type"
                     data={[
-                      { value: 'EMPLOYMENT', label: 'Employment Contract' },
-                      { value: 'VENDOR', label: 'Vendor Contract' },
-                      { value: 'NDA', label: 'Non-Disclosure Agreement' },
-                      { value: 'SLA', label: 'Service Level Agreement' },
-                      { value: 'FREELANCER', label: 'Freelancer Agreement' },
-                      { value: 'OTHER', label: 'Other' },
+                      {value: 'EMPLOYMENT', label: 'Employment Contract'},
+                      {value: 'VENDOR', label: 'Vendor Contract'},
+                      {value: 'NDA', label: 'Non-Disclosure Agreement'},
+                      {value: 'SLA', label: 'Service Level Agreement'},
+                      {value: 'FREELANCER', label: 'Freelancer Agreement'},
+                      {value: 'OTHER', label: 'Other'},
                     ]}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}

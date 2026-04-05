@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Training/LMS E2E Tests
@@ -6,22 +6,22 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Training Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display training page with header', async ({ page }) => {
+  test('should display training page with header', async ({page}) => {
     await expect(page.locator('h1')).toContainText('Training');
   });
 
-  test('should display tab navigation', async ({ page }) => {
+  test('should display tab navigation', async ({page}) => {
     // Check for tabs
     await expect(page.locator('text=My Trainings').first()).toBeVisible();
     await expect(page.locator('text=Course Catalog').first()).toBeVisible();
   });
 
-  test('should display stats cards', async ({ page }) => {
+  test('should display stats cards', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for stat cards
@@ -35,14 +35,14 @@ test.describe('Training Page', () => {
 });
 
 test.describe('Training - My Trainings Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
     await page.click('text=My Trainings');
     await page.waitForTimeout(500);
   });
 
-  test('should display My Trainings tab content', async ({ page }) => {
+  test('should display My Trainings tab content', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should show enrolled trainings or empty state
@@ -52,7 +52,7 @@ test.describe('Training - My Trainings Tab', () => {
     expect(hasTrainings || hasEmpty || true).toBe(true);
   });
 
-  test('should show progress for enrolled courses', async ({ page }) => {
+  test('should show progress for enrolled courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for progress indicators
@@ -63,7 +63,7 @@ test.describe('Training - My Trainings Tab', () => {
     expect(hasProgress || hasPercentage || true).toBe(true);
   });
 
-  test('should show continue button for in-progress courses', async ({ page }) => {
+  test('should show continue button for in-progress courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const continueBtn = page.locator('button:has-text("Continue")').first();
@@ -73,7 +73,7 @@ test.describe('Training - My Trainings Tab', () => {
     expect(hasButton || true).toBe(true);
   });
 
-  test('should show certificate download for completed courses', async ({ page }) => {
+  test('should show certificate download for completed courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const certBtn = page.locator('button:has-text("Certificate"), button:has-text("Download")').first();
@@ -85,19 +85,19 @@ test.describe('Training - My Trainings Tab', () => {
 });
 
 test.describe('Training - Course Catalog Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
     await page.click('text=Course Catalog');
     await page.waitForTimeout(500);
   });
 
-  test('should switch to Course Catalog tab', async ({ page }) => {
+  test('should switch to Course Catalog tab', async ({page}) => {
     const tab = page.locator('button:has-text("Course Catalog")');
     await expect(tab).toBeVisible();
   });
 
-  test('should display available courses', async ({ page }) => {
+  test('should display available courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should show course cards or empty state
@@ -107,7 +107,7 @@ test.describe('Training - Course Catalog Tab', () => {
     expect(hasCourses || hasEmpty || true).toBe(true);
   });
 
-  test('should show enroll button on courses', async ({ page }) => {
+  test('should show enroll button on courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const enrollBtn = page.locator('button:has-text("Enroll")').first();
@@ -117,7 +117,7 @@ test.describe('Training - Course Catalog Tab', () => {
     expect(hasButton || true).toBe(true);
   });
 
-  test('should display course details', async ({ page }) => {
+  test('should display course details', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for common course elements
@@ -129,7 +129,7 @@ test.describe('Training - Course Catalog Tab', () => {
     expect(hasDuration || hasLevel || hasCategory || true).toBe(true);
   });
 
-  test('should filter courses by search', async ({ page }) => {
+  test('should filter courses by search', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for search input
@@ -146,14 +146,14 @@ test.describe('Training - Course Catalog Tab', () => {
 });
 
 test.describe('Training - Enrollment Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
     await page.click('text=Course Catalog');
     await page.waitForTimeout(500);
   });
 
-  test('should enroll in a course', async ({ page }) => {
+  test('should enroll in a course', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const enrollBtn = page.locator('button:has-text("Enroll")').first();
@@ -171,7 +171,7 @@ test.describe('Training - Enrollment Flow', () => {
     }
   });
 
-  test('should prevent duplicate enrollment', async ({ page }) => {
+  test('should prevent duplicate enrollment', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Find a course that might already be enrolled
@@ -184,12 +184,12 @@ test.describe('Training - Enrollment Flow', () => {
 });
 
 test.describe('Training - Manage Programs Tab (Admin)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display Manage Programs tab for admin', async ({ page }) => {
+  test('should display Manage Programs tab for admin', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check if admin tab is visible
@@ -200,7 +200,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
     expect(hasTab || true).toBe(true);
   });
 
-  test('should show create program button for admin', async ({ page }) => {
+  test('should show create program button for admin', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Click Manage Programs if visible
@@ -219,7 +219,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
     }
   });
 
-  test('should display program management table', async ({ page }) => {
+  test('should display program management table', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const manageTab = page.locator('button:has-text("Manage Programs")').first();
@@ -239,14 +239,14 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
 });
 
 test.describe('Training - Progress Tracking', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
     await page.click('text=My Trainings');
     await page.waitForTimeout(500);
   });
 
-  test('should display progress bars', async ({ page }) => {
+  test('should display progress bars', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for progress bar elements
@@ -257,7 +257,7 @@ test.describe('Training - Progress Tracking', () => {
     expect(count >= 0).toBe(true);
   });
 
-  test('should show completion status', async ({ page }) => {
+  test('should show completion status', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for status indicators
@@ -269,7 +269,7 @@ test.describe('Training - Progress Tracking', () => {
     expect(hasCompleted || hasInProgress || hasNotStarted || true).toBe(true);
   });
 
-  test('should display enrollment date', async ({ page }) => {
+  test('should display enrollment date', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for date indicators
@@ -281,12 +281,12 @@ test.describe('Training - Progress Tracking', () => {
 });
 
 test.describe('Training - Visual Elements', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should have consistent card styling', async ({ page }) => {
+  test('should have consistent card styling', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for cards with proper styling
@@ -296,7 +296,7 @@ test.describe('Training - Visual Elements', () => {
     expect(count).toBeGreaterThanOrEqual(0);
   });
 
-  test('should display icons with courses', async ({ page }) => {
+  test('should display icons with courses', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for SVG icons
@@ -306,26 +306,26 @@ test.describe('Training - Visual Elements', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should be responsive', async ({ page }) => {
+  test('should be responsive', async ({page}) => {
     // Test at different viewport sizes
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     // Page should still be visible
     await expect(page.locator('h1')).toBeVisible();
 
     // Reset viewport
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });
 
 test.describe('Training - Full Enrollment + Completion Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/training');
     await page.waitForLoadState('networkidle');
   });
 
-  test('enroll in course from catalog, then verify it appears in My Trainings', async ({ page }) => {
+  test('enroll in course from catalog, then verify it appears in My Trainings', async ({page}) => {
     // Navigate to Course Catalog
     await page.click('text=Course Catalog');
     await page.waitForTimeout(1000);
@@ -366,7 +366,7 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
     expect(hasEnroll || true).toBe(true);
   });
 
-  test('progress tracking updates when continuing a course', async ({ page }) => {
+  test('progress tracking updates when continuing a course', async ({page}) => {
     // Navigate to My Trainings
     await page.click('text=My Trainings');
     await page.waitForTimeout(1000);
@@ -396,7 +396,7 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
     expect(hasContinue || true).toBe(true);
   });
 
-  test('completed course shows certificate option and 100% progress', async ({ page }) => {
+  test('completed course shows certificate option and 100% progress', async ({page}) => {
     await page.click('text=My Trainings');
     await page.waitForTimeout(1000);
 
@@ -415,7 +415,7 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
     expect(hasCompleted || true).toBe(true);
   });
 
-  test('admin can create a training program with modules', async ({ page }) => {
+  test('admin can create a training program with modules', async ({page}) => {
     await page.waitForTimeout(500);
 
     const manageTab = page.locator('button:has-text("Manage Programs"), button:has-text("Manage")').first();

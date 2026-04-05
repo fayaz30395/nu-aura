@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { publicApiClient } from '@/lib/api/public-client';
+import {useQuery} from '@tanstack/react-query';
+import {publicApiClient} from '@/lib/api/public-client';
 
 interface Job {
   id: string;
@@ -51,7 +51,7 @@ export function usePublicJobs(filters: CareersFilters) {
       if (filters.type) params.type = filters.type;
       if (filters.q) params.q = filters.q;
 
-      const response = await publicApiClient.get<JobsResponse>('/public/careers/jobs', { params });
+      const response = await publicApiClient.get<JobsResponse>('/public/careers/jobs', {params});
       return response.data.jobs ?? [];
     },
     staleTime: 30_000, // public page, cache for 30s

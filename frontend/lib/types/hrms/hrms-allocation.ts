@@ -1,4 +1,4 @@
-import { ProjectStatus } from './hrms-project';
+import {ProjectStatus} from './hrms-project';
 
 export interface ProjectAllocation {
   id: string;

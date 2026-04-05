@@ -161,30 +161,42 @@ export interface TaskFilterOptions {
 
 // Utility constants
 export const TASK_STATUS_OPTIONS: { value: TaskStatus; label: string; color: string }[] = [
-  { value: 'BACKLOG', label: 'Backlog', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]' },
-  { value: 'TODO', label: 'To Do', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]' },
-  { value: 'IN_PROGRESS', label: 'In Progress', color: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300' },
-  { value: 'IN_REVIEW', label: 'In Review', color: 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500' },
-  { value: 'BLOCKED', label: 'Blocked', color: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300' },
-  { value: 'DONE', label: 'Done', color: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300' },
-  { value: 'CANCELLED', label: 'Cancelled', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]' },
+  {value: 'BACKLOG', label: 'Backlog', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'},
+  {value: 'TODO', label: 'To Do', color: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'},
+  {
+    value: 'IN_PROGRESS',
+    label: 'In Progress',
+    color: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300'
+  },
+  {
+    value: 'IN_REVIEW',
+    label: 'In Review',
+    color: 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500'
+  },
+  {value: 'BLOCKED', label: 'Blocked', color: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300'},
+  {value: 'DONE', label: 'Done', color: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300'},
+  {value: 'CANCELLED', label: 'Cancelled', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]'},
 ];
 
 export const TASK_PRIORITY_OPTIONS: { value: TaskPriority; label: string; color: string }[] = [
-  { value: 'LOW', label: 'Low', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]' },
-  { value: 'MEDIUM', label: 'Medium', color: 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400' },
-  { value: 'HIGH', label: 'High', color: 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400' },
-  { value: 'CRITICAL', label: 'Critical', color: 'bg-danger-100 text-danger-600 dark:bg-danger-900 dark:text-danger-400' },
+  {value: 'LOW', label: 'Low', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]'},
+  {value: 'MEDIUM', label: 'Medium', color: 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400'},
+  {value: 'HIGH', label: 'High', color: 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400'},
+  {
+    value: 'CRITICAL',
+    label: 'Critical',
+    color: 'bg-danger-100 text-danger-600 dark:bg-danger-900 dark:text-danger-400'
+  },
 ];
 
 export const TASK_TYPE_OPTIONS: { value: TaskType; label: string; icon: string }[] = [
-  { value: 'EPIC', label: 'Epic', icon: '⚡' },
-  { value: 'STORY', label: 'Story', icon: '📖' },
-  { value: 'TASK', label: 'Task', icon: '✓' },
-  { value: 'SUBTASK', label: 'Subtask', icon: '↳' },
-  { value: 'BUG', label: 'Bug', icon: '🐛' },
-  { value: 'FEATURE', label: 'Feature', icon: '✨' },
-  { value: 'IMPROVEMENT', label: 'Improvement', icon: '📈' },
+  {value: 'EPIC', label: 'Epic', icon: '⚡'},
+  {value: 'STORY', label: 'Story', icon: '📖'},
+  {value: 'TASK', label: 'Task', icon: '✓'},
+  {value: 'SUBTASK', label: 'Subtask', icon: '↳'},
+  {value: 'BUG', label: 'Bug', icon: '🐛'},
+  {value: 'FEATURE', label: 'Feature', icon: '✨'},
+  {value: 'IMPROVEMENT', label: 'Improvement', icon: '📈'},
 ];
 
 // Helper functions

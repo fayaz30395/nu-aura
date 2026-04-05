@@ -14,12 +14,16 @@ description: Use when asked to create CRUD for a new entity, add a new module, o
 ## Input Required
 
 Ask the user for:
+
 1. **Entity name** (PascalCase, e.g., `AssetCategory`)
-2. **Module** — which sub-app/package (`employee`, `recruitment`, `performance`, `knowledge`, `training`, etc.)
+2. **Module** — which sub-app/package (`employee`, `recruitment`, `performance`, `knowledge`,
+   `training`, etc.)
 3. **Field definitions** — name, Java type, nullable?, validation constraints
-4. **Permission prefix** — e.g., `ASSET_CATEGORY` (will generate `ASSET_CATEGORY:READ`, `ASSET_CATEGORY:MANAGE`)
+4. **Permission prefix** — e.g., `ASSET_CATEGORY` (will generate `ASSET_CATEGORY:READ`,
+   `ASSET_CATEGORY:MANAGE`)
 5. **Cache TTL tier** — `short` (5-15min), `medium` (4hr), `long` (24hr) — default `medium`
-6. **Parent entity** (optional) — if this entity belongs to another (e.g., AssetCategory belongs to AssetModule)
+6. **Parent entity** (optional) — if this entity belongs to another (e.g., AssetCategory belongs to
+   AssetModule)
 
 ## Steps
 
@@ -78,15 +82,18 @@ public class {EntityName} extends TenantAware {
 ```
 
 **Key rules:**
+
 - Table name: `snake_case`, plural (e.g., `asset_categories`)
-- Extends `TenantAware` (which extends `BaseEntity` — gives you `id`, `createdAt`, `updatedAt`, `createdBy`, `lastModifiedBy`, `version`, `isDeleted`, `deletedAt`, `tenantId`)
+- Extends `TenantAware` (which extends `BaseEntity` — gives you `id`, `createdAt`, `updatedAt`,
+  `createdBy`, `lastModifiedBy`, `version`, `isDeleted`, `deletedAt`, `tenantId`)
 - Always add `@Where(clause = "is_deleted = false")` for soft deletes
 - Index all FK columns and the `tenantId` column
 - Use `@SuperBuilder` (not `@Builder`) because of inheritance
 
 ### Step 3: Create the Repository
 
-**File:** `backend/src/main/java/com/hrms/infrastructure/{module}/repository/{EntityName}Repository.java`
+**File:**
+`backend/src/main/java/com/hrms/infrastructure/{module}/repository/{EntityName}Repository.java`
 
 ```java
 package com.hrms.infrastructure.{module}.repository;
@@ -124,6 +131,7 @@ public interface {EntityName}Repository extends JpaRepository<{EntityName}, UUID
 ```
 
 **Key rules:**
+
 - Every query method must include `tenantId` parameter — never query without tenant scoping
 - Return `Optional` for single-entity lookups
 - `Page` for paginated lists, `List` for dropdown/select data
@@ -206,6 +214,7 @@ public class {EntityName}Response implements Serializable {
 ```
 
 **Key rules:**
+
 - Must implement `Serializable` (Redis caching)
 - Include a static factory method `from{EntityName}` for entity-to-DTO conversion
 - Use `@Builder(toBuilder = true)` to allow enrichment after initial build
@@ -347,6 +356,7 @@ public class {EntityName}Service {
 ```
 
 **Key rules:**
+
 - Constructor injection (no `@Autowired`)
 - `TenantContext.requireCurrentTenant()` in EVERY method — never skip tenant scoping
 - `@Transactional` on write methods, `@Transactional(readOnly = true)` on reads
@@ -356,6 +366,7 @@ public class {EntityName}Service {
 - Audit log on create, update (if sensitive), and delete
 
 **IMPORTANT:** You must also register the cache name in `CacheConfig.java`:
+
 - **File:** `backend/src/main/java/com/hrms/common/config/CacheConfig.java`
 - Add a constant: `public static final String {CACHE_NAME} = "{cache_name}";`
 - Add it to the cache manager builder with the appropriate TTL tier
@@ -477,6 +488,7 @@ public class {EntityName}Controller {
 ```
 
 **Key rules:**
+
 - `@RequiresPermission` on EVERY endpoint — no exceptions
 - Constructor injection only
 - `@Valid` on all `@RequestBody` parameters
@@ -595,6 +607,7 @@ export const {entityName}Service = {
 ```
 
 **Key rules:**
+
 - Import `apiClient` from `../../api/client` — NEVER create a new Axios instance
 - Return `response.data` (Axios wraps responses)
 - Use `Page<T>` for paginated endpoints
@@ -692,9 +705,11 @@ export function useDelete{EntityName}() {
 ```
 
 **Key rules:**
+
 - `'use client'` directive at top
 - Query keys follow the factory pattern: `all > lists > list(params) > details > detail(id)`
-- `staleTime` based on how frequently the data changes (30min for config data, 5min for transactional)
+- `staleTime` based on how frequently the data changes (30min for config data, 5min for
+  transactional)
 - Mutations invalidate all related query keys on success/settled
 - `enabled` guard on detail queries to prevent fetching with empty ID
 
@@ -703,6 +718,7 @@ export function useDelete{EntityName}() {
 **File:** `frontend/app/{route-path}/page.tsx`
 
 Generate a list page following the exact pattern from `office-locations/page.tsx`:
+
 - `'use client'` directive
 - Role-based access guard using `usePermissions()` + `useAuth()`
 - Zod schema for the form

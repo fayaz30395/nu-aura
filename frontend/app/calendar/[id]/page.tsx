@@ -1,47 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { calendarService } from '@/lib/services/hrms/calendar.service';
-import { EventStatus } from '@/lib/types/hrms/calendar';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {useState} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {calendarService} from '@/lib/services/hrms/calendar.service';
+import {EventStatus} from '@/lib/types/hrms/calendar';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useCalendarEvent, useDeleteCalendarEvent, useSyncEventToGoogle,} from '@/lib/hooks/queries/useCalendar';
 import {
-  useCalendarEvent,
-  useDeleteCalendarEvent,
-  useSyncEventToGoogle,
-} from '@/lib/hooks/queries/useCalendar';
-import {
-  ArrowLeft,
-  Loader2,
   AlertCircle,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  MapPin,
-  Video,
-  Users,
+  ArrowLeft,
   Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  ExternalLink,
   Globe,
+  Loader2,
+  MapPin,
   RefreshCw,
   Trash2,
-  ExternalLink,
+  Users,
+  Video,
+  XCircle,
 } from 'lucide-react';
 
 export default function EventDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const eventId = params.id as string;
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   // React Query hooks
-  const { data: event, isLoading, error } = useCalendarEvent(eventId);
+  const {data: event, isLoading, error} = useCalendarEvent(eventId);
   const deleteEventMutation = useDeleteCalendarEvent();
   const syncToGoogleMutation = useSyncEventToGoogle();
 
@@ -109,7 +104,8 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+            <Loader2
+              className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
@@ -126,7 +122,8 @@ export default function EventDetailPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+            <AlertCircle
+              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Event not found'}
             </p>
@@ -154,7 +151,7 @@ export default function EventDetailPage() {
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
@@ -169,7 +166,7 @@ export default function EventDetailPage() {
               <span
                 className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
-                <StatusIcon className="h-4 w-4" />
+                <StatusIcon className="h-4 w-4"/>
                 {event.status}
               </span>
             </div>
@@ -182,7 +179,7 @@ export default function EventDetailPage() {
         {/* Time Card */}
         <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
           <div className="flex items-center gap-4 mb-4">
-            <Calendar className="h-6 w-6" />
+            <Calendar className="h-6 w-6"/>
             <h2 className="text-xl font-semibold">Event Time</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -214,7 +211,7 @@ export default function EventDetailPage() {
           {event.location && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <MapPin className="h-5 w-5 text-[var(--text-secondary)]" />
+                <MapPin className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Location</p>
@@ -229,7 +226,7 @@ export default function EventDetailPage() {
           {event.meetingLink && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <Video className="h-5 w-5 text-[var(--text-secondary)]" />
+                <Video className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Meeting Link</p>
@@ -240,7 +237,7 @@ export default function EventDetailPage() {
                   className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   Join Meeting
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-4 w-4"/>
                 </a>
               </div>
             </div>
@@ -250,7 +247,7 @@ export default function EventDetailPage() {
           {event.organizerName && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <Users className="h-5 w-5 text-[var(--text-secondary)]" />
+                <Users className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Organizer</p>
@@ -265,7 +262,7 @@ export default function EventDetailPage() {
           {event.attendeeNames && event.attendeeNames.length > 0 && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <Users className="h-5 w-5 text-[var(--text-secondary)]" />
+                <Users className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Attendees</p>
@@ -287,7 +284,7 @@ export default function EventDetailPage() {
           {event.reminderMinutes !== undefined && event.reminderMinutes !== null && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <Bell className="h-5 w-5 text-[var(--text-secondary)]" />
+                <Bell className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Reminder</p>
@@ -295,10 +292,10 @@ export default function EventDetailPage() {
                   {event.reminderMinutes === 0
                     ? 'At time of event'
                     : event.reminderMinutes < 60
-                    ? `${event.reminderMinutes} minutes before`
-                    : event.reminderMinutes === 60
-                    ? '1 hour before'
-                    : `${event.reminderMinutes / 60} hours before`}
+                      ? `${event.reminderMinutes} minutes before`
+                      : event.reminderMinutes === 60
+                        ? '1 hour before'
+                        : `${event.reminderMinutes / 60} hours before`}
                 </p>
               </div>
             </div>
@@ -308,7 +305,7 @@ export default function EventDetailPage() {
           {event.visibility && (
             <div className="flex items-start gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
-                <Globe className="h-5 w-5 text-[var(--text-secondary)]" />
+                <Globe className="h-5 w-5 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <p className="text-body-muted">Visibility</p>
@@ -362,8 +359,8 @@ export default function EventDetailPage() {
                   event.syncStatus === 'SYNCED'
                     ? 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300'
                     : event.syncStatus === 'SYNC_ERROR'
-                    ? 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300'
-                    : 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300'
+                      ? 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300'
+                      : 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300'
                 }`}
               >
                 {event.syncStatus}
@@ -390,9 +387,9 @@ export default function EventDetailPage() {
                   className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {syncToGoogleMutation.isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin"/>
                   ) : (
-                    <RefreshCw className="h-5 w-5" />
+                    <RefreshCw className="h-5 w-5"/>
                   )}
                   Sync to Google
                 </button>
@@ -403,7 +400,7 @@ export default function EventDetailPage() {
                   onClick={handleDelete}
                   className="flex items-center justify-center gap-2 px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Trash2 className="h-5 w-5" />
+                  <Trash2 className="h-5 w-5"/>
                   Delete
                 </button>
               </PermissionGate>

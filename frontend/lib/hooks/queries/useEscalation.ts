@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { escalationApi } from '@/lib/api/escalation';
-import { EscalationConfig as _EscalationConfig, EscalationConfigRequest } from '@/lib/types/core/escalation';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {escalationApi} from '@/lib/api/escalation';
+import {EscalationConfigRequest} from '@/lib/types/core/escalation';
 
 // Query key factory
 const escalationKeys = {
@@ -38,8 +38,8 @@ export function useUpsertEscalationConfig(workflowId: string) {
     mutationFn: (data: EscalationConfigRequest) =>
       escalationApi.upsertConfig(workflowId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: escalationKeys.config(workflowId) });
-      queryClient.invalidateQueries({ queryKey: escalationKeys.configs() });
+      queryClient.invalidateQueries({queryKey: escalationKeys.config(workflowId)});
+      queryClient.invalidateQueries({queryKey: escalationKeys.configs()});
       notifications.show({
         title: 'Success',
         message: 'Escalation config saved successfully',
@@ -66,8 +66,8 @@ export function useDeleteEscalationConfig(workflowId: string) {
   return useMutation({
     mutationFn: () => escalationApi.deleteConfig(workflowId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: escalationKeys.config(workflowId) });
-      queryClient.invalidateQueries({ queryKey: escalationKeys.configs() });
+      queryClient.invalidateQueries({queryKey: escalationKeys.config(workflowId)});
+      queryClient.invalidateQueries({queryKey: escalationKeys.configs()});
       notifications.show({
         title: 'Success',
         message: 'Escalation config deleted successfully',

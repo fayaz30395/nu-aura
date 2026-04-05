@@ -1,39 +1,39 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  useEmployeeBalancesForYear,
   useActiveLeaveTypes,
+  useEmployeeBalancesForYear,
   useEmployeeLeaveRequests,
 } from '@/lib/hooks/queries/useLeaves';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { motion } from 'framer-motion';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { NuAuraLoader } from '@/components/ui/Loading';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {motion} from 'framer-motion';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {NuAuraLoader} from '@/components/ui/Loading';
 import {
-  Calendar,
-  Plus,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  FileText,
-  CalendarDays,
-  ChevronRight,
-  Umbrella,
-  Heart,
   Baby,
   Briefcase,
+  Calendar,
+  CalendarDays,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  FileText,
+  Heart,
   HelpCircle,
+  Plus,
+  Umbrella,
+  XCircle,
 } from 'lucide-react';
 
 export default function LeavePage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -52,7 +52,7 @@ export default function LeavePage() {
     isLoading: isBalancesLoading,
     error: balancesError,
   } = useEmployeeBalancesForYear(employeeId, year, !!employeeId);
-  const { data: leaveTypesData = [], isLoading: isTypesLoading } = useActiveLeaveTypes();
+  const {data: leaveTypesData = [], isLoading: isTypesLoading} = useActiveLeaveTypes();
   const {
     data: requestsData,
     isLoading: isRequestsLoading,
@@ -133,7 +133,7 @@ export default function LeavePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="leave">
-        <NuAuraLoader message="Loading leave data..." />
+        <NuAuraLoader message="Loading leave data..."/>
       </AppLayout>
     );
   }
@@ -143,8 +143,9 @@ export default function LeavePage() {
       <AppLayout activeMenuItem="leave">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
-            <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-              <AlertCircle className="h-8 w-8 text-danger-500" />
+            <div
+              className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-danger-500"/>
             </div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Unable to load leave data
@@ -178,9 +179,9 @@ export default function LeavePage() {
     <AppLayout activeMenuItem="leave">
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -197,7 +198,8 @@ export default function LeavePage() {
               onClick={() => router.push('/leave/apply')}
               className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <Plus
+                className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
               Apply for Leave
             </button>
           </PermissionGate>
@@ -223,9 +225,10 @@ export default function LeavePage() {
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>
-                      <Icon className="h-5 w-5 text-white" />
+                      <Icon className="h-5 w-5 text-white"/>
                     </div>
-                    <span className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
+                    <span
+                      className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
                       {leaveType?.leaveCode || 'N/A'}
                     </span>
                   </div>
@@ -247,7 +250,7 @@ export default function LeavePage() {
                   <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-4">
                     <div
                       className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-300`}
-                      style={{ width: `${Math.min(usedPercentage, 100)}%` }}
+                      style={{width: `${Math.min(usedPercentage, 100)}%`}}
                     />
                   </div>
 
@@ -278,13 +281,14 @@ export default function LeavePage() {
               className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               View All
-              <ChevronRight className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <ChevronRight
+                className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
           </div>
 
           {recentRequests.length === 0 ? (
             <EmptyState
-              icon={<CalendarDays className="h-12 w-12" />}
+              icon={<CalendarDays className="h-12 w-12"/>}
               title="No Leave Requests"
               description="No leave requests to display"
             />
@@ -292,49 +296,55 @@ export default function LeavePage() {
             <div className="overflow-x-auto">
               <table className="table-aura w-full">
                 <thead className="skeuo-table-header">
-                  <tr>
-                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Request #
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Leave Type
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Duration
-                    </th>
-                    <th className="px-6 py-2 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Days
-                    </th>
-                    <th className="px-6 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Applied On
-                    </th>
-                  </tr>
+                <tr>
+                  <th
+                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Request #
+                  </th>
+                  <th
+                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Leave Type
+                  </th>
+                  <th
+                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Duration
+                  </th>
+                  <th
+                    className="px-6 py-2 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Days
+                  </th>
+                  <th
+                    className="px-6 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th
+                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Applied On
+                  </th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                  {recentRequests.map((request) => {
-                    const leaveType = leaveTypes.find(t => t.id === request.leaveTypeId);
-                    const statusConfig = getStatusConfig(request.status);
-                    const StatusIcon = statusConfig.icon;
+                {recentRequests.map((request) => {
+                  const leaveType = leaveTypes.find(t => t.id === request.leaveTypeId);
+                  const statusConfig = getStatusConfig(request.status);
+                  const StatusIcon = statusConfig.icon;
 
-                    return (
-                      <tr
-                        key={request.id}
-                        className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                      >
-                        <td className="px-6 py-4">
+                  return (
+                    <tr
+                      key={request.id}
+                      className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
                             {request.requestNumber}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+                      <td className="px-6 py-4">
                           <span className="text-body-secondary">
                             {leaveType?.leaveName || 'N/A'}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+                      <td className="px-6 py-4">
                           <span className="text-body-secondary">
                             {new Date(request.startDate).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -347,24 +357,24 @@ export default function LeavePage() {
                               year: 'numeric',
                             })}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
+                      </td>
+                      <td className="px-6 py-4 text-right">
                           <span className="text-body-secondary">
                             {request.totalDays}
                             {request.isHalfDay && (
                               <span className="ml-1 text-caption">(Half Day)</span>
                             )}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 text-center">
+                      </td>
+                      <td className="px-6 py-4 text-center">
                           <span
                             className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5 justify-center`}
                           >
-                            <StatusIcon className="h-3.5 w-3.5" />
+                            <StatusIcon className="h-3.5 w-3.5"/>
                             {request.status}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+                      <td className="px-6 py-4">
                           <span className="text-body-secondary">
                             {new Date(request.appliedOn).toLocaleDateString('en-IN', {
                               day: '2-digit',
@@ -372,10 +382,10 @@ export default function LeavePage() {
                               year: 'numeric',
                             })}
                           </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                      </td>
+                    </tr>
+                  );
+                })}
                 </tbody>
               </table>
             </div>
@@ -388,11 +398,14 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/apply')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <Plus className="h-5 w-5 text-white" />
+            <div
+              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div
+                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <Plus className="h-5 w-5 text-white"/>
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight
+                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
@@ -406,11 +419,14 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/my-leaves')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <FileText className="h-5 w-5 text-white" />
+            <div
+              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div
+                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <FileText className="h-5 w-5 text-white"/>
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight
+                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
@@ -424,11 +440,14 @@ export default function LeavePage() {
             onClick={() => router.push('/leave/calendar')}
             className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <div className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <CalendarDays className="h-5 w-5 text-white" />
+            <div
+              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div
+                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <CalendarDays className="h-5 w-5 text-white"/>
               </div>
-              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight
+                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar

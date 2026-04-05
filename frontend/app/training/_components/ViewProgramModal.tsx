@@ -1,18 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Plus, Loader2 } from 'lucide-react';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Badge,
-} from '@/components/ui';
-import { EnrollmentStatus } from '@/lib/types/grow/training';
-import type { TrainingProgram, TrainingEnrollment } from '@/lib/types/grow/training';
-import { toBadgeVariant } from '@/lib/utils/type-guards';
+import {Loader2, Plus} from 'lucide-react';
+import {Badge, Button, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import type {TrainingEnrollment, TrainingProgram} from '@/lib/types/grow/training';
+import {EnrollmentStatus} from '@/lib/types/grow/training';
+import {toBadgeVariant} from '@/lib/utils/type-guards';
 
 interface ViewProgramModalProps {
   isOpen: boolean;
@@ -25,14 +18,14 @@ interface ViewProgramModalProps {
 }
 
 export function ViewProgramModal({
-  isOpen,
-  program,
-  enrollments,
-  isEnrolled,
-  enrolling,
-  onClose,
-  onSelfEnroll,
-}: ViewProgramModalProps) {
+                                   isOpen,
+                                   program,
+                                   enrollments,
+                                   isEnrolled,
+                                   enrolling,
+                                   onClose,
+                                   onSelfEnroll,
+                                 }: ViewProgramModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader>
@@ -131,9 +124,9 @@ export function ViewProgramModal({
         {program && !isEnrolled(program.id) && (
           <Button onClick={() => onSelfEnroll(program)} disabled={enrolling}>
             {enrolling ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              <Loader2 className="h-4 w-4 animate-spin mr-2"/>
             ) : (
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4"/>
             )}
             Enroll
           </Button>

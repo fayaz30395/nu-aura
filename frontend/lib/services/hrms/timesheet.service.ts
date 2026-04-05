@@ -1,11 +1,6 @@
-import { apiClient } from '@/lib/api/client';
-import { logger } from '@/lib/utils/logger';
-import {
-  Timesheet,
-  TimeEntry,
-  CreateTimesheetRequest,
-  CreateTimeEntryRequest,
-} from '@/lib/types/hrms/timesheet';
+import {apiClient} from '@/lib/api/client';
+import {logger} from '@/lib/utils/logger';
+import {CreateTimeEntryRequest, CreateTimesheetRequest, TimeEntry, Timesheet,} from '@/lib/types/hrms/timesheet';
 
 const BASE_URL = '/psa/timesheets';
 
@@ -15,7 +10,7 @@ export const timesheetService = {
       const response = await apiClient.get<Timesheet[]>(`${BASE_URL}/employee/${employeeId}`);
       return response.data;
     } catch (error) {
-      logger.error('Failed to get employee timesheets', { error, employeeId });
+      logger.error('Failed to get employee timesheets', {error, employeeId});
       throw error;
     }
   },
@@ -25,7 +20,7 @@ export const timesheetService = {
       const response = await apiClient.get<Timesheet>(`${BASE_URL}/${id}`);
       return response.data;
     } catch (error) {
-      logger.error('Failed to get timesheet', { error, id });
+      logger.error('Failed to get timesheet', {error, id});
       throw error;
     }
   },
@@ -35,7 +30,7 @@ export const timesheetService = {
       const response = await apiClient.post<Timesheet>(BASE_URL, request);
       return response.data;
     } catch (error) {
-      logger.error('Failed to create timesheet', { error, request });
+      logger.error('Failed to create timesheet', {error, request});
       throw error;
     }
   },
@@ -45,27 +40,27 @@ export const timesheetService = {
       const response = await apiClient.post<Timesheet>(`${BASE_URL}/${id}/submit`);
       return response.data;
     } catch (error) {
-      logger.error('Failed to submit timesheet', { error, id });
+      logger.error('Failed to submit timesheet', {error, id});
       throw error;
     }
   },
 
   async approveTimesheet(id: string, approverId: string): Promise<Timesheet> {
     try {
-      const response = await apiClient.post<Timesheet>(`${BASE_URL}/${id}/approve`, { approverId });
+      const response = await apiClient.post<Timesheet>(`${BASE_URL}/${id}/approve`, {approverId});
       return response.data;
     } catch (error) {
-      logger.error('Failed to approve timesheet', { error, id, approverId });
+      logger.error('Failed to approve timesheet', {error, id, approverId});
       throw error;
     }
   },
 
   async rejectTimesheet(id: string, reason: string): Promise<Timesheet> {
     try {
-      const response = await apiClient.post<Timesheet>(`${BASE_URL}/${id}/reject`, { reason });
+      const response = await apiClient.post<Timesheet>(`${BASE_URL}/${id}/reject`, {reason});
       return response.data;
     } catch (error) {
-      logger.error('Failed to reject timesheet', { error, id, reason });
+      logger.error('Failed to reject timesheet', {error, id, reason});
       throw error;
     }
   },
@@ -75,7 +70,7 @@ export const timesheetService = {
       const response = await apiClient.get<TimeEntry[]>(`${BASE_URL}/${timesheetId}/entries`);
       return response.data;
     } catch (error) {
-      logger.error('Failed to get timesheet entries', { error, timesheetId });
+      logger.error('Failed to get timesheet entries', {error, timesheetId});
       throw error;
     }
   },
@@ -85,7 +80,7 @@ export const timesheetService = {
       const response = await apiClient.post<TimeEntry>(`${BASE_URL}/${timesheetId}/entries`, entry);
       return response.data;
     } catch (error) {
-      logger.error('Failed to add time entry', { error, timesheetId, entry });
+      logger.error('Failed to add time entry', {error, timesheetId, entry});
       throw error;
     }
   },

@@ -8,13 +8,15 @@ description: Use when asked to "validate code", "code review", "check quality", 
 ## When to Use
 
 - After writing or modifying any `.tsx`, `.ts`, or `.java` file
-- When the user says "validate", "check quality", "UX audit", "accessibility check", "code review", or "is this production ready"
+- When the user says "validate", "check quality", "UX audit", "accessibility check", "code review",
+  or "is this production ready"
 - Before committing changes — catches pattern violations, missing states, and a11y issues
 - When reviewing a PR for correctness and completeness
 
 ## Scope
 
-If the user provides specific files, scan those. Otherwise, default to files changed since the last commit:
+If the user provides specific files, scan those. Otherwise, default to files changed since the last
+commit:
 
 ```bash
 cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura
@@ -99,7 +101,8 @@ Fix: Wrap in array brackets.
 
 ### 2.1 Every Page Must Have a Loading State
 
-Check that each page component (files under `frontend/app/**/page.tsx`) renders a spinner or skeleton when data is loading:
+Check that each page component (files under `frontend/app/**/page.tsx`) renders a spinner or
+skeleton when data is loading:
 
 ```
 Pattern (absence): isLoading|isPending|Skeleton|Spinner|animate-spin|NuAuraLoader
@@ -278,6 +281,7 @@ Severity: ERROR — "Existing Flyway migration was modified. Flyway will fail on
 ## Phase 6 — Design System (Delegate)
 
 After all above checks, invoke `/nu-design-check` on the same file scope to catch:
+
 - Banned color tokens (`bg-white`, `sky-*`, `rose-*`, `slate-*`, etc.)
 - Banned shadow utilities (`shadow-sm/md/lg`)
 - Missing skeuomorphic utilities on cards/buttons
@@ -322,6 +326,7 @@ INFO (nice to have)
 ```
 
 **Status logic:**
+
 - `❌ NOT READY` — any ERRORs present
 - `⚠️ REVIEW NEEDED` — only WARNINGs, no errors
 - `✅ READY` — zero errors and zero warnings
@@ -330,43 +335,43 @@ INFO (nice to have)
 
 ## Severity Reference
 
-| Level | Meaning | Action |
-|-------|---------|--------|
-| ERROR | Violates non-negotiable project rule | Must fix before commit |
-| WARN | Violates best practice, degrades UX/quality | Should fix; document if intentionally skipped |
-| INFO | Improvement opportunity | Optional |
+| Level | Meaning                                     | Action                                        |
+|-------|---------------------------------------------|-----------------------------------------------|
+| ERROR | Violates non-negotiable project rule        | Must fix before commit                        |
+| WARN  | Violates best practice, degrades UX/quality | Should fix; document if intentionally skipped |
+| INFO  | Improvement opportunity                     | Optional                                      |
 
 ---
 
 ## Checks Summary Table
 
-| # | Check | Phase | Severity |
-|---|-------|-------|----------|
-| 1.1 | No `any` types | TS | ERROR |
-| 1.2 | No fetch in useEffect | TS | ERROR |
-| 1.3 | No new Axios instances | TS | ERROR |
-| 1.4 | Forms use RHF + Zod | TS | WARN |
-| 1.5 | No console.log | TS | WARN |
-| 1.6 | No hardcoded UUIDs | TS | WARN |
-| 1.7 | Stable queryKey arrays | TS | WARN |
-| 2.1 | Loading state present | React | WARN |
-| 2.2 | Empty state present | React | WARN |
-| 2.3 | Error state present | React | WARN |
-| 2.4 | Mutations handle errors | React | WARN |
-| 2.5 | No key={index} | React | WARN |
-| 3.1 | aria-label on icon buttons | a11y | ERROR |
-| 3.2 | cursor-pointer on interactive | a11y | WARN |
-| 3.3 | Focus ring present | a11y | WARN |
-| 3.4 | Images have alt text | a11y | ERROR |
-| 3.5 | Inputs have labels | a11y | WARN |
-| 4.1 | Async buttons show loading | UX | WARN |
-| 4.2 | Destructive actions confirmed | UX | WARN |
-| 4.3 | Success feedback present | UX | WARN |
-| 4.4 | Modals are closeable | UX | WARN |
-| 4.5 | Tables have empty state | UX | WARN |
-| 5.1 | @RequiresPermission on endpoints | Java | ERROR |
-| 5.2 | No logic in controllers | Java | WARN |
-| 5.3 | Records for DTOs | Java | INFO |
-| 5.4 | No System.out.println | Java | ERROR |
-| 5.5 | No modified Flyway migrations | Java | ERROR |
-| 6.* | Design token compliance | Design | via nu-design-check |
+| #   | Check                            | Phase  | Severity            |
+|-----|----------------------------------|--------|---------------------|
+| 1.1 | No `any` types                   | TS     | ERROR               |
+| 1.2 | No fetch in useEffect            | TS     | ERROR               |
+| 1.3 | No new Axios instances           | TS     | ERROR               |
+| 1.4 | Forms use RHF + Zod              | TS     | WARN                |
+| 1.5 | No console.log                   | TS     | WARN                |
+| 1.6 | No hardcoded UUIDs               | TS     | WARN                |
+| 1.7 | Stable queryKey arrays           | TS     | WARN                |
+| 2.1 | Loading state present            | React  | WARN                |
+| 2.2 | Empty state present              | React  | WARN                |
+| 2.3 | Error state present              | React  | WARN                |
+| 2.4 | Mutations handle errors          | React  | WARN                |
+| 2.5 | No key={index}                   | React  | WARN                |
+| 3.1 | aria-label on icon buttons       | a11y   | ERROR               |
+| 3.2 | cursor-pointer on interactive    | a11y   | WARN                |
+| 3.3 | Focus ring present               | a11y   | WARN                |
+| 3.4 | Images have alt text             | a11y   | ERROR               |
+| 3.5 | Inputs have labels               | a11y   | WARN                |
+| 4.1 | Async buttons show loading       | UX     | WARN                |
+| 4.2 | Destructive actions confirmed    | UX     | WARN                |
+| 4.3 | Success feedback present         | UX     | WARN                |
+| 4.4 | Modals are closeable             | UX     | WARN                |
+| 4.5 | Tables have empty state          | UX     | WARN                |
+| 5.1 | @RequiresPermission on endpoints | Java   | ERROR               |
+| 5.2 | No logic in controllers          | Java   | WARN                |
+| 5.3 | Records for DTOs                 | Java   | INFO                |
+| 5.4 | No System.out.println            | Java   | ERROR               |
+| 5.5 | No modified Flyway migrations    | Java   | ERROR               |
+| 6.* | Design token compliance          | Design | via nu-design-check |

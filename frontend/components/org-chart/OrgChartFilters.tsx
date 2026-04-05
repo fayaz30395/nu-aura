@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Search, GitBranch, List, Building2 } from 'lucide-react';
-import { Department } from '@/lib/types/hrms/employee';
-import { cn } from '@/lib/utils';
+import {Building2, GitBranch, List, Search} from 'lucide-react';
+import {Department} from '@/lib/types/hrms/employee';
+import {cn} from '@/lib/utils';
 
 export type ViewMode = 'tree' | 'list' | 'department';
 
@@ -20,36 +20,36 @@ interface OrgChartFiltersProps {
 }
 
 const VIEW_OPTIONS: { value: ViewMode; label: string; icon: React.ReactNode }[] = [
-  { value: 'tree', label: 'Tree', icon: <GitBranch className="h-3.5 w-3.5" /> },
-  { value: 'list', label: 'List', icon: <List className="h-3.5 w-3.5" /> },
-  { value: 'department', label: 'Department', icon: <Building2 className="h-3.5 w-3.5" /> },
+  {value: 'tree', label: 'Tree', icon: <GitBranch className="h-3.5 w-3.5"/>},
+  {value: 'list', label: 'List', icon: <List className="h-3.5 w-3.5"/>},
+  {value: 'department', label: 'Department', icon: <Building2 className="h-3.5 w-3.5"/>},
 ];
 
 const DEPTH_OPTIONS = [
-  { value: 0, label: 'All levels' },
-  { value: 1, label: '1 level' },
-  { value: 2, label: '2 levels' },
-  { value: 3, label: '3 levels' },
-  { value: 4, label: '4 levels' },
-  { value: 5, label: '5 levels' },
+  {value: 0, label: 'All levels'},
+  {value: 1, label: '1 level'},
+  {value: 2, label: '2 levels'},
+  {value: 3, label: '3 levels'},
+  {value: 4, label: '4 levels'},
+  {value: 5, label: '5 levels'},
 ];
 
 export function OrgChartFilters({
-  viewMode,
-  onViewModeChange,
-  searchQuery,
-  onSearchChange,
-  departments,
-  selectedDepartment,
-  onDepartmentChange,
-  maxDepth,
-  onMaxDepthChange,
-}: OrgChartFiltersProps) {
+                                  viewMode,
+                                  onViewModeChange,
+                                  searchQuery,
+                                  onSearchChange,
+                                  departments,
+                                  selectedDepartment,
+                                  onDepartmentChange,
+                                  maxDepth,
+                                  onMaxDepthChange,
+                                }: OrgChartFiltersProps) {
   return (
     <div className="flex flex-wrap items-center gap-4">
       {/* Search */}
       <div className="relative flex-1 min-w-[200px] max-w-sm">
-        <Search className="absolute left-3 top-1/2 -transurface-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
+        <Search className="absolute left-3 top-1/2 -transurface-y-1/2 h-4 w-4 text-[var(--text-tertiary)]"/>
         <input
           type="text"
           placeholder="Search by name, designation, or code..."

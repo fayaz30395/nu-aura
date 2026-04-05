@@ -1,31 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { timeTrackingService } from '@/lib/services/hrms/time-tracking.service';
-import { TimeEntryStatus } from '@/lib/types/hrms/time-tracking';
+import {useEffect, useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {timeTrackingService} from '@/lib/services/hrms/time-tracking.service';
+import {TimeEntryStatus} from '@/lib/types/hrms/time-tracking';
+import {useDeleteTimeEntry, useSubmitTimeEntry, useTimeEntry,} from '@/lib/hooks/queries/useTimeTracking';
 import {
-  useTimeEntry,
-  useSubmitTimeEntry,
-  useDeleteTimeEntry,
-} from '@/lib/hooks/queries/useTimeTracking';
-import {
-  ArrowLeft,
-  Loader2,
   AlertCircle,
-  Clock,
+  ArrowLeft,
   CheckCircle,
-  XCircle,
-  Timer,
-  FileText,
+  Clock,
   DollarSign,
-  Send,
+  FileText,
+  Loader2,
   Pencil,
+  Send,
+  Timer,
+  XCircle,
 } from 'lucide-react';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { createLogger } from '@/lib/utils/logger';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('TimeTrackingPage');
 
@@ -33,7 +29,7 @@ export default function TimeEntryDetailPage() {
   const router = useRouter();
   const params = useParams();
   const entryId = params.id as string;
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.TIMESHEET_VIEW, Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
 
   useEffect(() => {
@@ -44,7 +40,7 @@ export default function TimeEntryDetailPage() {
 
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
-  const { data: entry, isLoading, error } = useTimeEntry(entryId);
+  const {data: entry, isLoading, error} = useTimeEntry(entryId);
   const submitMutation = useSubmitTimeEntry();
   const deleteMutation = useDeleteTimeEntry();
 
@@ -102,7 +98,7 @@ export default function TimeEntryDetailPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading time entry...</p>
           </div>
         </div>
@@ -115,7 +111,7 @@ export default function TimeEntryDetailPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Time entry not found'}
             </p>
@@ -143,7 +139,7 @@ export default function TimeEntryDetailPage() {
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
@@ -153,7 +149,7 @@ export default function TimeEntryDetailPage() {
               <span
                 className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
-                <StatusIcon className="h-4 w-4" />
+                <StatusIcon className="h-4 w-4"/>
                 {entry.status}
               </span>
             </div>
@@ -173,7 +169,7 @@ export default function TimeEntryDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
               </div>
               <span className="text-body-muted">Hours Worked</span>
             </div>
@@ -185,7 +181,7 @@ export default function TimeEntryDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
+                <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
               <span className="text-body-muted">Billable Hours</span>
             </div>
@@ -200,7 +196,7 @@ export default function TimeEntryDetailPage() {
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                  <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400" />
+                  <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400"/>
                 </div>
                 <span className="text-body-muted">
                   Billing Amount
@@ -308,9 +304,10 @@ export default function TimeEntryDetailPage() {
 
         {/* Rejection Reason */}
         {entry.status === 'REJECTED' && entry.rejectionReason && (
-          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
+          <div
+            className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
             <div className="flex items-center gap-4 mb-4">
-              <XCircle className="h-5 w-5 text-danger-500" />
+              <XCircle className="h-5 w-5 text-danger-500"/>
               <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
                 Rejection Reason
               </h3>
@@ -341,7 +338,7 @@ export default function TimeEntryDetailPage() {
                 onClick={() => router.push(`/time-tracking/${entry.id}/edit`)}
                 className="flex items-center justify-center gap-2 px-6 py-4 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
               >
-                <Pencil className="h-4 w-4" />
+                <Pencil className="h-4 w-4"/>
                 Edit
               </button>
               <button
@@ -351,12 +348,12 @@ export default function TimeEntryDetailPage() {
               >
                 {submitMutation.isPending ? (
                   <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin"/>
                     Submitting...
                   </>
                 ) : (
                   <>
-                    <Send className="h-5 w-5" />
+                    <Send className="h-5 w-5"/>
                     Submit for Approval
                   </>
                 )}

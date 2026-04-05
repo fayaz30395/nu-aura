@@ -1,30 +1,30 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Building2, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, Users, Search, X } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/hrms/employee';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { SkeletonTable } from '@/components/ui/Loading';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Building2, Edit2, Plus, Search, ToggleLeft, ToggleRight, Trash2, Users, X} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Department, DepartmentRequest, DepartmentType} from '@/lib/types/hrms/employee';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {SkeletonTable} from '@/components/ui/Loading';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
+  useActivateDepartment,
   useAllDepartments,
   useCreateDepartment,
-  useUpdateDepartment,
-  useActivateDepartment,
   useDeactivateDepartment,
   useDeleteDepartment,
+  useUpdateDepartment,
 } from '@/lib/hooks/queries/useDepartments';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { createLogger } from '@/lib/utils/logger';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('DepartmentsPage');
 
@@ -44,8 +44,8 @@ type DepartmentFormData = z.infer<typeof departmentSchema>;
 
 export default function DepartmentsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const toast = useToast();
 
   // Form state — ALL hooks must be called unconditionally before any returns
@@ -54,7 +54,7 @@ export default function DepartmentsPage() {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<DepartmentFormData>({
     resolver: zodResolver(departmentSchema),
     defaultValues: {
@@ -83,8 +83,8 @@ export default function DepartmentsPage() {
   const [pageSize] = React.useState(10);
 
   // React Query hooks
-  const { data: deptData, isLoading } = useAllDepartments(currentPage, pageSize);
-  const { data: empData } = useEmployees(0, 500);
+  const {data: deptData, isLoading} = useAllDepartments(currentPage, pageSize);
+  const {data: empData} = useEmployees(0, 500);
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
   const activateMutation = useActivateDepartment();
@@ -116,10 +116,10 @@ export default function DepartmentsPage() {
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
-              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
-              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4"/>
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3"/>
             </div>
-            <SkeletonTable rows={5} columns={4} />
+            <SkeletonTable rows={5} columns={4}/>
           </div>
         </div>
       </AppLayout>
@@ -143,7 +143,7 @@ export default function DepartmentsPage() {
       };
 
       if (editingDepartment) {
-        await updateMutation.mutateAsync({ id: editingDepartment.id, data: submitData });
+        await updateMutation.mutateAsync({id: editingDepartment.id, data: submitData});
         toast.success('Department Updated', 'The department has been updated successfully.');
       } else {
         await createMutation.mutateAsync(submitData);
@@ -154,7 +154,9 @@ export default function DepartmentsPage() {
       setShowAddModal(false);
       setEditingDepartment(null);
     } catch (err: unknown) {
-      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`;
+      const errorMsg = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`;
       setError(errorMsg);
       toast.error('Error', errorMsg);
       log.error('Error saving department:', err);
@@ -192,7 +194,9 @@ export default function DepartmentsPage() {
       toast.success('Department Deleted', 'The department has been deleted successfully.');
       setDeleteTarget(null);
     } catch (err: unknown) {
-      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department';
+      const errorMsg = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete department';
       setError(errorMsg);
       toast.error('Error', errorMsg);
       log.error('Error deleting department:', err);
@@ -219,7 +223,9 @@ export default function DepartmentsPage() {
       }
       setToggleTarget(null);
     } catch (err: unknown) {
-      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status';
+      const errorMsg = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to update department status';
       setError(errorMsg);
       toast.error('Error', errorMsg);
       log.error('Error toggling department status:', err);
@@ -253,7 +259,7 @@ export default function DepartmentsPage() {
           </div>
           <Button
             variant="primary"
-            leftIcon={<Plus className="h-4 w-4" />}
+            leftIcon={<Plus className="h-4 w-4"/>}
             onClick={() => {
               reset();
               setEditingDepartment(null);
@@ -273,8 +279,9 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
                   <p className="text-2xl font-bold skeuo-emboss">{departments.length}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Building2 className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Building2 className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
               </div>
             </CardContent>
@@ -287,8 +294,9 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
                   <p className="text-2xl font-bold skeuo-emboss">{activeDepartments}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                  <ToggleRight className="h-6 w-6 text-success-600 dark:text-success-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                  <ToggleRight className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
               </div>
             </CardContent>
@@ -301,8 +309,9 @@ export default function DepartmentsPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
                   <p className="text-2xl font-bold skeuo-emboss">{totalEmployees}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
               </div>
             </CardContent>
@@ -311,10 +320,11 @@ export default function DepartmentsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl row-between">
+          <div
+            className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl row-between">
             <span>{error}</span>
             <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5"/>
             </button>
           </div>
         )}
@@ -323,7 +333,7 @@ export default function DepartmentsPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search departments by name, code, or type..."
@@ -341,92 +351,105 @@ export default function DepartmentsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[var(--border-main)]">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Department
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Parent
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Manager
-                    </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Employees
-                    </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
+                <tr className="border-b border-[var(--border-main)]">
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Department
+                  </th>
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Parent
+                  </th>
+                  <th
+                    className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Manager
+                  </th>
+                  <th
+                    className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Employees
+                  </th>
+                  <th
+                    className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th
+                    className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" aria-label="Loading departments" />
-                          <span className="text-[var(--text-muted)]">Loading departments...</span>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div
+                          className="w-8 h-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"
+                          aria-label="Loading departments"/>
+                        <span className="text-[var(--text-muted)]">Loading departments...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredDepartments.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div
+                          className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                          <Building2 className="h-8 w-8 text-[var(--text-muted)]"/>
                         </div>
-                      </td>
-                    </tr>
-                  ) : filteredDepartments.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
-                            <Building2 className="h-8 w-8 text-[var(--text-muted)]" />
+                        <div>
+                          <p className="text-[var(--text-primary)] font-medium">No departments found</p>
+                          <p className="text-[var(--text-muted)] text-sm mt-1">
+                            {searchQuery ? 'Try a different search term' : 'Click "Add Department" to get started'}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredDepartments.map((dept) => (
+                    <tr key={dept.id}
+                        className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                            <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                           </div>
                           <div>
-                            <p className="text-[var(--text-primary)] font-medium">No departments found</p>
-                            <p className="text-[var(--text-muted)] text-sm mt-1">
-                              {searchQuery ? 'Try a different search term' : 'Click "Add Department" to get started'}
-                            </p>
+                            <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
+                            <p className="text-body-muted">{dept.code}</p>
                           </div>
                         </div>
                       </td>
-                    </tr>
-                  ) : (
-                    filteredDepartments.map((dept) => (
-                      <tr key={dept.id} className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                              <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
-                              <p className="text-body-muted">{dept.code}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {dept.type ? (
-                            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400">
+                      <td className="px-6 py-4">
+                        {dept.type ? (
+                          <span
+                            className="px-2.5 py-1 text-xs font-medium rounded-full bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400">
                               {dept.type}
                             </span>
-                          ) : (
-                            <span className="text-[var(--text-muted)]">-</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-[var(--text-primary)]">
-                          {dept.parentDepartmentName || '-'}
-                        </td>
-                        <td className="px-6 py-4 text-[var(--text-primary)]">
-                          {dept.managerName || '-'}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Users className="h-4 w-4 text-[var(--text-muted)]" />
-                            <span className="text-[var(--text-primary)]">{dept.employeeCount || 0}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
+                        ) : (
+                          <span className="text-[var(--text-muted)]">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-[var(--text-primary)]">
+                        {dept.parentDepartmentName || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-[var(--text-primary)]">
+                        {dept.managerName || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Users className="h-4 w-4 text-[var(--text-muted)]"/>
+                          <span className="text-[var(--text-primary)]">{dept.employeeCount || 0}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                             dept.isActive
                               ? 'bg-success-100 dark:bg-success-950/30 text-success-700 dark:text-success-400'
@@ -434,38 +457,38 @@ export default function DepartmentsPage() {
                           }`}>
                             {dept.isActive ? 'Active' : 'Inactive'}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleEdit(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              title="Edit"
-                              aria-label="Edit department"
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleToggleClick(dept)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              title={dept.isActive ? 'Deactivate' : 'Activate'}
-                              aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
-                            >
-                              {dept.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(dept.id)}
-                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              title="Delete"
-                              aria-label="Delete department"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleEdit(dept)}
+                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title="Edit"
+                            aria-label="Edit department"
+                          >
+                            <Edit2 className="h-4 w-4"/>
+                          </button>
+                          <button
+                            onClick={() => handleToggleClick(dept)}
+                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title={dept.isActive ? 'Deactivate' : 'Activate'}
+                            aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
+                          >
+                            {dept.isActive ? <ToggleRight className="h-4 w-4"/> : <ToggleLeft className="h-4 w-4"/>}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(dept.id)}
+                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title="Delete"
+                            aria-label="Delete department"
+                          >
+                            <Trash2 className="h-4 w-4"/>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 </tbody>
               </table>
             </div>
@@ -475,12 +498,14 @@ export default function DepartmentsPage() {
         {/* Add/Edit Department Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-elevated)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-elevated)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                    <div
+                      className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                     </div>
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {editingDepartment ? 'Edit Department' : 'Add New Department'}
@@ -495,7 +520,7 @@ export default function DepartmentsPage() {
                     className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     aria-label="Close modal"
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-5 w-5"/>
                   </button>
                 </div>
               </div>
@@ -549,7 +574,7 @@ export default function DepartmentsPage() {
                     <Controller
                       name="type"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -570,7 +595,7 @@ export default function DepartmentsPage() {
                     <Controller
                       name="parentDepartmentId"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -586,7 +611,8 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.parentDepartmentId && <p className="text-danger-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
+                    {errors.parentDepartmentId &&
+                      <p className="text-danger-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
                   </div>
                 </div>
 
@@ -598,7 +624,7 @@ export default function DepartmentsPage() {
                     <Controller
                       name="managerId"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -645,15 +671,17 @@ export default function DepartmentsPage() {
                     <Controller
                       name="isActive"
                       control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <label className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+                      render={({field: {value, onChange}}) => (
+                        <label
+                          className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
                           <input
                             type="checkbox"
                             checked={value}
                             onChange={(e) => onChange(e.target.checked)}
                             className="h-5 w-5 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
-                          <span className="ml-4 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
+                          <span
+                            className="ml-4 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
                         </label>
                       )}
                     />

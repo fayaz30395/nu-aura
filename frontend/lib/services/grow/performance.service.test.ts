@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {
+  feedbackService,
+  goalService,
+  performanceRevolutionService,
+  pipService,
+  reviewCycleService,
+  reviewService,
+} from './performance.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,16 +18,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import {
-  goalService,
-  reviewService,
-  feedbackService,
-  reviewCycleService,
-  pipService,
-  performanceRevolutionService,
-} from './performance.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -48,7 +47,7 @@ describe('Performance Service', () => {
     };
 
     it('should create a goal successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.post.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.createGoal(mockGoalRequest);
       expect(result).toEqual(mockGoal);
       expect(mockApiClient.post).toHaveBeenCalledWith('/goals', mockGoalRequest);
@@ -60,14 +59,14 @@ describe('Performance Service', () => {
     });
 
     it('should create goal via alias method', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.post.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.create(mockGoalRequest);
       expect(result).toEqual(mockGoal);
       expect(mockApiClient.post).toHaveBeenCalledWith('/goals', mockGoalRequest);
     });
 
     it('should update a goal successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.put.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.updateGoal('goal-1', mockGoalRequest);
       expect(result).toEqual(mockGoal);
       expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1', mockGoalRequest);
@@ -79,14 +78,14 @@ describe('Performance Service', () => {
     });
 
     it('should update goal via alias method', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.put.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.update('goal-1', mockGoalRequest);
       expect(result).toEqual(mockGoal);
       expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1', mockGoalRequest);
     });
 
     it('should get goal by ID successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.get.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.getGoalById('goal-1');
       expect(result).toEqual(mockGoal);
       expect(mockApiClient.get).toHaveBeenCalledWith('/goals/goal-1');
@@ -105,10 +104,10 @@ describe('Performance Service', () => {
         size: 20,
         number: 0,
       };
-      mockApiClient.get.mockResolvedValueOnce({ data: paginatedResponse });
+      mockApiClient.get.mockResolvedValueOnce({data: paginatedResponse});
       const result = await goalService.getAllGoals(0, 20);
       expect(result).toEqual(paginatedResponse);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/goals', { params: { page: 0, size: 20 } });
+      expect(mockApiClient.get).toHaveBeenCalledWith('/goals', {params: {page: 0, size: 20}});
     });
 
     it('should handle error when getting all goals fails', async () => {
@@ -117,7 +116,7 @@ describe('Performance Service', () => {
     });
 
     it('should get employee goals successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockGoal] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockGoal]});
       const result = await goalService.getEmployeeGoals('emp-1');
       expect(result).toEqual([mockGoal]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/goals/employee/emp-1');
@@ -129,13 +128,13 @@ describe('Performance Service', () => {
     });
 
     it('should get employee goals via alias method', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockGoal] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockGoal]});
       const result = await goalService.getByEmployee('emp-1');
       expect(result).toEqual([mockGoal]);
     });
 
     it('should get team goals successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockGoal] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockGoal]});
       const result = await goalService.getTeamGoals('mgr-1');
       expect(result).toEqual([mockGoal]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/goals/team/mgr-1');
@@ -147,10 +146,10 @@ describe('Performance Service', () => {
     });
 
     it('should update progress successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.put.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.updateProgress('goal-1', 75);
       expect(result).toEqual(mockGoal);
-      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/progress', null, { params: { progressPercentage: 75 } });
+      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/progress', null, {params: {progressPercentage: 75}});
     });
 
     it('should handle error when updating progress fails', async () => {
@@ -159,10 +158,10 @@ describe('Performance Service', () => {
     });
 
     it('should approve goal successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockGoal });
+      mockApiClient.put.mockResolvedValueOnce({data: mockGoal});
       const result = await goalService.approveGoal('goal-1', 'approver-1');
       expect(result).toEqual(mockGoal);
-      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/approve', null, { params: { approverId: 'approver-1' } });
+      expect(mockApiClient.put).toHaveBeenCalledWith('/goals/goal-1/approve', null, {params: {approverId: 'approver-1'}});
     });
 
     it('should handle error when approving goal fails', async () => {
@@ -171,8 +170,8 @@ describe('Performance Service', () => {
     });
 
     it('should get goal analytics successfully', async () => {
-      const analytics = { totalGoals: 10, completedGoals: 5, avgProgress: 50 };
-      mockApiClient.get.mockResolvedValueOnce({ data: analytics });
+      const analytics = {totalGoals: 10, completedGoals: 5, avgProgress: 50};
+      mockApiClient.get.mockResolvedValueOnce({data: analytics});
       const result = await goalService.getGoalAnalytics();
       expect(result).toEqual(analytics);
       expect(mockApiClient.get).toHaveBeenCalledWith('/goals/analytics');
@@ -215,7 +214,7 @@ describe('Performance Service', () => {
     };
 
     it('should create a review successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.post.mockResolvedValueOnce({data: mockReview});
       const result = await reviewService.createReview(mockReviewRequest);
       expect(result).toEqual(mockReview);
       expect(mockApiClient.post).toHaveBeenCalledWith('/reviews', mockReviewRequest);
@@ -227,7 +226,7 @@ describe('Performance Service', () => {
     });
 
     it('should update a review successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.put.mockResolvedValueOnce({data: mockReview});
       const result = await reviewService.updateReview('review-1', mockReviewRequest);
       expect(result).toEqual(mockReview);
       expect(mockApiClient.put).toHaveBeenCalledWith('/reviews/review-1', mockReviewRequest);
@@ -239,7 +238,7 @@ describe('Performance Service', () => {
     });
 
     it('should get review by ID successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.get.mockResolvedValueOnce({data: mockReview});
       const result = await reviewService.getReviewById('review-1');
       expect(result).toEqual(mockReview);
       expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/review-1');
@@ -258,10 +257,10 @@ describe('Performance Service', () => {
         size: 20,
         number: 0,
       };
-      mockApiClient.get.mockResolvedValueOnce({ data: paginatedResponse });
+      mockApiClient.get.mockResolvedValueOnce({data: paginatedResponse});
       const result = await reviewService.getAllReviews(0, 20);
       expect(result).toEqual(paginatedResponse);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/reviews', { params: { page: 0, size: 20 } });
+      expect(mockApiClient.get).toHaveBeenCalledWith('/reviews', {params: {page: 0, size: 20}});
     });
 
     it('should handle error when getting all reviews fails', async () => {
@@ -270,7 +269,7 @@ describe('Performance Service', () => {
     });
 
     it('should get employee reviews successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockReview] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockReview]});
       const result = await reviewService.getEmployeeReviews('emp-1');
       expect(result).toEqual([mockReview]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/employee/emp-1');
@@ -282,7 +281,7 @@ describe('Performance Service', () => {
     });
 
     it('should get pending reviews successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockReview] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockReview]});
       const result = await reviewService.getPendingReviews('rev-1');
       expect(result).toEqual([mockReview]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/pending/rev-1');
@@ -294,7 +293,7 @@ describe('Performance Service', () => {
     });
 
     it('should submit review successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.put.mockResolvedValueOnce({data: mockReview});
       const result = await reviewService.submitReview('review-1');
       expect(result).toEqual(mockReview);
       expect(mockApiClient.put).toHaveBeenCalledWith('/reviews/review-1/submit');
@@ -306,7 +305,7 @@ describe('Performance Service', () => {
     });
 
     it('should complete review successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockReview });
+      mockApiClient.put.mockResolvedValueOnce({data: mockReview});
       const result = await reviewService.completeReview('review-1');
       expect(result).toEqual(mockReview);
       expect(mockApiClient.put).toHaveBeenCalledWith('/reviews/review-1/complete');
@@ -318,21 +317,27 @@ describe('Performance Service', () => {
     });
 
     it('should add competency successfully', async () => {
-      const competency = { id: 'comp-1', name: 'Leadership' };
-      mockApiClient.post.mockResolvedValueOnce({ data: competency });
-      const result = await reviewService.addCompetency({ reviewId: 'review-1', name: 'Leadership' });
+      const competency = {id: 'comp-1', name: 'Leadership'};
+      mockApiClient.post.mockResolvedValueOnce({data: competency});
+      const result = await reviewService.addCompetency({reviewId: 'review-1', name: 'Leadership'});
       expect(result).toEqual(competency);
-      expect(mockApiClient.post).toHaveBeenCalledWith('/reviews/competencies', { reviewId: 'review-1', name: 'Leadership' });
+      expect(mockApiClient.post).toHaveBeenCalledWith('/reviews/competencies', {
+        reviewId: 'review-1',
+        name: 'Leadership'
+      });
     });
 
     it('should handle error when adding competency fails', async () => {
       mockApiClient.post.mockRejectedValueOnce(new Error('Add failed'));
-      await expect(reviewService.addCompetency({ reviewId: 'review-1', name: 'Leadership' })).rejects.toThrow('Add failed');
+      await expect(reviewService.addCompetency({
+        reviewId: 'review-1',
+        name: 'Leadership'
+      })).rejects.toThrow('Add failed');
     });
 
     it('should get competencies successfully', async () => {
-      const competencies = [{ id: 'comp-1', name: 'Leadership' }];
-      mockApiClient.get.mockResolvedValueOnce({ data: competencies });
+      const competencies = [{id: 'comp-1', name: 'Leadership'}];
+      mockApiClient.get.mockResolvedValueOnce({data: competencies});
       const result = await reviewService.getCompetencies('review-1');
       expect(result).toEqual(competencies);
       expect(mockApiClient.get).toHaveBeenCalledWith('/reviews/review-1/competencies');
@@ -382,7 +387,7 @@ describe('Performance Service', () => {
     };
 
     it('should give feedback successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockFeedback });
+      mockApiClient.post.mockResolvedValueOnce({data: mockFeedback});
       const result = await feedbackService.giveFeedback(mockFeedbackRequest);
       expect(result).toEqual(mockFeedback);
       expect(mockApiClient.post).toHaveBeenCalledWith('/feedback', mockFeedbackRequest);
@@ -394,7 +399,7 @@ describe('Performance Service', () => {
     });
 
     it('should get feedback by ID successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: mockFeedback });
+      mockApiClient.get.mockResolvedValueOnce({data: mockFeedback});
       const result = await feedbackService.getFeedbackById('feedback-1');
       expect(result).toEqual(mockFeedback);
       expect(mockApiClient.get).toHaveBeenCalledWith('/feedback/feedback-1');
@@ -406,7 +411,7 @@ describe('Performance Service', () => {
     });
 
     it('should get received feedback successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockFeedback] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockFeedback]});
       const result = await feedbackService.getReceivedFeedback('emp-2');
       expect(result).toEqual([mockFeedback]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/feedback/received/emp-2');
@@ -418,7 +423,7 @@ describe('Performance Service', () => {
     });
 
     it('should get given feedback successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockFeedback] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockFeedback]});
       const result = await feedbackService.getGivenFeedback('emp-1');
       expect(result).toEqual([mockFeedback]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/feedback/given/emp-1');
@@ -430,7 +435,7 @@ describe('Performance Service', () => {
     });
 
     it('should update feedback successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockFeedback });
+      mockApiClient.put.mockResolvedValueOnce({data: mockFeedback});
       const result = await feedbackService.updateFeedback('feedback-1', mockFeedbackRequest);
       expect(result).toEqual(mockFeedback);
       expect(mockApiClient.put).toHaveBeenCalledWith('/feedback/feedback-1', mockFeedbackRequest);
@@ -468,7 +473,7 @@ describe('Performance Service', () => {
     };
 
     it('should create a review cycle successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockCycle });
+      mockApiClient.post.mockResolvedValueOnce({data: mockCycle});
       const result = await reviewCycleService.createCycle(mockCycleRequest);
       expect(result).toEqual(mockCycle);
       expect(mockApiClient.post).toHaveBeenCalledWith('/review-cycles', mockCycleRequest);
@@ -480,7 +485,7 @@ describe('Performance Service', () => {
     });
 
     it('should update a review cycle successfully', async () => {
-      mockApiClient.put.mockResolvedValueOnce({ data: mockCycle });
+      mockApiClient.put.mockResolvedValueOnce({data: mockCycle});
       const result = await reviewCycleService.updateCycle('cycle-1', mockCycleRequest);
       expect(result).toEqual(mockCycle);
       expect(mockApiClient.put).toHaveBeenCalledWith('/review-cycles/cycle-1', mockCycleRequest);
@@ -492,7 +497,7 @@ describe('Performance Service', () => {
     });
 
     it('should get review cycle by ID successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: mockCycle });
+      mockApiClient.get.mockResolvedValueOnce({data: mockCycle});
       const result = await reviewCycleService.getCycleById('cycle-1');
       expect(result).toEqual(mockCycle);
       expect(mockApiClient.get).toHaveBeenCalledWith('/review-cycles/cycle-1');
@@ -511,10 +516,10 @@ describe('Performance Service', () => {
         size: 20,
         number: 0,
       };
-      mockApiClient.get.mockResolvedValueOnce({ data: paginatedResponse });
+      mockApiClient.get.mockResolvedValueOnce({data: paginatedResponse});
       const result = await reviewCycleService.getAllCycles(0, 20);
       expect(result).toEqual(paginatedResponse);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/review-cycles', { params: { page: 0, size: 20 } });
+      expect(mockApiClient.get).toHaveBeenCalledWith('/review-cycles', {params: {page: 0, size: 20}});
     });
 
     it('should handle error when getting all review cycles fails', async () => {
@@ -523,7 +528,7 @@ describe('Performance Service', () => {
     });
 
     it('should get active review cycles successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockCycle] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockCycle]});
       const result = await reviewCycleService.getActiveCycles();
       expect(result).toEqual([mockCycle]);
       expect(mockApiClient.get).toHaveBeenCalledWith('/review-cycles/active');
@@ -535,7 +540,7 @@ describe('Performance Service', () => {
     });
 
     it('should complete a review cycle successfully', async () => {
-      mockApiClient.post.mockResolvedValueOnce({ data: mockCycle });
+      mockApiClient.post.mockResolvedValueOnce({data: mockCycle});
       const result = await reviewCycleService.completeCycle('cycle-1');
       expect(result).toEqual(mockCycle);
       expect(mockApiClient.post).toHaveBeenCalledWith('/review-cycles/cycle-1/complete');
@@ -547,16 +552,16 @@ describe('Performance Service', () => {
     });
 
     it('should activate a review cycle successfully', async () => {
-      const response = { cycleId: 'cycle-1', reviewsCreated: 10 };
-      mockApiClient.post.mockResolvedValueOnce({ data: response });
-      const result = await reviewCycleService.activateCycle('cycle-1', { employeeFilter: [] });
+      const response = {cycleId: 'cycle-1', reviewsCreated: 10};
+      mockApiClient.post.mockResolvedValueOnce({data: response});
+      const result = await reviewCycleService.activateCycle('cycle-1', {employeeFilter: []});
       expect(result).toEqual(response);
-      expect(mockApiClient.post).toHaveBeenCalledWith('/review-cycles/cycle-1/activate', { employeeFilter: [] });
+      expect(mockApiClient.post).toHaveBeenCalledWith('/review-cycles/cycle-1/activate', {employeeFilter: []});
     });
 
     it('should handle error when activating review cycle fails', async () => {
       mockApiClient.post.mockRejectedValueOnce(new Error('Activate failed'));
-      await expect(reviewCycleService.activateCycle('cycle-1', { employeeFilter: [] })).rejects.toThrow('Activate failed');
+      await expect(reviewCycleService.activateCycle('cycle-1', {employeeFilter: []})).rejects.toThrow('Activate failed');
     });
 
     it('should delete a review cycle successfully', async () => {
@@ -582,10 +587,10 @@ describe('Performance Service', () => {
     };
 
     it('should get all PIPs successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: [mockPIP] });
+      mockApiClient.get.mockResolvedValueOnce({data: [mockPIP]});
       const result = await pipService.getAll();
       expect(result).toEqual([mockPIP]);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/performance/pip', { params: {} });
+      expect(mockApiClient.get).toHaveBeenCalledWith('/performance/pip', {params: {}});
     });
 
     it('should handle error when getting all PIPs fails', async () => {
@@ -594,7 +599,7 @@ describe('Performance Service', () => {
     });
 
     it('should get PIP by ID successfully', async () => {
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPIP });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPIP});
       const result = await pipService.getById('pip-1');
       expect(result).toEqual(mockPIP);
       expect(mockApiClient.get).toHaveBeenCalledWith('/performance/pip/pip-1');
@@ -613,7 +618,7 @@ describe('Performance Service', () => {
         endDate: '2024-03-31',
         reason: 'Performance improvement needed',
       };
-      mockApiClient.post.mockResolvedValueOnce({ data: mockPIP });
+      mockApiClient.post.mockResolvedValueOnce({data: mockPIP});
       const result = await pipService.create(request);
       expect(result).toEqual(mockPIP);
       expect(mockApiClient.post).toHaveBeenCalledWith('/performance/pip', request);
@@ -636,8 +641,8 @@ describe('Performance Service', () => {
         checkInDate: '2024-01-15',
         progressNotes: 'On track',
       };
-      const checkIn = { id: 'checkin-1', ...checkInRequest };
-      mockApiClient.post.mockResolvedValueOnce({ data: checkIn });
+      const checkIn = {id: 'checkin-1', ...checkInRequest};
+      mockApiClient.post.mockResolvedValueOnce({data: checkIn});
       const result = await pipService.recordCheckIn('pip-1', checkInRequest);
       expect(result).toEqual(checkIn);
       expect(mockApiClient.post).toHaveBeenCalledWith('/performance/pip/pip-1/check-in', checkInRequest);
@@ -675,8 +680,8 @@ describe('Performance Service', () => {
   // ─── Performance Revolution Service Tests ──────────────────────────────────
   describe('performanceRevolutionService', () => {
     it('should get OKR graph successfully', async () => {
-      const mockGraphData = { nodes: [], edges: [] };
-      mockApiClient.get.mockResolvedValueOnce({ data: mockGraphData });
+      const mockGraphData = {nodes: [], edges: []};
+      mockApiClient.get.mockResolvedValueOnce({data: mockGraphData});
       const result = await performanceRevolutionService.getOKRGraph();
       expect(result).toEqual(mockGraphData);
       expect(mockApiClient.get).toHaveBeenCalledWith('/performance/revolution/okr-graph');
@@ -688,8 +693,8 @@ describe('Performance Service', () => {
     });
 
     it('should get performance spider successfully', async () => {
-      const mockSpiderData = { dimensions: [], scores: [] };
-      mockApiClient.get.mockResolvedValueOnce({ data: mockSpiderData });
+      const mockSpiderData = {dimensions: [], scores: []};
+      mockApiClient.get.mockResolvedValueOnce({data: mockSpiderData});
       const result = await performanceRevolutionService.getPerformanceSpider('emp-1');
       expect(result).toEqual(mockSpiderData);
       expect(mockApiClient.get).toHaveBeenCalledWith('/performance/revolution/spider/emp-1');

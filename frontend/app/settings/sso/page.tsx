@@ -1,41 +1,41 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {
-  Save,
-  Trash2,
-  TestTube,
-  Download,
-  Upload,
-  Check,
   AlertCircle,
   ArrowLeft,
-  Globe,
-  Key,
-  Users,
-  FileText,
-  Loader2,
+  Check,
   CheckCircle,
-  XCircle,
+  Download,
+  FileText,
+  Globe,
   Info,
+  Key,
+  Loader2,
+  Save,
+  TestTube,
+  Trash2,
+  Upload,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { logger } from '@/lib/utils/logger';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {logger} from '@/lib/utils/logger';
 import {
-  useSamlConfig,
   useCreateSamlConfig,
-  useUpdateSamlConfig,
   useDeleteSamlConfig,
+  useSamlConfig,
   useTestSamlConnection,
+  useUpdateSamlConfig,
 } from '@/lib/hooks/useSamlConfig';
-import { samlService, SamlConfigRequest } from '@/lib/services/core/saml.service';
+import {SamlConfigRequest, samlService} from '@/lib/services/core/saml.service';
 
 // ==================== Zod Schema ====================
 
@@ -63,14 +63,14 @@ type SamlConfigFormData = z.infer<typeof samlConfigSchema>;
 
 export default function SsoSettingsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // React Query hooks
-  const { data: samlConfig, isLoading, error: fetchError } = useSamlConfig(hasHydrated && isAuthenticated);
+  const {data: samlConfig, isLoading, error: fetchError} = useSamlConfig(hasHydrated && isAuthenticated);
   const createMutation = useCreateSamlConfig();
   const updateMutation = useUpdateSamlConfig();
   const deleteMutation = useDeleteSamlConfig();
@@ -86,7 +86,7 @@ export default function SsoSettingsPage() {
     reset,
     setValue,
     watch,
-    formState: { errors, isDirty: _isDirty },
+    formState: {errors, isDirty: _isDirty},
   } = useForm<SamlConfigFormData>({
     resolver: zodResolver(samlConfigSchema),
     defaultValues: {
@@ -232,7 +232,7 @@ export default function SsoSettingsPage() {
   const handleDownloadMetadata = async () => {
     try {
       const metadata = await samlService.getMetadata();
-      const blob = new Blob([metadata], { type: 'application/xml' });
+      const blob = new Blob([metadata], {type: 'application/xml'});
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -252,7 +252,7 @@ export default function SsoSettingsPage() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      setValue('certificate', content, { shouldDirty: true });
+      setValue('certificate', content, {shouldDirty: true});
     };
     reader.readAsText(file);
   };
@@ -262,11 +262,11 @@ export default function SsoSettingsPage() {
   // ==================== Toggle Component ====================
 
   const Toggle = ({
-    checked,
-    onChange,
-    label,
-    description,
-  }: {
+                    checked,
+                    onChange,
+                    label,
+                    description,
+                  }: {
     checked: boolean;
     onChange: (val: boolean) => void;
     label: string;
@@ -310,7 +310,7 @@ export default function SsoSettingsPage() {
             className="p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Go back to settings"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">SAML SSO Configuration</h1>
@@ -322,15 +322,17 @@ export default function SsoSettingsPage() {
 
         {/* Status Messages */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
-            <Check className="h-5 w-5 text-success-600 flex-shrink-0" />
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+            <Check className="h-5 w-5 text-success-600 flex-shrink-0"/>
             <p className="text-success-800 dark:text-success-200 font-medium">{success}</p>
           </div>
         )}
 
         {(error || fetchError) && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-            <AlertCircle className="h-5 w-5 text-danger-600 flex-shrink-0" />
+          <div
+            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+            <AlertCircle className="h-5 w-5 text-danger-600 flex-shrink-0"/>
             <p className="text-danger-800 dark:text-danger-200 font-medium">
               {error || 'No SAML configuration found. Fill in the form below to set one up.'}
             </p>
@@ -339,7 +341,7 @@ export default function SsoSettingsPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -347,7 +349,7 @@ export default function SsoSettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
+                  <Globe className="h-5 w-5"/>
                   Identity Provider Settings
                 </CardTitle>
                 <CardDescription>
@@ -451,7 +453,7 @@ export default function SsoSettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Key className="h-5 w-5" />
+                  <Key className="h-5 w-5"/>
                   IdP Certificate
                 </CardTitle>
                 <CardDescription>
@@ -460,8 +462,9 @@ export default function SsoSettingsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {samlConfig?.hasCertificate && (
-                  <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0" />
+                  <div
+                    className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+                    <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0"/>
                     <div>
                       <p className="text-sm text-success-800 dark:text-success-200 font-medium">
                         Certificate uploaded
@@ -496,8 +499,9 @@ export default function SsoSettingsPage() {
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Or upload a certificate file
                   </label>
-                  <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] cursor-pointer hover:bg-[var(--bg-surface)] transition-colors">
-                    <Upload className="h-4 w-4 text-[var(--text-secondary)]" />
+                  <label
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] cursor-pointer hover:bg-[var(--bg-surface)] transition-colors">
+                    <Upload className="h-4 w-4 text-[var(--text-secondary)]"/>
                     <span className="text-body-secondary">Choose file</span>
                     <input
                       type="file"
@@ -514,7 +518,7 @@ export default function SsoSettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-5 w-5"/>
                   Attribute Mapping
                 </CardTitle>
                 <CardDescription>
@@ -524,12 +528,16 @@ export default function SsoSettingsPage() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { field: 'attributeMappingEmail' as const, label: 'Email', placeholder: 'urn:oid:0.9.2342.19200300.100.1.3' },
-                    { field: 'attributeMappingFirstName' as const, label: 'First Name', placeholder: 'urn:oid:2.5.4.42' },
-                    { field: 'attributeMappingLastName' as const, label: 'Last Name', placeholder: 'urn:oid:2.5.4.4' },
-                    { field: 'attributeMappingEmployeeId' as const, label: 'Employee ID', placeholder: 'customAttr1' },
-                    { field: 'attributeMappingDepartment' as const, label: 'Department', placeholder: 'customAttr2' },
-                  ].map(({ field, label, placeholder }) => (
+                    {
+                      field: 'attributeMappingEmail' as const,
+                      label: 'Email',
+                      placeholder: 'urn:oid:0.9.2342.19200300.100.1.3'
+                    },
+                    {field: 'attributeMappingFirstName' as const, label: 'First Name', placeholder: 'urn:oid:2.5.4.42'},
+                    {field: 'attributeMappingLastName' as const, label: 'Last Name', placeholder: 'urn:oid:2.5.4.4'},
+                    {field: 'attributeMappingEmployeeId' as const, label: 'Employee ID', placeholder: 'customAttr1'},
+                    {field: 'attributeMappingDepartment' as const, label: 'Department', placeholder: 'customAttr2'},
+                  ].map(({field, label, placeholder}) => (
                     <div key={field}>
                       <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         {label}
@@ -542,8 +550,9 @@ export default function SsoSettingsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="flex items-start gap-2 mt-4 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-                  <Info className="h-4 w-4 text-accent-600 mt-0.5 flex-shrink-0" />
+                <div
+                  className="flex items-start gap-2 mt-4 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
+                  <Info className="h-4 w-4 text-accent-600 mt-0.5 flex-shrink-0"/>
                   <p className="text-xs text-accent-800 dark:text-accent-200">
                     Enter the SAML attribute name your IdP sends for each field. Common formats include
                     OID URIs (e.g., urn:oid:2.5.4.42) or friendly names (e.g., firstName). Check your IdP
@@ -557,7 +566,7 @@ export default function SsoSettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                  <Users className="h-5 w-5"/>
                   Provisioning & Activation
                 </CardTitle>
                 <CardDescription>
@@ -568,7 +577,7 @@ export default function SsoSettingsPage() {
                 <Controller
                   name="autoProvisionUsers"
                   control={control}
-                  render={({ field }) => (
+                  render={({field}) => (
                     <Toggle
                       checked={field.value}
                       onChange={field.onChange}
@@ -599,7 +608,7 @@ export default function SsoSettingsPage() {
                   <Controller
                     name="isActive"
                     control={control}
-                    render={({ field }) => (
+                    render={({field}) => (
                       <Toggle
                         checked={field.value}
                         onChange={field.onChange}
@@ -611,8 +620,9 @@ export default function SsoSettingsPage() {
                 </div>
 
                 {isActive && (
-                  <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                    <AlertCircle className="h-4 w-4 text-warning-600 mt-0.5 flex-shrink-0" />
+                  <div
+                    className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                    <AlertCircle className="h-4 w-4 text-warning-600 mt-0.5 flex-shrink-0"/>
                     <p className="text-xs text-warning-800 dark:text-warning-200">
                       Enabling SSO will add a &quot;Sign in with SSO&quot; button to your login page. Ensure you
                       have tested the configuration before enabling in production.
@@ -627,7 +637,7 @@ export default function SsoSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TestTube className="h-5 w-5" />
+                    <TestTube className="h-5 w-5"/>
                     Connection Test Results
                   </CardTitle>
                 </CardHeader>
@@ -639,9 +649,9 @@ export default function SsoSettingsPage() {
                         : 'bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800'
                     }`}>
                       {testMutation.data.success ? (
-                        <CheckCircle className="h-5 w-5 text-success-600" />
+                        <CheckCircle className="h-5 w-5 text-success-600"/>
                       ) : (
-                        <XCircle className="h-5 w-5 text-danger-600" />
+                        <XCircle className="h-5 w-5 text-danger-600"/>
                       )}
                       <p className={`font-medium ${
                         testMutation.data.success
@@ -655,17 +665,17 @@ export default function SsoSettingsPage() {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         {testMutation.data.certificateValid ? (
-                          <CheckCircle className="h-4 w-4 text-success-600" />
+                          <CheckCircle className="h-4 w-4 text-success-600"/>
                         ) : (
-                          <XCircle className="h-4 w-4 text-danger-600" />
+                          <XCircle className="h-4 w-4 text-danger-600"/>
                         )}
                         <span className="text-[var(--text-secondary)]">Certificate</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {testMutation.data.metadataReachable ? (
-                          <CheckCircle className="h-4 w-4 text-success-600" />
+                          <CheckCircle className="h-4 w-4 text-success-600"/>
                         ) : (
-                          <XCircle className="h-4 w-4 text-warning-500" />
+                          <XCircle className="h-4 w-4 text-warning-500"/>
                         )}
                         <span className="text-[var(--text-secondary)]">Metadata URL</span>
                       </div>
@@ -690,9 +700,9 @@ export default function SsoSettingsPage() {
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSaving ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin"/>
                 ) : (
-                  <Save className="h-4 w-4" />
+                  <Save className="h-4 w-4"/>
                 )}
                 {isExistingConfig ? 'Update Configuration' : 'Save Configuration'}
               </button>
@@ -706,9 +716,9 @@ export default function SsoSettingsPage() {
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {testMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin"/>
                   ) : (
-                    <TestTube className="h-4 w-4" />
+                    <TestTube className="h-4 w-4"/>
                   )}
                   Test Connection
                 </button>
@@ -721,7 +731,7 @@ export default function SsoSettingsPage() {
                   onClick={handleDownloadMetadata}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Download className="h-4 w-4" />
+                  <Download className="h-4 w-4"/>
                   Download SP Metadata
                 </button>
               )}
@@ -733,7 +743,7 @@ export default function SsoSettingsPage() {
                   onClick={() => setShowDeleteConfirm(true)}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-danger-200 dark:border-danger-800 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/20 transition-colors ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4"/>
                   Delete
                 </button>
               )}
@@ -747,7 +757,7 @@ export default function SsoSettingsPage() {
                     disabled={deleteMutation.isPending}
                     className="inline-flex items-center gap-1 px-4 py-1.5 bg-danger-600 text-white rounded-lg text-sm hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    {deleteMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                    {deleteMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin"/> : null}
                     Confirm
                   </button>
                   <button

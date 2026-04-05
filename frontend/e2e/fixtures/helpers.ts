@@ -1,5 +1,5 @@
-import { Page, expect } from '@playwright/test';
-import { demoUsers, allDemoUsers, DEMO_PASSWORD, DemoUser } from './testData';
+import {expect, Page} from '@playwright/test';
+import {allDemoUsers, DEMO_PASSWORD, DemoUser, demoUsers} from './testData';
 
 /**
  * E2E Test Helpers — Playwright fixtures for multi-user approval flow testing.
@@ -25,7 +25,7 @@ export async function loginAs(page: Page, email: string): Promise<void> {
 
   // Call the backend login API directly
   const response = await page.request.post(`${API_BASE}/auth/login`, {
-    data: { email, password },
+    data: {email, password},
     failOnStatusCode: false,
   });
 
@@ -58,23 +58,23 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
   await page.waitForLoadState('networkidle');
 
   // Find and click the demo account button by user name
-  const demoButton = page.locator('button').filter({ hasText: user.name });
+  const demoButton = page.locator('button').filter({hasText: user.name});
 
   // The demo accounts panel might be collapsed; expand it if needed
-  const demoToggle = page.locator('button').filter({ hasText: 'Demo Accounts' });
+  const demoToggle = page.locator('button').filter({hasText: 'Demo Accounts'});
   if (await demoToggle.isVisible()) {
     // Check if accounts are already visible
-    if (!(await demoButton.isVisible({ timeout: 2000 }).catch(() => false))) {
+    if (!(await demoButton.isVisible({timeout: 2000}).catch(() => false))) {
       await demoToggle.click();
       await page.waitForTimeout(300);
     }
   }
 
-  await expect(demoButton).toBeVisible({ timeout: 10000 });
+  await expect(demoButton).toBeVisible({timeout: 10000});
   await demoButton.click();
 
   // Wait for redirect to dashboard
-  await page.waitForURL('**/dashboard', { timeout: 45000 });
+  await page.waitForURL('**/dashboard', {timeout: 45000});
   await page.waitForLoadState('networkidle');
 }
 
@@ -87,7 +87,7 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
 export async function waitForDashboard(page: Page, timeout = 30000): Promise<void> {
   // Wait for URL to settle on a dashboard path
   try {
-    await page.waitForURL('**/dashboard', { timeout });
+    await page.waitForURL('**/dashboard', {timeout});
   } catch {
     const currentUrl = page.url();
     // If redirected to login, auth failed
@@ -100,7 +100,7 @@ export async function waitForDashboard(page: Page, timeout = 30000): Promise<voi
 
   // Verify content is visible (heading or main content area)
   const content = page.locator('h1, h2, main, [data-testid="dashboard-heading"]').first();
-  await expect(content).toBeVisible({ timeout: 15000 });
+  await expect(content).toBeVisible({timeout: 15000});
 }
 
 /**

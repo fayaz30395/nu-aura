@@ -79,7 +79,7 @@ export const FREQUENCY_LABELS: Record<LWFFrequency, string> = {
 
 /** Display-friendly status labels with colors */
 export const STATUS_CONFIG: Record<LWFDeductionStatus, { label: string; color: string }> = {
-  CALCULATED: { label: 'Calculated', color: 'blue' },
-  DEDUCTED: { label: 'Deducted', color: 'orange' },
-  REMITTED: { label: 'Remitted', color: 'green' },
+  CALCULATED: {label: 'Calculated', color: 'blue'},
+  DEDUCTED: {label: 'Deducted', color: 'orange'},
+  REMITTED: {label: 'Remitted', color: 'green'},
 };

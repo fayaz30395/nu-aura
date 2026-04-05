@@ -1,16 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import {
-  employeeSkillService,
-  competencyService,
-  skillGapService,
-} from '@/lib/services/grow/competencyService';
-import type {
-  EmployeeSkillRequest,
-  CompetencyRequest,
-} from '@/lib/types/grow/competency';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {competencyService, employeeSkillService, skillGapService,} from '@/lib/services/grow/competencyService';
+import type {CompetencyRequest, EmployeeSkillRequest,} from '@/lib/types/grow/competency';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────
 
@@ -70,7 +63,7 @@ export function useVerifySkill() {
   return useMutation({
     mutationFn: (skillId: string) => employeeSkillService.verify(skillId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: competencyKeys.skills() });
+      queryClient.invalidateQueries({queryKey: competencyKeys.skills()});
       notifications.show({
         title: 'Skill Verified',
         message: 'The skill has been verified successfully.',

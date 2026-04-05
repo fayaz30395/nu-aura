@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback, useId, ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { modalVariants, overlayVariants } from '@/lib/animations/variants';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, {ReactNode, useCallback, useEffect, useId, useRef} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {modalVariants, overlayVariants} from '@/lib/animations/variants';
+import {X} from 'lucide-react';
+import {cn} from '@/lib/utils';
 
 interface ModalProps {
   isOpen: boolean;
@@ -38,14 +38,14 @@ const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disab
 const ModalTitleIdContext = React.createContext<string | undefined>(undefined);
 
 const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  children,
-  size = 'md',
-  className,
-  closeOnBackdrop = true,
-  closeOnEscape = true,
-}) => {
+                                       isOpen,
+                                       onClose,
+                                       children,
+                                       size = 'md',
+                                       className,
+                                       closeOnBackdrop = true,
+                                       closeOnEscape = true,
+                                     }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const generatedId = useId();
   const titleId = `modal-title-${generatedId}`;
@@ -111,60 +111,60 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <ModalTitleIdContext.Provider value={titleId}>
-    <AnimatePresence>
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          aria-modal="true"
-          role="dialog"
-          aria-labelledby={titleId}
-        >
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0"
-            style={{ backgroundColor: 'var(--bg-overlay)' }}
-            onClick={closeOnBackdrop ? onClose : undefined}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={overlayVariants}
-          />
-
-          {/* Modal */}
-          <motion.div
-            ref={modalRef}
-            className={cn(
-              'relative w-full rounded-lg border',
-              'max-h-[90vh] overflow-hidden flex flex-col',
-              sizeClasses[size],
-              className
-            )}
-            style={{
-              backgroundColor: 'var(--bg-elevated)',
-              borderColor: 'var(--border-main)',
-              boxShadow: 'var(--shadow-dropdown)',
-            }}
-            onClick={(e) => e.stopPropagation()}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={modalVariants}
+      <AnimatePresence>
+        {isOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            aria-modal="true"
+            role="dialog"
+            aria-labelledby={titleId}
           >
-            {children}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0"
+              style={{backgroundColor: 'var(--bg-overlay)'}}
+              onClick={closeOnBackdrop ? onClose : undefined}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={overlayVariants}
+            />
+
+            {/* Modal */}
+            <motion.div
+              ref={modalRef}
+              className={cn(
+                'relative w-full rounded-lg border',
+                'max-h-[90vh] overflow-hidden flex flex-col',
+                sizeClasses[size],
+                className
+              )}
+              style={{
+                backgroundColor: 'var(--bg-elevated)',
+                borderColor: 'var(--border-main)',
+                boxShadow: 'var(--shadow-dropdown)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={modalVariants}
+            >
+              {children}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </ModalTitleIdContext.Provider>
   );
 };
 
 const ModalHeader: React.FC<ModalHeaderProps> = ({
-  children,
-  className,
-  onClose,
-  showCloseButton = true,
-}) => {
+                                                   children,
+                                                   className,
+                                                   onClose,
+                                                   showCloseButton = true,
+                                                 }) => {
   const titleId = React.useContext(ModalTitleIdContext);
 
   return (
@@ -173,7 +173,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
         'row-between px-6 py-4',
         className
       )}
-      style={{ borderBottom: '1px solid var(--border-main)' }}
+      style={{borderBottom: '1px solid var(--border-main)'}}
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
@@ -190,14 +190,14 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
           className="ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           aria-label="Close modal"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5"/>
         </button>
       )}
     </div>
   );
 };
 
-const ModalBody: React.FC<ModalBodyProps> = ({ children, className }) => {
+const ModalBody: React.FC<ModalBodyProps> = ({children, className}) => {
   return (
     <div className={cn('flex-1 overflow-y-auto px-6 py-4', className)}>
       {children}
@@ -205,7 +205,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({ children, className }) => {
   );
 };
 
-const ModalFooter: React.FC<ModalFooterProps> = ({ children, className }) => {
+const ModalFooter: React.FC<ModalFooterProps> = ({children, className}) => {
   return (
     <div
       className={cn(
@@ -222,5 +222,5 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ children, className }) => {
   );
 };
 
-export { Modal, ModalHeader, ModalBody, ModalFooter };
-export type { ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps };
+export {Modal, ModalHeader, ModalBody, ModalFooter};
+export type {ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps};

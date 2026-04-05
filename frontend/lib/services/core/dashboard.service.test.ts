@@ -1,28 +1,40 @@
 /**
  * Unit Tests for Dashboard Service
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {dashboardService} from './dashboard.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
-  apiClient: { get: vi.fn() },
+  apiClient: {get: vi.fn()},
 }));
-
-import { dashboardService } from './dashboard.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockedApiClient = apiClient as { get: ReturnType<typeof vi.fn> };
 
-interface ExecutiveDashboardData { headcount: number; revenue: number; }
-interface EmployeeDashboardData { employeeId: string; leaveBalance: number; }
-interface ManagerDashboardResponse { teamSize: number; pendingApprovals: number; }
+interface ExecutiveDashboardData {
+  headcount: number;
+  revenue: number;
+}
+
+interface EmployeeDashboardData {
+  employeeId: string;
+  leaveBalance: number;
+}
+
+interface ManagerDashboardResponse {
+  teamSize: number;
+  pendingApprovals: number;
+}
 
 describe('DashboardService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe('getExecutiveDashboard', () => {
     it('should return executive dashboard data', async () => {
-      const mockData: ExecutiveDashboardData = { headcount: 200, revenue: 5000000 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: ExecutiveDashboardData = {headcount: 200, revenue: 5000000};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       const result = await dashboardService.getExecutiveDashboard();
       expect(result).toEqual(mockData);
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/executive');
@@ -36,11 +48,11 @@ describe('DashboardService', () => {
 
   describe('getExecutiveDashboardByDateRange', () => {
     it('should pass date range parameters', async () => {
-      const mockData: ExecutiveDashboardData = { headcount: 200, revenue: 5000000 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: ExecutiveDashboardData = {headcount: 200, revenue: 5000000};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       await dashboardService.getExecutiveDashboardByDateRange('2024-01-01', '2024-03-31');
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/executive', {
-        params: { startDate: '2024-01-01', endDate: '2024-03-31' },
+        params: {startDate: '2024-01-01', endDate: '2024-03-31'},
       });
     });
 
@@ -54,8 +66,8 @@ describe('DashboardService', () => {
 
   describe('getEmployeeDashboard', () => {
     it('should return employee dashboard data', async () => {
-      const mockData: EmployeeDashboardData = { employeeId: 'emp-1', leaveBalance: 12 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: EmployeeDashboardData = {employeeId: 'emp-1', leaveBalance: 12};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       const result = await dashboardService.getEmployeeDashboard();
       expect(result).toEqual(mockData);
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/employee');
@@ -69,8 +81,8 @@ describe('DashboardService', () => {
 
   describe('getEmployeeDashboardById', () => {
     it('should fetch dashboard for specific employee', async () => {
-      const mockData: EmployeeDashboardData = { employeeId: 'emp-42', leaveBalance: 8 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: EmployeeDashboardData = {employeeId: 'emp-42', leaveBalance: 8};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       const result = await dashboardService.getEmployeeDashboardById('emp-42');
       expect(result).toEqual(mockData);
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/employee/emp-42');
@@ -84,8 +96,8 @@ describe('DashboardService', () => {
 
   describe('getManagerDashboard', () => {
     it('should return manager dashboard data', async () => {
-      const mockData: ManagerDashboardResponse = { teamSize: 10, pendingApprovals: 3 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: ManagerDashboardResponse = {teamSize: 10, pendingApprovals: 3};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       const result = await dashboardService.getManagerDashboard();
       expect(result).toEqual(mockData);
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/manager');
@@ -99,8 +111,8 @@ describe('DashboardService', () => {
 
   describe('getManagerDashboardById', () => {
     it('should fetch dashboard for specific manager', async () => {
-      const mockData: ManagerDashboardResponse = { teamSize: 5, pendingApprovals: 1 };
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockData });
+      const mockData: ManagerDashboardResponse = {teamSize: 5, pendingApprovals: 1};
+      mockedApiClient.get.mockResolvedValueOnce({data: mockData});
       const result = await dashboardService.getManagerDashboardById('mgr-1');
       expect(result).toEqual(mockData);
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/manager/mgr-1');

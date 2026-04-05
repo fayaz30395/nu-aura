@@ -1,10 +1,10 @@
-import { apiClient } from './client';
+import {apiClient} from './client';
 import {
-  SystemOverview,
-  TenantMetrics,
+  GrowthMetrics,
   ImpersonationToken,
   PaginatedTenantList,
-  GrowthMetrics,
+  SystemOverview,
+  TenantMetrics,
 } from '../types/core/admin-system';
 
 /**
@@ -31,7 +31,7 @@ export const systemAdminApi = {
     const params = new URLSearchParams({
       page: page.toString(),
       size: size.toString(),
-      ...(sort && { sort }),
+      ...(sort && {sort}),
     });
 
     const response = await apiClient.get<PaginatedTenantList>(

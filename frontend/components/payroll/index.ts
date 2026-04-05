@@ -1,2 +1,2 @@
-export { PayslipCard } from './PayslipCard';
-export { BulkProcessingWizard } from './BulkProcessingWizard';
+export {PayslipCard} from './PayslipCard';
+export {BulkProcessingWizard} from './BulkProcessingWizard';

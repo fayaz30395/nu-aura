@@ -1,26 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AlertCircle, Calendar, CheckCircle2, Clock, Mail, RefreshCw, Search, UserPlus, Users} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {
-  Users, UserPlus, Calendar, CheckCircle2, Clock,
-  Search, Mail, RefreshCw, AlertCircle
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Skeleton } from '@/components/ui/Skeleton';
-import {
-  usePreboardingCandidates,
-  useCreatePreboardingCandidate,
-  useResendPreboardingInvitation,
   type CreatePreboardingRequest,
+  useCreatePreboardingCandidate,
+  usePreboardingCandidates,
+  useResendPreboardingInvitation,
 } from '@/lib/hooks/queries/usePreboarding';
+import {createLogger} from '@/lib/utils/logger';
 
 const preBoardingFormSchema = z.object({
   firstName: z.string().min(1, 'First name required'),
@@ -31,7 +29,6 @@ const preBoardingFormSchema = z.object({
 });
 
 type PreBoardingFormData = z.infer<typeof preBoardingFormSchema>;
-import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('PreboardingPage');
 
@@ -40,12 +37,12 @@ interface PreBoardingModalProps {
   createMutation: ReturnType<typeof useCreatePreboardingCandidate>;
 }
 
-function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
+function PreBoardingModal({onClose, createMutation}: PreBoardingModalProps) {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<PreBoardingFormData>({
     resolver: zodResolver(preBoardingFormSchema),
     defaultValues: {
@@ -114,7 +111,7 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
 }
 
 export default function PreboardingPage() {
-  const { data: candidates = [], isLoading: loading, isError, error, refetch } = usePreboardingCandidates();
+  const {data: candidates = [], isLoading: loading, isError, error, refetch} = usePreboardingCandidates();
   const createCandidateMutation = useCreatePreboardingCandidate();
   const resendInvitationMutation = useResendPreboardingInvitation();
 
@@ -128,12 +125,18 @@ export default function PreboardingPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
-      case 'IN_PROGRESS': return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
-      case 'INVITED': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
-      case 'CONVERTED': return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
-      case 'CANCELLED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+      case 'IN_PROGRESS':
+        return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+      case 'INVITED':
+        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      case 'CONVERTED':
+        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
+      case 'CANCELLED':
+        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
   };
 
@@ -152,7 +155,7 @@ export default function PreboardingPage() {
   };
 
   return (
-    <AppLayout activeMenuItem="recruitment" breadcrumbs={[{ label: 'Pre-boarding', href: '/preboarding' }]}>
+    <AppLayout activeMenuItem="recruitment" breadcrumbs={[{label: 'Pre-boarding', href: '/preboarding'}]}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -163,7 +166,7 @@ export default function PreboardingPage() {
           <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
             <Button
               variant="primary"
-              leftIcon={<UserPlus className="h-4 w-4" />}
+              leftIcon={<UserPlus className="h-4 w-4"/>}
               onClick={() => setShowInviteModal(true)}
             >
               Invite Candidate
@@ -176,13 +179,13 @@ export default function PreboardingPage() {
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
             <CardContent className="p-4 row-between">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
                 <p className="text-sm text-danger-600 dark:text-danger-400">
                   {error instanceof Error ? error.message : 'Failed to load pre-boarding data'}
                 </p>
               </div>
               <Button variant="outline" size="sm" onClick={() => refetch()}>
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5"/>
                 Retry
               </Button>
             </CardContent>
@@ -194,7 +197,7 @@ export default function PreboardingPage() {
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Total Candidates</p>
@@ -205,8 +208,9 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/20 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+              <div
+                className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/20 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Invited</p>
@@ -218,7 +222,7 @@ export default function PreboardingPage() {
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                <Clock className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">In Progress</p>
@@ -229,8 +233,9 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/20 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
+              <div
+                className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/20 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400"/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Completed</p>
@@ -243,7 +248,7 @@ export default function PreboardingPage() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <Input
               placeholder="Search candidates..."
               value={searchQuery}
@@ -271,22 +276,24 @@ export default function PreboardingPage() {
             {loading ? (
               <div className="p-6 space-y-4">
                 {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
+                  <Skeleton key={i} className="h-16 w-full"/>
                 ))}
               </div>
             ) : filteredCandidates.length === 0 ? (
               <div className="p-12 text-center">
-                <Users className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                <Users className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                 <h3 className="text-lg font-medium text-[var(--text-primary)]">No candidates found</h3>
                 <p className="text-[var(--text-muted)] mt-1">Invite a new candidate to get started</p>
               </div>
             ) : (
               <div className="divide-y divide-surface-100 dark:divide-surface-700">
                 {filteredCandidates.map((candidate) => (
-                  <div key={candidate.id} className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                  <div key={candidate.id}
+                       className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                     <div className="row-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        <div
+                          className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                           <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
                             {candidate.firstName[0]}{candidate.lastName?.[0] || ''}
                           </span>
@@ -301,7 +308,7 @@ export default function PreboardingPage() {
                         <div className="text-right hidden sm:block">
                           <p className="text-sm text-[var(--text-primary)]">{candidate.designation || '-'}</p>
                           <p className="text-caption">
-                            <Calendar className="h-3 w-3 inline mr-1" />
+                            <Calendar className="h-3 w-3 inline mr-1"/>
                             Joining: {new Date(candidate.expectedJoiningDate).toLocaleDateString()}
                           </p>
                         </div>
@@ -310,13 +317,14 @@ export default function PreboardingPage() {
                           <div className="w-24 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                             <div
                               className="bg-accent-500 h-2 rounded-full transition-all"
-                              style={{ width: `${candidate.completionPercentage}%` }}
+                              style={{width: `${candidate.completionPercentage}%`}}
                             />
                           </div>
                           <span className="text-caption w-8">{candidate.completionPercentage}%</span>
                         </div>
 
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
                           {candidate.status}
                         </span>
 
@@ -329,7 +337,7 @@ export default function PreboardingPage() {
                               title="Resend Invitation"
                               disabled={resendInvitationMutation.isPending}
                             >
-                              <RefreshCw className="h-4 w-4" />
+                              <RefreshCw className="h-4 w-4"/>
                             </Button>
                           </PermissionGate>
                         )}
@@ -344,7 +352,8 @@ export default function PreboardingPage() {
       </div>
 
       {/* Invite Modal */}
-      {showInviteModal && <PreBoardingModal onClose={() => setShowInviteModal(false)} createMutation={createCandidateMutation} />}
+      {showInviteModal &&
+        <PreBoardingModal onClose={() => setShowInviteModal(false)} createMutation={createCandidateMutation}/>}
     </AppLayout>
   );
 }

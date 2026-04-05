@@ -1,6 +1,26 @@
-export type BenefitType = 'HEALTH' | 'DENTAL' | 'VISION' | 'LIFE' | 'DISABILITY' | 'RETIREMENT' | 'FSA' | 'HSA' | 'OTHER';
+export type BenefitType =
+  'HEALTH'
+  | 'DENTAL'
+  | 'VISION'
+  | 'LIFE'
+  | 'DISABILITY'
+  | 'RETIREMENT'
+  | 'FSA'
+  | 'HSA'
+  | 'OTHER';
 
-export type PlanType = 'HEALTH_INSURANCE' | 'DENTAL' | 'VISION' | 'LIFE_INSURANCE' | 'DISABILITY' | 'RETIREMENT' | 'FSA' | 'HSA' | 'WELLNESS' | 'EAP' | 'OTHER';
+export type PlanType =
+  'HEALTH_INSURANCE'
+  | 'DENTAL'
+  | 'VISION'
+  | 'LIFE_INSURANCE'
+  | 'DISABILITY'
+  | 'RETIREMENT'
+  | 'FSA'
+  | 'HSA'
+  | 'WELLNESS'
+  | 'EAP'
+  | 'OTHER';
 
 export type PlanCategory = 'CORE' | 'VOLUNTARY' | 'FLEX' | 'SUPPLEMENTAL';
 

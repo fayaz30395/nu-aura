@@ -1,15 +1,8 @@
 'use client';
 
 import React from 'react';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Input,
-} from '@/components/ui';
-import type { TrainingEnrollmentRequest } from '@/lib/types/grow/training';
+import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import type {TrainingEnrollmentRequest} from '@/lib/types/grow/training';
 
 interface EnrollEmployeeModalProps {
   isOpen: boolean;
@@ -21,13 +14,13 @@ interface EnrollEmployeeModalProps {
 }
 
 export function EnrollEmployeeModal({
-  isOpen,
-  programName,
-  enrollFormData,
-  onClose,
-  onEnrollFormChange,
-  onSubmit,
-}: EnrollEmployeeModalProps) {
+                                      isOpen,
+                                      programName,
+                                      enrollFormData,
+                                      onClose,
+                                      onEnrollFormChange,
+                                      onSubmit,
+                                    }: EnrollEmployeeModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalHeader>
@@ -39,7 +32,7 @@ export function EnrollEmployeeModal({
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Program
             </label>
-            <Input value={programName} disabled />
+            <Input value={programName} disabled/>
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -47,7 +40,7 @@ export function EnrollEmployeeModal({
             </label>
             <Input
               value={enrollFormData.employeeId ?? ''}
-              onChange={(e) => onEnrollFormChange({ ...enrollFormData, employeeId: e.target.value })}
+              onChange={(e) => onEnrollFormChange({...enrollFormData, employeeId: e.target.value})}
               placeholder="Enter employee ID"
             />
           </div>
@@ -59,7 +52,7 @@ export function EnrollEmployeeModal({
               type="date"
               value={enrollFormData.enrollmentDate ?? ''}
               onChange={(e) =>
-                onEnrollFormChange({ ...enrollFormData, enrollmentDate: e.target.value })
+                onEnrollFormChange({...enrollFormData, enrollmentDate: e.target.value})
               }
             />
           </div>

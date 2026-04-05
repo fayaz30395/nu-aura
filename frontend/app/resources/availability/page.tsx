@@ -1,32 +1,25 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Calendar, ChevronLeft, ChevronRight, Filter, RefreshCw, Users,} from 'lucide-react';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {ResourceAvailabilityCalendar} from '@/components/resource-management/ResourceAvailabilityCalendar';
+import {useTeamAvailability} from '@/lib/hooks/queries/useResources';
 import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  Filter,
-  Users,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { ResourceAvailabilityCalendar } from '@/components/resource-management/ResourceAvailabilityCalendar';
-import { useTeamAvailability } from '@/lib/hooks/queries/useResources';
-import {
+  addMonths,
+  addWeeks,
+  endOfMonth,
+  endOfWeek,
   format,
   startOfMonth,
-  endOfMonth,
-  addMonths,
-  subMonths,
   startOfWeek,
-  endOfWeek,
-  addWeeks,
+  subMonths,
   subWeeks,
 } from 'date-fns';
 
@@ -34,7 +27,7 @@ type ViewMode = 'month' | 'week';
 
 export default function AvailabilityCalendarPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -59,13 +52,13 @@ export default function AvailabilityCalendarPage() {
       };
     } else {
       return {
-        startDate: format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'yyyy-MM-dd'),
-        endDate: format(endOfWeek(currentDate, { weekStartsOn: 1 }), 'yyyy-MM-dd'),
+        startDate: format(startOfWeek(currentDate, {weekStartsOn: 1}), 'yyyy-MM-dd'),
+        endDate: format(endOfWeek(currentDate, {weekStartsOn: 1}), 'yyyy-MM-dd'),
       };
     }
   }, [currentDate, viewMode]);
 
-  const { data: teamAvailability, isLoading } = useTeamAvailability({
+  const {data: teamAvailability, isLoading} = useTeamAvailability({
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
     departmentIds: selectedDepartment ? [selectedDepartment] : undefined,
@@ -144,7 +137,7 @@ export default function AvailabilityCalendarPage() {
 
           <div className="flex items-center gap-4">
             <Button variant="ghost" disabled={isLoading} aria-label="Refresh data">
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
             </Button>
             <Button
               variant="outline"
@@ -152,7 +145,7 @@ export default function AvailabilityCalendarPage() {
               onClick={() => setShowFilters(!showFilters)}
               className={showFilters ? 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]' : ''}
             >
-              <Filter className="mr-2 h-4 w-4" />
+              <Filter className="mr-2 h-4 w-4"/>
               Filters
             </Button>
           </div>
@@ -236,18 +229,18 @@ export default function AvailabilityCalendarPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={navigatePrevious}>
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4"/>
             </Button>
             <Button variant="ghost" size="sm" onClick={goToToday}>
               Today
             </Button>
             <Button variant="ghost" size="sm" onClick={navigateNext}>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4"/>
             </Button>
             <h2 className="ml-2 text-xl font-semibold text-[var(--text-primary)]">
               {viewMode === 'month'
                 ? format(currentDate, 'MMMM yyyy')
-                : `Week of ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`}
+                : `Week of ${format(startOfWeek(currentDate, {weekStartsOn: 1}), 'MMM d, yyyy')}`}
             </h2>
           </div>
 
@@ -282,9 +275,9 @@ export default function AvailabilityCalendarPage() {
           <CardContent className="p-4">
             {isLoading ? (
               <div className="space-y-4">
-                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full"/>
                 {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
+                  <Skeleton key={i} className="h-10 w-full"/>
                 ))}
               </div>
             ) : teamAvailability && teamAvailability.employees.length > 0 ? (
@@ -299,7 +292,7 @@ export default function AvailabilityCalendarPage() {
               <EmptyState
                 title="No employees found"
                 description="Try adjusting your filters or date range"
-                icon={<Users className="h-12 w-12" />}
+                icon={<Users className="h-12 w-12"/>}
               />
             )}
           </CardContent>
@@ -310,11 +303,11 @@ export default function AvailabilityCalendarPage() {
 }
 
 function SummaryCard({
-  label,
-  value,
-  icon: Icon,
-  color,
-}: {
+                       label,
+                       value,
+                       icon: Icon,
+                       color,
+                     }: {
   label: string;
   value: number;
   icon: React.ElementType;
@@ -324,7 +317,7 @@ function SummaryCard({
     <Card>
       <CardContent className="flex items-center gap-4 p-4">
         <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5"/>
         </div>
         <div>
           <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>

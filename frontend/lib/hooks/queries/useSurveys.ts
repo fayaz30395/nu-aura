@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { surveyService } from '@/lib/services/grow/survey.service';
-import type { SurveyStatus, SurveyRequest } from '@/lib/types/grow/survey';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {surveyService} from '@/lib/services/grow/survey.service';
+import type {SurveyRequest, SurveyStatus} from '@/lib/types/grow/survey';
+import {notifications} from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
 export const surveyKeys = {
   all: ['surveys'] as const,
   lists: () => [...surveyKeys.all, 'list'] as const,
-  list: (page: number, size: number) => [...surveyKeys.lists(), { page, size }] as const,
+  list: (page: number, size: number) => [...surveyKeys.lists(), {page, size}] as const,
   detail: (id: string) => [...surveyKeys.all, 'detail', id] as const,
   byStatus: (status: SurveyStatus) => [...surveyKeys.all, 'status', status] as const,
   active: () => [...surveyKeys.all, 'active'] as const,
@@ -60,7 +60,7 @@ export function useCreateSurvey() {
     mutationFn: (data: SurveyRequest) => surveyService.createSurvey(data),
     onSuccess: (_newSurvey) => {
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
       notifications.show({
         title: 'Success',
         message: 'Survey created successfully',
@@ -70,7 +70,9 @@ export function useCreateSurvey() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create survey',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to create survey',
         color: 'red',
       });
     },
@@ -81,11 +83,11 @@ export function useUpdateSurvey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ surveyId, data }: { surveyId: string; data: SurveyRequest }) =>
+    mutationFn: ({surveyId, data}: { surveyId: string; data: SurveyRequest }) =>
       surveyService.updateSurvey(surveyId, data),
     onSuccess: (updatedSurvey) => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: surveyKeys.detail(updatedSurvey.id) });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
+      queryClient.invalidateQueries({queryKey: surveyKeys.detail(updatedSurvey.id)});
       notifications.show({
         title: 'Success',
         message: 'Survey updated successfully',
@@ -95,7 +97,9 @@ export function useUpdateSurvey() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update survey',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to update survey',
         color: 'red',
       });
     },
@@ -106,11 +110,11 @@ export function useUpdateSurveyStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ surveyId, status }: { surveyId: string; status: SurveyStatus }) =>
+    mutationFn: ({surveyId, status}: { surveyId: string; status: SurveyStatus }) =>
       surveyService.updateStatus(surveyId, status),
     onSuccess: (updatedSurvey) => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: surveyKeys.detail(updatedSurvey.id) });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
+      queryClient.invalidateQueries({queryKey: surveyKeys.detail(updatedSurvey.id)});
     },
   });
 }
@@ -121,9 +125,9 @@ export function useLaunchSurvey() {
   return useMutation({
     mutationFn: (surveyId: string) => surveyService.launchSurvey(surveyId),
     onSuccess: (launchedSurvey) => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: surveyKeys.detail(launchedSurvey.id) });
-      queryClient.invalidateQueries({ queryKey: surveyKeys.active() });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
+      queryClient.invalidateQueries({queryKey: surveyKeys.detail(launchedSurvey.id)});
+      queryClient.invalidateQueries({queryKey: surveyKeys.active()});
       notifications.show({
         title: 'Success',
         message: 'Survey launched successfully',
@@ -133,7 +137,9 @@ export function useLaunchSurvey() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to launch survey',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to launch survey',
         color: 'red',
       });
     },
@@ -146,8 +152,8 @@ export function useCompleteSurvey() {
   return useMutation({
     mutationFn: (surveyId: string) => surveyService.completeSurvey(surveyId),
     onSuccess: (completedSurvey) => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: surveyKeys.detail(completedSurvey.id) });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
+      queryClient.invalidateQueries({queryKey: surveyKeys.detail(completedSurvey.id)});
       notifications.show({
         title: 'Success',
         message: 'Survey completed successfully',
@@ -157,7 +163,9 @@ export function useCompleteSurvey() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete survey',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to complete survey',
         color: 'red',
       });
     },
@@ -170,7 +178,7 @@ export function useDeleteSurvey() {
   return useMutation({
     mutationFn: (surveyId: string) => surveyService.deleteSurvey(surveyId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.lists() });
+      queryClient.invalidateQueries({queryKey: surveyKeys.lists()});
       notifications.show({
         title: 'Success',
         message: 'Survey deleted successfully',
@@ -180,7 +188,9 @@ export function useDeleteSurvey() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete survey',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to delete survey',
         color: 'red',
       });
     },

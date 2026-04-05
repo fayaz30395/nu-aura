@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers, demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {demoUsers, testUsers} from './fixtures/testData';
 
 /**
  * Admin Role Management E2E Tests
@@ -9,7 +9,7 @@ import { testUsers, demoUsers } from './fixtures/testData';
  */
 
 test.describe('Admin Role Management', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -17,17 +17,17 @@ test.describe('Admin Role Management', () => {
   });
 
   test.describe('Roles Page', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/admin/roles');
       await page.waitForLoadState('networkidle');
     });
 
-    test('should load roles page and display a heading', async ({ page }) => {
+    test('should load roles page and display a heading', async ({page}) => {
       await expect(page.locator('h1, h2').first()).toBeVisible();
       expect(page.url()).toContain('/admin/roles');
     });
 
-    test('should display existing roles list', async ({ page }) => {
+    test('should display existing roles list', async ({page}) => {
       await page.waitForTimeout(1000);
 
       // Roles are typically displayed as table rows or cards
@@ -38,7 +38,7 @@ test.describe('Admin Role Management', () => {
       expect(hasTable || hasCards || hasRoleItem || true).toBe(true);
     });
 
-    test('should display a create role button for admin', async ({ page }) => {
+    test('should display a create role button for admin', async ({page}) => {
       await page.waitForTimeout(500);
 
       const createBtn = page.locator(
@@ -54,7 +54,7 @@ test.describe('Admin Role Management', () => {
       expect(hasCreate || true).toBe(true);
     });
 
-    test('create role modal opens with form fields', async ({ page }) => {
+    test('create role modal opens with form fields', async ({page}) => {
       await page.waitForTimeout(500);
 
       const createBtn = page.locator(
@@ -74,7 +74,7 @@ test.describe('Admin Role Management', () => {
       }
     });
 
-    test('can search or filter roles', async ({ page }) => {
+    test('can search or filter roles', async ({page}) => {
       await page.waitForTimeout(500);
 
       const searchInput = page.locator('input[type="search"], input[placeholder*="search" i], input[placeholder*="filter" i]').first();
@@ -92,17 +92,17 @@ test.describe('Admin Role Management', () => {
   });
 
   test.describe('Permissions Page', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/admin/permissions');
       await page.waitForLoadState('networkidle');
     });
 
-    test('should load permissions page', async ({ page }) => {
+    test('should load permissions page', async ({page}) => {
       expect(page.url()).toContain('/admin/permissions');
       await expect(page.locator('h1, h2').first()).toBeVisible();
     });
 
-    test('should display role cards or list', async ({ page }) => {
+    test('should display role cards or list', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const hasContent = await page.locator('[class*="card"], [class*="Card"], table, [class*="list"]').first().isVisible().catch(() => false);
@@ -113,7 +113,7 @@ test.describe('Admin Role Management', () => {
       expect(hasContent || hasAccessDenied || true).toBe(true);
     });
 
-    test('can expand a role to view its permissions', async ({ page }) => {
+    test('can expand a role to view its permissions', async ({page}) => {
       await page.waitForTimeout(1000);
 
       // Rows/cards with a chevron or expand button
@@ -132,10 +132,10 @@ test.describe('Admin Role Management', () => {
       expect(hasTrigger || true).toBe(true);
     });
 
-    test('create role button opens a form', async ({ page }) => {
+    test('create role button opens a form', async ({page}) => {
       await page.waitForTimeout(500);
 
-      const createBtn = page.getByRole('button', { name: /create|add.*role|new.*role/i }).first();
+      const createBtn = page.getByRole('button', {name: /create|add.*role|new.*role/i}).first();
       const hasCreate = await createBtn.isVisible().catch(() => false);
 
       if (hasCreate) {
@@ -154,7 +154,7 @@ test.describe('Admin Role Management', () => {
   });
 
   test.describe('Admin Settings Page', () => {
-    test('admin settings page is accessible', async ({ page }) => {
+    test('admin settings page is accessible', async ({page}) => {
       await page.goto('/admin/settings');
       await page.waitForLoadState('networkidle');
 
@@ -165,7 +165,7 @@ test.describe('Admin Role Management', () => {
 });
 
 test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
-  test('employee login hides admin menu items', async ({ page }) => {
+  test('employee login hides admin menu items', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
@@ -184,7 +184,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
     expect(hasDashboard).toBe(true);
   });
 
-  test('employee cannot access admin routes directly', async ({ page }) => {
+  test('employee cannot access admin routes directly', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
@@ -203,7 +203,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
     expect(redirectedAway || hasAccessDenied).toBe(true);
   });
 
-  test('SuperAdmin has full access to admin panel', async ({ page }) => {
+  test('SuperAdmin has full access to admin panel', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -224,7 +224,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
     expect(hasCreate || true).toBe(true);
   });
 
-  test('SuperAdmin can access permissions page', async ({ page }) => {
+  test('SuperAdmin can access permissions page', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -239,7 +239,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
 });
 
 test.describe('Permission Change — SuperAdmin updates role, Employee sees updated UI', () => {
-  test('SuperAdmin can open role edit and toggle permissions', async ({ page }) => {
+  test('SuperAdmin can open role edit and toggle permissions', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -268,7 +268,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
     expect(hasEdit || true).toBe(true);
   });
 
-  test('SuperAdmin can view all roles with permission counts', async ({ page }) => {
+  test('SuperAdmin can view all roles with permission counts', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -294,7 +294,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
     expect(hasAnyRole || hasContent || true).toBe(true);
   });
 
-  test('employee sidebar updates when navigating after permission change', async ({ page }) => {
+  test('employee sidebar updates when navigating after permission change', async ({page}) => {
     // This test verifies that the employee UI reflects role-appropriate content
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
@@ -303,7 +303,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
     await page.waitForLoadState('networkidle');
 
     // Employee should see limited sidebar items
-    const sidebarLinks = page.locator('nav a, nav button').filter({ has: page.locator('span, text') });
+    const sidebarLinks = page.locator('nav a, nav button').filter({has: page.locator('span, text')});
     const linkCount = await sidebarLinks.count();
 
     // Employee should have some sidebar items but not all admin items

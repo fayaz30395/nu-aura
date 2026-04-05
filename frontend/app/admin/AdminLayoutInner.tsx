@@ -1,40 +1,40 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { Sidebar, SidebarItem, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '@/components/ui/Sidebar';
-import { Header } from '@/components/layout/Header';
-import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
-import { usePermissions, Roles, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
+import React, {useEffect, useMemo, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
+import {Sidebar, SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED, SidebarItem} from '@/components/ui/Sidebar';
+import {Header} from '@/components/layout/Header';
+import {DarkModeProvider} from '@/components/layout/DarkModeProvider';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
-  LayoutDashboard,
-  Users,
-  Clock,
   Briefcase,
+  Clock,
   FileText,
-  Shield,
   GitBranch,
-  Umbrella,
+  LayoutDashboard,
   Server,
+  Shield,
+  Umbrella,
   Upload,
+  Users,
 } from 'lucide-react';
-import { useUnreadNotificationCount } from '@/lib/hooks/queries/useNotifications';
+import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
 
 // This component is dynamically imported with { ssr: false } from layout.tsx.
 // It is NEVER server-rendered, so there is no hydration to worry about.
 // All Zustand hooks (usePermissions, useAuth, etc.) are safe to use freely.
 export default function AdminLayoutInner({
-  children,
-}: {
+                                           children,
+                                         }: {
   children: React.ReactNode;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const { permissions, roles, hasPermission, isReady } = usePermissions();
-  const { user } = useAuth();
-  const { data: unreadCount } = useUnreadNotificationCount();
+  const {permissions, roles, hasPermission, isReady} = usePermissions();
+  const {user} = useAuth();
+  const {data: unreadCount} = useUnreadNotificationCount();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
@@ -76,40 +76,40 @@ export default function AdminLayoutInner({
     // SuperAdmin-only section
     ...(isSuperAdmin
       ? [
-          {
-            id: 'system',
-            label: 'System Dashboard',
-            icon: <Server className="h-5 w-5" />,
-            href: '/admin/system',
-            requiredPermission: Permissions.SYSTEM_ADMIN,
-          },
-        ]
+        {
+          id: 'system',
+          label: 'System Dashboard',
+          icon: <Server className="h-5 w-5"/>,
+          href: '/admin/system',
+          requiredPermission: Permissions.SYSTEM_ADMIN,
+        },
+      ]
       : []),
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: <LayoutDashboard className="h-5 w-5" />,
+      icon: <LayoutDashboard className="h-5 w-5"/>,
       href: '/admin',
       requiredPermission: Permissions.DASHBOARD_VIEW,
     },
     {
       id: 'employees',
       label: 'Employees',
-      icon: <Users className="h-5 w-5" />,
+      icon: <Users className="h-5 w-5"/>,
       href: '/admin/employees',
       requiredPermission: Permissions.EMPLOYEE_VIEW_ALL,
     },
     {
       id: 'org-hierarchy',
       label: 'Organization',
-      icon: <GitBranch className="h-5 w-5" />,
+      icon: <GitBranch className="h-5 w-5"/>,
       href: '/admin/org-hierarchy',
       requiredPermission: Permissions.ORG_STRUCTURE_VIEW,
     },
     {
       id: 'attendance',
       label: 'Attendance',
-      icon: <Clock className="h-5 w-5" />,
+      icon: <Clock className="h-5 w-5"/>,
       children: [
         {
           id: 'attendance-records',
@@ -128,7 +128,7 @@ export default function AdminLayoutInner({
     {
       id: 'leave',
       label: 'Leave Management',
-      icon: <Umbrella className="h-5 w-5" />,
+      icon: <Umbrella className="h-5 w-5"/>,
       children: [
         {
           id: 'leave-requests',
@@ -154,14 +154,14 @@ export default function AdminLayoutInner({
     {
       id: 'payroll',
       label: 'Payroll',
-      icon: <Briefcase className="h-5 w-5" />,
+      icon: <Briefcase className="h-5 w-5"/>,
       href: '/admin/payroll',
       requiredPermission: Permissions.PAYROLL_VIEW_ALL,
     },
     {
       id: 'keka-import',
       label: 'Data Import',
-      icon: <Upload className="h-5 w-5" />,
+      icon: <Upload className="h-5 w-5"/>,
       children: [
         {
           id: 'import-keka',
@@ -174,14 +174,14 @@ export default function AdminLayoutInner({
     {
       id: 'reports',
       label: 'Reports',
-      icon: <FileText className="h-5 w-5" />,
+      icon: <FileText className="h-5 w-5"/>,
       href: '/admin/reports',
       requiredPermission: Permissions.REPORT_VIEW,
     },
     {
       id: 'settings',
       label: 'Settings',
-      icon: <Shield className="h-5 w-5" />,
+      icon: <Shield className="h-5 w-5"/>,
       children: [
         {
           id: 'roles',
@@ -215,7 +215,7 @@ export default function AdminLayoutInner({
         },
       ],
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [isSuperAdmin]);
 
   const filterSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
@@ -364,18 +364,21 @@ export default function AdminLayoutInner({
             {!isReady ? (
               <div className="flex h-full items-center justify-center">
                 <div className="space-y-4 text-center">
-                  <div className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin mx-auto" />
+                  <div
+                    className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin mx-auto"/>
                   <p className="text-[var(--text-secondary)]">Loading...</p>
                 </div>
               </div>
             ) : !hasAdminAccess ? (
               <div className="flex h-full items-center justify-center">
                 <div className="space-y-4 text-center">
-                  <div className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center mx-auto">
+                  <div
+                    className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center mx-auto">
                     <span className="text-danger-600 dark:text-danger-400 text-lg">✕</span>
                   </div>
                   <h1 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h1>
-                  <p className="text-[var(--text-secondary)]">You do not have permission to access the admin dashboard.</p>
+                  <p className="text-[var(--text-secondary)]">You do not have permission to access the admin
+                    dashboard.</p>
                 </div>
               </div>
             ) : (

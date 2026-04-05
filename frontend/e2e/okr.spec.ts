@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * OKR Page Smoke Tests
@@ -6,20 +6,20 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('OKR Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/performance/okr');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display OKR page with heading', async ({ page }) => {
+  test('should display OKR page with heading', async ({page}) => {
     await expect(page.locator('h1, h2').first()).toBeVisible();
   });
 
-  test('should not show application error', async ({ page }) => {
+  test('should not show application error', async ({page}) => {
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display objectives or empty state', async ({ page }) => {
+  test('should display objectives or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasObjectives = await page.locator('[class*="card"], [class*="Card"], table').first().isVisible().catch(() => false);
@@ -28,7 +28,7 @@ test.describe('OKR Page', () => {
     expect(hasObjectives || hasEmpty || true).toBe(true);
   });
 
-  test('should show create objective button', async ({ page }) => {
+  test('should show create objective button', async ({page}) => {
     await page.waitForTimeout(500);
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
@@ -37,7 +37,7 @@ test.describe('OKR Page', () => {
     expect(hasCreate || true).toBe(true);
   });
 
-  test('/okr redirect works', async ({ page }) => {
+  test('/okr redirect works', async ({page}) => {
     await page.goto('/okr');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);

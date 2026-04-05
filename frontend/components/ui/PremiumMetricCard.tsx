@@ -17,25 +17,26 @@ interface PremiumMetricCardProps {
  * - Tone badge for quick trend scanning
  */
 export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
-  title,
-  value,
-  change,
-  isPositive = true,
-  icon,
-  delay = 0,
-}) => {
+                                                                      title,
+                                                                      value,
+                                                                      change,
+                                                                      isPositive = true,
+                                                                      icon,
+                                                                      delay = 0,
+                                                                    }) => {
   const trendTone = isPositive ? 'status-success' : 'status-warning';
   const trendLabel = isPositive ? '↑' : '↓';
 
   return (
     <div
       className="card-interactive p-6 page-reveal"
-      style={{ animationDelay: `${Math.round(delay * 1000)}ms` }}
+      style={{animationDelay: `${Math.round(delay * 1000)}ms`}}
     >
       <div className="row-between">
         <span className="text-micro">{title}</span>
         {icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] text-[var(--accent-primary)]">
             {icon}
           </div>
         )}

@@ -1,21 +1,15 @@
 'use client';
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  UseQueryResult,
-  UseMutationResult,
-} from '@tanstack/react-query';
-import { calendarService } from '@/lib/services/hrms/calendar.service';
+import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult,} from '@tanstack/react-query';
+import {calendarService} from '@/lib/services/hrms/calendar.service';
 import {
   CalendarEvent,
   CreateCalendarEventRequest,
+  EventsSummary,
   EventStatus,
   EventType,
-  EventsSummary,
-  SyncResult,
   Page,
+  SyncResult,
 } from '@/lib/types/hrms/calendar';
 
 // Query key factory
@@ -136,9 +130,9 @@ export const useCreateCalendarEvent = (): UseMutationResult<
   return useMutation({
     mutationFn: (data) => calendarService.createEvent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventsOrganized() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventsOrganized()});
     },
   });
 };
@@ -150,12 +144,12 @@ export const useUpdateCalendarEvent = (): UseMutationResult<
 > => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }) => calendarService.updateEvent(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventDetail(id) });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventsOrganized() });
+    mutationFn: ({id, data}) => calendarService.updateEvent(id, data),
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventDetail(id)});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventsOrganized()});
     },
   });
 };
@@ -165,10 +159,10 @@ export const useDeleteCalendarEvent = (): UseMutationResult<void, Error, string>
   return useMutation({
     mutationFn: (id) => calendarService.deleteEvent(id),
     onSuccess: (_, id) => {
-      queryClient.removeQueries({ queryKey: calendarKeys.eventDetail(id) });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventsOrganized() });
+      queryClient.removeQueries({queryKey: calendarKeys.eventDetail(id)});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventsOrganized()});
     },
   });
 };
@@ -180,11 +174,11 @@ export const useUpdateEventStatus = (): UseMutationResult<
 > => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, status }) => calendarService.updateEventStatus(id, status),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventDetail(id) });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
+    mutationFn: ({id, status}) => calendarService.updateEventStatus(id, status),
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventDetail(id)});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
     },
   });
 };
@@ -202,8 +196,8 @@ export const useSyncEventToGoogle = (): UseMutationResult<
   return useMutation({
     mutationFn: (id) => calendarService.syncToGoogle(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventDetail(id) });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventDetail(id)});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
     },
   });
 };
@@ -217,8 +211,8 @@ export const useSyncEventToOutlook = (): UseMutationResult<
   return useMutation({
     mutationFn: (id) => calendarService.syncToOutlook(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.eventDetail(id) });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.eventDetail(id)});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
     },
   });
 };
@@ -232,8 +226,8 @@ export const useSyncAllPendingEvents = (): UseMutationResult<
   return useMutation({
     mutationFn: () => calendarService.syncAllPending(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.syncPending() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.syncPending()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
     },
   });
 };
@@ -248,8 +242,8 @@ export const useImportEventFromGoogle = (): UseMutationResult<
     mutationFn: (externalEventId) =>
       calendarService.importFromGoogle(externalEventId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
     },
   });
 };
@@ -264,8 +258,8 @@ export const useImportEventFromOutlook = (): UseMutationResult<
     mutationFn: (externalEventId) =>
       calendarService.importFromOutlook(externalEventId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: calendarKeys.events() });
-      queryClient.invalidateQueries({ queryKey: calendarKeys.myEvents() });
+      queryClient.invalidateQueries({queryKey: calendarKeys.events()});
+      queryClient.invalidateQueries({queryKey: calendarKeys.myEvents()});
     },
   });
 };

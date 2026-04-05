@@ -61,7 +61,7 @@ export function createLogger(namespace: string): Logger {
         // In production, log a sanitized message without sensitive details
         const sanitizedArgs = args.map((arg) => {
           if (arg instanceof Error) {
-            return { message: arg.message, name: arg.name };
+            return {message: arg.message, name: arg.name};
           }
           return typeof arg === 'object' ? '[Object]' : arg;
         });
@@ -117,7 +117,7 @@ export const logger: Logger = {
       // In production, log sanitized errors
       const sanitizedArgs = args.map((arg) => {
         if (arg instanceof Error) {
-          return { message: arg.message, name: arg.name };
+          return {message: arg.message, name: arg.name};
         }
         return typeof arg === 'object' ? '[Object]' : arg;
       });

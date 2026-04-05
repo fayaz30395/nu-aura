@@ -1,20 +1,20 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { recognitionService } from '@/lib/services/grow/recognition.service';
-import type { RecognitionRequest, ReactionType } from '@/lib/types/grow/recognition';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {recognitionService} from '@/lib/services/grow/recognition.service';
+import type {ReactionType, RecognitionRequest} from '@/lib/types/grow/recognition';
+import {notifications} from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
 export const recognitionKeys = {
   all: ['recognition'] as const,
   feed: () => [...recognitionKeys.all, 'feed'] as const,
-  feedList: (page: number, size: number) => [...recognitionKeys.feed(), 'list', { page, size }] as const,
+  feedList: (page: number, size: number) => [...recognitionKeys.feed(), 'list', {page, size}] as const,
   detail: (id: string) => [...recognitionKeys.all, 'detail', id] as const,
   received: () => [...recognitionKeys.all, 'received'] as const,
-  receivedList: (page: number, size: number) => [...recognitionKeys.received(), 'list', { page, size }] as const,
+  receivedList: (page: number, size: number) => [...recognitionKeys.received(), 'list', {page, size}] as const,
   given: () => [...recognitionKeys.all, 'given'] as const,
-  givenList: (page: number, size: number) => [...recognitionKeys.given(), 'list', { page, size }] as const,
+  givenList: (page: number, size: number) => [...recognitionKeys.given(), 'list', {page, size}] as const,
   badges: () => [...recognitionKeys.all, 'badges'] as const,
   myPoints: () => [...recognitionKeys.all, 'myPoints'] as const,
   leaderboard: (limit: number) => [...recognitionKeys.all, 'leaderboard', limit] as const,
@@ -105,10 +105,10 @@ export function useGiveRecognition() {
   return useMutation({
     mutationFn: (data: RecognitionRequest) => recognitionService.giveRecognition(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.feed() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.given() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.myPoints() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: recognitionKeys.feed()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.myPoints()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.dashboard()});
       notifications.show({
         title: 'Success',
         message: 'Recognition given successfully',
@@ -118,7 +118,9 @@ export function useGiveRecognition() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to give recognition',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to give recognition',
         color: 'red',
       });
     },
@@ -129,12 +131,12 @@ export function useAddReaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ recognitionId, reactionType }: { recognitionId: string; reactionType: ReactionType }) =>
+    mutationFn: ({recognitionId, reactionType}: { recognitionId: string; reactionType: ReactionType }) =>
       recognitionService.addReaction(recognitionId, reactionType),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.feed() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.received() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.given() });
+      queryClient.invalidateQueries({queryKey: recognitionKeys.feed()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
     },
   });
 }
@@ -143,12 +145,12 @@ export function useRemoveReaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ recognitionId, reactionType }: { recognitionId: string; reactionType: ReactionType }) =>
+    mutationFn: ({recognitionId, reactionType}: { recognitionId: string; reactionType: ReactionType }) =>
       recognitionService.removeReaction(recognitionId, reactionType),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.feed() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.received() });
-      queryClient.invalidateQueries({ queryKey: recognitionKeys.given() });
+      queryClient.invalidateQueries({queryKey: recognitionKeys.feed()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
     },
   });
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 export interface PreboardingCandidate {
   id: string;
@@ -63,7 +63,7 @@ export function useCreatePreboardingCandidate() {
     mutationFn: (data: CreatePreboardingRequest) =>
       apiClient.post('/preboarding/candidates', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: preboardingKeys.candidates() });
+      queryClient.invalidateQueries({queryKey: preboardingKeys.candidates()});
       toast.success('Candidate invited successfully');
     },
     onError: (error: unknown) => {

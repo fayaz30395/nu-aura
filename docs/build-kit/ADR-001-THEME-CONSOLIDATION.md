@@ -10,6 +10,7 @@
 ## Context
 
 The application currently implements dark mode using:
+
 - `/frontend/app/globals.css` - Light theme with CSS variables
 - `/frontend/components/layout/DarkModeProvider.tsx` - Context-based theme switcher
 - Tailwind's `dark:` modifier throughout the codebase
@@ -18,6 +19,7 @@ The application currently implements dark mode using:
 ### Current Implementation Analysis
 
 **globals.css structure:**
+
 ```css
 :root {
   --color-brand-500: #465fff;
@@ -29,6 +31,7 @@ The application currently implements dark mode using:
 ```
 
 **DarkModeProvider implementation:**
+
 - Uses React Context API
 - Persists theme to `localStorage` with key `nu-aura-theme`
 - Adds/removes `dark` class on `<html>` element
@@ -36,10 +39,14 @@ The application currently implements dark mode using:
 
 **Problems Identified:**
 
-1. **Duplicate Class Declarations**: Tailwind classes are duplicated across components (e.g., `bg-white dark:bg-gray-800`)
-2. **No Dark Mode CSS Variables**: Light mode uses CSS variables, but dark mode relies solely on Tailwind classes
-3. **Inconsistent Color Usage**: Some components use CSS variables, others use Tailwind colors directly
-4. **Hydration Mismatch Risk**: Theme initialization happens in `useEffect`, causing flash of incorrect theme
+1. **Duplicate Class Declarations**: Tailwind classes are duplicated across components (e.g.,
+   `bg-white dark:bg-gray-800`)
+2. **No Dark Mode CSS Variables**: Light mode uses CSS variables, but dark mode relies solely on
+   Tailwind classes
+3. **Inconsistent Color Usage**: Some components use CSS variables, others use Tailwind colors
+   directly
+4. **Hydration Mismatch Risk**: Theme initialization happens in `useEffect`, causing flash of
+   incorrect theme
 5. **No Theme Transition Animations**: Theme switches are jarring with no smooth transitions
 
 ---
@@ -316,6 +323,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Component Migration Example
 
 **Before:**
+
 ```tsx
 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
   <h2 className="text-gray-900 dark:text-white">Title</h2>
@@ -324,6 +332,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```
 
 **After:**
+
 ```tsx
 <div className="bg-surface border border-border text-text-primary">
   <h2 className="text-text-primary">Title</h2>
@@ -338,6 +347,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Implementation Plan
 
 ### Phase 1: Foundation (Day 1, 4 hours)
+
 - [ ] Create consolidated `theme-variables.css` file
 - [ ] Update `tailwind.config.js` with semantic color tokens
 - [ ] Update `DarkModeProvider` with cookie support
@@ -345,12 +355,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - [ ] Test SSR theme consistency
 
 ### Phase 2: Component Migration (Day 2-3, 8 hours)
+
 - [ ] Migrate core UI components (`Card`, `Button`, `Modal`)
 - [ ] Migrate layout components (`Header`, `Sidebar`)
 - [ ] Create component migration checklist
 - [ ] Document semantic color usage guide
 
 ### Phase 3: Validation (Day 4, 4 hours)
+
 - [ ] Visual regression testing with Percy/Chromatic
 - [ ] Test theme switching in all browsers
 - [ ] Verify no hydration mismatches
@@ -371,11 +383,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## Risks & Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Breaking existing styles | High | Gradual migration, parallel implementation |
-| Browser compatibility | Medium | CSS variables supported in all modern browsers (IE11 unsupported, acceptable) |
-| Team learning curve | Low | Document semantic color guide, provide examples |
+| Risk                     | Impact | Mitigation                                                                    |
+|--------------------------|--------|-------------------------------------------------------------------------------|
+| Breaking existing styles | High   | Gradual migration, parallel implementation                                    |
+| Browser compatibility    | Medium | CSS variables supported in all modern browsers (IE11 unsupported, acceptable) |
+| Team learning curve      | Low    | Document semantic color guide, provide examples                               |
 
 ---
 

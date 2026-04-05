@@ -1,16 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BarChart3, Award, X, Plus, Image as ImageIcon, Smile, Paperclip, Star, Heart, Trophy, ThumbsUp } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { CreatePostRequest, PostType } from '@/lib/services/core/wall.service';
-import { cn } from '@/lib/utils';
+import React, {useState} from 'react';
+import {Controller, useFieldArray, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AnimatePresence, motion} from 'framer-motion';
+import {
+  Award,
+  BarChart3,
+  Heart,
+  Image as ImageIcon,
+  Paperclip,
+  Plus,
+  Send,
+  Smile,
+  Star,
+  ThumbsUp,
+  Trophy,
+  X
+} from 'lucide-react';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import {CreatePostRequest, PostType} from '@/lib/services/core/wall.service';
+import {cn} from '@/lib/utils';
 
 // ==================== Zod Schemas ====================
 
@@ -35,10 +48,10 @@ const pollSchema = z.object({
 });
 
 const CELEBRATION_TYPES = [
-  { id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-warning-500' },
-  { id: 'HEART', label: 'Team Player', icon: Heart, color: 'text-danger-500' },
-  { id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-warning-600' },
-  { id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-accent-600' },
+  {id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-warning-500'},
+  {id: 'HEART', label: 'Team Player', icon: Heart, color: 'text-danger-500'},
+  {id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-warning-600'},
+  {id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-accent-600'},
 ] as const;
 
 const praiseSchema = z.object({
@@ -62,9 +75,9 @@ interface TabConfig {
 }
 
 const tabs: TabConfig[] = [
-  { id: 'POST', label: 'Post', icon: <Send className="w-4 h-4" /> },
-  { id: 'POLL', label: 'Poll', icon: <BarChart3 className="w-4 h-4" /> },
-  { id: 'PRAISE', label: 'Praise', icon: <Award className="w-4 h-4" /> },
+  {id: 'POST', label: 'Post', icon: <Send className="w-4 h-4"/>},
+  {id: 'POLL', label: 'Poll', icon: <BarChart3 className="w-4 h-4"/>},
+  {id: 'PRAISE', label: 'Praise', icon: <Award className="w-4 h-4"/>},
 ];
 
 // ==================== Props ====================
@@ -76,7 +89,7 @@ interface PostComposerProps {
 
 // ==================== Component ====================
 
-export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): React.ReactElement {
+export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React.ReactElement {
   const [activeTab, setActiveTab] = useState<PostType>('POST');
 
   // Initialize forms for each tab
@@ -94,7 +107,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
     defaultValues: {
       type: 'POLL',
       content: '',
-      pollOptions: [{ value: '' }, { value: '' }],
+      pollOptions: [{value: ''}, {value: ''}],
       visibility: 'ORGANIZATION',
     },
   });
@@ -114,7 +127,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
   const [selectedEmployee, setSelectedEmployee] = useState<{ id: string; name: string } | null>(null);
 
   // Field array for poll options
-  const { fields, append, remove } = useFieldArray({
+  const {fields, append, remove} = useFieldArray({
     control: pollForm.control,
     name: 'pollOptions',
   });
@@ -178,7 +191,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                 <motion.div
                   layoutId="composerActiveTab"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  transition={{type: 'spring', stiffness: 300, damping: 30}}
                 />
               )}
             </button>
@@ -191,10 +204,10 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'POST' && (
             <motion.div
               key="post"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -8}}
+              transition={{duration: 0.2}}
             >
               <form onSubmit={postForm.handleSubmit(handlePostSubmit)} className="space-y-4 pt-4">
                 <div>
@@ -221,7 +234,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       title="Add image"
                       aria-label="Add image"
                     >
-                      <ImageIcon className="w-4 h-4" />
+                      <ImageIcon className="w-4 h-4"/>
                     </button>
                     <button
                       type="button"
@@ -229,7 +242,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       title="Add emoji"
                       aria-label="Add emoji"
                     >
-                      <Smile className="w-4 h-4" />
+                      <Smile className="w-4 h-4"/>
                     </button>
                     <button
                       type="button"
@@ -237,13 +250,13 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       title="Attach file"
                       aria-label="Attach file"
                     >
-                      <Paperclip className="w-4 h-4" />
+                      <Paperclip className="w-4 h-4"/>
                     </button>
 
                     <Controller
                       control={postForm.control}
                       name="visibility"
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura text-sm py-1.5"
@@ -261,7 +274,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     disabled={isSubmitting}
                     isLoading={isSubmitting}
                     loadingText="Posting..."
-                    leftIcon={<Send className="w-4 h-4" />}
+                    leftIcon={<Send className="w-4 h-4"/>}
                     variant="primary"
                     size="md"
                   >
@@ -276,10 +289,10 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'POLL' && (
             <motion.div
               key="poll"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -8}}
+              transition={{duration: 0.2}}
             >
               <form onSubmit={pollForm.handleSubmit(handlePollSubmit)} className="space-y-4 pt-4">
                 <div>
@@ -324,7 +337,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                             aria-label="Remove option"
                             className="p-1.5 text-[var(--text-muted)] hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-4 h-4"/>
                           </button>
                         )}
                       </div>
@@ -338,10 +351,10 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   {fields.length < 6 && (
                     <button
                       type="button"
-                      onClick={() => append({ value: '' })}
+                      onClick={() => append({value: ''})}
                       className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-4 h-4"/>
                       Add Option
                     </button>
                   )}
@@ -353,7 +366,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     <Controller
                       control={pollForm.control}
                       name="visibility"
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura text-sm py-1.5"
@@ -371,7 +384,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     disabled={isSubmitting}
                     isLoading={isSubmitting}
                     loadingText="Creating..."
-                    leftIcon={<BarChart3 className="w-4 h-4" />}
+                    leftIcon={<BarChart3 className="w-4 h-4"/>}
                     variant="primary"
                     size="md"
                   >
@@ -386,10 +399,10 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'PRAISE' && (
             <motion.div
               key="praise"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -8}}
+              transition={{duration: 0.2}}
             >
               <form onSubmit={praiseForm.handleSubmit(handlePraiseSubmit)} className="space-y-4 pt-4">
                 {/* Employee Search */}
@@ -401,13 +414,14 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     value={selectedEmployee}
                     onChange={(employee) => {
                       setSelectedEmployee(employee);
-                      praiseForm.setValue('praiseRecipientId', employee?.id || '', { shouldValidate: true });
+                      praiseForm.setValue('praiseRecipientId', employee?.id || '', {shouldValidate: true});
                     }}
                     placeholder="Search for an employee..."
                     required
                   />
                   {praiseForm.formState.errors.praiseRecipientId && (
-                    <p className="mt-1 text-xs text-danger-500">{praiseForm.formState.errors.praiseRecipientId.message}</p>
+                    <p
+                      className="mt-1 text-xs text-danger-500">{praiseForm.formState.errors.praiseRecipientId.message}</p>
                   )}
                 </div>
 
@@ -419,7 +433,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   <Controller
                     control={praiseForm.control}
                     name="celebrationType"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <div className="flex flex-wrap gap-2">
                         {CELEBRATION_TYPES.map((ct) => {
                           const Icon = ct.icon;
@@ -436,7 +450,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                                   : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-secondary)]'
                               )}
                             >
-                              <Icon className={cn('w-4 h-4', isSelected ? ct.color : 'text-[var(--text-muted)]')} />
+                              <Icon className={cn('w-4 h-4', isSelected ? ct.color : 'text-[var(--text-muted)]')}/>
                               {ct.label}
                             </button>
                           );
@@ -471,7 +485,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     <Controller
                       control={praiseForm.control}
                       name="visibility"
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura text-sm py-1.5"
@@ -489,7 +503,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     disabled={isSubmitting}
                     isLoading={isSubmitting}
                     loadingText="Sending..."
-                    leftIcon={<Award className="w-4 h-4" />}
+                    leftIcon={<Award className="w-4 h-4"/>}
                     variant="primary"
                     size="md"
                   >

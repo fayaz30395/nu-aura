@@ -1,35 +1,24 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useCallback, useState} from 'react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  useShiftDefinitions,
   useCreateShiftDefinition,
-  useUpdateShiftDefinition,
   useDeleteShiftDefinition,
+  useShiftDefinitions,
+  useUpdateShiftDefinition,
 } from '@/lib/hooks/queries/useShifts';
-import { ShiftDefinition, ShiftDefinitionRequest } from '@/lib/types/hrms/shift';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  Clock,
-  Moon,
-  Sun,
-  Zap,
-  X,
-  Check,
-  ChevronLeft,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {ShiftDefinition, ShiftDefinitionRequest} from '@/lib/types/hrms/shift';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Check, ChevronLeft, Clock, Edit2, Moon, Plus, Sun, Trash2, X, Zap,} from 'lucide-react';
+import {useRouter} from 'next/navigation';
 
 const shiftSchema = z.object({
   shiftCode: z.string().min(1, 'Code is required').max(50),
@@ -57,10 +46,10 @@ const shiftSchema = z.object({
 type ShiftFormData = z.infer<typeof shiftSchema>;
 
 const SHIFT_TYPES = [
-  { value: 'FIXED', label: 'Fixed' },
-  { value: 'ROTATING', label: 'Rotating' },
-  { value: 'FLEXIBLE', label: 'Flexible' },
-  { value: 'SPLIT', label: 'Split' },
+  {value: 'FIXED', label: 'Fixed'},
+  {value: 'ROTATING', label: 'Rotating'},
+  {value: 'FLEXIBLE', label: 'Flexible'},
+  {value: 'SPLIT', label: 'Split'},
 ];
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -86,7 +75,7 @@ export default function ShiftDefinitionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingShift, setEditingShift] = useState<ShiftDefinition | null>(null);
 
-  const { data, isLoading } = useShiftDefinitions(page, 20);
+  const {data, isLoading} = useShiftDefinitions(page, 20);
   const createMutation = useCreateShiftDefinition();
   const updateMutation = useUpdateShiftDefinition();
   const deleteMutation = useDeleteShiftDefinition();
@@ -182,11 +171,11 @@ export default function ShiftDefinitionsPage() {
 
       if (editingShift) {
         updateMutation.mutate(
-          { id: editingShift.id, data: payload },
-          { onSuccess: () => setShowForm(false) }
+          {id: editingShift.id, data: payload},
+          {onSuccess: () => setShowForm(false)}
         );
       } else {
-        createMutation.mutate(payload, { onSuccess: () => setShowForm(false) });
+        createMutation.mutate(payload, {onSuccess: () => setShowForm(false)});
       }
     },
     [editingShift, createMutation, updateMutation]
@@ -206,7 +195,7 @@ export default function ShiftDefinitionsPage() {
                 onClick={() => router.push('/shifts')}
                 className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
               >
-                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
+                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Definitions</h1>
@@ -220,7 +209,7 @@ export default function ShiftDefinitionsPage() {
                 onClick={openCreate}
                 className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4"/>
                 Add Shift
               </button>
             </PermissionGate>
@@ -228,10 +217,10 @@ export default function ShiftDefinitionsPage() {
 
           {/* Shift List */}
           {isLoading ? (
-            <NuAuraLoader />
+            <NuAuraLoader/>
           ) : shifts.length === 0 ? (
             <EmptyState
-              icon={<Clock className="w-12 h-12 text-surface-400" />}
+              icon={<Clock className="w-12 h-12 text-surface-400"/>}
               title="No Shifts Defined"
               description="Create your first shift definition to start scheduling."
             />
@@ -240,15 +229,15 @@ export default function ShiftDefinitionsPage() {
               {shifts.map((shift) => (
                 <motion.div
                   key={shift.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{opacity: 0, y: 10}}
+                  animate={{opacity: 1, y: 0}}
                   className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: shift.colorCode || '#6B7280' }}
+                        style={{backgroundColor: shift.colorCode || '#6B7280'}}
                       />
                       <div>
                         <h3 className="font-semibold text-surface-900 dark:text-white text-sm">
@@ -258,8 +247,8 @@ export default function ShiftDefinitionsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
-                      {shift.isNightShift && <Moon className="w-4 h-4 text-accent-500" />}
-                      {shift.isFlexible && <Zap className="w-4 h-4 text-warning-500" />}
+                      {shift.isNightShift && <Moon className="w-4 h-4 text-accent-500"/>}
+                      {shift.isFlexible && <Zap className="w-4 h-4 text-warning-500"/>}
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           shift.isActive
@@ -274,38 +263,43 @@ export default function ShiftDefinitionsPage() {
 
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-surface-600 dark:text-surface-300">
-                      <Clock className="w-3.5 h-3.5" />
+                      <Clock className="w-3.5 h-3.5"/>
                       <span>
                         {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-surface-600 dark:text-surface-300">
-                      <Sun className="w-3.5 h-3.5" />
+                      <Sun className="w-3.5 h-3.5"/>
                       <span>{shift.workingDays}</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      <span className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
+                      <span
+                        className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
                         {shift.shiftType}
                       </span>
-                      <span className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
+                      <span
+                        className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
                         {shift.netWorkingHours}h net
                       </span>
-                      <span className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
+                      <span
+                        className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
                         {shift.breakDurationMinutes}m break
                       </span>
-                      <span className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
+                      <span
+                        className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
                         Grace {shift.gracePeriodInMinutes}m
                       </span>
                     </div>
                   </div>
 
                   <PermissionGate permission={Permissions.SHIFT_MANAGE}>
-                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700">
+                    <div
+                      className="flex items-center gap-2 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700">
                       <button
                         onClick={() => openEdit(shift)}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
+                        <Edit2 className="w-3.5 h-3.5"/>
                         Edit
                       </button>
                       <button
@@ -314,7 +308,7 @@ export default function ShiftDefinitionsPage() {
                         }}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5"/>
                         Delete
                       </button>
                     </div>
@@ -351,18 +345,18 @@ export default function ShiftDefinitionsPage() {
           <AnimatePresence>
             {showForm && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                 onClick={(e) => {
                   if (e.target === e.currentTarget) setShowForm(false);
                 }}
               >
                 <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
+                  initial={{scale: 0.95, opacity: 0}}
+                  animate={{scale: 1, opacity: 1}}
+                  exit={{scale: 0.95, opacity: 0}}
                   className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
                   <div className="row-between p-6 border-b border-surface-200 dark:border-surface-700">
@@ -373,7 +367,7 @@ export default function ShiftDefinitionsPage() {
                       onClick={() => setShowForm(false)}
                       className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
                     >
-                      <X className="w-5 h-5 text-surface-500" />
+                      <X className="w-5 h-5 text-surface-500"/>
                     </button>
                   </div>
 
@@ -471,7 +465,7 @@ export default function ShiftDefinitionsPage() {
                                 type="button"
                                 onClick={() => form.setValue('colorCode', c)}
                                 className="w-5 h-5 rounded-full border-2 border-transparent hover:border-surface-400"
-                                style={{ backgroundColor: c }}
+                                style={{backgroundColor: c}}
                               />
                             ))}
                           </div>
@@ -487,7 +481,7 @@ export default function ShiftDefinitionsPage() {
                       <Controller
                         control={form.control}
                         name="workingDays"
-                        render={({ field }) => {
+                        render={({field}) => {
                           const selected = field.value.split(',').filter(Boolean);
                           return (
                             <div className="flex gap-1">
@@ -556,16 +550,16 @@ export default function ShiftDefinitionsPage() {
                     {/* Toggles */}
                     <div className="flex flex-wrap gap-4">
                       {[
-                        { name: 'isNightShift' as const, label: 'Night Shift', icon: Moon },
-                        { name: 'isFlexible' as const, label: 'Flexible', icon: Zap },
-                        { name: 'allowsOvertime' as const, label: 'Allows Overtime', icon: Clock },
-                        { name: 'isActive' as const, label: 'Active', icon: Check },
-                      ].map(({ name, label, icon: Icon }) => (
+                        {name: 'isNightShift' as const, label: 'Night Shift', icon: Moon},
+                        {name: 'isFlexible' as const, label: 'Flexible', icon: Zap},
+                        {name: 'allowsOvertime' as const, label: 'Allows Overtime', icon: Clock},
+                        {name: 'isActive' as const, label: 'Active', icon: Check},
+                      ].map(({name, label, icon: Icon}) => (
                         <Controller
                           key={name}
                           control={form.control}
                           name={name}
-                          render={({ field }) => (
+                          render={({field}) => (
                             <button
                               type="button"
                               onClick={() => field.onChange(!field.value)}
@@ -575,7 +569,7 @@ export default function ShiftDefinitionsPage() {
                                   : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400'
                               }`}
                             >
-                              <Icon className="w-3.5 h-3.5" />
+                              <Icon className="w-3.5 h-3.5"/>
                               {label}
                             </button>
                           )}

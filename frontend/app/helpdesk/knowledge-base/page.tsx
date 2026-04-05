@@ -1,32 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useKnowledgeBaseArticles, useArticleFeedback, useCreateArticle, useCreateTicketFromKB } from '@/lib/hooks/queries/useKnowledgeBase';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Search,
-  ThumbsUp,
-  ThumbsDown,
+  useArticleFeedback,
+  useCreateArticle,
+  useCreateTicketFromKB,
+  useKnowledgeBaseArticles
+} from '@/lib/hooks/queries/useKnowledgeBase';
+import {
+  CheckCircle,
+  ChevronRight,
   Clock,
   Eye,
-  Plus,
-  MessageSquare,
-  ChevronRight,
   FileText,
-  CheckCircle,
+  MessageSquare,
+  Plus,
+  Search,
+  ThumbsDown,
+  ThumbsUp,
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { Button } from '@/components/ui/Button';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Input } from '@/components/ui/Input';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button} from '@/components/ui/Button';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {Input} from '@/components/ui/Input';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Skeleton} from '@/components/ui/Skeleton';
 
 // ─── Zod Schemas ──────────────────────────────────────────────────────────────
 
@@ -63,7 +68,7 @@ interface ArticleCardProps {
   onView: (article: Article) => void;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
+const ArticleCard: React.FC<ArticleCardProps> = ({article, onView}) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const today = new Date();
@@ -104,9 +109,10 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-4 mb-4">
-            <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1" />
+            <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1"/>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors truncate">
+              <h3
+                className="text-base font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors truncate">
                 {article.title}
               </h3>
               <Badge
@@ -120,21 +126,22 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
 
           <div className="flex flex-wrap gap-4 text-caption mt-4">
             <span className="flex items-center gap-1">
-              <Eye className="h-3 w-3" />
+              <Eye className="h-3 w-3"/>
               {article.views} views
             </span>
             <span className="flex items-center gap-1">
-              <ThumbsUp className="h-3 w-3" />
+              <ThumbsUp className="h-3 w-3"/>
               {helpfulRate}% helpful ({article.helpful + article.unhelpful})
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
+              <Clock className="h-3 w-3"/>
               Updated {formatDate(article.updatedAt)}
             </span>
           </div>
         </div>
 
-        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+        <ChevronRight
+          className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 group-hover:translate-x-1 transition-transform"/>
       </div>
     </Card>
   );
@@ -145,7 +152,7 @@ const ArticleDetailModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   onSubmitTicket: () => void;
-}> = ({ article, isOpen, onClose, onSubmitTicket }) => {
+}> = ({article, isOpen, onClose, onSubmitTicket}) => {
   const [isHelpful, setIsHelpful] = useState<boolean | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const feedbackMutation = useArticleFeedback();
@@ -154,7 +161,7 @@ const ArticleDetailModal: React.FC<{
 
   const handleHelpful = async (helpful: boolean) => {
     try {
-      await feedbackMutation.mutateAsync({ articleId: article.id, helpful });
+      await feedbackMutation.mutateAsync({articleId: article.id, helpful});
       setIsHelpful(helpful);
       setSubmitStatus('success');
     } catch {
@@ -172,7 +179,7 @@ const ArticleDetailModal: React.FC<{
           <div className="flex items-center gap-4 mt-4 flex-wrap">
             <Badge variant="outline">{article.category}</Badge>
             <span className="text-caption flex items-center gap-1">
-              <Eye className="h-3 w-3" />
+              <Eye className="h-3 w-3"/>
               {article.views} views
             </span>
             {article.author && (
@@ -193,7 +200,7 @@ const ArticleDetailModal: React.FC<{
             </div>
           </div>
 
-          <hr className="border-[var(--border-main)]" />
+          <hr className="border-[var(--border-main)]"/>
 
           {/* Feedback Section */}
           <div>
@@ -202,8 +209,9 @@ const ArticleDetailModal: React.FC<{
             </h4>
 
             {submitStatus === 'success' && (
-              <div className="p-4 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300 flex gap-2 mb-4 text-sm">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <div
+                className="p-4 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300 flex gap-2 mb-4 text-sm">
+                <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5"/>
                 Thank you for your feedback!
               </div>
             )}
@@ -216,7 +224,7 @@ const ArticleDetailModal: React.FC<{
                 disabled={feedbackMutation.isPending || isHelpful === true}
                 className={isHelpful === true ? 'bg-success-600 hover:bg-success-700' : ''}
               >
-                <ThumbsUp className="h-4 w-4 mr-2" />
+                <ThumbsUp className="h-4 w-4 mr-2"/>
                 Helpful
               </Button>
               <Button
@@ -226,13 +234,13 @@ const ArticleDetailModal: React.FC<{
                 disabled={feedbackMutation.isPending || isHelpful === false}
                 className={isHelpful === false ? 'bg-danger-600 hover:bg-danger-700' : ''}
               >
-                <ThumbsDown className="h-4 w-4 mr-2" />
+                <ThumbsDown className="h-4 w-4 mr-2"/>
                 Not Helpful
               </Button>
             </div>
           </div>
 
-          <hr className="border-[var(--border-main)]" />
+          <hr className="border-[var(--border-main)]"/>
 
           {/* Related Articles Section */}
           <div>
@@ -256,7 +264,7 @@ const ArticleDetailModal: React.FC<{
             onSubmitTicket();
           }}
           variant="primary"
-          leftIcon={<MessageSquare className="h-4 w-4" />}
+          leftIcon={<MessageSquare className="h-4 w-4"/>}
         >
           Submit a Ticket
         </Button>
@@ -269,21 +277,21 @@ const ArticleSkeletonCard: React.FC = () => (
   <Card className="p-6">
     <div className="space-y-4">
       <div className="flex gap-4">
-        <Skeleton className="h-5 w-5 flex-shrink-0" />
-        <Skeleton className="h-6 w-2/3" />
+        <Skeleton className="h-5 w-5 flex-shrink-0"/>
+        <Skeleton className="h-6 w-2/3"/>
       </div>
-      <Skeleton className="h-6 w-24" />
+      <Skeleton className="h-6 w-24"/>
       <div className="flex gap-4 mt-4">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-4 w-20"/>
+        <Skeleton className="h-4 w-24"/>
+        <Skeleton className="h-4 w-28"/>
       </div>
     </div>
   </Card>
 );
 
 export default function KnowledgeBasePage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -305,7 +313,7 @@ export default function KnowledgeBasePage() {
   ];
 
   // React Query - automatically refetches when filters change
-  const { data: articles = [], isLoading } = useKnowledgeBaseArticles({
+  const {data: articles = [], isLoading} = useKnowledgeBaseArticles({
     category: selectedCategory || undefined,
     q: searchQuery || undefined,
   });
@@ -319,7 +327,7 @@ export default function KnowledgeBasePage() {
     register: registerArticle,
     handleSubmit: handleArticleSubmit,
     reset: resetArticleForm,
-    formState: { errors: articleErrors },
+    formState: {errors: articleErrors},
   } = useForm<CreateArticleFormData>({
     resolver: zodResolver(createArticleSchema),
     defaultValues: {
@@ -334,7 +342,7 @@ export default function KnowledgeBasePage() {
     register: registerTicket,
     handleSubmit: handleTicketSubmit,
     reset: resetTicketForm,
-    formState: { errors: ticketErrors },
+    formState: {errors: ticketErrors},
   } = useForm<CreateTicketFormData>({
     resolver: zodResolver(createTicketSchema),
     defaultValues: {
@@ -411,7 +419,7 @@ export default function KnowledgeBasePage() {
               <Button
                 onClick={() => setShowCreateModal(true)}
                 variant="primary"
-                leftIcon={<Plus className="h-4 w-4" />}
+                leftIcon={<Plus className="h-4 w-4"/>}
               >
                 New Article
               </Button>
@@ -481,7 +489,8 @@ export default function KnowledgeBasePage() {
             {/* Search Bar */}
             <div className="mb-8">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Search
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="text"
                   placeholder="Search articles..."
@@ -496,12 +505,12 @@ export default function KnowledgeBasePage() {
             {isLoading ? (
               <div className="space-y-4">
                 {[...Array(6)].map((_, i) => (
-                  <ArticleSkeletonCard key={i} />
+                  <ArticleSkeletonCard key={i}/>
                 ))}
               </div>
             ) : articles.length === 0 ? (
               <div className="text-center py-20">
-                <FileText className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+                <FileText className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No articles found
                 </h3>
@@ -543,8 +552,14 @@ export default function KnowledgeBasePage() {
 
       {/* Create Article Modal (Admin Only) */}
       {isAdmin && (
-        <Modal isOpen={showCreateModal} onClose={() => { setShowCreateModal(false); resetArticleForm(); }} size="lg">
-          <ModalHeader onClose={() => { setShowCreateModal(false); resetArticleForm(); }}>
+        <Modal isOpen={showCreateModal} onClose={() => {
+          setShowCreateModal(false);
+          resetArticleForm();
+        }} size="lg">
+          <ModalHeader onClose={() => {
+            setShowCreateModal(false);
+            resetArticleForm();
+          }}>
             <div>
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                 Create New Article
@@ -558,8 +573,9 @@ export default function KnowledgeBasePage() {
           {createArticleSuccess ? (
             <ModalBody>
               <div className="py-8 text-center">
-                <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
+                <div
+                  className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400"/>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Article Created
@@ -622,7 +638,10 @@ export default function KnowledgeBasePage() {
               </ModalBody>
 
               <ModalFooter>
-                <Button variant="outline" onClick={() => { setShowCreateModal(false); resetArticleForm(); }}>
+                <Button variant="outline" onClick={() => {
+                  setShowCreateModal(false);
+                  resetArticleForm();
+                }}>
                   Cancel
                 </Button>
                 <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
@@ -641,8 +660,14 @@ export default function KnowledgeBasePage() {
       )}
 
       {/* Submit Ticket Modal */}
-      <Modal isOpen={showTicketModal} onClose={() => { setShowTicketModal(false); resetTicketForm(); }} size="lg">
-        <ModalHeader onClose={() => { setShowTicketModal(false); resetTicketForm(); }}>
+      <Modal isOpen={showTicketModal} onClose={() => {
+        setShowTicketModal(false);
+        resetTicketForm();
+      }} size="lg">
+        <ModalHeader onClose={() => {
+          setShowTicketModal(false);
+          resetTicketForm();
+        }}>
           <div>
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               Submit a Support Ticket
@@ -656,8 +681,9 @@ export default function KnowledgeBasePage() {
         {createTicketSuccess ? (
           <ModalBody>
             <div className="py-8 text-center">
-              <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400" />
+              <div
+                className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400"/>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Ticket Submitted
@@ -722,13 +748,16 @@ export default function KnowledgeBasePage() {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="outline" onClick={() => { setShowTicketModal(false); resetTicketForm(); }}>
+              <Button variant="outline" onClick={() => {
+                setShowTicketModal(false);
+                resetTicketForm();
+              }}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="primary"
-                leftIcon={<MessageSquare className="h-4 w-4" />}
+                leftIcon={<MessageSquare className="h-4 w-4"/>}
                 disabled={createTicketMutation.isPending}
               >
                 {createTicketMutation.isPending ? 'Submitting...' : 'Submit Ticket'}

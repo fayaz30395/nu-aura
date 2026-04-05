@@ -1,32 +1,34 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useParams, useRouter, useSearchParams} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {useFieldArray, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
-  useWorkflowDefinition,
   useCreateWorkflowDefinition,
   useUpdateWorkflowDefinition,
+  useWorkflowDefinition,
 } from '@/lib/hooks/queries/useWorkflows';
 import type {
+  ApproverType,
   WorkflowDefinitionRequest,
   WorkflowEntityType,
   WorkflowType,
-  ApproverType,
 } from '@/lib/types/core/workflow';
 import {
+  AlertTriangle,
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  Clock,
   Edit,
   Eye,
   GitBranch,
@@ -34,57 +36,55 @@ import {
   Save,
   Trash2,
   XCircle,
-  Clock,
-  AlertTriangle,
 } from 'lucide-react';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const ENTITY_TYPE_OPTIONS: { value: WorkflowEntityType; label: string }[] = [
-  { value: 'LEAVE_REQUEST', label: 'Leave Request' },
-  { value: 'EXPENSE_CLAIM', label: 'Expense Claim' },
-  { value: 'TRAVEL_REQUEST', label: 'Travel Request' },
-  { value: 'LOAN_REQUEST', label: 'Loan Request' },
-  { value: 'ASSET_REQUEST', label: 'Asset Request' },
-  { value: 'TIMESHEET', label: 'Timesheet' },
-  { value: 'RESIGNATION', label: 'Resignation' },
-  { value: 'SALARY_REVISION', label: 'Salary Revision' },
-  { value: 'PROMOTION', label: 'Promotion' },
-  { value: 'TRANSFER', label: 'Transfer' },
-  { value: 'ONBOARDING', label: 'Onboarding' },
-  { value: 'OFFBOARDING', label: 'Offboarding' },
-  { value: 'DOCUMENT_REQUEST', label: 'Document Request' },
-  { value: 'POLICY_ACKNOWLEDGMENT', label: 'Policy Acknowledgment' },
-  { value: 'TRAINING_REQUEST', label: 'Training Request' },
-  { value: 'REIMBURSEMENT', label: 'Reimbursement' },
-  { value: 'OVERTIME', label: 'Overtime' },
-  { value: 'SHIFT_CHANGE', label: 'Shift Change' },
-  { value: 'WORK_FROM_HOME', label: 'Work From Home' },
-  { value: 'RECRUITMENT_OFFER', label: 'Recruitment Offer' },
-  { value: 'CUSTOM', label: 'Custom' },
+  {value: 'LEAVE_REQUEST', label: 'Leave Request'},
+  {value: 'EXPENSE_CLAIM', label: 'Expense Claim'},
+  {value: 'TRAVEL_REQUEST', label: 'Travel Request'},
+  {value: 'LOAN_REQUEST', label: 'Loan Request'},
+  {value: 'ASSET_REQUEST', label: 'Asset Request'},
+  {value: 'TIMESHEET', label: 'Timesheet'},
+  {value: 'RESIGNATION', label: 'Resignation'},
+  {value: 'SALARY_REVISION', label: 'Salary Revision'},
+  {value: 'PROMOTION', label: 'Promotion'},
+  {value: 'TRANSFER', label: 'Transfer'},
+  {value: 'ONBOARDING', label: 'Onboarding'},
+  {value: 'OFFBOARDING', label: 'Offboarding'},
+  {value: 'DOCUMENT_REQUEST', label: 'Document Request'},
+  {value: 'POLICY_ACKNOWLEDGMENT', label: 'Policy Acknowledgment'},
+  {value: 'TRAINING_REQUEST', label: 'Training Request'},
+  {value: 'REIMBURSEMENT', label: 'Reimbursement'},
+  {value: 'OVERTIME', label: 'Overtime'},
+  {value: 'SHIFT_CHANGE', label: 'Shift Change'},
+  {value: 'WORK_FROM_HOME', label: 'Work From Home'},
+  {value: 'RECRUITMENT_OFFER', label: 'Recruitment Offer'},
+  {value: 'CUSTOM', label: 'Custom'},
 ];
 
 const WORKFLOW_TYPE_OPTIONS: { value: WorkflowType; label: string; description: string }[] = [
-  { value: 'SEQUENTIAL', label: 'Sequential', description: 'Steps are executed one after another' },
-  { value: 'PARALLEL', label: 'Parallel', description: 'All approvals happen simultaneously' },
-  { value: 'CONDITIONAL', label: 'Conditional', description: 'Steps are based on rules/conditions' },
-  { value: 'HIERARCHICAL', label: 'Hierarchical', description: 'Based on reporting structure' },
-  { value: 'HYBRID', label: 'Hybrid', description: 'Mix of sequential and parallel steps' },
+  {value: 'SEQUENTIAL', label: 'Sequential', description: 'Steps are executed one after another'},
+  {value: 'PARALLEL', label: 'Parallel', description: 'All approvals happen simultaneously'},
+  {value: 'CONDITIONAL', label: 'Conditional', description: 'Steps are based on rules/conditions'},
+  {value: 'HIERARCHICAL', label: 'Hierarchical', description: 'Based on reporting structure'},
+  {value: 'HYBRID', label: 'Hybrid', description: 'Mix of sequential and parallel steps'},
 ];
 
 const APPROVER_TYPE_OPTIONS: { value: ApproverType; label: string }[] = [
-  { value: 'REPORTING_MANAGER', label: 'Reporting Manager' },
-  { value: 'SKIP_LEVEL_MANAGER', label: 'Skip-Level Manager' },
-  { value: 'DEPARTMENT_HEAD', label: 'Department Head' },
-  { value: 'HR_MANAGER', label: 'HR Manager' },
-  { value: 'FINANCE_MANAGER', label: 'Finance Manager' },
-  { value: 'CEO', label: 'CEO' },
-  { value: 'ROLE', label: 'Specific Role' },
-  { value: 'SPECIFIC_USER', label: 'Specific User' },
-  { value: 'ANY_OF_ROLE', label: 'Any of Role' },
-  { value: 'COMMITTEE', label: 'Committee' },
-  { value: 'CUSTOM_HIERARCHY', label: 'Custom Hierarchy' },
-  { value: 'DYNAMIC', label: 'Dynamic (Expression)' },
+  {value: 'REPORTING_MANAGER', label: 'Reporting Manager'},
+  {value: 'SKIP_LEVEL_MANAGER', label: 'Skip-Level Manager'},
+  {value: 'DEPARTMENT_HEAD', label: 'Department Head'},
+  {value: 'HR_MANAGER', label: 'HR Manager'},
+  {value: 'FINANCE_MANAGER', label: 'Finance Manager'},
+  {value: 'CEO', label: 'CEO'},
+  {value: 'ROLE', label: 'Specific Role'},
+  {value: 'SPECIFIC_USER', label: 'Specific User'},
+  {value: 'ANY_OF_ROLE', label: 'Any of Role'},
+  {value: 'COMMITTEE', label: 'Committee'},
+  {value: 'CUSTOM_HIERARCHY', label: 'Custom Hierarchy'},
+  {value: 'DYNAMIC', label: 'Dynamic (Expression)'},
 ];
 
 // ── Zod Schema ───────────────────────────────────────────────────────────────
@@ -137,8 +137,8 @@ function getApproverTypeLabel(type: ApproverType): string {
 // ── Pipeline Step Visual ─────────────────────────────────────────────────────
 
 function StepPipelinePreview({
-  steps,
-}: {
+                               steps,
+                             }: {
   steps: Array<{ stepName: string; approverType: ApproverType; slaHours?: number }>;
 }) {
   if (!steps || steps.length === 0) return null;
@@ -149,7 +149,8 @@ function StepPipelinePreview({
         <React.Fragment key={idx}>
           {/* Step node */}
           <div className="flex flex-col items-center flex-shrink-0">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-500 bg-accent-50 text-sm font-bold text-accent-700 dark:border-accent-400 dark:bg-accent-900/30 dark:text-accent-300">
+            <div
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-500 bg-accent-50 text-sm font-bold text-accent-700 dark:border-accent-400 dark:bg-accent-900/30 dark:text-accent-300">
               {idx + 1}
             </div>
             <p className="mt-2 max-w-[120px] text-center text-xs font-medium text-[var(--text-primary)] truncate">
@@ -160,15 +161,16 @@ function StepPipelinePreview({
             </p>
             {step.slaHours && step.slaHours > 0 ? (
               <p className="flex items-center gap-0.5 text-2xs text-[var(--text-muted)]">
-                <Clock className="h-3 w-3" /> {step.slaHours}h
+                <Clock className="h-3 w-3"/> {step.slaHours}h
               </p>
             ) : null}
           </div>
           {/* Connector arrow */}
           {idx < steps.length - 1 && (
             <div className="flex items-center flex-shrink-0 px-1">
-              <div className="h-0.5 w-8 bg-accent-300 dark:bg-accent-600" />
-              <div className="h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-accent-300 dark:border-l-accent-600" />
+              <div className="h-0.5 w-8 bg-accent-300 dark:bg-accent-600"/>
+              <div
+                className="h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-accent-300 dark:border-l-accent-600"/>
             </div>
           )}
         </React.Fragment>
@@ -183,7 +185,7 @@ export default function WorkflowDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
   const canManage = isReady && hasPermission(Permissions.WORKFLOW_MANAGE);
   const canView = isReady && (hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
 
@@ -192,7 +194,7 @@ export default function WorkflowDetailPage() {
   const editFromQuery = searchParams.get('edit') === 'true';
   const [isEditing, setIsEditing] = useState(isNew || editFromQuery);
 
-  const { data: workflow, isLoading } = useWorkflowDefinition(isNew ? '' : workflowId);
+  const {data: workflow, isLoading} = useWorkflowDefinition(isNew ? '' : workflowId);
   const createMutation = useCreateWorkflowDefinition();
   const updateMutation = useUpdateWorkflowDefinition(workflowId);
 
@@ -229,7 +231,7 @@ export default function WorkflowDetailPage() {
     },
   });
 
-  const { fields, append, remove, move } = useFieldArray({
+  const {fields, append, remove, move} = useFieldArray({
     control: form.control,
     name: 'steps',
   });
@@ -336,7 +338,7 @@ export default function WorkflowDetailPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-danger-500" />}
+            icon={<XCircle className="h-12 w-12 text-danger-500"/>}
           />
         </div>
       </AppLayout>
@@ -348,9 +350,9 @@ export default function WorkflowDetailPage() {
     return (
       <AppLayout activeMenuItem="workflows">
         <div className="space-y-6 p-6">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-64 w-full rounded-xl" />
-          <Skeleton className="h-48 w-full rounded-xl" />
+          <Skeleton className="h-8 w-64"/>
+          <Skeleton className="h-64 w-full rounded-xl"/>
+          <Skeleton className="h-48 w-full rounded-xl"/>
         </div>
       </AppLayout>
     );
@@ -364,7 +366,7 @@ export default function WorkflowDetailPage() {
           <EmptyState
             title="Workflow not found"
             description="The requested workflow definition could not be found."
-            icon={<AlertTriangle className="h-12 w-12 text-warning-500" />}
+            icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
           />
         </div>
       </AppLayout>
@@ -374,9 +376,9 @@ export default function WorkflowDetailPage() {
   return (
     <AppLayout activeMenuItem="workflows">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="space-y-6 p-6"
       >
         {/* Header */}
@@ -387,7 +389,7 @@ export default function WorkflowDetailPage() {
               size="sm"
               onClick={() => router.push('/workflows')}
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4"/>
             </Button>
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
@@ -401,7 +403,7 @@ export default function WorkflowDetailPage() {
           <div className="flex items-center gap-2">
             {!isNew && !isEditing && canManage && (
               <Button variant="outline" onClick={() => setIsEditing(true)}>
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className="mr-2 h-4 w-4"/>
                 Edit
               </Button>
             )}
@@ -418,21 +420,23 @@ export default function WorkflowDetailPage() {
           <>
             {/* Info Cards */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <InfoCard label="Entity Type" value={ENTITY_TYPE_OPTIONS.find((o) => o.value === workflow.entityType)?.label ?? workflow.entityType} />
-              <InfoCard label="Workflow Type" value={WORKFLOW_TYPE_OPTIONS.find((o) => o.value === workflow.workflowType)?.label ?? workflow.workflowType} />
+              <InfoCard label="Entity Type"
+                        value={ENTITY_TYPE_OPTIONS.find((o) => o.value === workflow.entityType)?.label ?? workflow.entityType}/>
+              <InfoCard label="Workflow Type"
+                        value={WORKFLOW_TYPE_OPTIONS.find((o) => o.value === workflow.workflowType)?.label ?? workflow.workflowType}/>
               <InfoCard
                 label="Status"
                 value={workflow.isActive ? 'Active' : 'Inactive'}
                 valueClassName={workflow.isActive ? 'text-success-600 dark:text-success-400' : 'text-surface-500'}
               />
-              <InfoCard label="Version" value={`v${workflow.version}`} />
+              <InfoCard label="Version" value={`v${workflow.version}`}/>
             </div>
 
             {/* Pipeline Preview */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5 text-accent-600" />
+                  <GitBranch className="h-5 w-5 text-accent-600"/>
                   Approval Pipeline ({workflow.totalSteps} {workflow.totalSteps === 1 ? 'step' : 'steps'})
                 </CardTitle>
               </CardHeader>
@@ -463,7 +467,8 @@ export default function WorkflowDetailPage() {
                       key={step.id}
                       className="flex gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)]/30 p-4"
                     >
-                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                      <div
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
                         {idx + 1}
                       </div>
                       <div className="flex-1 space-y-1">
@@ -472,31 +477,37 @@ export default function WorkflowDetailPage() {
                           <p className="text-caption">{step.description}</p>
                         )}
                         <div className="flex flex-wrap gap-2 pt-1">
-                          <span className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                          <span
+                            className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
                             {getApproverTypeLabel(step.approverType)}
                           </span>
                           {step.roleName && (
-                            <span className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                            <span
+                              className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
                               Role: {step.roleName}
                             </span>
                           )}
                           {step.slaHours && step.slaHours > 0 && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-                              <Clock className="h-3 w-3" /> SLA: {step.slaHours}h
+                            <span
+                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                              <Clock className="h-3 w-3"/> SLA: {step.slaHours}h
                             </span>
                           )}
                           {step.escalationEnabled && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-                              <AlertTriangle className="h-3 w-3" /> Escalation
+                            <span
+                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                              <AlertTriangle className="h-3 w-3"/> Escalation
                             </span>
                           )}
                           {step.commentsRequired && (
-                            <span className="inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800/30 dark:text-surface-300">
+                            <span
+                              className="inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800/30 dark:text-surface-300">
                               Comments required
                             </span>
                           )}
                           {step.isOptional && (
-                            <span className="inline-flex items-center rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                            <span
+                              className="inline-flex items-center rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
                               Optional
                             </span>
                           )}
@@ -515,17 +526,17 @@ export default function WorkflowDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <SettingItem label="Default SLA" value={`${workflow.defaultSlaHours}h`} />
-                  <SettingItem label="Escalation Enabled" value={workflow.escalationEnabled ? 'Yes' : 'No'} />
-                  <SettingItem label="Escalation After" value={`${workflow.escalationAfterHours}h`} />
-                  <SettingItem label="Notify on Submission" value={workflow.notifyOnSubmission ? 'Yes' : 'No'} />
-                  <SettingItem label="Notify on Approval" value={workflow.notifyOnApproval ? 'Yes' : 'No'} />
-                  <SettingItem label="Notify on Rejection" value={workflow.notifyOnRejection ? 'Yes' : 'No'} />
-                  <SettingItem label="Parallel Approval" value={workflow.allowParallelApproval ? 'Yes' : 'No'} />
-                  <SettingItem label="Auto-Approve" value={workflow.autoApproveEnabled ? 'Yes' : 'No'} />
-                  <SettingItem label="Skip-Level Allowed" value={workflow.skipLevelAllowed ? 'Yes' : 'No'} />
-                  {workflow.minAmount != null && <SettingItem label="Min Amount" value={`${workflow.minAmount}`} />}
-                  {workflow.maxAmount != null && <SettingItem label="Max Amount" value={`${workflow.maxAmount}`} />}
+                  <SettingItem label="Default SLA" value={`${workflow.defaultSlaHours}h`}/>
+                  <SettingItem label="Escalation Enabled" value={workflow.escalationEnabled ? 'Yes' : 'No'}/>
+                  <SettingItem label="Escalation After" value={`${workflow.escalationAfterHours}h`}/>
+                  <SettingItem label="Notify on Submission" value={workflow.notifyOnSubmission ? 'Yes' : 'No'}/>
+                  <SettingItem label="Notify on Approval" value={workflow.notifyOnApproval ? 'Yes' : 'No'}/>
+                  <SettingItem label="Notify on Rejection" value={workflow.notifyOnRejection ? 'Yes' : 'No'}/>
+                  <SettingItem label="Parallel Approval" value={workflow.allowParallelApproval ? 'Yes' : 'No'}/>
+                  <SettingItem label="Auto-Approve" value={workflow.autoApproveEnabled ? 'Yes' : 'No'}/>
+                  <SettingItem label="Skip-Level Allowed" value={workflow.skipLevelAllowed ? 'Yes' : 'No'}/>
+                  {workflow.minAmount != null && <SettingItem label="Min Amount" value={`${workflow.minAmount}`}/>}
+                  {workflow.maxAmount != null && <SettingItem label="Max Amount" value={`${workflow.maxAmount}`}/>}
                 </div>
               </CardContent>
             </Card>
@@ -644,7 +655,7 @@ export default function WorkflowDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Eye className="h-5 w-5 text-accent-600" />
+                    <Eye className="h-5 w-5 text-accent-600"/>
                     Pipeline Preview
                   </CardTitle>
                 </CardHeader>
@@ -664,7 +675,7 @@ export default function WorkflowDetailPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5 text-accent-600" />
+                  <GitBranch className="h-5 w-5 text-accent-600"/>
                   Approval Steps
                 </CardTitle>
                 <Button
@@ -683,7 +694,7 @@ export default function WorkflowDetailPage() {
                     })
                   }
                 >
-                  <Plus className="mr-1 h-4 w-4" />
+                  <Plus className="mr-1 h-4 w-4"/>
                   Add Step
                 </Button>
               </CardHeader>
@@ -711,7 +722,7 @@ export default function WorkflowDetailPage() {
                             aria-label="Move step up"
                             className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
-                            <ChevronUp className="h-3.5 w-3.5" />
+                            <ChevronUp className="h-3.5 w-3.5"/>
                           </button>
                           <button
                             type="button"
@@ -720,10 +731,11 @@ export default function WorkflowDetailPage() {
                             aria-label="Move step down"
                             className="rounded p-0.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
-                            <ChevronDown className="h-3.5 w-3.5" />
+                            <ChevronDown className="h-3.5 w-3.5"/>
                           </button>
                         </div>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                        <div
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
                           {idx + 1}
                         </div>
                         <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -736,7 +748,7 @@ export default function WorkflowDetailPage() {
                         aria-label="Delete step"
                         className="rounded p-1 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4"/>
                       </button>
                     </div>
 
@@ -900,39 +912,48 @@ export default function WorkflowDetailPage() {
 
                 <div className="mt-4 flex flex-wrap gap-6">
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('escalationEnabled')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('escalationEnabled')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Enable Escalation
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnSubmission')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('notifyOnSubmission')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Notify on Submission
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnApproval')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('notifyOnApproval')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Notify on Approval
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnRejection')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('notifyOnRejection')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Notify on Rejection
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('notifyOnEscalation')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('notifyOnEscalation')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Notify on Escalation
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('allowParallelApproval')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('allowParallelApproval')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Allow Parallel Approval
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('autoApproveEnabled')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('autoApproveEnabled')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Auto-Approve Enabled
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('skipLevelAllowed')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('skipLevelAllowed')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Skip-Level Allowed
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
-                    <input type="checkbox" {...form.register('isDefault')} className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500" />
+                    <input type="checkbox" {...form.register('isDefault')}
+                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
                     Set as Default
                   </label>
                 </div>
@@ -950,7 +971,7 @@ export default function WorkflowDetailPage() {
                 Cancel
               </Button>
               <Button type="submit" variant="primary" disabled={isSaving}>
-                <Save className="mr-2 h-4 w-4" />
+                <Save className="mr-2 h-4 w-4"/>
                 {isSaving
                   ? isNew
                     ? 'Creating...'
@@ -970,10 +991,10 @@ export default function WorkflowDetailPage() {
 // ── Sub-components ───────────────────────────────────────────────────────────
 
 function InfoCard({
-  label,
-  value,
-  valueClassName,
-}: {
+                    label,
+                    value,
+                    valueClassName,
+                  }: {
   label: string;
   value: string;
   valueClassName?: string;
@@ -988,7 +1009,7 @@ function InfoCard({
   );
 }
 
-function SettingItem({ label, value }: { label: string; value: string }) {
+function SettingItem({label, value}: { label: string; value: string }) {
   return (
     <div className="row-between rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2">
       <span className="text-caption">{label}</span>

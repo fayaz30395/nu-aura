@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { demoUsers } from './fixtures/testData';
-import { loginAs, navigateTo } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {demoUsers} from './fixtures/testData';
+import {loginAs, navigateTo} from './fixtures/helpers';
 
 /**
  * Compensation Page E2E Tests
@@ -8,18 +8,18 @@ import { loginAs, navigateTo } from './fixtures/helpers';
  */
 
 test.describe('Compensation — Page Load', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/compensation');
   });
 
-  test('should display Compensation page heading', async ({ page }) => {
-    await expect(page.locator('h1, h2').filter({ hasText: /Compensation/i }).first()).toBeVisible({
+  test('should display Compensation page heading', async ({page}) => {
+    await expect(page.locator('h1, h2').filter({hasText: /Compensation/i}).first()).toBeVisible({
       timeout: 10000,
     });
   });
 
-  test('should display stats cards', async ({ page }) => {
+  test('should display stats cards', async ({page}) => {
     await page.waitForTimeout(2000);
     // Look for any numeric stat displayed on the page
     const hasStats = await page
@@ -30,7 +30,7 @@ test.describe('Compensation — Page Load', () => {
     expect(hasStats).toBe(true);
   });
 
-  test('should have no critical console errors', async ({ page }) => {
+  test('should have no critical console errors', async ({page}) => {
     const errors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -49,13 +49,13 @@ test.describe('Compensation — Page Load', () => {
 });
 
 test.describe('Compensation — Review Cycles', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/compensation');
     await page.waitForTimeout(2000);
   });
 
-  test('should display review cycles section or tab', async ({ page }) => {
+  test('should display review cycles section or tab', async ({page}) => {
     const hasCycles = await page
       .locator('text=/review cycle|compensation cycle/i')
       .first()
@@ -69,7 +69,7 @@ test.describe('Compensation — Review Cycles', () => {
     expect(hasCycles || hasTab).toBe(true);
   });
 
-  test('should display cycle type labels', async ({ page }) => {
+  test('should display cycle type labels', async ({page}) => {
     await page.waitForTimeout(1000);
     // Cycle types: Annual, Mid-Year, Quarterly, Special, Ad Hoc
     const hasType = await page
@@ -81,7 +81,7 @@ test.describe('Compensation — Review Cycles', () => {
     expect(hasType || true).toBe(true);
   });
 
-  test('should display cycle status badges', async ({ page }) => {
+  test('should display cycle status badges', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasStatus = await page
       .locator('text=/Draft|Planning|In Progress|Review|Approval|Approved|Completed/i')
@@ -93,13 +93,13 @@ test.describe('Compensation — Review Cycles', () => {
 });
 
 test.describe('Compensation — Salary Revisions', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/compensation');
     await page.waitForTimeout(2000);
   });
 
-  test('should display revision types when available', async ({ page }) => {
+  test('should display revision types when available', async ({page}) => {
     const hasRevision = await page
       .locator(
         'text=/Annual Increment|Promotion|Role Change|Market Adjustment|Performance Bonus/i'
@@ -110,7 +110,7 @@ test.describe('Compensation — Salary Revisions', () => {
     expect(hasRevision || true).toBe(true);
   });
 
-  test('should display revision status labels when available', async ({ page }) => {
+  test('should display revision status labels when available', async ({page}) => {
     const hasStatus = await page
       .locator('text=/Pending Review|Pending Approval|Applied|Rejected/i')
       .first()
@@ -119,7 +119,7 @@ test.describe('Compensation — Salary Revisions', () => {
     expect(hasStatus || true).toBe(true);
   });
 
-  test('Approve button triggers action for pending revisions', async ({ page }) => {
+  test('Approve button triggers action for pending revisions', async ({page}) => {
     await page.waitForTimeout(1500);
     const approveBtn = page.locator('button:has-text("Approve")').first();
     const hasApprove = await approveBtn.isVisible().catch(() => false);
@@ -135,7 +135,7 @@ test.describe('Compensation — Salary Revisions', () => {
     expect(!stillVisible || true).toBe(true);
   });
 
-  test('Reject button triggers action for pending revisions', async ({ page }) => {
+  test('Reject button triggers action for pending revisions', async ({page}) => {
     await page.waitForTimeout(1500);
     const rejectBtn = page.locator('button:has-text("Reject")').first();
     const hasReject = await rejectBtn.isVisible().catch(() => false);
@@ -155,19 +155,19 @@ test.describe('Compensation — Salary Revisions', () => {
 });
 
 test.describe('Compensation — Search & Filter', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/compensation');
     await page.waitForTimeout(2000);
   });
 
-  test('should have a search input field', async ({ page }) => {
+  test('should have a search input field', async ({page}) => {
     const searchInput = page.locator('input[placeholder*="search" i], input[placeholder*="Search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
     expect(hasSearch || true).toBe(true);
   });
 
-  test('filter controls are accessible', async ({ page }) => {
+  test('filter controls are accessible', async ({page}) => {
     const hasFilter = await page
       .locator('button:has-text("Filter"), select, [role="combobox"]')
       .first()
@@ -178,7 +178,7 @@ test.describe('Compensation — Search & Filter', () => {
 });
 
 test.describe('Compensation — RBAC', () => {
-  test('Employee cannot access compensation admin page', async ({ page }) => {
+  test('Employee cannot access compensation admin page', async ({page}) => {
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/compensation');
     await page.waitForTimeout(3000);
@@ -187,7 +187,7 @@ test.describe('Compensation — RBAC', () => {
     expect(url).not.toContain('/compensation');
   });
 
-  test('HR Manager can access compensation page', async ({ page }) => {
+  test('HR Manager can access compensation page', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
     await page.goto('/compensation');
     await page.waitForTimeout(3000);
@@ -195,9 +195,9 @@ test.describe('Compensation — RBAC', () => {
     expect(url.includes('/compensation') || url.includes('/dashboard')).toBe(true);
   });
 
-  test('Super Admin sees full compensation management', async ({ page }) => {
+  test('Super Admin sees full compensation management', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin.email);
     await navigateTo(page, '/compensation');
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 10000});
   });
 });

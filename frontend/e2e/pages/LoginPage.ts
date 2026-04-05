@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Login Page Object Model
@@ -29,7 +29,7 @@ export class LoginPage extends BasePage {
     this.googleLoginButton = page.locator('button:has-text("Sign in with Google")');
     this.forgotPasswordLink = page.locator('a:has-text("Forgot password?")');
     this.errorMessage = page.locator('text=Authentication Failed').locator('..');
-    this.showPasswordButton = page.locator('button').filter({ has: page.locator('svg') }).nth(1);
+    this.showPasswordButton = page.locator('button').filter({has: page.locator('svg')}).nth(1);
     this.demoCredentialsToggle = page.locator('button:has-text("Demo Credentials")');
     this.lockoutMessage = page.locator('text=Account Temporarily Locked');
   }

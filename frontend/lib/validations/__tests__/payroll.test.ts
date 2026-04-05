@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { payrollRunSchema, payrollRunStatusSchema } from '../payroll';
+import {describe, expect, it} from 'vitest';
+import {payrollRunSchema, payrollRunStatusSchema} from '../payroll';
 
 describe('Payroll Validation Schemas', () => {
   // ─── payrollRunStatusSchema ────────────────────────────────────────────────
@@ -30,17 +30,17 @@ describe('Payroll Validation Schemas', () => {
     });
 
     it('rejects empty run name', () => {
-      const r = payrollRunSchema.safeParse({ ...valid, runName: '' });
+      const r = payrollRunSchema.safeParse({...valid, runName: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects run name shorter than 3 chars', () => {
-      const r = payrollRunSchema.safeParse({ ...valid, runName: 'ab' });
+      const r = payrollRunSchema.safeParse({...valid, runName: 'ab'});
       expect(r.success).toBe(false);
     });
 
     it('rejects run name exceeding 255 chars', () => {
-      const r = payrollRunSchema.safeParse({ ...valid, runName: 'a'.repeat(256) });
+      const r = payrollRunSchema.safeParse({...valid, runName: 'a'.repeat(256)});
       expect(r.success).toBe(false);
     });
 
@@ -80,29 +80,29 @@ describe('Payroll Validation Schemas', () => {
     });
 
     it('accepts optional notes', () => {
-      const r = payrollRunSchema.safeParse({ ...valid, notes: 'Regular monthly run' });
+      const r = payrollRunSchema.safeParse({...valid, notes: 'Regular monthly run'});
       expect(r.success).toBe(true);
     });
 
     it('accepts optional status', () => {
-      const r = payrollRunSchema.safeParse({ ...valid, status: 'DRAFT' });
+      const r = payrollRunSchema.safeParse({...valid, status: 'DRAFT'});
       expect(r.success).toBe(true);
     });
 
     it('rejects missing payrollPeriodStart', () => {
-      const { payrollPeriodStart: _, ...incomplete } = valid;
+      const {payrollPeriodStart: _, ...incomplete} = valid;
       const r = payrollRunSchema.safeParse(incomplete);
       expect(r.success).toBe(false);
     });
 
     it('rejects missing payrollPeriodEnd', () => {
-      const { payrollPeriodEnd: _, ...incomplete } = valid;
+      const {payrollPeriodEnd: _, ...incomplete} = valid;
       const r = payrollRunSchema.safeParse(incomplete);
       expect(r.success).toBe(false);
     });
 
     it('rejects missing paymentDate', () => {
-      const { paymentDate: _, ...incomplete } = valid;
+      const {paymentDate: _, ...incomplete} = valid;
       const r = payrollRunSchema.safeParse(incomplete);
       expect(r.success).toBe(false);
     });

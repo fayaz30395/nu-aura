@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { loginAs } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {loginAs} from './fixtures/helpers';
 
 /**
  * Payroll Run E2E Tests
@@ -9,22 +9,22 @@ import { loginAs } from './fixtures/helpers';
  */
 
 test.describe('Payroll Dashboard', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
   });
 
-  test('should display payroll page with heading', async ({ page }) => {
+  test('should display payroll page with heading', async ({page}) => {
     await page.goto('/payroll');
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
 
     const headingText = await heading.textContent();
     expect(headingText?.toLowerCase()).toMatch(/payroll/i);
   });
 
-  test('should display payroll dashboard cards or stats', async ({ page }) => {
+  test('should display payroll dashboard cards or stats', async ({page}) => {
     await page.goto('/payroll');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
@@ -36,21 +36,21 @@ test.describe('Payroll Dashboard', () => {
     expect(hasCards || hasTable || hasContent).toBe(true);
   });
 
-  test('should not show error on payroll page load', async ({ page }) => {
+  test('should not show error on payroll page load', async ({page}) => {
     await page.goto('/payroll');
     await page.waitForLoadState('networkidle');
 
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 });
 
 test.describe('Payroll Runs', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
   });
 
-  test('should display payroll runs list page', async ({ page }) => {
+  test('should display payroll runs list page', async ({page}) => {
     await page.goto('/payroll/runs');
     await page.waitForLoadState('networkidle');
 
@@ -59,15 +59,15 @@ test.describe('Payroll Runs', () => {
 
     // Should not crash
     const errorMsg = page.locator('text=/Something went wrong|Error loading/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 
-  test('should display create payroll run button', async ({ page }) => {
+  test('should display create payroll run button', async ({page}) => {
     await page.goto('/payroll/runs');
     await page.waitForLoadState('networkidle');
 
-    const createBtn = page.getByRole('button', { name: /create|new|add|generate/i }).first();
-    const hasCreate = await createBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const createBtn = page.getByRole('button', {name: /create|new|add|generate/i}).first();
+    const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // Button may or may not be visible depending on state
     expect(hasCreate || true).toBe(true);
@@ -75,19 +75,19 @@ test.describe('Payroll Runs', () => {
 });
 
 test.describe('Salary Structures', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, 'fayaz.m@nulogic.io');
   });
 
-  test('should display salary structures page', async ({ page }) => {
+  test('should display salary structures page', async ({page}) => {
     await page.goto('/compensation');
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should display salary structure list or empty state', async ({ page }) => {
+  test('should display salary structure list or empty state', async ({page}) => {
     await page.goto('/compensation');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);

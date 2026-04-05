@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Loader2, User, X } from 'lucide-react';
-import { Employee } from '@/lib/types/hrms/employee';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { getInitials } from '@/lib/utils';
-import { logger } from '@/lib/utils/logger';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Loader2, Search, User, X} from 'lucide-react';
+import {Employee} from '@/lib/types/hrms/employee';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {getInitials} from '@/lib/utils';
+import {logger} from '@/lib/utils/logger';
 
 interface EmployeeSearchAutocompleteProps {
   value?: { id: string; name: string } | null;
@@ -27,15 +27,15 @@ const getEmployeeName = (employee: Employee) => {
 };
 
 export function EmployeeSearchAutocomplete({
-  value,
-  onChange,
-  placeholder = 'Search employees...',
-  label,
-  required = false,
-  disabled = false,
-  excludeIds = [],
-  className = '',
-}: EmployeeSearchAutocompleteProps) {
+                                             value,
+                                             onChange,
+                                             placeholder = 'Search employees...',
+                                             label,
+                                             required = false,
+                                             disabled = false,
+                                             excludeIds = [],
+                                             className = '',
+                                           }: EmployeeSearchAutocompleteProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,7 @@ export function EmployeeSearchAutocomplete({
   }, []);
 
   const handleSelect = (employee: Employee) => {
-    onChange({ id: employee.id, name: getEmployeeName(employee) });
+    onChange({id: employee.id, name: getEmployeeName(employee)});
     setQuery('');
     setResults([]);
     setIsOpen(false);
@@ -147,7 +147,6 @@ export function EmployeeSearchAutocomplete({
   };
 
 
-
   return (
     <div className={`relative ${className}`}>
       {label && (
@@ -158,8 +157,10 @@ export function EmployeeSearchAutocomplete({
       )}
       <div className="relative">
         {value ? (
-          <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
-            <div className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
+          <div
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
+            <div
+              className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
               {getInitials(value.name)}
             </div>
             <span className="flex-1 text-surface-900 dark:text-surface-100 text-sm">
@@ -171,7 +172,7 @@ export function EmployeeSearchAutocomplete({
                 onClick={handleClear}
                 className="p-1 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
               >
-                <X className="h-4 w-4 text-surface-500" />
+                <X className="h-4 w-4 text-surface-500"/>
               </button>
             )}
           </div>
@@ -179,9 +180,9 @@ export function EmployeeSearchAutocomplete({
           <>
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               {loading ? (
-                <Loader2 className="h-4 w-4 text-surface-400 animate-spin" />
+                <Loader2 className="h-4 w-4 text-surface-400 animate-spin"/>
               ) : (
-                <Search className="h-4 w-4 text-surface-400" />
+                <Search className="h-4 w-4 text-surface-400"/>
               )}
             </div>
             <input
@@ -212,30 +213,31 @@ export function EmployeeSearchAutocomplete({
             {results.map((employee, index) => {
               const name = getEmployeeName(employee);
               return (
-              <button
-                key={employee.id}
-                role="option"
-                aria-selected={highlightedIndex === index}
-                type="button"
-                onClick={() => handleSelect(employee)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
+                <button
+                  key={employee.id}
+                  role="option"
+                  aria-selected={highlightedIndex === index}
+                  type="button"
+                  onClick={() => handleSelect(employee)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                  className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
                     ? 'bg-surface-50 dark:bg-surface-700'
                     : ''
                   }`}
-              >
-                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
-                  {getInitials(name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                    {name}
-                  </p>
-                  <p className="text-xs text-surface-500 truncate">
-                    {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
-                  </p>
-                </div>
-              </button>
+                >
+                  <div
+                    className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
+                    {getInitials(name)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
+                      {name}
+                    </p>
+                    <p className="text-xs text-surface-500 truncate">
+                      {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
+                    </p>
+                  </div>
+                </button>
               );
             })}
           </div>
@@ -247,7 +249,7 @@ export function EmployeeSearchAutocomplete({
             className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] p-4"
           >
             <div className="flex flex-col items-center text-center">
-              <User className="h-8 w-8 text-surface-400 mb-2" />
+              <User className="h-8 w-8 text-surface-400 mb-2"/>
               <p className="text-sm text-surface-500">No employees found</p>
               <p className="text-xs text-surface-400 mt-1">
                 Try a different search term

@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
 
 export interface Article {
   id: string;
@@ -55,16 +55,16 @@ export function useArticleFeedback() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ articleId, helpful }: { articleId: string; helpful: boolean }) => {
+    mutationFn: async ({articleId, helpful}: { articleId: string; helpful: boolean }) => {
       const response = await apiClient.patch(
         `/helpdesk/knowledge-base/${articleId}/helpful`,
-        { helpful }
+        {helpful}
       );
       return response.data;
     },
     onSuccess: () => {
       // Invalidate articles list to refresh feedback counts
-      queryClient.invalidateQueries({ queryKey: knowledgeBaseKeys.articles() });
+      queryClient.invalidateQueries({queryKey: knowledgeBaseKeys.articles()});
     },
   });
 }
@@ -90,7 +90,7 @@ export function useCreateArticle() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: knowledgeBaseKeys.articles() });
+      queryClient.invalidateQueries({queryKey: knowledgeBaseKeys.articles()});
     },
   });
 }

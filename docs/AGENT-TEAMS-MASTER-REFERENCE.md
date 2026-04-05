@@ -53,17 +53,17 @@ Layer 3: Agent Teams (coordinated multi-session)
 
 ### Key Differences: Subagents vs Agent Teams
 
-| Dimension | Subagents | Agent Teams |
-|-----------|-----------|-------------|
-| **Context** | Own window; results return to caller | Own window; fully independent |
-| **Communication** | Report results back to main agent only | Teammates message each other directly |
-| **Coordination** | Main agent manages all work | Shared task list with self-coordination |
-| **Task list** | No shared task list | Shared task list (pending → in-progress → completed) |
-| **Nesting** | Cannot spawn other subagents | Teammates cannot spawn sub-teams |
-| **Session** | Runs within a single session | Each teammate is a separate Claude Code session |
-| **Display** | Invisible to user (runs in background) | In-process (Shift+Down to cycle) or split panes (tmux/iTerm2) |
-| **Token cost** | Lower: results summarized back to main | Higher: each teammate is a separate instance |
-| **Best for** | Focused tasks where only the result matters | Complex work requiring discussion and collaboration |
+| Dimension         | Subagents                                   | Agent Teams                                                   |
+|-------------------|---------------------------------------------|---------------------------------------------------------------|
+| **Context**       | Own window; results return to caller        | Own window; fully independent                                 |
+| **Communication** | Report results back to main agent only      | Teammates message each other directly                         |
+| **Coordination**  | Main agent manages all work                 | Shared task list with self-coordination                       |
+| **Task list**     | No shared task list                         | Shared task list (pending → in-progress → completed)          |
+| **Nesting**       | Cannot spawn other subagents                | Teammates cannot spawn sub-teams                              |
+| **Session**       | Runs within a single session                | Each teammate is a separate Claude Code session               |
+| **Display**       | Invisible to user (runs in background)      | In-process (Shift+Down to cycle) or split panes (tmux/iTerm2) |
+| **Token cost**    | Lower: results summarized back to main      | Higher: each teammate is a separate instance                  |
+| **Best for**      | Focused tasks where only the result matters | Complex work requiring discussion and collaboration           |
 
 ---
 
@@ -71,18 +71,20 @@ Layer 3: Agent Teams (coordinated multi-session)
 
 ### Agent Team Components
 
-| Component | Role |
-|-----------|------|
+| Component     | Role                                                                                   |
+|---------------|----------------------------------------------------------------------------------------|
 | **Team Lead** | The main Claude Code session that creates the team, spawns teammates, coordinates work |
-| **Teammates** | Separate Claude Code instances working on assigned tasks |
-| **Task List** | Shared list of work items with states: pending, in-progress, completed |
-| **Mailbox** | Messaging system for inter-agent communication |
+| **Teammates** | Separate Claude Code instances working on assigned tasks                               |
+| **Task List** | Shared list of work items with states: pending, in-progress, completed                 |
+| **Mailbox**   | Messaging system for inter-agent communication                                         |
 
 ### How Teams Start
 
 Two paths:
+
 1. **You request a team**: Describe the task and team structure. Claude creates the team.
-2. **Claude proposes a team**: Claude detects the task benefits from parallelism and suggests a team. You confirm.
+2. **Claude proposes a team**: Claude detects the task benefits from parallelism and suggests a
+   team. You confirm.
 
 Claude never creates a team without your approval.
 
@@ -93,9 +95,11 @@ Claude never creates a team without your approval.
 ~/.claude/tasks/{team-name}/              # Task list storage
 ```
 
-The team config contains a `members` array with each teammate's name, agent ID, and agent type. Teammates can read this file to discover other team members.
+The team config contains a `members` array with each teammate's name, agent ID, and agent type.
+Teammates can read this file to discover other team members.
 
-**Important**: There is no project-level team config. A file like `.claude/teams/teams.json` in your project directory is NOT recognized as configuration.
+**Important**: There is no project-level team config. A file like `.claude/teams/teams.json` in your
+project directory is NOT recognized as configuration.
 
 ### Subagent Storage
 
@@ -128,14 +132,14 @@ Plugin agents/ directory       # Plugin-provided (priority 4, lowest)
 
 ### Built-in Subagents
 
-| Agent | Model | Tools | Purpose |
-|-------|-------|-------|---------|
-| **Explore** | Haiku (fast) | Read-only | File discovery, code search, codebase exploration |
-| **Plan** | Inherits | Read-only | Codebase research for plan mode |
-| **General-purpose** | Inherits | All | Complex research, multi-step operations, code modifications |
-| **Bash** | Inherits | — | Terminal commands in separate context |
-| **statusline-setup** | Sonnet | — | Configure status line |
-| **Claude Code Guide** | Haiku | — | Answer questions about Claude Code features |
+| Agent                 | Model        | Tools     | Purpose                                                     |
+|-----------------------|--------------|-----------|-------------------------------------------------------------|
+| **Explore**           | Haiku (fast) | Read-only | File discovery, code search, codebase exploration           |
+| **Plan**              | Inherits     | Read-only | Codebase research for plan mode                             |
+| **General-purpose**   | Inherits     | All       | Complex research, multi-step operations, code modifications |
+| **Bash**              | Inherits     | —         | Terminal commands in separate context                       |
+| **statusline-setup**  | Sonnet       | —         | Configure status line                                       |
+| **Claude Code Guide** | Haiku        | —         | Answer questions about Claude Code features                 |
 
 ### Creating Custom Subagents
 
@@ -147,7 +151,8 @@ Plugin agents/ directory       # Plugin-provided (priority 4, lowest)
 
 #### Method 2: Manual file creation
 
-Create a Markdown file with YAML frontmatter in `.claude/agents/` (project) or `~/.claude/agents/` (user):
+Create a Markdown file with YAML frontmatter in `.claude/agents/` (project) or `~/.claude/agents/` (
+user):
 
 ```markdown
 ---
@@ -175,17 +180,18 @@ claude --agents '{
 
 ### Invoking Subagents
 
-| Method | Syntax | Behavior |
-|--------|--------|----------|
-| Natural language | "Use the code-reviewer subagent to..." | Claude decides whether to delegate |
-| @-mention | `@"code-reviewer (agent)" review auth` | Guarantees that subagent runs |
-| Session-wide | `claude --agent code-reviewer` | Entire session uses that subagent |
-| Setting | `{ "agent": "code-reviewer" }` in settings.json | Default for every session |
+| Method           | Syntax                                          | Behavior                           |
+|------------------|-------------------------------------------------|------------------------------------|
+| Natural language | "Use the code-reviewer subagent to..."          | Claude decides whether to delegate |
+| @-mention        | `@"code-reviewer (agent)" review auth`          | Guarantees that subagent runs      |
+| Session-wide     | `claude --agent code-reviewer`                  | Entire session uses that subagent  |
+| Setting          | `{ "agent": "code-reviewer" }` in settings.json | Default for every session          |
 
 ### Foreground vs Background
 
 - **Foreground**: Blocks main conversation. Permission prompts pass through to you.
-- **Background**: Runs concurrently. Auto-denies unapproved permissions. Cannot ask clarifying questions.
+- **Background**: Runs concurrently. Auto-denies unapproved permissions. Cannot ask clarifying
+  questions.
 - Claude decides automatically, or you can say "run this in the background" or press **Ctrl+B**.
 
 ### Resuming Subagents
@@ -222,22 +228,22 @@ In `.claude/settings.json`:
 
 ### Display Modes
 
-| Mode | Description | Config |
-|------|-------------|--------|
-| **in-process** | All teammates in main terminal. Shift+Down to cycle. Works anywhere. | Default if not in tmux |
-| **split panes** | Each teammate in own pane. Requires tmux or iTerm2. | Set `"teammateMode": "tmux"` in `~/.claude.json` |
-| **auto** | Split panes if already in tmux, otherwise in-process. | Default |
+| Mode            | Description                                                          | Config                                           |
+|-----------------|----------------------------------------------------------------------|--------------------------------------------------|
+| **in-process**  | All teammates in main terminal. Shift+Down to cycle. Works anywhere. | Default if not in tmux                           |
+| **split panes** | Each teammate in own pane. Requires tmux or iTerm2.                  | Set `"teammateMode": "tmux"` in `~/.claude.json` |
+| **auto**        | Split panes if already in tmux, otherwise in-process.                | Default                                          |
 
 Override per-session: `claude --teammate-mode in-process`
 
 ### Display Mode Controls (In-Process)
 
-| Key | Action |
-|-----|--------|
+| Key            | Action                                                  |
+|----------------|---------------------------------------------------------|
 | **Shift+Down** | Cycle through teammates (wraps back to lead after last) |
-| **Enter** | View teammate's session |
-| **Escape** | Interrupt teammate's current turn |
-| **Ctrl+T** | Toggle task list |
+| **Enter**      | View teammate's session                                 |
+| **Escape**     | Interrupt teammate's current turn                       |
+| **Ctrl+T**     | Toggle task list                                        |
 
 ### Spawning Teams
 
@@ -266,35 +272,39 @@ Spawn an architect teammate to refactor the authentication module.
 Require plan approval before they make any changes.
 ```
 
-When the teammate finishes planning, it sends a plan approval request to the lead. The lead reviews and approves or rejects with feedback. Rejected teammates revise and resubmit.
+When the teammate finishes planning, it sends a plan approval request to the lead. The lead reviews
+and approves or rejects with feedback. Rejected teammates revise and resubmit.
 
-Influence the lead's approval criteria: "only approve plans that include test coverage" or "reject plans that modify the database schema."
+Influence the lead's approval criteria: "only approve plans that include test coverage" or "reject
+plans that modify the database schema."
 
 ### Task Management
 
 Tasks have three states: **pending**, **in-progress**, **completed**.
 
-Tasks can have dependencies: a pending task with unresolved dependencies cannot be claimed until dependencies complete.
+Tasks can have dependencies: a pending task with unresolved dependencies cannot be claimed until
+dependencies complete.
 
 Task claiming uses file locking to prevent race conditions.
 
-| Assignment Method | Description |
-|-------------------|-------------|
-| **Lead assigns** | Tell lead which task to give to which teammate |
-| **Self-claim** | After finishing, teammate picks next unassigned, unblocked task |
+| Assignment Method | Description                                                     |
+|-------------------|-----------------------------------------------------------------|
+| **Lead assigns**  | Tell lead which task to give to which teammate                  |
+| **Self-claim**    | After finishing, teammate picks next unassigned, unblocked task |
 
 ### Talking to Teammates Directly
 
 Each teammate is a full Claude Code session. You can:
+
 - Message any teammate directly (additional instructions, questions, redirects)
 - In-process: Shift+Down to cycle, then type
 - Split panes: Click into teammate's pane
 
 ### Communication Primitives
 
-| Primitive | Description |
-|-----------|-------------|
-| **message** | Send to one specific teammate |
+| Primitive     | Description                                                                       |
+|---------------|-----------------------------------------------------------------------------------|
+| **message**   | Send to one specific teammate                                                     |
 | **broadcast** | Send to all teammates simultaneously (use sparingly — costs scale with team size) |
 
 ### Shutting Down
@@ -304,7 +314,8 @@ Ask the researcher teammate to shut down     # Graceful shutdown
 Clean up the team                             # Remove shared team resources
 ```
 
-**Always use the lead to clean up.** Teammates should not run cleanup — their team context may not resolve correctly.
+**Always use the lead to clean up.** Teammates should not run cleanup — their team context may not
+resolve correctly.
 
 The lead checks for active teammates and fails if any are still running. Shut them all down first.
 
@@ -324,23 +335,23 @@ The teammate inherits that subagent's system prompt, tools, and model.
 
 ### Frontmatter Fields (Complete)
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `name` | Yes | string | Unique identifier, lowercase letters and hyphens |
-| `description` | Yes | string | When Claude should delegate to this agent |
-| `tools` | No | string/list | Tools the agent can use. Inherits all if omitted |
-| `disallowedTools` | No | string/list | Tools to deny (removed from inherited set) |
-| `model` | No | string | `sonnet`, `opus`, `haiku`, full model ID (e.g. `claude-opus-4-6`), or `inherit`. Default: `inherit` |
-| `permissionMode` | No | string | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan` |
-| `maxTurns` | No | integer | Maximum agentic turns before stopping |
-| `skills` | No | list | Skills to inject into context at startup (full content, not just availability) |
-| `mcpServers` | No | list | MCP servers: string references or inline definitions |
-| `hooks` | No | object | Lifecycle hooks scoped to this subagent |
-| `memory` | No | string | Persistent memory scope: `user`, `project`, `local` |
-| `background` | No | boolean | Always run as background task. Default: `false` |
-| `effort` | No | string | Effort level: `low`, `medium`, `high`, `max` (Opus 4.6 only) |
-| `isolation` | No | string | `worktree` for isolated git worktree copy |
-| `initialPrompt` | No | string | Auto-submitted first user turn when running as main session agent |
+| Field             | Required | Type        | Description                                                                                         |
+|-------------------|----------|-------------|-----------------------------------------------------------------------------------------------------|
+| `name`            | Yes      | string      | Unique identifier, lowercase letters and hyphens                                                    |
+| `description`     | Yes      | string      | When Claude should delegate to this agent                                                           |
+| `tools`           | No       | string/list | Tools the agent can use. Inherits all if omitted                                                    |
+| `disallowedTools` | No       | string/list | Tools to deny (removed from inherited set)                                                          |
+| `model`           | No       | string      | `sonnet`, `opus`, `haiku`, full model ID (e.g. `claude-opus-4-6`), or `inherit`. Default: `inherit` |
+| `permissionMode`  | No       | string      | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan`                                    |
+| `maxTurns`        | No       | integer     | Maximum agentic turns before stopping                                                               |
+| `skills`          | No       | list        | Skills to inject into context at startup (full content, not just availability)                      |
+| `mcpServers`      | No       | list        | MCP servers: string references or inline definitions                                                |
+| `hooks`           | No       | object      | Lifecycle hooks scoped to this subagent                                                             |
+| `memory`          | No       | string      | Persistent memory scope: `user`, `project`, `local`                                                 |
+| `background`      | No       | boolean     | Always run as background task. Default: `false`                                                     |
+| `effort`          | No       | string      | Effort level: `low`, `medium`, `high`, `max` (Opus 4.6 only)                                        |
+| `isolation`       | No       | string      | `worktree` for isolated git worktree copy                                                           |
+| `initialPrompt`   | No       | string      | Auto-submitted first user turn when running as main session agent                                   |
 
 ### Model Resolution Order
 
@@ -352,11 +363,13 @@ The teammate inherits that subagent's system prompt, tools, and model.
 ### Tool Control
 
 **Allowlist** — only these tools:
+
 ```yaml
 tools: Read, Grep, Glob, Bash
 ```
 
 **Denylist** — inherit all except these:
+
 ```yaml
 disallowedTools: Write, Edit
 ```
@@ -364,11 +377,13 @@ disallowedTools: Write, Edit
 If both set: `disallowedTools` applied first, then `tools` resolved against remaining pool.
 
 **Restrict spawnable subagents** (for `--agent` mode):
+
 ```yaml
 tools: Agent(worker, researcher), Read, Bash
 ```
 
 **Disable specific subagents** in settings.json:
+
 ```json
 {
   "permissions": {
@@ -390,30 +405,32 @@ mcpServers:
   - github
 ```
 
-Inline MCP servers connect when subagent starts, disconnect when it finishes. The parent conversation never sees the tools.
+Inline MCP servers connect when subagent starts, disconnect when it finishes. The parent
+conversation never sees the tools.
 
 ### Persistent Memory
 
-| Scope | Location | Use Case |
-|-------|----------|----------|
-| `user` | `~/.claude/agent-memory/<name>/` | Learnings across all projects |
-| `project` | `.claude/agent-memory/<name>/` | Project-specific, shareable via VCS |
-| `local` | `.claude/agent-memory-local/<name>/` | Project-specific, NOT in VCS |
+| Scope     | Location                             | Use Case                            |
+|-----------|--------------------------------------|-------------------------------------|
+| `user`    | `~/.claude/agent-memory/<name>/`     | Learnings across all projects       |
+| `project` | `.claude/agent-memory/<name>/`       | Project-specific, shareable via VCS |
+| `local`   | `.claude/agent-memory-local/<name>/` | Project-specific, NOT in VCS        |
 
 When memory is enabled:
+
 - System prompt includes read/write instructions for the memory directory
 - First 200 lines or 25KB of `MEMORY.md` in the memory directory is loaded
 - Read, Write, Edit tools are auto-enabled
 
 ### Permission Modes
 
-| Mode | Behavior |
-|------|----------|
-| `default` | Standard permission checking with prompts |
-| `acceptEdits` | Auto-accept file edits |
-| `dontAsk` | Auto-deny prompts (explicitly allowed tools still work) |
-| `bypassPermissions` | Skip permission prompts (use with caution) |
-| `plan` | Read-only exploration |
+| Mode                | Behavior                                                |
+|---------------------|---------------------------------------------------------|
+| `default`           | Standard permission checking with prompts               |
+| `acceptEdits`       | Auto-accept file edits                                  |
+| `dontAsk`           | Auto-deny prompts (explicitly allowed tools still work) |
+| `bypassPermissions` | Skip permission prompts (use with caution)              |
+| `plan`              | Read-only exploration                                   |
 
 If parent uses `bypassPermissions`, it takes precedence and cannot be overridden.
 If parent uses auto mode, subagent inherits auto mode and `permissionMode` is ignored.
@@ -424,13 +441,13 @@ If parent uses auto mode, subagent inherits auto mode and `permissionMode` is ig
 
 ### Team Hooks (settings.json)
 
-| Hook Event | Matcher Input | When it Fires | Exit Code 2 Behavior |
-|------------|---------------|---------------|----------------------|
-| `TeammateIdle` | — | Teammate about to go idle | Send feedback, keep teammate working |
-| `TaskCreated` | — | Task being created | Prevent creation, send feedback |
-| `TaskCompleted` | — | Task being marked complete | Prevent completion, send feedback |
-| `SubagentStart` | Agent type name | Subagent begins execution | — |
-| `SubagentStop` | Agent type name | Subagent completes | — |
+| Hook Event      | Matcher Input   | When it Fires              | Exit Code 2 Behavior                 |
+|-----------------|-----------------|----------------------------|--------------------------------------|
+| `TeammateIdle`  | —               | Teammate about to go idle  | Send feedback, keep teammate working |
+| `TaskCreated`   | —               | Task being created         | Prevent creation, send feedback      |
+| `TaskCompleted` | —               | Task being marked complete | Prevent completion, send feedback    |
+| `SubagentStart` | Agent type name | Subagent begins execution  | —                                    |
+| `SubagentStop`  | Agent type name | Subagent completes         | —                                    |
 
 ### Example: Enforce Quality Gates
 
@@ -478,24 +495,27 @@ Do workers need to coordinate or share findings?
 
 ### Decision Matrix
 
-| Scenario | Approach | Team Size |
-|----------|----------|-----------|
-| Fix a bug in one service | Single session | 1 |
-| Add a new API endpoint | Single session | 1 |
-| Design + implement + test a feature | Subagents (sequential) | 3-4 |
-| Research best practices | Subagents (parallel) | 2-3 |
-| Build a full module end-to-end | Agent Teams | 5-6 |
-| Debug complex cross-cutting issue | Agent Teams (debate) | 3-5 |
-| Execute multiple sprint tickets | Agent Teams (parallel) | 3-5 |
-| Review a PR from multiple angles | Agent Teams | 3 |
-| Refactor spanning multiple sub-apps | Agent Teams | 3-4 |
+| Scenario                            | Approach               | Team Size |
+|-------------------------------------|------------------------|-----------|
+| Fix a bug in one service            | Single session         | 1         |
+| Add a new API endpoint              | Single session         | 1         |
+| Design + implement + test a feature | Subagents (sequential) | 3-4       |
+| Research best practices             | Subagents (parallel)   | 2-3       |
+| Build a full module end-to-end      | Agent Teams            | 5-6       |
+| Debug complex cross-cutting issue   | Agent Teams (debate)   | 3-5       |
+| Execute multiple sprint tickets     | Agent Teams (parallel) | 3-5       |
+| Review a PR from multiple angles    | Agent Teams            | 3         |
+| Refactor spanning multiple sub-apps | Agent Teams            | 3-4       |
 
 ### Strongest Use Cases for Agent Teams
 
-1. **Research and review**: Multiple teammates investigate different aspects simultaneously, share and challenge findings
+1. **Research and review**: Multiple teammates investigate different aspects simultaneously, share
+   and challenge findings
 2. **New modules or features**: Each teammate owns a separate piece without stepping on each other
-3. **Debugging with competing hypotheses**: Teammates test different theories in parallel and converge
-4. **Cross-layer coordination**: Changes spanning frontend, backend, and tests, each owned by a different teammate
+3. **Debugging with competing hypotheses**: Teammates test different theories in parallel and
+   converge
+4. **Cross-layer coordination**: Changes spanning frontend, backend, and tests, each owned by a
+   different teammate
 
 ### When NOT to Use Agent Teams
 
@@ -582,6 +602,7 @@ Each reviewer applies a different lens to the same code. No overlap, thorough co
 ```
 architect → dev → qa → reviewer → docs
 ```
+
 Each waits for the previous. Best for new features where design must precede implementation.
 
 ### Fan-Out / Fan-In
@@ -591,6 +612,7 @@ Each waits for the previous. Best for new features where design must precede imp
 architect┤                 ├─ qa → reviewer
          └─ frontend-dev ──┘
 ```
+
 Architect designs, dev work parallelizes, QA integrates. Most common for feature builds.
 
 ### Fully Parallel
@@ -600,6 +622,7 @@ ticket-1 ─────────────────→ done
 ticket-2 ─────────────────→ done
 ticket-3 ─────────────────→ done
 ```
+
 Independent tickets, no dependencies. Fastest but highest token cost.
 
 ### Debate (Competing Hypotheses)
@@ -609,7 +632,9 @@ investigator-1 ──┐
 investigator-2 ──┼─ challenge each other → converge
 investigator-3 ──┘
 ```
-Multiple hypotheses tested in parallel. The adversarial structure ensures the surviving theory is more likely correct.
+
+Multiple hypotheses tested in parallel. The adversarial structure ensures the surviving theory is
+more likely correct.
 
 ### Hybrid
 
@@ -618,6 +643,7 @@ Multiple hypotheses tested in parallel. The adversarial structure ensures the su
 architect┤                ├─ qa ┤              ├─ reviewer
          └─ frontend-dev ─┘     └─ perf-tests ─┘
 ```
+
 Combines sequential and parallel phases. Best for large features with testing diversity.
 
 ---
@@ -656,14 +682,14 @@ CONVENTIONS:
 
 ### Common Prompt Mistakes
 
-| Mistake | Problem | Fix |
-|---------|---------|-----|
-| Vague task | "Build the expense module" | Specify entities, endpoints, RBAC, file paths |
-| Missing context | Agent doesn't know the stack | Include tech stack, package root, key conventions |
-| No file boundaries | Two agents edit same file → conflicts | Assign explicit directory ownership |
-| No dependency info | Agent starts before design exists | State "Wait for architect's design in the task list" |
-| Missing conventions | Agent uses wrong patterns | Include naming, annotation, and structure rules |
-| Too many tasks | Agent context overflows | One focused task per agent (5-6 tasks per teammate) |
+| Mistake             | Problem                               | Fix                                                  |
+|---------------------|---------------------------------------|------------------------------------------------------|
+| Vague task          | "Build the expense module"            | Specify entities, endpoints, RBAC, file paths        |
+| Missing context     | Agent doesn't know the stack          | Include tech stack, package root, key conventions    |
+| No file boundaries  | Two agents edit same file → conflicts | Assign explicit directory ownership                  |
+| No dependency info  | Agent starts before design exists     | State "Wait for architect's design in the task list" |
+| Missing conventions | Agent uses wrong patterns             | Include naming, annotation, and structure rules      |
+| Too many tasks      | Agent context overflows               | One focused task per agent (5-6 tasks per teammate)  |
 
 ### Tips for Strong Prompts
 
@@ -722,11 +748,11 @@ hooks:
 
 ### Hook Exit Codes
 
-| Exit Code | Behavior |
-|-----------|----------|
-| 0 | Allow (proceed normally) |
-| 1 | Error (halt) |
-| 2 | Block + send feedback (keeps agent working on corrections) |
+| Exit Code | Behavior                                                   |
+|-----------|------------------------------------------------------------|
+| 0         | Allow (proceed normally)                                   |
+| 1         | Error (halt)                                               |
+| 2         | Block + send feedback (keeps agent working on corrections) |
 
 ### Hook Input
 
@@ -747,32 +773,35 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 
 ### Token Cost by Approach
 
-| Approach | Relative Cost | When to Use |
-|----------|---------------|-------------|
-| Single session + role | 1x (baseline) | Daily tasks, simple changes |
-| 2-3 subagents | 2-3x | Feature design → implement → test |
-| Agent Teams (3 agents) | 5-8x | Debugging, research, code review |
-| Agent Teams (6 agents) | 10-15x | Major module builds, sprint execution |
+| Approach               | Relative Cost | When to Use                           |
+|------------------------|---------------|---------------------------------------|
+| Single session + role  | 1x (baseline) | Daily tasks, simple changes           |
+| 2-3 subagents          | 2-3x          | Feature design → implement → test     |
+| Agent Teams (3 agents) | 5-8x          | Debugging, research, code review      |
+| Agent Teams (6 agents) | 10-15x        | Major module builds, sprint execution |
 
 ### Cost Optimization Rules
 
 1. **Start simple, escalate when needed** — most tasks (70%) need only a single session
-2. **Right-size your team** — 3-5 teammates is the sweet spot. Beyond that, coordination overhead grows faster than value
-3. **Use cheaper models for simple agents** — Haiku for exploration, Sonnet for review, Opus for architecture
+2. **Right-size your team** — 3-5 teammates is the sweet spot. Beyond that, coordination overhead
+   grows faster than value
+3. **Use cheaper models for simple agents** — Haiku for exploration, Sonnet for review, Opus for
+   architecture
 4. **5-6 tasks per teammate** — keeps everyone productive without excessive switching
 5. **Kill early** — if an agent goes off-track, shut it down and respawn with clearer instructions
-6. **Use subagents for focused tasks** — if agents don't need to talk to each other, subagents are cheaper than teams
+6. **Use subagents for focused tasks** — if agents don't need to talk to each other, subagents are
+   cheaper than teams
 7. **Avoid broadcast** — sending to all teammates costs N messages. Use targeted messages
 
 ### Optimal Team Sizing
 
-| Number of Tasks | Recommended Teammates | Reasoning |
-|-----------------|----------------------|-----------|
-| 3-5 | 1-2 | Low parallelism benefit |
-| 6-10 | 2-3 | Good task-to-agent ratio |
-| 11-18 | 3-4 | Balanced coordination |
-| 19-30 | 4-5 | Maximum practical team |
-| 30+ | 5-6 + phased execution | Diminishing returns beyond 6 |
+| Number of Tasks | Recommended Teammates  | Reasoning                    |
+|-----------------|------------------------|------------------------------|
+| 3-5             | 1-2                    | Low parallelism benefit      |
+| 6-10            | 2-3                    | Good task-to-agent ratio     |
+| 11-18           | 3-4                    | Balanced coordination        |
+| 19-30           | 4-5                    | Maximum practical team       |
+| 30+             | 5-6 + phased execution | Diminishing returns beyond 6 |
 
 ---
 
@@ -780,25 +809,25 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 
 ### Agent Teams Issues
 
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| Teammates not appearing | Task not complex enough or tmux missing | Press Shift+Down; verify `which tmux` |
-| Too many permission prompts | Unapproved operations | Pre-approve common operations in permission settings |
-| Teammates stopping on errors | Error recovery not attempted | Message teammate directly with instructions |
-| Lead shuts down before work done | Lead thinks team is finished | Tell lead to wait for teammates before proceeding |
-| Orphaned tmux sessions | Incomplete cleanup | `tmux ls` then `tmux kill-session -t <name>` |
-| Task status stuck | Teammate didn't mark complete | Tell lead to nudge teammate or update manually |
-| File conflicts | Two agents editing same file | Assign explicit file/directory ownership |
+| Issue                            | Cause                                   | Fix                                                  |
+|----------------------------------|-----------------------------------------|------------------------------------------------------|
+| Teammates not appearing          | Task not complex enough or tmux missing | Press Shift+Down; verify `which tmux`                |
+| Too many permission prompts      | Unapproved operations                   | Pre-approve common operations in permission settings |
+| Teammates stopping on errors     | Error recovery not attempted            | Message teammate directly with instructions          |
+| Lead shuts down before work done | Lead thinks team is finished            | Tell lead to wait for teammates before proceeding    |
+| Orphaned tmux sessions           | Incomplete cleanup                      | `tmux ls` then `tmux kill-session -t <name>`         |
+| Task status stuck                | Teammate didn't mark complete           | Tell lead to nudge teammate or update manually       |
+| File conflicts                   | Two agents editing same file            | Assign explicit file/directory ownership             |
 
 ### Subagent Issues
 
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| Agent exits immediately | Missing context in spawn prompt | Add more project context |
-| Wrong code patterns | Stale or missing conventions | Include coding conventions in prompt |
-| Agent stuck waiting | Dependency not posted | Check task list, manually trigger |
-| High token burn, low output | Task too vague | Be more specific in the spawn prompt |
-| Agents contradicting each other | No shared design | Always have architect design first |
+| Issue                           | Cause                           | Fix                                  |
+|---------------------------------|---------------------------------|--------------------------------------|
+| Agent exits immediately         | Missing context in spawn prompt | Add more project context             |
+| Wrong code patterns             | Stale or missing conventions    | Include coding conventions in prompt |
+| Agent stuck waiting             | Dependency not posted           | Check task list, manually trigger    |
+| High token burn, low output     | Task too vague                  | Be more specific in the spawn prompt |
+| Agents contradicting each other | No shared design                | Always have architect design first   |
 
 ### Session Resumption
 
@@ -819,7 +848,8 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 5. **No nested teams**: Teammates cannot spawn their own teams
 6. **Lead is fixed**: Cannot promote a teammate to lead or transfer leadership
 7. **Permissions set at spawn**: All teammates start with lead's mode; change individually after
-8. **Split panes require tmux/iTerm2**: Not supported in VS Code terminal, Windows Terminal, or Ghostty
+8. **Split panes require tmux/iTerm2**: Not supported in VS Code terminal, Windows Terminal, or
+   Ghostty
 
 ### Subagents
 
@@ -842,6 +872,7 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 ### Current Setup
 
 **Settings** (`.claude/settings.json`):
+
 ```json
 {
   "env": {
@@ -854,6 +885,7 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 ```
 
 **Teammate mode** (`.claude/claude.json`):
+
 ```json
 {
   "teammateMode": "in-process"
@@ -864,14 +896,14 @@ Hooks receive JSON via stdin with tool input details. Example for `PreToolUse` o
 
 Six roles defined in `CLAUDE.md` via `@role` prefix:
 
-| Role | Persona | Focus |
-|------|---------|-------|
-| `@architect` | Senior Systems Architect | API contracts, DB schema, RBAC design, ADRs |
-| `@dev` | Senior Full-Stack Developer | Feature implementation, tests alongside code |
-| `@qa` | Senior QA Engineer | RBAC boundary tests, E2E, edge cases, bug reports |
-| `@reviewer` | Tech Lead | Security, quality, patterns, performance review |
-| `@devops` | Platform Engineer | Docker, CI/CD, K8s, monitoring |
-| `@docs` | Technical Writer | API docs, ADRs, READMEs, changelogs |
+| Role         | Persona                     | Focus                                             |
+|--------------|-----------------------------|---------------------------------------------------|
+| `@architect` | Senior Systems Architect    | API contracts, DB schema, RBAC design, ADRs       |
+| `@dev`       | Senior Full-Stack Developer | Feature implementation, tests alongside code      |
+| `@qa`        | Senior QA Engineer          | RBAC boundary tests, E2E, edge cases, bug reports |
+| `@reviewer`  | Tech Lead                   | Security, quality, patterns, performance review   |
+| `@devops`    | Platform Engineer           | Docker, CI/CD, K8s, monitoring                    |
+| `@docs`      | Technical Writer            | API docs, ADRs, READMEs, changelogs               |
 
 ### NU-AURA Subagent Library
 
@@ -888,12 +920,12 @@ Six pre-built spawn prompts in `AGENTS.md`:
 
 Four pre-built team configs in `TEAMS.md`:
 
-| Config | Agents | Use Case |
-|--------|--------|----------|
-| Full Feature Build | 6 | New module (e.g., Expense Management) |
-| Cross-Module Refactor | 4 | Spanning multiple sub-apps (e.g., RBAC refactor) |
-| Bug Hunt / Debugging | 3 | Complex bug with competing hypotheses |
-| Sprint Execution | 5 | Multiple independent tickets in parallel |
+| Config                | Agents | Use Case                                         |
+|-----------------------|--------|--------------------------------------------------|
+| Full Feature Build    | 6      | New module (e.g., Expense Management)            |
+| Cross-Module Refactor | 4      | Spanning multiple sub-apps (e.g., RBAC refactor) |
+| Bug Hunt / Debugging  | 3      | Complex bug with competing hypotheses            |
+| Sprint Execution      | 5      | Multiple independent tickets in parallel         |
 
 ### NU-AURA Context That Every Agent Needs
 
@@ -933,6 +965,7 @@ DOCS         → docs/
 ```
 
 **Shared files requiring coordination** (post to task list before editing):
+
 - `backend/src/main/java/com/hrms/common/config/SecurityConfig.java`
 - `backend/src/main/resources/application.yml`
 - `frontend/lib/config/apps.ts`

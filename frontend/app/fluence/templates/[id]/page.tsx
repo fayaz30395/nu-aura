@@ -1,40 +1,30 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { notFound } from 'next/navigation';
-import { motion } from 'framer-motion';
-import {
-  ArrowLeft,
-  Copy,
-  Eye,
-  Tag,
-  Calendar,
-  User,
-  RefreshCw,
-  Trash2,
-} from 'lucide-react';
+import {useCallback, useEffect, useState} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {motion} from 'framer-motion';
+import {ArrowLeft, Calendar, Copy, Eye, RefreshCw, Tag, Trash2, User,} from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { Skeleton, TextInput, Select, Modal } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { instantiateTemplateSchema } from '@/lib/validations/fluence';
-import { z } from 'zod';
+import {Modal, Select, Skeleton, TextInput} from '@mantine/core';
+import {notifications} from '@mantine/notifications';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {instantiateTemplateSchema} from '@/lib/validations/fluence';
+import {z} from 'zod';
 
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
+  useDeleteFluenceTemplate,
   useFluenceTemplate,
   useInstantiateTemplate,
-  useDeleteFluenceTemplate,
   useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
 
-import type { InstantiateTemplateRequest } from '@/lib/types/platform/fluence';
+import type {InstantiateTemplateRequest} from '@/lib/types/platform/fluence';
 
 /** Form-level schema — excludes templateId which is injected at submit time */
 const instantiateFormSchema = instantiateTemplateSchema.pick({
@@ -46,7 +36,7 @@ type InstantiateFormData = z.infer<typeof instantiateFormSchema>;
 
 const ContentViewer = dynamic(
   () => import('@/components/fluence/ContentViewer'),
-  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
+  {ssr: false, loading: () => <Skeleton height={300} radius="md"/>}
 );
 
 export default function TemplateDetailPage() {
@@ -55,7 +45,7 @@ export default function TemplateDetailPage() {
   const templateId = params.id as string;
   const [showInstantiateModal, setShowInstantiateModal] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_TEMPLATE_READ,
@@ -68,8 +58,8 @@ export default function TemplateDetailPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  const { data: template, isLoading } = useFluenceTemplate(templateId, !!templateId);
-  const { data: spacesData } = useWikiSpaces(0, 100);
+  const {data: template, isLoading} = useFluenceTemplate(templateId, !!templateId);
+  const {data: spacesData} = useWikiSpaces(0, 100);
   const instantiate = useInstantiateTemplate();
   const deleteTemplate = useDeleteFluenceTemplate();
 
@@ -79,11 +69,11 @@ export default function TemplateDetailPage() {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: {errors},
     reset,
   } = useForm<InstantiateFormData>({
     resolver: zodResolver(instantiateFormSchema),
-    defaultValues: { documentTitle: '', spaceId: '' },
+    defaultValues: {documentTitle: '', spaceId: ''},
   });
 
   const handleInstantiate = useCallback(
@@ -122,7 +112,7 @@ export default function TemplateDetailPage() {
     deleteTemplate.mutate(template.id, {
       onSuccess: () => {
         setDeleteConfirmOpen(false);
-        notifications.show({ title: 'Template deleted', message: '', color: 'green' });
+        notifications.show({title: 'Template deleted', message: '', color: 'green'});
         router.push('/fluence/templates');
       },
     });
@@ -134,7 +124,7 @@ export default function TemplateDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin" />
+          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -155,7 +145,7 @@ export default function TemplateDetailPage() {
               aria-label="Go back"
               className="mb-4 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4"/>
               Back to Templates
             </button>
             <h1 className="text-2xl font-bold skeuo-emboss flex items-center gap-4 mb-2">
@@ -167,15 +157,15 @@ export default function TemplateDetailPage() {
             )}
             <div className="flex items-center gap-4 text-body-muted mt-2">
               <div className="flex items-center gap-1">
-                <User className="w-4 h-4" />
+                <User className="w-4 h-4"/>
                 {template.authorName || 'Unknown'}
               </div>
               <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4"/>
                 {new Date(template.updatedAt).toLocaleDateString()}
               </div>
               <div className="flex items-center gap-1">
-                <Copy className="w-4 h-4" />
+                <Copy className="w-4 h-4"/>
                 {template.usageCount} uses
               </div>
             </div>
@@ -185,7 +175,7 @@ export default function TemplateDetailPage() {
               onClick={() => setShowInstantiateModal(true)}
               className="gap-2 bg-accent-600 hover:bg-accent-700"
             >
-              <Copy className="w-4 h-4" />
+              <Copy className="w-4 h-4"/>
               Use Template
             </Button>
             <Button
@@ -195,26 +185,26 @@ export default function TemplateDetailPage() {
               disabled={deleteTemplate.isPending}
               aria-label="Delete template"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4"/>
             </Button>
           </div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         >
           {/* Template Content Preview */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
+                <Eye className="w-5 h-5"/>
                 Template Preview
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ContentViewer content={template.content} />
+              <ContentViewer content={template.content}/>
             </CardContent>
           </Card>
 
@@ -256,7 +246,7 @@ export default function TemplateDetailPage() {
                         key={tag}
                         className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] px-4 py-1 rounded-full text-sm"
                       >
-                        <Tag className="w-3 h-3" />
+                        <Tag className="w-3 h-3"/>
                         {tag}
                       </span>
                     ))}
@@ -286,7 +276,7 @@ export default function TemplateDetailPage() {
           <Controller
             control={control}
             name="spaceId"
-            render={({ field }) => (
+            render={({field}) => (
               <Select
                 {...field}
                 label="Wiki Space"
@@ -313,7 +303,7 @@ export default function TemplateDetailPage() {
               disabled={instantiate.isPending}
               className="gap-2 bg-accent-600 hover:bg-accent-700"
             >
-              <Copy className="w-4 h-4" />
+              <Copy className="w-4 h-4"/>
               {instantiate.isPending ? 'Creating...' : 'Create Page'}
             </Button>
           </div>

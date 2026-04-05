@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import Link from 'next/link';
-import { Bot, User, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { ChatSourceCard } from './ChatSourceCard';
-import type { ChatMessage as ChatMessageType } from '@/lib/types/platform/fluence-chat';
+import {Bot, Loader2, User} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {ChatSourceCard} from './ChatSourceCard';
+import type {ChatMessage as ChatMessageType} from '@/lib/types/platform/fluence-chat';
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -52,7 +52,7 @@ function renderMessageContent(content: string): React.ReactNode[] {
   return parts;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({message}) => {
   const isUser = message.role === 'user';
 
   const renderedContent = useMemo(() => {
@@ -71,7 +71,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
         )}
       >
-        {isUser ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
+        {isUser ? <User className="h-3.5 w-3.5"/> : <Bot className="h-3.5 w-3.5"/>}
       </div>
 
       {/* Bubble */}
@@ -91,14 +91,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             </div>
           ) : message.isStreaming ? (
             <div className="flex items-center gap-1.5 py-0.5">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500"/>
               <span className="text-caption">Thinking...</span>
             </div>
           ) : null}
 
           {/* Streaming cursor */}
           {message.isStreaming && message.content && (
-            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-md" />
+            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-md"/>
           )}
         </div>
 
@@ -109,7 +109,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               Sources
             </p>
             {message.sources.map((source) => (
-              <ChatSourceCard key={source.id} source={source} />
+              <ChatSourceCard key={source.id} source={source}/>
             ))}
           </div>
         )}

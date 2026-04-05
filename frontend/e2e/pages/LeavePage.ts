@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Leave Page Object Model
@@ -44,7 +44,7 @@ export class LeavePage extends BasePage {
     super(page);
 
     // Page elements
-    this.pageHeading = page.locator('h1').filter({ hasText: /Leave|My Leaves/i });
+    this.pageHeading = page.locator('h1').filter({hasText: /Leave|My Leaves/i});
     this.applyLeaveButton = page.locator('button:has-text("Apply Leave")');
     this.leaveTable = page.locator('table');
     this.tableRows = page.locator('tbody tr');
@@ -55,7 +55,7 @@ export class LeavePage extends BasePage {
     this.casualLeaveBalance = page.locator('text=/Casual Leave/i').locator('..');
 
     // Apply leave modal
-    this.leaveModal = page.locator('div.fixed.inset-0').filter({ hasText: /Apply Leave|Leave Request/i });
+    this.leaveModal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
     this.leaveTypeSelect = page.locator('label:has-text("Leave Type")').locator('..').locator('select');
     this.startDateInput = page.locator('label:has-text("Start Date")').locator('..').locator('input');
     this.endDateInput = page.locator('label:has-text("End Date")').locator('..').locator('input');
@@ -65,8 +65,8 @@ export class LeavePage extends BasePage {
     this.cancelLeaveButton = page.locator('button:has-text("Cancel")');
 
     // Filters
-    this.statusFilter = page.locator('select').filter({ hasText: /Status|All Status/ });
-    this.typeFilter = page.locator('select').filter({ hasText: /Type|All Types/ });
+    this.statusFilter = page.locator('select').filter({hasText: /Status|All Status/});
+    this.typeFilter = page.locator('select').filter({hasText: /Type|All Types/});
     this.dateRangeFilter = page.locator('input[type="date"]').first();
 
     // Actions
@@ -107,7 +107,7 @@ export class LeavePage extends BasePage {
    */
   async clickApplyLeave() {
     await this.applyLeaveButton.click();
-    await this.leaveModal.waitFor({ state: 'visible' });
+    await this.leaveModal.waitFor({state: 'visible'});
   }
 
   /**

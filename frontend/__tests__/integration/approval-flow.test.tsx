@@ -4,10 +4,11 @@
  * Uses mocked workflow service for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {workflowService} from '@/lib/services/core/workflow.service';
 
 // Mock types for approval items
 interface ApprovalItem {
@@ -32,8 +33,6 @@ vi.mock('@/lib/services/core/workflow.service', () => ({
   },
 }));
 
-import { workflowService } from '@/lib/services/core/workflow.service';
-
 const mockedWorkflowService = vi.mocked(workflowService);
 
 // Mock Approval Inbox Component
@@ -42,7 +41,7 @@ interface ApprovalInboxProps {
   onReject?: (id: string, reason: string) => void;
 }
 
-const MockApprovalInbox: React.FC<ApprovalInboxProps> = ({ onApprove, onReject }) => {
+const MockApprovalInbox: React.FC<ApprovalInboxProps> = ({onApprove, onReject}) => {
   const [items, setItems] = React.useState<ApprovalItem[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -76,7 +75,8 @@ const MockApprovalInbox: React.FC<ApprovalInboxProps> = ({ onApprove, onReject }
       ) : (
         <div data-testid="approval-items">
           {items.map((item) => (
-            <div key={item.id} data-testid={`approval-item-${item.id}`} className={`approval-item approval-${item.status}`}>
+            <div key={item.id} data-testid={`approval-item-${item.id}`}
+                 className={`approval-item approval-${item.status}`}>
               <div className="item-header">
                 <h3>{item.title}</h3>
                 <span data-testid={`status-${item.id}`} className={`status status-${item.status.toLowerCase()}`}>
@@ -108,7 +108,7 @@ const MockApprovalInbox: React.FC<ApprovalInboxProps> = ({ onApprove, onReject }
                     data-testid={`approve-btn-${item.id}`}
                     onClick={() => {
                       onApprove?.(item.id);
-                      setItems(items.map((i) => (i.id === item.id ? { ...i, status: 'APPROVED' } : i)));
+                      setItems(items.map((i) => (i.id === item.id ? {...i, status: 'APPROVED'} : i)));
                     }}
                   >
                     Approve
@@ -127,7 +127,7 @@ const MockApprovalInbox: React.FC<ApprovalInboxProps> = ({ onApprove, onReject }
                   itemId={item.id}
                   onReject={(reason) => {
                     onReject?.(item.id, reason);
-                    setItems(items.map((i) => (i.id === item.id ? { ...i, status: 'REJECTED' } : i)));
+                    setItems(items.map((i) => (i.id === item.id ? {...i, status: 'REJECTED'} : i)));
                     setExpandedId(null);
                   }}
                 />
@@ -146,7 +146,7 @@ interface RejectFormProps {
   onReject: (reason: string) => void;
 }
 
-const RejectForm: React.FC<RejectFormProps> = ({ itemId, onReject }) => {
+const RejectForm: React.FC<RejectFormProps> = ({itemId, onReject}) => {
   const [reason, setReason] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
@@ -240,7 +240,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
           )
       );
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       expect(screen.getByTestId('loading')).toBeInTheDocument();
     });
@@ -248,7 +248,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should display all pending approvals', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce(mockApprovals);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('approval-items')).toBeInTheDocument();
@@ -262,7 +262,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should show pending count in inbox header', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce(mockApprovals);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         // 2 pending items in mockApprovals
@@ -273,7 +273,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should display approval item details', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByText(mockApprovals[0].title)).toBeInTheDocument();
@@ -285,7 +285,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should show empty inbox when no approvals', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([]);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('empty-inbox')).toBeInTheDocument();
@@ -296,7 +296,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       const errorMessage = 'Failed to fetch approvals';
       mockedWorkflowService.getApprovalInbox.mockRejectedValueOnce(new Error(errorMessage));
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('error')).toHaveTextContent(errorMessage);
@@ -308,7 +308,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should display approval status correctly', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce(mockApprovals);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`status-${mockApprovals[0].id}`)).toHaveTextContent('PENDING');
@@ -319,7 +319,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should apply correct CSS class for status', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce(mockApprovals);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         const approvedItem = screen.getByTestId(`approval-item-${mockApprovals[2].id}`);
@@ -332,7 +332,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should show approve button for pending items', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`approve-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -344,7 +344,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
 
       const onApprove = vi.fn();
       const user = userEvent.setup();
-      render(<MockApprovalInbox onApprove={onApprove} />);
+      render(<MockApprovalInbox onApprove={onApprove}/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`approve-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -359,7 +359,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`approve-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -376,7 +376,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`approve-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -394,7 +394,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should show reject button for pending items', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -405,7 +405,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -422,7 +422,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -440,7 +440,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[0]]);
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -468,7 +468,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
 
       const onReject = vi.fn();
       const user = userEvent.setup();
-      render(<MockApprovalInbox onReject={onReject} />);
+      render(<MockApprovalInbox onReject={onReject}/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -505,7 +505,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`reject-btn-${mockApprovals[0].id}`)).toBeInTheDocument();
@@ -531,7 +531,7 @@ describe('Approval Workflow Flow Integration Tests', () => {
     it('should not show action buttons for approved items', async () => {
       mockedWorkflowService.getApprovalInbox.mockResolvedValueOnce([mockApprovals[2]]);
 
-      render(<MockApprovalInbox />);
+      render(<MockApprovalInbox/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`approval-item-${mockApprovals[2].id}`)).toBeInTheDocument();

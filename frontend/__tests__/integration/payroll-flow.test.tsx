@@ -4,10 +4,11 @@
  * Uses mocked payroll service for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {payrollService} from '@/lib/services/hrms/payroll.service';
 
 // Mock the payroll service
 vi.mock('@/lib/services/hrms/payroll.service', () => ({
@@ -16,8 +17,6 @@ vi.mock('@/lib/services/hrms/payroll.service', () => ({
   },
 }));
 
-import { payrollService } from '@/lib/services/hrms/payroll.service';
-
 const mockedPayrollService = vi.mocked(payrollService);
 
 // Mock Payroll Run Form Component
@@ -25,7 +24,7 @@ interface PayrollRunFormProps {
   onSuccess?: () => void;
 }
 
-const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
+const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({onSuccess}) => {
   const [formData, setFormData] = React.useState({
     runName: '',
     payrollMonth: '',
@@ -101,7 +100,7 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           type="text"
           value={formData.runName}
           onChange={(e) =>
-            setFormData({ ...formData, runName: e.target.value })
+            setFormData({...formData, runName: e.target.value})
           }
           data-testid="run-name-input"
           required
@@ -114,13 +113,13 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           id="payroll-month"
           value={formData.payrollMonth}
           onChange={(e) =>
-            setFormData({ ...formData, payrollMonth: e.target.value })
+            setFormData({...formData, payrollMonth: e.target.value})
           }
           data-testid="payroll-month-select"
           required
         >
           <option value="">Select Month</option>
-          {Array.from({ length: 12 }, (_, i) => (
+          {Array.from({length: 12}, (_, i) => (
             <option key={i + 1} value={i + 1}>
               {new Date(2024, i, 1).toLocaleString('en-US', {
                 month: 'long',
@@ -137,7 +136,7 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           type="number"
           value={formData.payrollYear}
           onChange={(e) =>
-            setFormData({ ...formData, payrollYear: e.target.value })
+            setFormData({...formData, payrollYear: e.target.value})
           }
           data-testid="payroll-year-input"
           min="2020"
@@ -153,7 +152,7 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           type="date"
           value={formData.startDate}
           onChange={(e) =>
-            setFormData({ ...formData, startDate: e.target.value })
+            setFormData({...formData, startDate: e.target.value})
           }
           data-testid="start-date-input"
           required
@@ -167,7 +166,7 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           type="date"
           value={formData.endDate}
           onChange={(e) =>
-            setFormData({ ...formData, endDate: e.target.value })
+            setFormData({...formData, endDate: e.target.value})
           }
           data-testid="end-date-input"
           required
@@ -181,7 +180,7 @@ const MockPayrollRunForm: React.FC<PayrollRunFormProps> = ({ onSuccess }) => {
           type="date"
           value={formData.paymentDate}
           onChange={(e) =>
-            setFormData({ ...formData, paymentDate: e.target.value })
+            setFormData({...formData, paymentDate: e.target.value})
           }
           data-testid="payment-date-input"
           required
@@ -202,7 +201,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
 
   describe('Form Rendering', () => {
     it('should render payroll run form with all fields', () => {
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       expect(screen.getByTestId('payroll-form')).toBeInTheDocument();
       expect(screen.getByTestId('run-name-input')).toBeInTheDocument();
@@ -218,7 +217,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
   describe('Form Validation', () => {
     it('should validate that all fields are required', async () => {
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       const submitButton = screen.getByTestId('form-submit');
       await user.click(submitButton);
@@ -234,7 +233,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
 
     it('should validate that start date is before end date', async () => {
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       await user.type(screen.getByTestId('run-name-input'), 'Payroll March 2024');
       await user.selectOptions(
@@ -264,7 +263,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
 
       const user = userEvent.setup();
       const onSuccess = vi.fn();
-      render(<MockPayrollRunForm onSuccess={onSuccess} />);
+      render(<MockPayrollRunForm onSuccess={onSuccess}/>);
 
       await user.type(
         screen.getByTestId('run-name-input'),
@@ -302,7 +301,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       await user.type(
         screen.getByTestId('run-name-input'),
@@ -331,7 +330,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       const runNameInput = screen.getByTestId('run-name-input') as HTMLInputElement;
       const yearInput = screen.getByTestId('payroll-year-input') as HTMLInputElement;
@@ -360,7 +359,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
       );
 
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       await user.type(
         screen.getByTestId('run-name-input'),
@@ -402,7 +401,7 @@ describe('Payroll Run Creation Flow Integration Tests', () => {
       );
 
       const user = userEvent.setup();
-      render(<MockPayrollRunForm />);
+      render(<MockPayrollRunForm/>);
 
       await user.type(
         screen.getByTestId('run-name-input'),

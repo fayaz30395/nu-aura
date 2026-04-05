@@ -1,65 +1,46 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { format } from 'date-fns';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {format} from 'date-fns';
+import {AlertCircle, CheckCircle, Clock, Download, FileText, Plus, Truck, X, XCircle,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
 import {
-  FileText,
-  Plus,
-  Download,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Truck,
-  X,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import {
+  Button,
   Card,
   CardContent,
+  EmptyState,
   Loading,
-  Button,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  EmptyState,
+  ModalHeader,
 } from '@/components/ui';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { safeWindowOpen } from '@/lib/utils/url';
-import {
-  useMyDocumentRequests,
-  useCreateDocumentRequest,
-  useDocumentTypes,
-} from '@/lib/hooks/queries';
-import {
-  DocumentRequestDto,
-  DocumentType,
-  DeliveryMode,
-  DocumentRequestStatus,
-} from '@/lib/types/hrms/selfservice';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {safeWindowOpen} from '@/lib/utils/url';
+import {useCreateDocumentRequest, useDocumentTypes, useMyDocumentRequests,} from '@/lib/hooks/queries';
+import {DeliveryMode, DocumentRequestDto, DocumentRequestStatus, DocumentType,} from '@/lib/types/hrms/selfservice';
 
 // UI metadata for known document types. Used to enrich API-returned type values with
 // human-readable labels and descriptions. If the backend introduces a new type that is
 // not listed here, the UI will fall back to a formatted label derived from the enum value.
 // FUTURE: NUAURA-001 — Consider moving label/description to a backend endpoint when the API supports it.
 const DOCUMENT_TYPE_META: Partial<Record<DocumentType, { label: string; description: string }>> = {
-  EMPLOYMENT_CERTIFICATE: { label: 'Employment Certificate', description: 'Confirms your employment status' },
-  SALARY_CERTIFICATE:     { label: 'Salary Certificate',     description: 'Shows your current salary details' },
-  EXPERIENCE_LETTER:      { label: 'Experience Letter',      description: 'Details your work experience' },
-  RELIEVING_LETTER:       { label: 'Relieving Letter',       description: 'Confirms employment termination' },
-  BONAFIDE_CERTIFICATE:   { label: 'Bonafide Certificate',   description: 'Verifies you are an employee' },
-  ADDRESS_PROOF_LETTER:   { label: 'Address Proof Letter',   description: 'Confirms your address on record' },
-  VISA_LETTER:            { label: 'Visa Support Letter',    description: 'For visa application purposes' },
-  BANK_LETTER:            { label: 'Bank Letter',            description: 'For bank account opening or loans' },
-  SALARY_SLIP:            { label: 'Salary Slip',            description: 'Monthly salary breakdown' },
-  FORM_16:                { label: 'Form 16',                description: 'Tax deduction certificate' },
-  APPOINTMENT_LETTER_COPY:{ label: 'Appointment Letter Copy',description: 'Copy of your offer letter' },
-  CUSTOM:                 { label: 'Custom Document',        description: 'Any other document on request' },
+  EMPLOYMENT_CERTIFICATE: {label: 'Employment Certificate', description: 'Confirms your employment status'},
+  SALARY_CERTIFICATE: {label: 'Salary Certificate', description: 'Shows your current salary details'},
+  EXPERIENCE_LETTER: {label: 'Experience Letter', description: 'Details your work experience'},
+  RELIEVING_LETTER: {label: 'Relieving Letter', description: 'Confirms employment termination'},
+  BONAFIDE_CERTIFICATE: {label: 'Bonafide Certificate', description: 'Verifies you are an employee'},
+  ADDRESS_PROOF_LETTER: {label: 'Address Proof Letter', description: 'Confirms your address on record'},
+  VISA_LETTER: {label: 'Visa Support Letter', description: 'For visa application purposes'},
+  BANK_LETTER: {label: 'Bank Letter', description: 'For bank account opening or loans'},
+  SALARY_SLIP: {label: 'Salary Slip', description: 'Monthly salary breakdown'},
+  FORM_16: {label: 'Form 16', description: 'Tax deduction certificate'},
+  APPOINTMENT_LETTER_COPY: {label: 'Appointment Letter Copy', description: 'Copy of your offer letter'},
+  CUSTOM: {label: 'Custom Document', description: 'Any other document on request'},
 };
 
 /** Converts an enum value like SALARY_SLIP to "Salary Slip" as a display fallback. */
@@ -71,12 +52,32 @@ function formatDocumentTypeLabel(value: string): string {
 }
 
 const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; color: string; bgColor: string }> = {
-  PENDING: { icon: <Clock className="h-4 w-4" />, color: 'text-warning-600', bgColor: 'bg-warning-100 dark:bg-warning-900/30' },
-  IN_PROGRESS: { icon: <AlertCircle className="h-4 w-4" />, color: 'text-info-600', bgColor: 'bg-info-100 dark:bg-info-900/30' },
-  GENERATED: { icon: <CheckCircle className="h-4 w-4" />, color: 'text-success-600', bgColor: 'bg-success-100 dark:bg-success-900/30' },
-  DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-accent-700', bgColor: 'bg-accent-100 dark:bg-accent-900/30' },
-  REJECTED: { icon: <XCircle className="h-4 w-4" />, color: 'text-danger-600', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
-  CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]' },
+  PENDING: {
+    icon: <Clock className="h-4 w-4"/>,
+    color: 'text-warning-600',
+    bgColor: 'bg-warning-100 dark:bg-warning-900/30'
+  },
+  IN_PROGRESS: {
+    icon: <AlertCircle className="h-4 w-4"/>,
+    color: 'text-info-600',
+    bgColor: 'bg-info-100 dark:bg-info-900/30'
+  },
+  GENERATED: {
+    icon: <CheckCircle className="h-4 w-4"/>,
+    color: 'text-success-600',
+    bgColor: 'bg-success-100 dark:bg-success-900/30'
+  },
+  DELIVERED: {
+    icon: <Truck className="h-4 w-4"/>,
+    color: 'text-accent-700',
+    bgColor: 'bg-accent-100 dark:bg-accent-900/30'
+  },
+  REJECTED: {
+    icon: <XCircle className="h-4 w-4"/>,
+    color: 'text-danger-600',
+    bgColor: 'bg-danger-100 dark:bg-danger-900/30'
+  },
+  CANCELLED: {icon: <X className="h-4 w-4"/>, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]'},
 };
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
@@ -93,14 +94,14 @@ const documentRequestSchema = z.object({
   requiredByDate: z.string().min(1, 'Required by date is required'),
   deliveryMode: z.enum(['DIGITAL', 'PHYSICAL', 'BOTH']),
   deliveryAddress: z.string().optional(),
-  priority: z.number({ coerce: true }).int().min(1).max(3),
+  priority: z.number({coerce: true}).int().min(1).max(3),
 });
 
 type DocumentRequestFormData = z.infer<typeof documentRequestSchema>;
 
 export default function MyDocumentsPage() {
   const router = useRouter();
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const [showModal, setShowModal] = useState(false);
 
   const defaultValues: DocumentRequestFormData = {
@@ -118,7 +119,7 @@ export default function MyDocumentsPage() {
     handleSubmit: rhfHandleSubmit,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<DocumentRequestFormData>({
     resolver: zodResolver(documentRequestSchema),
     defaultValues,
@@ -128,7 +129,7 @@ export default function MyDocumentsPage() {
   const watchedDeliveryMode = watch('deliveryMode');
 
   // React Query hooks
-  const { data: documentTypeValues } = useDocumentTypes();
+  const {data: documentTypeValues} = useDocumentTypes();
 
   // Enrich API-returned type values with UI labels/descriptions.
   // Falls back to a formatted label for any type not present in DOCUMENT_TYPE_META,
@@ -140,7 +141,7 @@ export default function MyDocumentsPage() {
       description: DOCUMENT_TYPE_META[value]?.description ?? '',
     }));
 
-  const { data: requestsData, isLoading } = useMyDocumentRequests(
+  const {data: requestsData, isLoading} = useMyDocumentRequests(
     user?.employeeId || '',
     0,
     100,
@@ -169,7 +170,7 @@ export default function MyDocumentsPage() {
       priority: data.priority,
     };
 
-    await createMutation.mutateAsync({ employeeId: user.employeeId, data: payload });
+    await createMutation.mutateAsync({employeeId: user.employeeId, data: payload});
     setShowModal(false);
     reset(defaultValues);
   };
@@ -184,12 +185,12 @@ export default function MyDocumentsPage() {
       <AppLayout
         activeMenuItem="my-documents"
         breadcrumbs={[
-          { label: 'My Dashboard', href: '/me/dashboard' },
-          { label: 'Documents', href: '/me/documents' },
+          {label: 'My Dashboard', href: '/me/dashboard'},
+          {label: 'Documents', href: '/me/documents'},
         ]}
       >
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loading />
+          <Loading/>
         </div>
       </AppLayout>
     );
@@ -200,12 +201,12 @@ export default function MyDocumentsPage() {
       <AppLayout
         activeMenuItem="my-documents"
         breadcrumbs={[
-          { label: 'My Dashboard', href: '/me/dashboard' },
-          { label: 'Documents', href: '/me/documents' },
+          {label: 'My Dashboard', href: '/me/dashboard'},
+          {label: 'Documents', href: '/me/documents'},
         ]}
       >
         <div className="text-center py-12">
-          <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+          <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Document requests require an employee profile. Use the admin panels to manage employee documents.
@@ -225,8 +226,8 @@ export default function MyDocumentsPage() {
     <AppLayout
       activeMenuItem="my-documents"
       breadcrumbs={[
-        { label: 'My Dashboard', href: '/me/dashboard' },
-        { label: 'Documents', href: '/me/documents' },
+        {label: 'My Dashboard', href: '/me/dashboard'},
+        {label: 'Documents', href: '/me/documents'},
       ]}
     >
       <div className="space-y-6">
@@ -241,7 +242,7 @@ export default function MyDocumentsPage() {
             </p>
           </div>
           <Button onClick={() => setShowModal(true)} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4"/>
             Request Document
           </Button>
         </div>
@@ -251,7 +252,7 @@ export default function MyDocumentsPage() {
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
-                <Clock className="h-5 w-5" />
+                <Clock className="h-5 w-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -264,7 +265,7 @@ export default function MyDocumentsPage() {
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -277,7 +278,7 @@ export default function MyDocumentsPage() {
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
-                <CheckCircle className="h-5 w-5" />
+                <CheckCircle className="h-5 w-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -290,7 +291,7 @@ export default function MyDocumentsPage() {
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
-                <FileText className="h-5 w-5" />
+                <FileText className="h-5 w-5"/>
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
@@ -306,7 +307,7 @@ export default function MyDocumentsPage() {
         {requests.length === 0 ? (
           <EmptyState
             title="You haven't requested any documents yet"
-            icon={<FileText className="h-12 w-12" />}
+            icon={<FileText className="h-12 w-12"/>}
           />
         ) : (
           <div className="space-y-4">
@@ -316,7 +317,7 @@ export default function MyDocumentsPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Icon and Status */}
                     <div className={`p-4 rounded-lg ${STATUS_CONFIG[request.status].bgColor}`}>
-                      <FileText className={`h-6 w-6 ${STATUS_CONFIG[request.status].color}`} />
+                      <FileText className={`h-6 w-6 ${STATUS_CONFIG[request.status].color}`}/>
                     </div>
 
                     {/* Details */}
@@ -328,10 +329,10 @@ export default function MyDocumentsPage() {
                         <div className="flex items-center gap-2">
                           <span className={`badge-status gap-1.5 ${
                             request.status === 'PENDING' ? 'status-warning'
-                            : request.status === 'IN_PROGRESS' ? 'status-info'
-                            : request.status === 'GENERATED' || request.status === 'DELIVERED' ? 'status-success'
-                            : request.status === 'REJECTED' ? 'status-danger'
-                            : 'status-neutral'
+                              : request.status === 'IN_PROGRESS' ? 'status-info'
+                                : request.status === 'GENERATED' || request.status === 'DELIVERED' ? 'status-success'
+                                  : request.status === 'REJECTED' ? 'status-danger'
+                                    : 'status-neutral'
                           }`}>
                             {STATUS_CONFIG[request.status].icon}
                             {request.statusDisplayName}
@@ -356,7 +357,8 @@ export default function MyDocumentsPage() {
                       </div>
 
                       {request.rejectionReason && (
-                        <div className="mt-4 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
+                        <div
+                          className="mt-4 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
                           <p className="text-sm text-danger-700 dark:text-danger-400">
                             <strong>Rejection Reason:</strong> {request.rejectionReason}
                           </p>
@@ -374,7 +376,7 @@ export default function MyDocumentsPage() {
                             onClick={() => safeWindowOpen(request.generatedDocumentUrl, '_blank')}
                             className="flex items-center gap-2"
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-4 w-4"/>
                             Download
                           </Button>
                         </div>
@@ -501,7 +503,7 @@ export default function MyDocumentsPage() {
                   Priority
                 </label>
                 <select
-                  {...register('priority', { valueAsNumber: true })}
+                  {...register('priority', {valueAsNumber: true})}
                   className="input-aura w-full px-4 py-2 rounded-lg"
                 >
                   <option value={1}>High - Urgent</option>

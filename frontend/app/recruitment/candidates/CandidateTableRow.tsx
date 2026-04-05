@@ -1,16 +1,27 @@
 'use client';
 
-import React, { memo } from 'react';
-import { useRouter } from 'next/navigation';
-import { Candidate } from '@/lib/types/hire/recruitment';
-import { CandidateMatchResponse } from '@/lib/types/hire/ai-recruitment';
+import React, {memo} from 'react';
+import {useRouter} from 'next/navigation';
+import {Candidate} from '@/lib/types/hire/recruitment';
+import {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 import {
-  Eye, Edit2, Trash2, Calendar, Send, CheckCircle, XCircle,
-  Loader2, Brain, FileText, MessageSquare, TrendingUp, FileSignature,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Edit2,
+  Eye,
+  FileSignature,
+  FileText,
+  Loader2,
+  MessageSquare,
+  Send,
+  Trash2,
+  TrendingUp,
+  XCircle,
 } from 'lucide-react';
-import { getStatusColor, getStageColor, getMatchScoreColor } from './utils';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {getMatchScoreColor, getStageColor, getStatusColor} from './utils';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 interface CandidateTableRowProps {
   candidate: Candidate;
@@ -34,21 +45,21 @@ interface CandidateTableRowProps {
  * when sibling rows change (e.g., AI loading state on another row).
  */
 export const CandidateTableRow = memo(function CandidateTableRow({
-  candidate,
-  matchScore,
-  aiLoadingState,
-  onView,
-  onEdit,
-  onDelete,
-  onOffer,
-  onAccept,
-  onDecline,
-  onCalculateMatch,
-  onScreeningSummary,
-  onSynthesizeFeedback,
-  onViewScorecard,
-  onESign,
-}: CandidateTableRowProps) {
+                                                                   candidate,
+                                                                   matchScore,
+                                                                   aiLoadingState,
+                                                                   onView,
+                                                                   onEdit,
+                                                                   onDelete,
+                                                                   onOffer,
+                                                                   onAccept,
+                                                                   onDecline,
+                                                                   onCalculateMatch,
+                                                                   onScreeningSummary,
+                                                                   onSynthesizeFeedback,
+                                                                   onViewScorecard,
+                                                                   onESign,
+                                                                 }: CandidateTableRowProps) {
   const router = useRouter();
 
   return (
@@ -59,7 +70,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       {/* Candidate Info */}
       <td className="px-6 py-4">
         <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
+          <div
+            className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
               {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
             </span>
@@ -112,7 +124,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="View"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4"/>
           </button>
 
           {/* AI: Match Score */}
@@ -124,13 +136,14 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             title="Calculate Match Score"
           >
             {aiLoadingState === `match-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin"/>
             ) : (
-              <Brain className="h-4 w-4" />
+              <Brain className="h-4 w-4"/>
             )}
           </button>
           {matchScore && (
-            <div className={`px-2 py-1 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
+            <div
+              className={`px-2 py-1 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
               {Math.round(matchScore.overallScore)}%
             </div>
           )}
@@ -144,9 +157,9 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             title="Screening Summary"
           >
             {aiLoadingState === `screening-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin"/>
             ) : (
-              <FileText className="h-4 w-4" />
+              <FileText className="h-4 w-4"/>
             )}
           </button>
 
@@ -159,9 +172,9 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             title="Synthesize Feedback"
           >
             {aiLoadingState === `feedback-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin"/>
             ) : (
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="h-4 w-4"/>
             )}
           </button>
 
@@ -172,7 +185,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Interview Scorecards"
           >
-            <TrendingUp className="h-4 w-4" />
+            <TrendingUp className="h-4 w-4"/>
           </button>
 
           {/* Schedule Interview */}
@@ -182,7 +195,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Schedule Interview"
           >
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4"/>
           </button>
 
           {/* Offer (only when SELECTED) */}
@@ -193,7 +206,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
               className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
               title="Generate Offer Letter"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4"/>
             </button>
           )}
 
@@ -206,7 +219,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 title="Send for E-Sign"
               >
-                <FileSignature className="h-4 w-4" />
+                <FileSignature className="h-4 w-4"/>
               </button>
               <button
                 onClick={() => onAccept(candidate)}
@@ -214,7 +227,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 title="Accept Offer"
               >
-                <CheckCircle className="h-4 w-4" />
+                <CheckCircle className="h-4 w-4"/>
               </button>
               <button
                 onClick={() => onDecline(candidate)}
@@ -222,7 +235,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 className="p-2 text-[var(--text-muted)] hover:text-danger-600 dark:hover:text-danger-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
                 title="Decline Offer"
               >
-                <XCircle className="h-4 w-4" />
+                <XCircle className="h-4 w-4"/>
               </button>
             </>
           )}
@@ -234,7 +247,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
             title="Edit"
           >
-            <Edit2 className="h-4 w-4" />
+            <Edit2 className="h-4 w-4"/>
           </button>
 
           {/* Delete */}
@@ -245,7 +258,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
               className="p-2 text-[var(--text-muted)] hover:text-danger-600 dark:hover:text-danger-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
               title="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4"/>
             </button>
           </PermissionGate>
         </div>

@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   MeetingActionItemRequest,
   MeetingActionItemResponse,
@@ -53,7 +53,7 @@ export const meetingService = {
 
   getMyMeetings: async (page: number = 0, size: number = 20): Promise<Page<OneOnOneMeetingResponse>> => {
     const response = await apiClient.get<Page<OneOnOneMeetingResponse>>('/meetings', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -68,7 +68,7 @@ export const meetingService = {
     size: number = 20
   ): Promise<Page<OneOnOneMeetingResponse>> => {
     const response = await apiClient.get<Page<OneOnOneMeetingResponse>>('/meetings/as-manager', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -90,7 +90,7 @@ export const meetingService = {
     meetingId: string,
     summary?: string
   ): Promise<OneOnOneMeetingResponse> => {
-    const payload = summary !== undefined ? { summary } : undefined;
+    const payload = summary !== undefined ? {summary} : undefined;
     const response = await apiClient.post<OneOnOneMeetingResponse>(
       `/meetings/${meetingId}/complete`,
       payload
@@ -158,7 +158,7 @@ export const meetingService = {
     itemId: string,
     notes?: string
   ): Promise<MeetingAgendaItemResponse> => {
-    const payload = notes !== undefined ? { notes } : undefined;
+    const payload = notes !== undefined ? {notes} : undefined;
     const response = await apiClient.put<MeetingAgendaItemResponse>(
       `/meetings/${meetingId}/agenda/${itemId}/discussed`,
       payload

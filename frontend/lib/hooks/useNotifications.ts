@@ -1,13 +1,13 @@
 'use client';
 
 import {
+  useMarkAllNotificationsAsRead,
+  useMarkNotificationAsRead,
   useNotificationInbox,
   useUnreadNotificationCount,
-  useMarkNotificationAsRead,
-  useMarkAllNotificationsAsRead,
 } from './queries/useNotifications';
-import { useWebSocket } from '@/lib/contexts/WebSocketContext';
-import { useCallback, useMemo } from 'react';
+import {useWebSocket} from '@/lib/contexts/WebSocketContext';
+import {useCallback, useMemo} from 'react';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -49,8 +49,8 @@ export interface UseNotificationsReturn {
  */
 export function useUnifiedNotifications(limit: number = 10): UseNotificationsReturn {
   // ── REST API queries ──────────────────────────────────────────────
-  const { data: persistedNotifications = [], isLoading } = useNotificationInbox(limit);
-  const { data: persistedUnreadCount = 0 } = useUnreadNotificationCount();
+  const {data: persistedNotifications = [], isLoading} = useNotificationInbox(limit);
+  const {data: persistedUnreadCount = 0} = useUnreadNotificationCount();
 
   // ── WebSocket real-time feed ──────────────────────────────────────
   const {

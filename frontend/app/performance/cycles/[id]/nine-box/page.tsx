@@ -1,26 +1,14 @@
 'use client';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import {
-  Title,
-  Text,
-  Paper,
-  Stack,
-  Group,
-  Badge,
-  Tooltip,
-  Loader,
-  Center,
-  Alert,
-  SimpleGrid,
-} from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
-import type { CalibrationResponse, CalibrationEmployee } from '@/lib/types/grow/performance';
+import {useParams} from 'next/navigation';
+import {useQuery} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
+import {Alert, Badge, Center, Group, Loader, Paper, SimpleGrid, Stack, Text, Title, Tooltip,} from '@mantine/core';
+import {IconAlertCircle} from '@tabler/icons-react';
+import type {CalibrationEmployee, CalibrationResponse} from '@/lib/types/grow/performance';
 
 // 9-box maps (performance axis = finalRating 1-5 → buckets Low/Med/High)
 // potential axis = managerRating 1-5 → buckets Low/Med/High
@@ -61,16 +49,16 @@ async function fetchCalibration(cycleId: string): Promise<CalibrationResponse> {
 }
 
 export default function NineBoxPage() {
-  const { id: cycleId } = useParams<{ id: string }>();
+  const {id: cycleId} = useParams<{ id: string }>();
 
-  const { data, isLoading, error } = useQuery({
+  const {data, isLoading, error} = useQuery({
     queryKey: ['calibration', cycleId],
     queryFn: () => fetchCalibration(cycleId),
   });
 
-  if (isLoading) return <Center h={300}><Loader /></Center>;
+  if (isLoading) return <Center h={300}><Loader/></Center>;
   if (error || !data) return (
-    <Alert icon={<IconAlertCircle size={16} />} color="red">
+    <Alert icon={<IconAlertCircle size={16}/>} color="red">
       Failed to load 9-box data
     </Alert>
   );
@@ -96,84 +84,102 @@ export default function NineBoxPage() {
   return (
     <AppLayout>
       <PermissionGate permission={Permissions.CALIBRATION_VIEW}>
-      <Stack gap="lg" p="md">
-        <Group justify="space-between">
-        <div>
-          <Title order={2} className="skeuo-emboss">9-Box Grid</Title>
-          <Text c="dimmed" size="sm">{data.cycleName} — Performance vs Potential</Text>
-        </div>
-      </Group>
-
-      <Group gap="xs" align="flex-start">
-        {/* Y-axis label */}
-        <Stack justify="center" h={360} w={20}>
-          <Text size="xs" c="dimmed" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', whiteSpace: 'nowrap' }}>
-            Potential (Manager Rating) →
-          </Text>
-        </Stack>
-
-        <Stack gap={4}>
-          {/* Column headers */}
-          <Group gap={4} ml={60}>
-            <Text size="xs" c="dimmed" w={140} ta="center">Low Performance</Text>
-            <Text size="xs" c="dimmed" w={140} ta="center">Medium Performance</Text>
-            <Text size="xs" c="dimmed" w={140} ta="center">High Performance</Text>
+        <Stack gap="lg" p="md">
+          <Group justify="space-between">
+            <div>
+              <Title order={2} className="skeuo-emboss">9-Box Grid</Title>
+              <Text c="dimmed" size="sm">{data.cycleName} — Performance vs Potential</Text>
+            </div>
           </Group>
 
-          {potRows.map((pot) => (
-            <Group key={pot} gap={4} align="stretch">
-              <Text size="xs" c="dimmed" w={56} ta="right" style={{ lineHeight: '120px' }}>
-                {pot === 'high' ? 'High' : pot === 'med' ? 'Medium' : 'Low'}
+          <Group gap="xs" align="flex-start">
+            {/* Y-axis label */}
+            <Stack justify="center" h={360} w={20}>
+              <Text size="xs" c="dimmed"
+                    style={{writingMode: 'vertical-rl', transform: 'rotate(180deg)', whiteSpace: 'nowrap'}}>
+                Potential (Manager Rating) →
               </Text>
-              {perfCols.map((perf) => {
-                const key = `${perf}-${pot}`;
-                const employees = boxes[key] ?? [];
-                return (
-                  <Paper
-                    key={key}
-                    w={140}
-                    h={120}
-                    p="xs"
-                    style={{ backgroundColor: BOX_COLORS[key], border: '1px solid var(--border-subtle)', overflow: 'hidden' }}
-                  >
-                    <Text size="xs" fw={600} mb={4} c="dark.7">
-                      {BOX_LABELS[key]} ({employees.length})
-                    </Text>
-                    <Stack gap={2}>
-                      {employees.slice(0, 4).map((emp) => (
-                        <Tooltip key={emp.employeeId} label={`Self: ${emp.selfRating ?? '?'} | Mgr: ${emp.managerRating ?? '?'} | Final: ${emp.finalRating ?? '?'}`} withArrow>
-                          <Badge variant="white" size="xs" style={{ cursor: 'default', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {emp.employeeName}
-                          </Badge>
-                        </Tooltip>
-                      ))}
-                      {employees.length > 4 && (
-                        <Text size="xs" c="dimmed">+{employees.length - 4} more</Text>
-                      )}
-                    </Stack>
-                  </Paper>
-                );
-              })}
-            </Group>
-          ))}
+            </Stack>
 
-          {/* X-axis label */}
-          <Text size="xs" c="dimmed" ta="center" ml={60}>
-            Performance (Final Rating) →
-          </Text>
-        </Stack>
-      </Group>
+            <Stack gap={4}>
+              {/* Column headers */}
+              <Group gap={4} ml={60}>
+                <Text size="xs" c="dimmed" w={140} ta="center">Low Performance</Text>
+                <Text size="xs" c="dimmed" w={140} ta="center">Medium Performance</Text>
+                <Text size="xs" c="dimmed" w={140} ta="center">High Performance</Text>
+              </Group>
 
-      {/* Legend */}
-      <SimpleGrid cols={3} spacing="xs">
-        {Object.entries(BOX_LABELS).map(([key, label]) => (
-          <Group key={key} gap={6}>
-            <div style={{ width: 12, height: 12, borderRadius: 2, backgroundColor: BOX_COLORS[key], border: '1px solid var(--border-main)' }} />
-            <Text size="xs">{label}</Text>
+              {potRows.map((pot) => (
+                <Group key={pot} gap={4} align="stretch">
+                  <Text size="xs" c="dimmed" w={56} ta="right" style={{lineHeight: '120px'}}>
+                    {pot === 'high' ? 'High' : pot === 'med' ? 'Medium' : 'Low'}
+                  </Text>
+                  {perfCols.map((perf) => {
+                    const key = `${perf}-${pot}`;
+                    const employees = boxes[key] ?? [];
+                    return (
+                      <Paper
+                        key={key}
+                        w={140}
+                        h={120}
+                        p="xs"
+                        style={{
+                          backgroundColor: BOX_COLORS[key],
+                          border: '1px solid var(--border-subtle)',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <Text size="xs" fw={600} mb={4} c="dark.7">
+                          {BOX_LABELS[key]} ({employees.length})
+                        </Text>
+                        <Stack gap={2}>
+                          {employees.slice(0, 4).map((emp) => (
+                            <Tooltip key={emp.employeeId}
+                                     label={`Self: ${emp.selfRating ?? '?'} | Mgr: ${emp.managerRating ?? '?'} | Final: ${emp.finalRating ?? '?'}`}
+                                     withArrow>
+                              <Badge variant="white" size="xs" style={{
+                                cursor: 'default',
+                                maxWidth: '100%',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {emp.employeeName}
+                              </Badge>
+                            </Tooltip>
+                          ))}
+                          {employees.length > 4 && (
+                            <Text size="xs" c="dimmed">+{employees.length - 4} more</Text>
+                          )}
+                        </Stack>
+                      </Paper>
+                    );
+                  })}
+                </Group>
+              ))}
+
+              {/* X-axis label */}
+              <Text size="xs" c="dimmed" ta="center" ml={60}>
+                Performance (Final Rating) →
+              </Text>
+            </Stack>
           </Group>
-        ))}
-      </SimpleGrid>
-      </Stack>
+
+          {/* Legend */}
+          <SimpleGrid cols={3} spacing="xs">
+            {Object.entries(BOX_LABELS).map(([key, label]) => (
+              <Group key={key} gap={6}>
+                <div style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: 2,
+                  backgroundColor: BOX_COLORS[key],
+                  border: '1px solid var(--border-main)'
+                }}/>
+                <Text size="xs">{label}</Text>
+              </Group>
+            ))}
+          </SimpleGrid>
+        </Stack>
       </PermissionGate>
     </AppLayout>
   );

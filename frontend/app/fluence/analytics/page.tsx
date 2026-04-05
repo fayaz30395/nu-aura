@@ -1,49 +1,26 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useMemo} from 'react';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
+  CartesianGrid,
   Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from 'recharts';
-import {
-  TrendingUp,
-  Eye,
-  Heart,
-  MessageCircle,
-  FileText,
-  BookOpen,
-  Pen,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import {
-  useWikiPages,
-  useBlogPosts,
-  useFluenceTemplates,
-  useActivityFeed,
-} from '@/lib/hooks/queries/useFluence';
-import {
-  layout,
-  typography,
-  card,
-  motion as dsMotion,
-  chartColors,
-  iconSize,
-} from '@/lib/design-system';
+import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
+import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/design-system';
 
 /**
  * NU-Fluence Analytics Dashboard
@@ -51,7 +28,7 @@ import {
  */
 export default function FluenceAnalyticsPage() {
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.KNOWLEDGE_VIEW);
 
@@ -62,10 +39,10 @@ export default function FluenceAnalyticsPage() {
   }, [isReady, hasAccess, router]);
 
   // Fetch data
-  const { data: wikiData, isLoading: wikiLoading } = useWikiPages(undefined, 0, 100);
-  const { data: blogData, isLoading: blogLoading } = useBlogPosts(0, 100);
-  const { data: templatesData, isLoading: templatesLoading } = useFluenceTemplates(0, 100);
-  const { data: activityData, isLoading: activityLoading } = useActivityFeed(0, 100);
+  const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 100);
+  const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 100);
+  const {data: templatesData, isLoading: templatesLoading} = useFluenceTemplates(0, 100);
+  const {data: activityData, isLoading: activityLoading} = useActivityFeed(0, 100);
 
   // ── All useMemo hooks must be before any conditional return ──────────────────
 
@@ -93,7 +70,7 @@ export default function FluenceAnalyticsPage() {
     const publishedBlogs = blogPosts.filter((p) => p.status === 'PUBLISHED').length;
     const activeContent = publishedWiki + publishedBlogs;
 
-    return { totalViews, totalLikes, totalComments, activeContent };
+    return {totalViews, totalLikes, totalComments, activeContent};
   }, [wikiData, blogData]);
 
   // Activity trend data (group by day, last 30 days)
@@ -134,9 +111,9 @@ export default function FluenceAnalyticsPage() {
     const templateCount = templatesData?.totalElements || 0;
 
     return [
-      { name: 'Wiki Pages', value: wikiCount, fill: chartColors.primary },
-      { name: 'Blog Posts', value: blogCount, fill: chartColors.secondary },
-      { name: 'Templates', value: templateCount, fill: chartColors.success },
+      {name: 'Wiki Pages', value: wikiCount, fill: chartColors.primary},
+      {name: 'Blog Posts', value: blogCount, fill: chartColors.secondary},
+      {name: 'Templates', value: templateCount, fill: chartColors.success},
     ];
   }, [wikiData, blogData, templatesData]);
 
@@ -195,13 +172,13 @@ export default function FluenceAnalyticsPage() {
       <motion.div className={layout.sectionGap} {...dsMotion.pageEnter}>
         {/* Page Header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3}}
         >
           <div className="flex items-start gap-4 mb-2">
             <div className="p-4 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
-              <TrendingUp className={`${iconSize.pageHeader} text-white`} />
+              <TrendingUp className={`${iconSize.pageHeader} text-white`}/>
             </div>
             <div className="flex-1">
               <h1 className={typography.pageTitle}>Content Analytics</h1>
@@ -216,9 +193,9 @@ export default function FluenceAnalyticsPage() {
         {isLoading ? (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{delay: 0.1}}
           >
             {[1, 2, 3, 4].map((i) => (
               <div
@@ -230,9 +207,9 @@ export default function FluenceAnalyticsPage() {
         ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.3 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.1, duration: 0.3}}
           >
             <KpiCard
               icon={Eye}
@@ -264,34 +241,34 @@ export default function FluenceAnalyticsPage() {
         {/* Charts Grid */}
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.2, duration: 0.3}}
         >
           {/* Activity Trend */}
-          <motion.div className="lg:col-span-2" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div className="lg:col-span-2" initial={{opacity: 0, x: -8}} animate={{opacity: 1, x: 0}}>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className={`${iconSize.cardInline} text-accent-600`} />
+                  <TrendingUp className={`${iconSize.cardInline} text-accent-600`}/>
                   <CardTitle className={typography.cardTitle}>Activity Trend</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
                 {activityLoading ? (
-                  <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
+                  <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
                     <LineChart data={activityTrendData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid}/>
                       <XAxis
                         dataKey="date"
                         stroke={chartColors.grid}
-                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                        tick={{fill: 'var(--text-muted)', fontSize: 12}}
                       />
                       <YAxis
                         stroke={chartColors.grid}
-                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                        tick={{fill: 'var(--text-muted)', fontSize: 12}}
                       />
                       <Tooltip
                         contentStyle={{
@@ -299,15 +276,15 @@ export default function FluenceAnalyticsPage() {
                           border: `1px solid ${chartColors.tooltip.border}`,
                           borderRadius: '8px',
                         }}
-                        labelStyle={{ color: chartColors.tooltip.text }}
+                        labelStyle={{color: chartColors.tooltip.text}}
                       />
                       <Line
                         type="monotone"
                         dataKey="actions"
                         stroke={chartColors.primary}
                         strokeWidth={2}
-                        dot={{ fill: chartColors.primary, r: 4 }}
-                        activeDot={{ r: 6 }}
+                        dot={{fill: chartColors.primary, r: 4}}
+                        activeDot={{r: 6}}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -317,17 +294,17 @@ export default function FluenceAnalyticsPage() {
           </motion.div>
 
           {/* Content Distribution */}
-          <motion.div initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div initial={{opacity: 0, x: 8}} animate={{opacity: 1, x: 0}}>
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <FileText className={`${iconSize.cardInline} text-success-600`} />
+                  <FileText className={`${iconSize.cardInline} text-success-600`}/>
                   <CardTitle className={typography.cardTitle}>Distribution</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
                 {isLoading ? (
-                  <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
+                  <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
                     <PieChart>
@@ -336,13 +313,13 @@ export default function FluenceAnalyticsPage() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, value }) => `${name}: ${value}`}
+                        label={({name, value}) => `${name}: ${value}`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
                       >
                         {contentDistData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                          <Cell key={`cell-${index}`} fill={entry.fill}/>
                         ))}
                       </Pie>
                       <Tooltip
@@ -351,7 +328,7 @@ export default function FluenceAnalyticsPage() {
                           border: `1px solid ${chartColors.tooltip.border}`,
                           borderRadius: '8px',
                         }}
-                        labelStyle={{ color: chartColors.tooltip.text }}
+                        labelStyle={{color: chartColors.tooltip.text}}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -363,14 +340,14 @@ export default function FluenceAnalyticsPage() {
 
         {/* Top Content Table */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.3, duration: 0.3}}
         >
           <Card className={card.base}>
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <BookOpen className={`${iconSize.cardInline} text-accent-600`} />
+                <BookOpen className={`${iconSize.cardInline} text-accent-600`}/>
                 <CardTitle className={typography.cardTitle}>Top Content</CardTitle>
               </div>
             </CardHeader>
@@ -390,42 +367,42 @@ export default function FluenceAnalyticsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-[var(--border-main)]">
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
-                          Title
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
-                          Type
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
-                          Views
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
-                          Likes
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
-                          Author
-                        </th>
-                      </tr>
+                    <tr className="border-b border-[var(--border-main)]">
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        Title
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        Type
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        Views
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        Likes
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase">
+                        Author
+                      </th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {topContent.map((item) => (
-                        <motion.tr
-                          key={item.id}
-                          className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
-                          onClick={() => {
-                            const route =
-                              item.type === 'Wiki'
-                                ? `/fluence/wiki/${item.id}`
-                                : `/fluence/blogs/${item.id}`;
-                            router.push(route);
-                          }}
-                          whileHover={{ backgroundColor: 'var(--bg-secondary)' }}
-                        >
-                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
-                            <span className="line-clamp-2">{item.title}</span>
-                          </td>
-                          <td className="px-4 py-4 text-sm">
+                    {topContent.map((item) => (
+                      <motion.tr
+                        key={item.id}
+                        className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
+                        onClick={() => {
+                          const route =
+                            item.type === 'Wiki'
+                              ? `/fluence/wiki/${item.id}`
+                              : `/fluence/blogs/${item.id}`;
+                          router.push(route);
+                        }}
+                        whileHover={{backgroundColor: 'var(--bg-secondary)'}}
+                      >
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
+                          <span className="line-clamp-2">{item.title}</span>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
                             <span
                               className={`inline-block px-2.5 py-1 rounded text-xs font-medium ${
                                 item.type === 'Wiki'
@@ -435,18 +412,18 @@ export default function FluenceAnalyticsPage() {
                             >
                               {item.type}
                             </span>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
-                            {item.views}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
-                            {item.likes}
-                          </td>
-                          <td className="px-4 py-4 text-body-secondary">
-                            {item.author}
-                          </td>
-                        </motion.tr>
-                      ))}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
+                          {item.views}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
+                          {item.likes}
+                        </td>
+                        <td className="px-4 py-4 text-body-secondary">
+                          {item.author}
+                        </td>
+                      </motion.tr>
+                    ))}
                     </tbody>
                   </table>
                 </div>
@@ -457,14 +434,14 @@ export default function FluenceAnalyticsPage() {
 
         {/* Recent Activity Feed */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.4, duration: 0.3}}
         >
           <Card className={card.base}>
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <TrendingUp className={`${iconSize.cardInline} text-info-600`} />
+                <TrendingUp className={`${iconSize.cardInline} text-info-600`}/>
                 <CardTitle className={typography.cardTitle}>Recent Activity</CardTitle>
               </div>
             </CardHeader>
@@ -486,7 +463,7 @@ export default function FluenceAnalyticsPage() {
                     <motion.div
                       key={activity.id}
                       className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
-                      whileHover={{ x: 4 }}
+                      whileHover={{x: 4}}
                     >
                       <span
                         className={`px-2.5 py-1 rounded text-xs font-medium whitespace-nowrap ${getActionColor(
@@ -533,7 +510,7 @@ interface KpiCardProps {
   color: 'primary' | 'secondary' | 'warning' | 'success';
 }
 
-function KpiCard({ icon: IconComponent, label, value, color }: KpiCardProps) {
+function KpiCard({icon: IconComponent, label, value, color}: KpiCardProps) {
   const colorMap = {
     primary: 'from-accent-600 to-accent-700',
     secondary: 'from-info-600 to-info-700',
@@ -557,9 +534,9 @@ function KpiCard({ icon: IconComponent, label, value, color }: KpiCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+      initial={{opacity: 0, scale: 0.9}}
+      animate={{opacity: 1, scale: 1}}
+      transition={{duration: 0.2}}
     >
       <Card className={card.base}>
         <CardContent className={`${card.paddingLarge} row-between`}>
@@ -570,7 +547,7 @@ function KpiCard({ icon: IconComponent, label, value, color }: KpiCardProps) {
             </p>
           </div>
           <div className={`p-4 rounded-lg ${bgMap[color]}`}>
-            <IconComponent className={`${iconSize.statCard} ${textMap[color]}`} />
+            <IconComponent className={`${iconSize.statCard} ${textMap[color]}`}/>
           </div>
         </CardContent>
       </Card>

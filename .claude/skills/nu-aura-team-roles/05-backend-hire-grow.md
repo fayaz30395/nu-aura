@@ -7,6 +7,7 @@
 ## Core Responsibilities
 
 ### 1. Recruitment (NU-Hire)
+
 - Job postings management
 - Candidate pipeline (ATS)
 - Interview scheduling (Google Calendar integration)
@@ -16,6 +17,7 @@
 **Pipeline Stages**: Applied → Screened → Interview → Offered → Hired/Rejected
 
 ### 2. Performance Management (NU-Grow)
+
 - Performance reviews (annual, quarterly)
 - 360-degree feedback
 - Rating scales (1-5)
@@ -23,29 +25,35 @@
 - Competency frameworks
 
 ### 3. OKR Management
+
 - Objective & Key Results tracking
 - Quarterly goal setting
 - Progress updates
 - Alignment (company → team → individual)
 
 ### 4. Learning Management (LMS)
+
 - Course catalog
 - Enrollment tracking
 - Completion certificates
 - Training schedules
 
 ### 5. Integrations
+
 **Google Calendar**:
+
 - Create interview events
 - Send invites
 - Google Meet links
 
 **DocuSign**:
+
 - Offer letter templates
 - E-signature workflows
 - Status tracking
 
 **Job Boards**:
+
 - Naukri, LinkedIn, Indeed
 - Auto-posting
 - Applicant import
@@ -53,6 +61,7 @@
 ## Key Services
 
 **InterviewSchedulingService.java**:
+
 ```java
 public InterviewResponse scheduleInterview(InterviewDTO dto) {
     CalendarEvent event = googleCalendarClient.createEvent(
@@ -70,12 +79,14 @@ public InterviewResponse scheduleInterview(InterviewDTO dto) {
 ```
 
 **PerformanceReviewService.java**:
+
 - `createReviewCycle(name, startDate, endDate)` - New cycle
 - `submitSelfAssessment(reviewId, ratings)` - Employee input
 - `submitManagerReview(reviewId, ratings)` - Manager input
 - `calculateFinalRating(reviewId)` - Weighted average
 
 **OKRService.java**:
+
 - `createObjective(title, description, owner)` - New objective
 - `addKeyResult(objectiveId, title, target)` - Add KR
 - `updateProgress(keyResultId, progress)` - Update %
@@ -83,6 +94,7 @@ public InterviewResponse scheduleInterview(InterviewDTO dto) {
 ## ATS Pipeline
 
 **State Transitions**:
+
 - Applied → Screened (manual review)
 - Screened → Interview (schedule interview)
 - Interview → Offered (generate offer)
@@ -92,11 +104,13 @@ public InterviewResponse scheduleInterview(InterviewDTO dto) {
 ## Performance Review Cycle
 
 **Timeline**:
+
 1. Goal setting (Q1: Jan)
 2. Mid-year check-in (Q2: Jun)
 3. Annual review (Q4: Dec)
 
 **Ratings**:
+
 - 5: Exceptional (top 5%)
 - 4: Exceeds expectations (20%)
 - 3: Meets expectations (60%)
@@ -119,4 +133,5 @@ public InterviewResponse scheduleInterview(InterviewDTO dto) {
 
 ## Escalation
 
-**Escalate when**: ATS workflow broken, Google Calendar API failure, DocuSign integration issue, review cycle delayed
+**Escalate when**: ATS workflow broken, Google Calendar API failure, DocuSign integration issue,
+review cycle delayed

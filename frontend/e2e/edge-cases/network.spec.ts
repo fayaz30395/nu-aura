@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Network and Error Scenario E2E Tests
@@ -6,13 +6,13 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Network Error Handling', () => {
-  test('should show error message when API returns 500', async ({ page }) => {
+  test('should show error message when API returns 500', async ({page}) => {
     // Intercept API calls and return 500 error
     await page.route('**/api/v1/employees**', (route) => {
       route.fulfill({
         status: 500,
         contentType: 'application/json',
-        body: JSON.stringify({ message: 'Internal Server Error' }),
+        body: JSON.stringify({message: 'Internal Server Error'}),
       });
     });
 
@@ -20,15 +20,15 @@ test.describe('Network Error Handling', () => {
 
     // Should show error state
     const errorMessage = page.getByText(/error|failed|something went wrong/i);
-    await expect(errorMessage.first()).toBeVisible({ timeout: 10000 });
+    await expect(errorMessage.first()).toBeVisible({timeout: 10000});
   });
 
-  test('should show error when API returns 403 Forbidden', async ({ page }) => {
+  test('should show error when API returns 403 Forbidden', async ({page}) => {
     await page.route('**/api/v1/employees**', (route) => {
       route.fulfill({
         status: 403,
         contentType: 'application/json',
-        body: JSON.stringify({ message: 'Forbidden' }),
+        body: JSON.stringify({message: 'Forbidden'}),
       });
     });
 
@@ -36,16 +36,16 @@ test.describe('Network Error Handling', () => {
 
     // Should show forbidden/access denied message
     const errorMessage = page.getByText(/forbidden|access denied|not authorized|error/i);
-    await expect(errorMessage.first()).toBeVisible({ timeout: 10000 });
+    await expect(errorMessage.first()).toBeVisible({timeout: 10000});
   });
 
-  test('should show error when API returns 404', async ({ page }) => {
+  test('should show error when API returns 404', async ({page}) => {
     await page.route('**/api/v1/employees/**', (route) => {
       if (route.request().url().includes('/employees/')) {
         route.fulfill({
           status: 404,
           contentType: 'application/json',
-          body: JSON.stringify({ message: 'Not Found' }),
+          body: JSON.stringify({message: 'Not Found'}),
         });
       } else {
         route.continue();
@@ -57,10 +57,10 @@ test.describe('Network Error Handling', () => {
 
     // Should show not found or error
     const errorMessage = page.getByText(/not found|error|doesn't exist/i);
-    await expect(errorMessage.first()).toBeVisible({ timeout: 10000 });
+    await expect(errorMessage.first()).toBeVisible({timeout: 10000});
   });
 
-  test('should handle network timeout gracefully', async ({ page }) => {
+  test('should handle network timeout gracefully', async ({page}) => {
     // Simulate very slow network
     await page.route('**/api/v1/**', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 30000)); // 30 second delay
@@ -85,7 +85,7 @@ test.describe('Network Error Handling', () => {
     expect(hasLoading || hasError).toBeTruthy();
   });
 
-  test('should retry failed requests when clicking retry button', async ({ page }) => {
+  test('should retry failed requests when clicking retry button', async ({page}) => {
     let callCount = 0;
 
     await page.route('**/api/v1/employees**', (route) => {
@@ -95,7 +95,7 @@ test.describe('Network Error Handling', () => {
         route.fulfill({
           status: 500,
           contentType: 'application/json',
-          body: JSON.stringify({ message: 'Server Error' }),
+          body: JSON.stringify({message: 'Server Error'}),
         });
       } else {
         // Subsequent calls succeed
@@ -117,7 +117,7 @@ test.describe('Network Error Handling', () => {
     await page.waitForTimeout(2000);
 
     // Look for retry button
-    const retryButton = page.getByRole('button', { name: /retry|try again/i });
+    const retryButton = page.getByRole('button', {name: /retry|try again/i});
     if (await retryButton.isVisible()) {
       await retryButton.click();
 
@@ -127,7 +127,7 @@ test.describe('Network Error Handling', () => {
     }
   });
 
-  test('should handle network disconnect gracefully', async ({ page }) => {
+  test('should handle network disconnect gracefully', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
@@ -135,7 +135,7 @@ test.describe('Network Error Handling', () => {
     await page.context().setOffline(true);
 
     // Try to navigate
-    await page.getByRole('link', { name: /employees|team/i }).first().click();
+    await page.getByRole('link', {name: /employees|team/i}).first().click();
 
     // Wait for error handling
     await page.waitForTimeout(2000);
@@ -152,7 +152,7 @@ test.describe('Network Error Handling', () => {
 });
 
 test.describe('Session Expiration', () => {
-  test('should redirect to login when session expires', async ({ page }) => {
+  test('should redirect to login when session expires', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
@@ -161,7 +161,7 @@ test.describe('Session Expiration', () => {
       route.fulfill({
         status: 401,
         contentType: 'application/json',
-        body: JSON.stringify({ message: 'Unauthorized' }),
+        body: JSON.stringify({message: 'Unauthorized'}),
       });
     });
 
@@ -184,7 +184,7 @@ test.describe('Session Expiration', () => {
 });
 
 test.describe('Empty States', () => {
-  test('should show empty state when no employees', async ({ page }) => {
+  test('should show empty state when no employees', async ({page}) => {
     await page.route('**/api/v1/employees**', (route) => {
       route.fulfill({
         status: 200,
@@ -203,10 +203,10 @@ test.describe('Empty States', () => {
 
     // Should show empty state message
     const emptyMessage = page.getByText(/no employees|no data|empty|no results/i);
-    await expect(emptyMessage.first()).toBeVisible({ timeout: 10000 });
+    await expect(emptyMessage.first()).toBeVisible({timeout: 10000});
   });
 
-  test('should show empty state when no leave requests', async ({ page }) => {
+  test('should show empty state when no leave requests', async ({page}) => {
     await page.route('**/api/v1/leave-requests**', (route) => {
       route.fulfill({
         status: 200,
@@ -225,10 +225,10 @@ test.describe('Empty States', () => {
 
     // Should show empty state
     const emptyMessage = page.getByText(/no leave|no requests|empty|no results/i);
-    await expect(emptyMessage.first()).toBeVisible({ timeout: 10000 });
+    await expect(emptyMessage.first()).toBeVisible({timeout: 10000});
   });
 
-  test('should show empty state for search with no results', async ({ page }) => {
+  test('should show empty state for search with no results', async ({page}) => {
     await page.route('**/api/v1/employees**', (route) => {
       const url = route.request().url();
       if (url.includes('search') || url.includes('q=')) {
@@ -262,20 +262,20 @@ test.describe('Empty States', () => {
 
       // Should show no results message
       const noResultsMessage = page.getByText(/no results|no matches|not found/i);
-      await expect(noResultsMessage.first()).toBeVisible({ timeout: 10000 });
+      await expect(noResultsMessage.first()).toBeVisible({timeout: 10000});
     }
   });
 });
 
 test.describe('Concurrent Operations', () => {
-  test('should handle rapid navigation correctly', async ({ page }) => {
+  test('should handle rapid navigation correctly', async ({page}) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
     // Rapidly click multiple navigation links
-    await page.getByRole('link', { name: /employees|team/i }).first().click();
-    await page.getByRole('link', { name: /leave/i }).first().click();
-    await page.getByRole('link', { name: /dashboard|home/i }).first().click();
+    await page.getByRole('link', {name: /employees|team/i}).first().click();
+    await page.getByRole('link', {name: /leave/i}).first().click();
+    await page.getByRole('link', {name: /dashboard|home/i}).first().click();
 
     // Wait for navigation to settle
     await page.waitForLoadState('networkidle');
@@ -295,7 +295,7 @@ test.describe('Concurrent Operations', () => {
     }
   });
 
-  test('should prevent double form submission', async ({ page }) => {
+  test('should prevent double form submission', async ({page}) => {
     let submitCount = 0;
 
     await page.route('**/api/v1/leave-requests**', async (route) => {
@@ -306,7 +306,7 @@ test.describe('Concurrent Operations', () => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ id: 'test-id', status: 'PENDING' }),
+          body: JSON.stringify({id: 'test-id', status: 'PENDING'}),
         });
       } else {
         route.continue();
@@ -316,7 +316,7 @@ test.describe('Concurrent Operations', () => {
     await page.goto('/leave');
 
     // Open create form if button exists
-    const createButton = page.getByRole('button', { name: /new|create|request/i }).first();
+    const createButton = page.getByRole('button', {name: /new|create|request/i}).first();
     if (await createButton.isVisible()) {
       await createButton.click();
 
@@ -324,7 +324,7 @@ test.describe('Concurrent Operations', () => {
       await page.waitForTimeout(500);
 
       // Find submit button and click twice rapidly
-      const submitButton = page.getByRole('button', { name: /submit|save|create/i }).first();
+      const submitButton = page.getByRole('button', {name: /submit|save|create/i}).first();
       if (await submitButton.isVisible()) {
         await submitButton.click();
         await submitButton.click();
@@ -340,7 +340,7 @@ test.describe('Concurrent Operations', () => {
 });
 
 test.describe('Rate Limiting', () => {
-  test('should handle 429 rate limiting response', async ({ page }) => {
+  test('should handle 429 rate limiting response', async ({page}) => {
     let callCount = 0;
 
     await page.route('**/api/v1/**', (route) => {
@@ -349,7 +349,7 @@ test.describe('Rate Limiting', () => {
         route.fulfill({
           status: 429,
           contentType: 'application/json',
-          body: JSON.stringify({ message: 'Too Many Requests' }),
+          body: JSON.stringify({message: 'Too Many Requests'}),
           headers: {
             'Retry-After': '60',
           },

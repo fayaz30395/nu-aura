@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { useScanReceipt } from '@/lib/hooks/queries';
-import { OcrResult } from '@/lib/types/hrms/expense';
-import {
-  Upload, FileText, CheckCircle, AlertTriangle, RotateCcw, X, Camera,
-} from 'lucide-react';
+import {useCallback, useRef, useState} from 'react';
+import {useScanReceipt} from '@/lib/hooks/queries';
+import {OcrResult} from '@/lib/types/hrms/expense';
+import {AlertTriangle, Camera, CheckCircle, FileText, RotateCcw, Upload, X,} from 'lucide-react';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -30,7 +28,7 @@ export interface ConfirmedOcrData {
 
 type ScanStage = 'upload' | 'scanning' | 'review' | 'error';
 
-export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
+export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
   const [stage, setStage] = useState<ScanStage>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
@@ -169,14 +167,15 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
               flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed rounded-xl
               cursor-pointer transition-all duration-200
               ${isDragOver
-                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-                : 'border-surface-300 dark:border-surface-600 hover:border-accent-400 hover:bg-surface-50 dark:hover:bg-surface-800'
-              }
+              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+              : 'border-surface-300 dark:border-surface-600 hover:border-accent-400 hover:bg-surface-50 dark:hover:bg-surface-800'
+            }
             `}
             aria-label="Upload receipt image"
           >
-            <div className={`p-4 rounded-full ${isDragOver ? 'bg-accent-100 dark:bg-accent-900/40' : 'bg-surface-100 dark:bg-surface-700'}`}>
-              <Upload className={`w-8 h-8 ${isDragOver ? 'text-accent-600' : 'text-surface-400'}`} />
+            <div
+              className={`p-4 rounded-full ${isDragOver ? 'bg-accent-100 dark:bg-accent-900/40' : 'bg-surface-100 dark:bg-surface-700'}`}>
+              <Upload className={`w-8 h-8 ${isDragOver ? 'text-accent-600' : 'text-surface-400'}`}/>
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
@@ -196,8 +195,9 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
             />
           </div>
           {validationError && (
-            <div className="mt-2 flex items-center gap-2 p-2 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-danger-500 flex-shrink-0" />
+            <div
+              className="mt-2 flex items-center gap-2 p-2 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+              <AlertTriangle className="w-4 h-4 text-danger-500 flex-shrink-0"/>
               <p className="text-sm text-danger-600 dark:text-danger-400">{validationError}</p>
             </div>
           )}
@@ -208,8 +208,9 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
       {stage === 'scanning' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
           <div className="relative">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-surface-200 dark:border-surface-700 border-t-accent-600" />
-            <Camera className="absolute inset-0 m-auto w-5 h-5 text-accent-600" />
+            <div
+              className="animate-spin rounded-full h-12 w-12 border-4 border-surface-200 dark:border-surface-700 border-t-accent-600"/>
+            <Camera className="absolute inset-0 m-auto w-5 h-5 text-accent-600"/>
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
@@ -226,7 +227,7 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
       {stage === 'error' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
           <div className="p-4 rounded-full bg-danger-100 dark:bg-danger-900/30">
-            <AlertTriangle className="w-8 h-8 text-danger-500" />
+            <AlertTriangle className="w-8 h-8 text-danger-500"/>
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
@@ -241,7 +242,7 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
               onClick={handleReScan}
               className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4"/>
               Try Again
             </button>
             <button
@@ -260,13 +261,13 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
           {/* Confidence indicator */}
           <div className="row-between p-2 bg-surface-50 dark:bg-surface-800 rounded-lg">
             <div className="flex items-center gap-2">
-              <CheckCircle className={`w-4 h-4 ${confidenceColor(ocrResult.confidence)}`} />
+              <CheckCircle className={`w-4 h-4 ${confidenceColor(ocrResult.confidence)}`}/>
               <span className={`text-sm font-medium ${confidenceColor(ocrResult.confidence)}`}>
                 {confidenceLabel(ocrResult.confidence)} ({(ocrResult.confidence * 100).toFixed(0)}%)
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-surface-500">
-              <FileText className="w-3.5 h-3.5" />
+              <FileText className="w-3.5 h-3.5"/>
               {ocrResult.receiptFileName}
             </div>
           </div>
@@ -337,21 +338,21 @@ export function ReceiptScanner({ onConfirm, onCancel }: ReceiptScannerProps) {
               onClick={handleReScan}
               className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4"/>
               Re-scan
             </button>
             <button
               onClick={onCancel}
               className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4"/>
               Cancel
             </button>
             <button
               onClick={handleConfirm}
               className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
-              <CheckCircle className="w-4 h-4" />
+              <CheckCircle className="w-4 h-4"/>
               Confirm &amp; Fill
             </button>
           </div>

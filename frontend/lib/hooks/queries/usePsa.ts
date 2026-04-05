@@ -1,13 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { psaService } from '@/lib/services/hrms/psa.service';
-import {
-  PSATimesheet,
-  PSATimeEntry,
-  PSAInvoice,
-} from '@/lib/types/hrms/psa';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {psaService} from '@/lib/services/hrms/psa.service';
+import {PSAInvoice, PSATimeEntry, PSATimesheet,} from '@/lib/types/hrms/psa';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 // Query key factory
 export const psaKeys = {
@@ -73,7 +69,7 @@ export function useCreatePsaTimesheet() {
   return useMutation({
     mutationFn: (data: Partial<PSATimesheet>) => psaService.createTimesheet(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Created', 'Timesheet has been created');
     },
     onError: (error: Error) => {
@@ -89,8 +85,8 @@ export function useSubmitPsaTimesheet() {
   return useMutation({
     mutationFn: (id: string) => psaService.submitTimesheet(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheet(id)});
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
     },
     onError: (error: Error) => {
@@ -104,11 +100,11 @@ export function useApprovePsaTimesheet() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, approverId }: { id: string; approverId: string }) =>
+    mutationFn: ({id, approverId}: { id: string; approverId: string }) =>
       psaService.approveTimesheet(id, approverId),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheet(id)});
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Approved', 'Timesheet has been approved');
     },
     onError: (error: Error) => {
@@ -122,11 +118,11 @@ export function useRejectPsaTimesheet() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       psaService.rejectTimesheet(id, reason),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(id) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheets() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheet(id)});
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.info('Timesheet Rejected', 'Timesheet has been rejected');
     },
     onError: (error: Error) => {
@@ -141,15 +137,15 @@ export function useAddPsaTimeEntry() {
 
   return useMutation({
     mutationFn: ({
-      timesheetId,
-      entry,
-    }: {
+                   timesheetId,
+                   entry,
+                 }: {
       timesheetId: string;
       entry: Partial<PSATimeEntry>;
     }) => psaService.addTimeEntry(timesheetId, entry),
-    onSuccess: (_, { timesheetId }) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheet(timesheetId) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.timesheetEntries(timesheetId) });
+    onSuccess: (_, {timesheetId}) => {
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheet(timesheetId)});
+      queryClient.invalidateQueries({queryKey: psaKeys.timesheetEntries(timesheetId)});
       toast.success('Time Entry Added', 'Time entry has been recorded');
     },
     onError: (error: Error) => {
@@ -194,7 +190,7 @@ export function useCreateInvoice() {
   return useMutation({
     mutationFn: (data: Partial<PSAInvoice>) => psaService.createInvoice(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+      queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Created', 'New invoice has been created');
     },
     onError: (error: Error) => {
@@ -208,11 +204,11 @@ export function useUpdateInvoice() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<PSAInvoice> }) =>
+    mutationFn: ({id, data}: { id: string; data: Partial<PSAInvoice> }) =>
       psaService.updateInvoice(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.invoice(id) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: psaKeys.invoice(id)});
+      queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Updated', 'Invoice details have been updated');
     },
     onError: (error: Error) => {
@@ -228,8 +224,8 @@ export function useApproveInvoice() {
   return useMutation({
     mutationFn: (id: string) => psaService.approveInvoice(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: psaKeys.invoice(id) });
-      queryClient.invalidateQueries({ queryKey: psaKeys.invoices() });
+      queryClient.invalidateQueries({queryKey: psaKeys.invoice(id)});
+      queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Approved', 'Invoice has been approved');
     },
     onError: (error: Error) => {

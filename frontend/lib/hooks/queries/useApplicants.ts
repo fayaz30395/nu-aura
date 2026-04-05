@@ -1,12 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { applicantService } from '@/lib/services/hire/applicant.service';
-import type {
-  ApplicantRequest,
-  ApplicantStatusUpdate,
-} from '@/lib/types/hire/applicant';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {applicantService} from '@/lib/services/hire/applicant.service';
+import type {ApplicantRequest, ApplicantStatusUpdate,} from '@/lib/types/hire/applicant';
 
 // ==================== Query Keys ====================
 
@@ -64,9 +61,9 @@ export function useCreateApplicant() {
   return useMutation({
     mutationFn: (data: ApplicantRequest) => applicantService.createApplicant(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: applicantKeys.all });
+      queryClient.invalidateQueries({queryKey: applicantKeys.all});
       if (data.jobOpeningId) {
-        queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(data.jobOpeningId) });
+        queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(data.jobOpeningId)});
       }
     },
     onError: () => {
@@ -82,14 +79,14 @@ export function useCreateApplicant() {
 export function useUpdateApplicantStatus() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ApplicantStatusUpdate }) =>
+    mutationFn: ({id, data}: { id: string; data: ApplicantStatusUpdate }) =>
       applicantService.updateStatus(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: applicantKeys.all });
+      queryClient.invalidateQueries({queryKey: applicantKeys.all});
       if (data.jobOpeningId) {
-        queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(data.jobOpeningId) });
+        queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(data.jobOpeningId)});
       }
-      queryClient.invalidateQueries({ queryKey: applicantKeys.detail(data.id) });
+      queryClient.invalidateQueries({queryKey: applicantKeys.detail(data.id)});
     },
     onError: () => {
       notifications.show({
@@ -104,11 +101,11 @@ export function useUpdateApplicantStatus() {
 export function useRateApplicant() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, rating }: { id: string; rating: number }) =>
+    mutationFn: ({id, rating}: { id: string; rating: number }) =>
       applicantService.rateApplicant(id, rating),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: applicantKeys.detail(data.id) });
-      queryClient.invalidateQueries({ queryKey: applicantKeys.all });
+      queryClient.invalidateQueries({queryKey: applicantKeys.detail(data.id)});
+      queryClient.invalidateQueries({queryKey: applicantKeys.all});
     },
     onError: () => {
       notifications.show({
@@ -125,7 +122,7 @@ export function useDeleteApplicant() {
   return useMutation({
     mutationFn: (id: string) => applicantService.deleteApplicant(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: applicantKeys.all });
+      queryClient.invalidateQueries({queryKey: applicantKeys.all});
     },
     onError: () => {
       notifications.show({

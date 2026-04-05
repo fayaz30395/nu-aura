@@ -1,20 +1,11 @@
 'use client';
-import { AppLayout } from '@/components/layout';
+import {AppLayout} from '@/components/layout';
 
-import { useState, useMemo, useEffect } from 'react';
-import {
-  Download,
-  Info,
-  RefreshCw,
-  Search,
-  Grid3x3,
-  Users,
-  TrendingUp,
-  Target,
-} from 'lucide-react';
-import { usePerformanceAllCycles, useAllReviews } from '@/lib/hooks/queries/usePerformance';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useMemo, useState} from 'react';
+import {Download, Grid3x3, Info, RefreshCw, Search, Target, TrendingUp, Users,} from 'lucide-react';
+import {useAllReviews, usePerformanceAllCycles} from '@/lib/hooks/queries/usePerformance';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -28,15 +19,69 @@ interface EmployeePoint {
 type SortField = 'name' | 'performance' | 'potential';
 
 const BOX_CONFIG: Record<string, { label: string; sublabel: string; bg: string; border: string; text: string }> = {
-  '1-1': { label: 'Deadwood', sublabel: 'Low Performance • Low Potential', bg: 'bg-danger-50 dark:bg-danger-900/10', border: 'border-danger-200 dark:border-danger-800', text: 'text-danger-700 dark:text-danger-400' },
-  '2-1': { label: 'Dilemma', sublabel: 'Medium Performance • Low Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
-  '3-1': { label: 'Highly Skilled', sublabel: 'High Performance • Low Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
-  '1-2': { label: 'Inconsistent Player', sublabel: 'Low Performance • Medium Potential', bg: 'bg-warning-50 dark:bg-warning-900/10', border: 'border-warning-200 dark:border-warning-800', text: 'text-warning-700 dark:text-warning-400' },
-  '2-2': { label: 'Core Player', sublabel: 'Medium Performance • Medium Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
-  '3-2': { label: 'High Performer', sublabel: 'High Performance • Medium Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
-  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-accent-50 dark:bg-accent-900/10', border: 'border-accent-200 dark:border-accent-800', text: 'text-accent-700 dark:text-accent-400' },
-  '2-3': { label: 'Future Star', sublabel: 'Medium Performance • High Potential', bg: 'bg-success-50 dark:bg-success-900/10', border: 'border-success-200 dark:border-success-800', text: 'text-success-700 dark:text-success-400' },
-  '3-3': { label: 'Star', sublabel: 'High Performance • High Potential', bg: 'bg-success-50 dark:bg-success-900/10', border: 'border-success-200 dark:border-success-800', text: 'text-success-700 dark:text-success-400' },
+  '1-1': {
+    label: 'Deadwood',
+    sublabel: 'Low Performance • Low Potential',
+    bg: 'bg-danger-50 dark:bg-danger-900/10',
+    border: 'border-danger-200 dark:border-danger-800',
+    text: 'text-danger-700 dark:text-danger-400'
+  },
+  '2-1': {
+    label: 'Dilemma',
+    sublabel: 'Medium Performance • Low Potential',
+    bg: 'bg-warning-50 dark:bg-warning-900/10',
+    border: 'border-warning-200 dark:border-warning-800',
+    text: 'text-warning-700 dark:text-warning-400'
+  },
+  '3-1': {
+    label: 'Highly Skilled',
+    sublabel: 'High Performance • Low Potential',
+    bg: 'bg-warning-50 dark:bg-warning-900/10',
+    border: 'border-warning-200 dark:border-warning-800',
+    text: 'text-warning-700 dark:text-warning-400'
+  },
+  '1-2': {
+    label: 'Inconsistent Player',
+    sublabel: 'Low Performance • Medium Potential',
+    bg: 'bg-warning-50 dark:bg-warning-900/10',
+    border: 'border-warning-200 dark:border-warning-800',
+    text: 'text-warning-700 dark:text-warning-400'
+  },
+  '2-2': {
+    label: 'Core Player',
+    sublabel: 'Medium Performance • Medium Potential',
+    bg: 'bg-accent-50 dark:bg-accent-900/10',
+    border: 'border-accent-200 dark:border-accent-800',
+    text: 'text-accent-700 dark:text-accent-400'
+  },
+  '3-2': {
+    label: 'High Performer',
+    sublabel: 'High Performance • Medium Potential',
+    bg: 'bg-accent-50 dark:bg-accent-900/10',
+    border: 'border-accent-200 dark:border-accent-800',
+    text: 'text-accent-700 dark:text-accent-400'
+  },
+  '1-3': {
+    label: 'Growth Employee',
+    sublabel: 'Low Performance • High Potential',
+    bg: 'bg-accent-50 dark:bg-accent-900/10',
+    border: 'border-accent-200 dark:border-accent-800',
+    text: 'text-accent-700 dark:text-accent-400'
+  },
+  '2-3': {
+    label: 'Future Star',
+    sublabel: 'Medium Performance • High Potential',
+    bg: 'bg-success-50 dark:bg-success-900/10',
+    border: 'border-success-200 dark:border-success-800',
+    text: 'text-success-700 dark:text-success-400'
+  },
+  '3-3': {
+    label: 'Star',
+    sublabel: 'High Performance • High Potential',
+    bg: 'bg-success-50 dark:bg-success-900/10',
+    border: 'border-success-200 dark:border-success-800',
+    text: 'text-success-700 dark:text-success-400'
+  },
 };
 
 function toBand(value: number): 1 | 2 | 3 {
@@ -52,26 +97,26 @@ function boxKey(perf: number, pot: number) {
 // ─── Components ────────────────────────────────────────────────────────────────
 
 function NineBoxGrid({
-  points: _points,
-  byBox,
-  selectedBox,
-  onSelectBox,
-}: {
+                       points: _points,
+                       byBox,
+                       selectedBox,
+                       onSelectBox,
+                     }: {
   points: EmployeePoint[];
   byBox: Record<string, EmployeePoint[]>;
   selectedBox: string | null;
   onSelectBox: (box: string | null) => void;
 }) {
   const gridRows = [
-    { potBand: 3, label: 'High Potential' },
-    { potBand: 2, label: 'Medium Potential' },
-    { potBand: 1, label: 'Low Potential' },
+    {potBand: 3, label: 'High Potential'},
+    {potBand: 2, label: 'Medium Potential'},
+    {potBand: 1, label: 'Low Potential'},
   ];
 
   const gridCols = [
-    { perfBand: 1, label: 'Low (1.0–2.3)' },
-    { perfBand: 2, label: 'Medium (2.4–3.7)' },
-    { perfBand: 3, label: 'High (3.8–5.0)' },
+    {perfBand: 1, label: 'Low (1.0–2.3)'},
+    {perfBand: 2, label: 'Medium (2.4–3.7)'},
+    {perfBand: 3, label: 'High (3.8–5.0)'},
   ];
 
   return (
@@ -79,7 +124,8 @@ function NineBoxGrid({
       <div className="flex gap-4 min-w-max">
         {/* Y-axis */}
         <div className="flex flex-col items-center justify-start w-6 flex-shrink-0">
-          <span className="text-xs font-semibold text-[var(--text-muted)] mt-2" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+          <span className="text-xs font-semibold text-[var(--text-muted)] mt-2"
+                style={{writingMode: 'vertical-rl', transform: 'rotate(180deg)'}}>
             POTENTIAL ↑
           </span>
         </div>
@@ -87,7 +133,7 @@ function NineBoxGrid({
         {/* Grid */}
         <div className="flex-1">
           {/* Rows (potential high to low) */}
-          {gridRows.map(({ potBand, label: potLabel }) => (
+          {gridRows.map(({potBand, label: potLabel}) => (
             <div key={potBand} className="flex gap-4 mb-4">
               {/* Potential label */}
               <div className="w-28 flex-shrink-0 flex items-center justify-end pr-4">
@@ -95,7 +141,7 @@ function NineBoxGrid({
               </div>
 
               {/* 3 cells */}
-              {gridCols.map(({ perfBand }) => {
+              {gridCols.map(({perfBand}) => {
                 const key = `${perfBand}-${potBand}`;
                 const meta = BOX_CONFIG[key];
                 const cellPoints = byBox[key] || [];
@@ -153,8 +199,8 @@ function NineBoxGrid({
 
           {/* X-axis labels */}
           <div className="flex gap-4 mt-4">
-            <div className="w-28 flex-shrink-0" />
-            {gridCols.map(({ perfBand, label }) => (
+            <div className="w-28 flex-shrink-0"/>
+            {gridCols.map(({perfBand, label}) => (
               <div key={perfBand} className="flex-1 text-center text-caption font-medium">
                 {label}
               </div>
@@ -290,7 +336,7 @@ export default function NineBoxPage() {
         return [p.employeeName, p.performance.toFixed(1), p.potential.toFixed(1), meta?.label ?? ''].join(',');
       });
     const csv = ['Employee,Performance,Potential,Category', ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `9box-${selectedCycleId}.csv`;
@@ -309,7 +355,7 @@ export default function NineBoxPage() {
     const highPotential = points.filter(p => p.potential > 3.5).length;
     const stars = points.filter(p => p.performance > 3.5 && p.potential > 3.5).length;
 
-    return { categories, highPerformers, highPotential, stars };
+    return {categories, highPerformers, highPotential, stars};
   }, [points]);
 
   const cycles = cyclesQuery.data?.content || [];
@@ -321,326 +367,339 @@ export default function NineBoxPage() {
       <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
-          <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view the 9-Box talent grid.</p>
+          <p className="text-[var(--text-muted)] text-sm mt-1">You do not have permission to view the 9-Box talent
+            grid.</p>
         </div>
       }>
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">
-              9-Box Talent Grid
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Segment talent by performance and potential
-            </p>
-          </div>
-          <button
-            onClick={exportCsv}
-            disabled={points.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <Download size={16} />
-            Export CSV
-          </button>
-        </div>
-
-        {/* Cycle Selector */}
-        <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-          <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Review Cycle
-              </label>
-              {cyclesLoading ? (
-                <div className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
-              ) : (
-                <select
-                  value={selectedCycleId}
-                  onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-                >
-                  <option value="">Select a cycle</option>
-                  {cycles.map(c => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} ({c.status})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-            <div className="text-caption md:mt-6">
-              {points.length} employees plotted
-            </div>
-          </div>
-        </div>
-
-        {/* Info Banner */}
-        <div className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-4">
-          <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-accent-800 dark:text-accent-300">
-            <strong>X-axis:</strong> Performance = manager review rating.
-            <strong className="ml-4">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to view
-            employees and override potential scores.
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
-                <Users className="text-accent-800 dark:text-accent-600" size={20} />
-              </div>
+        <div className="min-h-screen bg-[var(--bg-secondary)]">
+          <div className="max-w-7xl mx-auto p-6 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <p className="text-caption">Total Plotted</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{points.length}</p>
+                <h1 className="text-2xl font-bold skeuo-emboss">
+                  9-Box Talent Grid
+                </h1>
+                <p className="text-[var(--text-muted)] mt-1">
+                  Segment talent by performance and potential
+                </p>
+              </div>
+              <button
+                onClick={exportCsv}
+                disabled={points.length === 0}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                <Download size={16}/>
+                Export CSV
+              </button>
+            </div>
+
+            {/* Cycle Selector */}
+            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Review Cycle
+                  </label>
+                  {cyclesLoading ? (
+                    <div
+                      className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
+                  ) : (
+                    <select
+                      value={selectedCycleId}
+                      onChange={e => setSelectedCycleId(e.target.value)}
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                    >
+                      <option value="">Select a cycle</option>
+                      {cycles.map(c => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.status})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+                <div className="text-caption md:mt-6">
+                  {points.length} employees plotted
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                <TrendingUp className="text-success-600 dark:text-success-400" size={20} />
-              </div>
-              <div>
-                <p className="text-caption">Stars</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.stars}</p>
-              </div>
+            {/* Info Banner */}
+            <div
+              className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-4">
+              <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
+              <p className="text-sm text-accent-800 dark:text-accent-300">
+                <strong>X-axis:</strong> Performance = manager review rating.
+                <strong className="ml-4">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to
+                view
+                employees and override potential scores.
+              </p>
             </div>
-          </div>
 
-          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                <Target className="text-accent-600 dark:text-accent-400" size={20} />
-              </div>
-              <div>
-                <p className="text-caption">High Performers</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPerformers}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                <Grid3x3 className="text-success-600 dark:text-success-400" size={20} />
-              </div>
-              <div>
-                <p className="text-caption">High Potential</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPotential}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {reviewsLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-accent-500 mr-4" />
-            <span className="text-[var(--text-muted)]">Loading reviews...</span>
-          </div>
-        ) : points.length === 0 && selectedCycleId ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
-            <Info size={32} className="text-[var(--text-muted)] mb-4" />
-            <p className="text-[var(--text-secondary)] font-medium">
-              No rated reviews found
-            </p>
-            <p className="text-[var(--text-muted)] text-sm mt-1">
-              Complete reviews with overall ratings to populate the grid
-            </p>
-          </div>
-        ) : selectedCycleId ? (
-          <div className="space-y-6">
-            {/* 9-Box Grid */}
-            <NineBoxGrid
-              points={points}
-              byBox={byBox}
-              selectedBox={selectedBox}
-              onSelectBox={setSelectedBox}
-            />
-
-            {/* Selected Box Details */}
-            {selectedBox && selectedBoxPoints && (
-              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`px-4 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
-                  >
+                    className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
+                    <Users className="text-accent-800 dark:text-accent-600" size={20}/>
+                  </div>
+                  <div>
+                    <p className="text-caption">Total Plotted</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{points.length}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                    <TrendingUp className="text-success-600 dark:text-success-400" size={20}/>
+                  </div>
+                  <div>
+                    <p className="text-caption">Stars</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.stars}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                    <Target className="text-accent-600 dark:text-accent-400" size={20}/>
+                  </div>
+                  <div>
+                    <p className="text-caption">High Performers</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPerformers}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                    <Grid3x3 className="text-success-600 dark:text-success-400" size={20}/>
+                  </div>
+                  <div>
+                    <p className="text-caption">High Potential</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPotential}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {reviewsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <RefreshCw size={24} className="animate-spin text-accent-500 mr-4"/>
+                <span className="text-[var(--text-muted)]">Loading reviews...</span>
+              </div>
+            ) : points.length === 0 && selectedCycleId ? (
+              <div
+                className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <Info size={32} className="text-[var(--text-muted)] mb-4"/>
+                <p className="text-[var(--text-secondary)] font-medium">
+                  No rated reviews found
+                </p>
+                <p className="text-[var(--text-muted)] text-sm mt-1">
+                  Complete reviews with overall ratings to populate the grid
+                </p>
+              </div>
+            ) : selectedCycleId ? (
+              <div className="space-y-6">
+                {/* 9-Box Grid */}
+                <NineBoxGrid
+                  points={points}
+                  byBox={byBox}
+                  selectedBox={selectedBox}
+                  onSelectBox={setSelectedBox}
+                />
+
+                {/* Selected Box Details */}
+                {selectedBox && selectedBoxPoints && (
+                  <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`px-4 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
+                      >
                     <span
                       className={`text-sm font-bold ${BOX_CONFIG[selectedBox].text}`}
                     >
                       {BOX_CONFIG[selectedBox].label}
                     </span>
-                  </div>
-                  <span className="text-body-muted">
+                      </div>
+                      <span className="text-body-muted">
                     {BOX_CONFIG[selectedBox].sublabel}
                   </span>
-                  <span className="ml-auto text-sm font-semibold text-[var(--text-secondary)]">
+                      <span className="ml-auto text-sm font-semibold text-[var(--text-secondary)]">
                     {selectedBoxPoints.length} employees
                   </span>
-                </div>
+                    </div>
 
-                {/* Employees Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                    {/* Employees Table */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                        <tr
+                          className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                          <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
+                            Employee
+                          </th>
+                          <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
+                            Performance
+                          </th>
+                          <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
+                            Potential
+                          </th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                        {selectedBoxPoints.map(p => (
+                          <tr key={p.employeeId}
+                              className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+                            <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
+                              {p.employeeName}
+                            </td>
+                            <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
+                              {p.performance.toFixed(1)}
+                            </td>
+                            <td className="px-4 py-2.5 text-center">
+                              <input
+                                type="number"
+                                min={1}
+                                max={5}
+                                step={0.5}
+                                value={potentialOverrides[p.employeeId] ?? p.potential.toFixed(1)}
+                                onChange={e => {
+                                  const v = parseFloat(e.target.value);
+                                  if (!isNaN(v) && v >= 1 && v <= 5) {
+                                    setPotentialOverrides(prev => ({
+                                      ...prev,
+                                      [p.employeeId]: v,
+                                    }));
+                                  }
+                                }}
+                                className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="text-caption">
+                      Edit potential scores to re-plot employees in the grid dynamically
+                    </p>
+                  </div>
+                )}
+
+                {/* All Employees Table */}
+                <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <h3 className="text-sm font-bold text-[var(--text-primary)]">
+                      All Employees
+                    </h3>
+                    <div className="flex-1 relative">
+                      <Search
+                        size={14}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="ml-auto w-full md:w-64 pl-10 pr-4 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                      <tr
+                        className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
                         <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
-                          Employee
+                          <button
+                            onClick={() => setSortField(sortField === 'name' ? 'name' : 'name')}
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                          >
+                            Employee {sortField === 'name' ? '↑' : ''}
+                          </button>
                         </th>
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
-                          Performance
+                          <button
+                            onClick={() => setSortField(sortField === 'performance' ? 'performance' : 'performance')}
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                          >
+                            Performance {sortField === 'performance' ? '↑' : ''}
+                          </button>
                         </th>
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
-                          Potential
+                          <button
+                            onClick={() => setSortField(sortField === 'potential' ? 'potential' : 'potential')}
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                          >
+                            Potential {sortField === 'potential' ? '↑' : ''}
+                          </button>
+                        </th>
+                        <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
+                          Category
                         </th>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
-                      {selectedBoxPoints.map(p => (
-                        <tr key={p.employeeId} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
-                            {p.employeeName}
-                          </td>
-                          <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
-                            {p.performance.toFixed(1)}
-                          </td>
-                          <td className="px-4 py-2.5 text-center">
-                            <input
-                              type="number"
-                              min={1}
-                              max={5}
-                              step={0.5}
-                              value={potentialOverrides[p.employeeId] ?? p.potential.toFixed(1)}
-                              onChange={e => {
-                                const v = parseFloat(e.target.value);
-                                if (!isNaN(v) && v >= 1 && v <= 5) {
-                                  setPotentialOverrides(prev => ({
-                                    ...prev,
-                                    [p.employeeId]: v,
-                                  }));
-                                }
-                              }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-caption">
-                  Edit potential scores to re-plot employees in the grid dynamically
-                </p>
-              </div>
-            )}
-
-            {/* All Employees Table */}
-            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 space-y-4">
-              <div className="flex items-center gap-4">
-                <h3 className="text-sm font-bold text-[var(--text-primary)]">
-                  All Employees
-                </h3>
-                <div className="flex-1 relative">
-                  <Search
-                    size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-4 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-                  />
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-                      <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
-                        <button
-                          onClick={() => setSortField(sortField === 'name' ? 'name' : 'name')}
-                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
-                        >
-                          Employee {sortField === 'name' ? '↑' : ''}
-                        </button>
-                      </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
-                        <button
-                          onClick={() => setSortField(sortField === 'performance' ? 'performance' : 'performance')}
-                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
-                        >
-                          Performance {sortField === 'performance' ? '↑' : ''}
-                        </button>
-                      </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
-                        <button
-                          onClick={() => setSortField(sortField === 'potential' ? 'potential' : 'potential')}
-                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
-                        >
-                          Potential {sortField === 'potential' ? '↑' : ''}
-                        </button>
-                      </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
-                        Category
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
-                    {filteredAndSorted.map(p => {
-                      const key = boxKey(p.performance, p.potential);
-                      const meta = BOX_CONFIG[key];
-                      return (
-                        <tr key={p.employeeId} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
-                            {p.employeeName}
-                          </td>
-                          <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
-                            {p.performance.toFixed(1)}
-                          </td>
-                          <td className="px-4 py-2.5 text-center">
-                            <input
-                              type="number"
-                              min={1}
-                              max={5}
-                              step={0.5}
-                              value={potentialOverrides[p.employeeId] ?? p.potential.toFixed(1)}
-                              onChange={e => {
-                                const v = parseFloat(e.target.value);
-                                if (!isNaN(v) && v >= 1 && v <= 5) {
-                                  setPotentialOverrides(prev => ({
-                                    ...prev,
-                                    [p.employeeId]: v,
-                                  }));
-                                }
-                              }}
-                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-                            />
-                          </td>
-                          <td className="px-4 py-2.5 text-center">
+                      </thead>
+                      <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                      {filteredAndSorted.map(p => {
+                        const key = boxKey(p.performance, p.potential);
+                        const meta = BOX_CONFIG[key];
+                        return (
+                          <tr key={p.employeeId}
+                              className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+                            <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
+                              {p.employeeName}
+                            </td>
+                            <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
+                              {p.performance.toFixed(1)}
+                            </td>
+                            <td className="px-4 py-2.5 text-center">
+                              <input
+                                type="number"
+                                min={1}
+                                max={5}
+                                step={0.5}
+                                value={potentialOverrides[p.employeeId] ?? p.potential.toFixed(1)}
+                                onChange={e => {
+                                  const v = parseFloat(e.target.value);
+                                  if (!isNaN(v) && v >= 1 && v <= 5) {
+                                    setPotentialOverrides(prev => ({
+                                      ...prev,
+                                      [p.employeeId]: v,
+                                    }));
+                                  }
+                                }}
+                                className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                              />
+                            </td>
+                            <td className="px-4 py-2.5 text-center">
                             <span
                               className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold ${meta?.bg} ${meta?.text}`}
                             >
                               {meta?.label ?? '—'}
                             </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
-        ) : null}
         </div>
-      </div>
       </PermissionGate>
     </AppLayout>
   );

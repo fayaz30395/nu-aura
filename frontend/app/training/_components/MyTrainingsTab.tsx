@@ -1,23 +1,24 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, Play, Download, Award, Loader2 } from 'lucide-react';
-import { Card, CardContent, Button, Badge, EmptyState } from '@/components/ui';
-import { EnrollmentStatus } from '@/lib/types/grow/training';
-import type { TrainingEnrollment } from '@/lib/types/grow/training';
-import { toBadgeVariant } from '@/lib/utils/type-guards';
-import { safeWindowOpen } from '@/lib/utils/url';
+import {Award, BookOpen, Download, Loader2, Play} from 'lucide-react';
+import {Badge, Button, Card, CardContent, EmptyState} from '@/components/ui';
+import type {TrainingEnrollment} from '@/lib/types/grow/training';
+import {EnrollmentStatus} from '@/lib/types/grow/training';
+import {toBadgeVariant} from '@/lib/utils/type-guards';
+import {safeWindowOpen} from '@/lib/utils/url';
+
 interface MyTrainingsTabProps {
   enrollments: TrainingEnrollment[];
   loading: boolean;
   onNavigateToCatalog: () => void;
 }
 
-export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: MyTrainingsTabProps) {
+export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTrainingsTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
       </div>
     );
   }
@@ -25,7 +26,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
   if (enrollments.length === 0) {
     return (
       <EmptyState
-        icon={<BookOpen className="h-8 w-8" />}
+        icon={<BookOpen className="h-8 w-8"/>}
         title="No Enrolled Trainings Yet"
         description="Browse the course catalog to find programs and enroll in trainings"
         action={{
@@ -51,7 +52,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
                   </Badge>
                   {enrollment.certificateIssued && (
                     <Badge variant="success">
-                      <Award className="h-3 w-3 mr-1" />
+                      <Award className="h-3 w-3 mr-1"/>
                       Certified
                     </Badge>
                   )}
@@ -67,7 +68,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
                         className="bg-accent-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${enrollment.attendancePercentage || 0}%` }}
+                        style={{width: `${enrollment.attendancePercentage || 0}%`}}
                       />
                     </div>
                   </div>
@@ -114,7 +115,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
               <div className="flex gap-2">
                 {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
                   <Button size="sm" variant="outline">
-                    <Play className="h-4 w-4 mr-1" />
+                    <Play className="h-4 w-4 mr-1"/>
                     Continue
                   </Button>
                 )}
@@ -124,7 +125,7 @@ export function MyTrainingsTab({ enrollments, loading, onNavigateToCatalog }: My
                     variant="outline"
                     onClick={() => safeWindowOpen(enrollment.certificateUrl, '_blank')}
                   >
-                    <Download className="h-4 w-4 mr-1" />
+                    <Download className="h-4 w-4 mr-1"/>
                     Certificate
                   </Button>
                 )}

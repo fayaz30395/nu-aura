@@ -141,7 +141,7 @@ export function formatDate(
   const dateOptions: Intl.DateTimeFormatOptions = {
     month: shortMonth ? 'short' : 'long',
     day: 'numeric',
-    ...(includeYear && { year: 'numeric' }),
+    ...(includeYear && {year: 'numeric'}),
     ...(includeTime && {
       hour: 'numeric',
       minute: '2-digit',
@@ -171,7 +171,7 @@ export function formatRelativeTime(
   const diffHours = Math.round(diffMinutes / 60);
   const diffDays = Math.round(diffHours / 24);
 
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(locale, {numeric: 'auto'});
 
   if (Math.abs(diffSeconds) < 60) {
     return rtf.format(diffSeconds, 'second');

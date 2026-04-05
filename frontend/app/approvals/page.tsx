@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 
 /**
  * Redirect /approvals -> /approvals/inbox (DEF-42 + DEF-47).

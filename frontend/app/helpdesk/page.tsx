@@ -1,30 +1,30 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { useSLADashboard, useMyPendingEscalations, useSlaConfigs } from '@/lib/hooks/queries/useHelpdeskSla';
+import {useMemo} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {useMyPendingEscalations, useSlaConfigs, useSLADashboard} from '@/lib/hooks/queries/useHelpdeskSla';
 import {
-  Headphones,
   AlertTriangle,
-  CheckCircle2,
-  Clock,
   ArrowRight,
   BarChart3,
-  Settings,
   Bell,
-  Ticket,
   BookOpen,
+  CheckCircle2,
+  Clock,
+  Headphones,
+  Settings,
+  Ticket,
 } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function HelpdeskPage() {
   const router = useRouter();
-  const { hasPermission } = usePermissions();
+  const {hasPermission} = usePermissions();
   const isHelpdeskAdmin = hasPermission(Permissions.SYSTEM_ADMIN);
-  const { data: dashboard, isLoading: dashboardLoading, error: dashboardError } = useSLADashboard();
-  const { data: escalations = [], isLoading: escalationsLoading } = useMyPendingEscalations();
-  const { data: slasResponse } = useSlaConfigs(0, 100);
+  const {data: dashboard, isLoading: dashboardLoading, error: dashboardError} = useSLADashboard();
+  const {data: escalations = [], isLoading: escalationsLoading} = useMyPendingEscalations();
+  const {data: slasResponse} = useSlaConfigs(0, 100);
 
   const activeSlaCount = useMemo(
     () => (slasResponse?.content ?? []).filter((s) => s.isActive).length,
@@ -88,7 +88,7 @@ export default function HelpdeskPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-lg ${card.bg}`}>
-                    <card.icon className={`w-5 h-5 ${card.color}`} />
+                    <card.icon className={`w-5 h-5 ${card.color}`}/>
                   </div>
                   <div>
                     <p className="text-caption">{card.label}</p>
@@ -104,9 +104,10 @@ export default function HelpdeskPage() {
 
         {/* Pending Escalations */}
         {escalations.length > 0 && (
-          <div className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
+          <div
+            className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-5 h-5 text-warning-600" />
+              <AlertTriangle className="w-5 h-5 text-warning-600"/>
               <h3 className="font-semibold text-warning-800 dark:text-warning-300">
                 Pending Escalations ({escalations.length})
               </h3>
@@ -141,13 +142,13 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <div className="flex items-center gap-4">
-              <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400" />
+              <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400"/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Tickets</p>
                 <p className="text-caption">View and manage support tickets</p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
           </button>
 
           <button
@@ -155,13 +156,13 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-4">
-              <Settings className="w-5 h-5 text-[var(--text-muted)]" />
+              <Settings className="w-5 h-5 text-[var(--text-muted)]"/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">SLA Policies</p>
                 <p className="text-caption">{activeSlaCount} active policies</p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
           </button>
 
           <button
@@ -169,13 +170,13 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-4">
-              <Bell className="w-5 h-5 text-[var(--text-muted)]" />
+              <Bell className="w-5 h-5 text-[var(--text-muted)]"/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Escalations</p>
                 <p className="text-caption">{escalations.length} pending</p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
           </button>
 
           <button
@@ -183,13 +184,13 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-4">
-              <BookOpen className="w-5 h-5 text-[var(--text-muted)]" />
+              <BookOpen className="w-5 h-5 text-[var(--text-muted)]"/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Knowledge Base</p>
                 <p className="text-caption">Find answers to common questions</p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
           </button>
 
           <button
@@ -197,13 +198,13 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left"
           >
             <div className="flex items-center gap-4">
-              <BarChart3 className="w-5 h-5 text-[var(--text-muted)]" />
+              <BarChart3 className="w-5 h-5 text-[var(--text-muted)]"/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">SLA Dashboard</p>
                 <p className="text-caption">View detailed metrics</p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]" />
+            <ArrowRight className="w-4 h-4 text-[var(--text-muted)]"/>
           </button>
         </div>
 

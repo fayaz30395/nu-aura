@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 
 export interface Announcement {
   id: string;
@@ -75,14 +75,14 @@ export interface Page<T> {
 class AnnouncementService {
   async getAllAnnouncements(page: number = 0, size: number = 10): Promise<Page<Announcement>> {
     const response = await apiClient.get<Page<Announcement>>('/announcements', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getActiveAnnouncements(employeeId: string, page: number = 0, size: number = 10): Promise<Page<Announcement>> {
     const response = await apiClient.get<Page<Announcement>>('/announcements/active', {
-      params: { employeeId, page, size },
+      params: {employeeId, page, size},
     });
     return response.data;
   }
@@ -94,7 +94,7 @@ class AnnouncementService {
 
   async getAnnouncement(id: string, employeeId?: string): Promise<Announcement> {
     const response = await apiClient.get<Announcement>(`/announcements/${id}`, {
-      params: employeeId ? { employeeId } : undefined,
+      params: employeeId ? {employeeId} : undefined,
     });
     return response.data;
   }
@@ -115,7 +115,7 @@ class AnnouncementService {
 
   async markAsRead(announcementId: string, employeeId: string): Promise<void> {
     await apiClient.post(`/announcements/${announcementId}/read`, null, {
-      params: { employeeId },
+      params: {employeeId},
     });
   }
 }

@@ -1,20 +1,20 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  EmployeeCapacity,
   AllocationApprovalRequest,
-  CreateAllocationApprovalRequest,
-  ApproveAllocationRequest,
-  RejectAllocationRequest,
   AllocationValidationResult,
-  UpdateAllocationRequest,
+  ApproveAllocationRequest,
+  CreateAllocationApprovalRequest,
+  DepartmentWorkload,
   EmployeeAvailability,
-  TeamAvailabilityView,
-  ResourceCalendarFilter,
+  EmployeeCapacity,
+  EmployeeWorkload,
   Holiday,
+  RejectAllocationRequest,
+  ResourceCalendarFilter,
+  TeamAvailabilityView,
+  UpdateAllocationRequest,
   WorkloadDashboardData,
   WorkloadFilterOptions,
-  EmployeeWorkload,
-  DepartmentWorkload,
   WorkloadHeatmapRow,
 } from '../../types/hrms/resource-management';
 
@@ -82,7 +82,7 @@ export const resourceManagementService = {
       if (asOfDate) params.asOfDate = asOfDate;
       const response = await apiClient.get<EmployeeCapacity>(
         `${BASE_URL}/capacity/employee/${employeeId}`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -91,20 +91,17 @@ export const resourceManagementService = {
   },
 
 
-
-
-
   getOverAllocatedEmployees: async (
     departmentId?: string,
     page = 0,
     size = 20
   ): Promise<PageResponse<EmployeeCapacity>> => {
     try {
-      const params: Record<string, string | number> = { page, size };
+      const params: Record<string, string | number> = {page, size};
       if (departmentId) params.departmentId = departmentId;
       const response = await apiClient.get<PageResponse<EmployeeCapacity>>(
         `${BASE_URL}/capacity/over-allocated`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -119,11 +116,11 @@ export const resourceManagementService = {
     size = 20
   ): Promise<PageResponse<EmployeeCapacity>> => {
     try {
-      const params: Record<string, string | number> = { minCapacity, page, size };
+      const params: Record<string, string | number> = {minCapacity, page, size};
       if (departmentId) params.departmentId = departmentId;
       const response = await apiClient.get<PageResponse<EmployeeCapacity>>(
         `${BASE_URL}/capacity/available`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -136,16 +133,13 @@ export const resourceManagementService = {
   // ============================================
 
 
-
-
-
   getAllPendingRequests: async (departmentId?: string, page = 0, size = 20): Promise<PageResponse<AllocationApprovalRequest>> => {
     try {
-      const params: Record<string, string | number> = { page, size };
+      const params: Record<string, string | number> = {page, size};
       if (departmentId) params.departmentId = departmentId;
       const response = await apiClient.get<PageResponse<AllocationApprovalRequest>>(
         `${BASE_URL}/allocation-requests/pending`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -192,7 +186,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.get<PageResponse<AllocationApprovalRequest>>(
         `${BASE_URL}/allocation-requests/employee/${employeeId}`,
-        { params: { page, size } }
+        {params: {page, size}}
       );
       return response.data;
     } catch (error) {
@@ -214,7 +208,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.get<EmployeeAvailability>(
         `${BASE_URL}/availability/employee/${employeeId}`,
-        { params: { startDate, endDate, includeLeaves, includeHolidays } }
+        {params: {startDate, endDate, includeLeaves, includeHolidays}}
       );
       return response.data;
     } catch (error) {
@@ -240,11 +234,11 @@ export const resourceManagementService = {
     departmentId?: string
   ): Promise<TeamAvailabilityView> => {
     try {
-      const params: Record<string, string> = { startDate, endDate };
+      const params: Record<string, string> = {startDate, endDate};
       if (departmentId) params.departmentId = departmentId;
       const response = await apiClient.get<TeamAvailabilityView>(
         `${BASE_URL}/availability/aggregated`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -254,9 +248,9 @@ export const resourceManagementService = {
 
   getHolidays: async (startDate: string, endDate: string, locationId?: string): Promise<Holiday[]> => {
     try {
-      const params: Record<string, string> = { startDate, endDate };
+      const params: Record<string, string> = {startDate, endDate};
       if (locationId) params.locationId = locationId;
-      const response = await apiClient.get<Holiday[]>(`${BASE_URL}/holidays`, { params });
+      const response = await apiClient.get<Holiday[]>(`${BASE_URL}/holidays`, {params});
       return response.data;
     } catch (error) {
       throw handleApiError(error, 'load holidays');
@@ -284,7 +278,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.post<EmployeeCapacity[]>(
         `${BASE_URL}/capacity/employees`,
-        { employeeIds, asOfDate }
+        {employeeIds, asOfDate}
       );
       return response.data;
     } catch (error) {
@@ -312,7 +306,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.post<AllocationValidationResult>(
         `${BASE_URL}/allocation/validate`,
-        { employeeId, projectId, allocationPercentage }
+        {employeeId, projectId, allocationPercentage}
       );
       return response.data;
     } catch (error) {
@@ -336,7 +330,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.get<PageResponse<AllocationApprovalRequest>>(
         `${BASE_URL}/allocation-requests/my-pending`,
-        { params: { page, size } }
+        {params: {page, size}}
       );
       return response.data;
     } catch (error) {
@@ -351,7 +345,7 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.post<PageResponse<EmployeeWorkload>>(
         `${BASE_URL}/workload/employees`,
-        { ...filters, page, size }
+        {...filters, page, size}
       );
       return response.data;
     } catch (error) {
@@ -377,7 +371,7 @@ export const resourceManagementService = {
       if (endDate) params.endDate = endDate;
       const response = await apiClient.get<DepartmentWorkload[]>(
         `${BASE_URL}/workload/departments`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -392,11 +386,11 @@ export const resourceManagementService = {
     limit = 50
   ): Promise<WorkloadHeatmapRow[]> => {
     try {
-      const params: Record<string, string | number> = { startDate, endDate, limit };
+      const params: Record<string, string | number> = {startDate, endDate, limit};
       if (departmentId) params.departmentId = departmentId;
       const response = await apiClient.get<WorkloadHeatmapRow[]>(
         `${BASE_URL}/workload/heatmap`,
-        { params }
+        {params}
       );
       return response.data;
     } catch (error) {
@@ -408,8 +402,8 @@ export const resourceManagementService = {
     try {
       const response = await apiClient.post<Blob>(
         `${BASE_URL}/workload/export`,
-        { format, ...filters },
-        { responseType: 'blob' }
+        {format, ...filters},
+        {responseType: 'blob'}
       );
       return response.data;
     } catch (error) {
@@ -462,7 +456,7 @@ export const resourceManagementService = {
   getAvailableResources: async (minAvailablePercent = 20): Promise<AvailableResource[]> => {
     try {
       const response = await apiClient.get<AvailableResource[]>('/resources/available', {
-        params: { minAvailablePercent },
+        params: {minAvailablePercent},
       });
       return response.data;
     } catch (error) {

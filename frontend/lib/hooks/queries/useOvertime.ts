@@ -1,18 +1,18 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { overtimeService } from '@/lib/services/hrms/overtime.service';
-import { OvertimeRecordRequest, OvertimeApprovalRequest } from '@/lib/types/hrms/overtime';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {overtimeService} from '@/lib/services/hrms/overtime.service';
+import {OvertimeApprovalRequest, OvertimeRecordRequest} from '@/lib/types/hrms/overtime';
 
 // Query keys for cache management
 export const overtimeKeys = {
   all: ['overtime'] as const,
   list: () => [...overtimeKeys.all, 'list'] as const,
-  listPaginated: (page: number, size: number) => [...overtimeKeys.list(), { page, size }] as const,
+  listPaginated: (page: number, size: number) => [...overtimeKeys.list(), {page, size}] as const,
   byEmployee: (employeeId: string, page: number, size: number) =>
-    [...overtimeKeys.all, 'employee', employeeId, { page, size }] as const,
+    [...overtimeKeys.all, 'employee', employeeId, {page, size}] as const,
   pending: (page: number, size: number) =>
-    [...overtimeKeys.all, 'pending', { page, size }] as const,
+    [...overtimeKeys.all, 'pending', {page, size}] as const,
   detail: (id: string) => [...overtimeKeys.all, 'detail', id] as const,
   compTimeBalance: (employeeId: string) =>
     [...overtimeKeys.all, 'comp-time', employeeId] as const,
@@ -76,7 +76,7 @@ export function useCreateOvertimeRecord() {
   return useMutation({
     mutationFn: (data: OvertimeRecordRequest) => overtimeService.createOvertimeRecord(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: overtimeKeys.all });
+      queryClient.invalidateQueries({queryKey: overtimeKeys.all});
     },
   });
 }
@@ -86,16 +86,16 @@ export function useApproveOrRejectOvertime() {
 
   return useMutation({
     mutationFn: ({
-      recordId,
-      approverId,
-      data,
-    }: {
+                   recordId,
+                   approverId,
+                   data,
+                 }: {
       recordId: string;
       approverId: string;
       data: OvertimeApprovalRequest;
     }) => overtimeService.approveOrRejectOvertime(recordId, approverId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: overtimeKeys.all });
+      queryClient.invalidateQueries({queryKey: overtimeKeys.all});
     },
   });
 }
@@ -106,7 +106,7 @@ export function useDeleteOvertimeRecord() {
   return useMutation({
     mutationFn: (recordId: string) => overtimeService.deleteOvertimeRecord(recordId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: overtimeKeys.all });
+      queryClient.invalidateQueries({queryKey: overtimeKeys.all});
     },
   });
 }

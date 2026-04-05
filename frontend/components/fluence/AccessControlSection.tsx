@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { MultiSelect } from '@mantine/core';
-import { Building2, Users, Shield, Info } from 'lucide-react';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { Card, CardContent } from '@/components/ui/Card';
-import type { Department } from '@/lib/types/hrms/employee';
-import type { Employee } from '@/lib/types/hrms/employee';
+import {useState} from 'react';
+import {MultiSelect} from '@mantine/core';
+import {Building2, Info, Shield, Users} from 'lucide-react';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {Card, CardContent} from '@/components/ui/Card';
+import type {Department, Employee} from '@/lib/types/hrms/employee';
 
 interface AccessControlSectionProps {
   /** Current visibility value */
@@ -32,16 +31,16 @@ interface AccessControlSectionProps {
  * - RESTRICTED: must explicitly choose who can see it
  */
 export default function AccessControlSection({
-  visibility,
-  sharedWithDepartmentIds,
-  sharedWithEmployeeIds,
-  onDepartmentIdsChange,
-  onEmployeeIdsChange,
-  disabled = false,
-}: AccessControlSectionProps) {
+                                               visibility,
+                                               sharedWithDepartmentIds,
+                                               sharedWithEmployeeIds,
+                                               onDepartmentIdsChange,
+                                               onEmployeeIdsChange,
+                                               disabled = false,
+                                             }: AccessControlSectionProps) {
   const [employeeSearchQuery, setEmployeeSearchQuery] = useState('');
-  const { data: departmentsData } = useActiveDepartments();
-  const { data: employeeSearchData } = useEmployeeSearch(employeeSearchQuery, 0, 20, employeeSearchQuery.length > 1);
+  const {data: departmentsData} = useActiveDepartments();
+  const {data: employeeSearchData} = useEmployeeSearch(employeeSearchQuery, 0, 20, employeeSearchQuery.length > 1);
 
   const departments = departmentsData || [];
   const searchedEmployees = employeeSearchData?.content || [];
@@ -68,13 +67,13 @@ export default function AccessControlSection({
     <Card className="border-accent-200 dark:border-accent-800 bg-accent-50/50 dark:bg-accent-950/20">
       <CardContent className="pt-4 space-y-4">
         <div className="flex items-center gap-2 text-sm font-medium text-accent-700 dark:text-accent-300">
-          <Shield className="w-4 h-4" />
+          <Shield className="w-4 h-4"/>
           Access Control
         </div>
 
         {visibility === 'DEPARTMENT' && (
           <div className="flex items-start gap-2 text-caption bg-[var(--bg-secondary)] rounded-lg p-4">
-            <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 flex-shrink-0 mt-0.5"/>
             <p>
               This content will be visible to members of your department by default.
               You can grant additional access to other departments or specific employees below.
@@ -84,7 +83,7 @@ export default function AccessControlSection({
 
         {visibility === 'RESTRICTED' && (
           <div className="flex items-start gap-2 text-caption bg-[var(--bg-secondary)] rounded-lg p-4">
-            <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 flex-shrink-0 mt-0.5"/>
             <p>
               Only you and the people/departments you specify below will be able to see this content.
             </p>
@@ -95,7 +94,7 @@ export default function AccessControlSection({
         {showDepartmentSharing && (
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-4 h-4"/>
               Share with Departments
             </label>
             <MultiSelect
@@ -118,7 +117,7 @@ export default function AccessControlSection({
         {showEmployeeSharing && (
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
-              <Users className="w-4 h-4" />
+              <Users className="w-4 h-4"/>
               Share with Specific People
             </label>
             <MultiSelect

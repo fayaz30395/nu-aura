@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { loginAs } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
 
 /**
  * Expense Flow E2E Tests
@@ -9,20 +8,20 @@ import { loginAs } from './fixtures/helpers';
  */
 
 test.describe('Expense Flow — Page Load', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display expenses page with heading', async ({ page }) => {
+  test('should display expenses page with heading', async ({page}) => {
     await expect(page.locator('h1')).toContainText(/Expense/i);
   });
 
-  test('should display My Claims tab', async ({ page }) => {
+  test('should display My Claims tab', async ({page}) => {
     await expect(page.locator('text=My Claims').first()).toBeVisible();
   });
 
-  test('should display stats or summary cards', async ({ page }) => {
+  test('should display stats or summary cards', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -31,32 +30,32 @@ test.describe('Expense Flow — Page Load', () => {
     expect(hasCards || hasTable).toBe(true);
   });
 
-  test('should not show error on page load', async ({ page }) => {
+  test('should not show error on page load', async ({page}) => {
     const errorMsg = page.locator('text=/Something went wrong|Error loading|Internal Server/i');
-    await expect(errorMsg).not.toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).not.toBeVisible({timeout: 5000});
   });
 });
 
 test.describe('Expense Flow — Create Claim', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display create claim button', async ({ page }) => {
+  test('should display create claim button', async ({page}) => {
     const createBtn = page.locator(
       'button:has-text("Create"), button:has-text("New"), button:has-text("Add")'
     ).first();
-    const hasCreate = await createBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     expect(hasCreate || true).toBe(true);
   });
 
-  test('should open create claim form and display fields', async ({ page }) => {
+  test('should open create claim form and display fields', async ({page}) => {
     const createBtn = page.locator(
       'button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")'
     ).first();
-    const hasCreate = await createBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     if (hasCreate) {
       await createBtn.click();
@@ -70,11 +69,11 @@ test.describe('Expense Flow — Create Claim', () => {
     }
   });
 
-  test('should close create form on cancel or escape', async ({ page }) => {
+  test('should close create form on cancel or escape', async ({page}) => {
     const createBtn = page.locator(
       'button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")'
     ).first();
-    const hasCreate = await createBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     if (hasCreate) {
       await createBtn.click();
@@ -97,7 +96,7 @@ test.describe('Expense Flow — Create Claim', () => {
 });
 
 test.describe('Expense Flow — Claims List', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
     const myClaimsTab = page.locator('text=My Claims').first();
@@ -107,7 +106,7 @@ test.describe('Expense Flow — Claims List', () => {
     }
   });
 
-  test('should display claims list or empty state', async ({ page }) => {
+  test('should display claims list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasClaims = await page.locator('table, [class*="table"], [class*="card"]').first().isVisible().catch(() => false);
@@ -116,7 +115,7 @@ test.describe('Expense Flow — Claims List', () => {
     expect(hasClaims || hasEmpty || true).toBe(true);
   });
 
-  test('should show claim status badges if claims exist', async ({ page }) => {
+  test('should show claim status badges if claims exist', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const statuses = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'PAID'];

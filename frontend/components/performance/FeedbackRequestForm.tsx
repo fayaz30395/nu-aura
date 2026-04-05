@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Users, Plus, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FeedbackReviewer, NominatePeersRequest } from '@/lib/types/grow/performance-360';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { Employee } from '@/lib/types/hrms/employee';
+import {useState} from 'react';
+import {AlertCircle, CheckCircle, Plus, Search, Users, X} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {FeedbackReviewer, NominatePeersRequest} from '@/lib/types/grow/performance-360';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {Employee} from '@/lib/types/hrms/employee';
 
 interface FeedbackRequestFormProps {
   cycleId: string;
@@ -22,18 +22,18 @@ interface FeedbackRequestFormProps {
 }
 
 export default function FeedbackRequestForm({
-  cycleId,
-  cycleName,
-  subjectEmployeeId,
-  subjectEmployeeName,
-  minPeers,
-  maxPeers,
-  includeManager,
-  includePeers,
-  includeDirectReports,
-  onSubmit,
-  onCancel,
-}: FeedbackRequestFormProps) {
+                                              cycleId,
+                                              cycleName,
+                                              subjectEmployeeId,
+                                              subjectEmployeeName,
+                                              minPeers,
+                                              maxPeers,
+                                              includeManager,
+                                              includePeers,
+                                              includeDirectReports,
+                                              onSubmit,
+                                              onCancel,
+                                            }: FeedbackRequestFormProps) {
   const [selectedPeers, setSelectedPeers] = useState<FeedbackReviewer[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -47,7 +47,7 @@ export default function FeedbackRequestForm({
     return () => clearTimeout(timer);
   };
 
-  const { data: searchData, isFetching: isSearching } = useEmployeeSearch(
+  const {data: searchData, isFetching: isSearching} = useEmployeeSearch(
     debouncedQuery,
     0,
     10,
@@ -126,7 +126,7 @@ export default function FeedbackRequestForm({
         <div className="mb-6 p-4 bg-accent-50 rounded-lg">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-accent-100 rounded-lg">
-              <Users className="h-5 w-5 text-accent-600" />
+              <Users className="h-5 w-5 text-accent-600"/>
             </div>
             <div>
               <p className="text-sm font-medium text-[var(--text-primary)]">Feedback Subject</p>
@@ -141,7 +141,7 @@ export default function FeedbackRequestForm({
           <div className="space-y-2 text-body-secondary">
             {includePeers && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
                 <span>
                   Select {minPeers} to {maxPeers} peer reviewers who work closely with the subject
                 </span>
@@ -149,13 +149,13 @@ export default function FeedbackRequestForm({
             )}
             {includeManager && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
                 <span>Manager feedback will be requested automatically</span>
               </div>
             )}
             {includeDirectReports && (
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-500 mt-0.5 flex-shrink-0"/>
                 <span>Direct report feedback will be requested automatically</span>
               </div>
             )}
@@ -170,7 +170,7 @@ export default function FeedbackRequestForm({
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-[var(--text-muted)]" />
+                <Search className="h-5 w-5 text-[var(--text-muted)]"/>
               </div>
               <input
                 type="text"
@@ -201,7 +201,7 @@ export default function FeedbackRequestForm({
                         </p>
                       </div>
                       {selectedPeers.some((p) => p.employeeId === employee.id) && (
-                        <CheckCircle className="h-5 w-5 text-success-500" />
+                        <CheckCircle className="h-5 w-5 text-success-500"/>
                       )}
                     </div>
                   </button>
@@ -243,7 +243,7 @@ export default function FeedbackRequestForm({
                     onClick={() => removePeer(peer.employeeId)}
                     className="p-1 hover:bg-[var(--bg-card-hover)] rounded"
                   >
-                    <X className="h-5 w-5 text-[var(--text-muted)]" />
+                    <X className="h-5 w-5 text-[var(--text-muted)]"/>
                   </button>
                 </div>
               ))}
@@ -254,7 +254,7 @@ export default function FeedbackRequestForm({
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5"/>
             <p className="text-sm text-danger-700">{error}</p>
           </div>
         )}
@@ -265,14 +265,14 @@ export default function FeedbackRequestForm({
             <div className="flex items-center gap-2">
               {canSubmit ? (
                 <>
-                  <CheckCircle className="h-5 w-5 text-success-500" />
+                  <CheckCircle className="h-5 w-5 text-success-500"/>
                   <span className="text-sm text-success-700">
                     Ready to submit ({selectedPeers.length} peers selected)
                   </span>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="h-5 w-5 text-warning-500" />
+                  <AlertCircle className="h-5 w-5 text-warning-500"/>
                   <span className="text-body-secondary">
                     Select at least {minPeers} peer reviewer(s) to continue
                   </span>
@@ -294,7 +294,7 @@ export default function FeedbackRequestForm({
           disabled={!canSubmit || isSubmitting}
           isLoading={isSubmitting}
         >
-          <Plus className="h-5 w-5 mr-2" />
+          <Plus className="h-5 w-5 mr-2"/>
           Submit Nominations
         </Button>
       </div>

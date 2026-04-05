@@ -1,41 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
 import {
-  ShieldCheck,
-  Users,
-  Plus,
-  Pencil,
-  Trash2,
-  Search,
+  Check,
   ChevronDown,
   ChevronRight,
-  Check,
-  X,
   Key,
+  Pencil,
+  Plus,
+  Search,
+  ShieldCheck,
+  Trash2,
+  Users,
+  X,
 } from 'lucide-react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Permission, RoleWithDetails } from '@/lib/types/core/roles';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Permission, RoleWithDetails} from '@/lib/types/core/roles';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui';
+import {Button} from '@/components/ui/Button';
 import {
-  useRoles,
-  usePermissions as useQueryPermissions,
-  useRoleAdminUsers as useAdminUsers,
-  useUpdateRole,
-  useCreateRole,
-  useDeleteRole,
   useAssignPermissions,
   useAssignRolesToUser,
+  useCreateRole,
+  useDeleteRole,
+  usePermissions as useQueryPermissions,
+  useRoleAdminUsers as useAdminUsers,
+  useRoles,
+  useUpdateRole,
 } from '@/lib/hooks/queries/useRoles';
-import type { User } from '@/lib/api/users';
-import { createLogger } from '@/lib/utils/logger';
+import type {User} from '@/lib/api/users';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('PermissionsPage');
 
@@ -70,8 +70,8 @@ type AssignRolesData = z.infer<typeof assignRolesSchema>;
 
 export default function PermissionsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<'roles' | 'users'>('roles');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -145,7 +145,7 @@ export default function PermissionsPage() {
   };
 
   const handleDeleteRole = (roleId: string, roleName: string) => {
-    setRoleToDelete({ id: roleId, name: roleName });
+    setRoleToDelete({id: roleId, name: roleName});
     setShowDeleteConfirm(true);
   };
 
@@ -211,7 +211,7 @@ export default function PermissionsPage() {
               onClick={() => setIsCreateRoleModalOpen(true)}
               variant="primary"
               size="md"
-              leftIcon={<Plus className="w-5 h-5" />}
+              leftIcon={<Plus className="w-5 h-5"/>}
             >
               Create Role
             </Button>
@@ -225,10 +225,10 @@ export default function PermissionsPage() {
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'roles'
               ? 'border-accent-500 text-accent-700'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
+            }`}
           >
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5" />
+              <ShieldCheck className="w-5 h-5"/>
               Roles ({roles.length})
             </div>
           </button>
@@ -237,10 +237,10 @@ export default function PermissionsPage() {
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'users'
               ? 'border-accent-500 text-accent-700'
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
+            }`}
           >
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
+              <Users className="w-5 h-5"/>
               Users ({users.length})
             </div>
           </button>
@@ -248,7 +248,7 @@ export default function PermissionsPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]"/>
           <input
             type="text"
             placeholder={activeTab === 'roles' ? 'Search roles...' : 'Search users...'}
@@ -261,29 +261,29 @@ export default function PermissionsPage() {
         {/* Content */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500"/>
           </div>
         ) : (
           <AnimatePresence mode="wait">
             {activeTab === 'roles' ? (
               <motion.div
                 key="roles"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{opacity: 0, y: 10}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -10}}
                 className="space-y-4"
               >
                 {filteredRoles.length === 0 ? (
                   <div className="text-center py-12 text-[var(--text-muted)]">
-                    <ShieldCheck className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
+                    <ShieldCheck className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]"/>
                     <p>No roles found</p>
                   </div>
                 ) : (
                   filteredRoles.map((role) => (
                     <motion.div
                       key={role.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+                      initial={{opacity: 0}}
+                      animate={{opacity: 1}}
                       className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden"
                     >
                       {/* Role Header */}
@@ -295,11 +295,11 @@ export default function PermissionsPage() {
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${role.isSystemRole
                             ? 'bg-accent-300 dark:bg-accent-900/30'
                             : 'bg-accent-100 dark:bg-accent-900/30'
-                            }`}>
+                          }`}>
                             <ShieldCheck className={`w-5 h-5 ${role.isSystemRole
                               ? 'text-accent-800 dark:text-accent-600'
                               : 'text-accent-700 dark:text-accent-400'
-                              }`} />
+                            }`}/>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -307,7 +307,8 @@ export default function PermissionsPage() {
                                 {role.name}
                               </h3>
                               {role.isSystemRole && (
-                                <span className="px-2 py-0.5 text-xs bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                                <span
+                                  className="px-2 py-0.5 text-xs bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                   System
                                 </span>
                               )}
@@ -327,7 +328,7 @@ export default function PermissionsPage() {
                                 }}
                                 className="p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
-                                <Pencil className="w-4 h-4" />
+                                <Pencil className="w-4 h-4"/>
                               </button>
                               <button
                                 onClick={(e) => {
@@ -336,14 +337,14 @@ export default function PermissionsPage() {
                                 }}
                                 className="p-2 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4"/>
                               </button>
                             </>
                           )}
                           {role.expanded ? (
-                            <ChevronDown className="w-5 h-5 text-[var(--text-muted)]" />
+                            <ChevronDown className="w-5 h-5 text-[var(--text-muted)]"/>
                           ) : (
-                            <ChevronRight className="w-5 h-5 text-[var(--text-muted)]" />
+                            <ChevronRight className="w-5 h-5 text-[var(--text-muted)]"/>
                           )}
                         </div>
                       </div>
@@ -352,10 +353,10 @@ export default function PermissionsPage() {
                       <AnimatePresence>
                         {role.expanded && (
                           <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{height: 0, opacity: 0}}
+                            animate={{height: 'auto', opacity: 1}}
+                            exit={{height: 0, opacity: 0}}
+                            transition={{duration: 0.2}}
                             className="border-t border-[var(--border-main)]"
                           >
                             <div className="p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/50">
@@ -372,7 +373,7 @@ export default function PermissionsPage() {
                                       className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded text-xs font-mono text-[var(--text-secondary)]"
                                       title={perm.description}
                                     >
-                                      <Key className="w-3 h-3" />
+                                      <Key className="w-3 h-3"/>
                                       {perm.code.replace('HRMS:', '')}
                                     </span>
                                   ))}
@@ -389,67 +390,70 @@ export default function PermissionsPage() {
             ) : (
               <motion.div
                 key="users"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{opacity: 0, y: 10}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -10}}
                 className="space-y-4"
               >
                 {filteredUsers.length === 0 ? (
                   <div className="text-center py-12 text-[var(--text-muted)]">
-                    <Users className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
+                    <Users className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]"/>
                     <p>No users found</p>
                   </div>
                 ) : (
                   <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
                     <table className="w-full text-left text-sm">
                       <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
-                        <tr>
-                          <th className="px-6 py-2 font-medium">User</th>
-                          <th className="px-6 py-2 font-medium">Email</th>
-                          <th className="px-6 py-2 font-medium">Assigned Roles</th>
-                          <th className="px-6 py-2 font-medium text-right">Actions</th>
-                        </tr>
+                      <tr>
+                        <th className="px-6 py-2 font-medium">User</th>
+                        <th className="px-6 py-2 font-medium">Email</th>
+                        <th className="px-6 py-2 font-medium">Assigned Roles</th>
+                        <th className="px-6 py-2 font-medium text-right">Actions</th>
+                      </tr>
                       </thead>
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                        {filteredUsers.map((user) => (
-                          <tr key={user.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                                  {user.firstName[0]}
-                                </div>
-                                <span className="font-medium text-[var(--text-primary)]">
+                      {filteredUsers.map((user) => (
+                        <tr key={user.id}
+                            className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              <div
+                                className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                                {user.firstName[0]}
+                              </div>
+                              <span className="font-medium text-[var(--text-primary)]">
                                   {user.fullName}
                                 </span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-[var(--text-muted)]">
-                              {user.email}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                {user.roles.length > 0 ? (
-                                  user.roles.map(role => (
-                                    <span key={role.code} className="inline-flex items-center px-2 py-1 rounded bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-[var(--text-muted)]">
+                            {user.email}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-wrap gap-2">
+                              {user.roles.length > 0 ? (
+                                user.roles.map(role => (
+                                  <span key={role.code}
+                                        className="inline-flex items-center px-2 py-1 rounded bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                       {role.name}
                                     </span>
-                                  ))
-                                ) : (
-                                  <span className="text-[var(--text-muted)] italic">No roles</span>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <button
-                                onClick={() => openEditUserModal(user)}
-                                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              >
-                                <Pencil className="w-4 h-4" />
-                                Edit Roles
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                                ))
+                              ) : (
+                                <span className="text-[var(--text-muted)] italic">No roles</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button
+                              onClick={() => openEditUserModal(user)}
+                              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            >
+                              <Pencil className="w-4 h-4"/>
+                              Edit Roles
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                       </tbody>
                     </table>
                   </div>
@@ -544,12 +548,12 @@ export default function PermissionsPage() {
 // ─── EditRoleModal ─────────────────────────────────────────────────────────────
 
 function EditRoleModal({
-  role,
-  permissionsByResource,
-  onClose,
-  onSave,
-  isSaving,
-}: {
+                         role,
+                         permissionsByResource,
+                         onClose,
+                         onSave,
+                         isSaving,
+                       }: {
   role: RoleWithDetails;
   permissionsByResource: Record<string, Permission[]>;
   onClose: () => void;
@@ -581,7 +585,7 @@ function EditRoleModal({
 
   const onSubmit = (data: EditRoleData) => {
     onSave(
-      { name: data.name, description: data.description },
+      {name: data.name, description: data.description},
       data.permissions,
     );
   };
@@ -591,16 +595,16 @@ function EditRoleModal({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
       onClick={handleClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -613,8 +617,9 @@ function EditRoleModal({
               {selectedCount} permissions selected
             </p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5" />
+          <button onClick={handleClose}
+                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
+            <X className="w-5 h-5"/>
           </button>
         </div>
 
@@ -629,7 +634,8 @@ function EditRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.name && (
-                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
+                  <p
+                    className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
                 )}
               </div>
               <div>
@@ -645,11 +651,12 @@ function EditRoleModal({
             <Controller
               name="permissions"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <>
                   {Object.entries(permissionsByResource).map(([resource, perms]) => (
                     <div key={resource} className="mb-6">
-                      <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4 uppercase tracking-wider">{resource}</h3>
+                      <h3
+                        className="text-sm font-medium text-[var(--text-secondary)] mb-4 uppercase tracking-wider">{resource}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                         {perms.map((perm) => {
                           const isChecked = field.value.includes(perm.code);
@@ -666,11 +673,13 @@ function EditRoleModal({
                               onClick={toggle}
                               className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'}`}
                             >
-                              <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
-                                {isChecked && <Check className="w-3 h-3" />}
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                                {isChecked && <Check className="w-3 h-3"/>}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
+                                <p className="text-sm font-medium text-[var(--text-primary)] truncate"
+                                   title={perm.name}>{perm.name}</p>
                                 <p className="text-caption truncate" title={perm.action}>{perm.action}</p>
                               </div>
                             </button>
@@ -686,7 +695,8 @@ function EditRoleModal({
 
           <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
             <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Saving...">
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                    loadingText="Saving...">
               Save Changes
             </Button>
           </div>
@@ -699,11 +709,11 @@ function EditRoleModal({
 // ─── CreateRoleModal ───────────────────────────────────────────────────────────
 
 function CreateRoleModal({
-  permissionsByResource,
-  onClose,
-  onSave,
-  isSaving,
-}: {
+                           permissionsByResource,
+                           onClose,
+                           onSave,
+                           isSaving,
+                         }: {
   permissionsByResource: Record<string, Permission[]>;
   onClose: () => void;
   onSave: (data: { code: string; name: string; description?: string; permissionCodes?: string[] }) => void;
@@ -737,16 +747,16 @@ function CreateRoleModal({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
       onClick={handleClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -755,8 +765,9 @@ function CreateRoleModal({
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">Create New Role</h2>
             <p className="text-body-muted">Create a custom role with specific permissions</p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5" />
+          <button onClick={handleClose}
+                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
+            <X className="w-5 h-5"/>
           </button>
         </div>
 
@@ -772,7 +783,8 @@ function CreateRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.roleCode && (
-                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.roleCode.message}</p>
+                  <p
+                    className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.roleCode.message}</p>
                 )}
               </div>
               <div>
@@ -784,7 +796,8 @@ function CreateRoleModal({
                   className="input-aura"
                 />
                 {form.formState.errors.name && (
-                  <p className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
+                  <p
+                    className="mt-1 text-xs text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{form.formState.errors.name.message}</p>
                 )}
               </div>
             </div>
@@ -804,11 +817,12 @@ function CreateRoleModal({
               <Controller
                 name="permissions"
                 control={form.control}
-                render={({ field }) => (
+                render={({field}) => (
                   <>
                     {Object.entries(permissionsByResource).map(([resource, perms]) => (
                       <div key={resource} className="mb-4">
-                        <h4 className="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">{resource}</h4>
+                        <h4
+                          className="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">{resource}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                           {perms.map((perm) => {
                             const isChecked = field.value.includes(perm.code);
@@ -825,11 +839,13 @@ function CreateRoleModal({
                                 onClick={toggle}
                                 className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'}`}
                               >
-                                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
-                                  {isChecked && <Check className="w-3 h-3" />}
+                                <div
+                                  className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                                  {isChecked && <Check className="w-3 h-3"/>}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
+                                  <p className="text-sm font-medium text-[var(--text-primary)] truncate"
+                                     title={perm.name}>{perm.name}</p>
                                   <p className="text-caption truncate" title={perm.action}>{perm.action}</p>
                                 </div>
                               </button>
@@ -846,7 +862,8 @@ function CreateRoleModal({
 
           <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
             <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Creating...">
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                    loadingText="Creating...">
               Create Role
             </Button>
           </div>
@@ -859,12 +876,12 @@ function CreateRoleModal({
 // ─── EditUserModal ─────────────────────────────────────────────────────────────
 
 function EditUserModal({
-  user,
-  allRoles,
-  onClose,
-  onSave,
-  isSaving,
-}: {
+                         user,
+                         allRoles,
+                         onClose,
+                         onSave,
+                         isSaving,
+                       }: {
   user: User;
   allRoles: RoleWithDetails[];
   onClose: () => void;
@@ -880,7 +897,7 @@ function EditUserModal({
 
   // Reset when a different user is opened
   useEffect(() => {
-    form.reset({ roleCodes: user.roles.map(r => r.code) });
+    form.reset({roleCodes: user.roles.map(r => r.code)});
   }, [user, form]);
 
   const handleClose = () => {
@@ -894,16 +911,16 @@ function EditUserModal({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]"
       onClick={handleClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-dropdown)] w-full max-w-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -916,8 +933,9 @@ function EditUserModal({
               Assign roles to {user.fullName}
             </p>
           </div>
-          <button onClick={handleClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
-            <X className="w-5 h-5" />
+          <button onClick={handleClose}
+                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-surface)]">
+            <X className="w-5 h-5"/>
           </button>
         </div>
 
@@ -926,7 +944,7 @@ function EditUserModal({
             <Controller
               name="roleCodes"
               control={form.control}
-              render={({ field }) => (
+              render={({field}) => (
                 <div className="grid grid-cols-1 gap-2">
                   {allRoles.map((role) => {
                     const isChecked = field.value.includes(role.code);
@@ -942,15 +960,15 @@ function EditUserModal({
                         type="button"
                         onClick={toggle}
                         className={`flex items-center gap-4 p-4 rounded-lg border text-left transition-colors ${isChecked
-                            ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700'
-                            : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'
-                          }`}
+                          ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700'
+                          : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'
+                        }`}
                       >
                         <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked
-                            ? 'bg-accent-500 text-white'
-                            : 'bg-[var(--bg-surface)]'
-                          }`}>
-                          {isChecked && <Check className="w-3 h-3" />}
+                          ? 'bg-accent-500 text-white'
+                          : 'bg-[var(--bg-surface)]'
+                        }`}>
+                          {isChecked && <Check className="w-3 h-3"/>}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -970,7 +988,8 @@ function EditUserModal({
 
           <div className="flex items-center justify-end gap-4 p-4 border-t border-[var(--border-main)] shrink-0">
             <Button type="button" onClick={handleClose} variant="ghost" size="md">Cancel</Button>
-            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving} loadingText="Saving...">
+            <Button type="submit" disabled={isSaving} variant="primary" size="md" isLoading={isSaving}
+                    loadingText="Saving...">
               Save Changes
             </Button>
           </div>

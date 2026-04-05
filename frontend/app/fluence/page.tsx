@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 /**
  * Fluence entry point — redirects to the Wiki section (default landing).
@@ -10,7 +10,7 @@ import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
  */
 export default function FluencePage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_VIEW,

@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { LeaveRequest, LeaveRequestStatus } from '@/lib/types/hrms/leave';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
   useActiveLeaveTypes,
+  useApproveLeaveRequest,
   useLeaveRequests,
   useLeaveRequestsByStatus,
-  useApproveLeaveRequest,
   useRejectLeaveRequest,
 } from '@/lib/hooks/queries/useLeaves';
 
@@ -19,8 +19,8 @@ const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMI
 export default function AdminLeaveRequestsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   const [selectedStatus, setSelectedStatus] = useState<LeaveRequestStatus | 'ALL'>('PENDING');
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
@@ -30,7 +30,7 @@ export default function AdminLeaveRequestsPage() {
   const [rejectionReason, setRejectionReason] = useState('');
 
   // React Query hooks
-  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const {data: leaveTypes = []} = useActiveLeaveTypes();
   const allRequests = useLeaveRequests(0, 100);
   const statusRequests = useLeaveRequestsByStatus(selectedStatus as LeaveRequestStatus, 0, 100);
   const approveMutation = useApproveLeaveRequest();
@@ -152,7 +152,8 @@ export default function AdminLeaveRequestsPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 rounded">
+          <div
+            className="mb-4 p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 rounded">
             {error instanceof Error ? error.message : 'Failed to load leave requests'}
           </div>
         )}
@@ -178,96 +179,98 @@ export default function AdminLeaveRequestsPage() {
         <div className="card-aura overflow-hidden">
           <table className="table-aura">
             <thead className="skeuo-table-header">
-              <tr>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Request #
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Employee ID
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Leave Type
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Dates
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Days
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Applied On
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
+            <tr>
+              <th
+                className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
+                Request #
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Employee ID
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Leave Type
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Dates
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Days
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Applied On
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
             </thead>
             <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
-              {leaveRequests.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-[var(--text-secondary)]">
-                    No leave requests found for {selectedStatus.toLowerCase()} status
+            {leaveRequests.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="px-6 py-12 text-center text-[var(--text-secondary)]">
+                  No leave requests found for {selectedStatus.toLowerCase()} status
+                </td>
+              </tr>
+            ) : (
+              leaveRequests.map(request => (
+                <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
+                    {request.requestNumber}
                   </td>
-                </tr>
-              ) : (
-                leaveRequests.map(request => (
-                  <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
-                      {request.requestNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                      {request.employeeId.substring(0, 8)}...
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
-                      {getLeaveTypeName(request.leaveTypeId)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                      {formatDate(request.startDate)} - {formatDate(request.endDate)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                      {request.totalDays} {request.isHalfDay && '(Half Day)'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(request.status)}`}>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                    {request.employeeId.substring(0, 8)}...
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
+                    {getLeaveTypeName(request.leaveTypeId)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                    {formatDate(request.startDate)} - {formatDate(request.endDate)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                    {request.totalDays} {request.isHalfDay && '(Half Day)'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(request.status)}`}>
                         {request.status}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                      {formatDate(request.appliedOn)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      {request.status === 'PENDING' && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setSelectedRequest(request);
-                              setShowApproveModal(true);
-                            }}
-                            className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedRequest(request);
-                              setShowRejectModal(true);
-                            }}
-                            className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-                      {request.status !== 'PENDING' && (
-                        <span className="text-[var(--text-secondary)]">No actions</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                    {formatDate(request.appliedOn)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    {request.status === 'PENDING' && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setShowApproveModal(true);
+                          }}
+                          className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setShowRejectModal(true);
+                          }}
+                          className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    {request.status !== 'PENDING' && (
+                      <span className="text-[var(--text-secondary)]">No actions</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
             </tbody>
           </table>
         </div>

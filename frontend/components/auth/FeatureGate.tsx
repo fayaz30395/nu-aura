@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useFeatureFlag } from '@/lib/hooks/useFeatureFlag';
+import {useFeatureFlag} from '@/lib/hooks/useFeatureFlag';
 
 interface FeatureGateProps {
   /** The feature key to check (e.g., "enable_projects") */
@@ -25,8 +25,8 @@ interface FeatureGateProps {
  *     <AIRecruitmentPanel />
  *   </FeatureGate>
  */
-export function FeatureGate({ feature, children, fallback = null }: FeatureGateProps) {
-  const { enabled, isLoading } = useFeatureFlag(feature);
+export function FeatureGate({feature, children, fallback = null}: FeatureGateProps) {
+  const {enabled, isLoading} = useFeatureFlag(feature);
 
   if (isLoading) return null;
   if (!enabled) return <>{fallback}</>;

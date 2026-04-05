@@ -1,17 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  OnboardingStatus
-} from '@/lib/types/hire/onboarding';
-import { onboardingService } from '@/lib/services/hire/onboarding.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {OnboardingStatus} from '@/lib/types/hire/onboarding';
+import {onboardingService} from '@/lib/services/hire/onboarding.service';
 
 // Query Key Factory
 export const onboardingKeys = {
   all: ['onboarding'] as const,
   processes: () => [...onboardingKeys.all, 'processes'] as const,
   processesPaginated: (page: number, size: number) =>
-    [...onboardingKeys.processes(), 'paginated', { page, size }] as const,
+    [...onboardingKeys.processes(), 'paginated', {page, size}] as const,
   processByStatus: (status: OnboardingStatus) =>
     [...onboardingKeys.processes(), 'status', status] as const,
   processById: (id: string) =>
@@ -137,7 +135,7 @@ export function useCreateOnboardingProcess() {
     mutationFn: (data: Parameters<typeof onboardingService.createProcess>[0]) =>
       onboardingService.createProcess(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.processes() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.processes()});
     },
   });
 }
@@ -149,14 +147,14 @@ export function useUpdateOnboardingProcessStatus() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      status,
-    }: {
+                   id,
+                   status,
+                 }: {
       id: string;
       status: OnboardingStatus;
     }) => onboardingService.updateStatus(id, status),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.processes() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.processes()});
       queryClient.invalidateQueries({
         queryKey: onboardingKeys.processById(data.id),
       });
@@ -171,14 +169,14 @@ export function useUpdateOnboardingProcessProgress() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      percentage,
-    }: {
+                   id,
+                   percentage,
+                 }: {
       id: string;
       percentage: number;
     }) => onboardingService.updateProgress(id, percentage),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.processes() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.processes()});
       queryClient.invalidateQueries({
         queryKey: onboardingKeys.processById(data.id),
       });
@@ -196,7 +194,7 @@ export function useCreateOnboardingTemplate() {
       data: Parameters<typeof onboardingService.createTemplate>[0]
     ) => onboardingService.createTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.templates() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.templates()});
     },
   });
 }
@@ -208,14 +206,14 @@ export function useUpdateOnboardingTemplate() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      templateId,
-      data,
-    }: {
+                   templateId,
+                   data,
+                 }: {
       templateId: string;
       data: Parameters<typeof onboardingService.updateTemplate>[1];
     }) => onboardingService.updateTemplate(templateId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.templates() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.templates()});
       queryClient.invalidateQueries({
         queryKey: onboardingKeys.templateById(data.id),
       });
@@ -232,7 +230,7 @@ export function useDeleteOnboardingTemplate() {
     mutationFn: (templateId: string) =>
       onboardingService.deleteTemplate(templateId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.templates() });
+      queryClient.invalidateQueries({queryKey: onboardingKeys.templates()});
     },
   });
 }
@@ -244,9 +242,9 @@ export function useAddOnboardingTemplateTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      templateId,
-      data,
-    }: {
+                   templateId,
+                   data,
+                 }: {
       templateId: string;
       data: Parameters<typeof onboardingService.addTemplateTask>[1];
     }) => onboardingService.addTemplateTask(templateId, data),
@@ -265,10 +263,10 @@ export function useUpdateOnboardingTemplateTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      templateId,
-      taskId,
-      data,
-    }: {
+                   templateId,
+                   taskId,
+                   data,
+                 }: {
       templateId: string;
       taskId: string;
       data: Parameters<typeof onboardingService.updateTemplateTask>[2];
@@ -288,9 +286,9 @@ export function useDeleteOnboardingTemplateTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      templateId,
-      taskId,
-    }: {
+                   templateId,
+                   taskId,
+                 }: {
       templateId: string;
       taskId: string;
     }) => onboardingService.deleteTemplateTask(templateId, taskId),
@@ -309,10 +307,10 @@ export function useUpdateOnboardingTaskStatus() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      taskId,
-      status,
-      remarks,
-    }: {
+                   taskId,
+                   status,
+                   remarks,
+                 }: {
       taskId: string;
       status: string;
       remarks?: string;

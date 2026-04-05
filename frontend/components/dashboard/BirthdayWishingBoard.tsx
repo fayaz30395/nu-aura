@@ -1,25 +1,25 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import {useMemo, useState} from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { PartyPopper, Gift } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useUpcomingBirthdays } from '@/lib/hooks/queries/useHome';
+import {motion} from 'framer-motion';
+import {Gift, PartyPopper} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useUpcomingBirthdays} from '@/lib/hooks/queries/useHome';
 
 /* ─── Balloon SVG Components ─────────────────────────────────────────────── */
 
-function Balloon({ color, className }: { color: string; className?: string }) {
+function Balloon({color, className}: { color: string; className?: string }) {
   return (
     <svg viewBox="0 0 40 60" className={className} fill="none">
-      <ellipse cx="20" cy="22" rx="14" ry="18" fill={color} />
-      <ellipse cx="20" cy="22" rx="14" ry="18" fill="white" opacity="0.15" />
+      <ellipse cx="20" cy="22" rx="14" ry="18" fill={color}/>
+      <ellipse cx="20" cy="22" rx="14" ry="18" fill="white" opacity="0.15"/>
       {/* Highlight */}
-      <ellipse cx="14" cy="16" rx="4" ry="6" fill="white" opacity="0.25" transform="rotate(-15 14 16)" />
+      <ellipse cx="14" cy="16" rx="4" ry="6" fill="white" opacity="0.25" transform="rotate(-15 14 16)"/>
       {/* Knot */}
-      <polygon points="18,39 20,42 22,39" fill={color} />
+      <polygon points="18,39 20,42 22,39" fill={color}/>
       {/* String */}
-      <path d="M20 42 Q 18 50, 20 58" stroke={color} strokeWidth="0.8" fill="none" opacity="0.6" />
+      <path d="M20 42 Q 18 50, 20 58" stroke={color} strokeWidth="0.8" fill="none" opacity="0.6"/>
     </svg>
   );
 }
@@ -48,7 +48,7 @@ function FloatingBalloons() {
             delay: i * 0.3,
           }}
         >
-          <Balloon color={color} className="w-8 h-12" />
+          <Balloon color={color} className="w-8 h-12"/>
         </motion.div>
       ))}
     </div>
@@ -57,14 +57,14 @@ function FloatingBalloons() {
 
 /* ─── Confetti Particles ─────────────────────────────────────────────────── */
 
-function ConfettiParticle({ delay, left }: { delay: number; left: string }) {
+function ConfettiParticle({delay, left}: { delay: number; left: string }) {
   const colors = ['var(--chart-secondary)', 'var(--chart-warning)', 'var(--chart-accent)', 'var(--chart-success)', 'var(--chart-primary)', 'var(--chart-warning)'];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
   return (
     <motion.div
       className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
-      style={{ backgroundColor: color, left, top: '20%' }}
+      style={{backgroundColor: color, left, top: '20%'}}
       animate={{
         y: [0, 120],
         x: [0, (Math.random() - 0.5) * 40],
@@ -117,7 +117,7 @@ function BuntingFlags() {
 
 /* ─── Wisher Avatars ─────────────────────────────────────────────────────── */
 
-function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: string }[] }) {
+function WisherAvatars({wishers}: { wishers: { name: string; avatarUrl?: string }[] }) {
   if (wishers.length === 0) return null;
 
   return (
@@ -131,7 +131,8 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
             title={w.name}
           >
             {w.avatarUrl ? (
-              <Image src={w.avatarUrl} alt={w.name} width={32} height={32} unoptimized className="h-full w-full rounded-full object-cover" />
+              <Image src={w.avatarUrl} alt={w.name} width={32} height={32} unoptimized
+                     className="h-full w-full rounded-full object-cover"/>
             ) : (
               initials
             )}
@@ -139,7 +140,8 @@ function WisherAvatars({ wishers }: { wishers: { name: string; avatarUrl?: strin
         );
       })}
       {wishers.length > 5 && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-2xs font-semibold text-[var(--text-muted)]">
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-[var(--bg-surface)] text-2xs font-semibold text-[var(--text-muted)]">
           +{wishers.length - 5}
         </div>
       )}
@@ -154,9 +156,9 @@ interface BirthdayWishingBoardProps {
   forceShow?: boolean;
 }
 
-export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
-  const { user } = useAuth();
-  const { data: birthdays = [] } = useUpcomingBirthdays(1);
+export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
+  const {user} = useAuth();
+  const {data: birthdays = []} = useUpcomingBirthdays(1);
   const [dismissed] = useState(false);
 
   // Check if today is the logged-in user's birthday
@@ -173,7 +175,7 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
     return birthdays
       .filter(b => b.employeeId !== user?.employeeId)
       .slice(0, 5)
-      .map(b => ({ name: b.employeeName, avatarUrl: b.avatarUrl }));
+      .map(b => ({name: b.employeeName, avatarUrl: b.avatarUrl}));
   }, [birthdays, user?.employeeId]);
 
   if (!isTodayMyBirthday || dismissed) return null;
@@ -182,33 +184,34 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{opacity: 0, scale: 0.95}}
+      animate={{opacity: 1, scale: 1}}
+      transition={{duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94]}}
       className="relative overflow-hidden rounded-lg border border-accent-200 dark:border-accent-800/40 bg-gradient-to-br from-accent-50 via-white to-info-50 dark:from-accent-950/40 dark:via-[var(--bg-card)] dark:to-info-950/30"
     >
       {/* Decorative elements */}
-      <BuntingFlags />
-      <FloatingBalloons />
+      <BuntingFlags/>
+      <FloatingBalloons/>
 
       {/* Confetti particles */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <ConfettiParticle key={i} delay={i * 0.4} left={`${10 + i * 10}%`} />
+      {Array.from({length: 8}).map((_, i) => (
+        <ConfettiParticle key={i} delay={i * 0.4} left={`${10 + i * 10}%`}/>
       ))}
 
       {/* Content */}
       <div className="relative z-10 px-6 pt-20 pb-6 text-center">
         {/* Avatar with party hat effect */}
         <div className="relative inline-block mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-[var(--shadow-dropdown)] mx-auto">
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-[var(--shadow-dropdown)] mx-auto">
             {displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
           </div>
           <motion.div
             className="absolute -top-2 -right-2"
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={{rotate: [0, 10, -10, 0]}}
+            transition={{duration: 2, repeat: Infinity, ease: 'easeInOut'}}
           >
-            <PartyPopper className="h-6 w-6 text-warning-500" />
+            <PartyPopper className="h-6 w-6 text-warning-500"/>
           </motion.div>
         </div>
 
@@ -222,24 +225,24 @@ export function BirthdayWishingBoard({ forceShow }: BirthdayWishingBoardProps) {
 
         {/* See wishes button */}
         <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={{scale: 1.03}}
+          whileTap={{scale: 0.97}}
           className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-[var(--shadow-card)] hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           onClick={() => {
             // Navigate to wishes view — for now, scroll to celebrations section
             const celebrationSection = document.querySelector('[data-section="celebrations"]');
             if (celebrationSection) {
-              celebrationSection.scrollIntoView({ behavior: 'smooth' });
+              celebrationSection.scrollIntoView({behavior: 'smooth'});
             }
           }}
           aria-label="See your birthday wishes"
         >
-          <Gift className="h-4 w-4" />
+          <Gift className="h-4 w-4"/>
           See your wishes
         </motion.button>
 
         {/* Wisher avatars */}
-        <WisherAvatars wishers={wishers} />
+        <WisherAvatars wishers={wishers}/>
       </div>
     </motion.div>
   );

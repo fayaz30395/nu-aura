@@ -1,37 +1,37 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { logger } from '@/lib/utils/logger';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Plus, Info, ArrowLeft } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { useToast } from '@/components/ui/Toast';
+import {useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {logger} from '@/lib/utils/logger';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {ArrowLeft, Info, Plus} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {useToast} from '@/components/ui/Toast';
 import {
   usePendingRegularizations,
-  useRequestRegularization,
   useRejectRegularization,
+  useRequestRegularization,
 } from '@/lib/hooks/queries/useAttendance';
-import { AttendanceRecord } from '@/lib/types/hrms/attendance';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployee } from '@/lib/hooks/queries/useEmployees';
-import { usePermissions } from '@/lib/hooks/usePermissions';
+import {AttendanceRecord} from '@/lib/types/hrms/attendance';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useEmployee} from '@/lib/hooks/queries/useEmployees';
+import {usePermissions} from '@/lib/hooks/usePermissions';
+import type {RegularizationFormData, RegularizationRequest, RejectReasonData} from './_components';
 import {
-  RegularizationStatsCards,
-  ViewTabs,
-  StatusFilterTabs,
-  RequestsTable,
-  TeamRequestsView,
   CreateRequestModal,
+  RegularizationStatsCards,
   RejectRequestModal,
+  RequestsTable,
+  StatusFilterTabs,
+  TeamRequestsView,
+  ViewTabs,
 } from './_components';
-import type { RegularizationRequest, RegularizationFormData, RejectReasonData } from './_components';
 
 // ---------------------------------------------------------------------------
 // Zod schemas (kept here so page owns the validation contract)
@@ -55,10 +55,10 @@ const rejectReasonSchema = z.object({
 
 export default function RegularizationPage() {
   const router = useRouter();
-  const { success, error } = useToast();
-  const { user } = useAuth();
-  const { data: myEmployee } = useEmployee(user?.employeeId || '', !!user?.employeeId);
-  const { hasPermission } = usePermissions();
+  const {success, error} = useToast();
+  const {user} = useAuth();
+  const {data: myEmployee} = useEmployee(user?.employeeId || '', !!user?.employeeId);
+  const {hasPermission} = usePermissions();
   const canApprove = hasPermission('ATTENDANCE:APPROVE');
   const rejectMutation = useRejectRegularization();
 
@@ -80,7 +80,7 @@ export default function RegularizationPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     reset,
     watch,
     setValue,
@@ -97,12 +97,12 @@ export default function RegularizationPage() {
   const {
     register: registerReject,
     handleSubmit: handleSubmitReject,
-    formState: { errors: rejectErrors, isSubmitting: isRejectSubmitting },
+    formState: {errors: rejectErrors, isSubmitting: isRejectSubmitting},
     reset: resetReject,
     watch: watchReject,
   } = useForm<RejectReasonData>({
     resolver: zodResolver(rejectReasonSchema),
-    defaultValues: { reason: '' },
+    defaultValues: {reason: ''},
   });
 
   const reasonValue = watch('reason');
@@ -111,7 +111,7 @@ export default function RegularizationPage() {
   // ---------------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------------
-  const { data: regularizationsData, isLoading: loading } = usePendingRegularizations(0, 50);
+  const {data: regularizationsData, isLoading: loading} = usePendingRegularizations(0, 50);
   const requestMutation = useRequestRegularization();
 
   const allRequests: RegularizationRequest[] = (regularizationsData?.content || [])
@@ -170,7 +170,7 @@ export default function RegularizationPage() {
     try {
       await requestMutation.mutateAsync({
         id: data.attendanceDate,
-        data: { reason: data.reason },
+        data: {reason: data.reason},
       });
       success('Regularization request submitted successfully!');
       setShowCreateModal(false);
@@ -186,7 +186,7 @@ export default function RegularizationPage() {
   const onRejectSubmit = async (data: RejectReasonData) => {
     if (!requestToReject) return;
     try {
-      await rejectMutation.mutateAsync({ id: requestToReject, reason: data.reason });
+      await rejectMutation.mutateAsync({id: requestToReject, reason: data.reason});
       success('Regularization request rejected successfully!');
       setShowRejectModal(false);
       setRequestToReject(null);
@@ -234,9 +234,9 @@ export default function RegularizationPage() {
     <AppLayout activeMenuItem="attendance">
       <motion.div
         className="space-y-8"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 12}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header with Breadcrumb */}
         <div className="space-y-4">
@@ -245,7 +245,7 @@ export default function RegularizationPage() {
               onClick={() => router.push('/attendance')}
               className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4"/>
               Back to Attendance
             </button>
           </div>
@@ -257,7 +257,7 @@ export default function RegularizationPage() {
               </p>
             </div>
             <Button onClick={handleOpenCreate} className="bg-accent-500 hover:bg-accent-700 text-white">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2"/>
               Request Regularization
             </Button>
           </div>
@@ -267,7 +267,7 @@ export default function RegularizationPage() {
         <Card className="card-aura tint-info border-[var(--status-info-border)]">
           <CardContent className="p-4">
             <div className="flex gap-4">
-              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]" />
+              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]"/>
               <div className="text-sm text-[var(--status-info-text)]">
                 <p className="font-semibold mb-1">About Attendance Regularization</p>
                 <p>
@@ -280,15 +280,15 @@ export default function RegularizationPage() {
         </Card>
 
         {/* KPI Stats Cards */}
-        <RegularizationStatsCards stats={stats} loading={loading} />
+        <RegularizationStatsCards stats={stats} loading={loading}/>
 
         {/* My Requests / Team Requests tab switcher */}
-        <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} canApprove={canApprove} />
+        <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} canApprove={canApprove}/>
 
         {/* My Requests View */}
         {activeTab === 'my-requests' && (
           <>
-            <StatusFilterTabs statusFilter={statusFilter} onFilterChange={setStatusFilter} />
+            <StatusFilterTabs statusFilter={statusFilter} onFilterChange={setStatusFilter}/>
             <RequestsTable
               requests={sortedRequests}
               loading={loading}
@@ -300,7 +300,7 @@ export default function RegularizationPage() {
 
         {/* Team Requests View */}
         {activeTab === 'team-requests' && canApprove && (
-          <TeamRequestsView onReject={handleOpenReject} />
+          <TeamRequestsView onReject={handleOpenReject}/>
         )}
       </motion.div>
 

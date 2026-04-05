@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {ChevronDown, ChevronUp} from 'lucide-react';
 
 // Column definition for the table
 export interface Column<T> {
@@ -46,24 +46,24 @@ export interface ResponsiveTableProps<T> {
 }
 
 function ResponsiveTable<T>({
-  columns,
-  data,
-  keyExtractor,
-  emptyMessage = 'No data available',
-  emptyIcon,
-  isLoading = false,
-  onRowClick,
-  renderRowActions,
-  sortColumn,
-  sortDirection,
-  onSort,
-  selectable = false,
-  selectedKeys = new Set(),
-  onSelectionChange,
-  className,
-  rowClassName,
-  renderMobileCard,
-}: ResponsiveTableProps<T>) {
+                              columns,
+                              data,
+                              keyExtractor,
+                              emptyMessage = 'No data available',
+                              emptyIcon,
+                              isLoading = false,
+                              onRowClick,
+                              renderRowActions,
+                              sortColumn,
+                              sortDirection,
+                              onSort,
+                              selectable = false,
+                              selectedKeys = new Set(),
+                              onSelectionChange,
+                              className,
+                              rowClassName,
+                              renderMobileCard,
+                            }: ResponsiveTableProps<T>) {
   const handleSelectAll = () => {
     if (!onSelectionChange) return;
     if (selectedKeys.size === data.length) {
@@ -87,12 +87,12 @@ function ResponsiveTable<T>({
   const renderSortIcon = (column: Column<T>) => {
     if (!column.sortable) return null;
     if (sortColumn !== column.key) {
-      return <ChevronDown className="h-4 w-4 opacity-30" />;
+      return <ChevronDown className="h-4 w-4 opacity-30"/>;
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4" />
+      <ChevronUp className="h-4 w-4"/>
     ) : (
-      <ChevronDown className="h-4 w-4" />
+      <ChevronDown className="h-4 w-4"/>
     );
   };
 
@@ -103,16 +103,16 @@ function ResponsiveTable<T>({
         {/* Desktop skeleton */}
         <div className="hidden md:block">
           <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-surface-200 dark:bg-surface-700 rounded" />
+            <div className="h-12 bg-surface-200 dark:bg-surface-700 rounded"/>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-surface-100 dark:bg-surface-800 rounded" />
+              <div key={i} className="h-16 bg-surface-100 dark:bg-surface-800 rounded"/>
             ))}
           </div>
         </div>
         {/* Mobile skeleton */}
         <div className="md:hidden space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg animate-pulse" />
+            <div key={i} className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg animate-pulse"/>
           ))}
         </div>
       </div>
@@ -142,83 +142,83 @@ function ResponsiveTable<T>({
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
-              {selectable && (
-                <th className="w-12 px-4 py-2 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedKeys.size === data.length && data.length > 0}
-                    onChange={handleSelectAll}
-                    className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
-                  />
-                </th>
-              )}
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className={cn(
-                    'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
-                    column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
-                    column.width
-                  )}
-                  onClick={() => column.sortable && onSort?.(column.key)}
-                >
-                  <div className="flex items-center gap-1">
-                    {column.header}
-                    {renderSortIcon(column)}
-                  </div>
-                </th>
-              ))}
-              {renderRowActions && (
-                <th className="w-16 px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
-                  Actions
-                </th>
-              )}
-            </tr>
+          <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+            {selectable && (
+              <th className="w-12 px-4 py-2 text-left">
+                <input
+                  type="checkbox"
+                  checked={selectedKeys.size === data.length && data.length > 0}
+                  onChange={handleSelectAll}
+                  className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
+                />
+              </th>
+            )}
+            {columns.map((column) => (
+              <th
+                key={column.key}
+                className={cn(
+                  'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
+                  column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
+                  column.width
+                )}
+                onClick={() => column.sortable && onSort?.(column.key)}
+              >
+                <div className="flex items-center gap-1">
+                  {column.header}
+                  {renderSortIcon(column)}
+                </div>
+              </th>
+            ))}
+            {renderRowActions && (
+              <th className="w-16 px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+                Actions
+              </th>
+            )}
+          </tr>
           </thead>
           <tbody>
-            {data.map((row) => {
-              const key = keyExtractor(row);
-              const isSelected = selectedKeys.has(key);
-              const computedRowClassName = typeof rowClassName === 'function' ? rowClassName(row) : rowClassName;
+          {data.map((row) => {
+            const key = keyExtractor(row);
+            const isSelected = selectedKeys.has(key);
+            const computedRowClassName = typeof rowClassName === 'function' ? rowClassName(row) : rowClassName;
 
-              return (
-                <tr
-                  key={key}
-                  className={cn(
-                    'border-b border-surface-100 dark:border-surface-800 transition-colors',
-                    onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                    isSelected && 'bg-accent-50 dark:bg-accent-900/20',
-                    computedRowClassName
-                  )}
-                  onClick={() => onRowClick?.(row)}
-                >
-                  {selectable && (
-                    <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => handleSelectRow(key)}
-                        className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
-                      />
-                    </td>
-                  )}
-                  {columns.map((column) => (
-                    <td
-                      key={column.key}
-                      className={cn('px-4 py-4 text-sm text-surface-900 dark:text-surface-100', column.width)}
-                    >
-                      {column.accessor(row)}
-                    </td>
-                  ))}
-                  {renderRowActions && (
-                    <td className="px-4 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      {renderRowActions(row)}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
+            return (
+              <tr
+                key={key}
+                className={cn(
+                  'border-b border-surface-100 dark:border-surface-800 transition-colors',
+                  onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
+                  isSelected && 'bg-accent-50 dark:bg-accent-900/20',
+                  computedRowClassName
+                )}
+                onClick={() => onRowClick?.(row)}
+              >
+                {selectable && (
+                  <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleSelectRow(key)}
+                      className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
+                    />
+                  </td>
+                )}
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className={cn('px-4 py-4 text-sm text-surface-900 dark:text-surface-100', column.width)}
+                  >
+                    {column.accessor(row)}
+                  </td>
+                ))}
+                {renderRowActions && (
+                  <td className="px-4 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                    {renderRowActions(row)}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
           </tbody>
         </table>
       </div>
@@ -235,7 +235,12 @@ function ResponsiveTable<T>({
               <div
                 key={key}
                 onClick={() => onRowClick?.(row)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick?.(row); } }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onRowClick?.(row);
+                  }
+                }}
                 tabIndex={onRowClick ? 0 : undefined}
                 role={onRowClick ? 'button' : undefined}
                 aria-label={onRowClick ? 'View row details' : undefined}
@@ -326,19 +331,20 @@ export interface TablePaginationProps {
 }
 
 export function TablePagination({
-  currentPage,
-  totalPages,
-  totalItems,
-  pageSize,
-  onPageChange,
-  onPageSizeChange,
-  pageSizeOptions = [10, 20, 50, 100],
-}: TablePaginationProps) {
+                                  currentPage,
+                                  totalPages,
+                                  totalItems,
+                                  pageSize,
+                                  onPageChange,
+                                  onPageSizeChange,
+                                  pageSizeOptions = [10, 20, 50, 100],
+                                }: TablePaginationProps) {
   const startItem = currentPage * pageSize + 1;
   const endItem = Math.min((currentPage + 1) * pageSize, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-surface-200 dark:border-surface-700">
+    <div
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-surface-200 dark:border-surface-700">
       {/* Info */}
       <div className="text-sm text-surface-500 dark:text-surface-400 order-2 sm:order-1">
         Showing {startItem} to {endItem} of {totalItems} results
@@ -409,5 +415,5 @@ export function TablePagination({
   );
 }
 
-export { ResponsiveTable };
+export {ResponsiveTable};
 export default ResponsiveTable;

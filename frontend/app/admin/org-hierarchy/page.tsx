@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { Employee } from '@/lib/types/hrms/employee';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { getInitials } from '@/lib/utils';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Employee} from '@/lib/types/hrms/employee';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {getInitials} from '@/lib/utils';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 
 interface EmployeeNode extends Employee {
   subordinates?: EmployeeNode[];
@@ -20,7 +20,7 @@ const buildEmployeeTree = (employees: Employee[]): EmployeeNode[] => {
 
   // Create map of all employees
   employees.forEach(emp => {
-    employeeMap.set(emp.id, { ...emp, subordinates: [] });
+    employeeMap.set(emp.id, {...emp, subordinates: []});
   });
 
   // Build tree structure
@@ -45,14 +45,14 @@ const buildEmployeeTree = (employees: Employee[]): EmployeeNode[] => {
 
 export default function OrgHierarchyPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [hierarchy, setHierarchy] = useState<EmployeeNode[]>([]);
 
   // React Query hook
-  const { data: employeesData, isLoading, error } = useEmployees(0, 1000);
+  const {data: employeesData, isLoading, error} = useEmployees(0, 1000);
   const employees = useMemo(() => employeesData?.content || [], [employeesData?.content]);
   const loading = isLoading;
 
@@ -91,21 +91,64 @@ export default function OrgHierarchyPage() {
   };
 
 
-
   const getLevelColor = (level?: string) => {
     const colors: Record<string, { bg: string; border: string; text: string }> = {
-      'CXO': { bg: 'bg-accent-50 dark:bg-accent-950/40', border: 'border-accent-500', text: 'text-accent-900 dark:text-accent-200' },
-      'SVP': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
-      'VP': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
-      'DIRECTOR': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
-      'SENIOR_MANAGER': { bg: 'bg-accent-50 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', text: 'text-accent-700 dark:text-accent-300' },
-      'MANAGER': { bg: 'bg-success-50 dark:bg-success-950/30', border: 'border-success-300 dark:border-success-700', text: 'text-success-700 dark:text-success-300' },
-      'LEAD': { bg: 'bg-warning-50 dark:bg-warning-950/30', border: 'border-warning-300 dark:border-warning-700', text: 'text-warning-700 dark:text-warning-300' },
-      'SENIOR': { bg: 'bg-warning-50 dark:bg-warning-950/30', border: 'border-warning-300 dark:border-warning-700', text: 'text-warning-700 dark:text-warning-300' },
-      'MID': { bg: 'bg-danger-50 dark:bg-danger-950/30', border: 'border-danger-300 dark:border-danger-700', text: 'text-danger-700 dark:text-danger-300' },
-      'ENTRY': { bg: 'bg-accent-50 dark:bg-accent-950/40', border: 'border-accent-500', text: 'text-accent-900 dark:text-accent-200' },
+      'CXO': {
+        bg: 'bg-accent-50 dark:bg-accent-950/40',
+        border: 'border-accent-500',
+        text: 'text-accent-900 dark:text-accent-200'
+      },
+      'SVP': {
+        bg: 'bg-accent-50 dark:bg-accent-950/30',
+        border: 'border-accent-300 dark:border-accent-700',
+        text: 'text-accent-700 dark:text-accent-300'
+      },
+      'VP': {
+        bg: 'bg-accent-50 dark:bg-accent-950/30',
+        border: 'border-accent-300 dark:border-accent-700',
+        text: 'text-accent-700 dark:text-accent-300'
+      },
+      'DIRECTOR': {
+        bg: 'bg-accent-50 dark:bg-accent-950/30',
+        border: 'border-accent-300 dark:border-accent-700',
+        text: 'text-accent-700 dark:text-accent-300'
+      },
+      'SENIOR_MANAGER': {
+        bg: 'bg-accent-50 dark:bg-accent-950/30',
+        border: 'border-accent-300 dark:border-accent-700',
+        text: 'text-accent-700 dark:text-accent-300'
+      },
+      'MANAGER': {
+        bg: 'bg-success-50 dark:bg-success-950/30',
+        border: 'border-success-300 dark:border-success-700',
+        text: 'text-success-700 dark:text-success-300'
+      },
+      'LEAD': {
+        bg: 'bg-warning-50 dark:bg-warning-950/30',
+        border: 'border-warning-300 dark:border-warning-700',
+        text: 'text-warning-700 dark:text-warning-300'
+      },
+      'SENIOR': {
+        bg: 'bg-warning-50 dark:bg-warning-950/30',
+        border: 'border-warning-300 dark:border-warning-700',
+        text: 'text-warning-700 dark:text-warning-300'
+      },
+      'MID': {
+        bg: 'bg-danger-50 dark:bg-danger-950/30',
+        border: 'border-danger-300 dark:border-danger-700',
+        text: 'text-danger-700 dark:text-danger-300'
+      },
+      'ENTRY': {
+        bg: 'bg-accent-50 dark:bg-accent-950/40',
+        border: 'border-accent-500',
+        text: 'text-accent-900 dark:text-accent-200'
+      },
     };
-    return level && colors[level] ? colors[level] : { bg: 'bg-[var(--bg-secondary)]/50', border: 'border-[var(--border-main)] dark:border-[var(--border-main)]', text: 'text-[var(--text-secondary)]' };
+    return level && colors[level] ? colors[level] : {
+      bg: 'bg-[var(--bg-secondary)]/50',
+      border: 'border-[var(--border-main)] dark:border-[var(--border-main)]',
+      text: 'text-[var(--text-secondary)]'
+    };
   };
 
   const renderEmployeeCard = (employee: EmployeeNode, level: number = 0) => {
@@ -136,7 +179,8 @@ export default function OrgHierarchyPage() {
                   `}>
                     {getInitials(employee.fullName)}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white dark:border-surface-800 rounded-full h-4 w-4"></div>
+                  <div
+                    className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white dark:border-surface-800 rounded-full h-4 w-4"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-base truncate">
@@ -174,7 +218,9 @@ export default function OrgHierarchyPage() {
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      <path fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"/>
                     </svg>
                   </button>
                 )}
@@ -193,7 +239,8 @@ export default function OrgHierarchyPage() {
                   </span>
                 )}
                 {employee.status && (
-                  <span className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' :
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' :
                       employee.status === 'ON_LEAVE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
                         employee.status === 'ON_NOTICE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
                           'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300'
@@ -207,10 +254,12 @@ export default function OrgHierarchyPage() {
               {hasSubordinates && (
                 <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-current border-opacity-20">
                   <svg className="h-5 w-5 opacity-60" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                    <path
+                      d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                   </svg>
                   <span className="font-semibold">{employee.subordinates!.length}</span>
-                  <span className="text-sm opacity-75">direct report{employee.subordinates!.length !== 1 ? 's' : ''}</span>
+                  <span
+                    className="text-sm opacity-75">direct report{employee.subordinates!.length !== 1 ? 's' : ''}</span>
                 </div>
               )}
             </div>
@@ -218,7 +267,8 @@ export default function OrgHierarchyPage() {
 
           {/* Connector line to subordinates */}
           {hasSubordinates && isExpanded && (
-            <div className="absolute left-1/2 -translate-x-1/2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
+            <div
+              className="absolute left-1/2 -translate-x-1/2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
           )}
         </div>
 
@@ -243,7 +293,8 @@ export default function OrgHierarchyPage() {
               {employee.subordinates!.map((subordinate) => (
                 <div key={subordinate.id} className="relative">
                   {/* Vertical line to subordinate */}
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2 -top-2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
                   {renderEmployeeCard(subordinate, level + 1)}
                 </div>
               ))}
@@ -260,8 +311,11 @@ export default function OrgHierarchyPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold skeuo-emboss flex items-center space-x-4">
-            <svg className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+            <svg
+              className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
             </svg>
             <span>Organization Chart</span>
           </h1>
@@ -271,7 +325,8 @@ export default function OrgHierarchyPage() {
         </div>
 
         {/* Controls */}
-        <div className="skeuo-card bg-[var(--bg-card)] rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+        <div
+          className="skeuo-card bg-[var(--bg-card)] rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => {
@@ -290,7 +345,8 @@ export default function OrgHierarchyPage() {
               className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors flex items-center space-x-2"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
               </svg>
               <span>Expand All</span>
             </button>
@@ -299,7 +355,7 @@ export default function OrgHierarchyPage() {
               className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors flex items-center space-x-2"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6m0 0L4 11m5-5l5 5" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6m0 0L4 11m5-5l5 5"/>
               </svg>
               <span>Collapse All</span>
             </button>
@@ -331,12 +387,15 @@ export default function OrgHierarchyPage() {
           ) : error ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="mx-auto h-16 w-16 text-danger-500 mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <div
+                  className="mx-auto h-16 w-16 text-danger-500 mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
-                <p className="text-danger-600 dark:text-danger-400 font-medium mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
+                <p
+                  className="text-danger-600 dark:text-danger-400 font-medium mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (
@@ -344,7 +403,8 @@ export default function OrgHierarchyPage() {
               <div className="text-center">
                 <div className="mx-auto h-16 w-16 text-[var(--text-muted)] mb-4">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                   </svg>
                 </div>
                 <p className="text-[var(--text-secondary)] font-medium mb-2">No employees found</p>

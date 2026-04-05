@@ -1,27 +1,27 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { publicApiClient } from '@/lib/api/public-client';
+import {useParams} from 'next/navigation';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {publicApiClient} from '@/lib/api/public-client';
 import {
-  Title,
-  Text,
-  Paper,
-  Stack,
-  Group,
+  Alert,
   Button,
+  Center,
+  Checkbox,
+  Group,
+  Loader,
+  Paper,
   Rating,
   Select,
-  Textarea,
-  Checkbox,
-  Loader,
-  Center,
-  Alert,
+  Stack,
   Stepper,
+  Text,
+  Textarea,
+  Title,
 } from '@mantine/core';
-import { useState } from 'react';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconAlertCircle } from '@tabler/icons-react';
+import {useState} from 'react';
+import {notifications} from '@mantine/notifications';
+import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
 
 interface ExitInterviewData {
   status: string;
@@ -29,20 +29,20 @@ interface ExitInterviewData {
 }
 
 const LEAVING_REASONS = [
-  { value: 'BETTER_OPPORTUNITY', label: 'Better Opportunity' },
-  { value: 'COMPENSATION', label: 'Compensation' },
-  { value: 'CAREER_GROWTH', label: 'Career Growth' },
-  { value: 'WORK_LIFE_BALANCE', label: 'Work-Life Balance' },
-  { value: 'MANAGEMENT_ISSUES', label: 'Management Issues' },
-  { value: 'RELOCATION', label: 'Relocation' },
-  { value: 'PERSONAL_REASONS', label: 'Personal Reasons' },
-  { value: 'HEALTH_ISSUES', label: 'Health Issues' },
-  { value: 'HIGHER_EDUCATION', label: 'Higher Education' },
-  { value: 'STARTING_OWN_BUSINESS', label: 'Starting Own Business' },
-  { value: 'RETIREMENT', label: 'Retirement' },
-  { value: 'COMPANY_CULTURE', label: 'Company Culture' },
-  { value: 'JOB_SECURITY', label: 'Job Security' },
-  { value: 'OTHER', label: 'Other' },
+  {value: 'BETTER_OPPORTUNITY', label: 'Better Opportunity'},
+  {value: 'COMPENSATION', label: 'Compensation'},
+  {value: 'CAREER_GROWTH', label: 'Career Growth'},
+  {value: 'WORK_LIFE_BALANCE', label: 'Work-Life Balance'},
+  {value: 'MANAGEMENT_ISSUES', label: 'Management Issues'},
+  {value: 'RELOCATION', label: 'Relocation'},
+  {value: 'PERSONAL_REASONS', label: 'Personal Reasons'},
+  {value: 'HEALTH_ISSUES', label: 'Health Issues'},
+  {value: 'HIGHER_EDUCATION', label: 'Higher Education'},
+  {value: 'STARTING_OWN_BUSINESS', label: 'Starting Own Business'},
+  {value: 'RETIREMENT', label: 'Retirement'},
+  {value: 'COMPANY_CULTURE', label: 'Company Culture'},
+  {value: 'JOB_SECURITY', label: 'Job Security'},
+  {value: 'OTHER', label: 'Other'},
 ];
 
 async function fetchInterview(token: string): Promise<ExitInterviewData> {
@@ -55,7 +55,7 @@ async function submitInterview(token: string, data: object): Promise<void> {
 }
 
 export default function PublicExitInterviewPage() {
-  const { token } = useParams<{ token: string }>();
+  const {token} = useParams<{ token: string }>();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
@@ -77,7 +77,7 @@ export default function PublicExitInterviewPage() {
   const [newEmployer, setNewEmployer] = useState('');
   const [newRole, setNewRole] = useState('');
 
-  const { data, isLoading, error } = useQuery({
+  const {data, isLoading, error} = useQuery({
     queryKey: ['exit-interview-public', token],
     queryFn: () => fetchInterview(token),
   });
@@ -99,15 +99,15 @@ export default function PublicExitInterviewPage() {
       setSubmitted(true);
     },
     onError: () => {
-      notifications.show({ title: 'Error', message: 'Could not submit. Please try again.', color: 'red' });
+      notifications.show({title: 'Error', message: 'Could not submit. Please try again.', color: 'red'});
     },
   });
 
-  if (isLoading) return <Center h="100vh"><Loader /></Center>;
+  if (isLoading) return <Center h="100vh"><Loader/></Center>;
 
   if (error) return (
     <Center h="100vh">
-      <Alert icon={<IconAlertCircle size={16} />} color="red" title="Invalid Link">
+      <Alert icon={<IconAlertCircle size={16}/>} color="red" title="Invalid Link">
         This exit interview link is invalid or has expired. Please contact HR.
       </Alert>
     </Center>
@@ -116,7 +116,7 @@ export default function PublicExitInterviewPage() {
   if (submitted || data?.status === 'COMPLETED') return (
     <Center h="100vh">
       <Paper withBorder p="xl" maw={500} ta="center">
-        <IconCheck size={48} color="green" />
+        <IconCheck size={48} color="green"/>
         <Title order={3} mt="md">Thank you!</Title>
         <Text c="dimmed" mt="sm">
           Your exit interview has been submitted. We appreciate your feedback and wish you all the best.
@@ -125,12 +125,12 @@ export default function PublicExitInterviewPage() {
     </Center>
   );
 
-  const RatingRow = ({ label, field }: { label: string; field: keyof typeof ratings }) => (
+  const RatingRow = ({label, field}: { label: string; field: keyof typeof ratings }) => (
     <Group justify="space-between" py="xs">
       <Text size="sm">{label}</Text>
       <Rating
         value={ratings[field]}
-        onChange={(val) => setRatings((prev) => ({ ...prev, [field]: val }))}
+        onChange={(val) => setRatings((prev) => ({...prev, [field]: val}))}
       />
     </Group>
   );
@@ -144,21 +144,21 @@ export default function PublicExitInterviewPage() {
         </Text>
 
         <Stepper active={step} onStepClick={setStep} mb="xl">
-          <Stepper.Step label="Ratings" description="Rate your experience" />
-          <Stepper.Step label="Reasons" description="Why are you leaving?" />
-          <Stepper.Step label="Feedback" description="Your thoughts" />
-          <Stepper.Step label="Review" description="Submit" />
+          <Stepper.Step label="Ratings" description="Rate your experience"/>
+          <Stepper.Step label="Reasons" description="Why are you leaving?"/>
+          <Stepper.Step label="Feedback" description="Your thoughts"/>
+          <Stepper.Step label="Review" description="Submit"/>
         </Stepper>
 
         {step === 0 && (
           <Stack gap="xs">
             <Title order={5} mb="xs">How would you rate these aspects?</Title>
-            <RatingRow label="Overall Experience" field="overallExperienceRating" />
-            <RatingRow label="Management & Leadership" field="managementRating" />
-            <RatingRow label="Work-Life Balance" field="workLifeBalanceRating" />
-            <RatingRow label="Growth Opportunities" field="growthOpportunitiesRating" />
-            <RatingRow label="Compensation & Benefits" field="compensationRating" />
-            <RatingRow label="Team Culture" field="teamCultureRating" />
+            <RatingRow label="Overall Experience" field="overallExperienceRating"/>
+            <RatingRow label="Management & Leadership" field="managementRating"/>
+            <RatingRow label="Work-Life Balance" field="workLifeBalanceRating"/>
+            <RatingRow label="Growth Opportunities" field="growthOpportunitiesRating"/>
+            <RatingRow label="Compensation & Benefits" field="compensationRating"/>
+            <RatingRow label="Team Culture" field="teamCultureRating"/>
           </Stack>
         )}
 
@@ -177,8 +177,9 @@ export default function PublicExitInterviewPage() {
               onChange={(e) => setDetailedReason(e.currentTarget.value)}
               rows={4}
             />
-            <TextInput label="New Employer (optional)" value={newEmployer} onChange={(e) => setNewEmployer(e.currentTarget.value)} />
-            <TextInput label="New Role (optional)" value={newRole} onChange={(e) => setNewRole(e.currentTarget.value)} />
+            <TextInput label="New Employer (optional)" value={newEmployer}
+                       onChange={(e) => setNewEmployer(e.currentTarget.value)}/>
+            <TextInput label="New Role (optional)" value={newRole} onChange={(e) => setNewRole(e.currentTarget.value)}/>
           </Stack>
         )}
 
@@ -252,7 +253,11 @@ export default function PublicExitInterviewPage() {
 }
 
 // Need TextInput for this page
-function TextInput({ label, value, onChange }: { label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+function TextInput({label, value, onChange}: {
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}) {
   return (
     <div>
       <Text size="sm" fw={500} mb={4}>{label}</Text>

@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Download, Loader2, Plus, Search, X, Edit2, Eye } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Download, Edit2, Eye, Loader2, Plus, Search, X} from 'lucide-react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   Badge,
   Button,
@@ -27,21 +27,21 @@ import {
 import {
   HrmsProject,
   ProjectCreateRequest,
+  ProjectPriority,
   ProjectStatus,
   ProjectType,
-  ProjectPriority,
   ProjectUpdateRequest,
 } from '@/lib/types/hrms/hrms-project';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
-  useHrmsProjects,
   useCreateHrmsProject,
   useExportHrmsProjects,
+  useHrmsProjects,
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const _log = createLogger('ProjectsPage');
 
@@ -75,46 +75,49 @@ interface MultiOwnerTypeaheadProps {
   maxOwners?: number;
 }
 
-const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  PLANNED: { label: 'Planned', variant: 'secondary' },
-  IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
-  ON_HOLD: { label: 'On Hold', variant: 'warning' },
-  COMPLETED: { label: 'Completed', variant: 'success' },
-  CANCELLED: { label: 'Cancelled', variant: 'danger' },
+const STATUS_BADGE: Record<ProjectStatus, {
+  label: string;
+  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
+}> = {
+  DRAFT: {label: 'Draft', variant: 'secondary'},
+  PLANNED: {label: 'Planned', variant: 'secondary'},
+  IN_PROGRESS: {label: 'In Progress', variant: 'primary'},
+  ON_HOLD: {label: 'On Hold', variant: 'warning'},
+  COMPLETED: {label: 'Completed', variant: 'success'},
+  CANCELLED: {label: 'Cancelled', variant: 'danger'},
 };
 
 const PRIORITY_BADGE: Record<string, { label: string; variant: 'danger' | 'warning' | 'primary' | 'secondary' }> = {
-  LOW: { label: 'Low', variant: 'secondary' },
-  MEDIUM: { label: 'Medium', variant: 'primary' },
-  HIGH: { label: 'High', variant: 'warning' },
-  CRITICAL: { label: 'Critical', variant: 'danger' },
+  LOW: {label: 'Low', variant: 'secondary'},
+  MEDIUM: {label: 'Medium', variant: 'primary'},
+  HIGH: {label: 'High', variant: 'warning'},
+  CRITICAL: {label: 'Critical', variant: 'danger'},
 };
 
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
-  CLIENT: { label: 'Client', variant: 'primary' },
-  INTERNAL: { label: 'Internal', variant: 'outline' },
+  CLIENT: {label: 'Client', variant: 'primary'},
+  INTERNAL: {label: 'Internal', variant: 'outline'},
 };
 
 const getStatusBadge = (status?: ProjectStatus | null) => {
   if (status && STATUS_BADGE[status]) {
     return STATUS_BADGE[status];
   }
-  return { label: status ?? 'Unknown', variant: 'secondary' as const };
+  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
 const getTypeBadge = (type?: ProjectType | null) => {
   if (type && TYPE_BADGE[type]) {
     return TYPE_BADGE[type];
   }
-  return { label: type ?? 'Unknown', variant: 'outline' as const };
+  return {label: type ?? 'Unknown', variant: 'outline' as const};
 };
 
 const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
 const buildEmployeeName = (employee?: EmployeeSummary | null) => {
@@ -161,15 +164,15 @@ type EditProjectFormData = z.infer<typeof editProjectFormSchema>;
 const parseApiError = (error: unknown): ApiErrorPayload => {
   const response = (error as { response?: { data?: ApiErrorPayload } })?.response?.data;
   if (response) {
-    return { message: response.message, details: response.details };
+    return {message: response.message, details: response.details};
   }
   if (error instanceof Error) {
-    return { message: error.message };
+    return {message: error.message};
   }
-  return { message: 'Something went wrong. Please try again.' };
+  return {message: 'Something went wrong. Please try again.'};
 };
 
-function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: OwnerTypeaheadProps) {
+function OwnerTypeahead({label, value, onChange, placeholder, disabled}: OwnerTypeaheadProps) {
   const [query, setQuery] = useState(value ? buildEmployeeName(value) : '');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -201,7 +204,7 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
   }, [query]);
 
   // React Query for employee search
-  const { data: searchData, isLoading: loading } = useEmployeeSearch(
+  const {data: searchData, isLoading: loading} = useEmployeeSearch(
     debouncedQuery, 0, 20, open && debouncedQuery.length >= 2
   );
   const results: EmployeeSummary[] = (searchData?.content ?? []) as EmployeeSummary[];
@@ -237,13 +240,15 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
         value={query}
         onChange={handleInputChange}
         onFocus={() => setOpen(true)}
-        icon={<Search className="h-4 w-4" />}
-        rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : showClear ? <X className="h-4 w-4" /> : undefined}
+        icon={<Search className="h-4 w-4"/>}
+        rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin"/> : showClear ?
+          <X className="h-4 w-4"/> : undefined}
         onRightIconClick={showClear ? handleClear : undefined}
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        <div
+          className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-4 text-body-muted">Searching owners...</div>
           )}
@@ -278,13 +283,13 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
 }
 
 function MultiOwnerTypeahead({
-  label,
-  values,
-  onChange,
-  placeholder,
-  disabled,
-  maxOwners = 5,
-}: MultiOwnerTypeaheadProps) {
+                               label,
+                               values,
+                               onChange,
+                               placeholder,
+                               disabled,
+                               maxOwners = 5,
+                             }: MultiOwnerTypeaheadProps) {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -312,7 +317,7 @@ function MultiOwnerTypeahead({
   }, [query]);
 
   // React Query for employee search
-  const { data: searchData, isLoading: loading } = useEmployeeSearch(
+  const {data: searchData, isLoading: loading} = useEmployeeSearch(
     debouncedQuery, 0, 20, open && debouncedQuery.length >= 2
   );
   const results: EmployeeSummary[] = useMemo(() => {
@@ -343,7 +348,8 @@ function MultiOwnerTypeahead({
       <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
         {label}
       </label>
-      <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-2.5 dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+      <div
+        className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-2.5 dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
         {values.length > 0 && (
           <div className="mb-2 flex flex-wrap gap-1.5">
             {values.map((owner, index) => (
@@ -361,7 +367,7 @@ function MultiOwnerTypeahead({
                   className="ml-1 hover:text-accent-900 dark:hover:text-accent-100"
                   aria-label={`Remove ${buildEmployeeName(owner)}`}
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-3.5 w-3.5"/>
                 </button>
               </div>
             ))}
@@ -373,14 +379,15 @@ function MultiOwnerTypeahead({
             value={query}
             onChange={handleInputChange}
             onFocus={() => setOpen(true)}
-            icon={<Search className="h-4 w-4" />}
-            rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined}
+            icon={<Search className="h-4 w-4"/>}
+            rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin"/> : undefined}
             disabled={disabled || values.length >= maxOwners}
           />
         </div>
       </div>
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        <div
+          className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-4 text-body-muted">Searching owners...</div>
           )}
@@ -418,9 +425,9 @@ function MultiOwnerTypeahead({
 
 export default function ProjectsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const toast = useToast();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {
@@ -477,7 +484,7 @@ export default function ProjectsPage() {
     handleSubmit,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
@@ -501,7 +508,7 @@ export default function ProjectsPage() {
     register: editRegister,
     handleSubmit: editHandleSubmit,
     reset: editReset,
-    formState: { errors: editErrors, isSubmitting: editIsSubmitting },
+    formState: {errors: editErrors, isSubmitting: editIsSubmitting},
   } = useForm<EditProjectFormData>({
     resolver: zodResolver(editProjectFormSchema),
   });
@@ -542,7 +549,7 @@ export default function ProjectsPage() {
   }), [ownerFilter, debouncedSearchTerm, statusFilter, typeFilter, priorityFilter]);
 
   // Query with filters
-  const { data, isLoading, error: queryError, refetch } = useHrmsProjects(
+  const {data, isLoading, error: queryError, refetch} = useHrmsProjects(
     currentPage,
     pageSize,
     activeFilters
@@ -673,7 +680,7 @@ export default function ProjectsPage() {
     };
 
     try {
-      await updateMutation.mutateAsync({ id: editingProject.id, data: payload });
+      await updateMutation.mutateAsync({id: editingProject.id, data: payload});
       setShowEditModal(false);
       setEditingProject(null);
       refetch();
@@ -691,7 +698,10 @@ export default function ProjectsPage() {
         <div className="space-y-1">
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/projects/${project.id}`);
+            }}
             className="font-semibold text-[var(--text-primary)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors text-left"
           >
             {project.name}
@@ -756,7 +766,7 @@ export default function ProjectsPage() {
       key: 'priority',
       header: 'Priority',
       accessor: (project: HrmsProject) => {
-        const badge = PRIORITY_BADGE[project.priority] || { label: project.priority, variant: 'secondary' };
+        const badge = PRIORITY_BADGE[project.priority] || {label: project.priority, variant: 'secondary'};
         return (
           <Badge variant={badge.variant} size="sm">
             {badge.label}
@@ -796,19 +806,25 @@ export default function ProjectsPage() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); router.push(`/projects/${project.id}`); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/projects/${project.id}`);
+            }}
             className="rounded-lg p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
             aria-label={`View ${project.name}`}
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4"/>
           </button>
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); handleOpenEdit(project); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenEdit(project);
+            }}
             className="rounded-lg p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
             aria-label={`Edit ${project.name}`}
           >
-            <Edit2 className="h-4 w-4" />
+            <Edit2 className="h-4 w-4"/>
           </button>
         </div>
       ),
@@ -819,7 +835,7 @@ export default function ProjectsPage() {
   if (!permissionsReady || !hasAccess) return null;
 
   return (
-    <AppLayout breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Projects' }]} activeMenuItem="projects">
+    <AppLayout breadcrumbs={[{label: 'Dashboard', href: '/dashboard'}, {label: 'Projects'}]} activeMenuItem="projects">
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -834,14 +850,14 @@ export default function ProjectsPage() {
             <Button
               variant="outline"
               onClick={handleExport}
-              leftIcon={<Download className="h-4 w-4" />}
+              leftIcon={<Download className="h-4 w-4"/>}
               isLoading={exporting}
               aria-label="Export projects as CSV"
             >
               Export
             </Button>
             {canCreateProject && (
-              <Button onClick={handleOpenCreate} leftIcon={<Plus className="h-4 w-4" />} aria-label="Create new project">
+              <Button onClick={handleOpenCreate} leftIcon={<Plus className="h-4 w-4"/>} aria-label="Create new project">
                 New Project
               </Button>
             )}
@@ -851,11 +867,11 @@ export default function ProjectsPage() {
         {/* Tab-based filtering */}
         <div className="flex border-b border-[var(--border-main)]">
           {[
-            { key: 'active' as const, label: 'Active' },
-            { key: 'all' as const, label: 'All' },
-            { key: 'on_hold' as const, label: 'On Hold' },
-            { key: 'completed' as const, label: 'Completed' },
-            { key: 'archived' as const, label: 'Archived' },
+            {key: 'active' as const, label: 'Active'},
+            {key: 'all' as const, label: 'All'},
+            {key: 'on_hold' as const, label: 'On Hold'},
+            {key: 'completed' as const, label: 'Completed'},
+            {key: 'archived' as const, label: 'Archived'},
           ].map((tab) => (
             <button
               key={tab.key}
@@ -875,7 +891,9 @@ export default function ProjectsPage() {
           <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
             <CardContent className="row-between gap-4">
               <p className="text-sm text-danger-700 dark:text-danger-400">{error?.message ?? String(error)}</p>
-              <Button variant="outline" size="sm" onClick={() => { void refetch(); }}>
+              <Button variant="outline" size="sm" onClick={() => {
+                void refetch();
+              }}>
                 Retry
               </Button>
             </CardContent>
@@ -890,7 +908,7 @@ export default function ProjectsPage() {
                 placeholder="Search by name, code, client, or owner"
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
-                icon={<Search className="h-4 w-4" />}
+                icon={<Search className="h-4 w-4"/>}
               />
               <Select
                 label="Status"
@@ -969,7 +987,7 @@ export default function ProjectsPage() {
           <CardContent>
             {!loading && totalElements === 0 && projects.length === 0 ? (
               <EmptyState
-                icon={<Eye className="h-12 w-12" />}
+                icon={<Eye className="h-12 w-12"/>}
                 title="No Projects Yet"
                 description="Create your first project to start tracking work, assigning tasks, and collaborating with your team."
                 actionLabel="Create Project"
@@ -1008,7 +1026,8 @@ export default function ProjectsPage() {
         <form onSubmit={handleSubmit(handleCreateProject)}>
           <ModalBody className="space-y-4">
             {formErrorDetails.length > 0 && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div
+                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 <ul className="space-y-1">
                   {formErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -1060,7 +1079,8 @@ export default function ProjectsPage() {
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...register('expectedEndDate')} />
-                {errors.expectedEndDate && <p className="text-sm text-danger-500 mt-1">{errors.expectedEndDate.message}</p>}
+                {errors.expectedEndDate &&
+                  <p className="text-sm text-danger-500 mt-1">{errors.expectedEndDate.message}</p>}
               </div>
             </div>
 
@@ -1150,7 +1170,8 @@ export default function ProjectsPage() {
         <form onSubmit={editHandleSubmit(handleEditProject)}>
           <ModalBody className="space-y-4">
             {editFormErrorDetails.length > 0 && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              <div
+                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 <ul className="space-y-1">
                   {editFormErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -1164,7 +1185,8 @@ export default function ProjectsPage() {
                 <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                   Project code
                 </label>
-                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
+                <div
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
                   {editingProject?.projectCode}
                 </div>
               </div>
@@ -1194,7 +1216,8 @@ export default function ProjectsPage() {
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...editRegister('expectedEndDate')} />
-                {editErrors.expectedEndDate && <p className="text-sm text-danger-500 mt-1">{editErrors.expectedEndDate.message}</p>}
+                {editErrors.expectedEndDate &&
+                  <p className="text-sm text-danger-500 mt-1">{editErrors.expectedEndDate.message}</p>}
               </div>
             </div>
 
@@ -1238,7 +1261,8 @@ export default function ProjectsPage() {
                 Description (optional)
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...editRegister('description')} />
-              {editErrors.description && <p className="text-sm text-danger-500 mt-1">{editErrors.description.message}</p>}
+              {editErrors.description &&
+                <p className="text-sm text-danger-500 mt-1">{editErrors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>

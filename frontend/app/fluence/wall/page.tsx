@@ -1,26 +1,26 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { IconTrendingUp, IconActivity, IconFlame } from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {IconActivity, IconFlame, IconTrendingUp} from '@tabler/icons-react';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
-import { PostComposer } from '@/components/wall';
-import { useCreatePost } from '@/lib/hooks/queries/useWall';
-import { notifications } from '@mantine/notifications';
+import {PostComposer} from '@/components/wall';
+import {useCreatePost} from '@/lib/hooks/queries/useWall';
+import {notifications} from '@mantine/notifications';
 
 function TrendingSidebar() {
   return (
     <div className="skeuo-card p-4 rounded-xl">
       <div className="flex items-center gap-2 mb-4">
-        <IconTrendingUp size={18} className="text-[var(--text-primary)]" />
+        <IconTrendingUp size={18} className="text-[var(--text-primary)]"/>
         <span className="text-sm font-semibold text-[var(--text-primary)]">
           Trending Content
         </span>
       </div>
       <div className="flex flex-col items-center gap-2 py-4">
-        <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" />
+        <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]"/>
         <p className="text-caption text-center">
           No trending content yet. Start creating and sharing to see what is popular.
         </p>
@@ -32,7 +32,7 @@ function TrendingSidebar() {
 export default function WallPage() {
   const router = useRouter();
   const createPost = useCreatePost();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_VIEW,
@@ -51,7 +51,7 @@ export default function WallPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 mb-6">
-          <IconActivity size={28} className="text-[var(--text-primary)]" />
+          <IconActivity size={28} className="text-[var(--text-primary)]"/>
           <div>
             <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Activity Wall
@@ -60,7 +60,8 @@ export default function WallPage() {
               See what is happening across your knowledge base
             </p>
           </div>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400">
+          <span
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400">
             Live
           </span>
         </div>
@@ -92,11 +93,11 @@ export default function WallPage() {
               }}
               isSubmitting={createPost.isPending}
             />
-            <ActivityFeed />
+            <ActivityFeed/>
           </div>
 
           <div className="md:col-span-4">
-            <TrendingSidebar />
+            <TrendingSidebar/>
           </div>
         </div>
       </div>

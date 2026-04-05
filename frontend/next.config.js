@@ -120,15 +120,15 @@ const nextConfig = {
 
     const securityHeaders = [
       // Prevent clickjacking
-      { key: 'X-Frame-Options', value: 'DENY' },
+      {key: 'X-Frame-Options', value: 'DENY'},
       // Prevent MIME-type sniffing
-      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      {key: 'X-Content-Type-Options', value: 'nosniff'},
       // Control referrer information
-      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
       // HSTS (only active over HTTPS; browsers ignore over HTTP)
-      { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+      {key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload'},
       // Disable sensitive browser features the app does not use
-      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()' },
+      {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()'},
       // Content-Security-Policy
       // Notes:
       //   • 'unsafe-inline' on script-src is required by Next.js RSC hydration scripts.
@@ -167,20 +167,20 @@ const nextConfig = {
       {
         source: '/:all*(svg|jpg|png|webp|avif)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          {key: 'Cache-Control', value: 'public, max-age=31536000, immutable'},
         ],
       },
       {
         source: '/_next/static/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          {key: 'Cache-Control', value: 'public, max-age=31536000, immutable'},
         ],
       },
     ];
   },
 
   // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config, {dev, isServer}) => {
     // Production optimizations only
     if (!dev && !isServer) {
       config.optimization = {

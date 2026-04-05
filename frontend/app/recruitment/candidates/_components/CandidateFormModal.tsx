@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { Button } from '@/components/ui/Button';
-import { X } from 'lucide-react';
-import { Candidate } from '@/lib/types/hire/recruitment';
-import { CreateCandidateFormData } from '@/lib/validations/recruitment';
+import {UseFormReturn} from 'react-hook-form';
+import {Button} from '@/components/ui/Button';
+import {X} from 'lucide-react';
+import {Candidate} from '@/lib/types/hire/recruitment';
+import {CreateCandidateFormData} from '@/lib/validations/recruitment';
 
 interface JobOpeningOption {
   id: string;
@@ -29,29 +29,31 @@ interface CandidateFormModalProps {
 }
 
 export function CandidateFormModal({
-  open,
-  editingCandidate,
-  candidateForm,
-  jobOpenings,
-  recruiters,
-  isSubmitting,
-  onSubmit,
-  onClose,
-}: CandidateFormModalProps) {
+                                     open,
+                                     editingCandidate,
+                                     candidateForm,
+                                     jobOpenings,
+                                     recruiters,
+                                     isSubmitting,
+                                     onSubmit,
+                                     onClose,
+                                   }: CandidateFormModalProps) {
   if (!open) return null;
 
   const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">
               {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
             </h2>
-            <button onClick={onClose} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6" />
+            <button onClick={onClose} aria-label="Close modal"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <X className="h-6 w-6"/>
             </button>
           </div>
 
@@ -139,25 +141,27 @@ export function CandidateFormModal({
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Company</label>
-                <input type="text" {...candidateForm.register('currentCompany')} className={inputCls} />
+                <input type="text" {...candidateForm.register('currentCompany')} className={inputCls}/>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Designation</label>
-                <input type="text" {...candidateForm.register('currentDesignation')} className={inputCls} />
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current
+                  Designation</label>
+                <input type="text" {...candidateForm.register('currentDesignation')} className={inputCls}/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                <input type="text" {...candidateForm.register('currentLocation')} className={inputCls} />
+                <input type="text" {...candidateForm.register('currentLocation')} className={inputCls}/>
               </div>
             </div>
 
             <div className="grid grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience (years)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
+                  (years)</label>
                 <input
                   type="number"
                   step="0.5"
-                  {...candidateForm.register('totalExperience', { valueAsNumber: true })}
+                  {...candidateForm.register('totalExperience', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
@@ -165,7 +169,7 @@ export function CandidateFormModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current CTC</label>
                 <input
                   type="number"
-                  {...candidateForm.register('currentCtc', { valueAsNumber: true })}
+                  {...candidateForm.register('currentCtc', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
@@ -173,7 +177,7 @@ export function CandidateFormModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expected CTC</label>
                 <input
                   type="number"
-                  {...candidateForm.register('expectedCtc', { valueAsNumber: true })}
+                  {...candidateForm.register('expectedCtc', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
@@ -181,7 +185,7 @@ export function CandidateFormModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notice (days)</label>
                 <input
                   type="number"
-                  {...candidateForm.register('noticePeriodDays', { valueAsNumber: true })}
+                  {...candidateForm.register('noticePeriodDays', {valueAsNumber: true})}
                   className={inputCls}
                 />
               </div>
@@ -237,7 +241,8 @@ export function CandidateFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned Recruiter</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned
+                  Recruiter</label>
                 <select {...candidateForm.register('assignedRecruiterId')} className={inputCls}>
                   <option value="">Select Recruiter</option>
                   {recruiters.map((recruiter) => (

@@ -1,12 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { workflowService } from '@/lib/services/core/workflow.service';
-import type {
-  WorkflowDefinitionRequest,
-  WorkflowEntityType,
-} from '@/lib/types/core/workflow';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {workflowService} from '@/lib/services/core/workflow.service';
+import type {WorkflowDefinitionRequest, WorkflowEntityType,} from '@/lib/types/core/workflow';
 
 // ── Query Key Factory ────────────────────────────────────────────────────────
 
@@ -82,7 +79,7 @@ export function useCreateWorkflowDefinition() {
     mutationFn: (data: WorkflowDefinitionRequest) =>
       workflowService.createWorkflowDefinition(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: workflowKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: workflowKeys.definitions()});
       notifications.show({
         title: 'Workflow created',
         message: 'The workflow definition has been created successfully.',
@@ -109,8 +106,8 @@ export function useUpdateWorkflowDefinition(id: string) {
     mutationFn: (data: WorkflowDefinitionRequest) =>
       workflowService.updateWorkflowDefinition(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: workflowKeys.definition(id) });
-      queryClient.invalidateQueries({ queryKey: workflowKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: workflowKeys.definition(id)});
+      queryClient.invalidateQueries({queryKey: workflowKeys.definitions()});
       notifications.show({
         title: 'Workflow updated',
         message: 'The workflow definition has been updated successfully.',
@@ -136,7 +133,7 @@ export function useDeactivateWorkflowDefinition() {
   return useMutation({
     mutationFn: (id: string) => workflowService.deactivateWorkflowDefinition(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: workflowKeys.definitions() });
+      queryClient.invalidateQueries({queryKey: workflowKeys.definitions()});
       notifications.show({
         title: 'Workflow deactivated',
         message: 'The workflow definition has been deactivated.',

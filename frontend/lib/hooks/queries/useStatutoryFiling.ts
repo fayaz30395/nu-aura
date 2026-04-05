@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { statutoryFilingService } from '@/lib/services/hrms/statutory-filing.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {statutoryFilingService} from '@/lib/services/hrms/statutory-filing.service';
 import {
-  FilingTypeInfo,
   FilingRunResponse,
+  FilingTypeInfo,
   GenerateFilingRequest,
+  Page,
   SubmitFilingRequest,
   ValidationResult,
-  Page,
 } from '@/lib/types/hrms/statutory-filing';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ export const statutoryFilingKeys = {
   types: () => [...statutoryFilingKeys.all, 'types'] as const,
   history: () => [...statutoryFilingKeys.all, 'history'] as const,
   historyList: (page: number, size: number, filingType?: string) =>
-    [...statutoryFilingKeys.history(), { page, size, filingType }] as const,
+    [...statutoryFilingKeys.history(), {page, size, filingType}] as const,
   detail: () => [...statutoryFilingKeys.all, 'detail'] as const,
   detailById: (id: string) => [...statutoryFilingKeys.detail(), id] as const,
 };
@@ -77,7 +77,7 @@ export function useGenerateFiling() {
   return useMutation<FilingRunResponse, Error, GenerateFilingRequest>({
     mutationFn: (data) => statutoryFilingService.generateFiling(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: statutoryFilingKeys.history() });
+      queryClient.invalidateQueries({queryKey: statutoryFilingKeys.history()});
     },
   });
 }
@@ -91,8 +91,8 @@ export function useValidateFiling() {
   return useMutation<ValidationResult, Error, string>({
     mutationFn: (id) => statutoryFilingService.validateFiling(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: statutoryFilingKeys.detailById(id) });
-      queryClient.invalidateQueries({ queryKey: statutoryFilingKeys.history() });
+      queryClient.invalidateQueries({queryKey: statutoryFilingKeys.detailById(id)});
+      queryClient.invalidateQueries({queryKey: statutoryFilingKeys.history()});
     },
   });
 }
@@ -104,10 +104,10 @@ export function useSubmitFiling() {
   const queryClient = useQueryClient();
 
   return useMutation<FilingRunResponse, Error, { id: string; data: SubmitFilingRequest }>({
-    mutationFn: ({ id, data }) => statutoryFilingService.submitFiling(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: statutoryFilingKeys.detailById(id) });
-      queryClient.invalidateQueries({ queryKey: statutoryFilingKeys.history() });
+    mutationFn: ({id, data}) => statutoryFilingService.submitFiling(id, data),
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: statutoryFilingKeys.detailById(id)});
+      queryClient.invalidateQueries({queryKey: statutoryFilingKeys.history()});
     },
   });
 }
@@ -117,7 +117,7 @@ export function useSubmitFiling() {
  */
 export function useDownloadFiling() {
   return useMutation<Blob, Error, { id: string; fileName: string }>({
-    mutationFn: async ({ id, fileName }) => {
+    mutationFn: async ({id, fileName}) => {
       const blob = await statutoryFilingService.downloadFiling(id);
       // Trigger browser download
       const url = window.URL.createObjectURL(blob);

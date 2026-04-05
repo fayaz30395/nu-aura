@@ -1,11 +1,11 @@
-import { apiClient } from '../../api/client';
-import { Department, DepartmentRequest, Page } from '../../types/hrms/employee';
+import {apiClient} from '../../api/client';
+import {Department, DepartmentRequest, Page} from '../../types/hrms/employee';
 
 export const departmentService = {
   // Get all departments with pagination
   getAllDepartments: async (page = 0, size = 20): Promise<Page<Department>> => {
     const response = await apiClient.get<Page<Department>>('/departments', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -31,7 +31,7 @@ export const departmentService = {
   // Search departments
   searchDepartments: async (query: string, page = 0, size = 20): Promise<Page<Department>> => {
     const response = await apiClient.get<Page<Department>>('/departments/search', {
-      params: { query, page, size },
+      params: {query, page, size},
     });
     return response.data;
   },

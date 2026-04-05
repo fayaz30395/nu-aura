@@ -5,13 +5,13 @@ export default function GanttLoading() {
       {/* Header */}
       <div className="row-between">
         <div className="space-y-2">
-          <div className="h-7 w-44 bg-[var(--bg-surface)] rounded" />
-          <div className="h-4 w-60 bg-[var(--bg-surface)] rounded" />
+          <div className="h-7 w-44 bg-[var(--bg-surface)] rounded"/>
+          <div className="h-4 w-60 bg-[var(--bg-surface)] rounded"/>
         </div>
         <div className="flex gap-2">
-          <div className="h-9 w-28 bg-[var(--bg-surface)] rounded-md" />
-          <div className="h-9 w-28 bg-[var(--bg-surface)] rounded-md" />
-          <div className="h-9 w-24 bg-[var(--bg-surface)] rounded-md" />
+          <div className="h-9 w-28 bg-[var(--bg-surface)] rounded-md"/>
+          <div className="h-9 w-28 bg-[var(--bg-surface)] rounded-md"/>
+          <div className="h-9 w-24 bg-[var(--bg-surface)] rounded-md"/>
         </div>
       </div>
 
@@ -20,12 +20,12 @@ export default function GanttLoading() {
         {/* Timeline header */}
         <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-card)]">
           <div className="w-64 flex-shrink-0 p-4 border-r border-[var(--border-main)]">
-            <div className="h-4 w-24 bg-[var(--bg-surface)] rounded" />
+            <div className="h-4 w-24 bg-[var(--bg-surface)] rounded"/>
           </div>
           <div className="flex-1 flex">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="flex-1 p-4 border-r border-[var(--border-subtle)] last:border-r-0">
-                <div className="h-3 w-12 bg-[var(--bg-surface)] rounded mx-auto" />
+                <div className="h-3 w-12 bg-[var(--bg-surface)] rounded mx-auto"/>
               </div>
             ))}
           </div>
@@ -36,10 +36,10 @@ export default function GanttLoading() {
           <div key={i} className="flex divider-b last:border-b-0">
             {/* Task name column */}
             <div className="w-64 flex-shrink-0 p-4 border-r border-[var(--border-main)] flex items-center gap-2">
-              {i % 3 === 0 && <div className="w-3 h-3 bg-[var(--bg-surface)] rounded-md flex-shrink-0" />}
-              {i % 3 !== 0 && <div className="w-3 h-3 flex-shrink-0" />}
+              {i % 3 === 0 && <div className="w-3 h-3 bg-[var(--bg-surface)] rounded-md flex-shrink-0"/>}
+              {i % 3 !== 0 && <div className="w-3 h-3 flex-shrink-0"/>}
               <div className="h-4 bg-[var(--bg-surface)] rounded"
-                style={{ width: `${60 + (i % 4) * 20}px` }} />
+                   style={{width: `${60 + (i % 4) * 20}px`}}/>
             </div>
             {/* Timeline bar column */}
             <div className="flex-1 relative p-2 flex items-center">

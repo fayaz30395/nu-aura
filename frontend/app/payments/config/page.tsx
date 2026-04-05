@@ -1,20 +1,25 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Settings, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {AlertCircle, CheckCircle, Loader2, Settings} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {
+  useAllPaymentConfigs,
+  useSavePaymentConfig,
+  useTestConnection,
+  useToggleConfigActive
+} from '@/lib/hooks/queries/usePayments';
+import {paymentService} from '@/lib/services/core/payment.service';
+import {PaymentProvider, SavePaymentConfigRequest} from '@/lib/types/core/payment';
 
 // Phase 2 stabilization: payments module gated behind feature flag
 const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
-import { useAllPaymentConfigs, useSavePaymentConfig, useTestConnection, useToggleConfigActive } from '@/lib/hooks/queries/usePayments';
-import { paymentService } from '@/lib/services/core/payment.service';
-import { PaymentProvider, SavePaymentConfigRequest } from '@/lib/types/core/payment';
 
 const configFormSchema = z.object({
   provider: z.enum(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const),
@@ -28,11 +33,11 @@ type ConfigFormData = z.infer<typeof configFormSchema>;
 
 export default function PaymentConfigPage() {
   const router = useRouter();
-  const { hasHydrated } = useAuth();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasHydrated} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
-  const { data: configs = [] } = useAllPaymentConfigs();
+  const {data: configs = []} = useAllPaymentConfigs();
   const saveConfigMutation = useSavePaymentConfig();
   const testConnectionMutation = useTestConnection();
   const toggleConfigMutation = useToggleConfigActive();
@@ -50,7 +55,7 @@ export default function PaymentConfigPage() {
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ConfigFormData>({
     resolver: zodResolver(configFormSchema),
     defaultValues: {
@@ -144,17 +149,18 @@ export default function PaymentConfigPage() {
       let credentials: Record<string, unknown> = {};
       try {
         credentials = JSON.parse(formData.credentialsJson || '{}') as Record<string, unknown>;
-      } catch { /* use empty */ }
+      } catch { /* use empty */
+      }
       const result = await testConnectionMutation.mutateAsync({
         provider: formData.provider,
         credentials,
         testMode: formData.testMode,
       });
       setTestResult(typeof result === 'string'
-        ? { success: true, message: result }
+        ? {success: true, message: result}
         : (result && typeof result === 'object' && 'success' in result && 'message' in result)
           ? result as { success: boolean; message: string }
-          : { success: true, message: String(result) });
+          : {success: true, message: String(result)});
     } catch (error) {
       setTestResult({
         success: false,
@@ -168,7 +174,7 @@ export default function PaymentConfigPage() {
   const handleToggleActive = async (provider: PaymentProvider, isActive: boolean) => {
     try {
       setErrorMessage(null);
-      await toggleConfigMutation.mutateAsync({ provider, isActive });
+      await toggleConfigMutation.mutateAsync({provider, isActive});
       setSavedMessage(
         `${paymentService.getProviderLabel(provider)} has been ${isActive ? 'activated' : 'deactivated'}`
       );
@@ -184,7 +190,7 @@ export default function PaymentConfigPage() {
     return (
       <AppLayout activeMenuItem="payments">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"/>
         </div>
       </AppLayout>
     );
@@ -195,7 +201,7 @@ export default function PaymentConfigPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Settings className="w-8 h-8 text-accent-700" />
+          <Settings className="w-8 h-8 text-accent-700"/>
           <div>
             <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Payment Configuration
@@ -208,14 +214,16 @@ export default function PaymentConfigPage() {
 
         {/* Notifications */}
         {savedMessage && (
-          <div className="mb-6 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5" />
+          <div
+            className="mb-6 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            <CheckCircle className="w-5 h-5"/>
             {savedMessage}
           </div>
         )}
         {errorMessage && (
-          <div className="mb-6 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5" />
+          <div
+            className="mb-6 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            <AlertCircle className="w-5 h-5"/>
             {errorMessage}
           </div>
         )}
@@ -247,7 +255,8 @@ export default function PaymentConfigPage() {
                       </p>
                     </div>
                     {config?.isActive && (
-                      <span className="px-4 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300">
+                      <span
+                        className="px-4 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300">
                         Active
                       </span>
                     )}
@@ -339,7 +348,7 @@ export default function PaymentConfigPage() {
               >
                 {isSubmitting || saveConfigMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin"/>
                     Saving...
                   </>
                 ) : (
@@ -355,7 +364,7 @@ export default function PaymentConfigPage() {
               >
                 {testingConnection || testConnectionMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin"/>
                     Testing...
                   </>
                 ) : (
@@ -376,9 +385,9 @@ export default function PaymentConfigPage() {
             >
               <div className="flex items-center gap-2">
                 {testResult.success ? (
-                  <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
+                  <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400"/>
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400" />
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400"/>
                 )}
                 <p
                   className={`text-sm font-medium ${

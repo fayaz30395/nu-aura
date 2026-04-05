@@ -1,15 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useReceivedFeedback, useGivenFeedback, useCreateFeedback, useUpdateFeedback, useDeleteFeedback } from '@/lib/hooks/queries/usePerformance';
-import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/grow/performance';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {
+  useCreateFeedback,
+  useDeleteFeedback,
+  useGivenFeedback,
+  useReceivedFeedback,
+  useUpdateFeedback
+} from '@/lib/hooks/queries/usePerformance';
+import {Feedback, FeedbackRequest, FeedbackType} from '@/lib/types/grow/performance';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -27,7 +33,7 @@ const feedbackFormSchema = z.object({
 type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
 
 export default function FeedbackPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const currentUserId = user?.employeeId || '';
 
   // React Query hooks
@@ -48,7 +54,7 @@ export default function FeedbackPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<FeedbackFormData>({
     resolver: zodResolver(feedbackFormSchema),
     defaultValues: {
@@ -76,7 +82,7 @@ export default function FeedbackPage() {
     };
 
     if (selectedFeedback) {
-      await updateMutation.mutateAsync({ id: selectedFeedback.id, data: feedbackData as FeedbackRequest });
+      await updateMutation.mutateAsync({id: selectedFeedback.id, data: feedbackData as FeedbackRequest});
     } else {
       await createMutation.mutateAsync(feedbackData as FeedbackRequest);
     }
@@ -128,11 +134,16 @@ export default function FeedbackPage() {
 
   const getTypeColor = (type: FeedbackType) => {
     switch (type) {
-      case 'PRAISE': return 'bg-success-100 text-success-800';
-      case 'CONSTRUCTIVE': return 'bg-warning-100 text-warning-800';
-      case 'GENERAL': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'REQUEST': return 'bg-accent-300 text-accent-900';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'PRAISE':
+        return 'bg-success-100 text-success-800';
+      case 'CONSTRUCTIVE':
+        return 'bg-warning-100 text-warning-800';
+      case 'GENERAL':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'REQUEST':
+        return 'bg-accent-300 text-accent-900';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -170,7 +181,8 @@ export default function FeedbackPage() {
           </PermissionGate>
         </div>
 
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] mb-6">
+        <div
+          className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] mb-6">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('received')}
@@ -211,7 +223,8 @@ export default function FeedbackPage() {
             <div className="text-[var(--text-secondary)]">Loading feedback...</div>
           </div>
         ) : filteredFeedback.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
+          <div
+            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
             <div className="text-[var(--text-secondary)] mb-4">
               No {activeTab === 'received' ? 'received' : 'given'} feedback found
             </div>
@@ -232,7 +245,8 @@ export default function FeedbackPage() {
         ) : (
           <div className="space-y-4">
             {filteredFeedback.map((feedback) => (
-              <div key={feedback.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+              <div key={feedback.id}
+                   className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-4 flex-wrap">
@@ -240,7 +254,8 @@ export default function FeedbackPage() {
                         {feedback.feedbackType}
                       </span>
                       {feedback.category && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)]">
+                        <span
+                          className="px-2 py-1 rounded text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)]">
                           {feedback.category}
                         </span>
                       )}
@@ -298,7 +313,8 @@ export default function FeedbackPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedFeedback ? 'Edit Feedback' : 'Give Feedback'}
@@ -404,7 +420,8 @@ export default function FeedbackPage() {
                     >
                       Cancel
                     </button>
-                    <PermissionGate permission={selectedFeedback ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
+                    <PermissionGate
+                      permission={selectedFeedback ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
                       <button
                         type="submit"
                         disabled={isSubmitting}

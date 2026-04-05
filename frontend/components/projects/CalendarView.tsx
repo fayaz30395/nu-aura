@@ -1,35 +1,28 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import {useMemo, useState} from 'react';
+import {ChevronLeft, ChevronRight,} from 'lucide-react';
+import {CALENDAR_EVENT_COLORS, CalendarEvent, CalendarViewType,} from '@/lib/types/hrms/project-calendar';
 import {
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import {
-  CalendarEvent,
-  CalendarViewType,
-  CALENDAR_EVENT_COLORS,
-} from '@/lib/types/hrms/project-calendar';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  isSameMonth,
-  isToday,
-  addMonths,
-  subMonths,
-  addWeeks,
-  subWeeks,
   addDays,
-  subDays,
-  startOfDay,
+  addMonths,
+  addWeeks,
+  eachDayOfInterval,
   endOfDay,
-  isWithinInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
   getHours,
   getMinutes,
+  isSameMonth,
+  isToday,
+  isWithinInterval,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+  subMonths,
+  subWeeks,
 } from 'date-fns';
 
 interface CalendarViewProps {
@@ -39,15 +32,15 @@ interface CalendarViewProps {
   className?: string;
 }
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const HOURS = Array.from({length: 24}, (_, i) => i);
 const HOUR_HEIGHT = 60; // pixels per hour
 
 export function CalendarView({
-  events,
-  onEventClick,
-  onDateClick,
-  className = '',
-}: CalendarViewProps) {
+                               events,
+                               onEventClick,
+                               onDateClick,
+                               className = '',
+                             }: CalendarViewProps) {
   const [viewType, setViewType] = useState<CalendarViewType>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -90,8 +83,8 @@ export function CalendarView({
       case 'day':
         return format(currentDate, 'EEEE, MMMM d, yyyy');
       case 'week':
-        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-        const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+        const weekStart = startOfWeek(currentDate, {weekStartsOn: 1});
+        const weekEnd = endOfWeek(currentDate, {weekStartsOn: 1});
         if (weekStart.getMonth() === weekEnd.getMonth()) {
           return format(weekStart, 'MMMM d') + ' - ' + format(weekEnd, 'd, yyyy');
         }
@@ -107,8 +100,8 @@ export function CalendarView({
       const dayStart = startOfDay(date);
       const dayEnd = endOfDay(date);
       return (
-        isWithinInterval(event.startDate, { start: dayStart, end: dayEnd }) ||
-        isWithinInterval(event.endDate, { start: dayStart, end: dayEnd }) ||
+        isWithinInterval(event.startDate, {start: dayStart, end: dayEnd}) ||
+        isWithinInterval(event.endDate, {start: dayStart, end: dayEnd}) ||
         (event.startDate <= dayStart && event.endDate >= dayEnd)
       );
     });
@@ -116,16 +109,16 @@ export function CalendarView({
 
   // Month view calendar days
   const monthDays = useMemo(() => {
-    const start = startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
-    const end = endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 });
-    return eachDayOfInterval({ start, end });
+    const start = startOfWeek(startOfMonth(currentDate), {weekStartsOn: 1});
+    const end = endOfWeek(endOfMonth(currentDate), {weekStartsOn: 1});
+    return eachDayOfInterval({start, end});
   }, [currentDate]);
 
   // Week view days
   const weekDays = useMemo(() => {
-    const start = startOfWeek(currentDate, { weekStartsOn: 1 });
-    const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-    return eachDayOfInterval({ start, end });
+    const start = startOfWeek(currentDate, {weekStartsOn: 1});
+    const end = endOfWeek(currentDate, {weekStartsOn: 1});
+    return eachDayOfInterval({start, end});
   }, [currentDate]);
 
   // Render event badge
@@ -142,7 +135,7 @@ export function CalendarView({
         className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-white truncate hover:opacity-80 transition-opacity ${
           compact ? 'mb-0.5' : 'mb-1'
         }`}
-        style={{ backgroundColor }}
+        style={{backgroundColor}}
         title={`${event.title} - ${format(event.startDate, 'HH:mm')} to ${format(event.endDate, 'HH:mm')}`}
       >
         {!event.allDay && !compact && (
@@ -216,7 +209,7 @@ export function CalendarView({
     <div className="flex flex-col">
       {/* Header */}
       <div className="flex border-b border-surface-200 dark:border-surface-700">
-        <div className="w-16 border-r border-surface-200 dark:border-surface-700" />
+        <div className="w-16 border-r border-surface-200 dark:border-surface-700"/>
         {weekDays.map((day) => (
           <div
             key={day.toISOString()}
@@ -260,7 +253,7 @@ export function CalendarView({
       </div>
 
       {/* Time grid */}
-      <div className="flex overflow-y-auto" style={{ height: 'calc(100vh - 400px)' }}>
+      <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
         {/* Time column */}
         <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
           {HOURS.map((hour) => (
@@ -326,7 +319,7 @@ export function CalendarView({
                     top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                   }}
                 >
-                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full" />
+                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
                 </div>
               )}
             </div>
@@ -356,7 +349,7 @@ export function CalendarView({
         )}
 
         {/* Time grid */}
-        <div className="flex overflow-y-auto" style={{ height: 'calc(100vh - 400px)' }}>
+        <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
           {/* Time column */}
           <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
             {HOURS.map((hour) => (
@@ -418,7 +411,7 @@ export function CalendarView({
                   top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                 }}
               >
-                <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full" />
+                <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
               </div>
             )}
           </div>
@@ -430,19 +423,20 @@ export function CalendarView({
   return (
     <div className={`bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
             className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
-            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
           </button>
           <button
             onClick={handleNext}
             className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
-            <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+            <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
           </button>
           <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
             {getTitle()}
@@ -483,19 +477,19 @@ export function CalendarView({
       {/* Legend */}
       <div className="flex flex-wrap gap-4 p-4 border-t border-surface-200 dark:border-surface-700 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: CALENDAR_EVENT_COLORS.project }} />
+          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.project}}/>
           <span className="text-surface-600 dark:text-surface-400">Project</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: CALENDAR_EVENT_COLORS.task }} />
+          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.task}}/>
           <span className="text-surface-600 dark:text-surface-400">Task</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: CALENDAR_EVENT_COLORS.milestone }} />
+          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.milestone}}/>
           <span className="text-surface-600 dark:text-surface-400">Milestone</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: CALENDAR_EVENT_COLORS.deadline }} />
+          <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.deadline}}/>
           <span className="text-surface-600 dark:text-surface-400">Deadline</span>
         </div>
       </div>

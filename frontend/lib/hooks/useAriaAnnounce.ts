@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 
 /**
  * ID of the aria-live region element injected into the DOM.

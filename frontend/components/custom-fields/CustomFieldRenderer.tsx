@@ -1,11 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  CustomFieldDefinition,
-  CustomFieldValue,
-  FieldType,
-} from '@/lib/types/core/custom-fields';
+import {CustomFieldDefinition, CustomFieldValue, FieldType,} from '@/lib/types/core/custom-fields';
 
 interface CustomFieldRendererProps {
   definition: CustomFieldDefinition;
@@ -22,12 +18,12 @@ interface CustomFieldRendererProps {
 }
 
 export default function CustomFieldRenderer({
-  definition,
-  value,
-  onChange,
-  disabled = false,
-  className = '',
-}: CustomFieldRendererProps) {
+                                              definition,
+                                              value,
+                                              onChange,
+                                              disabled = false,
+                                              className = '',
+                                            }: CustomFieldRendererProps) {
   const currentValue = value?.value || definition.defaultValue || '';
 
   const baseInputClass = `w-full px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:bg-[var(--bg-surface)]  disabled:cursor-not-allowed ${className}`;
@@ -92,7 +88,7 @@ export default function CustomFieldRenderer({
           <div className="flex gap-2">
             <select
               value={value?.currencyCode || 'INR'}
-              onChange={(e) => onChange(currentValue, { currencyCode: e.target.value })}
+              onChange={(e) => onChange(currentValue, {currencyCode: e.target.value})}
               disabled={disabled}
               className="px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
             >

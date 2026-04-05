@@ -9,12 +9,19 @@
  */
 
 import {
-  BarChart, Bar,
-  LineChart, Line,
-  PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 // Using CSS custom properties for theme-aware colors that adapt to dark mode
@@ -42,13 +49,13 @@ interface ExpenseTrendChartProps {
   data: ChartDataPoint[];
 }
 
-export function ExpenseTrendChart({ data }: ExpenseTrendChartProps) {
+export function ExpenseTrendChart({data}: ExpenseTrendChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)" />
-        <XAxis dataKey="month" tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
-        <YAxis tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)"/>
+        <XAxis dataKey="month" tick={{fontSize: 12, fill: 'var(--color-surface-500)'}}/>
+        <YAxis tick={{fontSize: 12, fill: 'var(--color-surface-500)'}}/>
         <Tooltip
           contentStyle={{
             backgroundColor: 'var(--bg-input)',
@@ -56,8 +63,9 @@ export function ExpenseTrendChart({ data }: ExpenseTrendChartProps) {
             borderRadius: '8px',
           }}
         />
-        <Line type="monotone" dataKey="amount" stroke="var(--chart-primary)" strokeWidth={2} dot={{ r: 4 }} name="Amount" />
-        <Line type="monotone" dataKey="count" stroke="var(--chart-success)" strokeWidth={2} dot={{ r: 4 }} name="Claims" />
+        <Line type="monotone" dataKey="amount" stroke="var(--chart-primary)" strokeWidth={2} dot={{r: 4}}
+              name="Amount"/>
+        <Line type="monotone" dataKey="count" stroke="var(--chart-success)" strokeWidth={2} dot={{r: 4}} name="Claims"/>
       </LineChart>
     </ResponsiveContainer>
   );
@@ -67,7 +75,7 @@ interface ExpenseCategoryChartProps {
   data: ChartDataPoint[];
 }
 
-export function ExpenseCategoryChart({ data }: ExpenseCategoryChartProps) {
+export function ExpenseCategoryChart({data}: ExpenseCategoryChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <PieChart>
@@ -85,11 +93,11 @@ export function ExpenseCategoryChart({ data }: ExpenseCategoryChartProps) {
           labelLine={false}
         >
           {data.map((_entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
           ))}
         </Pie>
-        <Tooltip />
-        <Legend />
+        <Tooltip/>
+        <Legend/>
       </PieChart>
     </ResponsiveContainer>
   );
@@ -99,13 +107,13 @@ interface ExpenseStatusChartProps {
   data: ChartDataPoint[];
 }
 
-export function ExpenseStatusChart({ data }: ExpenseStatusChartProps) {
+export function ExpenseStatusChart({data}: ExpenseStatusChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)" />
-        <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--color-surface-500)' }} />
-        <YAxis tick={{ fontSize: 12, fill: 'var(--color-surface-500)' }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-surface-200)"/>
+        <XAxis dataKey="name" tick={{fontSize: 11, fill: 'var(--color-surface-500)'}}/>
+        <YAxis tick={{fontSize: 12, fill: 'var(--color-surface-500)'}}/>
         <Tooltip
           contentStyle={{
             backgroundColor: 'var(--bg-input)',
@@ -113,8 +121,8 @@ export function ExpenseStatusChart({ data }: ExpenseStatusChartProps) {
             borderRadius: '8px',
           }}
         />
-        <Bar dataKey="amount" fill="var(--chart-primary)" radius={[4, 4, 0, 0]} name="Amount" />
-        <Bar dataKey="count" fill="var(--chart-success)" radius={[4, 4, 0, 0]} name="Claims" />
+        <Bar dataKey="amount" fill="var(--chart-primary)" radius={[4, 4, 0, 0]} name="Amount"/>
+        <Bar dataKey="count" fill="var(--chart-success)" radius={[4, 4, 0, 0]} name="Claims"/>
       </BarChart>
     </ResponsiveContainer>
   );

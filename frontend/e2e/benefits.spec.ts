@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Benefits Management E2E Tests
@@ -6,23 +6,23 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Benefits Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display benefits page with header', async ({ page }) => {
+  test('should display benefits page with header', async ({page}) => {
     await expect(page.locator('h1')).toContainText('Benefits');
   });
 
-  test('should display tab navigation', async ({ page }) => {
+  test('should display tab navigation', async ({page}) => {
     // Check for tabs
     await expect(page.locator('text=Benefit Plans').first()).toBeVisible();
     await expect(page.locator('text=My Enrollments').first()).toBeVisible();
     await expect(page.locator('text=Claims').first()).toBeVisible();
   });
 
-  test('should display stats cards', async ({ page }) => {
+  test('should display stats cards', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for stat cards
@@ -36,7 +36,7 @@ test.describe('Benefits Page', () => {
 });
 
 test.describe('Benefits - Benefit Plans Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
     // Ensure on Benefit Plans tab
@@ -44,7 +44,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     await page.waitForTimeout(500);
   });
 
-  test('should display benefit plans list', async ({ page }) => {
+  test('should display benefit plans list', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should have benefit plan cards or empty state
@@ -54,7 +54,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     expect(hasPlans || hasEmptyState).toBe(true);
   });
 
-  test('should show enroll button on plans', async ({ page }) => {
+  test('should show enroll button on plans', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for Enroll buttons if plans exist
@@ -65,7 +65,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     expect(hasEnroll || true).toBe(true);
   });
 
-  test('should open enrollment modal on enroll click', async ({ page }) => {
+  test('should open enrollment modal on enroll click', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const enrollButton = page.locator('button:has-text("Enroll")').first();
@@ -84,7 +84,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     }
   });
 
-  test('should display plan details', async ({ page }) => {
+  test('should display plan details', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for common benefit plan elements
@@ -97,20 +97,20 @@ test.describe('Benefits - Benefit Plans Tab', () => {
 });
 
 test.describe('Benefits - My Enrollments Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
     await page.click('text=My Enrollments');
     await page.waitForTimeout(500);
   });
 
-  test('should switch to My Enrollments tab', async ({ page }) => {
+  test('should switch to My Enrollments tab', async ({page}) => {
     // Tab should be active
     const tab = page.locator('button:has-text("My Enrollments")');
     await expect(tab).toBeVisible();
   });
 
-  test('should display enrolled benefits or empty state', async ({ page }) => {
+  test('should display enrolled benefits or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should show enrollments or empty message
@@ -120,7 +120,7 @@ test.describe('Benefits - My Enrollments Tab', () => {
     expect(hasEnrollments || hasEmpty || true).toBe(true);
   });
 
-  test('should show terminate option for active enrollments', async ({ page }) => {
+  test('should show terminate option for active enrollments', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for terminate button if enrollments exist
@@ -133,26 +133,26 @@ test.describe('Benefits - My Enrollments Tab', () => {
 });
 
 test.describe('Benefits - Claims Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
     await page.click('text=Claims');
     await page.waitForTimeout(500);
   });
 
-  test('should switch to Claims tab', async ({ page }) => {
+  test('should switch to Claims tab', async ({page}) => {
     const tab = page.locator('button:has-text("Claims")');
     await expect(tab).toBeVisible();
   });
 
-  test('should display submit claim button', async ({ page }) => {
+  test('should display submit claim button', async ({page}) => {
     const submitBtn = page.locator('button:has-text("Submit Claim")').first();
     const hasSubmit = await submitBtn.isVisible().catch(() => false);
 
     expect(hasSubmit || true).toBe(true);
   });
 
-  test('should open claim modal on submit click', async ({ page }) => {
+  test('should open claim modal on submit click', async ({page}) => {
     const submitBtn = page.locator('button:has-text("Submit Claim")').first();
     const hasSubmit = await submitBtn.isVisible().catch(() => false);
 
@@ -169,7 +169,7 @@ test.describe('Benefits - Claims Tab', () => {
     }
   });
 
-  test('should display claims list or empty state', async ({ page }) => {
+  test('should display claims list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should show claims table or empty message
@@ -181,12 +181,12 @@ test.describe('Benefits - Claims Tab', () => {
 });
 
 test.describe('Benefits - Enrollment Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should complete enrollment flow', async ({ page }) => {
+  test('should complete enrollment flow', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Find and click Enroll button
@@ -218,7 +218,7 @@ test.describe('Benefits - Enrollment Flow', () => {
     }
   });
 
-  test('should close enrollment modal on cancel', async ({ page }) => {
+  test('should close enrollment modal on cancel', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const enrollButton = page.locator('button:has-text("Enroll")').first();
@@ -253,12 +253,12 @@ test.describe('Benefits - Enrollment Flow', () => {
 });
 
 test.describe('Benefits - Flex Credits', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/benefits');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display flex credits balance', async ({ page }) => {
+  test('should display flex credits balance', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for flex credits card
@@ -266,7 +266,7 @@ test.describe('Benefits - Flex Credits', () => {
     await expect(flexCredits).toBeVisible();
   });
 
-  test('should show use credits option if available', async ({ page }) => {
+  test('should show use credits option if available', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Check for Use Credits button

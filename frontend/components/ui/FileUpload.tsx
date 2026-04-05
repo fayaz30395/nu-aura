@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { Upload, X, File, Image, FileText, Loader2 } from 'lucide-react';
-import { apiClient } from '@/lib/api/client';
+import React, {useCallback, useRef, useState} from 'react';
+import {File, FileText, Image, Loader2, Upload, X} from 'lucide-react';
+import {apiClient} from '@/lib/api/client';
 
 interface FileUploadProps {
   onUpload: (result: FileUploadResult) => void;
@@ -37,16 +37,16 @@ const formatFileSize = (bytes: number): string => {
 };
 
 export const FileUpload: React.FC<FileUploadProps> = ({
-  onUpload,
-  onError,
-  category = 'documents',
-  accept = '*/*',
-  maxSize = 10 * 1024 * 1024, // 10MB default
-  multiple = false,
-  className = '',
-  disabled = false,
-  employeeId,
-}) => {
+                                                        onUpload,
+                                                        onError,
+                                                        category = 'documents',
+                                                        accept = '*/*',
+                                                        maxSize = 10 * 1024 * 1024, // 10MB default
+                                                        multiple = false,
+                                                        className = '',
+                                                        disabled = false,
+                                                        employeeId,
+                                                      }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -118,7 +118,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       onUpload(response.data);
       setSelectedFile(null);
     } catch (err: unknown) {
-      const errorMessage = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
+      const errorMessage = typeof err === 'object' && err !== null && 'response' in err ? (err as {
+        response?: { data?: { message?: string } }
+      }).response?.data?.message : null;
       onError?.(errorMessage || 'Failed to upload file');
     } finally {
       setUploading(false);
@@ -189,9 +191,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           flex flex-col items-center justify-center
           transition-all cursor-pointer
           ${isDragging
-            ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-            : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500'
-          }
+          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+          : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500'
+        }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${uploading ? 'pointer-events-none' : ''}
         `}
@@ -209,7 +211,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         {uploading && selectedFile ? (
           <div className="w-full max-w-xs">
             <div className="flex items-center gap-2 mb-4">
-              <FileIcon className="h-8 w-8 text-accent-500" />
+              <FileIcon className="h-8 w-8 text-accent-500"/>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{selectedFile.name}</p>
                 <p className="text-caption">{formatFileSize(selectedFile.size)}</p>
@@ -221,23 +223,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 }}
                 className="p-1 hover:bg-[var(--bg-surface)]  rounded"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4"/>
               </button>
             </div>
             <div className="relative h-2 bg-[var(--border-main)] dark:bg-surface-700 rounded-full overflow-hidden">
               <div
                 className="absolute inset-y-0 left-0 bg-accent-500 transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                style={{width: `${progress}%`}}
               />
             </div>
             <div className="flex items-center justify-center mt-2 text-body-muted">
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
               Uploading... {progress}%
             </div>
           </div>
         ) : (
           <>
-            <Upload className="h-12 w-12 text-[var(--text-muted)] mb-4" />
+            <Upload className="h-12 w-12 text-[var(--text-muted)] mb-4"/>
             <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               {isDragging ? 'Drop files here' : 'Click to upload or drag and drop'}
             </p>

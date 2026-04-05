@@ -1,16 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ThumbsUp,
-  Heart,
-  PartyPopper,
-  Lightbulb,
-  HelpCircle,
-  MessageCircle,
-} from 'lucide-react';
-import type { ReactionType } from '@/lib/services/core/wall.service';
+import {useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Heart, HelpCircle, Lightbulb, MessageCircle, PartyPopper, ThumbsUp,} from 'lucide-react';
+import type {ReactionType} from '@/lib/services/core/wall.service';
 
 interface ReactionBarProps {
   reactionCounts: Record<string, number>;
@@ -24,25 +17,25 @@ interface ReactionBarProps {
 }
 
 const reactionEmojis: Record<ReactionType, { icon: React.ReactNode; label: string; emoji: string }> = {
-  LIKE: { icon: <ThumbsUp size={16} />, label: 'Like', emoji: '👍' },
-  LOVE: { icon: <Heart size={16} />, label: 'Love', emoji: '❤️' },
-  CELEBRATE: { icon: <PartyPopper size={16} />, label: 'Celebrate', emoji: '🎉' },
-  INSIGHTFUL: { icon: <Lightbulb size={16} />, label: 'Insightful', emoji: '💡' },
-  CURIOUS: { icon: <HelpCircle size={16} />, label: 'Curious', emoji: '🤔' },
+  LIKE: {icon: <ThumbsUp size={16}/>, label: 'Like', emoji: '👍'},
+  LOVE: {icon: <Heart size={16}/>, label: 'Love', emoji: '❤️'},
+  CELEBRATE: {icon: <PartyPopper size={16}/>, label: 'Celebrate', emoji: '🎉'},
+  INSIGHTFUL: {icon: <Lightbulb size={16}/>, label: 'Insightful', emoji: '💡'},
+  CURIOUS: {icon: <HelpCircle size={16}/>, label: 'Curious', emoji: '🤔'},
 };
 
 const reactionTypes: ReactionType[] = ['LIKE', 'LOVE', 'CELEBRATE', 'INSIGHTFUL', 'CURIOUS'];
 
 export function ReactionBar({
-  reactionCounts: _reactionCounts,
-  totalReactions,
-  commentCount,
-  hasReacted,
-  userReactionType,
-  onReact,
-  onRemoveReact,
-  onToggleComments,
-}: ReactionBarProps): React.ReactNode {
+                              reactionCounts: _reactionCounts,
+                              totalReactions,
+                              commentCount,
+                              hasReacted,
+                              userReactionType,
+                              onReact,
+                              onRemoveReact,
+                              onToggleComments,
+                            }: ReactionBarProps): React.ReactNode {
   const [showReactionPopup, setShowReactionPopup] = useState(false);
   const [popupTimeout, setPopupTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -82,8 +75,8 @@ export function ReactionBar({
     <div className="flex items-center gap-2 text-sm">
       <div className="relative">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{scale: 1.05}}
+          whileTap={{scale: 0.95}}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={() => {
@@ -108,10 +101,10 @@ export function ReactionBar({
         <AnimatePresence>
           {showReactionPopup && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: -8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -8 }}
-              transition={{ duration: 0.15 }}
+              initial={{opacity: 0, scale: 0.8, y: -8}}
+              animate={{opacity: 1, scale: 1, y: 0}}
+              exit={{opacity: 0, scale: 0.8, y: -8}}
+              transition={{duration: 0.15}}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               className="absolute bottom-full left-0 mb-2 bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] p-2 flex gap-1 z-50 border border-[var(--border-main)]"
@@ -119,8 +112,8 @@ export function ReactionBar({
               {reactionTypes.map((type) => (
                 <motion.button
                   key={type}
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{scale: 1.15}}
+                  whileTap={{scale: 0.9}}
                   onClick={() => handleReactionClick(type)}
                   className={`flex items-center justify-center w-8 h-8 rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     userReactionType === type
@@ -139,13 +132,13 @@ export function ReactionBar({
       </div>
 
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{scale: 1.05}}
+        whileTap={{scale: 0.95}}
         onClick={onToggleComments}
         aria-label="Toggle comments"
         className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
-        <MessageCircle size={16} />
+        <MessageCircle size={16}/>
         {commentCount > 0 && (
           <span className="font-medium">{commentCount}</span>
         )}

@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Bell, Check, CheckCheck } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
-import type { UnifiedNotification } from '@/lib/hooks/useNotifications';
+import {useRouter} from 'next/navigation';
+import {Bell, Check, CheckCheck} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {formatDistanceToNow} from 'date-fns';
+import type {UnifiedNotification} from '@/lib/hooks/useNotifications';
 
 // ─── Props ──────────────────────────────────────────────────────────────
 export interface SimpleNotificationDropdownProps {
@@ -49,15 +49,15 @@ export interface SimpleNotificationDropdownProps {
  * ```
  */
 export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProps> = ({
-  isOpen,
-  onClose,
-  notifications,
-  unreadCount,
-  onMarkAsRead,
-  onMarkAllAsRead,
-  isLoading = false,
-  className,
-}) => {
+                                                                                        isOpen,
+                                                                                        onClose,
+                                                                                        notifications,
+                                                                                        unreadCount,
+                                                                                        onMarkAsRead,
+                                                                                        onMarkAllAsRead,
+                                                                                        isLoading = false,
+                                                                                        className,
+                                                                                      }) => {
   const router = useRouter();
 
   if (!isOpen) return null;
@@ -89,12 +89,13 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
       {/* Header */}
       <div className="row-between px-4 py-2 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
-          <Bell className="h-4 w-4 text-[var(--text-muted)]" />
+          <Bell className="h-4 w-4 text-[var(--text-muted)]"/>
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">
             Notifications
           </h3>
           {unreadCount > 0 && (
-            <span className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+            <span
+              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
               {unreadCount}
             </span>
           )}
@@ -110,7 +111,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
               'transition-colors duration-150'
             )}
           >
-            <CheckCheck className="h-3.5 w-3.5" />
+            <CheckCheck className="h-3.5 w-3.5"/>
             Mark all as read
           </button>
         )}
@@ -120,11 +121,11 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
       <div className="max-h-[400px] overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-700 border-t-transparent" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-700 border-t-transparent"/>
           </div>
         ) : displayed.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Bell className="h-8 w-8 text-[var(--text-muted)] mb-2" />
+            <Bell className="h-8 w-8 text-[var(--text-muted)] mb-2"/>
             <p className="text-body-muted">No notifications</p>
           </div>
         ) : (
@@ -145,9 +146,9 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                   {/* Unread indicator dot */}
                   <div className="mt-1.5 shrink-0">
                     {!notification.isRead ? (
-                      <span className="block h-2 w-2 rounded-full bg-accent-700" />
+                      <span className="block h-2 w-2 rounded-full bg-accent-700"/>
                     ) : (
-                      <Check className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                      <Check className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     )}
                   </div>
 

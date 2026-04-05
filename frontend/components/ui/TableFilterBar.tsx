@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useDebounce } from '@/lib/hooks/useDebounce';
+import React, {useCallback, useMemo, useState} from 'react';
+import {ChevronDown, ChevronUp, Filter, X} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {useDebounce} from '@/lib/hooks/useDebounce';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 export interface FilterField {
@@ -44,12 +44,12 @@ interface DebouncedTextInputProps {
 }
 
 const DebouncedTextInput: React.FC<DebouncedTextInputProps> = ({
-  value,
-  onChange,
-  placeholder,
-  id,
-  type = 'text',
-}) => {
+                                                                 value,
+                                                                 onChange,
+                                                                 placeholder,
+                                                                 id,
+                                                                 type = 'text',
+                                                               }) => {
   const [localValue, setLocalValue] = useState(value);
   const debouncedValue = useDebounce(localValue, 300);
 
@@ -91,13 +91,13 @@ const DebouncedTextInput: React.FC<DebouncedTextInputProps> = ({
 
 // ─── TableFilterBar ─────────────────────────────────────────────────────
 export const TableFilterBar: React.FC<TableFilterBarProps> = ({
-  filters,
-  values,
-  onChange,
-  onClear,
-  onApply,
-  className,
-}) => {
+                                                                filters,
+                                                                values,
+                                                                onChange,
+                                                                onClear,
+                                                                onApply,
+                                                                className,
+                                                              }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const activeFilterCount = useMemo(
@@ -242,17 +242,18 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
           aria-expanded={!isCollapsed}
           aria-controls="table-filter-fields"
         >
-          <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+          <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
           Filters
           {activeFilterCount > 0 && (
-            <span className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+            <span
+              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
               {activeFilterCount}
             </span>
           )}
           {isCollapsed ? (
-            <ChevronDown className="h-4 w-4 text-[var(--text-muted)]" />
+            <ChevronDown className="h-4 w-4 text-[var(--text-muted)]"/>
           ) : (
-            <ChevronUp className="h-4 w-4 text-[var(--text-muted)]" />
+            <ChevronUp className="h-4 w-4 text-[var(--text-muted)]"/>
           )}
         </button>
 
@@ -270,7 +271,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
                 'transition-colors duration-150'
               )}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5"/>
               Clear All
             </button>
           )}

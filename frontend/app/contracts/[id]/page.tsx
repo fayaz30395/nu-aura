@@ -1,20 +1,19 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useContract, useSignatures, useTerminateContract, useMarkAsActive } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/hrms/contract.service';
-import { Button, Badge, Card, Tabs, Table } from '@mantine/core';
-import { ArrowLeft, Download, Loader2 } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useEffect} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {useContract, useMarkAsActive, useSignatures, useTerminateContract} from '@/lib/hooks/queries/useContracts';
+import {contractService} from '@/lib/services/hrms/contract.service';
+import {Badge, Button, Card, Table, Tabs} from '@mantine/core';
+import {ArrowLeft, Download, Loader2} from 'lucide-react';
+import {notifications} from '@mantine/notifications';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function ContractDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
 
@@ -26,8 +25,8 @@ export default function ContractDetailPage() {
 
   const contractId = params.id as string;
 
-  const { data: contract, isLoading } = useContract(contractId);
-  const { data: signatures } = useSignatures(contractId);
+  const {data: contract, isLoading} = useContract(contractId);
+  const {data: signatures} = useSignatures(contractId);
   const terminateMutation = useTerminateContract();
   const markActiveMutation = useMarkAsActive();
 
@@ -37,7 +36,7 @@ export default function ContractDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center p-16">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
         </div>
       </AppLayout>
     );
@@ -48,9 +47,9 @@ export default function ContractDetailPage() {
   }
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Contracts', href: '/contracts' },
-    { label: contract.title, href: `/contracts/${contractId}` },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Contracts', href: '/contracts'},
+    {label: contract.title, href: `/contracts/${contractId}`},
   ];
 
   return (
@@ -59,8 +58,9 @@ export default function ContractDetailPage() {
         {/* Header */}
         <div className="row-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.back()} aria-label="Go back" className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
-              <ArrowLeft className="w-5 h-5" />
+            <button onClick={() => router.back()} aria-label="Go back"
+                    className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
+              <ArrowLeft className="w-5 h-5"/>
             </button>
             <div>
               <h1 className="text-2xl font-bold skeuo-emboss">{contract.title}</h1>
@@ -87,7 +87,8 @@ export default function ContractDetailPage() {
           {contract.value && (
             <Card>
               <div className="text-body-secondary mb-1">Value</div>
-              <div className="text-lg font-semibold">{contractService.formatCurrency(contract.value, contract.currency)}</div>
+              <div
+                className="text-lg font-semibold">{contractService.formatCurrency(contract.value, contract.currency)}</div>
             </Card>
           )}
         </div>
@@ -106,10 +107,10 @@ export default function ContractDetailPage() {
             <Button
               onClick={() => markActiveMutation.mutate(contractId, {
                 onSuccess: () => {
-                  notifications.show({ title: 'Success', message: 'Contract marked as active', color: 'green' });
+                  notifications.show({title: 'Success', message: 'Contract marked as active', color: 'green'});
                 },
                 onError: () => {
-                  notifications.show({ title: 'Error', message: 'Failed to mark contract as active', color: 'red' });
+                  notifications.show({title: 'Error', message: 'Failed to mark contract as active', color: 'red'});
                 },
               })}
               loading={markActiveMutation.isPending}
@@ -122,10 +123,10 @@ export default function ContractDetailPage() {
               color="red"
               onClick={() => terminateMutation.mutate(contractId, {
                 onSuccess: () => {
-                  notifications.show({ title: 'Success', message: 'Contract terminated', color: 'green' });
+                  notifications.show({title: 'Success', message: 'Contract terminated', color: 'green'});
                 },
                 onError: () => {
-                  notifications.show({ title: 'Error', message: 'Failed to terminate contract', color: 'red' });
+                  notifications.show({title: 'Error', message: 'Failed to terminate contract', color: 'red'});
                 },
               })}
               loading={terminateMutation.isPending}
@@ -134,7 +135,7 @@ export default function ContractDetailPage() {
             </Button>
           )}
           {contract.documentUrl && (
-            <Button variant="light" leftSection={<Download className="w-4 h-4" />}>
+            <Button variant="light" leftSection={<Download className="w-4 h-4"/>}>
               Download Document
             </Button>
           )}

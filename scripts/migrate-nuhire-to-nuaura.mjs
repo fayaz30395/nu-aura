@@ -11,9 +11,10 @@
  * NOTE: This script is READ-ONLY against MongoDB – no writes or deletions.
  */
 
-import { MongoClient } from 'mongodb';
+import {MongoClient} from 'mongodb';
 import pg from 'pg';
-const { Pool } = pg;
+
+const {Pool} = pg;
 
 // ── Config ──────────────────────────────────────────────────────────────
 const MONGO_URI =
@@ -66,11 +67,17 @@ function mapJobStatus(status) {
   if (!status) return 'DRAFT';
   const s = status.toUpperCase().replace(/\s+/g, '_');
   switch (s) {
-    case 'ACTIVE': return 'OPEN';
-    case 'ONHOLD': case 'ON_HOLD': return 'ON_HOLD';
-    case 'CLOSED': return 'CLOSED';
-    case 'CANCELLED': return 'CANCELLED';
-    default: return 'DRAFT';
+    case 'ACTIVE':
+      return 'OPEN';
+    case 'ONHOLD':
+    case 'ON_HOLD':
+      return 'ON_HOLD';
+    case 'CLOSED':
+      return 'CLOSED';
+    case 'CANCELLED':
+      return 'CANCELLED';
+    default:
+      return 'DRAFT';
   }
 }
 
@@ -103,11 +110,16 @@ function mapSource(source) {
 /** Map nu-hire interview type → NU-AURA InterviewRound (free VARCHAR) */
 function mapInterviewRound(type) {
   switch (type) {
-    case 'SCREENING': return 'SCREENING';
-    case 'TECHNICAL': return 'TECHNICAL_1';
-    case 'HR': return 'HR';
-    case 'MANAGERIAL': return 'MANAGERIAL';
-    default: return 'SCREENING';
+    case 'SCREENING':
+      return 'SCREENING';
+    case 'TECHNICAL':
+      return 'TECHNICAL_1';
+    case 'HR':
+      return 'HR';
+    case 'MANAGERIAL':
+      return 'MANAGERIAL';
+    default:
+      return 'SCREENING';
   }
 }
 
@@ -123,12 +135,19 @@ function mapInterviewType(type) {
 /** Map nu-hire InterviewStatusEnum → NU-AURA InterviewStatus (SCHEDULED, RESCHEDULED, COMPLETED, CANCELLED, NO_SHOW) */
 function mapInterviewStatus(status) {
   switch (status) {
-    case 'SCHEDULED': return 'SCHEDULED';
-    case 'RESCHEDULED': return 'RESCHEDULED';
-    case 'COMPLETED': case 'FEEDBACK_PROVIDED': return 'COMPLETED';
-    case 'CANCELLED': return 'CANCELLED';
-    case 'NO_SHOW': return 'NO_SHOW';
-    default: return 'SCHEDULED';
+    case 'SCHEDULED':
+      return 'SCHEDULED';
+    case 'RESCHEDULED':
+      return 'RESCHEDULED';
+    case 'COMPLETED':
+    case 'FEEDBACK_PROVIDED':
+      return 'COMPLETED';
+    case 'CANCELLED':
+      return 'CANCELLED';
+    case 'NO_SHOW':
+      return 'NO_SHOW';
+    default:
+      return 'SCHEDULED';
   }
 }
 

@@ -4,10 +4,10 @@
 
 Seed data is applied via Flyway migrations on backend startup. Two key migrations provide base data:
 
-| Migration | Purpose | Environment |
-|-----------|---------|-------------|
-| **V19** | Platform seed — tenant, SuperAdmin users, roles, permissions, app definitions | All environments |
-| **V30** | Demo data — sample employees, leave, attendance, performance, etc. | Development only |
+| Migration | Purpose                                                                       | Environment      |
+|-----------|-------------------------------------------------------------------------------|------------------|
+| **V19**   | Platform seed — tenant, SuperAdmin users, roles, permissions, app definitions | All environments |
+| **V30**   | Demo data — sample employees, leave, attendance, performance, etc.            | Development only |
 
 ## V19: Platform Seed (Required)
 
@@ -34,15 +34,18 @@ Populates the platform with realistic sample data for development and testing:
 - LMS courses
 - Social wall posts and recognition entries
 
-> **Warning:** V30 demo data must NOT be applied in production. Use environment-specific Flyway configuration to exclude it.
+> **Warning:** V30 demo data must NOT be applied in production. Use environment-specific Flyway
+> configuration to exclude it.
 
-> **Note:** Demo user passwords use placeholder BCrypt hashes. For actual login, update passwords via the signup flow or directly in the database.
+> **Note:** Demo user passwords use placeholder BCrypt hashes. For actual login, update passwords
+> via the signup flow or directly in the database.
 
 ## Migration Status
 
 - **Applied:** V0–V91 (88 migration files, gaps at V1, V27–V29, V63–V66, V68–V79)
 - **Next available version:** V92
-- **Migration tool:** Flyway only. Legacy Liquibase files in `db/changelog/` are deprecated — do not use.
+- **Migration tool:** Flyway only. Legacy Liquibase files in `db/changelog/` are deprecated — do not
+  use.
 
 ## Adding New Seed Data
 

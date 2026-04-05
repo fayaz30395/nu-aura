@@ -1,21 +1,21 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { projectService } from '@/lib/services/hrms/project.service';
-import { CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/hrms/project';
-import { hrmsProjectService } from '@/lib/services/hrms/hrms-project.service';
-import { hrmsProjectAllocationService } from '@/lib/services/hrms/hrms-project-allocation.service';
-import { ProjectCreateRequest, ProjectUpdateRequest, ProjectStatus, ProjectType } from '@/lib/types/hrms/hrms-project';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {projectService} from '@/lib/services/hrms/project.service';
+import {AssignEmployeeRequest, CreateProjectRequest, UpdateProjectRequest} from '@/lib/types/hrms/project';
+import {hrmsProjectService} from '@/lib/services/hrms/hrms-project.service';
+import {hrmsProjectAllocationService} from '@/lib/services/hrms/hrms-project-allocation.service';
+import {ProjectCreateRequest, ProjectStatus, ProjectType, ProjectUpdateRequest} from '@/lib/types/hrms/hrms-project';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management
 export const projectKeys = {
   all: ['projects'] as const,
   lists: () => [...projectKeys.all, 'list'] as const,
   list: (page: number, size: number, status?: string, priority?: string) =>
-    [...projectKeys.lists(), { page, size, status, priority }] as const,
+    [...projectKeys.lists(), {page, size, status, priority}] as const,
   search: (query: string, page: number, size: number) =>
-    [...projectKeys.all, 'search', { query, page, size }] as const,
+    [...projectKeys.all, 'search', {query, page, size}] as const,
   details: () => [...projectKeys.all, 'detail'] as const,
   detail: (id: string) => [...projectKeys.details(), id] as const,
   team: (id: string) => [...projectKeys.all, 'team', id] as const,
@@ -90,7 +90,7 @@ export function useCreateProject() {
   return useMutation({
     mutationFn: (data: CreateProjectRequest) => projectService.createProject(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+      queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Created', 'New project has been created successfully');
     },
     onError: (error: Error) => {
@@ -105,11 +105,11 @@ export function useUpdateProject() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateProjectRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateProjectRequest }) =>
       projectService.updateProject(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: projectKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Updated', 'Project details have been updated');
     },
     onError: (error: Error) => {
@@ -126,7 +126,7 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: (id: string) => projectService.deleteProject(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+      queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Deleted', 'Project has been removed');
     },
     onError: (error: Error) => {
@@ -141,11 +141,11 @@ export function useAssignEmployee() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ projectId, data }: { projectId: string; data: AssignEmployeeRequest }) =>
+    mutationFn: ({projectId, data}: { projectId: string; data: AssignEmployeeRequest }) =>
       projectService.assignEmployee(projectId, data),
-    onSuccess: (_, { projectId }) => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.team(projectId) });
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+    onSuccess: (_, {projectId}) => {
+      queryClient.invalidateQueries({queryKey: projectKeys.team(projectId)});
+      queryClient.invalidateQueries({queryKey: projectKeys.detail(projectId)});
       toast.success('Employee Assigned', 'Employee has been assigned to the project');
     },
     onError: (error: Error) => {
@@ -160,11 +160,11 @@ export function useRemoveEmployee() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ projectId, employeeId }: { projectId: string; employeeId: string }) =>
+    mutationFn: ({projectId, employeeId}: { projectId: string; employeeId: string }) =>
       projectService.removeEmployee(projectId, employeeId),
-    onSuccess: (_, { projectId }) => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.team(projectId) });
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+    onSuccess: (_, {projectId}) => {
+      queryClient.invalidateQueries({queryKey: projectKeys.team(projectId)});
+      queryClient.invalidateQueries({queryKey: projectKeys.detail(projectId)});
       toast.success('Employee Removed', 'Employee has been removed from the project');
     },
     onError: (error: Error) => {
@@ -191,7 +191,7 @@ export const hrmsProjectKeys = {
   all: ['hrmsProjects'] as const,
   lists: () => [...hrmsProjectKeys.all, 'list'] as const,
   list: (page: number, size: number, filters?: Record<string, string | undefined>) =>
-    [...hrmsProjectKeys.lists(), { page, size, ...filters }] as const,
+    [...hrmsProjectKeys.lists(), {page, size, ...filters}] as const,
   details: () => [...hrmsProjectKeys.all, 'detail'] as const,
   detail: (id: string) => [...hrmsProjectKeys.details(), id] as const,
   allocations: (projectId: string) =>
@@ -230,7 +230,7 @@ export function useCreateHrmsProject() {
     mutationFn: (data: ProjectCreateRequest) =>
       hrmsProjectService.createProject(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Created', 'New project has been created successfully');
     },
     onError: (error: Error) => {
@@ -245,11 +245,11 @@ export function useUpdateHrmsProject() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ProjectUpdateRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ProjectUpdateRequest }) =>
       hrmsProjectService.updateProject(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Updated', 'Project has been updated successfully');
     },
     onError: (error: Error) => {
@@ -266,8 +266,8 @@ export function useActivateHrmsProject() {
   return useMutation({
     mutationFn: (id: string) => hrmsProjectService.activateProject(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Activated', 'Project status has been set to active');
     },
     onError: (error: Error) => {
@@ -282,11 +282,11 @@ export function useCloseHrmsProject() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, closeDate }: { id: string; closeDate?: string }) =>
+    mutationFn: ({id, closeDate}: { id: string; closeDate?: string }) =>
       hrmsProjectService.closeProject(id, closeDate),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: hrmsProjectKeys.lists() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Closed', 'Project has been closed');
     },
     onError: (error: Error) => {
@@ -309,7 +309,7 @@ export const allocationKeys = {
   projectAllocations: (projectId: string) =>
     [...allocationKeys.all, 'project', projectId] as const,
   allocationList: (projectId: string, page: number, size: number) =>
-    [...allocationKeys.projectAllocations(projectId), 'list', { page, size }] as const,
+    [...allocationKeys.projectAllocations(projectId), 'list', {page, size}] as const,
   allocationSummary: () => [...allocationKeys.all, 'summary'] as const,
   summaryList: (
     scope: string,
@@ -322,7 +322,7 @@ export const allocationKeys = {
   ) =>
     [
       ...allocationKeys.allocationSummary(),
-      { scope, startDate, endDate, page, size, employeeSearch, employeeId },
+      {scope, startDate, endDate, page, size, employeeSearch, employeeId},
     ] as const,
 };
 
@@ -349,9 +349,9 @@ export function useAssignToProject() {
 
   return useMutation({
     mutationFn: ({
-      projectId,
-      data,
-    }: {
+                   projectId,
+                   data,
+                 }: {
       projectId: string;
       data: {
         employeeId: string;
@@ -361,7 +361,7 @@ export function useAssignToProject() {
         endDate?: string;
       };
     }) => hrmsProjectAllocationService.assignEmployee(projectId, data),
-    onSuccess: (_, { projectId }) => {
+    onSuccess: (_, {projectId}) => {
       queryClient.invalidateQueries({
         queryKey: allocationKeys.projectAllocations(projectId),
       });
@@ -380,15 +380,15 @@ export function useEndAllocation() {
 
   return useMutation({
     mutationFn: ({
-      projectId,
-      allocationId,
-      endDate,
-    }: {
+                   projectId,
+                   allocationId,
+                   endDate,
+                 }: {
       projectId: string;
       allocationId: string;
       endDate?: string;
     }) => hrmsProjectAllocationService.endAllocation(projectId, allocationId, endDate),
-    onSuccess: (_, { projectId }) => {
+    onSuccess: (_, {projectId}) => {
       queryClient.invalidateQueries({
         queryKey: allocationKeys.projectAllocations(projectId),
       });
@@ -440,12 +440,12 @@ export function useAllocationSummary(
 export function useExportAllocationSummary() {
   return useMutation({
     mutationFn: ({
-      scope,
-      startDate,
-      endDate,
-      employeeSearch,
-      employeeId,
-    }: {
+                   scope,
+                   startDate,
+                   endDate,
+                   employeeSearch,
+                   employeeId,
+                 }: {
       scope: 'SELF' | 'TEAM' | 'DEPARTMENT' | 'ORG';
       startDate: string;
       endDate: string;

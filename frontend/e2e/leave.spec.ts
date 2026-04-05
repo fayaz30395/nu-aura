@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { LeavePage } from './pages/LeavePage';
-import { testUsers, testLeave } from './fixtures/testData';
-import { loginAs, switchUser } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {LeavePage} from './pages/LeavePage';
+import {testLeave, testUsers} from './fixtures/testData';
+import {loginAs, switchUser} from './fixtures/helpers';
 
 /**
  * Leave Management E2E Tests
@@ -13,7 +13,7 @@ test.describe('Leave Management', () => {
   let loginPage: LoginPage;
   let leavePage: LeavePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     leavePage = new LeavePage(page);
 
@@ -27,7 +27,7 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Leave Page', () => {
-    test('should display leave page', async ({ page }) => {
+    test('should display leave page', async ({page}) => {
       // Verify page heading
       await expect(leavePage.pageHeading).toBeVisible();
 
@@ -35,7 +35,7 @@ test.describe('Leave Management', () => {
       await expect(leavePage.applyLeaveButton).toBeVisible();
     });
 
-    test('should display leave balances', async ({ page }) => {
+    test('should display leave balances', async ({page}) => {
       // Check if balance cards are visible
       const hasAnnualBalance = await leavePage.annualLeaveBalance.isVisible().catch(() => false);
       const hasSickBalance = await leavePage.sickLeaveBalance.isVisible().catch(() => false);
@@ -45,7 +45,7 @@ test.describe('Leave Management', () => {
       expect(hasAnnualBalance || hasSickBalance || hasCasualBalance).toBe(true);
     });
 
-    test('should display leave requests table', async ({ page }) => {
+    test('should display leave requests table', async ({page}) => {
       // Verify table exists
       const tableVisible = await leavePage.leaveTable.isVisible().catch(() => false);
 
@@ -55,14 +55,14 @@ test.describe('Leave Management', () => {
       }
     });
 
-    test('should navigate to my leaves', async ({ page }) => {
+    test('should navigate to my leaves', async ({page}) => {
       await leavePage.navigateToMyLeaves();
 
       // Verify URL
       expect(page.url()).toContain('/leave/my-leaves');
     });
 
-    test('should navigate to team leaves', async ({ page }) => {
+    test('should navigate to team leaves', async ({page}) => {
       // Login as manager
       await loginPage.navigate();
       await loginPage.login(testUsers.manager.email, testUsers.manager.password);
@@ -77,7 +77,7 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Apply Leave', () => {
-    test('should open apply leave modal', async ({ page }) => {
+    test('should open apply leave modal', async ({page}) => {
       await leavePage.clickApplyLeave();
 
       // Verify modal is visible
@@ -91,7 +91,7 @@ test.describe('Leave Management', () => {
       await expect(leavePage.reasonTextarea).toBeVisible();
     });
 
-    test('should apply for annual leave', async ({ page }) => {
+    test('should apply for annual leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.annual);
 
       // Wait for submission
@@ -102,7 +102,7 @@ test.describe('Leave Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should apply for sick leave', async ({ page }) => {
+    test('should apply for sick leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.sick);
 
       // Wait for submission
@@ -113,7 +113,7 @@ test.describe('Leave Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should apply for half day leave', async ({ page }) => {
+    test('should apply for half day leave', async ({page}) => {
       await leavePage.applyLeave(testLeave.casual);
 
       // Wait for submission
@@ -124,7 +124,7 @@ test.describe('Leave Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should validate required fields', async ({ page }) => {
+    test('should validate required fields', async ({page}) => {
       await leavePage.clickApplyLeave();
 
       // Try to submit without filling fields
@@ -135,7 +135,7 @@ test.describe('Leave Management', () => {
       expect(isModalVisible).toBe(true);
     });
 
-    test('should close leave modal on cancel', async ({ page }) => {
+    test('should close leave modal on cancel', async ({page}) => {
       await leavePage.clickApplyLeave();
 
       // Fill some data
@@ -151,7 +151,7 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Leave Requests List', () => {
-    test('should filter by status', async ({ page }) => {
+    test('should filter by status', async ({page}) => {
       const hasStatusFilter = await leavePage.statusFilter.isVisible().catch(() => false);
 
       if (hasStatusFilter) {
@@ -167,7 +167,7 @@ test.describe('Leave Management', () => {
       }
     });
 
-    test('should filter by leave type', async ({ page }) => {
+    test('should filter by leave type', async ({page}) => {
       const hasTypeFilter = await leavePage.typeFilter.isVisible().catch(() => false);
 
       if (hasTypeFilter) {
@@ -183,7 +183,7 @@ test.describe('Leave Management', () => {
       }
     });
 
-    test('should view leave request details', async ({ page }) => {
+    test('should view leave request details', async ({page}) => {
       const count = await leavePage.getLeaveRequestCount();
 
       if (count > 0) {
@@ -195,7 +195,7 @@ test.describe('Leave Management', () => {
       }
     });
 
-    test('should get leave request details', async ({ page }) => {
+    test('should get leave request details', async ({page}) => {
       const count = await leavePage.getLeaveRequestCount();
 
       if (count > 0) {
@@ -207,7 +207,7 @@ test.describe('Leave Management', () => {
       }
     });
 
-    test('should cancel pending leave request', async ({ page }) => {
+    test('should cancel pending leave request', async ({page}) => {
       // First apply for leave
       await leavePage.applyLeave({
         ...testLeave.casual,
@@ -236,7 +236,7 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Leave Balances', () => {
-    test('should display leave balance correctly', async ({ page }) => {
+    test('should display leave balance correctly', async ({page}) => {
       const annualBalance = await leavePage.getLeaveBalance('annual');
       const _sickBalance = await leavePage.getLeaveBalance('sick');
       const _casualBalance = await leavePage.getLeaveBalance('casual');
@@ -245,7 +245,7 @@ test.describe('Leave Management', () => {
       expect(annualBalance).toBeTruthy();
     });
 
-    test('should update balance after leave application', async ({ page }) => {
+    test('should update balance after leave application', async ({page}) => {
       // Get initial balance
       const _initialBalance = await leavePage.getLeaveBalance('annual');
 
@@ -266,14 +266,14 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Manager - Team Leaves', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       // Login as manager
       await loginPage.navigate();
       await loginPage.login(testUsers.manager.email, testUsers.manager.password);
       await page.waitForURL('**/dashboard');
     });
 
-    test('should view team leave requests', async ({ page }) => {
+    test('should view team leave requests', async ({page}) => {
       await leavePage.navigateToTeamLeaves();
 
       // Verify team leave page loaded
@@ -284,18 +284,18 @@ test.describe('Leave Management', () => {
       expect(tableVisible).toBe(true);
     });
 
-    test('should filter team leaves by employee', async ({ page }) => {
+    test('should filter team leaves by employee', async ({page}) => {
       await leavePage.navigateToTeamLeaves();
 
       // Check for employee filter (available in team view)
-      const hasFilter = await page.locator('select').filter({ hasText: /Employee|All/ }).isVisible().catch(() => false);
+      const hasFilter = await page.locator('select').filter({hasText: /Employee|All/}).isVisible().catch(() => false);
 
       if (hasFilter) {
-        const employeeFilter = page.locator('select').filter({ hasText: /Employee|All/ });
+        const employeeFilter = page.locator('select').filter({hasText: /Employee|All/});
         const options = await employeeFilter.locator('option').count();
 
         if (options > 1) {
-          await employeeFilter.selectOption({ index: 1 });
+          await employeeFilter.selectOption({index: 1});
           await page.waitForTimeout(1000);
         }
       }
@@ -303,13 +303,13 @@ test.describe('Leave Management', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match leave page snapshot', async ({ page }) => {
+    test('should match leave page snapshot', async ({page}) => {
       await expect(page).toHaveScreenshot('leave-page.png', {
         maxDiffPixels: 200,
       });
     });
 
-    test('should match apply leave modal snapshot', async ({ page }) => {
+    test('should match apply leave modal snapshot', async ({page}) => {
       await leavePage.clickApplyLeave();
       await page.waitForTimeout(500);
 
@@ -324,7 +324,7 @@ test.describe('Leave - Edge Cases', () => {
   let loginPage: LoginPage;
   let leavePage: LeavePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     leavePage = new LeavePage(page);
 
@@ -334,7 +334,7 @@ test.describe('Leave - Edge Cases', () => {
     await leavePage.navigate();
   });
 
-  test('should validate date range', async ({ page }) => {
+  test('should validate date range', async ({page}) => {
     await leavePage.clickApplyLeave();
 
     // Set end date before start date
@@ -353,7 +353,7 @@ test.describe('Leave - Edge Cases', () => {
     // Should show validation error or prevent submission
   });
 
-  test('should handle insufficient leave balance', async ({ page }) => {
+  test('should handle insufficient leave balance', async ({page}) => {
     // Apply for more days than available
     await leavePage.applyLeave({
       leaveType: 'ANNUAL',
@@ -390,7 +390,7 @@ test.describe('Leave Approval Chain', () => {
   // Use a unique reason per run to identify our request in the list
   const testRunId = `E2E-${Date.now()}`;
 
-  test('should submit casual leave and verify PENDING status', async ({ page }) => {
+  test('should submit casual leave and verify PENDING status', async ({page}) => {
     // Step 1: Login as Raj (Employee) via API for speed
     await loginAs(page, 'raj@nulogic.io');
 
@@ -400,12 +400,12 @@ test.describe('Leave Approval Chain', () => {
 
     // Click Apply Leave
     const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({ timeout: 10000 });
+    await expect(applyBtn).toBeVisible({timeout: 10000});
     await applyBtn.click();
 
     // Wait for modal
-    const modal = page.locator('div.fixed.inset-0').filter({ hasText: /Apply Leave|Leave Request/i });
-    await expect(modal).toBeVisible({ timeout: 10000 });
+    const modal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
+    await expect(modal).toBeVisible({timeout: 10000});
 
     // Fill leave form — casual leave for tomorrow
     const tomorrow = getDateString(1);
@@ -426,15 +426,15 @@ test.describe('Leave Approval Chain', () => {
     await submitBtn.click();
 
     // Wait for modal to close (indicates success)
-    await expect(modal).toBeHidden({ timeout: 15000 });
+    await expect(modal).toBeHidden({timeout: 15000});
 
     // Reload and verify the request appears with PENDING status
     await page.reload();
     await page.waitForLoadState('networkidle');
 
     // Look for our request in the table
-    const pendingBadge = page.locator('tbody tr', { hasText: testRunId }).locator('text=/PENDING/i');
-    const hasPending = await pendingBadge.isVisible({ timeout: 5000 }).catch(() => false);
+    const pendingBadge = page.locator('tbody tr', {hasText: testRunId}).locator('text=/PENDING/i');
+    const hasPending = await pendingBadge.isVisible({timeout: 5000}).catch(() => false);
 
     // Alternatively check the first row if our identifier isn't visible in table
     if (!hasPending) {
@@ -444,7 +444,7 @@ test.describe('Leave Approval Chain', () => {
     }
   });
 
-  test('should complete full approval chain: submit → TL approves → verify APPROVED', async ({ page }) => {
+  test('should complete full approval chain: submit → TL approves → verify APPROVED', async ({page}) => {
     const reason = `Full approval chain test — ${testRunId}-approve`;
     const tomorrow = getDateString(2); // Use day after tomorrow to avoid conflicts
 
@@ -454,11 +454,11 @@ test.describe('Leave Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({ timeout: 10000 });
+    await expect(applyBtn).toBeVisible({timeout: 10000});
     await applyBtn.click();
 
-    const modal = page.locator('div.fixed.inset-0').filter({ hasText: /Apply Leave|Leave Request/i });
-    await expect(modal).toBeVisible({ timeout: 10000 });
+    const modal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
+    await expect(modal).toBeVisible({timeout: 10000});
 
     await page.locator('label:has-text("Leave Type")').locator('..').locator('select').selectOption('CASUAL');
     await page.locator('label:has-text("Start Date")').locator('..').locator('input').fill(tomorrow);
@@ -466,7 +466,7 @@ test.describe('Leave Approval Chain', () => {
     await page.locator('textarea[placeholder*="reason"]').fill(reason);
     await page.locator('button:has-text("Submit Request")').click();
 
-    await expect(modal).toBeHidden({ timeout: 15000 });
+    await expect(modal).toBeHidden({timeout: 15000});
 
     // ── Step 2: Switch to Mani (Team Lead) and approve ──
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
@@ -476,33 +476,33 @@ test.describe('Leave Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     // Look for pending approval from Raj
-    const pendingRow = page.locator('tbody tr', { hasText: /Raj/i }).first();
-    const hasPendingRow = await pendingRow.isVisible({ timeout: 10000 }).catch(() => false);
+    const pendingRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
+    const hasPendingRow = await pendingRow.isVisible({timeout: 10000}).catch(() => false);
 
     if (hasPendingRow) {
       // Click approve button on the row or open details first
       const approveBtn = pendingRow.locator('button:has-text("Approve")');
-      const hasDirectApprove = await approveBtn.isVisible({ timeout: 3000 }).catch(() => false);
+      const hasDirectApprove = await approveBtn.isVisible({timeout: 3000}).catch(() => false);
 
       if (hasDirectApprove) {
         await approveBtn.click();
       } else {
         // May need to view details first
         const viewBtn = pendingRow.locator('button:has-text("View"), a:has-text("View")').first();
-        if (await viewBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
           await page.waitForLoadState('networkidle');
 
           // Now look for approve button on details page
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
-          await expect(detailApproveBtn).toBeVisible({ timeout: 10000 });
+          await expect(detailApproveBtn).toBeVisible({timeout: 10000});
           await detailApproveBtn.click();
         }
       }
 
       // Fill comment if a dialog appears
       const commentInput = page.locator('textarea[placeholder*="comment" i], textarea[placeholder*="remark" i]').first();
-      if (await commentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await commentInput.isVisible({timeout: 3000}).catch(() => false)) {
         await commentInput.fill('Approved — E2E test');
         const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Submit"), button:has-text("Approve")').last();
         await confirmBtn.click();
@@ -518,7 +518,7 @@ test.describe('Leave Approval Chain', () => {
 
     // Check for approved status on latest request
     const approvedBadge = page.locator('tbody tr').first().locator('text=/APPROVED/i');
-    const isApproved = await approvedBadge.isVisible({ timeout: 10000 }).catch(() => false);
+    const isApproved = await approvedBadge.isVisible({timeout: 10000}).catch(() => false);
 
     // If approval chain has multiple levels, it may still be pending at next level
     if (!isApproved) {
@@ -529,7 +529,7 @@ test.describe('Leave Approval Chain', () => {
     }
   });
 
-  test('should complete rejection flow: submit → TL rejects → verify REJECTED', async ({ page }) => {
+  test('should complete rejection flow: submit → TL rejects → verify REJECTED', async ({page}) => {
     const reason = `Rejection flow test — ${testRunId}-reject`;
     const leaveDate = getDateString(5);
 
@@ -539,11 +539,11 @@ test.describe('Leave Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({ timeout: 10000 });
+    await expect(applyBtn).toBeVisible({timeout: 10000});
     await applyBtn.click();
 
-    const modal = page.locator('div.fixed.inset-0').filter({ hasText: /Apply Leave|Leave Request/i });
-    await expect(modal).toBeVisible({ timeout: 10000 });
+    const modal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
+    await expect(modal).toBeVisible({timeout: 10000});
 
     await page.locator('label:has-text("Leave Type")').locator('..').locator('select').selectOption('CASUAL');
     await page.locator('label:has-text("Start Date")').locator('..').locator('input').fill(leaveDate);
@@ -551,7 +551,7 @@ test.describe('Leave Approval Chain', () => {
     await page.locator('textarea[placeholder*="reason"]').fill(reason);
     await page.locator('button:has-text("Submit Request")').click();
 
-    await expect(modal).toBeHidden({ timeout: 15000 });
+    await expect(modal).toBeHidden({timeout: 15000});
 
     // ── Step 2: Switch to Mani (Team Lead) and reject ──
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
@@ -559,30 +559,30 @@ test.describe('Leave Approval Chain', () => {
     await page.goto('/leave/team');
     await page.waitForLoadState('networkidle');
 
-    const pendingRow = page.locator('tbody tr', { hasText: /Raj/i }).first();
-    const hasPendingRow = await pendingRow.isVisible({ timeout: 10000 }).catch(() => false);
+    const pendingRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
+    const hasPendingRow = await pendingRow.isVisible({timeout: 10000}).catch(() => false);
 
     if (hasPendingRow) {
       const rejectBtn = pendingRow.locator('button:has-text("Reject")');
-      const hasDirectReject = await rejectBtn.isVisible({ timeout: 3000 }).catch(() => false);
+      const hasDirectReject = await rejectBtn.isVisible({timeout: 3000}).catch(() => false);
 
       if (hasDirectReject) {
         await rejectBtn.click();
       } else {
         const viewBtn = pendingRow.locator('button:has-text("View"), a:has-text("View")').first();
-        if (await viewBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
           await page.waitForLoadState('networkidle');
 
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
-          await expect(detailRejectBtn).toBeVisible({ timeout: 10000 });
+          await expect(detailRejectBtn).toBeVisible({timeout: 10000});
           await detailRejectBtn.click();
         }
       }
 
       // Fill rejection comment if dialog appears
       const commentInput = page.locator('textarea[placeholder*="comment" i], textarea[placeholder*="reason" i], textarea[placeholder*="remark" i]').first();
-      if (await commentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await commentInput.isVisible({timeout: 3000}).catch(() => false)) {
         await commentInput.fill('Rejected — team capacity issue — E2E test');
         const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Submit"), button:has-text("Reject")').last();
         await confirmBtn.click();
@@ -597,7 +597,7 @@ test.describe('Leave Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const rejectedBadge = page.locator('tbody tr').first().locator('text=/REJECTED/i');
-    const isRejected = await rejectedBadge.isVisible({ timeout: 10000 }).catch(() => false);
+    const isRejected = await rejectedBadge.isVisible({timeout: 10000}).catch(() => false);
 
     if (!isRejected) {
       const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]');
@@ -606,7 +606,7 @@ test.describe('Leave Approval Chain', () => {
     }
   });
 
-  test('should show updated leave balance after approval', async ({ page }) => {
+  test('should show updated leave balance after approval', async ({page}) => {
     // Login as Raj and capture current casual leave balance
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');

@@ -3,7 +3,9 @@
  * Run with: npx vitest run lib/services/home.service.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {homeService} from './home.service';
+import {apiClient} from '@/lib/api/client';
 
 // Mock the API client
 vi.mock('@/lib/api/client', () => ({
@@ -12,15 +14,12 @@ vi.mock('@/lib/api/client', () => ({
   },
 }));
 
-import { homeService } from './home.service';
-import { apiClient } from '@/lib/api/client';
-
 const mockedApiClient = apiClient as { get: ReturnType<typeof vi.fn> };
 
 describe('HomeService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('process', { env: { NODE_ENV: 'test', NEXT_PUBLIC_API_URL: 'http://localhost:8080' } });
+    vi.stubGlobal('process', {env: {NODE_ENV: 'test', NEXT_PUBLIC_API_URL: 'http://localhost:8080'}});
   });
 
   describe('getUpcomingBirthdays', () => {
@@ -37,26 +36,26 @@ describe('HomeService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockBirthdays });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockBirthdays});
 
       const result = await homeService.getUpcomingBirthdays();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/birthdays', { params: { days: 7 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/birthdays', {params: {days: 7}});
       expect(result).toEqual(mockBirthdays);
     });
 
     it('should fetch birthdays with custom days parameter', async () => {
       const mockBirthdays: never[] = [];
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockBirthdays });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockBirthdays});
 
       const result = await homeService.getUpcomingBirthdays(14);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/birthdays', { params: { days: 14 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/birthdays', {params: {days: 14}});
       expect(result).toEqual([]);
     });
 
     it('should handle empty response', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await homeService.getUpcomingBirthdays();
 
@@ -87,20 +86,20 @@ describe('HomeService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAnniversaries });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAnniversaries});
 
       const result = await homeService.getUpcomingAnniversaries();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/anniversaries', { params: { days: 7 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/anniversaries', {params: {days: 7}});
       expect(result).toEqual(mockAnniversaries);
     });
 
     it('should fetch anniversaries with custom days parameter', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       await homeService.getUpcomingAnniversaries(30);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/anniversaries', { params: { days: 30 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/anniversaries', {params: {days: 30}});
     });
   });
 
@@ -117,20 +116,20 @@ describe('HomeService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockJoinees });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockJoinees});
 
       const result = await homeService.getNewJoinees();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/new-joinees', { params: { days: 30 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/new-joinees', {params: {days: 30}});
       expect(result).toEqual(mockJoinees);
     });
 
     it('should fetch new joinees with custom days parameter', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       await homeService.getNewJoinees(60);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/new-joinees', { params: { days: 60 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/new-joinees', {params: {days: 60}});
     });
   });
 
@@ -148,7 +147,7 @@ describe('HomeService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockOnLeave });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockOnLeave});
 
       const result = await homeService.getEmployeesOnLeaveToday();
 
@@ -157,7 +156,7 @@ describe('HomeService', () => {
     });
 
     it('should handle no employees on leave', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await homeService.getEmployeesOnLeaveToday();
 
@@ -178,7 +177,7 @@ describe('HomeService', () => {
         canCheckOut: false,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
       const result = await homeService.getMyAttendanceToday();
 
@@ -201,7 +200,7 @@ describe('HomeService', () => {
         source: 'WEB',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
       const result = await homeService.getMyAttendanceToday();
 
@@ -220,7 +219,7 @@ describe('HomeService', () => {
         canCheckOut: false,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
       const result = await homeService.getMyAttendanceToday();
 
@@ -238,7 +237,7 @@ describe('HomeService', () => {
         canCheckOut: false,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
       const result = await homeService.getMyAttendanceToday();
 
@@ -255,7 +254,7 @@ describe('HomeService', () => {
         canCheckOut: false,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
       const result = await homeService.getMyAttendanceToday();
 
@@ -279,30 +278,54 @@ describe('HomeService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockHolidays });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockHolidays});
 
       const result = await homeService.getUpcomingHolidays();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/holidays', { params: { days: 30 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/holidays', {params: {days: 30}});
       expect(result).toEqual(mockHolidays);
     });
 
     it('should fetch holidays with custom days parameter', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       await homeService.getUpcomingHolidays(90);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/holidays', { params: { days: 90 } });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/holidays', {params: {days: 90}});
     });
 
     it('should handle multiple holidays', async () => {
       const mockHolidays = [
-        { id: '1', name: 'Republic Day', date: '2024-01-26', type: 'NATIONAL', isOptional: false, daysUntil: 10, dayOfWeek: 'Friday' },
-        { id: '2', name: 'Holi', date: '2024-03-25', type: 'NATIONAL', isOptional: false, daysUntil: 68, dayOfWeek: 'Monday' },
-        { id: '3', name: 'Good Friday', date: '2024-03-29', type: 'OPTIONAL', isOptional: true, daysUntil: 72, dayOfWeek: 'Friday' },
+        {
+          id: '1',
+          name: 'Republic Day',
+          date: '2024-01-26',
+          type: 'NATIONAL',
+          isOptional: false,
+          daysUntil: 10,
+          dayOfWeek: 'Friday'
+        },
+        {
+          id: '2',
+          name: 'Holi',
+          date: '2024-03-25',
+          type: 'NATIONAL',
+          isOptional: false,
+          daysUntil: 68,
+          dayOfWeek: 'Monday'
+        },
+        {
+          id: '3',
+          name: 'Good Friday',
+          date: '2024-03-29',
+          type: 'OPTIONAL',
+          isOptional: true,
+          daysUntil: 72,
+          dayOfWeek: 'Friday'
+        },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockHolidays });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockHolidays});
 
       const result = await homeService.getUpcomingHolidays(90);
 
@@ -324,7 +347,7 @@ describe('HomeService', () => {
         daysUntil: 0,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: [mockBirthday] });
+      mockedApiClient.get.mockResolvedValueOnce({data: [mockBirthday]});
 
       const result = await homeService.getUpcomingBirthdays();
 
@@ -349,7 +372,7 @@ describe('HomeService', () => {
         daysUntil: 3,
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: [mockAnniversary] });
+      mockedApiClient.get.mockResolvedValueOnce({data: [mockAnniversary]});
 
       const result = await homeService.getUpcomingAnniversaries();
 
@@ -371,7 +394,7 @@ describe('HomeService', () => {
           canCheckOut: false,
         };
 
-        mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
+        mockedApiClient.get.mockResolvedValueOnce({data: mockAttendance});
 
         const result = await homeService.getMyAttendanceToday();
         expect(validStatuses).toContain(result.status);
@@ -381,21 +404,21 @@ describe('HomeService', () => {
 
   describe('Error Handling', () => {
     it('should handle 401 unauthorized error', async () => {
-      const error = { response: { status: 401, data: { message: 'Unauthorized' } } };
+      const error = {response: {status: 401, data: {message: 'Unauthorized'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(homeService.getUpcomingBirthdays()).rejects.toEqual(error);
     });
 
     it('should handle 500 server error', async () => {
-      const error = { response: { status: 500, data: { message: 'Internal Server Error' } } };
+      const error = {response: {status: 500, data: {message: 'Internal Server Error'}}};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(homeService.getEmployeesOnLeaveToday()).rejects.toEqual(error);
     });
 
     it('should handle network timeout', async () => {
-      const error = { code: 'ECONNABORTED', message: 'timeout of 5000ms exceeded' };
+      const error = {code: 'ECONNABORTED', message: 'timeout of 5000ms exceeded'};
       mockedApiClient.get.mockRejectedValueOnce(error);
 
       await expect(homeService.getUpcomingHolidays()).rejects.toEqual(error);

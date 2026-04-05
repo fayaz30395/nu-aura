@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Settings, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { ConnectorInfo, ConnectorStatus } from '@/lib/types/core/connector';
+import {AlertCircle, CheckCircle2, Settings} from 'lucide-react';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {ConnectorInfo, ConnectorStatus} from '@/lib/types/core/connector';
 
 interface ConnectorCardProps {
   connector: ConnectorInfo;
@@ -13,7 +13,7 @@ interface ConnectorCardProps {
   isLoading?: boolean;
 }
 
-export function ConnectorCard({ connector, status, onConfigure, isLoading }: ConnectorCardProps) {
+export function ConnectorCard({connector, status, onConfigure, isLoading}: ConnectorCardProps) {
   const statusColors = {
     ACTIVE: {
       bg: 'bg-success-50 dark:bg-success-900/20',
@@ -47,11 +47,11 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
             className={`flex-shrink-0 h-10 w-10 rounded-lg ${colors.bg} flex items-center justify-center`}
           >
             {isActive ? (
-              <CheckCircle2 className={`h-5 w-5 ${colors.icon}`} />
+              <CheckCircle2 className={`h-5 w-5 ${colors.icon}`}/>
             ) : status === 'ERROR' ? (
-              <AlertCircle className={`h-5 w-5 ${colors.icon}`} />
+              <AlertCircle className={`h-5 w-5 ${colors.icon}`}/>
             ) : (
-              <Settings className={`h-5 w-5 ${colors.icon}`} />
+              <Settings className={`h-5 w-5 ${colors.icon}`}/>
             )}
           </div>
         </div>
@@ -60,7 +60,8 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
       <CardContent className="flex-1 flex flex-col gap-4">
         {/* Type Badge */}
         <div className="flex flex-wrap gap-2">
-          <span className="badge-status inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+          <span
+            className="badge-status inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
             {connector.type}
           </span>
         </div>
@@ -88,7 +89,8 @@ export function ConnectorCard({ connector, status, onConfigure, isLoading }: Con
                 </span>
               ))}
               {connector.capabilities.supportedEvents.length > 3 && (
-                <span className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                <span
+                  className="inline-flex text-xs px-2 py-1 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                   +{connector.capabilities.supportedEvents.length - 3}
                 </span>
               )}

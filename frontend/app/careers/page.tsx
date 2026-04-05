@@ -1,29 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { publicApiClient } from '@/lib/api/public-client';
-import { usePublicJobs, type CareersFilters } from '@/lib/hooks/queries/useCareers';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {publicApiClient} from '@/lib/api/public-client';
+import {type CareersFilters, usePublicJobs} from '@/lib/hooks/queries/useCareers';
 import {
-  Search,
-  MapPin,
+  AlertCircle,
+  ArrowRight,
   Briefcase,
   ChevronLeft,
   ChevronRight,
   Loader2,
-  AlertCircle,
-  Upload,
+  MapPin,
+  Search,
   Send,
-  ArrowRight,
+  Upload,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Skeleton} from '@/components/ui/Skeleton';
 
 interface Job {
   id: string;
@@ -56,13 +56,13 @@ interface JobCardProps {
   onViewDetails: (job: Job) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
+const JobCard: React.FC<JobCardProps> = ({job, onViewDetails}) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
@@ -90,7 +90,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           onClick={() => onViewDetails(job)}>
       <div className="flex flex-col gap-4">
         <div>
-          <h3 className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
+          <h3
+            className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
             {job.title}
           </h3>
           <p className="text-body-secondary mt-1">
@@ -107,7 +108,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
             {job.employmentType}
           </Badge>
           <Badge variant="outline" className="border-[var(--border-main)]">
-            <MapPin className="h-3 w-3 mr-1" />
+            <MapPin className="h-3 w-3 mr-1"/>
             {job.location}
           </Badge>
         </div>
@@ -116,7 +117,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails }) => {
           <span className="text-caption" suppressHydrationWarning>
             {formatDate(job.postedDate)}
           </span>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
+          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
         </div>
       </div>
     </Card>
@@ -128,7 +129,7 @@ const JobDetailModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   onApply: (job: Job) => void;
-}> = ({ job, isOpen, onClose, onApply }) => {
+}> = ({job, isOpen, onClose, onApply}) => {
   if (!job) return null;
 
   return (
@@ -176,7 +177,7 @@ const JobDetailModal: React.FC<{
             )}
           </div>
 
-          <hr className="border-[var(--border-main)]" />
+          <hr className="border-[var(--border-main)]"/>
 
           {/* Description */}
           <div>
@@ -229,7 +230,7 @@ const JobDetailModal: React.FC<{
           className="btn-primary bg-accent-700 hover:bg-accent-700 text-white"
         >
           Apply Now
-          <Send className="h-4 w-4 ml-2" />
+          <Send className="h-4 w-4 ml-2"/>
         </Button>
       </ModalFooter>
     </Modal>
@@ -240,7 +241,7 @@ const ApplicationModal: React.FC<{
   job: Job | null;
   isOpen: boolean;
   onClose: () => void;
-}> = ({ job, isOpen, onClose }) => {
+}> = ({job, isOpen, onClose}) => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
@@ -249,7 +250,7 @@ const ApplicationModal: React.FC<{
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationFormSchema),
     defaultValues: {
@@ -327,7 +328,7 @@ const ApplicationModal: React.FC<{
               ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
               : 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300'
           }`}>
-            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5"/>
             <p className="text-sm">{submitMessage}</p>
           </div>
         )}
@@ -389,7 +390,7 @@ const ApplicationModal: React.FC<{
                 htmlFor="resume-input"
                 className="flex items-center gap-2 p-4 border-2 border-dashed border-[var(--border-main)] rounded-lg cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
               >
-                <Upload className="h-5 w-5 text-[var(--text-muted)]" />
+                <Upload className="h-5 w-5 text-[var(--text-muted)]"/>
                 <div className="text-sm">
                   <p className="font-medium text-[var(--text-secondary)]">
                     {resumeFile ? resumeFile.name : 'Upload your resume'}
@@ -443,12 +444,12 @@ const ApplicationModal: React.FC<{
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
               Submitting...
             </>
           ) : (
             <>
-              <Send className="h-4 w-4 mr-2" />
+              <Send className="h-4 w-4 mr-2"/>
               Submit Application
             </>
           )}
@@ -460,14 +461,14 @@ const ApplicationModal: React.FC<{
 
 const JobSkeletonCard: React.FC = () => (
   <Card className="p-6">
-    <Skeleton className="h-6 w-3/4 mb-2" />
-    <Skeleton className="h-4 w-1/3 mb-4" />
-    <Skeleton className="h-12 w-full mb-4" />
+    <Skeleton className="h-6 w-3/4 mb-2"/>
+    <Skeleton className="h-4 w-1/3 mb-4"/>
+    <Skeleton className="h-12 w-full mb-4"/>
     <div className="flex gap-2 mb-4">
-      <Skeleton className="h-6 w-20" />
-      <Skeleton className="h-6 w-24" />
+      <Skeleton className="h-6 w-20"/>
+      <Skeleton className="h-6 w-24"/>
     </div>
-    <Skeleton className="h-4 w-1/4" />
+    <Skeleton className="h-4 w-1/4"/>
   </Card>
 );
 
@@ -492,7 +493,7 @@ export default function CareersPage() {
     q: searchQuery || undefined,
   };
 
-  const { data: jobs = [], isLoading } = usePublicJobs(filters);
+  const {data: jobs = [], isLoading} = usePublicJobs(filters);
 
   // Get unique values for filters
   const departments = Array.from(new Set(jobs.map((j) => j.department)));
@@ -542,13 +543,14 @@ export default function CareersPage() {
             Join Our Talented Team
           </h1>
           <p className="text-xl text-accent-100 mb-8 max-w-2xl mx-auto">
-            Explore exciting career opportunities and be part of something great. Help us build the future of HR management.
+            Explore exciting career opportunities and be part of something great. Help us build the future of HR
+            management.
           </p>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-4">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search job titles or keywords..."
@@ -567,7 +569,8 @@ export default function CareersPage() {
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
             <div className="skeuo-card p-6 sticky top-24">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-6">Filters</h3>
+              <h3
+                className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider mb-6">Filters</h3>
 
               {/* Department Filter */}
               <div className="mb-6">
@@ -660,12 +663,12 @@ export default function CareersPage() {
             {isLoading ? (
               <div className="grid gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <JobSkeletonCard key={i} />
+                  <JobSkeletonCard key={i}/>
                 ))}
               </div>
             ) : paginatedJobs.length === 0 ? (
               <div className="text-center py-20 skeuo-card">
-                <Briefcase className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4" />
+                <Briefcase className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No jobs found
                 </h3>
@@ -705,12 +708,12 @@ export default function CareersPage() {
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <ChevronLeft className="h-4 w-4"/>
                       Previous
                     </Button>
 
                     <div className="flex items-center gap-2">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
                         <Button
                           key={page}
                           variant={page === currentPage ? 'default' : 'outline'}
@@ -734,7 +737,7 @@ export default function CareersPage() {
                       disabled={currentPage === totalPages}
                     >
                       Next
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-4 w-4"/>
                     </Button>
                   </div>
                 )}

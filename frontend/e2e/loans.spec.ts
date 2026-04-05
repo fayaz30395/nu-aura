@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, switchUser } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, switchUser} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Loan Management E2E Tests
@@ -10,18 +10,18 @@ import { demoUsers } from './fixtures/testData';
  */
 
 test.describe('Loans Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/loans');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display loans page with heading', async ({ page }) => {
+  test('should display loans page with heading', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
     await expect(heading).toContainText(/loan/i);
   });
 
-  test('should display loan summary cards or stats', async ({ page }) => {
+  test('should display loan summary cards or stats', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasCards = await page
       .locator('[class*="card"], [class*="Card"], [class*="stat"], [class*="Stat"]')
@@ -31,7 +31,7 @@ test.describe('Loans Page', () => {
     expect(hasCards).toBe(true);
   });
 
-  test('should display loan request button', async ({ page }) => {
+  test('should display loan request button', async ({page}) => {
     const applyBtn = page
       .locator(
         'button:has-text("Apply"), button:has-text("Request"), button:has-text("New Loan"), button:has-text("Create")'
@@ -42,7 +42,7 @@ test.describe('Loans Page', () => {
     expect(hasBtn || true).toBe(true);
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -50,12 +50,12 @@ test.describe('Loans Page', () => {
 });
 
 test.describe('Loans - My Loans Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/loans');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display my loans list or empty state', async ({ page }) => {
+  test('should display my loans list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasTable = await page
       .locator('table, [class*="table"], [class*="card"]')
@@ -70,7 +70,7 @@ test.describe('Loans - My Loans Tab', () => {
     expect(hasTable || hasEmpty).toBe(true);
   });
 
-  test('should show loan status badges', async ({ page }) => {
+  test('should show loan status badges', async ({page}) => {
     await page.waitForTimeout(1000);
     const statuses = ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED', 'ACTIVE', 'CLOSED', 'DISBURSED'];
     let hasStatus = false;
@@ -86,12 +86,12 @@ test.describe('Loans - My Loans Tab', () => {
 });
 
 test.describe('Loans - Create Loan Request', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/loans');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should open create loan modal or navigate to new loan page', async ({ page }) => {
+  test('should open create loan modal or navigate to new loan page', async ({page}) => {
     const applyBtn = page
       .locator(
         'button:has-text("Apply"), button:has-text("Request"), button:has-text("New Loan"), button:has-text("Create")'
@@ -115,7 +115,7 @@ test.describe('Loans - Create Loan Request', () => {
     }
   });
 
-  test('should display loan form fields', async ({ page }) => {
+  test('should display loan form fields', async ({page}) => {
     // Navigate to new loan page directly
     await page.goto('/loans/new');
     await page.waitForLoadState('networkidle');
@@ -141,7 +141,7 @@ test.describe('Loans - Create Loan Request', () => {
     expect(hasLoanType || hasAmountInput || hasReason).toBe(true);
   });
 
-  test('should validate required fields on submit', async ({ page }) => {
+  test('should validate required fields on submit', async ({page}) => {
     await page.goto('/loans/new');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
@@ -163,7 +163,7 @@ test.describe('Loans - Create Loan Request', () => {
 });
 
 test.describe('Loans - Submit for Approval', () => {
-  test('should create and submit a loan request as employee', async ({ page }) => {
+  test('should create and submit a loan request as employee', async ({page}) => {
     // Log in as employee (Saran V — reports to Sumit Kumar)
     await loginAs(page, demoUsers.employeeSaran.email);
 
@@ -193,7 +193,7 @@ test.describe('Loans - Submit for Approval', () => {
       if (await loanTypeSelect.isVisible().catch(() => false)) {
         const options = await loanTypeSelect.locator('option').count();
         if (options > 1) {
-          await loanTypeSelect.selectOption({ index: 1 });
+          await loanTypeSelect.selectOption({index: 1});
         }
       }
 
@@ -223,7 +223,7 @@ test.describe('Loans - Submit for Approval', () => {
 });
 
 test.describe('Loans - Manager Approval', () => {
-  test('should show pending loan requests for manager', async ({ page }) => {
+  test('should show pending loan requests for manager', async ({page}) => {
     // Log in as manager (Sumit Kumar — approves for Saran V)
     await loginAs(page, demoUsers.managerEng.email);
 
@@ -248,7 +248,7 @@ test.describe('Loans - Manager Approval', () => {
     ).not.toBeVisible();
   });
 
-  test('should display approve/reject actions for pending loans', async ({ page }) => {
+  test('should display approve/reject actions for pending loans', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/loans');
@@ -275,7 +275,7 @@ test.describe('Loans - Manager Approval', () => {
 });
 
 test.describe('Loans - Multi-Step Approval Chain', () => {
-  test('should complete Manager → Finance Head approval chain', async ({ page }) => {
+  test('should complete Manager → Finance Head approval chain', async ({page}) => {
     // Step 1: Employee submits loan request
     await loginAs(page, demoUsers.employeeSaran.email);
     await page.goto('/loans');
@@ -349,12 +349,12 @@ test.describe('Loans - Multi-Step Approval Chain', () => {
 });
 
 test.describe('Loans - Status Transitions', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/loans');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display correct status for approved loans', async ({ page }) => {
+  test('should display correct status for approved loans', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasApproved = await page.locator('text=/APPROVED|ACTIVE|DISBURSED/i').first().isVisible().catch(() => false);
@@ -362,7 +362,7 @@ test.describe('Loans - Status Transitions', () => {
     expect(hasApproved || true).toBe(true);
   });
 
-  test('should show loan detail view', async ({ page }) => {
+  test('should show loan detail view', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Click on first loan row/card if available
@@ -379,7 +379,7 @@ test.describe('Loans - Status Transitions', () => {
     }
   });
 
-  test('should show repayment schedule for active loans', async ({ page }) => {
+  test('should show repayment schedule for active loans', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for repayment/EMI section
@@ -395,12 +395,12 @@ test.describe('Loans - Status Transitions', () => {
 });
 
 test.describe('Loans - Filters and Search', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/loans');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display search or filter controls', async ({ page }) => {
+  test('should display search or filter controls', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasSearch = await page
@@ -417,7 +417,7 @@ test.describe('Loans - Filters and Search', () => {
     expect(hasSearch || hasFilter).toBe(true);
   });
 
-  test('should not crash on empty search', async ({ page }) => {
+  test('should not crash on empty search', async ({page}) => {
     const searchInput = page.locator('input[type="search"], input[placeholder*="search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
 

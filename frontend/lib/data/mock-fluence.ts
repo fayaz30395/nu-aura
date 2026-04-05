@@ -4,7 +4,7 @@
  *
  * Remove this file once the Fluence backend endpoints are fully deployed.
  */
-import type { WikiPage, WikiSpace, FluenceComment, DocumentTemplate, Page } from '@/lib/types/platform/fluence';
+import type {DocumentTemplate, FluenceComment, Page, WikiPage, WikiSpace} from '@/lib/types/platform/fluence';
 
 // ─── Mock Users (for @mention / tagging) ────────────────────────
 
@@ -18,16 +18,34 @@ export interface MockUser {
 }
 
 export const MOCK_USERS: MockUser[] = [
-  { id: 'user-001', fullName: 'Fayaz M', email: 'fayaz@nulogic.io', department: 'Engineering', role: 'CTO' },
-  { id: 'user-002', fullName: 'Arjun S', email: 'arjun@nulogic.io', department: 'Product', role: 'Product Lead' },
-  { id: 'user-003', fullName: 'Priya K', email: 'priya@nulogic.io', department: 'HR Operations', role: 'HR Manager' },
-  { id: 'user-004', fullName: 'Deepak R', email: 'deepak@nulogic.io', department: 'Engineering', role: 'Senior Developer' },
-  { id: 'user-005', fullName: 'Sneha V', email: 'sneha@nulogic.io', department: 'Engineering', role: 'Frontend Developer' },
-  { id: 'user-006', fullName: 'Karthik N', email: 'karthik@nulogic.io', department: 'QA', role: 'QA Lead' },
-  { id: 'user-007', fullName: 'Ananya B', email: 'ananya@nulogic.io', department: 'Design', role: 'UI/UX Designer' },
-  { id: 'user-008', fullName: 'Rahul T', email: 'rahul@nulogic.io', department: 'Engineering', role: 'DevOps Engineer' },
-  { id: 'user-009', fullName: 'Meera J', email: 'meera@nulogic.io', department: 'Product', role: 'Product Manager' },
-  { id: 'user-010', fullName: 'Vikram P', email: 'vikram@nulogic.io', department: 'Engineering', role: 'Backend Developer' },
+  {id: 'user-001', fullName: 'Fayaz M', email: 'fayaz@nulogic.io', department: 'Engineering', role: 'CTO'},
+  {id: 'user-002', fullName: 'Arjun S', email: 'arjun@nulogic.io', department: 'Product', role: 'Product Lead'},
+  {id: 'user-003', fullName: 'Priya K', email: 'priya@nulogic.io', department: 'HR Operations', role: 'HR Manager'},
+  {
+    id: 'user-004',
+    fullName: 'Deepak R',
+    email: 'deepak@nulogic.io',
+    department: 'Engineering',
+    role: 'Senior Developer'
+  },
+  {
+    id: 'user-005',
+    fullName: 'Sneha V',
+    email: 'sneha@nulogic.io',
+    department: 'Engineering',
+    role: 'Frontend Developer'
+  },
+  {id: 'user-006', fullName: 'Karthik N', email: 'karthik@nulogic.io', department: 'QA', role: 'QA Lead'},
+  {id: 'user-007', fullName: 'Ananya B', email: 'ananya@nulogic.io', department: 'Design', role: 'UI/UX Designer'},
+  {id: 'user-008', fullName: 'Rahul T', email: 'rahul@nulogic.io', department: 'Engineering', role: 'DevOps Engineer'},
+  {id: 'user-009', fullName: 'Meera J', email: 'meera@nulogic.io', department: 'Product', role: 'Product Manager'},
+  {
+    id: 'user-010',
+    fullName: 'Vikram P',
+    email: 'vikram@nulogic.io',
+    department: 'Engineering',
+    role: 'Backend Developer'
+  },
 ];
 
 // ─── Mock Spaces ────────────────────────────────────────────────
@@ -86,13 +104,13 @@ const tiptapDoc = (blocks: Record<string, unknown>[]) => ({
 
 const heading = (level: number, text: string) => ({
   type: 'heading',
-  attrs: { level },
-  content: [{ type: 'text', text }],
+  attrs: {level},
+  content: [{type: 'text', text}],
 });
 
 const paragraph = (text: string) => ({
   type: 'paragraph',
-  content: [{ type: 'text', text }],
+  content: [{type: 'text', text}],
 });
 
 export const MOCK_WIKI_PAGES: WikiPage[] = [

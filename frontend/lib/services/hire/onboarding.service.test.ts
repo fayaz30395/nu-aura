@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {onboardingService} from './onboarding.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { onboardingService } from './onboarding.service';
-import { apiClient } from '@/lib/api/client';
 
 // Type definitions
 interface OnboardingProcess {
@@ -64,29 +63,29 @@ describe('onboardingService', () => {
     it('should fetch all processes with default pagination', async () => {
       const mockData = {
         content: [
-          { id: '1', employeeId: 'emp-1', status: 'IN_PROGRESS', completionPercentage: 50 },
-          { id: '2', employeeId: 'emp-2', status: 'COMPLETED', completionPercentage: 100 },
+          {id: '1', employeeId: 'emp-1', status: 'IN_PROGRESS', completionPercentage: 50},
+          {id: '2', employeeId: 'emp-2', status: 'COMPLETED', completionPercentage: 100},
         ],
         totalElements: 2,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await onboardingService.getAllProcesses();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/onboarding/processes', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockData);
     });
 
     it('should fetch all processes with custom pagination', async () => {
-      const mockData = { content: [], totalElements: 0 };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      const mockData = {content: [], totalElements: 0};
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       await onboardingService.getAllProcesses(2, 50);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/onboarding/processes', {
-        params: { page: 2, size: 50 },
+        params: {page: 2, size: 50},
       });
     });
   });
@@ -100,7 +99,7 @@ describe('onboardingService', () => {
         status: 'IN_PROGRESS',
         completionPercentage: 75,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockProcess });
+      mockedApiClient.get.mockResolvedValue({data: mockProcess});
 
       const result = await onboardingService.getProcessById('proc-123');
 
@@ -124,7 +123,7 @@ describe('onboardingService', () => {
         status: 'INITIATED',
         completionPercentage: 0,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockProcess });
+      mockedApiClient.get.mockResolvedValue({data: mockProcess});
 
       const result = await onboardingService.getProcessByEmployeeId('emp-1');
 
@@ -139,7 +138,7 @@ describe('onboardingService', () => {
         status: 'COMPLETED',
         completionPercentage: 100,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockProcess });
+      mockedApiClient.get.mockResolvedValue({data: mockProcess});
 
       const result = await onboardingService.getProcessByEmployeeId('emp-2');
 
@@ -161,7 +160,7 @@ describe('onboardingService', () => {
         status: 'INITIATED',
         completionPercentage: 0,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.createProcess(request);
 
@@ -170,14 +169,14 @@ describe('onboardingService', () => {
     });
 
     it('should create process with only employee ID', async () => {
-      const request: OnboardingProcessRequest = { employeeId: 'emp-2' };
+      const request: OnboardingProcessRequest = {employeeId: 'emp-2'};
       const mockResponse: OnboardingProcess = {
         id: 'proc-new',
         employeeId: 'emp-2',
         status: 'INITIATED',
         completionPercentage: 0,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.createProcess(request);
 
@@ -195,14 +194,14 @@ describe('onboardingService', () => {
         status: 'IN_PROGRESS',
         completionPercentage: 25,
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateStatus('proc-1', 'IN_PROGRESS');
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith(
         '/onboarding/processes/proc-1/status',
         null,
-        { params: { status: 'IN_PROGRESS' } }
+        {params: {status: 'IN_PROGRESS'}}
       );
       expect(result.status).toBe('IN_PROGRESS');
     });
@@ -214,14 +213,14 @@ describe('onboardingService', () => {
         status: 'COMPLETED',
         completionPercentage: 100,
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateStatus('proc-2', 'COMPLETED');
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith(
         '/onboarding/processes/proc-2/status',
         null,
-        { params: { status: 'COMPLETED' } }
+        {params: {status: 'COMPLETED'}}
       );
       expect(result.completionPercentage).toBe(100);
     });
@@ -236,14 +235,14 @@ describe('onboardingService', () => {
         status: 'IN_PROGRESS',
         completionPercentage: 50,
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateProgress('proc-1', 50);
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith(
         '/onboarding/processes/proc-1/progress',
         null,
-        { params: { completionPercentage: 50 } }
+        {params: {completionPercentage: 50}}
       );
       expect(result.completionPercentage).toBe(50);
     });
@@ -255,7 +254,7 @@ describe('onboardingService', () => {
         status: 'IN_PROGRESS',
         completionPercentage: 100,
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateProgress('proc-3', 100);
 
@@ -267,10 +266,10 @@ describe('onboardingService', () => {
   describe('getProcessesByStatus', () => {
     it('should fetch processes with INITIATED status', async () => {
       const mockProcesses: OnboardingProcess[] = [
-        { id: '1', employeeId: 'emp-1', status: 'INITIATED', completionPercentage: 0 },
-        { id: '2', employeeId: 'emp-2', status: 'INITIATED', completionPercentage: 0 },
+        {id: '1', employeeId: 'emp-1', status: 'INITIATED', completionPercentage: 0},
+        {id: '2', employeeId: 'emp-2', status: 'INITIATED', completionPercentage: 0},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockProcesses });
+      mockedApiClient.get.mockResolvedValue({data: mockProcesses});
 
       const result = await onboardingService.getProcessesByStatus('INITIATED');
 
@@ -281,9 +280,9 @@ describe('onboardingService', () => {
 
     it('should fetch processes with COMPLETED status', async () => {
       const mockProcesses: OnboardingProcess[] = [
-        { id: '3', employeeId: 'emp-3', status: 'COMPLETED', completionPercentage: 100 },
+        {id: '3', employeeId: 'emp-3', status: 'COMPLETED', completionPercentage: 100},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockProcesses });
+      mockedApiClient.get.mockResolvedValue({data: mockProcesses});
 
       const result = await onboardingService.getProcessesByStatus('COMPLETED');
 
@@ -296,10 +295,10 @@ describe('onboardingService', () => {
   describe('getAllTemplates', () => {
     it('should fetch all onboarding templates', async () => {
       const mockTemplates: OnboardingChecklistTemplate[] = [
-        { id: 'tpl-1', name: 'Standard Onboarding' },
-        { id: 'tpl-2', name: 'Executive Onboarding' },
+        {id: 'tpl-1', name: 'Standard Onboarding'},
+        {id: 'tpl-2', name: 'Executive Onboarding'},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockTemplates });
+      mockedApiClient.get.mockResolvedValue({data: mockTemplates});
 
       const result = await onboardingService.getAllTemplates();
 
@@ -308,7 +307,7 @@ describe('onboardingService', () => {
     });
 
     it('should handle empty templates list', async () => {
-      mockedApiClient.get.mockResolvedValue({ data: [] });
+      mockedApiClient.get.mockResolvedValue({data: []});
 
       const result = await onboardingService.getAllTemplates();
 
@@ -324,7 +323,7 @@ describe('onboardingService', () => {
         name: 'Standard Onboarding',
         description: 'Standard onboarding process',
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockTemplate });
+      mockedApiClient.get.mockResolvedValue({data: mockTemplate});
 
       const result = await onboardingService.getTemplateById('tpl-1');
 
@@ -338,7 +337,7 @@ describe('onboardingService', () => {
         name: 'Executive Onboarding',
         description: 'Executive level onboarding',
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockTemplate });
+      mockedApiClient.get.mockResolvedValue({data: mockTemplate});
 
       const result = await onboardingService.getTemplateById('tpl-2');
 
@@ -350,13 +349,13 @@ describe('onboardingService', () => {
   // createTemplate tests
   describe('createTemplate', () => {
     it('should create a new template', async () => {
-      const request = { name: 'New Template', description: 'A new template' };
+      const request = {name: 'New Template', description: 'A new template'};
       const mockResponse: OnboardingChecklistTemplate = {
         id: 'tpl-new',
         name: 'New Template',
         description: 'A new template',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.createTemplate(request);
 
@@ -365,12 +364,12 @@ describe('onboardingService', () => {
     });
 
     it('should create template with minimal data', async () => {
-      const request = { name: 'Minimal Template' };
+      const request = {name: 'Minimal Template'};
       const mockResponse: OnboardingChecklistTemplate = {
         id: 'tpl-minimal',
         name: 'Minimal Template',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.createTemplate(request);
 
@@ -381,13 +380,13 @@ describe('onboardingService', () => {
   // updateTemplate tests
   describe('updateTemplate', () => {
     it('should update template', async () => {
-      const updateData = { name: 'Updated Template', description: 'Updated description' };
+      const updateData = {name: 'Updated Template', description: 'Updated description'};
       const mockResponse: OnboardingChecklistTemplate = {
         id: 'tpl-1',
         name: 'Updated Template',
         description: 'Updated description',
       };
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTemplate('tpl-1', updateData);
 
@@ -396,12 +395,12 @@ describe('onboardingService', () => {
     });
 
     it('should update only name field', async () => {
-      const updateData = { name: 'New Name' };
+      const updateData = {name: 'New Name'};
       const mockResponse: OnboardingChecklistTemplate = {
         id: 'tpl-1',
         name: 'New Name',
       };
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTemplate('tpl-1', updateData);
 
@@ -430,13 +429,13 @@ describe('onboardingService', () => {
   // addTemplateTask tests
   describe('addTemplateTask', () => {
     it('should add task to template', async () => {
-      const taskData = { title: 'Equipment Setup' };
+      const taskData = {title: 'Equipment Setup'};
       const mockResponse: OnboardingTemplateTask = {
         id: 'task-1',
         templateId: 'tpl-1',
         title: 'Equipment Setup',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.addTemplateTask('tpl-1', taskData);
 
@@ -445,13 +444,13 @@ describe('onboardingService', () => {
     });
 
     it('should add multiple task types', async () => {
-      const taskData = { title: 'IT Access' };
+      const taskData = {title: 'IT Access'};
       const mockResponse: OnboardingTemplateTask = {
         id: 'task-2',
         templateId: 'tpl-1',
         title: 'IT Access',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.addTemplateTask('tpl-1', taskData);
 
@@ -463,10 +462,10 @@ describe('onboardingService', () => {
   describe('getTemplateTasks', () => {
     it('should fetch tasks for template', async () => {
       const mockTasks: OnboardingTemplateTask[] = [
-        { id: 'task-1', templateId: 'tpl-1', title: 'Equipment Setup' },
-        { id: 'task-2', templateId: 'tpl-1', title: 'IT Access' },
+        {id: 'task-1', templateId: 'tpl-1', title: 'Equipment Setup'},
+        {id: 'task-2', templateId: 'tpl-1', title: 'IT Access'},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockTasks });
+      mockedApiClient.get.mockResolvedValue({data: mockTasks});
 
       const result = await onboardingService.getTemplateTasks('tpl-1');
 
@@ -475,7 +474,7 @@ describe('onboardingService', () => {
     });
 
     it('should return empty list when no tasks', async () => {
-      mockedApiClient.get.mockResolvedValue({ data: [] });
+      mockedApiClient.get.mockResolvedValue({data: []});
 
       const result = await onboardingService.getTemplateTasks('tpl-empty');
 
@@ -486,13 +485,13 @@ describe('onboardingService', () => {
   // updateTemplateTask tests
   describe('updateTemplateTask', () => {
     it('should update template task', async () => {
-      const updateData = { title: 'Equipment Setup - Updated' };
+      const updateData = {title: 'Equipment Setup - Updated'};
       const mockResponse: OnboardingTemplateTask = {
         id: 'task-1',
         templateId: 'tpl-1',
         title: 'Equipment Setup - Updated',
       };
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTemplateTask('tpl-1', 'task-1', updateData);
 
@@ -504,13 +503,13 @@ describe('onboardingService', () => {
     });
 
     it('should update task with partial data', async () => {
-      const updateData = { title: 'New Title' };
+      const updateData = {title: 'New Title'};
       const mockResponse: OnboardingTemplateTask = {
         id: 'task-2',
         templateId: 'tpl-1',
         title: 'New Title',
       };
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTemplateTask('tpl-1', 'task-2', updateData);
 
@@ -540,10 +539,10 @@ describe('onboardingService', () => {
   describe('getProcessTasks', () => {
     it('should fetch tasks for process', async () => {
       const mockTasks: OnboardingTask[] = [
-        { id: 'ptask-1', processId: 'proc-1', status: 'PENDING' },
-        { id: 'ptask-2', processId: 'proc-1', status: 'COMPLETED' },
+        {id: 'ptask-1', processId: 'proc-1', status: 'PENDING'},
+        {id: 'ptask-2', processId: 'proc-1', status: 'COMPLETED'},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockTasks });
+      mockedApiClient.get.mockResolvedValue({data: mockTasks});
 
       const result = await onboardingService.getProcessTasks('proc-1');
 
@@ -553,10 +552,10 @@ describe('onboardingService', () => {
 
     it('should return tasks in correct order', async () => {
       const mockTasks: OnboardingTask[] = [
-        { id: 'ptask-1', processId: 'proc-1', status: 'COMPLETED' },
-        { id: 'ptask-2', processId: 'proc-1', status: 'PENDING' },
+        {id: 'ptask-1', processId: 'proc-1', status: 'COMPLETED'},
+        {id: 'ptask-2', processId: 'proc-1', status: 'PENDING'},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockTasks });
+      mockedApiClient.get.mockResolvedValue({data: mockTasks});
 
       const result = await onboardingService.getProcessTasks('proc-1');
 
@@ -573,12 +572,12 @@ describe('onboardingService', () => {
         processId: 'proc-1',
         status: 'COMPLETED',
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTaskStatus('ptask-1', 'COMPLETED');
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith('/onboarding/tasks/ptask-1/status', null, {
-        params: { status: 'COMPLETED', remarks: undefined },
+        params: {status: 'COMPLETED', remarks: undefined},
       });
       expect(result.status).toBe('COMPLETED');
     });
@@ -589,12 +588,12 @@ describe('onboardingService', () => {
         processId: 'proc-1',
         status: 'COMPLETED',
       };
-      mockedApiClient.patch.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.patch.mockResolvedValue({data: mockResponse});
 
       const result = await onboardingService.updateTaskStatus('ptask-1', 'COMPLETED', 'Task finished successfully');
 
       expect(mockedApiClient.patch).toHaveBeenCalledWith('/onboarding/tasks/ptask-1/status', null, {
-        params: { status: 'COMPLETED', remarks: 'Task finished successfully' },
+        params: {status: 'COMPLETED', remarks: 'Task finished successfully'},
       });
       expect(result.status).toBe('COMPLETED');
     });

@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 
 export interface BirthdayResponse {
   employeeId: string;
@@ -87,7 +87,7 @@ class HomeService {
    */
   async getUpcomingBirthdays(days: number = 7): Promise<BirthdayResponse[]> {
     const response = await apiClient.get<BirthdayResponse[]>('/home/birthdays', {
-      params: { days },
+      params: {days},
     });
     return response.data;
   }
@@ -97,7 +97,7 @@ class HomeService {
    */
   async getUpcomingAnniversaries(days: number = 7): Promise<WorkAnniversaryResponse[]> {
     const response = await apiClient.get<WorkAnniversaryResponse[]>('/home/anniversaries', {
-      params: { days },
+      params: {days},
     });
     return response.data;
   }
@@ -107,7 +107,7 @@ class HomeService {
    */
   async getNewJoinees(days: number = 30): Promise<NewJoineeResponse[]> {
     const response = await apiClient.get<NewJoineeResponse[]>('/home/new-joinees', {
-      params: { days },
+      params: {days},
     });
     return response.data;
   }
@@ -141,7 +141,7 @@ class HomeService {
    */
   async getUpcomingHolidays(days: number = 30): Promise<UpcomingHolidayResponse[]> {
     const response = await apiClient.get<UpcomingHolidayResponse[]>('/home/holidays', {
-      params: { days },
+      params: {days},
     });
     return response.data;
   }

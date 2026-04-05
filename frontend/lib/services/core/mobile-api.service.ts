@@ -3,21 +3,21 @@
  * Uses existing Axios instance from frontend/lib/api/client
  */
 
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  MobileDashboardResponse,
-  LeaveBalanceResponse,
-  RecentLeaveRequest,
-  MobileQuickLeaveRequest,
-  MobileCancelLeaveRequest,
-  PendingApprovalsResponse,
-  MobileBulkApprovalRequest,
   ApprovalActionResponse,
-  UnreadNotificationsResponse,
+  LeaveBalanceResponse,
+  MarkReadResponse,
+  MobileBulkApprovalRequest,
+  MobileCancelLeaveRequest,
+  MobileDashboardResponse,
   MobileDeviceRegistrationRequest,
   MobileMarkReadRequest,
-  MarkReadResponse,
+  MobileQuickLeaveRequest,
+  PendingApprovalsResponse,
+  RecentLeaveRequest,
   SyncResponse,
+  UnreadNotificationsResponse,
 } from '../../types/core/mobile-api';
 
 const MOBILE_API_BASE = '/mobile';
@@ -82,7 +82,7 @@ export const mobileApiService = {
   ): Promise<ApprovalActionResponse> => {
     const response = await apiClient.post<ApprovalActionResponse>(
       `${MOBILE_API_BASE}/approvals/${approvalId}/approve`,
-      { notes }
+      {notes}
     );
     return response.data;
   },
@@ -94,7 +94,7 @@ export const mobileApiService = {
   ): Promise<ApprovalActionResponse> => {
     const response = await apiClient.post<ApprovalActionResponse>(
       `${MOBILE_API_BASE}/approvals/${approvalId}/reject`,
-      { rejectionReason, notes }
+      {rejectionReason, notes}
     );
     return response.data;
   },

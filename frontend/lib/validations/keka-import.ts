@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 /**
  * Validation schema for file upload
@@ -154,7 +154,7 @@ export function validateKekaEmployee(data: unknown): {
   } catch {
     return {
       valid: false,
-      errors: { _general: 'Validation failed' },
+      errors: {_general: 'Validation failed'},
     };
   }
 }

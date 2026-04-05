@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import {cleanup} from '@testing-library/react';
+import {afterEach, vi} from 'vitest';
 
 // Cleanup after each test
 afterEach(() => {
@@ -27,14 +27,14 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/image', () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return React.createElement('img', { ...props, alt: props.alt || '' });
+    return React.createElement('img', {...props, alt: props.alt || ''});
   },
 }));
 
 // Mock next/link
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: { children?: React.ReactNode; href?: string; [key: string]: unknown }) =>
-    React.createElement('a', { href, ...props }, children),
+  default: ({children, href, ...props}: { children?: React.ReactNode; href?: string; [key: string]: unknown }) =>
+    React.createElement('a', {href, ...props}, children),
 }));
 
 // Mock ResizeObserver
@@ -43,6 +43,7 @@ class ResizeObserverMock {
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
+
 global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
 
 // Mock IntersectionObserver
@@ -51,6 +52,7 @@ class IntersectionObserverMock {
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
+
 global.IntersectionObserver = IntersectionObserverMock as unknown as typeof IntersectionObserver;
 
 // Mock window.matchMedia

@@ -14,8 +14,10 @@ import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
+import com.hrms.common.config.CacheConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +54,7 @@ public class HomeService {
     /**
      * Get upcoming birthdays for the next N days (default 7 days)
      */
+    @Cacheable(value = CacheConfig.UPCOMING_BIRTHDAYS)
     @Transactional(readOnly = true)
     public List<BirthdayResponse> getUpcomingBirthdays(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -105,6 +108,7 @@ public class HomeService {
     /**
      * Get upcoming work anniversaries for the next N days (default 7 days)
      */
+    @Cacheable(value = CacheConfig.UPCOMING_ANNIVERSARIES)
     @Transactional(readOnly = true)
     public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();

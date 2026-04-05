@@ -1,35 +1,35 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Input } from '@/components/ui/Input';
+import React, {useEffect, useState} from 'react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Input} from '@/components/ui/Input';
 import {
-  User,
+  AlertTriangle,
   Briefcase,
   Calendar,
-  Clock,
-  AlertTriangle,
-  TrendingUp,
-  History,
-  ChevronRight,
-  Percent,
-  Pencil,
-  X,
   Check,
+  ChevronRight,
+  Clock,
+  History,
+  Pencil,
+  Percent,
+  TrendingUp,
+  User,
+  X,
 } from 'lucide-react';
 import {
-  EmployeeWorkload,
-  ProjectAllocationDetail,
+  ALLOCATION_THRESHOLDS,
   AllocationApprovalRequest,
+  EmployeeWorkload,
+  formatAllocationPercentage,
   getAllocationStatusColor,
   getAllocationStatusLabel,
-  formatAllocationPercentage,
-  ALLOCATION_THRESHOLDS,
+  ProjectAllocationDetail,
 } from '@/lib/types/hrms/resource-management';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 
 export interface AllocationEditData {
   projectId: string;
@@ -51,14 +51,14 @@ interface EmployeeAllocationDetailModalProps {
 type TabType = 'current' | 'history';
 
 export function EmployeeAllocationDetailModal({
-  isOpen,
-  onClose,
-  employee,
-  allocationHistory = [],
-  loadingHistory = false,
-  onViewProject,
-  onEditAllocation,
-}: EmployeeAllocationDetailModalProps) {
+                                                isOpen,
+                                                onClose,
+                                                employee,
+                                                allocationHistory = [],
+                                                loadingHistory = false,
+                                                onViewProject,
+                                                onEditAllocation,
+                                              }: EmployeeAllocationDetailModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>('current');
   const [editingAllocationId, setEditingAllocationId] = useState<string | null>(null);
 
@@ -110,8 +110,8 @@ export function EmployeeAllocationDetailModal({
   // Calculate dynamic status based on active allocation
   const dynamicStatus: import('@/lib/types/hrms/resource-management').AllocationStatus =
     activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED ? 'OVER_ALLOCATED' :
-    activeAllocation >= ALLOCATION_THRESHOLDS.OPTIMAL_MIN ? 'OPTIMAL' :
-    activeAllocation > 0 ? 'UNDER_UTILIZED' : 'UNASSIGNED';
+      activeAllocation >= ALLOCATION_THRESHOLDS.OPTIMAL_MIN ? 'OPTIMAL' :
+        activeAllocation > 0 ? 'UNDER_UTILIZED' : 'UNASSIGNED';
 
   const statusColor = getAllocationStatusColor(dynamicStatus);
   const _statusLabel = getAllocationStatusLabel(dynamicStatus);
@@ -129,7 +129,7 @@ export function EmployeeAllocationDetailModal({
                 : 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400'
             }`}
           >
-            <User className="h-6 w-6" />
+            <User className="h-6 w-6"/>
           </div>
           <div>
             <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
@@ -151,22 +151,24 @@ export function EmployeeAllocationDetailModal({
       <ModalBody className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+          <div
+            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
-              <Percent className="h-4 w-4 text-surface-400" />
+              <Percent className="h-4 w-4 text-surface-400"/>
               <span className="text-xs text-surface-500">Active Allocation</span>
             </div>
             <p
               className="mt-1 text-xl font-bold"
-              style={{ color: statusColor }}
+              style={{color: statusColor}}
             >
               {formatAllocationPercentage(activeAllocation)}
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+          <div
+            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-surface-400" />
+              <TrendingUp className="h-4 w-4 text-surface-400"/>
               <span className="text-xs text-surface-500">Available</span>
             </div>
             <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? 'text-success-600' : 'text-danger-600'}`}>
@@ -174,9 +176,10 @@ export function EmployeeAllocationDetailModal({
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+          <div
+            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-surface-400" />
+              <Briefcase className="h-4 w-4 text-surface-400"/>
               <span className="text-xs text-surface-500">Active Projects</span>
             </div>
             <p className="mt-1 text-xl font-bold text-surface-900 dark:text-surface-50">
@@ -184,9 +187,10 @@ export function EmployeeAllocationDetailModal({
             </p>
           </div>
 
-          <div className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+          <div
+            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-accent-500" />
+              <Clock className="h-4 w-4 text-accent-500"/>
               <span className="text-xs text-surface-500">Planned</span>
             </div>
             <p className="mt-1 text-xl font-bold text-accent-600 dark:text-accent-400">
@@ -199,7 +203,7 @@ export function EmployeeAllocationDetailModal({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-surface-600 dark:text-surface-400">Current Capacity Utilization</span>
-            <span className="font-medium" style={{ color: statusColor }}>
+            <span className="font-medium" style={{color: statusColor}}>
               {formatAllocationPercentage(activeAllocation)} / 100%
             </span>
           </div>
@@ -209,7 +213,7 @@ export function EmployeeAllocationDetailModal({
               className={`absolute left-0 top-0 h-full transition-all ${
                 isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
               }`}
-              style={{ width: `${Math.min((activeAllocation / 150) * 100, 100)}%` }}
+              style={{width: `${Math.min((activeAllocation / 150) * 100, 100)}%`}}
             />
             {/* Planned allocation (shown in blue after active) */}
             {plannedAllocation > 0 && (
@@ -224,7 +228,7 @@ export function EmployeeAllocationDetailModal({
             {/* 100% marker */}
             <div
               className="absolute top-0 h-full w-0.5 bg-surface-600"
-              style={{ left: '66.67%' }}
+              style={{left: '66.67%'}}
             />
           </div>
           <div className="row-between text-xs text-surface-500">
@@ -253,7 +257,7 @@ export function EmployeeAllocationDetailModal({
               }`}
             >
               <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4" />
+                <Briefcase className="h-4 w-4"/>
                 Current Allocations ({employee.projectCount})
               </div>
             </button>
@@ -266,7 +270,7 @@ export function EmployeeAllocationDetailModal({
               }`}
             >
               <div className="flex items-center gap-2">
-                <History className="h-4 w-4" />
+                <History className="h-4 w-4"/>
                 Allocation History
               </div>
             </button>
@@ -295,7 +299,7 @@ export function EmployeeAllocationDetailModal({
                 <EmptyState
                   title="No Current Allocations"
                   description="This employee is not currently assigned to any projects."
-                  icon={<Briefcase className="h-12 w-12" />}
+                  icon={<Briefcase className="h-12 w-12"/>}
                 />
               )}
             </div>
@@ -305,19 +309,19 @@ export function EmployeeAllocationDetailModal({
             <div className="space-y-4">
               {loadingHistory ? (
                 <>
-                  <Skeleton className="h-20" />
-                  <Skeleton className="h-20" />
-                  <Skeleton className="h-20" />
+                  <Skeleton className="h-20"/>
+                  <Skeleton className="h-20"/>
+                  <Skeleton className="h-20"/>
                 </>
               ) : allocationHistory.length > 0 ? (
                 allocationHistory.map((request) => (
-                  <HistoryCard key={request.id} request={request} />
+                  <HistoryCard key={request.id} request={request}/>
                 ))
               ) : (
                 <EmptyState
                   title="No Allocation History"
                   description="No past allocation changes found for this employee."
-                  icon={<History className="h-12 w-12" />}
+                  icon={<History className="h-12 w-12"/>}
                 />
               )}
             </div>
@@ -335,15 +339,15 @@ export function EmployeeAllocationDetailModal({
 }
 
 function AllocationCard({
-  allocation,
-  allAllocations,
-  onClick,
-  isEditing,
-  onEdit,
-  onSaveEdit,
-  onCancelEdit,
-  canEdit,
-}: {
+                          allocation,
+                          allAllocations,
+                          onClick,
+                          isEditing,
+                          onEdit,
+                          onSaveEdit,
+                          onCancelEdit,
+                          canEdit,
+                        }: {
   allocation: ProjectAllocationDetail;
   allAllocations: ProjectAllocationDetail[];
   onClick?: () => void;
@@ -459,12 +463,13 @@ function AllocationCard({
 
   if (isEditing) {
     return (
-      <div className="rounded-lg border border-accent-300 bg-accent-50 p-4 dark:border-accent-700 dark:bg-accent-900/20">
+      <div
+        className="rounded-lg border border-accent-300 bg-accent-50 p-4 dark:border-accent-700 dark:bg-accent-900/20">
         <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
           >
-            <Briefcase className="h-5 w-5" />
+            <Briefcase className="h-5 w-5"/>
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -519,7 +524,7 @@ function AllocationCard({
             {/* Validation Error */}
             {validationError && (
               <div className="mt-2 flex items-center gap-1 text-xs text-danger-600 dark:text-danger-400">
-                <AlertTriangle className="h-3 w-3" />
+                <AlertTriangle className="h-3 w-3"/>
                 {validationError}
               </div>
             )}
@@ -527,11 +532,11 @@ function AllocationCard({
             {/* Edit Actions */}
             <div className="mt-4 flex items-center gap-2">
               <Button size="sm" onClick={handleSave} disabled={!!validationError}>
-                <Check className="mr-1 h-4 w-4" />
+                <Check className="mr-1 h-4 w-4"/>
                 Save
               </Button>
               <Button size="sm" variant="outline" onClick={onCancelEdit}>
-                <X className="mr-1 h-4 w-4" />
+                <X className="mr-1 h-4 w-4"/>
                 Cancel
               </Button>
             </div>
@@ -557,7 +562,7 @@ function AllocationCard({
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
           >
-            <Briefcase className="h-5 w-5" />
+            <Briefcase className="h-5 w-5"/>
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -565,8 +570,9 @@ function AllocationCard({
                 {allocation.projectName}
               </h4>
               {allocation.isPendingApproval && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
-                  <Clock className="h-3 w-3" />
+                <span
+                  className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
+                  <Clock className="h-3 w-3"/>
                   Pending
                 </span>
               )}
@@ -576,7 +582,7 @@ function AllocationCard({
             </p>
             <div className="mt-2 flex items-center gap-4 text-xs text-surface-500">
               <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <Calendar className="h-3 w-3"/>
                 {format(new Date(allocation.startDate), 'MMM d, yyyy')}
                 {allocation.endDate && ` - ${format(new Date(allocation.endDate), 'MMM d, yyyy')}`}
               </span>
@@ -593,7 +599,7 @@ function AllocationCard({
             <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
               {formatAllocationPercentage(allocation.allocationPercentage)}
             </p>
-            {onClick && <ChevronRight className="ml-auto mt-1 h-4 w-4 text-surface-400" />}
+            {onClick && <ChevronRight className="ml-auto mt-1 h-4 w-4 text-surface-400"/>}
           </div>
           {canEdit && isEditable && (
             <button
@@ -604,7 +610,7 @@ function AllocationCard({
               className="rounded-lg p-2 text-surface-400 transition-colors hover:bg-surface-100 hover:text-surface-600 dark:hover:bg-surface-700 dark:hover:text-surface-300"
               title="Edit allocation"
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="h-4 w-4"/>
             </button>
           )}
         </div>
@@ -613,7 +619,7 @@ function AllocationCard({
   );
 }
 
-function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
+function HistoryCard({request}: { request: AllocationApprovalRequest }) {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'APPROVED':
@@ -644,11 +650,11 @@ function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
           </p>
           <div className="mt-2 flex items-center gap-4 text-xs text-surface-500">
             <span className="flex items-center gap-1">
-              <User className="h-3 w-3" />
+              <User className="h-3 w-3"/>
               By {request.requestedByName}
             </span>
             <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
+              <Calendar className="h-3 w-3"/>
               {format(new Date(request.createdAt), 'MMM d, yyyy')}
             </span>
           </div>

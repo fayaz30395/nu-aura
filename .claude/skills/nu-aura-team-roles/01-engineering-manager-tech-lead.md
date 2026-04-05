@@ -7,11 +7,13 @@
 ## Core Responsibilities
 
 ### 1. Delivery & Coordination
+
 - Sprint planning (2-week sprints), velocity tracking, risk mitigation
 - Cross-team coordination across all 4 sub-apps
 - Release planning and deployment coordination
 
 ### 2. Architecture & Code Quality
+
 - Enforce multi-tenant + RBAC patterns (500+ permissions)
 - Review ADRs, migrations (Flyway V63+), critical code (payroll, security)
 - Maintain 80% coverage (JaCoCo), strict TypeScript (no `any`)
@@ -19,12 +21,14 @@
 - Tech debt sprint (every 4th sprint)
 
 ### 3. Team Leadership
+
 - 1-on-1s, skill development, knowledge sharing
 - Hiring, performance reviews, conflict resolution
 
 ## Platform Context
 
 **4 Sub-Apps**:
+
 - NU-HRMS (employees, payroll, leave, attendance)
 - NU-Hire (recruitment, onboarding)
 - NU-Grow (performance, OKRs, learning)
@@ -43,6 +47,7 @@
 ## Code Review Standards
 
 **Backend PR Must Have**:
+
 - [ ] Multi-tenant isolation (`WHERE tenant_id = ?`)
 - [ ] RBAC permissions (`@RequiresPermission`)
 - [ ] Audit logging (`AuditService.log()`)
@@ -50,6 +55,7 @@
 - [ ] Tests (80% coverage), migration (if schema change)
 
 **Frontend PR Must Have**:
+
 - [ ] TypeScript strict (no `any`)
 - [ ] React Hook Form + Zod (forms)
 - [ ] React Query (data fetching)
@@ -57,17 +63,20 @@
 - [ ] Responsive design, permission checks (`usePermissions`)
 
 **Approval Requirements**:
+
 - 2 approvals: Architecture, security, performance-critical
 - Tech Lead approval: Migrations, Kafka, Redis, integrations
 
 ## Key Architectural Patterns
 
 ### 1. Multi-Tenancy
+
 - Every entity has `tenant_id UUID`
 - PostgreSQL RLS enforces at DB level
 - Key: `TenantRlsTransactionManager.java`, `TenantFilter.java`
 
 ### 2. RBAC (500+ Permissions)
+
 - Format: `MODULE:ACTION` (e.g., `EMPLOYEE:READ`)
 - `@RequiresPermission` annotation
 - SuperAdmin bypasses ALL checks
@@ -75,9 +84,12 @@
 - Key: `docs/build-kit/04_RBAC_PERMISSION_MATRIX.md`
 
 ### 3. Event-Driven Workflows (Kafka)
-Topics: `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content`
+
+Topics: `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`,
+`nu-aura.fluence-content`
 
 ### 4. Data-Driven Approval Engine
+
 Workflow: `workflow_def → workflow_step → approval_instance → approval_task`
 Used for: Leave, expenses, assets, performance, recruitment
 Key: `docs/build-kit/08_APPROVAL_WORKFLOW_ENGINE.md`
@@ -91,16 +103,17 @@ Key: `docs/build-kit/08_APPROVAL_WORKFLOW_ENGINE.md`
 
 ## Risk Management
 
-| Risk | Mitigation |
-|------|------------|
-| Payroll bug | 100% coverage, manual QA, staged rollout |
+| Risk              | Mitigation                                    |
+|-------------------|-----------------------------------------------|
+| Payroll bug       | 100% coverage, manual QA, staged rollout      |
 | Multi-tenant leak | PostgreSQL RLS, integration tests, pentesting |
-| Kafka loss | DLT, retry logic, monitoring |
-| Performance | Load testing, Redis caching, indexing |
+| Kafka loss        | DLT, retry logic, monitoring                  |
+| Performance       | Load testing, Redis caching, indexing         |
 
 ## Technical Debt Management
 
 **Every 4th sprint** = Tech Debt Sprint:
+
 - 50% capacity: Tech debt
 - 30% capacity: Critical bugs
 - 20% capacity: Small features
@@ -128,6 +141,7 @@ Low: Style inconsistencies, TODOs
 ## Escalation Path
 
 **Escalate to VP/CTO when**:
+
 - Major architectural decision (microservices, tech stack change)
 - Budget approval (3rd party services)
 - Hiring/firing, cross-department conflicts

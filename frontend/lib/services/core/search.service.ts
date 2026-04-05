@@ -1,7 +1,7 @@
-import { apiClient } from '../../api/client';
-import { Employee, Page, Department } from '../../types/hrms/employee';
-import { Project } from '../../types/hrms/project';
-import { FluenceSearchResponse, FluenceSearchResult } from '../../types/platform/fluence';
+import {apiClient} from '../../api/client';
+import {Department, Employee, Page} from '../../types/hrms/employee';
+import {Project} from '../../types/hrms/project';
+import {FluenceSearchResponse, FluenceSearchResult} from '../../types/platform/fluence';
 
 export interface SearchResult {
   id: string;
@@ -33,7 +33,7 @@ class SearchService {
    */
   async unifiedSearch(query: string, limit: number = 5): Promise<UnifiedSearchResponse> {
     if (!query || query.trim().length < 2) {
-      return { employees: [], projects: [], departments: [], total: 0 };
+      return {employees: [], projects: [], departments: [], total: 0};
     }
 
     const [employeesResult, projectsResult, departmentsResult] = await Promise.allSettled([
@@ -60,7 +60,7 @@ class SearchService {
   async searchEmployees(query: string, limit: number = 5): Promise<SearchResult[]> {
     try {
       const response = await apiClient.get<Page<Employee>>('/employees', {
-        params: { search: query, page: 0, size: limit },
+        params: {search: query, page: 0, size: limit},
       });
 
       return response.data.content.map((emp) => ({
@@ -87,7 +87,7 @@ class SearchService {
   async searchProjects(query: string, limit: number = 5): Promise<SearchResult[]> {
     try {
       const response = await apiClient.get<Page<Project>>('/projects/search', {
-        params: { query, page: 0, size: limit },
+        params: {query, page: 0, size: limit},
       });
 
       return response.data.content.map((project) => ({
@@ -113,7 +113,7 @@ class SearchService {
   async searchDepartments(query: string, limit: number = 5): Promise<SearchResult[]> {
     try {
       const response = await apiClient.get<Page<Department>>('/departments/search', {
-        params: { query, page: 0, size: limit },
+        params: {query, page: 0, size: limit},
       });
 
       return response.data.content.map((dept) => ({
@@ -132,18 +132,19 @@ class SearchService {
       return [];
     }
   }
+
   /**
    * Search NU-Fluence content (wiki pages, blog posts, templates)
    * Used by GlobalSearch when the active app is FLUENCE
    */
   async searchFluenceContent(query: string, limit: number = 5): Promise<FluenceUnifiedSearchResponse> {
     if (!query || query.trim().length < 2) {
-      return { wikiPages: [], blogPosts: [], templates: [], total: 0 };
+      return {wikiPages: [], blogPosts: [], templates: [], total: 0};
     }
 
     try {
       const response = await apiClient.get<FluenceSearchResponse>('/fluence/search', {
-        params: { query, page: 0, size: limit },
+        params: {query, page: 0, size: limit},
       });
 
       const results = response.data.results || [];
@@ -180,7 +181,7 @@ class SearchService {
       };
     } catch (error) {
       console.error('Fluence search failed:', error);
-      return { wikiPages: [], blogPosts: [], templates: [], total: 0 };
+      return {wikiPages: [], blogPosts: [], templates: [], total: 0};
     }
   }
 }

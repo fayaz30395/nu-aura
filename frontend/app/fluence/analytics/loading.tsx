@@ -1,4 +1,4 @@
-import { layout, card } from '@/lib/design-system';
+import {card, layout} from '@/lib/design-system';
 
 export default function AnalyticsLoading() {
   return (
@@ -6,10 +6,10 @@ export default function AnalyticsLoading() {
       {/* Header skeleton */}
       <div className="mb-6">
         <div className="flex items-start gap-4">
-          <div className="h-10 w-10 rounded-lg bg-[var(--bg-secondary)] animate-pulse" />
+          <div className="h-10 w-10 rounded-lg bg-[var(--bg-secondary)] animate-pulse"/>
           <div className="flex-1">
-            <div className="h-6 w-48 rounded bg-[var(--bg-secondary)] animate-pulse mb-2" />
-            <div className="h-4 w-64 rounded bg-[var(--bg-secondary)] animate-pulse" />
+            <div className="h-6 w-48 rounded bg-[var(--bg-secondary)] animate-pulse mb-2"/>
+            <div className="h-4 w-64 rounded bg-[var(--bg-secondary)] animate-pulse"/>
           </div>
         </div>
       </div>
@@ -27,10 +27,10 @@ export default function AnalyticsLoading() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">
-          <div className={`${card.base} ${card.paddingLarge} h-80 animate-pulse`} />
+          <div className={`${card.base} ${card.paddingLarge} h-80 animate-pulse`}/>
         </div>
         <div>
-          <div className={`${card.base} ${card.paddingLarge} h-80 animate-pulse`} />
+          <div className={`${card.base} ${card.paddingLarge} h-80 animate-pulse`}/>
         </div>
       </div>
 
@@ -38,7 +38,7 @@ export default function AnalyticsLoading() {
       <div className="mb-6">
         <div className={`${card.base} ${card.paddingLarge} space-y-4`}>
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-14 bg-[var(--bg-secondary)] rounded animate-pulse" />
+            <div key={i} className="h-14 bg-[var(--bg-secondary)] rounded animate-pulse"/>
           ))}
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function AnalyticsLoading() {
       <div>
         <div className={`${card.base} ${card.paddingLarge} space-y-4`}>
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-[var(--bg-secondary)] rounded animate-pulse" />
+            <div key={i} className="h-12 bg-[var(--bg-secondary)] rounded animate-pulse"/>
           ))}
         </div>
       </div>

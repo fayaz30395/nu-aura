@@ -1,36 +1,36 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
+  AlertCircle,
   Briefcase,
   Building2,
-  Edit2,
-  Save,
-  X,
-  CreditCard,
-  Shield,
-  AlertCircle,
+  Calendar,
   Check,
-  SendHorizonal,
   Clock,
+  CreditCard,
+  Edit2,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  SendHorizonal,
+  Shield,
+  User,
+  X,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useMyEmployee, useUpdateMyProfile } from '@/lib/hooks/queries';
-import { getInitials } from '@/lib/utils';
-import { createLogger } from '@/lib/utils/logger';
-import { employmentChangeRequestService } from '@/lib/services/hrms/employment-change-request.service';
-import { isAxiosError } from 'axios';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useMyEmployee, useUpdateMyProfile} from '@/lib/hooks/queries';
+import {getInitials} from '@/lib/utils';
+import {createLogger} from '@/lib/utils/logger';
+import {employmentChangeRequestService} from '@/lib/services/hrms/employment-change-request.service';
+import {isAxiosError} from 'axios';
 
 const log = createLogger('ProfilePage');
 
@@ -57,7 +57,7 @@ const bankChangeSchema = z.object({
 type BankChangeFormData = z.infer<typeof bankChangeSchema>;
 
 export default function MyProfilePage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [photoLoadError, setPhotoLoadError] = useState(false);
@@ -95,7 +95,7 @@ export default function MyProfilePage() {
   });
 
   // React Query hooks — use /employees/me (no ID needed)
-  const { data: employee, isLoading } = useMyEmployee(!!user);
+  const {data: employee, isLoading} = useMyEmployee(!!user);
 
   const updateMutation = useUpdateMyProfile();
 
@@ -175,7 +175,7 @@ export default function MyProfilePage() {
     return (
       <AppLayout activeMenuItem="profile">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -188,7 +188,7 @@ export default function MyProfilePage() {
           <Card className="max-w-md">
             <CardHeader>
               <div className="flex items-center gap-2 text-danger-600">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <CardTitle>Profile Not Found</CardTitle>
               </div>
             </CardHeader>
@@ -244,7 +244,7 @@ export default function MyProfilePage() {
               onClick={() => setIsEditing(true)}
               className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg"
             >
-              <Edit2 className="h-4 w-4" />
+              <Edit2 className="h-4 w-4"/>
               Edit Profile
             </button>
           ) : (
@@ -254,7 +254,7 @@ export default function MyProfilePage() {
                 disabled={updateMutation.isPending}
                 className="btn-secondary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4"/>
                 Cancel
               </button>
               <button
@@ -264,12 +264,12 @@ export default function MyProfilePage() {
               >
                 {updateMutation.isPending ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                     Saving...
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4" />
+                    <Save className="h-4 w-4"/>
                     Save Changes
                   </>
                 )}
@@ -280,8 +280,9 @@ export default function MyProfilePage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
-            <Check className="h-5 w-5 text-success-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
+            <Check className="h-5 w-5 text-success-600"/>
             <p className="text-success-800 dark:text-success-200 font-medium">
               Profile updated successfully!
             </p>
@@ -290,15 +291,16 @@ export default function MyProfilePage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
-            <AlertCircle className="h-5 w-5 text-danger-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
+            <AlertCircle className="h-5 w-5 text-danger-600"/>
             <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
 
         {/* Profile Header Card */}
         <Card className="card-aura overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-accent-500 to-accent-700" />
+          <div className="h-32 bg-gradient-to-r from-accent-500 to-accent-700"/>
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
@@ -312,11 +314,13 @@ export default function MyProfilePage() {
                     onError={() => setPhotoLoadError(true)}
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-accent-700 shadow-[var(--shadow-dropdown)]">
+                  <div
+                    className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] flex items-center justify-center text-4xl font-bold text-accent-700 shadow-[var(--shadow-dropdown)]">
                     {getInitials(displayName)}
                   </div>
                 )}
-                <div className="absolute bottom-2 right-2 w-6 h-6 bg-success-500 border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] rounded-full" />
+                <div
+                  className="absolute bottom-2 right-2 w-6 h-6 bg-success-500 border-4 border-[var(--bg-card)] dark:border-[var(--bg-main)] rounded-full"/>
               </div>
               <div className="flex-1 pb-6">
                 <h2 className="text-2xl  font-bold text-[var(--text-primary)]">
@@ -327,15 +331,15 @@ export default function MyProfilePage() {
                 </p>
                 <div className="meta-row mt-2">
                   <div className="flex items-center gap-1">
-                    <Mail className="h-4 w-4" />
+                    <Mail className="h-4 w-4"/>
                     {employee.workEmail}
                   </div>
                   <div className="flex items-center gap-1">
-                    <Briefcase className="h-4 w-4" />
+                    <Briefcase className="h-4 w-4"/>
                     {employee.employeeCode}
                   </div>
                   <div className="flex items-center gap-1">
-                    <Building2 className="h-4 w-4" />
+                    <Building2 className="h-4 w-4"/>
                     {employee.departmentName || 'N/A'}
                   </div>
                 </div>
@@ -349,7 +353,7 @@ export default function MyProfilePage() {
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <User className="h-5 w-5" />
+                <User className="h-5 w-5"/>
                 Personal Information
               </CardTitle>
               <CardDescription>Your basic personal details</CardDescription>
@@ -384,7 +388,7 @@ export default function MyProfilePage() {
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <Phone className="h-5 w-5" />
+                <Phone className="h-5 w-5"/>
                 Contact Information
               </CardTitle>
               <CardDescription>How to reach you</CardDescription>
@@ -451,7 +455,7 @@ export default function MyProfilePage() {
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
+                <MapPin className="h-5 w-5"/>
                 Address
               </CardTitle>
               <CardDescription>Your residential address</CardDescription>
@@ -548,7 +552,7 @@ export default function MyProfilePage() {
           <Card className="card-aura">
             <CardHeader>
               <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5"/>
                 Employment Details
               </CardTitle>
               <CardDescription>Your work-related information</CardDescription>
@@ -592,9 +596,9 @@ export default function MyProfilePage() {
                 </label>
                 <span
                   className={`badge-status mt-1 ${employee.status === 'ACTIVE'
-                      ? 'status-success'
-                      : 'status-neutral'
-                    }`}
+                    ? 'status-success'
+                    : 'status-neutral'
+                  }`}
                 >
                   {employee.status}
                 </span>
@@ -608,7 +612,7 @@ export default function MyProfilePage() {
               <div className="row-between">
                 <div>
                   <CardTitle className="skeuo-emboss flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
+                    <CreditCard className="h-5 w-5"/>
                     Bank Details
                   </CardTitle>
                   <CardDescription>Your salary account information</CardDescription>
@@ -625,7 +629,7 @@ export default function MyProfilePage() {
                   }}
                   className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-warning-700 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 rounded-lg hover:bg-warning-100 dark:hover:bg-warning-950/50 transition-colors"
                 >
-                  <SendHorizonal className="h-3.5 w-3.5" />
+                  <SendHorizonal className="h-3.5 w-3.5"/>
                   Request Change
                 </button>
               </div>
@@ -664,7 +668,7 @@ export default function MyProfilePage() {
           <Card className="card-aura lg:col-span-2">
             <CardHeader>
               <CardTitle className="skeuo-emboss flex items-center gap-2">
-                <Shield className="h-5 w-5" />
+                <Shield className="h-5 w-5"/>
                 Tax Information
               </CardTitle>
               <CardDescription>Your tax identification details</CardDescription>
@@ -685,12 +689,13 @@ export default function MyProfilePage() {
         {/* Bank Change Request Modal */}
         {showBankChangeModal && (
           <div className="modal-backdrop">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-lg w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="row-between">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                      <SendHorizonal className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                      <SendHorizonal className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                     </div>
                     <div>
                       <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -705,15 +710,16 @@ export default function MyProfilePage() {
                     onClick={() => setShowBankChangeModal(false)}
                     className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                   >
-                    <X className="h-5 w-5 text-[var(--text-muted)]" />
+                    <X className="h-5 w-5 text-[var(--text-muted)]"/>
                   </button>
                 </div>
               </div>
 
               {bankChangeSuccess ? (
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check className="h-8 w-8 text-success-600 dark:text-success-400" />
+                  <div
+                    className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="h-8 w-8 text-success-600 dark:text-success-400"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                     Request Submitted
@@ -725,10 +731,12 @@ export default function MyProfilePage() {
                 </div>
               ) : (
                 <div className="p-6 space-y-4">
-                  <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                    <Clock className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0" />
+                  <div
+                    className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                    <Clock className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0"/>
                     <p className="text-sm text-warning-800 dark:text-warning-300">
-                      Bank detail changes are sensitive and go through an approval workflow. Your current details will remain active until the change is approved.
+                      Bank detail changes are sensitive and go through an approval workflow. Your current details will
+                      remain active until the change is approved.
                     </p>
                   </div>
 
@@ -757,7 +765,8 @@ export default function MyProfilePage() {
                       className="input-aura w-full px-4 py-2 rounded-lg font-mono"
                     />
                     {bankChangeForm.formState.errors.bankAccountNumber && (
-                      <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankAccountNumber.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankAccountNumber.message}</p>
                     )}
                   </div>
                   <div>
@@ -771,7 +780,8 @@ export default function MyProfilePage() {
                       className="input-aura w-full px-4 py-2 rounded-lg font-mono uppercase"
                     />
                     {bankChangeForm.formState.errors.bankIfscCode && (
-                      <p className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankIfscCode.message}</p>
+                      <p
+                        className="text-danger-500 text-xs mt-1">{bankChangeForm.formState.errors.bankIfscCode.message}</p>
                     )}
                   </div>
                   <div>
@@ -806,12 +816,12 @@ export default function MyProfilePage() {
                   >
                     {bankChangeSubmitting ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <SendHorizonal className="h-4 w-4" />
+                        <SendHorizonal className="h-4 w-4"/>
                         Submit Request
                       </>
                     )}

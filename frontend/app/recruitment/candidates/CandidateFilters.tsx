@@ -1,8 +1,8 @@
 'use client';
 
-import React, { memo } from 'react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Search } from 'lucide-react';
+import React, {memo} from 'react';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Search} from 'lucide-react';
 
 interface JobOption {
   id: string;
@@ -20,16 +20,16 @@ interface CandidateFiltersProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'All Status' },
-  { value: 'NEW', label: 'New' },
-  { value: 'SCREENING', label: 'Screening' },
-  { value: 'INTERVIEW', label: 'Interview' },
-  { value: 'SELECTED', label: 'Selected' },
-  { value: 'OFFER_EXTENDED', label: 'Offer Extended' },
-  { value: 'OFFER_ACCEPTED', label: 'Offer Accepted' },
-  { value: 'OFFER_DECLINED', label: 'Offer Declined' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'WITHDRAWN', label: 'Withdrawn' },
+  {value: '', label: 'All Status'},
+  {value: 'NEW', label: 'New'},
+  {value: 'SCREENING', label: 'Screening'},
+  {value: 'INTERVIEW', label: 'Interview'},
+  {value: 'SELECTED', label: 'Selected'},
+  {value: 'OFFER_EXTENDED', label: 'Offer Extended'},
+  {value: 'OFFER_ACCEPTED', label: 'Offer Accepted'},
+  {value: 'OFFER_DECLINED', label: 'Offer Declined'},
+  {value: 'REJECTED', label: 'Rejected'},
+  {value: 'WITHDRAWN', label: 'Withdrawn'},
 ] as const;
 
 /**
@@ -37,20 +37,20 @@ const STATUS_OPTIONS = [
  * Memoized — only re-renders when filter values or job openings change.
  */
 export const CandidateFilters = memo(function CandidateFilters({
-  searchQuery,
-  onSearchChange,
-  statusFilter,
-  onStatusChange,
-  jobFilter,
-  onJobChange,
-  jobOpenings,
-}: CandidateFiltersProps) {
+                                                                 searchQuery,
+                                                                 onSearchChange,
+                                                                 statusFilter,
+                                                                 onStatusChange,
+                                                                 jobFilter,
+                                                                 onJobChange,
+                                                                 jobOpenings,
+                                                               }: CandidateFiltersProps) {
   return (
     <Card className="skeuo-card">
       <CardContent className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search candidates..."

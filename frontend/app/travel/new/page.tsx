@@ -1,28 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { TravelType, TransportMode } from '@/lib/types/hrms/travel';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useCreateTravelRequest, useSubmitTravelRequest } from '@/lib/hooks/queries/useTravel';
-import { isAxiosError } from '@/lib/utils/type-guards';
-import {
-  Plane,
-  ArrowLeft,
-  MapPin,
-  DollarSign,
-  Briefcase,
-  Hotel,
-  AlertCircle,
-  Loader2,
-  Save,
-  Send,
-} from 'lucide-react';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {TransportMode, TravelType} from '@/lib/types/hrms/travel';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useCreateTravelRequest, useSubmitTravelRequest} from '@/lib/hooks/queries/useTravel';
+import {isAxiosError} from '@/lib/utils/type-guards';
+import {AlertCircle, ArrowLeft, Briefcase, DollarSign, Hotel, Loader2, MapPin, Plane, Save, Send,} from 'lucide-react';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -48,9 +37,9 @@ const travelRequestSchema = z
     checkInDate: z.string().optional(),
     checkOutDate: z.string().optional(),
     estimatedCost: z
-      .number({ coerce: true, invalid_type_error: 'Please enter a valid cost' })
+      .number({coerce: true, invalid_type_error: 'Please enter a valid cost'})
       .positive('Estimated cost must be greater than 0'),
-    advanceRequired: z.number({ coerce: true }).min(0).optional(),
+    advanceRequired: z.number({coerce: true}).min(0).optional(),
     specialInstructions: z.string().optional(),
   })
   .superRefine((data, ctx) => {
@@ -87,8 +76,8 @@ type TravelFormData = z.infer<typeof travelRequestSchema>;
 
 export default function NewTravelRequestPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyPermission, isReady} = usePermissions();
   const createMutation = useCreateTravelRequest();
   const submitMutation = useSubmitTravelRequest();
 
@@ -96,7 +85,7 @@ export default function NewTravelRequestPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<TravelFormData>({
     resolver: zodResolver(travelRequestSchema),
     defaultValues: {
@@ -136,7 +125,7 @@ export default function NewTravelRequestPage() {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
         </div>
       </AppLayout>
     );
@@ -245,7 +234,7 @@ export default function NewTravelRequestPage() {
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">New Travel Request</h1>
@@ -254,9 +243,11 @@ export default function NewTravelRequestPage() {
         </div>
 
         {(createMutation.isError || submitMutation.isError) && (
-          <div className="flex items-center gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-            <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0" />
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to create travel request. Please try again.</p>
+          <div
+            className="flex items-center gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+            <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0"/>
+            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to create travel request. Please try
+              again.</p>
           </div>
         )}
 
@@ -265,7 +256,7 @@ export default function NewTravelRequestPage() {
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
@@ -324,7 +315,7 @@ export default function NewTravelRequestPage() {
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                <MapPin className="h-5 w-5 text-success-600 dark:text-success-400" />
+                <MapPin className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Journey Details</h2>
             </div>
@@ -417,7 +408,7 @@ export default function NewTravelRequestPage() {
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                <Plane className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <Plane className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Transport Details</h2>
             </div>
@@ -469,7 +460,7 @@ export default function NewTravelRequestPage() {
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-accent-300 dark:bg-accent-900/30 rounded-lg">
-                <Hotel className="h-5 w-5 text-accent-800 dark:text-accent-600" />
+                <Hotel className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Accommodation</h2>
             </div>
@@ -533,7 +524,7 @@ export default function NewTravelRequestPage() {
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Budget Details</h2>
             </div>
@@ -547,7 +538,7 @@ export default function NewTravelRequestPage() {
                   type="number"
                   step="0.01"
                   min="0"
-                  {...register('estimatedCost', { valueAsNumber: true })}
+                  {...register('estimatedCost', {valueAsNumber: true})}
                   placeholder="0.00"
                   className={inputClass(!!errors.estimatedCost)}
                 />
@@ -564,7 +555,7 @@ export default function NewTravelRequestPage() {
                   type="number"
                   step="0.01"
                   min="0"
-                  {...register('advanceRequired', { valueAsNumber: true })}
+                  {...register('advanceRequired', {valueAsNumber: true})}
                   placeholder="0.00"
                   className={inputClass(false)}
                 />
@@ -601,7 +592,7 @@ export default function NewTravelRequestPage() {
             disabled={isLoading}
             className="flex items-center gap-2 px-6 py-2.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin"/> : <Save className="h-5 w-5"/>}
             Save as Draft
           </button>
           <button
@@ -610,7 +601,7 @@ export default function NewTravelRequestPage() {
             disabled={isLoading}
             className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin"/> : <Send className="h-5 w-5"/>}
             Submit Request
           </button>
         </div>
