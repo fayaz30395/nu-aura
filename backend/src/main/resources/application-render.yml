@@ -103,6 +103,10 @@ management:
       enabled: false
     elasticsearch:
       enabled: false
+    diskSpace:
+      # Render free-tier containers have ~1GB total disk; 1GB threshold always fails.
+      # Use a minimal threshold so the liveness probe doesn't report DOWN on Render.
+      threshold: 10MB
 
 server:
   # Render injects PORT env var (default 10000); Spring Boot must bind to that port
