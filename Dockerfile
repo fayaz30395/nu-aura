@@ -57,8 +57,11 @@ USER hrms
 EXPOSE 8080
 
 # Render free tier: 512MB RAM total.
-# Breakdown: heap 192MB + metaspace 96MB + code cache 64MB + threads + JVM native ≈ 450MB
+# Budget: heap 160MB + metaspace 192MB + code cache 48MB + threads (~30) + JVM native (~50) ≈ 480MB
+# Metaspace raised to 192m: Spring Boot 3 + Hibernate 6 + SAML + 274 lazy JPA repos loads
+# ~150-180MB of class metadata on first request wave. Previous 128m caused OOM:Metaspace.
+# Heap reduced from 192m to 160m to compensate — acceptable for single-instance demo load.
 # TieredStopAtLevel=1 disables server JIT — reduces startup memory and time.
-ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx192m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=48m -Xss512k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx160m -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=48m -Xss512k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
