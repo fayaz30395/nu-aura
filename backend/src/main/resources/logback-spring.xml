@@ -10,8 +10,8 @@
     <!-- Include Spring Boot defaults -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- ========== Development / Render Profiles ========== -->
-    <springProfile name="dev,local,default,render">
+    <!-- ========== Development Profiles ========== -->
+    <springProfile name="dev,local,default">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -26,6 +26,28 @@
         <logger name="com.hrms" level="DEBUG"/>
         <logger name="org.springframework.web" level="INFO"/>
         <logger name="org.hibernate.SQL" level="WARN"/>
+    </springProfile>
+
+    <!-- ========== Render Profile (free-tier cloud) ========== -->
+    <!-- Keep at INFO — DEBUG floods logs and pushes heap over the 192MB cap -->
+    <springProfile name="render">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="com.hrms" level="INFO"/>
+        <logger name="org.springframework.web" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN"/>
+        <logger name="org.springframework.kafka" level="WARN"/>
+        <logger name="org.apache.kafka" level="WARN"/>
+        <logger name="org.springframework.boot.autoconfigure" level="WARN"/>
     </springProfile>
 
     <!-- ========== Test Profile ========== -->
