@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -20,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 @EntityScan(basePackages = {"com.hrms"})
 @EnableJpaRepositories(basePackages = {"com.hrms"},
+        bootstrapMode = BootstrapMode.LAZY,
         excludeFilters = @org.springframework.context.annotation.ComponentScan.Filter(
                 type = org.springframework.context.annotation.FilterType.REGEX,
                 pattern = "com\\.hrms\\.infrastructure\\.search\\..*"))
